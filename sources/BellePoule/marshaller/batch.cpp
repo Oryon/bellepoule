@@ -23,7 +23,8 @@
 typedef enum
 {
   NAME_str,
-  JOB_ptr
+  JOB_ptr,
+  JOB_visibility
 } ColumnId;
 
 // --------------------------------------------------------------------------------
@@ -36,7 +37,14 @@ Batch::Batch (const gchar *id)
                                     NULL,
                                     16);
 
-  _list_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
+  _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
+
+  {
+    GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("treemodelfilter"));
+
+    gtk_tree_model_filter_set_visible_column (filter,
+                                              JOB_visibility);
+  }
 
   _gdk_color = NULL;
 
@@ -58,6 +66,29 @@ Batch::~Batch ()
 {
   gdk_color_free (_gdk_color);
   g_free (_name);
+
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
+                                                               &iter);
+
+    while (iter_is_valid)
+    {
+      Job *job;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
+                          &iter,
+                          JOB_ptr, &job,
+                          -1);
+
+      job->Release ();
+
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
+                                                &iter);
+    }
+
+    gtk_list_store_clear (_job_store);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -164,6 +195,36 @@ GSList *Batch::GetCurrentSelection ()
 }
 
 // --------------------------------------------------------------------------------
+void Batch::SetVisibility (Job      *job,
+                           gboolean  visibility)
+{
+  GtkTreeIter iter;
+  gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
+                                                             &iter);
+
+  while (iter_is_valid)
+  {
+    Job *current_job;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
+                        &iter,
+                        JOB_ptr, &current_job,
+                        -1);
+
+    if (current_job == job)
+    {
+      gtk_list_store_set (_job_store, &iter,
+                          JOB_visibility, visibility,
+                          -1);
+      break;
+    }
+
+    iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
+                                              &iter);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Batch::LoadJob (Net::Message *message)
 {
   gchar     *xml = message->GetString ("xml");
@@ -233,13 +294,14 @@ void Batch::LoadJob (xmlNode *xml_node)
           name = g_strdup (gettext ("Pool"));
         }
 
-        gtk_list_store_append (_list_store,
+        gtk_list_store_append (_job_store,
                                &iter);
 
         job->SetName (name);
-        gtk_list_store_set (_list_store, &iter,
-                            NAME_str, name,
-                            JOB_ptr,  job,
+        gtk_list_store_set (_job_store, &iter,
+                            NAME_str,       name,
+                            JOB_ptr,        job,
+                            JOB_visibility, 1,
                             -1);
         g_free (name);
       }

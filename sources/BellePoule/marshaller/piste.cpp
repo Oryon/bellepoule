@@ -36,6 +36,7 @@ Piste::Piste (GooCanvasItem *parent,
 {
   _horizontal = TRUE;
   _listener   = NULL;
+  _job_list   = NULL;
 
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
@@ -134,6 +135,22 @@ Piste::Piste (GooCanvasItem *parent,
 // --------------------------------------------------------------------------------
 Piste::~Piste ()
 {
+  {
+    GList *current = _job_list;
+
+    while (current)
+    {
+      Job   *job   = (Job *) current->data;
+      Batch *batch = job->GetBatch ();
+
+      batch->SetVisibility (job,
+                            TRUE);
+      job->RemoveObjectListener (this);
+
+      current = g_list_next (current);
+    }
+  }
+
   goo_canvas_item_remove (_root_item);
   g_free (_color);
   g_free (_focus_color);
@@ -148,24 +165,94 @@ void Piste::SetListener (Listener *listener)
 // --------------------------------------------------------------------------------
 void Piste::AddJob (Job *job)
 {
-  {
-    g_free (_color);
-    _color = gdk_color_to_string (job->GetGdkColor ());
+  _job_list = g_list_insert_sorted (_job_list,
+                                    job,
+                                    (GCompareFunc) CompareJob);
 
-    SetColor (_color);
-  }
+  job->AddObjectListener (this);
 
   {
     Batch *batch = job->GetBatch ();
 
-    g_object_set (G_OBJECT (_title_item),
-                  "text", batch->GetName (),
-                  NULL);
+    batch->SetVisibility (job,
+                          FALSE);;
+  }
+
+  RefreshDecoration ();
+}
+
+// --------------------------------------------------------------------------------
+void Piste::OnObjectDeleted (Object *object)
+{
+  Job *job = (Job *) object;
+
+  if (job)
+  {
+    GList *node = g_list_find (_job_list,
+                               job);
+
+    if (node)
+    {
+      _job_list = g_list_delete_link (_job_list,
+                                      node);
+    }
+
+    RefreshDecoration ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Piste::RefreshDecoration ()
+{
+  GString     *match_name = g_string_new ("");
+  GList       *current    = _job_list;
+  const gchar *last_name  = NULL;
+
+  for (guint i = 0; current != NULL; i++)
+  {
+    Job *job = (Job *) current->data;
+
+    if (i == 0)
+    {
+      {
+        g_free (_color);
+        _color = gdk_color_to_string (job->GetGdkColor ());
+
+        SetColor (_color);
+      }
+
+      {
+        Batch *batch = job->GetBatch ();
+
+        g_object_set (G_OBJECT (_title_item),
+                      "text", batch->GetName (),
+                      NULL);
+      }
+
+      g_string_append (match_name, job->GetName ());
+    }
+    else
+    {
+      if (i == 1)
+      {
+        g_string_append (match_name, " ... ");
+      }
+
+      last_name = job->GetName ();
+    }
+
+    current = g_list_next (current);
+  }
+
+  if (last_name)
+  {
+    g_string_append (match_name, last_name);
   }
 
   g_object_set (G_OBJECT (_match_item),
-                "text", job->GetName (),
+                "text", match_name->str,
                 NULL);
+  g_string_free (match_name, TRUE);
 }
 
 // --------------------------------------------------------------------------------
@@ -403,4 +490,11 @@ void Piste::MonitorEvent (GooCanvasItem *item)
                     "button_release_event",
                     G_CALLBACK (OnButtonRelease),
                     this);
+}
+
+// --------------------------------------------------------------------------------
+gint Piste::CompareJob (Job *a,
+                        Job *b)
+{
+  return strcmp (a->GetName (), b->GetName ());
 }

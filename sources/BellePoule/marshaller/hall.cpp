@@ -14,9 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "piste.hpp"
-#include "batch.hpp"
 #include "job.hpp"
+#include "batch.hpp"
 
 #include "hall.hpp"
 
@@ -135,8 +134,7 @@ void Hall::DropObject (Object   *object,
         current = g_slist_next (current);
       }
 
-      g_slist_free_full (selection,
-                         (GDestroyNotify) g_free);
+      g_slist_free (selection);
       return;
     }
   }
@@ -364,19 +362,22 @@ void Hall::RemovePiste (Piste *piste)
 {
   if (piste)
   {
-    GList *current = _piste_list;
+    GList *node = g_list_find (_piste_list, piste);
 
-    while (current)
+    if (node)
     {
-      if (current->data == piste)
+      GSList *zone = g_slist_find (_drop_zones, piste);
+
+      if (zone)
       {
-        _piste_list = g_list_remove_link (_piste_list,
-                                          current);
-        piste->Release ();
-        break;
+        _drop_zones = g_slist_remove_link (_drop_zones,
+                                           zone);
       }
 
-      current = g_list_next (current);
+      _piste_list = g_list_remove_link (_piste_list,
+                                        node);
+
+      piste->Release ();
     }
   }
 }

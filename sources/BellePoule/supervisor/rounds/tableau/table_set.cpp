@@ -3695,7 +3695,7 @@ namespace Table
 
         iter_is_valid = gtk_tree_model_get_iter_first (table_set->GetStatusModel (),
                                                        &iter);
-        for (guint i = 0; iter_is_valid; i++)
+        while (iter_is_valid)
         {
           gtk_tree_model_get (table_set->GetStatusModel (),
                               &iter,

@@ -70,16 +70,18 @@ Application::Application (const gchar   *config_file,
       Global::_share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);
 #else
       {
-        gchar *basename = g_path_get_basename ((*argv)[0]);
+        gchar  *basename = g_path_get_basename ((*argv)[0]);
+        gchar **segments = g_strsplit_set (basename,
+                                           "-.",
+                                           0);
 
-        if (strstr (basename, ".exe"))
+        if (segments[0])
         {
-          g_free (basename);
-          basename = g_strdup ("bellepoule");
+          Global::_share_dir = g_build_filename (binary_dir, "..", "share", segments[0], NULL);
         }
 
-        Global::_share_dir = g_build_filename (binary_dir, "..", "share", basename, NULL);
-        g_free (basename);
+        g_strfreev (segments);
+        g_free     (basename);
       }
 #endif
 

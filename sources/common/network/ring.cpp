@@ -19,6 +19,7 @@
 
 #ifdef WIN32
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -48,6 +49,12 @@ namespace Net
   // --------------------------------------------------------------------------------
   Ring::~Ring ()
   {
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Ring::GetRole ()
+  {
+    return _role;
   }
 
   // --------------------------------------------------------------------------------
@@ -173,28 +180,16 @@ namespace Net
   {
     gchar *role = message->GetString ("role");
 
-    if (message->Is ("Announcement"))
+    if (strcmp (role, _role) != 0)
     {
-      if (strcmp (role, _role) != 0)
+      if (message->Is ("Announcement"))
       {
+        Remove (role);
         Add (new Partner (message));
       }
-    }
-    else if (message->Is ("Farewell"))
-    {
-      GList *node = g_list_find_custom (_partner_list,
-                                        role,
-                                        (GCompareFunc) Partner::CompareRole);
-
-      if (node)
+      else if (message->Is ("Farewell"))
       {
-        if (_partner_indicator)
-        {
-          gtk_widget_set_sensitive (_partner_indicator, FALSE);
-        }
-
-        _partner_list = g_list_delete_link (_partner_list,
-                                            node);
+        Remove (role);
       }
     }
 
@@ -276,7 +271,11 @@ namespace Net
       ssize_t            size;
 
       if ((size = recvfrom (fd,
+#ifdef WIN32
+                            (char *) buffer,
+#else
                             buffer,
+#endif
                             100,
                             0,
                             (struct sockaddr *) &from,
@@ -305,7 +304,7 @@ namespace Net
 
       while (current)
       {
-        if (partner->HasSameRole ((Partner *) current->data))
+        if (partner->Is ((Partner *) current->data))
         {
           return;
         }
@@ -331,6 +330,32 @@ namespace Net
     _partner_list = g_list_prepend (_partner_list,
                                     partner);
     Synchronize (partner);
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::Remove (const gchar *role)
+  {
+    GList *current = _partner_list;
+
+    while (current)
+    {
+      Partner *partner = (Partner *) current->data;
+
+      if (partner->HasRole (role))
+      {
+        if (_partner_indicator)
+        {
+          gtk_widget_set_sensitive (_partner_indicator, FALSE);
+        }
+
+        _partner_list = g_list_delete_link (_partner_list,
+                                            current);
+        partner->Release ();
+        break;
+      }
+
+      current = g_list_next (current);
+    }
   }
 
   // -------------------------------------------------------------------------------
@@ -390,6 +415,26 @@ namespace Net
         _message_list = g_list_delete_link (_message_list,
                                             node);
       }
+    }
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::Store (Message *message)
+  {
+    GList *current = _partner_list;
+    gchar *role    = message->GetSender ();
+
+    while (current)
+    {
+      Partner *partner = (Partner *) current->data;
+
+      if (partner->HasRole (role))
+      {
+        partner->Store (message);
+        break;
+      }
+
+      current = g_list_next (current);
     }
   }
 }

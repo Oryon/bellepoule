@@ -26,6 +26,8 @@ namespace Net
   Partner::Partner (Message *message)
     : Object ("Partner")
   {
+    _message_list = NULL;
+
     _ip   = message->GetSenderIp ();
     _port = message->GetInteger  ("unicast_port");
 
@@ -37,24 +39,39 @@ namespace Net
   {
     g_free (_ip);
     g_free (_role);
-  }
 
-  // --------------------------------------------------------------------------------
-  gint Partner::CompareRole (Partner     *partner,
-                             const gchar *with)
-  {
-    return (strcmp (partner->_role, with));
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Partner::HasSameRole (Partner *than)
-  {
-    if (_role && than->_role)
     {
-      return (strcmp (_role, than->_role) == 0);
+      GList *current = _message_list;
+
+      while (current)
+      {
+        Net::Message *message = (Net::Message *) current->data;
+
+        message->Dump ();
+
+        current = g_list_next (current);
+      }
     }
 
-    return (_role == than->_role);
+    g_list_free_full (_message_list,
+                      (GDestroyNotify) Object::TryToRelease);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Partner::HasRole (const gchar *role)
+  {
+    if (_role && role)
+    {
+      return (strcmp (_role, _role) == 0);
+    }
+
+    return (_role == _role);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Partner::Is (Partner *partner)
+  {
+    return HasRole (partner->_role);
   }
 
   // --------------------------------------------------------------------------------
@@ -89,5 +106,13 @@ namespace Net
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Partner::Store (Message *message)
+  {
+    _message_list = g_list_prepend (_message_list,
+                                    message);
+    message->Retain ();
   }
 }

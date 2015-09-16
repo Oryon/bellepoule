@@ -69,12 +69,20 @@ namespace Net
     _server->Retain ();
 
     {
+#ifndef WIN32
+#pragma message "To fix!"
       const MHD_ConnectionInfo *info;
       gchar                    *content;
 
       info     = MHD_get_connection_info (connection, MHD_CONNECTION_INFO_CONNECTION_FD);
       content  = g_strndup (request_body->_data, request_body->_length);
       _message = new Net::Message ((const guint8 *) content, (struct sockaddr_in *) info);
+#else
+      gchar  *content;
+
+      content  = g_strndup (request_body->_data, request_body->_length);
+      _message = new Net::Message ((const guint8 *) content, NULL);
+#endif
 
       if (_message->IsValid () == FALSE)
       {

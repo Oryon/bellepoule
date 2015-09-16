@@ -21,7 +21,7 @@ Job::Job (Batch    *batch,
           GdkColor *gdk_color)
   : Object ("Job")
 {
-  _gdk_color = gdk_color_copy  (gdk_color);
+  _gdk_color = gdk_color_copy (gdk_color);
   _name      = NULL;
   _batch     = batch;
 }
@@ -29,6 +29,7 @@ Job::Job (Batch    *batch,
 // --------------------------------------------------------------------------------
 Job::~Job ()
 {
+  printf ("%s ==> deleted\n", _name);
   g_free         (_name);
   gdk_color_free (_gdk_color);
 }

@@ -3,19 +3,21 @@
 
 #include "..\..\..\sources\BellePoule\application\version.h"
 
-#define MINGW "C:\MinGW"
+#define MINGW   "C:\MinGW"
+#define PRODUCT "bellepoulebeta"
+;#define PUBLIC_VERSION
 
 [Setup]
-AppName=BellePoule
-AppVerName=BellePoule version {#VERSION}.{#VERSION_REVISION}{#VERSION_MATURITY}
+AppName={#PRODUCT}
+AppVerName={#PRODUCT} version {#VERSION}.{#VERSION_REVISION}{#VERSION_MATURITY}
 OutputBaseFilename=setup{#VERSION}_{#VERSION_REVISION}{#VERSION_MATURITY}
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/
 AppUpdatesURL=http://betton.escrime.free.fr/
 UsePreviousAppDir=no
-DefaultDirName={code:GetInstallDir}\BellePoule
-DefaultGroupName=BellePoule
+DefaultDirName={code:GetInstallDir}\{#PRODUCT}
+DefaultGroupName={#PRODUCT}
 AllowNoIcons=yes
 LicenseFile=COPYING.txt
 Compression=lzma
@@ -32,17 +34,19 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Registry]
+#ifdef PUBLIC_VERSION
 Root: HKCU; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKCU; Subkey: "Software\Classes\.fff"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKCU; Subkey: "Software\Classes\BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
-Root: HKCU; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\BellePoule.exe,0"; Flags: uninsdeletekey noerror
-Root: HKCU; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\BellePoule.exe"" ""%1"""; Flags: uninsdeletekey noerror
+Root: HKCU; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\{#PRODUCT}-supervisor.exe,0"; Flags: uninsdeletekey noerror
+Root: HKCU; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\{#PRODUCT}-supervisor.exe"" ""%1"""; Flags: uninsdeletekey noerror
 
 Root: HKLM; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKLM; Subkey: "Software\Classes\.fff"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKLM; Subkey: "Software\Classes\BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
-Root: HKLM; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\BellePoule.exe,0"; Flags: uninsdeletekey noerror
-Root: HKLM; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\BellePoule.bin"" ""%1"""; Flags: uninsdeletekey noerror
+Root: HKLM; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\{#PRODUCT}-supervisor.exe,0"; Flags: uninsdeletekey noerror
+Root: HKLM; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\{#PRODUCT}-supervisor.exe"" ""%1"""; Flags: uninsdeletekey noerror
+#endif
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -72,53 +76,58 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Icons]
-Name: "{userprograms}\BellePoule\BellePoule"; Filename: "{app}\bin\BellePoule.exe"; IconFilename: "{app}\bin\BellePoule.exe"
-Name: "{userprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"
-Name: "{commonprograms}\BellePoule\BellePoule"; Filename: "{app}\bin\BellePoule.exe"; IconFilename: "{app}\bin\BellePoule.exe"
-Name: "{commonprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\BellePoule"; Filename: "{app}\bin\BellePoule.exe"; Tasks: desktopicon; IconFilename: "{app}\bin\BellePoule.exe"
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BellePoule"; Filename: "{app}\bin\BellePoule.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\bin\BellePoule.exe"
+Name: "{userprograms}\{#PRODUCT}\marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exee"
+Name: "{userprograms}\{#PRODUCT}\supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exee"
+Name: "{userprograms}\{#PRODUCT}\Uninstall {#PRODUCT}"; Filename: "{uninstallexe}"
+Name: "{commonprograms}\{#PRODUCT}\marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exee"
+Name: "{commonprograms}\{#PRODUCT}\supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exee"
+Name: "{commonprograms}\{#PRODUCT}\Uninstall {#PRODUCT}"; Filename: "{uninstallexe}"
+Name: "{userdesktop}\{#PRODUCT}-marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: desktopicon; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exe"
+Name: "{userdesktop}\{#PRODUCT}-supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: desktopicon; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exe"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#PRODUCT}-marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exe"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#PRODUCT}-supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exe"
 
 [Files]
-Source: "..\Release\BellePoule.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "..\..\..\resources\gtkrc"; DestDir: "{app}\share\bellepoule\resources"; Flags: ignoreversion
+Source: "..\Release\bellepoulebeta-marshaller.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "..\Release\bellepoulebeta-supervisor.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "..\..\..\resources\gtkrc"; DestDir: "{app}\share\{#PRODUCT}\resources"; Flags: ignoreversion
 Source: "path_dependent_files\gtk.immodules"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gtk.immodules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 Source: "path_dependent_files\gdk-pixbuf.loaders"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gdk-pixbuf.loaders'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 Source: "path_dependent_files\pango.modules"; DestDir: "{app}\etc\pango"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\pango\pango.modules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 
 ;Exemple de fichiers
-Source: "..\..\..\Exemples\exemple.cotcot"; DestDir: "{app}\share\bellepoule\Exemples";             Flags: ignoreversion
-Source: "..\..\..\Exemples\FFE\*";          DestDir: "{app}\share\bellepoule\Exemples\FFE";         Flags: ignoreversion
-Source: "..\..\..\Exemples\Classements\*";  DestDir: "{app}\share\bellepoule\Exemples\Classements"; Flags: ignoreversion
+Source: "..\..\..\Exemples\exemple.cotcot"; DestDir: "{app}\share\{#PRODUCT}\Exemples";             Flags: ignoreversion
+Source: "..\..\..\Exemples\FFE\*";          DestDir: "{app}\share\{#PRODUCT}\Exemples\FFE";         Flags: ignoreversion
+Source: "..\..\..\Exemples\Classements\*";  DestDir: "{app}\share\{#PRODUCT}\Exemples\Classements"; Flags: ignoreversion
 
 ;Documentation
-Source: "..\..\..\resources\translations\user_manual.pdf"; DestDir: "{app}\share\bellepoule\resources\translations"; Flags: ignoreversion
+Source: "..\..\..\resources\translations\user_manual.pdf"; DestDir: "{app}\share\{#PRODUCT}\resources\translations"; Flags: ignoreversion
 
 ;Traductions
-Source: "..\..\..\resources\translations\index.txt"; DestDir: "{app}\share\bellepoule\resources\translations"; Flags: ignoreversion
+Source: "..\..\..\resources\translations\index.txt"; DestDir: "{app}\share\{#PRODUCT}\resources\translations"; Flags: ignoreversion
 
-Source: "..\..\..\resources\translations\fr\*"; DestDir: "{app}\share\bellepoule\resources\translations\fr"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\de\*"; DestDir: "{app}\share\bellepoule\resources\translations\de"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\nl\*"; DestDir: "{app}\share\bellepoule\resources\translations\nl"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\ru\*"; DestDir: "{app}\share\bellepoule\resources\translations\ru"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\ar\*"; DestDir: "{app}\share\bellepoule\resources\translations\ar"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\es\*"; DestDir: "{app}\share\bellepoule\resources\translations\es"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\it\*"; DestDir: "{app}\share\bellepoule\resources\translations\it"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\ko\*"; DestDir: "{app}\share\bellepoule\resources\translations\ko"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\pt_br\*"; DestDir: "{app}\share\bellepoule\resources\translations\pt_br"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\sv\*"; DestDir: "{app}\share\bellepoule\resources\translations\sv"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\ja\*"; DestDir: "{app}\share\bellepoule\resources\translations\ja"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\fr\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\fr"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\de\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\de"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\nl\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\nl"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\ru\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ru"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\ar\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ar"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\es\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\es"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\it\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\it"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\ko\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ko"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\pt_br\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\pt_br"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\sv\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\sv"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\ja\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ja"; Flags: ignoreversion recursesubdirs
 
 #ifdef MINGW
 ;WebServer
 [Dirs]
-Name: "{app}\share\bellepoule\webserver\LightTPD\www\cotcot"
+Name: "{app}\share\{#PRODUCT}\webserver\LightTPD\www\cotcot"
 
 [Files]
-Source: "{#MINGW}\webserver\*"; DestDir: "{app}\share\bellepoule\webserver"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\sources\www\*"; DestDir: "{app}\share\bellepoule\webserver\LightTPD\www"; Flags: ignoreversion
-Source: "..\..\..\scripts\wwwstart.bat"; DestDir: "{app}\share\bellepoule\scripts"; Flags: ignoreversion
-Source: "..\..\..\scripts\wwwstop.bat"; DestDir: "{app}\share\bellepoule\scripts"; Flags: ignoreversion
+Source: "{#MINGW}\webserver\*"; DestDir: "{app}\share\{#PRODUCT}\webserver"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\sources\www\*"; DestDir: "{app}\share\{#PRODUCT}\webserver\LightTPD\www"; Flags: ignoreversion
+Source: "..\..\..\scripts\wwwstart.bat"; DestDir: "{app}\share\{#PRODUCT}\scripts"; Flags: ignoreversion
+Source: "..\..\..\scripts\wwwstop.bat"; DestDir: "{app}\share\{#PRODUCT}\scripts"; Flags: ignoreversion
 
 Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
@@ -177,13 +186,13 @@ Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{a
 #endif
 
 ;Resources
-Source: "..\..\..\resources\glade\*.png"; DestDir: "{app}\share\bellepoule\resources\glade\"; Flags: ignoreversion
-Source: "..\..\..\resources\glade\*.jpg"; DestDir: "{app}\share\bellepoule\resources\glade\"; Flags: ignoreversion
-Source: "..\..\..\resources\glade\*.glade"; DestDir: "{app}\share\bellepoule\resources\glade\"; Flags: ignoreversion
-Source: "..\..\..\resources\countries\*"; DestDir: "{app}\share\bellepoule\resources\countries\"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\exe.ico"; DestDir: "{app}\share\bellepoule\resources\"; Flags: ignoreversion
+Source: "..\..\..\resources\glade\*.png"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\"; Flags: ignoreversion
+Source: "..\..\..\resources\glade\*.jpg"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\"; Flags: ignoreversion
+Source: "..\..\..\resources\glade\*.glade"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\"; Flags: ignoreversion
+Source: "..\..\..\resources\countries\*"; DestDir: "{app}\share\{#PRODUCT}\resources\countries\"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\exe.ico"; DestDir: "{app}\share\{#PRODUCT}\resources\"; Flags: ignoreversion
 
-Source: "..\..\..\resources\localized_data\*"; DestDir: "{app}\share\bellepoule\resources\localized_data\"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\localized_data\*"; DestDir: "{app}\share\{#PRODUCT}\resources\localized_data\"; Flags: ignoreversion recursesubdirs
 
 ; GTK+ dependencies
 ; DLL

@@ -25,7 +25,7 @@ class Module;
 class Referee;
 class Job;
 
-class Piste : public DropZone
+class Piste : public DropZone, Object::Listener
 {
   public:
     class Listener
@@ -85,6 +85,7 @@ class Piste : public DropZone
     gboolean         _horizontal;
     gchar           *_color;
     gchar           *_focus_color;
+    GList           *_job_list;
 
     ~Piste ();
 
@@ -97,6 +98,10 @@ class Piste : public DropZone
     void MonitorEvent (GooCanvasItem *item);
 
     gdouble GetGridAdjustment (gdouble coordinate);
+
+    void OnObjectDeleted (Object *object);
+
+    void RefreshDecoration ();
 
     static gboolean OnButtonPress (GooCanvasItem  *item,
                                    GooCanvasItem  *target,
@@ -112,6 +117,9 @@ class Piste : public DropZone
                                     GooCanvasItem  *target,
                                     GdkEventMotion *event,
                                     Piste          *piste);
+
+    static gint CompareJob (Job *a,
+                            Job *b);
 };
 
 #endif
