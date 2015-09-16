@@ -11,3 +11,6 @@ windows/setup/Output
 ./windows/BellePoule/setup/Output
 ./linux/LivePoule/livepoule
 ./webserver
+*.exe
+./build/BellePoule/windows/Output
+./build/BellePoule/debug
