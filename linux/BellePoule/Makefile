@@ -17,9 +17,10 @@ DATE    = $(shell date -R)
 #----------------------------------------------------
 ifeq ($(UBUNTU), windows)
 CC = i586-mingw32msvc-g++
+AR = i586-mingw32msvc-ar
 else
 CC = g++
-LD = g++
+AR = ar
 endif
 
 ifeq ($(OUTPUT), Debug)
@@ -37,7 +38,6 @@ CFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_DISABLE_DEPRECATED
 CFLAGS += -DGSEAL_ENABLE
-CFLAGS += -fPIC
 CFLAGS += -Wall
 CFLAGS += -Wcast-align
 CFLAGS += -Wextra
@@ -62,6 +62,7 @@ CFLAGS += -DWIN32
 CFLAGS += -DLIBXML2_STATIC
 else
 CFLAGS += -std=c++98
+CFLAGS += -fPIC
 CFLAGS += -Wno-int-to-pointer-cast
 CFLAGS += -Wno-vla
 CFLAGS += -Wno-deprecated-declarations
@@ -138,15 +139,6 @@ endif
 #----------------------------------------------------
 #-- Sources -----------------------------------------
 #----------------------------------------------------
-SRC   = $(wildcard sources/*/*/*.cpp)
-SRC  += $(wildcard sources/*/*/*/*.cpp)
-ifeq ($(UBUNTU), windows)
-OBJ = sources/BellePoule/windows.o
-else
-OBJ =
-endif
-OBJ += $(SRC:.cpp=.o)
-
 SRC  = $(wildcard sources/common/network/*.cpp)
 SRC += $(wildcard sources/common/util/*.cpp)
 SRC += $(wildcard sources/BellePoule/actors/*.cpp)
@@ -155,12 +147,28 @@ OBJ_LIB += $(SRC:.cpp=.o)
 
 SRC_MARSHALLER = $(wildcard sources/BellePoule/marshaller/*.cpp)
 OBJ_MARSHALLER = $(SRC_MARSHALLER:.cpp=.o)
+ifeq ($(UBUNTU), windows)
+OBJ_MARSHALLER += sources/BellePoule/windows.o
+endif
 
 SRC_SUPERVISOR  = $(wildcard sources/BellePoule/supervisor/*.cpp)
 SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*.cpp)
 SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*/*.cpp)
 SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*/*/*.cpp)
 OBJ_SUPERVISOR = $(SRC_SUPERVISOR:.cpp=.o)
+ifeq ($(UBUNTU), windows)
+OBJ_SUPERVISOR += sources/BellePoule/windows.o
+endif
+
+ifeq ($(UBUNTU), windows)
+SHARED_LIB = 
+RPATH      =
+STATIC_LIB = $(OUTPUT)/lib$(PRODUCT).a
+else
+SHARED_LIB = $(OUTPUT)/lib$(PRODUCT).so
+RPATH      = -Wl,--rpath,/usr/lib/$(PRODUCT)
+STATIC_LIB =
+endif
 
 #----------------------------------------------------
 #-- Targets -----------------------------------------
@@ -172,17 +180,21 @@ output:
 
 #--
 
-$(OUTPUT)/lib$(PRODUCT).so: $(OBJ_LIB)
+$(SHARED_LIB): $(OBJ_LIB)
 	@echo "\033[1;31m" $@ "\033[0m"
-	@$(LD) -shared -o $@ $^ $(LDFLAGS)
+	@$(CC) -shared -o $@ $^ $(LDFLAGS)
 
-$(OUTPUT)/$(PRODUCT)-supervisor: $(OUTPUT)/lib$(PRODUCT).so $(OBJ_SUPERVISOR)
+$(STATIC_LIB): $(OBJ_LIB)
 	@echo "\033[1;31m" $@ "\033[0m"
-	@$(CC) -o $@ $(OBJ_SUPERVISOR) -Wl,--rpath,/usr/lib/$(PRODUCT) -l$(PRODUCT) $(LDFLAGS)
+	@$(AR) rcs $@ $^
 
-$(OUTPUT)/$(PRODUCT)-marshaller: $(OUTPUT)/lib$(PRODUCT).so $(OBJ_MARSHALLER)
+$(OUTPUT)/$(PRODUCT)-supervisor: $(SHARED_LIB) $(STATIC_LIB) $(OBJ_SUPERVISOR)
 	@echo "\033[1;31m" $@ "\033[0m"
-	@$(CC) -o $@ $(OBJ_MARSHALLER) -Wl,--rpath,/usr/lib/$(PRODUCT) -l$(PRODUCT) $(LDFLAGS)
+	@$(CC) -o $@ $(OBJ_SUPERVISOR) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(LDFLAGS)
+
+$(OUTPUT)/$(PRODUCT)-marshaller: $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHALLER)
+	@echo "\033[1;31m" $@ "\033[0m"
+	@$(CC) -o $@ $(OBJ_MARSHALLER) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(LDFLAGS)
 
 #--
 
@@ -192,7 +204,7 @@ $(OUTPUT)/$(PRODUCT)-marshaller: $(OUTPUT)/lib$(PRODUCT).so $(OBJ_MARSHALLER)
 
 %.o: %.rc
 	@echo "\033[1;33m" $@ "\033[0m"
-	i586-mingw32msvc-windres --output=$@ --input=$<
+	@i586-mingw32msvc-windres --output=$@ --input=$<
 
 #--
 
@@ -374,7 +386,8 @@ help:
 	@echo "make -s UBUNTU=windows V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "make -s UBUNTU=windows V=$(V)"
-	@echo "cp Release/bellepoule /media/usb0/BellePoule/bazaar/4.0/windows/BellePoule/Release/BellePoule.exe"
+	@echo "cp Release/$(PRODUCT)-marshaller /media/usb0/BellePoule/bazaar/trunk/windows/BellePoule/Release/$(PRODUCT)-marshaller.exe"
+	@echo "cp Release/$(PRODUCT)-supervisor /media/usb0/BellePoule/bazaar/trunk/windows/BellePoule/Release/$(PRODUCT)-supervisor.exe"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
 	@echo "make -s UBUNTU=precise V=$(V) package"

@@ -14,9 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "piste.hpp"
-#include "batch.hpp"
 #include "job.hpp"
+#include "batch.hpp"
 
 #include "hall.hpp"
 
