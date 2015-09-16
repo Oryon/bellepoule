@@ -276,7 +276,7 @@ prepare_resources:
 	cp -rf ../../resources/translations/es    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/it    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/ko    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/pt_br $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/pt_BR $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/sv    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/ja    $(PACKAGE)/$(RELEASE)/resources/translations
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade
@@ -310,18 +310,15 @@ prepare_changelog:
 
 prepare_control:
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/control
-	chmod a-x $(PACKAGE)/$(RELEASE)/debian/control
 ifeq ($(PRODUCT), bellepoulebeta)
 	sed -i 's/Replaces/#Replaces/' $(PACKAGE)/$(RELEASE)/debian/control
 endif
 
 prepare_rules:
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/rules
-	chmod a+x $(PACKAGE)/$(RELEASE)/debian/rules
 
 prepare_copyright:
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/copyright
-	chmod a-x $(PACKAGE)/$(RELEASE)/debian/copyright
 
 prepare_desktop:
 	cp -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
