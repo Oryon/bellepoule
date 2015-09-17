@@ -2,6 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <!-- interface-local-resource-path images -->
   <object class="GtkListStore" id="FavoriteFTP">
     <columns>
       <!-- column-name name -->
@@ -703,7 +704,7 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 &lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;. </property>
-    <property name="logo">about.png</property>
+    <property name="logo">images/about.png</property>
     <signal name="close" handler="gtk_widget_hide" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
@@ -763,7 +764,7 @@ Public License instead of this License.  But first, please read
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">share.png</property>
+    <property name="pixbuf">images/share.png</property>
   </object>
   <object class="GtkImage" id="image11">
     <property name="visible">True</property>
@@ -793,7 +794,7 @@ Public License instead of this License.  But first, please read
   <object class="GtkImage" id="image16">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">wifi.png</property>
+    <property name="pixbuf">images/wifi.png</property>
   </object>
   <object class="GtkImage" id="image17">
     <property name="visible">True</property>
@@ -814,7 +815,7 @@ Public License instead of this License.  But first, please read
   <object class="GtkImage" id="image4">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">usb_key.png</property>
+    <property name="pixbuf">images/usb_key.png</property>
   </object>
   <object class="GtkImage" id="image5">
     <property name="visible">True</property>
@@ -830,7 +831,7 @@ Public License instead of this License.  But first, please read
   <object class="GtkImage" id="image7">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">network.png</property>
+    <property name="pixbuf">images/network.png</property>
   </object>
   <object class="GtkImage" id="image8">
     <property name="visible">True</property>
@@ -1390,7 +1391,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
   <object class="GtkWindow" id="root">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">BellePoule - Fencing tournament</property>
-    <property name="icon">bellepoulebeta.png</property>
+    <property name="icon">images/bellepoulebeta.png</property>
     <accel-groups>
       <group name="accelgroup1"/>
     </accel-groups>
@@ -1797,7 +1798,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
               <object class="GtkImage" id="logo">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="pixbuf">BellePoule.png</property>
+                <property name="pixbuf">images/BellePoule.png</property>
               </object>
               <packing>
                 <property name="expand">True</property>

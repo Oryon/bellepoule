@@ -194,8 +194,8 @@ void Application::Prepare ()
     desc->_uniqueness         = AttributeDesc::NOT_SINGULAR;
     desc->_free_value_allowed = FALSE;
     desc->_favorite_look      = AttributeDesc::GRAPHICAL;
-    desc->AddDiscreteValues ("M", gettext ("Male"), "resources/glade/male.png",
-                             "F", gettext ("Female"), "resources/glade/female.png", NULL);
+    desc->AddDiscreteValues ("M", gettext ("Male"), "resources/glade/images/male.png",
+                             "F", gettext ("Female"), "resources/glade/images/female.png", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
@@ -242,20 +242,20 @@ void Application::Prepare ()
     desc->_scope  = AttributeDesc::GLOBAL;
     desc->_rights = AttributeDesc::PRIVATE;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
-    desc->AddDiscreteValues ("Q", gettext ("Qualified"),     "resources/glade/normal.png",
-                             "N", gettext ("Not qualified"), "resources/glade/exit.png",
-                             "A", gettext ("Withdrawal"),    "resources/glade/ambulance.png",
-                             "E", gettext ("Excluded"),      "resources/glade/black_card.png",
-                             "F", gettext ("Forfeit"),       "resources/glade/normal.png", NULL);
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"),     "resources/glade/images/normal.png",
+                             "N", gettext ("Not qualified"), "resources/glade/images/exit.png",
+                             "A", gettext ("Withdrawal"),    "resources/glade/images/ambulance.png",
+                             "E", gettext ("Excluded"),      "resources/glade/images/black_card.png",
+                             "F", gettext ("Forfeit"),       "resources/glade/images/normal.png", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "status", "Statut", gettext ("status"));
     desc->_scope = AttributeDesc::LOCAL;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
-    desc->AddDiscreteValues ("Q", gettext ("Qualified"),     "resources/glade/normal.png",
-                             "N", gettext ("Not qualified"), "resources/glade/exit.png",
-                             "A", gettext ("Withdrawal"),    "resources/glade/ambulance.png",
-                             "E", gettext ("Excluded"),      "resources/glade/black_card.png",
-                             "F", gettext ("Forfeit"),       "resources/glade/normal.png", NULL);
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"),     "resources/glade/images/normal.png",
+                             "N", gettext ("Not qualified"), "resources/glade/images/exit.png",
+                             "A", gettext ("Withdrawal"),    "resources/glade/images/ambulance.png",
+                             "E", gettext ("Excluded"),      "resources/glade/images/black_card.png",
+                             "F", gettext ("Forfeit"),       "resources/glade/images/normal.png", NULL);
 
     // Not persistent data
     {
@@ -312,9 +312,9 @@ void Application::Prepare ()
       desc->_rights         = AttributeDesc::PRIVATE;
       desc->_scope          = AttributeDesc::GLOBAL;
       desc->_favorite_look  = AttributeDesc::GRAPHICAL;
-      desc->AddDiscreteValues ("Broken",  gettext ("Broken"),  "resources/glade/red.png",
-                               "Waiting", gettext ("Waiting"), "resources/glade/orange.png",
-                               "OK",      gettext ("OK"),      "resources/glade/green.png",
+      desc->AddDiscreteValues ("Broken",  gettext ("Broken"),  "resources/glade/images/red.png",
+                               "Waiting", gettext ("Waiting"), "resources/glade/images/orange.png",
+                               "OK",      gettext ("OK"),      "resources/glade/images/green.png",
                                "Manual",  gettext ("Manual"),  (gchar *) GTK_STOCK_EDIT, NULL);
 
     }

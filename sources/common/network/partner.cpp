@@ -33,7 +33,7 @@ namespace Net
 
     _role = message->GetString ("role");
 
-    _address = g_strdup_printf ("%s:%d", _ip, _port);
+    _address = g_strdup_printf ("%s:<b>%d</b>", _ip, _port);
   }
 
   // --------------------------------------------------------------------------------

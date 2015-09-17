@@ -50,7 +50,7 @@ EcoSystem::EcoSystem (Glade *glade)
   // Remote FTP
   {
     GtkListStore *model  = GTK_LIST_STORE (_glade->GetGObject ("FavoriteFTP"));
-    gchar        *path   = g_build_filename (Global::_share_dir, "resources", "glade", "escrime_info.jpg", NULL);
+    gchar        *path   = g_build_filename (Global::_share_dir, "resources", "glade", "images", "escrime_info.jpg", NULL);
     GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, NULL);
     GtkTreeIter   iter;
 

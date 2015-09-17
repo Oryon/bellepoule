@@ -2,6 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <!-- interface-local-resource-path images -->
   <object class="GtkWindow" id="configuration_window">
     <property name="can_focus">False</property>
     <child>
@@ -135,7 +136,7 @@
   <object class="GtkImage" id="score_image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">stock_scores.png</property>
+    <property name="pixbuf">images/stock_scores.png</property>
   </object>
   <object class="GtkWindow" id="supervisor_window">
     <property name="can_focus">False</property>
@@ -181,7 +182,7 @@
                       <object class="GtkImage" id="image1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="pixbuf">exit.png</property>
+                        <property name="pixbuf">images/exit.png</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -209,7 +210,7 @@
                       <object class="GtkImage" id="image2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="pixbuf">normal.png</property>
+                        <property name="pixbuf">images/normal.png</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>

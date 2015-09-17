@@ -796,9 +796,9 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
 
               // Icon
               {
-                gchar *escape_file = g_uri_escape_string (tokens[i], NULL, FALSE);
-                gchar *pixbuf_file        = g_build_filename (dir, escape_file, NULL);
-                gchar *pixbuf_file_png    = g_strdup_printf ("%s.png", pixbuf_file);
+                gchar *escape_file     = g_uri_escape_string (tokens[i], NULL, FALSE);
+                gchar *pixbuf_file     = g_build_filename (dir, escape_file, NULL);
+                gchar *pixbuf_file_png = g_strdup_printf ("%s.png", pixbuf_file);
 
                 if (g_file_test (pixbuf_file_png, G_FILE_TEST_IS_REGULAR))
                 {

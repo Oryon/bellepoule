@@ -2,6 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <!-- interface-local-resource-path images -->
   <object class="GtkWindow" id="pool_window">
     <child>
       <object class="GtkScrolledWindow" id="canvas_scrolled_window">

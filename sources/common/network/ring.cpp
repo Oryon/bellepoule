@@ -316,8 +316,8 @@ namespace Net
     if (_partner_indicator)
     {
       gtk_widget_set_sensitive (_partner_indicator, TRUE);
-      gtk_widget_set_tooltip_text (_partner_indicator,
-                                   partner->GetAddress ());
+      gtk_widget_set_tooltip_markup (_partner_indicator,
+                                     partner->GetAddress ());
     }
 
     {

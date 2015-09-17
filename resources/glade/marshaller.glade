@@ -2,6 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <!-- interface-local-resource-path images -->
   <object class="GtkAboutDialog" id="about_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -689,7 +690,7 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 &lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;. </property>
-    <property name="logo">about.png</property>
+    <property name="logo">images/about.png</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox8">
         <property name="visible">True</property>
@@ -722,7 +723,7 @@ Public License instead of this License.  But first, please read
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">bellepoulebeta.png</property>
+    <property name="pixbuf">images/bellepoulebeta.png</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
@@ -748,7 +749,7 @@ Public License instead of this License.  But first, please read
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">BellePoule - Fencing tournament</property>
     <property name="default_width">500</property>
-    <property name="icon">referee.png</property>
+    <property name="icon">images/referee.png</property>
     <property name="icon_name">preferences-desktop-theme</property>
     <signal name="drag-data-received" handler="on_root_drag_data_received" swapped="no"/>
     <signal name="key-press-event" handler="on_root_key_press_event" swapped="no"/>
