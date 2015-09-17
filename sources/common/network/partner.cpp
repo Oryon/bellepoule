@@ -28,10 +28,12 @@ namespace Net
   {
     _message_list = NULL;
 
-    _ip   = message->GetSenderIp ();
+    _ip   = message->GetString   ("ip_address");
     _port = message->GetInteger  ("unicast_port");
 
     _role = message->GetString ("role");
+
+    _address = g_strdup_printf ("%s:%d", _ip, _port);
   }
 
   // --------------------------------------------------------------------------------
@@ -114,5 +116,11 @@ namespace Net
     _message_list = g_list_prepend (_message_list,
                                     message);
     message->Retain ();
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Partner::GetAddress ()
+  {
+    return _address;
   }
 }

@@ -34,14 +34,11 @@ namespace Net
     public:
       Message (const gchar *name);
 
-      Message (const guint8       *data,
-               struct sockaddr_in *from = NULL);
+      Message (const guint8 *data);
 
       gboolean Is (const gchar *name);
 
       gboolean IsValid ();
-
-      gchar *GetSenderIp ();
 
       gchar *GetSender ();
 

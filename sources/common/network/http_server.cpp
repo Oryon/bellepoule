@@ -69,20 +69,10 @@ namespace Net
     _server->Retain ();
 
     {
-#ifndef WIN32
-#pragma message "To fix!"
-      const MHD_ConnectionInfo *info;
-      gchar                    *content;
+      gchar *content = g_strndup (request_body->_data,
+                                  request_body->_length);
 
-      info     = MHD_get_connection_info (connection, MHD_CONNECTION_INFO_CONNECTION_FD);
-      content  = g_strndup (request_body->_data, request_body->_length);
-      _message = new Net::Message ((const guint8 *) content, (struct sockaddr_in *) info);
-#else
-      gchar  *content;
-
-      content  = g_strndup (request_body->_data, request_body->_length);
-      _message = new Net::Message ((const guint8 *) content, NULL);
-#endif
+      _message = new Net::Message ((const guint8 *) content);
 
       if (_message->IsValid () == FALSE)
       {
@@ -164,20 +154,38 @@ namespace Net
     }
 #else
     {
-      int fd = socket (AF_INET, SOCK_DGRAM, 0);
+      struct ifaddrs *ifaddr;
 
-      if (fd != -1)
+      if (getifaddrs (&ifaddr) == -1)
       {
-        struct ifreq ioctl_request;
-
-        strcpy (ioctl_request.ifr_name, "eth0");
-        if (ioctl (fd, SIOCGIFADDR, &ioctl_request) != -1)
-        {
-          address = g_strdup (inet_ntoa (((struct sockaddr_in *) &ioctl_request.ifr_addr)->sin_addr));
-        }
-
-        close (fd);
+        g_warning ("getifaddrs");
+        return NULL;
       }
+
+      for (struct ifaddrs *ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
+      {
+        if ((ifa->ifa_addr) && ((ifa->ifa_flags & IFF_LOOPBACK) == 0))
+        {
+          int family = ifa->ifa_addr->sa_family;
+
+          if (family == AF_INET)
+          {
+            char host[NI_MAXHOST];
+
+            if (getnameinfo (ifa->ifa_addr,
+                             (family == AF_INET) ? sizeof(struct sockaddr_in) :
+                             sizeof (struct sockaddr_in6),
+                             host, NI_MAXHOST,
+                             NULL, 0, NI_NUMERICHOST) == 0)
+            {
+              address = g_strdup (host);
+              break;
+            }
+          }
+        }
+      }
+
+      freeifaddrs (ifaddr);
     }
 #endif
 
