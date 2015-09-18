@@ -279,9 +279,9 @@ prepare_resources:
 	cp -rf ../../resources/translations/pt_BR $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/sv    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/ja    $(PACKAGE)/$(RELEASE)/resources/translations
-	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade
-	cp -f ../../resources/glade/*.png   $(PACKAGE)/$(RELEASE)/resources/glade
-	cp -f ../../resources/glade/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade
+	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade/images
+	cp -f ../../resources/glade/images/*.png   $(PACKAGE)/$(RELEASE)/resources/glade/images
+	cp -f ../../resources/glade/images/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade/images
 	cp -f ../../resources/glade/*.glade $(PACKAGE)/$(RELEASE)/resources/glade
 	cp -rf ../../resources/countries      $(PACKAGE)/$(RELEASE)/resources/countries
 	cp -rf ../../resources/localized_data $(PACKAGE)/$(RELEASE)/resources/localized_data
