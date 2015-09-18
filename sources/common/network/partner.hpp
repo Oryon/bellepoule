@@ -36,9 +36,12 @@ namespace Net
 
       void Store (Message *message);
 
+      const gchar *GetAddress ();
+
     private:
       gchar *_ip;
       gchar *_role;
+      gchar *_address;
       guint  _port;
       GList *_message_list;
 

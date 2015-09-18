@@ -44,8 +44,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  Message::Message (const guint8       *data,
-                    struct sockaddr_in *from)
+  Message::Message (const guint8 *data)
   {
     GError *error = NULL;
 
@@ -61,14 +60,6 @@ namespace Net
       g_warning ("Message::Message: %s", error->message);
       _is_valid = FALSE;
       g_clear_error (&error);
-    }
-
-    if (from)
-    {
-      g_key_file_set_string (_key_file,
-                             "Header",
-                             "from",
-                             inet_ntoa (from->sin_addr));
     }
   }
 
@@ -104,15 +95,6 @@ namespace Net
 
     g_free (field_name);
     return result;
-  }
-
-  // --------------------------------------------------------------------------------
-  gchar *Message::GetSenderIp ()
-  {
-    return g_key_file_get_string (_key_file,
-                                  "Header",
-                                  "from",
-                                  NULL);
   }
 
   // --------------------------------------------------------------------------------

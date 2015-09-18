@@ -2,6 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <!-- interface-local-resource-path images -->
   <object class="GtkMessageDialog" id="print_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -207,7 +208,7 @@
                               <object class="GtkImage" id="image2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="pixbuf">checked.png</property>
+                                <property name="pixbuf">images/checked.png</property>
                                 <property name="icon-size">1</property>
                               </object>
                               <packing>
@@ -253,7 +254,7 @@
                               <object class="GtkImage" id="image1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="pixbuf">unchecked.png</property>
+                                <property name="pixbuf">images/unchecked.png</property>
                                 <property name="icon-size">1</property>
                               </object>
                               <packing>

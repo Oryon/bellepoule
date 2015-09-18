@@ -276,12 +276,12 @@ prepare_resources:
 	cp -rf ../../resources/translations/es    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/it    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/ko    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/pt_br $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/pt_BR $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/sv    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/ja    $(PACKAGE)/$(RELEASE)/resources/translations
-	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade
-	cp -f ../../resources/glade/*.png   $(PACKAGE)/$(RELEASE)/resources/glade
-	cp -f ../../resources/glade/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade
+	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade/images
+	cp -f ../../resources/glade/images/*.png   $(PACKAGE)/$(RELEASE)/resources/glade/images
+	cp -f ../../resources/glade/images/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade/images
 	cp -f ../../resources/glade/*.glade $(PACKAGE)/$(RELEASE)/resources/glade
 	cp -rf ../../resources/countries      $(PACKAGE)/$(RELEASE)/resources/countries
 	cp -rf ../../resources/localized_data $(PACKAGE)/$(RELEASE)/resources/localized_data
@@ -310,18 +310,15 @@ prepare_changelog:
 
 prepare_control:
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/control
-	chmod a-x $(PACKAGE)/$(RELEASE)/debian/control
 ifeq ($(PRODUCT), bellepoulebeta)
 	sed -i 's/Replaces/#Replaces/' $(PACKAGE)/$(RELEASE)/debian/control
 endif
 
 prepare_rules:
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/rules
-	chmod a+x $(PACKAGE)/$(RELEASE)/debian/rules
 
 prepare_copyright:
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/copyright
-	chmod a-x $(PACKAGE)/$(RELEASE)/debian/copyright
 
 prepare_desktop:
 	cp -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
@@ -386,8 +383,9 @@ help:
 	@echo "make -s UBUNTU=windows V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "make -s UBUNTU=windows V=$(V)"
-	@echo "cp Release/$(PRODUCT)-marshaller /media/usb0/BellePoule/bazaar/trunk/build/BellePoule/windows/exe/$(PRODUCT)-marshaller.exe"
-	@echo "cp Release/$(PRODUCT)-supervisor /media/usb0/BellePoule/bazaar/trunk/build/BellePoule/windows/exe/$(PRODUCT)-supervisor.exe"
+	@echo "cp Release/$(PRODUCT)-marshaller ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/$(PRODUCT)-marshaller.exe"
+	@echo "cp Release/$(PRODUCT)-supervisor ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/$(PRODUCT)-supervisor.exe"
+	@echo "cp ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/bellepoulebeta/bin"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
 	@echo "make -s UBUNTU=precise V=$(V) package"

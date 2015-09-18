@@ -53,6 +53,7 @@ namespace Net
       static const guint  ANNOUNCE_PORT = 35000;
 
       static gchar     *_role;
+      static gchar     *_ip_address;
       static guint      _unicast_port;
       static GList     *_partner_list;
       static GList     *_message_list;

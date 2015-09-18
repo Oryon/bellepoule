@@ -27,6 +27,7 @@
 #endif
 
 #include "util/object.hpp"
+#include "http_server.hpp" // !!
 #include "partner.hpp"
 #include "message.hpp"
 #include "ring.hpp"
@@ -36,6 +37,7 @@ namespace Net
   const gchar *Ring::ANNOUNCE_GROUP = "225.0.0.35";
 
   gchar     *Ring::_role              = NULL;
+  gchar     *Ring::_ip_address        = NULL;
   guint      Ring::_unicast_port      = 0;
   GList     *Ring::_partner_list      = NULL;
   GList     *Ring::_message_list      = NULL;
@@ -66,12 +68,14 @@ namespace Net
     {
       _role = g_strdup (role);
 
+      _ip_address   = HttpServer::GetIpV4 ();
       _unicast_port = unicast_port;
 
       _partner_indicator = partner_indicator;
       if (_partner_indicator)
       {
         gtk_widget_set_sensitive (_partner_indicator, FALSE);
+        gtk_widget_set_tooltip_text (_partner_indicator, "");
       }
 
       // Listen to partner announcement
@@ -128,6 +132,7 @@ namespace Net
     Message *message = new Message ("Announcement");
 
     message->Set ("role",         _role);
+    message->Set ("ip_address",   _ip_address);
     message->Set ("unicast_port", _unicast_port);
 
     Multicast (message);
@@ -267,15 +272,11 @@ namespace Net
     {
       struct sockaddr_in from;
       socklen_t          addrlen = sizeof (from);
-      guint8             buffer[500];
+      gchar              buffer[500];
       ssize_t            size;
 
       if ((size = recvfrom (fd,
-#ifdef WIN32
-                            (char *) buffer,
-#else
                             buffer,
-#endif
                             sizeof (buffer),
                             0,
                             (struct sockaddr *) &from,
@@ -285,8 +286,7 @@ namespace Net
       }
 
       {
-        Message *message = new Message (buffer,
-                                        &from);
+        Message *message = new Message ((guint8 *) buffer);
 
         g_idle_add ((GSourceFunc) OnMulticast,
                     message);
@@ -316,12 +316,15 @@ namespace Net
     if (_partner_indicator)
     {
       gtk_widget_set_sensitive (_partner_indicator, TRUE);
+      gtk_widget_set_tooltip_markup (_partner_indicator,
+                                     partner->GetAddress ());
     }
 
     {
       Message *message = new Message ("Handshake");
 
       message->Set ("role",         _role);
+      message->Set ("ip_address",   _ip_address);
       message->Set ("unicast_port", _unicast_port);
       partner->SendMessage (message);
       message->Release ();
@@ -346,6 +349,7 @@ namespace Net
         if (_partner_indicator)
         {
           gtk_widget_set_sensitive (_partner_indicator, FALSE);
+          gtk_widget_set_tooltip_text (_partner_indicator, "");
         }
 
         _partner_list = g_list_delete_link (_partner_list,

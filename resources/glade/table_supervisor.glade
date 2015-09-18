@@ -2,6 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <!-- interface-local-resource-path images -->
   <object class="GtkWindow" id="configuration_window">
     <property name="can_focus">False</property>
     <child>
@@ -264,7 +265,7 @@
   <object class="GtkImage" id="input_image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">stock_task-assigned.png</property>
+    <property name="pixbuf">images/stock_task-assigned.png</property>
   </object>
   <object class="GtkAdjustment" id="nb_qualified_adjustment">
     <property name="upper">100</property>
@@ -279,7 +280,7 @@
   <object class="GtkImage" id="score_image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">stock_scores.png</property>
+    <property name="pixbuf">images/stock_scores.png</property>
   </object>
   <object class="GtkTreeStore" id="table_set_treestore">
     <columns>

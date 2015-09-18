@@ -100,7 +100,7 @@ Piste::Piste (GooCanvasItem *parent,
   }
 
   {
-    gchar     *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "referee.png", NULL);
+    gchar     *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "images", "referee.png", NULL);
     GdkPixbuf *pixbuf    = container->GetPixbuf (icon_file);
 
     _status_item = goo_canvas_image_new (_root_item,

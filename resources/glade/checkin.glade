@@ -2,15 +2,16 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <!-- interface-local-resource-path images -->
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">ranking_pack.png</property>
+    <property name="pixbuf">images/ranking_pack.png</property>
   </object>
   <object class="GtkImage" id="image4">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">file_pack.png</property>
+    <property name="pixbuf">images/file_pack.png</property>
   </object>
   <object class="GtkMessageDialog" id="print_dialog">
     <property name="can_focus">False</property>
@@ -183,7 +184,7 @@
                               <object class="GtkImage" id="image2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="pixbuf">checked.png</property>
+                                <property name="pixbuf">images/checked.png</property>
                                 <property name="icon-size">1</property>
                               </object>
                               <packing>
@@ -229,7 +230,7 @@
                               <object class="GtkImage" id="image1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="pixbuf">unchecked.png</property>
+                                <property name="pixbuf">images/unchecked.png</property>
                                 <property name="icon-size">1</property>
                               </object>
                               <packing>
@@ -673,7 +674,7 @@
                   <object class="GtkImage" id="expand_image">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="pixbuf">format-indent-more.png</property>
+                    <property name="pixbuf">images/format-indent-more.png</property>
                   </object>
                 </child>
               </object>
@@ -693,7 +694,7 @@
                   <object class="GtkImage" id="collapse_image">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="pixbuf">format-justify-fill.png</property>
+                    <property name="pixbuf">images/format-justify-fill.png</property>
                   </object>
                 </child>
               </object>
