@@ -39,7 +39,7 @@
 #include "actors/checkin.hpp"
 #include "actors/referees_list.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
-#include "network/uploader.hpp"
+#include "ecosystem.hpp"
 
 #include "application/version.h"
 #include "application/weapon.hpp"
@@ -1366,10 +1366,9 @@ void Contest::Publish ()
   if (_tournament && (_schedule->ScoreStuffingIsAllowed () == FALSE))
   {
     {
-      Net::Uploader *uploader = _tournament->GetFtpUpLoader ();
+      EcoSystem *ecosystem = _tournament->GetEcosystem ();
 
-      uploader->UploadFile (_filename);
-      uploader->Release ();
+      ecosystem->UploadFile (_filename);
     }
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))

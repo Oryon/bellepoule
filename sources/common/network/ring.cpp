@@ -365,14 +365,14 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::Synchronize (Partner *partner)
   {
-    GList *current = _message_list;
+    GList *current = g_list_last (_message_list);
 
     while (current)
     {
       Message *message = (Message *) current->data;
 
       partner->SendMessage (message);
-      current = g_list_next (current);
+      current = g_list_previous (current);
     }
   }
 

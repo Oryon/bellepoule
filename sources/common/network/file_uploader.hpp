@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Yannick Le Roux.
+// Copyright (C) 2011 Yannick Le Roux.
 // This file is part of BellePoule.
 //
 //   BellePoule is free software: you can redistribute it and/or modify
@@ -14,39 +14,40 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef partner_hpp
-#define partner_hpp
+#ifndef file_upload_hpp
+#define file_upload_hpp
 
-#include "util/object.hpp"
+#include "uploader.hpp"
 
 namespace Net
 {
-  class Message;
-  class MessageUploader;
-
-  class Partner : public Object
+  class FileUploader : public Uploader
   {
     public:
-      Partner (Message *message);
+      FileUploader (const gchar  *url,
+                    const gchar  *user,
+                    const gchar  *passwd);
 
-      void SendMessage (Message *message);
-
-      gboolean Is (Partner *partner);
-
-      gboolean HasRole (const gchar *role);
-
-      void Store (Message *message);
-
-      const gchar *GetAddress ();
+      void UploadFile (const gchar *filename);
 
     private:
-      gchar           *_role;
-      gchar           *_address;
-      GList           *_message_list;
-      MessageUploader *_uploader;
+      gchar *_user;
+      gchar *_passwd;
+      gchar *_drop_dir;
+      gchar *_url;
+      gchar *_filename;
 
-      ~Partner ();
+      virtual ~FileUploader ();
+
+      void PushMessage (Message *message);
+
+      void SetCurlOptions (CURL *curl);
+
+      const gchar *GetUrl ();
+
+      static gpointer SenderThread (FileUploader *uploader);
   };
-}
 
+}
 #endif
+

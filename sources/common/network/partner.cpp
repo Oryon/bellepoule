@@ -16,7 +16,7 @@
 
 #include <stdlib.h>
 
-#include "uploader.hpp"
+#include "message_uploader.hpp"
 #include "message.hpp"
 #include "partner.hpp"
 
@@ -28,35 +28,36 @@ namespace Net
   {
     _message_list = NULL;
 
-    _ip   = message->GetString   ("ip_address");
-    _port = message->GetInteger  ("unicast_port");
-
     _role = message->GetString ("role");
 
-    _address = g_strdup_printf ("%s:<b>%d</b>", _ip, _port);
+    {
+      gchar *ip   = message->GetString ("ip_address");
+      guint  port = message->GetInteger ("unicast_port");
+
+      if (ip)
+      {
+        gchar *url = g_strdup_printf ("http://%s:%d", ip, port);
+
+        _uploader = new Net::MessageUploader (url);
+
+        g_free (url);
+        g_free (ip);
+      }
+
+      _address = g_strdup_printf ("%s:<b>%d</b>", ip, port);
+    }
   }
 
   // --------------------------------------------------------------------------------
   Partner::~Partner ()
   {
-    g_free (_ip);
     g_free (_role);
-
-    {
-      GList *current = _message_list;
-
-      while (current)
-      {
-        Net::Message *message = (Net::Message *) current->data;
-
-        message->Dump ();
-
-        current = g_list_next (current);
-      }
-    }
+    g_free (_address);
 
     g_list_free_full (_message_list,
                       (GDestroyNotify) Object::TryToRelease);
+
+    _uploader->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -77,37 +78,9 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Partner::SendMessage (Message *message)
+  void Partner::SendMessage (Message *message)
   {
-    if (_ip)
-    {
-      Net::Uploader *uploader;
-
-      {
-        gchar *url = g_strdup_printf ("http://%s:%d", _ip, _port);
-
-        uploader = new Net::Uploader (url,
-                                      NULL,
-                                      NULL, NULL);
-
-        g_free (url);
-      }
-
-      {
-        gchar *parcel = message->GetParcel ();
-
-        message->Dump ();
-        uploader->UploadString (parcel,
-                                NULL);
-        g_free (parcel);
-      }
-
-      uploader->Release ();
-
-      return TRUE;
-    }
-
-    return FALSE;
+    _uploader->PushMessage (message);
   }
 
   // --------------------------------------------------------------------------------

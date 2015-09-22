@@ -21,107 +21,22 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  Uploader::Uploader (const gchar  *url,
-                      Listener     *listener,
-                      const gchar  *user,
-                      const gchar  *passwd)
+  Uploader::Uploader ()
     : Object ("Uploader")
   {
-    _url    = g_strdup (url);
-    _user   = g_strdup (user);
-    _passwd = g_strdup (passwd);
-
-    _listener = listener;
-
-    if (_listener)
-    {
-      _listener->Use ();
-    }
-
-    _full_url = NULL;
-    _iv       = NULL;
-    _data     = NULL;
+    _data        = NULL;
+    _data_length = 0;
+    _curl        = NULL;
   }
 
   // --------------------------------------------------------------------------------
   Uploader::~Uploader ()
   {
-    g_free (_url);
-    g_free (_full_url);
-    g_free (_iv);
-    g_free (_user);
-    g_free (_passwd);
     g_free (_data);
 
-    if (_listener)
+    if (_curl)
     {
-      _listener->Drop ();
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Uploader::UploadFile (const gchar *filename)
-  {
-    if (filename && _url && *_url)
-    {
-      gchar *base_name = g_path_get_basename (filename);
-
-      _full_url = g_strdup_printf ("%s/%s", _url, base_name);
-      g_free (base_name);
-    }
-
-    if (filename)
-    {
-      GError *error = NULL;
-
-      if (g_file_get_contents (filename,
-                               &_data,
-                               &_data_length,
-                               &error) == FALSE)
-      {
-        g_print ("Unable to read file: %s\n", error->message);
-        g_error_free (error);
-      }
-    }
-
-    Start ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void Uploader::UploadString (const gchar *string,
-                               guchar      *iv)
-  {
-    _full_url = g_strdup (_url);
-
-    g_free (_iv);
-    _iv = NULL;
-
-    if (iv)
-    {
-      _iv = g_base64_encode (iv, 16);
-    }
-
-    _data        = g_strdup (string);
-    _data_length = strlen (_data);
-
-    Start ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void Uploader::Start ()
-  {
-    GError *error = NULL;
-
-    Retain ();
-
-    if (!g_thread_create ((GThreadFunc) ThreadFunction,
-                          this,
-                          FALSE,
-                          &error))
-    {
-      g_printerr ("Failed to create Uploader thread: %s\n", error->message);
-      g_error_free (error);
-      Release ();
+      curl_easy_cleanup (_curl);
     }
   }
 
@@ -189,92 +104,68 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Uploader::DeferedStatus (Uploader *uploader)
+  void Uploader::SetCurlOptions (CURL *curl)
   {
-    uploader->_listener->OnUploadStatus (uploader->_peer_status);
-    uploader->Release ();
-
-    return FALSE;
+    curl_easy_setopt (curl, CURLOPT_READFUNCTION,  ReadCallback);
+    curl_easy_setopt (curl, CURLOPT_READDATA,      this);
+    curl_easy_setopt (curl, CURLOPT_UPLOAD,        1L);
+#ifdef UPLOADER_DEBUG
+    curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION, OnUpLoadTrace);
+    curl_easy_setopt (curl, CURLOPT_DEBUGDATA,     this);
+    curl_easy_setopt (curl, CURLOPT_VERBOSE,       1L);
+#endif
   }
 
   // --------------------------------------------------------------------------------
-  gpointer Uploader::ThreadFunction (Uploader *uploader)
+  struct curl_slist *Uploader::SetHeader (struct curl_slist *list)
   {
-    gboolean defered_operation = FALSE;
+    return list;
+  }
 
-    if (uploader->_data && uploader->_full_url)
-    {
-      CURL *curl = curl_easy_init ();
-
-      if (curl)
-      {
-        struct curl_slist *header = NULL;
-
-        if (uploader->_iv)
-        {
-          gchar *iv_header = g_strdup_printf ("IV: %s", uploader->_iv);
-
-          header = curl_slist_append (NULL, iv_header);
-          g_free (iv_header);
-        }
-
-        curl_easy_setopt (curl, CURLOPT_READFUNCTION,     ReadCallback);
-        curl_easy_setopt (curl, CURLOPT_READDATA,         uploader);
-        curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
-        curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) uploader->_data_length);
-        curl_easy_setopt (curl, CURLOPT_URL,              uploader->_full_url);
-        curl_easy_setopt (curl, CURLOPT_HTTPHEADER,       header);
-#ifdef UPLOADER_DEBUG
-        curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION,    OnUpLoadTrace);
-        curl_easy_setopt (curl, CURLOPT_DEBUGDATA,        uploader);
-        curl_easy_setopt (curl, CURLOPT_VERBOSE,          1L);
-#endif
-
-        if (uploader->_user && *uploader->_user && uploader->_passwd && *uploader->_passwd)
-        {
-          gchar *opt = g_strdup_printf ("%s:%s", uploader->_user, uploader->_passwd);
-
-          curl_easy_setopt (curl, CURLOPT_USERPWD, opt);
-          g_free (opt);
-        }
-
-        uploader->_bytes_uploaded = 0;
-
-        {
-          CURLcode curl_code;
-
-          curl_code = curl_easy_perform (curl);
-          if (curl_code != CURLE_OK)
-          {
-            uploader->_peer_status = CONN_ERROR;
-            g_print (RED "[Uploader Error] " ESC "%s\n", curl_easy_strerror (curl_code));
-          }
-          else
-          {
-            uploader->_peer_status = CONN_OK;
-#ifdef UPLOADER_DEBUG
-            g_print (YELLOW "[Uploader] " ESC "Done\n");
-#endif
-          }
-
-          if (uploader->_listener)
-          {
-            defered_operation = TRUE;
-            g_idle_add ((GSourceFunc) DeferedStatus,
-                        uploader);
-          }
-        }
-
-        curl_easy_cleanup (curl);
-        curl_slist_free_all (header);
-      }
-    }
-
-    if (defered_operation == FALSE)
-    {
-      uploader->Release ();
-    }
-
+  // --------------------------------------------------------------------------------
+  const gchar *Uploader::GetUrl ()
+  {
     return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Uploader::Init ()
+  {
+    _curl = curl_easy_init ();
+    SetCurlOptions (_curl);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Uploader::SetDataCopy (gchar *data)
+  {
+    _data        = data;
+    _data_length = strlen (_data);
+  }
+
+  // --------------------------------------------------------------------------------
+  CURLcode Uploader::Upload ()
+  {
+    CURLcode     curl_code = CURLE_FAILED_INIT;
+    const gchar *url       = GetUrl ();
+
+    if (_curl && _data && url)
+    {
+      struct curl_slist *header = SetHeader (NULL);
+
+      curl_easy_setopt (_curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) _data_length);
+      curl_easy_setopt (_curl, CURLOPT_URL,              url);
+      curl_easy_setopt (_curl, CURLOPT_HTTPHEADER,       header);
+
+      _bytes_uploaded = 0;
+
+      curl_code = curl_easy_perform (_curl);
+
+      g_free (_data);
+      _data = NULL;
+
+      curl_slist_free_all (header);
+    }
+
+    return curl_code;
   }
 }
