@@ -241,7 +241,7 @@ namespace Net
         {
           struct MHD_Response *response;
 
-          response = MHD_create_response_from_buffer (strlen (client_response) + 1,
+          response = MHD_create_response_from_buffer (strlen (client_response),
                                                       (void *) client_response,
                                                       MHD_RESPMEM_MUST_COPY);
           ret = MHD_queue_response (connection,
