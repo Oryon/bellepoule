@@ -50,6 +50,7 @@ namespace Pool
       void OnUnLocked ();
       void RetrievePools ();
       void Manage (Pool *pool);
+      void Spread ();
 
     private:
       void OnPoolSelected (Pool *pool);

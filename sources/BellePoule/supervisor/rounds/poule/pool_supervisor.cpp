@@ -183,7 +183,11 @@ namespace Pool
                               FALSE);
 
     RetrievePools ();
+  }
 
+  // --------------------------------------------------------------------------------
+  void Supervisor::Spread ()
+  {
     for (guint p = 0; p < _allocator->GetNbPools (); p++)
     {
       Pool *pool = _allocator->GetPool (p);

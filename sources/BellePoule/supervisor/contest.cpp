@@ -755,6 +755,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       xmlXPathFreeContext (xml_context);
     }
 
+    Spread ();
+
     _schedule->Load (doc,
                      contest_keyword,
                      _referees_list);
@@ -1277,6 +1279,7 @@ void Contest::ReadProperties ()
   }
 
   _schedule->ApplyNewConfig ();
+  Spread ();
   DisplayProperties ();
 }
 
@@ -1336,8 +1339,6 @@ void Contest::DisplayProperties ()
                           GTK_STATE_ACTIVE,
                           _gdk_color);
   }
-
-  Spread ();
 }
 
 // --------------------------------------------------------------------------------

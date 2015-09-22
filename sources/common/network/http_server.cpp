@@ -299,18 +299,26 @@ namespace Net
 
           {
             struct MHD_Response *response;
-            gchar               *message  = g_strdup_printf (GREEN "%d\n" ESC,
-                                                             defered_data->_message->GetUUID ());
+#if 0
+            {
+              gchar *message = g_strdup_printf ("uuid %d received\n" ESC,
+                                                defered_data->_message->GetUUID ());
 
-            response = MHD_create_response_from_buffer (strlen (message) + 1,
-                                                        (void *) message,
-                                                        MHD_RESPMEM_MUST_COPY);
+              response = MHD_create_response_from_buffer (strlen (message) + 1,
+                                                          (void *) message,
+                                                          MHD_RESPMEM_MUST_COPY);
+              g_free (message);
+            }
+#else
+            response = MHD_create_response_from_buffer (0,
+                                                        NULL,
+                                                        MHD_RESPMEM_PERSISTENT);
+#endif
             ret = MHD_queue_response (connection,
                                       MHD_HTTP_OK,
                                       response);
 
             MHD_destroy_response (response);
-            g_free (message);
           }
         }
       }
