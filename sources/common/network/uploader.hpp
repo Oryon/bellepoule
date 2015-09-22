@@ -26,48 +26,32 @@ namespace Net
   class Uploader : public Object
   {
     public:
-      typedef enum
-      {
-        CONN_OK,
-        CONN_ERROR
-      } PeerStatus;
+      Uploader ();
 
-      class Listener
-      {
-        public:
-          virtual void OnUploadStatus (PeerStatus peer_status) = 0;
-          virtual void Use  () = 0;
-          virtual void Drop () = 0;
-      };
-
-    public:
-      Uploader (const gchar  *url,
-                Listener     *listener,
-                const gchar  *user,
-                const gchar  *passwd);
-
-      void UploadFile (const gchar *filename);
-
-      void UploadString (const gchar *string,
-                         guchar      *iv);
-
-    private:
-      gchar      *_user;
-      gchar      *_passwd;
-      gchar      *_full_url;
-      gchar      *_iv;
-      gchar      *_url;
-      gchar      *_data;
-      gsize       _data_length;
-      guint       _bytes_uploaded;
-      Listener   *_listener;
-      PeerStatus  _peer_status;
-
+    protected:
       virtual ~Uploader ();
 
-      void Start ();
+      void Init ();
 
-      static gpointer ThreadFunction (Uploader *uploader);
+      CURLcode Upload ();
+
+      void SetDataCopy (gchar *data);
+
+    protected:
+      virtual void SetCurlOptions (CURL *curl);
+
+      virtual const gchar *GetUrl ();
+
+      virtual struct curl_slist *SetHeader (struct curl_slist *list);
+
+    private:
+      CURL  *_curl;
+      guint  _bytes_uploaded;
+      gchar *_data;
+      gsize  _data_length;
+
+      void PrepareData (gchar       *data_copy,
+                        const gchar *passphrase);
 
       static int OnUpLoadTrace (CURL          *handle,
                                 curl_infotype  type,
@@ -79,8 +63,6 @@ namespace Net
                                   size_t    size,
                                   size_t    nmemb,
                                   Uploader *uploader);
-
-      static gboolean DeferedStatus (Uploader *uploader);
   };
 
 }

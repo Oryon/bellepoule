@@ -40,8 +40,6 @@ namespace Net
 
       static void RecallMessage (Message *message);
 
-      static void Store (Message *message);
-
       static const gchar *GetRole ();
 
     private:

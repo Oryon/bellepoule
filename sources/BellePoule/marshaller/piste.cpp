@@ -208,6 +208,16 @@ void Piste::RefreshDecoration ()
   GList       *current    = _job_list;
   const gchar *last_name  = NULL;
 
+  {
+    g_free (_color);
+    _color = g_strdup ("lightgrey");
+    SetColor (_color);
+
+    g_object_set (G_OBJECT (_title_item),
+                  "text", "",
+                  NULL);
+  }
+
   for (guint i = 0; current != NULL; i++)
   {
     Job *job = (Job *) current->data;

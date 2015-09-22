@@ -23,6 +23,8 @@ namespace Net
   Message::Message (const gchar *name)
     : Object ("Message")
   {
+    _passphrase = NULL;
+
     _key_file = g_key_file_new ();
 
     g_key_file_set_string (_key_file,
@@ -48,8 +50,9 @@ namespace Net
   {
     GError *error = NULL;
 
-    _is_valid = TRUE;
-    _key_file = g_key_file_new ();
+    _passphrase = NULL;
+    _is_valid   = TRUE;
+    _key_file   = g_key_file_new ();
 
     if (g_key_file_load_from_data (_key_file,
                                    (const gchar *) data,
@@ -66,6 +69,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   Message::~Message ()
   {
+    g_free (_passphrase);
     g_key_file_free (_key_file);
   }
 
@@ -98,6 +102,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  guint Message::GetUUID ()
+  {
+    return g_key_file_get_integer (_key_file,
+                                   "Header",
+                                   "uuid",
+                                   NULL);
+  }
+
+  // --------------------------------------------------------------------------------
   gchar *Message::GetSender ()
   {
     return g_key_file_get_string (_key_file,
@@ -116,6 +129,19 @@ namespace Net
   void Message::Recall ()
   {
     Ring::RecallMessage (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Message::SetPassPhrase (const gchar *passphrase)
+  {
+    g_free (_passphrase);
+    _passphrase = g_strdup (passphrase);
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Message::GetPassPhrase ()
+  {
+    return _passphrase;
   }
 
   // --------------------------------------------------------------------------------

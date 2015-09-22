@@ -31,10 +31,12 @@ class Batch : public Module
 
     void AttachTo (GtkNotebook *to);
 
-    void LoadJob (Net::Message *message);
+    void Load (Net::Message *message);
 
     void SetVisibility (Job      *job,
                         gboolean  visibility);
+
+    void Clean ();
 
     guint GetId ();
 

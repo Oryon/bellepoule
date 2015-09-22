@@ -1276,9 +1276,9 @@ void Tournament::OnVideoReleased ()
 }
 
 // --------------------------------------------------------------------------------
-Net::Uploader *Tournament::GetFtpUpLoader ()
+EcoSystem *Tournament::GetEcosystem ()
 {
-  return _ecosystem->GetUpLoader ();
+  return _ecosystem;
 }
 
 // --------------------------------------------------------------------------------

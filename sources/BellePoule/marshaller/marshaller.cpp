@@ -74,8 +74,6 @@ void Marshaller::Start ()
 // --------------------------------------------------------------------------------
 void Marshaller::OnHttpPost (Net::Message *message)
 {
-  Net::Ring::Store (message);
-
   if (message->GetFitness () > 0)
   {
     if (message->Is ("Competition"))
@@ -83,9 +81,9 @@ void Marshaller::OnHttpPost (Net::Message *message)
       _hall->ManageContest (message,
                             GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
     }
-    else if (message->Is ("Job"))
+    else if (message->Is ("Batch"))
     {
-      _hall->ManageJob (message);
+      _hall->ManageBatch (message);
     }
     else if (message->Is ("Referee"))
     {
@@ -98,9 +96,9 @@ void Marshaller::OnHttpPost (Net::Message *message)
     {
       _hall->DropContest (message);
     }
-    else if (message->Is ("Job"))
+    else if (message->Is ("Batch"))
     {
-      //_hall->ManageJob (message);
+      _hall->DropBatch (message);
     }
   }
 }
