@@ -26,8 +26,6 @@ namespace Net
   Partner::Partner (Message *message)
     : Object ("Partner")
   {
-    _message_list = NULL;
-
     _role = message->GetString ("role");
 
     {
@@ -39,12 +37,11 @@ namespace Net
         gchar *url = g_strdup_printf ("http://%s:%d", ip, port);
 
         _uploader = new Net::MessageUploader (url);
+        _address  = g_strdup_printf ("%s:<b>%d</b>", ip, port);
 
         g_free (url);
         g_free (ip);
       }
-
-      _address = g_strdup_printf ("%s:<b>%d</b>", ip, port);
     }
   }
 
@@ -53,9 +50,6 @@ namespace Net
   {
     g_free (_role);
     g_free (_address);
-
-    g_list_free_full (_message_list,
-                      (GDestroyNotify) Object::TryToRelease);
 
     _uploader->Release ();
   }
@@ -81,14 +75,6 @@ namespace Net
   void Partner::SendMessage (Message *message)
   {
     _uploader->PushMessage (message);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Partner::Store (Message *message)
-  {
-    _message_list = g_list_prepend (_message_list,
-                                    message);
-    message->Retain ();
   }
 
   // --------------------------------------------------------------------------------

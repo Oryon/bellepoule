@@ -35,14 +35,11 @@ namespace Net
 
       gboolean HasRole (const gchar *role);
 
-      void Store (Message *message);
-
       const gchar *GetAddress ();
 
     private:
       gchar           *_role;
       gchar           *_address;
-      GList           *_message_list;
       MessageUploader *_uploader;
 
       ~Partner ();

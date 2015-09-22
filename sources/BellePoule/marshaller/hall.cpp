@@ -195,17 +195,49 @@ void Hall::DropContest (Net::Message *message)
 }
 
 // --------------------------------------------------------------------------------
-void Hall::ManageJob (Net::Message *message)
+void Hall::ManageBatch (Net::Message *message)
 {
   gchar *id    = message->GetString ("contest");
   Batch *batch = GetBatch (id);
 
   if (batch)
   {
-    batch->LoadJob (message);
+    batch->Load (message);
   }
 
   g_free (id);
+}
+
+// --------------------------------------------------------------------------------
+void Hall::DropBatch (Net::Message *message)
+{
+  guint32 dnd_id;
+
+  {
+    gchar *id = message->GetString ("contest");
+
+    dnd_id = (guint32) g_ascii_strtoull (id,
+                                         NULL,
+                                         16);
+    g_free (id);
+  }
+
+  {
+    GList *current = _batch_list;
+
+    while (current)
+    {
+      Batch *batch = (Batch *) current->data;
+
+      if (batch->GetId () == dnd_id)
+      {
+        batch->Clean ();
+        break;
+      }
+
+      current = g_list_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------

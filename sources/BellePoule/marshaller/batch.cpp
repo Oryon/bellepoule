@@ -67,28 +67,7 @@ Batch::~Batch ()
   gdk_color_free (_gdk_color);
   g_free (_name);
 
-  {
-    GtkTreeIter iter;
-    gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
-                                                               &iter);
-
-    while (iter_is_valid)
-    {
-      Job *job;
-
-      gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
-                          &iter,
-                          JOB_ptr, &job,
-                          -1);
-
-      job->Release ();
-
-      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
-                                                &iter);
-    }
-
-    gtk_list_store_clear (_job_store);
-  }
+  Clean ();
 }
 
 // --------------------------------------------------------------------------------
@@ -225,7 +204,32 @@ void Batch::SetVisibility (Job      *job,
 }
 
 // --------------------------------------------------------------------------------
-void Batch::LoadJob (Net::Message *message)
+void Batch::Clean ()
+{
+  GtkTreeIter iter;
+  gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
+                                                             &iter);
+
+  while (iter_is_valid)
+  {
+    Job *job;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
+                        &iter,
+                        JOB_ptr, &job,
+                        -1);
+
+    job->Release ();
+
+    iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
+                                              &iter);
+  }
+
+  gtk_list_store_clear (_job_store);
+}
+
+// --------------------------------------------------------------------------------
+void Batch::Load (Net::Message *message)
 {
   gchar     *xml = message->GetString ("xml");
   xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
