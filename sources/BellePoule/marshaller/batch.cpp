@@ -67,7 +67,28 @@ Batch::~Batch ()
   gdk_color_free (_gdk_color);
   g_free (_name);
 
-  Clean ();
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
+                                                               &iter);
+
+    while (iter_is_valid)
+    {
+      Job *job;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
+                          &iter,
+                          JOB_ptr, &job,
+                          -1);
+
+      job->Release ();
+
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
+                                                &iter);
+    }
+
+    gtk_list_store_clear (_job_store);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -204,7 +225,7 @@ void Batch::SetVisibility (Job      *job,
 }
 
 // --------------------------------------------------------------------------------
-void Batch::Clean ()
+void Batch::RemoveJob (Net::Message *message)
 {
   GtkTreeIter iter;
   gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
@@ -212,20 +233,23 @@ void Batch::Clean ()
 
   while (iter_is_valid)
   {
-    Job *job;
+    Job *current_job;
 
     gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
                         &iter,
-                        JOB_ptr, &job,
+                        JOB_ptr, &current_job,
                         -1);
 
-    job->Release ();
+    if (current_job->GetUUID () == current_job->GetUUID ())
+    {
+      gtk_list_store_remove (_job_store,
+                             &iter);
+      break;
+    }
 
     iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
                                               &iter);
   }
-
-  gtk_list_store_clear (_job_store);
 }
 
 // --------------------------------------------------------------------------------
@@ -248,7 +272,8 @@ void Batch::Load (Net::Message *message)
 
       if (xml_nodeset->nodeNr == 1)
       {
-        LoadJob (xml_nodeset->nodeTab[0]);
+        LoadJob (xml_nodeset->nodeTab[0],
+                 message->GetUUID ());
       }
 
       xmlXPathFreeObject  (xml_object);
@@ -264,7 +289,8 @@ void Batch::Load (Net::Message *message)
 }
 
 // --------------------------------------------------------------------------------
-void Batch::LoadJob (xmlNode *xml_node)
+void Batch::LoadJob (xmlNode *xml_node,
+                     guint    uuid)
 {
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
@@ -286,7 +312,7 @@ void Batch::LoadJob (xmlNode *xml_node)
         GtkTreeIter  iter;
         gchar       *attr;
         gchar       *name;
-        Job         *job = new Job (this, _gdk_color);
+        Job         *job = new Job (this, uuid, _gdk_color);
 
         attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
         if (attr)
@@ -310,7 +336,8 @@ void Batch::LoadJob (xmlNode *xml_node)
         g_free (name);
       }
 
-      LoadJob (n->children);
+      LoadJob (n->children,
+               uuid);
     }
   }
 }

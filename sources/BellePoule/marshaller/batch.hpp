@@ -36,7 +36,7 @@ class Batch : public Module
     void SetVisibility (Job      *job,
                         gboolean  visibility);
 
-    void Clean ();
+    void RemoveJob (Net::Message *message);
 
     guint GetId ();
 
@@ -45,8 +45,6 @@ class Batch : public Module
     void SetProperties (Net::Message *message);
 
     GSList *GetCurrentSelection ();
-
-    GdkColor *GetColor ();
 
   private:
     guint32       _id;
@@ -57,7 +55,8 @@ class Batch : public Module
 
     virtual ~Batch ();
 
-    void LoadJob (xmlNode *xml_node);
+    void LoadJob (xmlNode *xml_node,
+                  guint    uuid);
 
     void SetProperty (Net::Message *message,
                       const gchar  *property);

@@ -25,6 +25,7 @@ class Job : public Object
 {
   public:
     Job (Batch    *batch,
+         guint     uuid,
          GdkColor *gdk_color);
 
     void SetName (const gchar *name);
@@ -35,8 +36,11 @@ class Job : public Object
 
     GdkColor *GetGdkColor ();
 
+    guint GetUUID ();
+
   private:
     gchar    *_name;
+    guint     _uuid;
     GdkColor *_gdk_color;
     Batch    *_batch;
 

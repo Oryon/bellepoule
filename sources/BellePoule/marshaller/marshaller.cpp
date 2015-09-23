@@ -81,9 +81,9 @@ void Marshaller::OnHttpPost (Net::Message *message)
       _hall->ManageContest (message,
                             GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
     }
-    else if (message->Is ("Batch"))
+    else if (message->Is ("Job"))
     {
-      _hall->ManageBatch (message);
+      _hall->ManageJob (message);
     }
     else if (message->Is ("Referee"))
     {
@@ -96,9 +96,9 @@ void Marshaller::OnHttpPost (Net::Message *message)
     {
       _hall->DropContest (message);
     }
-    else if (message->Is ("Batch"))
+    else if (message->Is ("Job"))
     {
-      _hall->DropBatch (message);
+      _hall->DropJob (message);
     }
   }
 }

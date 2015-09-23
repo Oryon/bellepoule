@@ -70,7 +70,7 @@ namespace Pool
 
     _dispatcher = new Dispatcher (_name);
 
-    Disclose ("Batch");
+    Disclose ("Job");
   }
 
   // --------------------------------------------------------------------------------

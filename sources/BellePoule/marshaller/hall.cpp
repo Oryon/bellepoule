@@ -195,7 +195,7 @@ void Hall::DropContest (Net::Message *message)
 }
 
 // --------------------------------------------------------------------------------
-void Hall::ManageBatch (Net::Message *message)
+void Hall::ManageJob (Net::Message *message)
 {
   gchar *id    = message->GetString ("contest");
   Batch *batch = GetBatch (id);
@@ -209,16 +209,16 @@ void Hall::ManageBatch (Net::Message *message)
 }
 
 // --------------------------------------------------------------------------------
-void Hall::DropBatch (Net::Message *message)
+void Hall::DropJob (Net::Message *message)
 {
-  guint32 dnd_id;
+  guint32 contest_id;
 
   {
     gchar *id = message->GetString ("contest");
 
-    dnd_id = (guint32) g_ascii_strtoull (id,
-                                         NULL,
-                                         16);
+    contest_id = (guint32) g_ascii_strtoull (id,
+                                             NULL,
+                                             16);
     g_free (id);
   }
 
@@ -229,9 +229,9 @@ void Hall::DropBatch (Net::Message *message)
     {
       Batch *batch = (Batch *) current->data;
 
-      if (batch->GetId () == dnd_id)
+      if (batch->GetId () == contest_id)
       {
-        batch->Clean ();
+        batch->RemoveJob (message);
         break;
       }
 

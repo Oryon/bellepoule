@@ -18,12 +18,14 @@
 
 // --------------------------------------------------------------------------------
 Job::Job (Batch    *batch,
+          guint     uuid,
           GdkColor *gdk_color)
   : Object ("Job")
 {
   _gdk_color = gdk_color_copy (gdk_color);
   _name      = NULL;
   _batch     = batch;
+  _uuid      = uuid;
 }
 
 // --------------------------------------------------------------------------------
@@ -43,6 +45,12 @@ void Job::SetName (const gchar *name)
 const gchar *Job::GetName ()
 {
   return _name;
+}
+
+// --------------------------------------------------------------------------------
+guint Job::GetUUID ()
+{
+  return _uuid;
 }
 
 // --------------------------------------------------------------------------------
