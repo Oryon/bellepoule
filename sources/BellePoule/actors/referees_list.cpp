@@ -72,12 +72,9 @@ namespace People
       filter->ShowAttribute ("participation_rate");
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
-      filter->ShowAttribute ("level");
       filter->ShowAttribute ("club");
       filter->ShowAttribute ("league");
       filter->ShowAttribute ("country");
-      filter->ShowAttribute ("birth_date");
-      filter->ShowAttribute ("licence");
 
       SetFilter (filter);
       CreateForm (filter,

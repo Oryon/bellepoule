@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "network/message.hpp"
+
 #include "job.hpp"
 
 // --------------------------------------------------------------------------------
@@ -26,6 +28,9 @@ Job::Job (Batch    *batch,
   _name      = NULL;
   _batch     = batch;
   _uuid      = uuid;
+
+  Disclose ("Roadmap");
+  _parcel->Set ("job", uuid);
 }
 
 // --------------------------------------------------------------------------------
@@ -45,6 +50,12 @@ void Job::SetName (const gchar *name)
 const gchar *Job::GetName ()
 {
   return _name;
+}
+
+// --------------------------------------------------------------------------------
+Net::Message *Job::GetRoadMap ()
+{
+  return _parcel;
 }
 
 // --------------------------------------------------------------------------------

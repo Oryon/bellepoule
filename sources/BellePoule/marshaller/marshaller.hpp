@@ -29,7 +29,7 @@ class Marshaller : public Module
 
     void Start ();
 
-    void OnHttpPost (Net::Message *message);
+    gboolean OnHttpPost (Net::Message *message);
 
   private:
     Hall                 *_hall;

@@ -38,6 +38,8 @@ class Job : public Object
 
     guint GetUUID ();
 
+    Net::Message *GetRoadMap ();
+
   private:
     gchar    *_name;
     guint     _uuid;

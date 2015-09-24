@@ -172,6 +172,13 @@ void Piste::AddJob (Job *job)
   job->AddObjectListener (this);
 
   {
+    Net::Message *roadmap = job->GetRoadMap ();
+
+    roadmap->Set ("piste", _id);
+    roadmap->Spread ();
+  }
+
+  {
     Batch *batch = job->GetBatch ();
 
     batch->SetVisibility (job,

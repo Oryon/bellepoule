@@ -242,6 +242,7 @@ void Batch::RemoveJob (Net::Message *message)
 
     if (current_job->GetUUID () == current_job->GetUUID ())
     {
+      current_job->Release ();
       gtk_list_store_remove (_job_store,
                              &iter);
       break;

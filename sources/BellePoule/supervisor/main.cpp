@@ -120,9 +120,27 @@ gboolean BellPouleApp::OnHttpPost (Net::Message *message)
 {
   if (Application::OnHttpPost (message) == FALSE)
   {
-    if (_tournament)
     {
-      return _tournament->OnHttpPost (message->GetString ("content"));
+      if (message->GetFitness () > 0)
+      {
+        if (message->Is ("Roadmap"))
+        {
+          printf (BLUE "%x ==> %02d\n" ESC, message->GetUUID (),
+                  message->GetInteger ("piste"));
+        }
+        else if (_tournament)
+        {
+          return _tournament->OnHttpPost (message->GetString ("content"));
+        }
+      }
+      else
+      {
+        if (message->Is ("Roadmap"))
+        {
+          printf (RED "%x ==> %02d\n" ESC, message->GetUUID (),
+                  message->GetInteger ("piste"));
+        }
+      }
     }
   }
 
