@@ -17,6 +17,7 @@
 #include "network/message.hpp"
 #include "network/ring.hpp"
 #include "application/weapon.hpp"
+#include "actors/referee.hpp"
 #include "hall.hpp"
 
 #include "marshaller.hpp"
@@ -26,7 +27,7 @@ Marshaller::Marshaller ()
   : Module ("marshaller.glade")
 {
   {
-    _hall = new Hall ();
+    _hall = new Hall (this);
 
     Plug (_hall,
           _glade->GetWidget ("hall_viewport"));
@@ -69,6 +70,26 @@ Marshaller::~Marshaller ()
 // --------------------------------------------------------------------------------
 void Marshaller::Start ()
 {
+}
+
+// --------------------------------------------------------------------------------
+Referee *Marshaller::GetReferee (guint ref)
+{
+  GSList *current = _referee_list->GetList ();
+
+  while (current)
+  {
+    Referee *referee = (Referee *) current->data;
+
+    if (referee->GetRef () == ref)
+    {
+      return referee;
+    }
+
+    current = g_slist_next (current);
+  }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------

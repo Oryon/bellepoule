@@ -602,9 +602,10 @@ Contest *Tournament::FetchContest (const gchar *id)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Tournament::OnHttpPost (const gchar *data)
+gboolean Tournament::OnHttpPost (Net::Message *message)
 {
-  gboolean result = FALSE;
+  gboolean  result = FALSE;
+  gchar    *data   = message->GetString ("content");
 
   if (data)
   {
@@ -687,6 +688,7 @@ gboolean Tournament::OnHttpPost (const gchar *data)
       }
     }
     g_strfreev (lines);
+    g_free (data);
   }
 
   return result;

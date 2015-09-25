@@ -70,7 +70,7 @@ class Tournament : public Module
 
     EcoSystem *GetEcosystem ();
 
-    gboolean OnHttpPost (const gchar *data);
+    gboolean OnHttpPost (Net::Message *message);
 
     gchar *OnHttpGet (const gchar *url);
 

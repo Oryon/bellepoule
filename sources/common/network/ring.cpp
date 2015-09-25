@@ -42,6 +42,7 @@ namespace Net
   GList     *Ring::_partner_list      = NULL;
   GList     *Ring::_message_list      = NULL;
   GtkWidget *Ring::_partner_indicator = NULL;
+  GList     *Ring::_listeners         = NULL;
 
   // --------------------------------------------------------------------------------
   Ring::Ring ()
@@ -417,6 +418,40 @@ namespace Net
 
       _message_list = g_list_delete_link (_message_list,
                                           node);
+    }
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::RegisterListener (Listener *listener)
+  {
+    _listeners = g_list_prepend (_listeners,
+                                 listener);
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::UnregisterListener (Listener *listener)
+  {
+    GList *node = g_list_find (_listeners,
+                               listener);
+
+    if (node)
+    {
+      _listeners = g_list_delete_link (_listeners,
+                                       node);
+    }
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::PostToListener (Net::Message *message)
+  {
+    GList *current = _listeners;
+
+    while (current)
+    {
+      Listener *listener = (Listener *) current->data;
+
+      listener->OnMessage (message);
+      current = g_list_next (current);
     }
   }
 }

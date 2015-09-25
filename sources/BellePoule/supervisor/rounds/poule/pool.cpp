@@ -56,8 +56,8 @@ namespace Pool
     _rand_seed          = rand_seed;
     _xml_player_tag     = xml_player_tag;
 
-    _status_cbk_data = NULL;
-    _status_cbk      = NULL;
+    _status_listener    = NULL;
+    _roadmap_listener   = NULL;
 
     _score_collector = NULL;
 
@@ -71,6 +71,7 @@ namespace Pool
     _dispatcher = new Dispatcher (_name);
 
     Disclose ("Job");
+    Net::Ring::RegisterListener (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -93,6 +94,7 @@ namespace Pool
     Object::TryToRelease (_score_collector);
 
     _dispatcher->Release ();
+    Net::Ring::UnregisterListener (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -209,13 +211,17 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::SetStatusCbk (StatusCbk  cbk,
-                           void      *data)
+  void Pool::RegisterStatusListener (StatusListener *listener)
   {
-    _status_cbk_data = data;
-    _status_cbk      = cbk;
+    _status_listener = listener;
 
     RefreshStatus ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::RegisterRoadmapListener (RoadmapListener *listener)
+  {
+    _roadmap_listener = listener;
   }
 
   // --------------------------------------------------------------------------------
@@ -1527,10 +1533,9 @@ namespace Pool
                                                0, 0);
     }
 
-    if (_status_cbk)
+    if (_status_listener)
     {
-      _status_cbk (this,
-                   _status_cbk_data);
+      _status_listener->OnPoolStatus (this);
     }
   }
 
@@ -2066,6 +2071,19 @@ namespace Pool
 
     parcel->Set ("xml", (const gchar *) xml_buffer->content);
     xmlBufferFree (xml_buffer);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::OnMessage (Net::Message *message)
+  {
+    if (message->GetInteger ("listener") == _parcel->GetUUID ())
+    {
+      if (_roadmap_listener)
+      {
+        _roadmap_listener->OnPoolRoadmap (this,
+                                          message);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

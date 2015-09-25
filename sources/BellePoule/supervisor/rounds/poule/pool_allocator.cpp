@@ -76,6 +76,8 @@ namespace Pool
       AddSensitiveWidget (_glade->GetWidget ("nb_pools_combobox"));
       AddSensitiveWidget (_glade->GetWidget ("pool_size_combobox"));
       AddSensitiveWidget (_glade->GetWidget ("swapping_criteria_hbox"));
+      AddSensitiveWidget (_glade->GetWidget ("marshaller_toolbutton"));
+      AddSensitiveWidget (_glade->GetWidget ("marshaller_toolitem"));
 
       _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_criteria_hbox"));
     }
@@ -245,10 +247,26 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Allocator::OnMessage (Net::Message *message)
+  {
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::Spread ()
+  {
+    for (guint p = 0; p < GetNbPools (); p++)
+    {
+      Pool *pool = GetPool (p);
+
+      pool->Spread ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   Object *Allocator::GetDropObjectFromRef (guint32 ref,
                                            guint   key)
   {
-    return _contest->GetRefereeFromDndRef (ref);
+    return _contest->GetRefereeFromRef (ref);
   }
 
   // --------------------------------------------------------------------------------
@@ -402,6 +420,11 @@ namespace Pool
       OnFencerListToggled (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("fencer_list"))));
 
       PopulateFencerList ();
+    }
+
+    {
+      gtk_widget_hide (_glade->GetWidget ("marshaller_spinner"));
+      gtk_widget_hide (_glade->GetWidget ("marshaller_image"));
     }
 
     if (_main_table)
@@ -686,6 +709,7 @@ namespace Pool
             current_pool->SetIdChain (_contest->GetId (),
                                       GetName (),
                                       GetId () + 1);
+            current_pool->RegisterRoadmapListener (this);
 
             {
               current_zone = new PoolZone (this,
@@ -725,7 +749,7 @@ namespace Pool
 
           if (attr)
           {
-            Player *referee = _contest->GetRefereeFromDndRef (atoi (attr));
+            Player *referee = _contest->GetRefereeFromRef (atoi (attr));
 
             if (referee)
             {
@@ -949,7 +973,7 @@ namespace Pool
         pool_table[i]->SetIdChain (_contest->GetId (),
                                    GetName (),
                                    GetId () + 1);
-
+        pool_table[i]->RegisterRoadmapListener (this);
 
         {
           PoolZone *zone = new PoolZone (this,
@@ -1810,6 +1834,38 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Allocator::OnMarshallerClicked ()
+  {
+    gtk_widget_show (_glade->GetWidget ("marshaller_spinner"));
+    gtk_widget_hide (_glade->GetWidget ("marshaller_image"));
+
+    Spread ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::OnPoolRoadmap (Pool         *pool,
+                                 Net::Message *message)
+  {
+    gtk_widget_hide (_glade->GetWidget ("marshaller_spinner"));
+    gtk_widget_show (_glade->GetWidget ("marshaller_image"));
+
+    {
+      guint   ref     = message->GetInteger ("referee");
+      Object *referee = _contest->GetRefereeFromRef (ref);
+
+      if (referee)
+      {
+        PoolZone *zone = (PoolZone *) g_slist_nth_data (_drop_zones,
+                                                        pool->GetNumber () - 1);
+
+        DropObject (referee,
+                    NULL,
+                    zone);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Allocator::OnPrintClicked ()
   {
     gchar *title = GetPrintName ();
@@ -1991,5 +2047,14 @@ namespace Pool
     Allocator *p = dynamic_cast <Allocator *> (owner);
 
     p->OnFencerListToggled (gtk_toggle_tool_button_get_active (widget));
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_marshaller_toolbutton_clicked (GtkWidget *widget,
+                                                                    Object    *owner)
+  {
+    Allocator *pa = dynamic_cast <Allocator *> (owner);
+
+    pa->OnMarshallerClicked ();
   }
 }

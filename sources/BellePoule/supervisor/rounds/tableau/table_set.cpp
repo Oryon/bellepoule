@@ -2157,7 +2157,7 @@ namespace Table
                              guint  referee_ref)
   {
     Contest  *contest = _supervisor->GetContest ();
-    Player   *referee = contest->GetRefereeFromDndRef (referee_ref);
+    Player   *referee = contest->GetRefereeFromRef (referee_ref);
 
     if (referee)
     {
@@ -3790,7 +3790,7 @@ namespace Table
   {
     Contest *contest = _supervisor->GetContest ();
 
-    return contest->GetRefereeFromDndRef (ref);
+    return contest->GetRefereeFromRef (ref);
   }
 
   // --------------------------------------------------------------------------------

@@ -19,6 +19,7 @@
 #include "util/global.hpp"
 #include "util/module.hpp"
 #include "util/canvas.hpp"
+#include "actors/referee.hpp"
 #include "job.hpp"
 
 #include "batch.hpp"
@@ -34,9 +35,10 @@ Piste::Piste (GooCanvasItem *parent,
               Module        *container)
   : DropZone (container)
 {
-  _horizontal = TRUE;
-  _listener   = NULL;
-  _job_list   = NULL;
+  _horizontal   = TRUE;
+  _listener     = NULL;
+  _job_list     = NULL;
+  _referee_list = NULL;
 
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
@@ -149,7 +151,11 @@ Piste::~Piste ()
 
       current = g_list_next (current);
     }
+
+    g_list_free (_job_list);
   }
+
+  g_list_free (_referee_list);
 
   goo_canvas_item_remove (_root_item);
   g_free (_color);
@@ -175,7 +181,14 @@ void Piste::AddJob (Job *job)
     Net::Message *roadmap = job->GetRoadMap ();
 
     roadmap->Set ("piste", _id);
-    roadmap->Spread ();
+
+    if (_referee_list)
+    {
+      Referee *referee = (Referee *) _referee_list->data;
+      roadmap->Set ("referee", referee->GetRef ());
+    }
+
+    job->Spread ();
   }
 
   {
@@ -278,6 +291,24 @@ void Piste::AddReferee (Referee *referee)
   g_object_set (G_OBJECT (_status_item),
                 "visibility", GOO_CANVAS_ITEM_VISIBLE,
                 NULL);
+
+  _referee_list = g_list_prepend (_referee_list,
+                                  referee);
+
+  {
+    GList *current = _job_list;
+
+    while (current)
+    {
+      Job          *job     = (Job *) current->data;
+      Net::Message *roadmap = job->GetRoadMap ();
+
+      roadmap->Set ("referee", referee->GetRef ());
+      job->Spread ();
+
+      current = g_list_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------

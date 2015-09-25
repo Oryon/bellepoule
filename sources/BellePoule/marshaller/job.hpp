@@ -47,6 +47,8 @@ class Job : public Object
     Batch    *_batch;
 
     ~Job ();
+
+    void FeedParcel (Net::Message *parcel);
 };
 
 #endif

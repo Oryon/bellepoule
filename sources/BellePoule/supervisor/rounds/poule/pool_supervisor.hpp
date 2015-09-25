@@ -28,7 +28,10 @@ namespace Pool
 {
   class Allocator;
 
-  class Supervisor : public virtual Stage, public Module
+  class Supervisor :
+    public virtual Stage,
+    public Module,
+    public Pool::StatusListener
   {
     public:
       static void Declare ();
@@ -50,7 +53,6 @@ namespace Pool
       void OnUnLocked ();
       void RetrievePools ();
       void Manage (Pool *pool);
-      void Spread ();
 
     private:
       void OnPoolSelected (Pool *pool);
@@ -110,8 +112,7 @@ namespace Pool
                            const gchar **ressource,
                            const gchar *data);
 
-      static void OnPoolStatusUpdated (Pool       *pool,
-                                       Supervisor *ps);
+      void OnPoolStatus (Pool *pool);
 
       static gint CompareCurrentRoundClassification (Player     *A,
                                                      Player     *B,

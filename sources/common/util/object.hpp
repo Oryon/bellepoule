@@ -115,7 +115,11 @@ class Object
 
     virtual void Disclose (const gchar *as);
 
+    virtual void Conceal ();
+
     virtual void FeedParcel (Net::Message *parcel);
+
+    gboolean OnMessage (Net::Message *message);
 
     virtual void Spread ();
 

@@ -86,6 +86,7 @@ class Piste : public DropZone, Object::Listener
     gchar           *_color;
     gchar           *_focus_color;
     GList           *_job_list;
+    GList           *_referee_list;
 
     ~Piste ();
 

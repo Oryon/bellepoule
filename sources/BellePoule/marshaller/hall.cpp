@@ -14,13 +14,15 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "actors/referee.hpp"
 #include "job.hpp"
 #include "batch.hpp"
+#include "referee_pool.hpp"
 
 #include "hall.hpp"
 
 // --------------------------------------------------------------------------------
-Hall::Hall ()
+Hall::Hall (RefereePool *referee_pool)
   : CanvasModule ("hall.glade")
 {
   _piste_list    = NULL;
@@ -32,6 +34,8 @@ Hall::Hall ()
              2.0);
 
   _batch_list = NULL;
+
+  _referee_pool = referee_pool;
 }
 
 // --------------------------------------------------------------------------------
@@ -98,12 +102,10 @@ Object *Hall::GetDropObjectFromRef (guint32 ref,
 {
   if (strcmp (g_quark_to_string (key), "bellepoule/referee") == 0)
   {
-    printf ("====> %d\n", ref);
-    return this;
+    return _referee_pool->GetReferee (ref);
   }
   else if (strcmp (g_quark_to_string (key), "bellepoule/job") == 0)
   {
-    printf ("====> %d\n", ref);
     return GetBatch (ref);
   }
 
@@ -140,7 +142,12 @@ void Hall::DropObject (Object   *object,
   }
 
   {
-    piste->AddReferee (NULL);
+    Referee *refere = dynamic_cast <Referee *> (object);
+
+    if (refere)
+    {
+      piste->AddReferee (refere);
+    }
   }
 }
 

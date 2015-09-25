@@ -984,7 +984,7 @@ void Contest::LatchPlayerList ()
 }
 
 // --------------------------------------------------------------------------------
-Player *Contest::GetRefereeFromDndRef (guint ref)
+Player *Contest::GetRefereeFromRef (guint ref)
 {
   if (ref)
   {
@@ -994,7 +994,7 @@ Player *Contest::GetRefereeFromDndRef (guint ref)
     {
       Player *player = (Player *) current->data;
 
-      if (player->GetDndRef () == ref)
+      if (player->GetRef () == ref)
       {
         return player;
       }

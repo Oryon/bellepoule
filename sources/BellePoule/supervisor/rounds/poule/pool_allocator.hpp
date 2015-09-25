@@ -31,7 +31,10 @@
 
 namespace Pool
 {
-  class Allocator : public virtual Stage, public CanvasModule
+  class Allocator :
+    public virtual Stage,
+    public CanvasModule,
+    public Pool::RoadmapListener
   {
     public:
       static void Declare ();
@@ -62,6 +65,7 @@ namespace Pool
       void OnFencerListToggled (gboolean toggled);
       void OnFilterClicked ();
       void OnPrintClicked ();
+      void OnMarshallerClicked ();
 
     private:
       void OnLocked ();
@@ -125,6 +129,13 @@ namespace Pool
       void FixUpTablesBounds ();
       void RegisterConfig (Configuration *config);
       const gchar *GetInputProviderClient ();
+
+      void OnMessage (Net::Message *message);
+
+      void OnPoolRoadmap (Pool         *pool,
+                          Net::Message *message);
+
+      void Spread ();
 
       gint GetNbMatchs ();
 

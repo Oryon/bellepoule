@@ -265,7 +265,7 @@ namespace People
     {
       GSList  *selected    = GetSelectedPlayers ();
       Player  *referee     = (Player *) selected->data;
-      guint32  referee_ref = referee->GetDndRef ();
+      guint32  referee_ref = referee->GetRef ();
 
       gtk_selection_data_set (data,
                               gtk_selection_data_get_target (data),

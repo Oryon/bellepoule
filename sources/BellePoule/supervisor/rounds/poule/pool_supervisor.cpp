@@ -186,17 +186,6 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::Spread ()
-  {
-    for (guint p = 0; p < _allocator->GetNbPools (); p++)
-    {
-      Pool *pool = _allocator->GetPool (p);
-
-      pool->Spread ();
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void Supervisor::OnUnPlugged ()
   {
     gtk_widget_set_sensitive (_glade->GetWidget ("seeding_viewport"),
@@ -363,22 +352,20 @@ namespace Pool
     pool->CopyPlayersStatus (_allocator);
 
     pool->SetFilter (_filter);
-    pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
-                        this);
+    pool->RegisterStatusListener (this);
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnPoolStatusUpdated (Pool       *pool,
-                                        Supervisor *ps)
+  void Supervisor::OnPoolStatus (Pool *pool)
   {
     GtkTreeIter iter;
 
-    if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (ps->_pool_liststore),
+    if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_pool_liststore),
                                        &iter,
                                        NULL,
                                        pool->GetNumber () - 1))
     {
-      PoolZone *zone = ps->_allocator->GetZone (pool->GetNumber () - 1);
+      PoolZone *zone = _allocator->GetZone (pool->GetNumber () - 1);
 
       if (pool->IsOver ())
       {
@@ -396,7 +383,7 @@ namespace Pool
       {
         GdkPixbuf *pixbuf = pool->GetStatusPixbuf ();
 
-        gtk_list_store_set (ps->_pool_liststore, &iter,
+        gtk_list_store_set (_pool_liststore, &iter,
                             STATUS_COLUMN, pixbuf,
                             -1);
         if (pixbuf)
@@ -406,7 +393,7 @@ namespace Pool
       }
     }
 
-    ps->SignalStatusUpdate ();
+    SignalStatusUpdate ();
   }
 
   // --------------------------------------------------------------------------------
@@ -740,8 +727,7 @@ namespace Pool
       {
         Pool *pool = _allocator->GetPool (p);
 
-        OnPoolStatusUpdated (pool,
-                             this);
+        OnPoolStatus (pool);
       }
     }
   }

@@ -19,10 +19,11 @@
 
 #include "util/module.hpp"
 #include "actors/referees_list.hpp"
+#include "referee_pool.hpp"
 
 class Hall;
 
-class Marshaller : public Module
+class Marshaller : public Module, public RefereePool
 {
   public:
     Marshaller ();
@@ -38,6 +39,8 @@ class Marshaller : public Module
     virtual ~Marshaller ();
 
     void ManageReferee (Net::Message *message);
+
+    Referee *GetReferee (guint ref);
 };
 
 #endif

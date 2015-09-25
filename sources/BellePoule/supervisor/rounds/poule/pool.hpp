@@ -23,6 +23,7 @@
 #include "util/data.hpp"
 #include "util/canvas_module.hpp"
 #include "util/player.hpp"
+#include "network/ring.hpp"
 #include "../../stage.hpp"
 #include "../../score_collector.hpp"
 
@@ -30,8 +31,22 @@
 
 namespace Pool
 {
-  class Pool : public CanvasModule
+  class Pool : public CanvasModule, Net::Ring::Listener
   {
+    public:
+      class RoadmapListener
+      {
+        public:
+          virtual void OnPoolRoadmap (Pool         *pool,
+                                      Net::Message *roadmap) = 0;
+      };
+
+      class StatusListener
+      {
+        public:
+          virtual void OnPoolStatus (Pool *pool) = 0;
+      };
+
     public:
       typedef enum
       {
@@ -41,9 +56,6 @@ namespace Pool
       } ComparisonPolicy;
 
     public:
-      typedef void (*StatusCbk) (Pool *pool,
-                                 void *data);
-
       Pool (Data        *max_score,
             guint        number,
             const gchar *xml_player_tag,
@@ -67,10 +79,11 @@ namespace Pool
       void  SetDataOwner  (Object *current_round_owner,
                            Object *combined_owner,
                            Object *combined_source_owner);
-      void  SetStatusCbk  (StatusCbk  cbk,
-                           void      *data);
       void OnStatusChanged (GtkComboBox *combo_box);
       void CopyPlayersStatus (Object *from);
+
+      void  RegisterStatusListener (StatusListener *listener);
+      void  RegisterRoadmapListener (RoadmapListener *listener);
 
       gboolean IsOver ();
       gboolean HasError ();
@@ -139,8 +152,8 @@ namespace Pool
     const gchar     *_xml_player_tag;
     Dispatcher      *_dispatcher;
 
-    void            *_status_cbk_data;
-    StatusCbk        _status_cbk;
+    StatusListener  *_status_listener;
+    RoadmapListener *_roadmap_listener;
 
     private:
       typedef enum
@@ -207,6 +220,8 @@ namespace Pool
                              gchar             *value);
 
       void FeedParcel (Net::Message *parcel);
+
+      void OnMessage (Net::Message *message);
 
       static gint CompareMatch (Match *a,
                                 Match *b,

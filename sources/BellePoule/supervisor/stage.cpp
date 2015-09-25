@@ -85,8 +85,6 @@ void Stage::SetStatusCbk (StatusCbk  cbk,
 {
   _status_cbk_data = data;
   _status_cbk      = cbk;
-
-  Spread ();
 }
 
 // --------------------------------------------------------------------------------

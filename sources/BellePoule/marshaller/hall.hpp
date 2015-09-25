@@ -22,11 +22,12 @@
 #include "piste.hpp"
 
 class Batch;
+class RefereePool;
 
 class Hall : public CanvasModule, Piste::Listener
 {
   public:
-    Hall ();
+    Hall (RefereePool *referee_pool);
 
     void AddPiste ();
 
@@ -58,6 +59,7 @@ class Hall : public CanvasModule, Piste::Listener
     gdouble        _drag_x;
     gdouble        _drag_y;
     GList         *_batch_list;
+    RefereePool   *_referee_pool;
 
     ~Hall ();
 

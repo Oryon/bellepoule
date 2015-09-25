@@ -30,7 +30,7 @@ Job::Job (Batch    *batch,
   _uuid      = uuid;
 
   Disclose ("Roadmap");
-  _parcel->Set ("job", uuid);
+  _parcel->Set ("listener", uuid);
 }
 
 // --------------------------------------------------------------------------------
@@ -74,4 +74,9 @@ Batch *Job::GetBatch ()
 GdkColor *Job::GetGdkColor ()
 {
   return _gdk_color;
+}
+
+// --------------------------------------------------------------------------------
+void Job::FeedParcel (Net::Message *parcel)
+{
 }
