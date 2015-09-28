@@ -62,6 +62,7 @@ namespace Pool
             guint32      rand_seed);
 
       void  SetIdChain    (const gchar *contest, const gchar *stage_name, guint stage_id);
+      void  SetPiste      (guint piste);
       void  AddFencer     (Player *player, Object *rank_owner);
       void  AddReferee    (Player *player);
       void  CreateMatchs  (GSList *affinity_criteria_list);
@@ -138,6 +139,7 @@ namespace Pool
     GSList          *_fencer_list;
     GSList          *_sorted_fencer_list;
     GSList          *_referee_list;
+    guint            _piste;
     ScoreCollector  *_score_collector;
     GSList          *_match_list;
     gchar           *_name;

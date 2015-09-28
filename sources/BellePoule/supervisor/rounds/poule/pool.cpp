@@ -42,6 +42,7 @@ namespace Pool
     _number             = number;
     _fencer_list        = NULL;
     _referee_list       = NULL;
+    _piste              = 0;
     _sorted_fencer_list = NULL;
     _match_list         = NULL;
     _is_over            = FALSE;
@@ -114,6 +115,12 @@ namespace Pool
       SetFlashRef (ref);
       g_free (ref);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::SetPiste (guint piste)
+  {
+    _piste = piste;
   }
 
   // --------------------------------------------------------------------------------
@@ -522,7 +529,7 @@ namespace Pool
       // Referee / Track
       {
         GooCanvasItem *referee_group = goo_canvas_group_new (title_group, NULL);
-        GooCanvasItem *track_group   = goo_canvas_group_new (title_group, NULL);
+        GooCanvasItem *piste_group   = goo_canvas_group_new (title_group, NULL);
 
         goo_canvas_rect_new (referee_group,
                              0.0,
@@ -565,7 +572,7 @@ namespace Pool
                         _title_table,
                         cell_w*5);
 
-        goo_canvas_rect_new (track_group,
+        goo_canvas_rect_new (piste_group,
                              0.0,
                              0.0,
                              cell_w*5,
@@ -573,7 +580,7 @@ namespace Pool
                              "stroke-color", "Grey",
                              "line-width", 2.0,
                              NULL);
-        goo_canvas_text_new (track_group,
+        goo_canvas_text_new (piste_group,
                              gettext ("Piste"),
                              0.0,
                              0.0,
@@ -583,11 +590,27 @@ namespace Pool
                              "font", BP_FONT "bold 30.0px",
                              NULL);
 
-        Canvas::HAlign (track_group,
+        if (_piste)
+        {
+          gchar *piste = g_strdup_printf ("%02d", _piste);
+
+          goo_canvas_text_new (piste_group,
+                               piste,
+                               5.0,
+                               cell_h/2.0,
+                               -1,
+                               GTK_ANCHOR_W,
+                               "fill-color", "Black",
+                               "font", BP_FONT "bold 25.0px",
+                               NULL);
+          g_free (piste);
+        }
+
+        Canvas::HAlign (piste_group,
                         Canvas::START,
                         referee_group,
                         Canvas::START);
-        Canvas::Anchor (track_group,
+        Canvas::Anchor (piste_group,
                         NULL,
                         referee_group,
                         cell_w/2);
@@ -2078,6 +2101,8 @@ namespace Pool
   {
     if (message->GetInteger ("listener") == _parcel->GetUUID ())
     {
+      _piste = message->GetInteger ("piste");
+
       if (_roadmap_listener)
       {
         _roadmap_listener->OnPoolRoadmap (this,
@@ -2096,6 +2121,12 @@ namespace Pool
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "ID",
                                        "%d", _number);
+    if (_piste)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Piste",
+                                         "%d", _piste);
+    }
 
     if (_sorted_fencer_list)
     {

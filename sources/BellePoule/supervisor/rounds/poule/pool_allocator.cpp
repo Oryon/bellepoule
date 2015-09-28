@@ -719,6 +719,17 @@ namespace Pool
                                             current_zone);
             }
           }
+
+          {
+            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "Piste");
+
+            if (attr)
+            {
+              current_pool->SetPiste (atoi (attr));
+
+              xmlFree (attr);
+            }
+          }
         }
         else if (strcmp ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {

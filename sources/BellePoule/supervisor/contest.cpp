@@ -820,9 +820,9 @@ Contest::~Contest ()
 
   gdk_color_free (_gdk_color);
 
-  Object::TryToRelease (_referees_list);
-
   Object::TryToRelease (_schedule);
+
+  Object::TryToRelease (_referees_list);
 
   if (_save_timeout_id > 0)
   {
