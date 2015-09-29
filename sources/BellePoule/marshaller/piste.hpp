@@ -20,12 +20,15 @@
 #include <goocanvas.h>
 
 #include "util/drop_zone.hpp"
+#include "timeslot.hpp"
 
 class Module;
 class Referee;
 class Job;
 
-class Piste : public DropZone, Object::Listener
+class Piste :
+  public DropZone,
+  public TimeSlot::Owner
 {
   public:
     class Listener
@@ -85,8 +88,9 @@ class Piste : public DropZone, Object::Listener
     gboolean         _horizontal;
     gchar           *_color;
     gchar           *_focus_color;
-    GList           *_job_list;
+    GList           *_time_slots;
     GList           *_referee_list;
+    TimeSlot        *_current_timeslot;
 
     ~Piste ();
 
@@ -102,7 +106,7 @@ class Piste : public DropZone, Object::Listener
 
     void OnObjectDeleted (Object *object);
 
-    void RefreshDecoration ();
+    void OnTimeSlotUpdated (TimeSlot *timeslot);
 
     static gboolean OnButtonPress (GooCanvasItem  *item,
                                    GooCanvasItem  *target,

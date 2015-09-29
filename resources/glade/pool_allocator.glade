@@ -16,7 +16,7 @@
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">images/marshaller.png</property>
+    <property name="pixbuf">images/referee.png</property>
   </object>
   <object class="GtkListStore" id="swapping_liststore">
     <columns>
@@ -109,7 +109,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
-                <property name="label" translatable="yes">Assign</property>
+                <property name="label" translatable="yes">Assign referees</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">image1</property>
                 <signal name="clicked" handler="on_marshaller_toolbutton_clicked" swapped="no"/>

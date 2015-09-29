@@ -36,6 +36,18 @@ Hall::Hall (RefereePool *referee_pool)
   _batch_list = NULL;
 
   _referee_pool = referee_pool;
+
+  {
+    GtkScale *scale = GTK_SCALE (_glade->GetWidget ("timeline"));
+
+    for (guint i = 0; i <= 10; i++)
+    {
+      gtk_scale_add_mark (scale,
+                          i*10,
+                          GTK_POS_BOTTOM,
+                          NULL);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -163,7 +175,8 @@ void Hall::ManageContest (Net::Message *message,
 
     if (batch == NULL)
     {
-      batch = new Batch (id);
+      batch = new Batch (id,
+                         this);
 
       _batch_list = g_list_prepend (_batch_list,
                                     batch);
@@ -539,6 +552,25 @@ gboolean Hall::OnMotionNotify (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
+void Hall::OnBatchAssignmentRequest (Batch *batch)
+{
+  GList *job_list = batch->RetreiveJobList ();
+  GList *current  = job_list;
+
+  while (current)
+  {
+    Job *job = (Job *) current->data;
+
+    batch->SetVisibility (job,
+                          0);
+
+    current = g_list_next (current);
+  }
+
+  g_list_free (job_list);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_add_piste_button_clicked (GtkWidget *widget,
                                                              Object    *owner)
 {
@@ -563,4 +595,18 @@ extern "C" G_MODULE_EXPORT void on_remove_piste_button_clicked (GtkWidget *widge
   Hall *h = dynamic_cast <Hall *> (owner);
 
   h->RemoveSelected ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT gchar *on_timeline_format_value (GtkScale *scale,
+                                                            gdouble   value)
+{
+  return g_strdup_printf ("T0+%02d\'", (guint) value);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_timeline_value_changed (GtkRange *range,
+                                                           gpointer  user_data)
+{
+  gtk_range_get_value (range);
 }

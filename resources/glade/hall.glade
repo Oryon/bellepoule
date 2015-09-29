@@ -3,6 +3,11 @@
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
   <!-- interface-local-resource-path images -->
+  <object class="GtkAdjustment" id="timeline_adjustment">
+    <property name="upper">100</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
     <child>
@@ -11,10 +16,9 @@
         <property name="can_focus">False</property>
         <property name="spacing">8</property>
         <child>
-          <object class="GtkExpander" id="expander1">
+          <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="expanded">True</property>
+            <property name="can_focus">False</property>
             <child>
               <object class="GtkToolbar" id="toolbar2">
                 <property name="visible">True</property>
@@ -97,14 +101,39 @@
                     <property name="homogeneous">True</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkSeparatorToolItem" id="separatortoolitem1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_action_appearance">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
               </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
-            <child type="label">
-              <object class="GtkLabel" id="label1">
+            <child>
+              <object class="GtkHScale" id="timeline">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">expander</property>
+                <property name="can_focus">True</property>
+                <property name="update_policy">discontinuous</property>
+                <property name="adjustment">timeline_adjustment</property>
+                <property name="show_fill_level">True</property>
+                <property name="round_digits">1</property>
+                <signal name="format-value" handler="on_timeline_format_value" swapped="no"/>
+                <signal name="value-changed" handler="on_timeline_value_changed" swapped="no"/>
               </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>

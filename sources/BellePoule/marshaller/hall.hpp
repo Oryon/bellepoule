@@ -20,11 +20,14 @@
 #include "util/canvas_module.hpp"
 #include "network/message.hpp"
 #include "piste.hpp"
+#include "batch.hpp"
 
-class Batch;
 class RefereePool;
 
-class Hall : public CanvasModule, Piste::Listener
+class Hall :
+  public CanvasModule,
+  public Piste::Listener,
+  public Batch::Listener
 {
   public:
     Hall (RefereePool *referee_pool);
@@ -50,6 +53,8 @@ class Hall : public CanvasModule, Piste::Listener
     void ManageJob (Net::Message *message);
 
     void DropJob (Net::Message *message);
+
+    void AssignBatch (Batch *batch);
 
   private:
     GooCanvasItem *_root;
@@ -93,6 +98,8 @@ class Hall : public CanvasModule, Piste::Listener
 
     void OnPisteMotionEvent (Piste          *piste,
                              GdkEventMotion *event);
+
+    void OnBatchAssignmentRequest (Batch *batch);
 };
 
 #endif

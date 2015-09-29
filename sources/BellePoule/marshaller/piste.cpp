@@ -37,8 +37,10 @@ Piste::Piste (GooCanvasItem *parent,
 {
   _horizontal   = TRUE;
   _listener     = NULL;
-  _job_list     = NULL;
+  _time_slots   = NULL;
   _referee_list = NULL;
+
+  _current_timeslot = new TimeSlot (this);
 
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
@@ -137,23 +139,8 @@ Piste::Piste (GooCanvasItem *parent,
 // --------------------------------------------------------------------------------
 Piste::~Piste ()
 {
-  {
-    GList *current = _job_list;
-
-    while (current)
-    {
-      Job   *job   = (Job *) current->data;
-      Batch *batch = job->GetBatch ();
-
-      batch->SetVisibility (job,
-                            TRUE);
-      job->RemoveObjectListener (this);
-
-      current = g_list_next (current);
-    }
-
-    g_list_free (_job_list);
-  }
+  g_list_free_full (_time_slots,
+                    (GDestroyNotify) TryToRelease);
 
   g_list_free (_referee_list);
 
@@ -171,61 +158,14 @@ void Piste::SetListener (Listener *listener)
 // --------------------------------------------------------------------------------
 void Piste::AddJob (Job *job)
 {
-  _job_list = g_list_insert_sorted (_job_list,
-                                    job,
-                                    (GCompareFunc) CompareJob);
-
-  job->AddObjectListener (this);
-
-  {
-    Net::Message *roadmap = job->GetRoadMap ();
-
-    roadmap->Set ("piste", _id);
-
-    if (_referee_list)
-    {
-      Referee *referee = (Referee *) _referee_list->data;
-      roadmap->Set ("referee", referee->GetRef ());
-    }
-
-    job->Spread ();
-  }
-
-  {
-    Batch *batch = job->GetBatch ();
-
-    batch->SetVisibility (job,
-                          FALSE);;
-  }
-
-  RefreshDecoration ();
+  _current_timeslot->AddJob (job);
 }
 
 // --------------------------------------------------------------------------------
-void Piste::OnObjectDeleted (Object *object)
-{
-  Job *job = (Job *) object;
-
-  if (job)
-  {
-    GList *node = g_list_find (_job_list,
-                               job);
-
-    if (node)
-    {
-      _job_list = g_list_delete_link (_job_list,
-                                      node);
-    }
-
-    RefreshDecoration ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Piste::RefreshDecoration ()
+void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 {
   GString     *match_name = g_string_new ("");
-  GList       *current    = _job_list;
+  GList       *current    = _current_timeslot->GetJobList ();
   const gchar *last_name  = NULL;
 
   {
@@ -235,6 +175,19 @@ void Piste::RefreshDecoration ()
 
     g_object_set (G_OBJECT (_title_item),
                   "text", "",
+                  NULL);
+  }
+
+  if (_current_timeslot->GetRefereeList ())
+  {
+    g_object_set (G_OBJECT (_status_item),
+                  "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                  NULL);
+  }
+  else
+  {
+    g_object_set (G_OBJECT (_status_item),
+                  "visibility", GOO_CANVAS_ITEM_INVISIBLE,
                   NULL);
   }
 
@@ -288,27 +241,7 @@ void Piste::RefreshDecoration ()
 // --------------------------------------------------------------------------------
 void Piste::AddReferee (Referee *referee)
 {
-  g_object_set (G_OBJECT (_status_item),
-                "visibility", GOO_CANVAS_ITEM_VISIBLE,
-                NULL);
-
-  _referee_list = g_list_prepend (_referee_list,
-                                  referee);
-
-  {
-    GList *current = _job_list;
-
-    while (current)
-    {
-      Job          *job     = (Job *) current->data;
-      Net::Message *roadmap = job->GetRoadMap ();
-
-      roadmap->Set ("referee", referee->GetRef ());
-      job->Spread ();
-
-      current = g_list_next (current);
-    }
-  }
+  _current_timeslot->AddReferee (referee);
 }
 
 // --------------------------------------------------------------------------------
