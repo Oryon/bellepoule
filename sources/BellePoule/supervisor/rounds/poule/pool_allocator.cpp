@@ -1212,8 +1212,11 @@ namespace Pool
     }
 
     {
-      guint pool_size           = pool->GetNbPlayers ();
-      GooCanvasItem *name_table = goo_canvas_table_new (table, NULL);
+      guint          pool_size    = pool->GetNbPlayers ();
+      guint          column_count = 0;
+      GooCanvasItem *header_table = goo_canvas_table_new (table,
+                                                          "column-spacing", 8.0,
+                                                          NULL);
 
       // Status icon
       if (_selected_config)
@@ -1233,28 +1236,65 @@ namespace Pool
           pool->SetData (this, "is_balanced", 0);
         }
 
-        Canvas::PutStockIconInTable (name_table,
+        Canvas::PutStockIconInTable (header_table,
                                      icon_name,
-                                     0, 0);
+                                     0, column_count++);
         g_free (icon_name);
       }
 
       // Name
       {
-        item = Canvas::PutTextInTable (name_table,
+        item = Canvas::PutTextInTable (header_table,
                                        pool->GetName (),
-                                       0, 1);
+                                       0, column_count++);
         g_object_set (G_OBJECT (item),
                       "font", BP_FONT "bold 18px",
                       NULL);
+        Canvas::SetTableItemAttribute (item, "y-align", 1.0);
+      }
+
+      // Piste
+      {
+        guint piste = pool->GetPiste ();
+
+        if (piste)
+        {
+          gchar *label = g_strdup_printf ("%s %d", gettext ("Piste"), piste);
+
+          item = Canvas::PutTextInTable (header_table,
+                                         label,
+                                         0, column_count++);
+          g_object_set (G_OBJECT (item),
+                        "font",       BP_FONT "bold italic 14px",
+                        "fill-color", "darkblue",
+                        NULL);
+          Canvas::SetTableItemAttribute (item, "y-align", 1.0);
+          g_free (label);
+        }
+      }
+
+      // Time
+      {
+        item = Canvas::PutTextInTable (header_table,
+                                       "14h30",
+                                       0, column_count++);
+        g_object_set (G_OBJECT (item),
+                      "font",       BP_FONT "bold italic 14px",
+                      "fill-color", "darkblue",
+                      NULL);
+        Canvas::SetTableItemAttribute (item, "y-align", 1.0);
       }
 
       Canvas::PutInTable (table,
-                          name_table,
+                          header_table,
                           0, 0);
-      Canvas::SetTableItemAttribute (name_table, "columns", g_slist_length (layout_list));
-      //Canvas::SetTableItemAttribute (name_table, "x-expand", 1U);
-      Canvas::SetTableItemAttribute (name_table, "x-fill", 1U);
+      Canvas::SetTableItemAttribute (header_table,
+                                     "columns", g_slist_length (layout_list) + column_count);
+
+      //g_object_set (G_OBJECT (table),
+                    //"horz-grid-line-width", 2.0,
+                    //"vert-grid-line-width", 2.0,
+                    //NULL);
     }
 
     if (layout_list)
