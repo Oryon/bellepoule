@@ -31,6 +31,7 @@ class Batch : public Module
     {
       public:
         virtual void OnBatchAssignmentRequest (Batch *batch) = 0;
+        virtual void OnBatchAssignmentCancel  (Batch *batch) = 0;
     };
 
   public:

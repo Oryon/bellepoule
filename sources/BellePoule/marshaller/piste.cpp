@@ -247,6 +247,38 @@ void Piste::AddReferee (Referee *referee)
 }
 
 // --------------------------------------------------------------------------------
+void Piste::RemoveBatch (Batch *batch)
+{
+  GList *current_timeslot = _time_slots;
+
+  while (current_timeslot)
+  {
+    TimeSlot *timeslot = (TimeSlot *) current_timeslot->data;
+    GList    *job_list = g_list_copy (timeslot->GetJobList ());
+
+    {
+      GList *current_job = job_list;
+
+      while (current_job)
+      {
+        Job *job = (Job *) current_job->data;
+
+        if (job->GetBatch () == batch)
+        {
+          timeslot->RemoveJob (job);
+        }
+
+        current_job = g_list_next (current_job);
+      }
+
+      g_list_free (job_list);
+    }
+
+    current_timeslot = g_list_next (current_timeslot);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Piste::SetColor (const gchar *color)
 {
   g_object_set (_drop_rect,

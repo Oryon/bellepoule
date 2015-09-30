@@ -25,6 +25,7 @@
 class Module;
 class Referee;
 class Job;
+class Batch;
 
 class Piste :
   public DropZone,
@@ -49,6 +50,8 @@ class Piste :
     void AddJob (Job *job);
 
     void AddReferee (Referee *referee);
+
+    void RemoveBatch (Batch *batch);
 
     void Disable ();
 

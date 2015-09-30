@@ -100,6 +100,8 @@ class Hall :
                              GdkEventMotion *event);
 
     void OnBatchAssignmentRequest (Batch *batch);
+
+    void OnBatchAssignmentCancel (Batch *batch);
 };
 
 #endif

@@ -55,20 +55,19 @@ TimeSlot::~TimeSlot ()
 // --------------------------------------------------------------------------------
 void TimeSlot::Cancel ()
 {
-  GList *current = _job_list;
+  GList *job_list = g_list_copy (_job_list);
+  GList *current  = job_list;
 
   while (current)
   {
-    Job          *job     = (Job *) current->data;
-    Net::Message *roadmap = job->GetRoadMap ();
-    Batch        *batch   = job->GetBatch ();
+    Job *job = (Job *) current->data;
 
-    batch->SetVisibility (job,
-                          TRUE);
-    roadmap->Recall ();
+    RemoveJob (job);
 
     current = g_list_next (current);
   }
+
+  g_list_free (job_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -100,6 +99,35 @@ void TimeSlot::AddJob (Job *job)
     batch->SetVisibility (job,
                           FALSE);;
   }
+
+  _owner->OnTimeSlotUpdated (this);
+}
+
+// --------------------------------------------------------------------------------
+void TimeSlot::RemoveJob (Job *job)
+{
+  {
+    GList *node = g_list_find (_job_list,
+                               job);
+
+    _job_list = g_list_delete_link (_job_list,
+                                    node);
+  }
+
+  {
+    Net::Message *roadmap = job->GetRoadMap ();
+
+    roadmap->Recall ();
+  }
+
+  {
+    Batch *batch = job->GetBatch ();
+
+    batch->SetVisibility (job,
+                          TRUE);;
+  }
+
+  job->RemoveObjectListener (this);
 
   _owner->OnTimeSlotUpdated (this);
 }

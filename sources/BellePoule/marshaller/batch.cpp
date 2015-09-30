@@ -403,7 +403,7 @@ void Batch::OnAssign ()
 // --------------------------------------------------------------------------------
 void Batch::OnCancelAssign ()
 {
-  _listener->OnBatchAssignmentRequest (this);
+  _listener->OnBatchAssignmentCancel (this);
 }
 
 // --------------------------------------------------------------------------------

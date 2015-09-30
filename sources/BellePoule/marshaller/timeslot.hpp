@@ -39,6 +39,8 @@ class TimeSlot :
 
     void AddJob (Job *job);
 
+    void RemoveJob (Job *job);
+
     void AddReferee (Referee *referee);
 
     GList *GetJobList ();

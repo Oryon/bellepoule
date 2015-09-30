@@ -578,6 +578,21 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
 }
 
 // --------------------------------------------------------------------------------
+void Hall::OnBatchAssignmentCancel (Batch *batch)
+{
+  GList *current_piste = _piste_list;
+
+  while (current_piste)
+  {
+    Piste *piste = (Piste *) current_piste->data;
+
+    piste->RemoveBatch (batch);
+
+    current_piste = g_list_next (current_piste);
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_add_piste_button_clicked (GtkWidget *widget,
                                                              Object    *owner)
 {
