@@ -50,6 +50,8 @@ class Piste :
 
     void AddReferee (Referee *referee);
 
+    void Disable ();
+
     void Select ();
 
     void UnSelect ();

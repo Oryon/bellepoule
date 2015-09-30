@@ -45,6 +45,8 @@ class TimeSlot :
 
     GList *GetRefereeList ();
 
+    void Cancel ();
+
   private:
     Owner *_owner;
     GList *_job_list;

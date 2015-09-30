@@ -401,10 +401,25 @@ void Batch::OnAssign ()
 }
 
 // --------------------------------------------------------------------------------
+void Batch::OnCancelAssign ()
+{
+  _listener->OnBatchAssignmentRequest (this);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_assign_toolbutton_clicked (GtkToolButton *widget,
                                                               Object        *owner)
 {
   Batch *b = dynamic_cast <Batch *> (owner);
 
   b->OnAssign ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_cancel_toolbutton_clicked (GtkToolButton *widget,
+                                                              Object        *owner)
+{
+  Batch *b = dynamic_cast <Batch *> (owner);
+
+  b->OnCancelAssign ();
 }

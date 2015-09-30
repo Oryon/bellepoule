@@ -41,6 +41,8 @@ Piste::Piste (GooCanvasItem *parent,
   _referee_list = NULL;
 
   _current_timeslot = new TimeSlot (this);
+  _time_slots = g_list_append (_time_slots,
+                               _current_timeslot);
 
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
@@ -361,6 +363,21 @@ gboolean Piste::OnButtonRelease (GooCanvasItem  *item,
   }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Piste::Disable ()
+{
+  GList *current = _time_slots;
+
+  while (current)
+  {
+    TimeSlot *timeslot = (TimeSlot *) current->data;
+
+    timeslot->Cancel ();
+
+    current = g_list_next (current);
+  }
 }
 
 // --------------------------------------------------------------------------------

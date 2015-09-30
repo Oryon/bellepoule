@@ -23,8 +23,9 @@
 TimeSlot::TimeSlot (Owner *owner)
   : Object ("TimeSlot")
 {
-  _job_list = NULL;
-  _owner    = owner;
+  _job_list     = NULL;
+  _referee_list = NULL;
+  _owner        = owner;
 }
 
 // --------------------------------------------------------------------------------
@@ -49,6 +50,25 @@ TimeSlot::~TimeSlot ()
   }
 
   g_list_free (_referee_list);
+}
+
+// --------------------------------------------------------------------------------
+void TimeSlot::Cancel ()
+{
+  GList *current = _job_list;
+
+  while (current)
+  {
+    Job          *job     = (Job *) current->data;
+    Net::Message *roadmap = job->GetRoadMap ();
+    Batch        *batch   = job->GetBatch ();
+
+    batch->SetVisibility (job,
+                          TRUE);
+    roadmap->Recall ();
+
+    current = g_list_next (current);
+  }
 }
 
 // --------------------------------------------------------------------------------

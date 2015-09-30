@@ -429,6 +429,7 @@ void Hall::RemovePiste (Piste *piste)
       _piste_list = g_list_remove_link (_piste_list,
                                         node);
 
+      piste->Disable ();
       piste->Release ();
     }
   }
@@ -554,17 +555,23 @@ gboolean Hall::OnMotionNotify (GooCanvasItem  *item,
 // --------------------------------------------------------------------------------
 void Hall::OnBatchAssignmentRequest (Batch *batch)
 {
-  GList *job_list = batch->RetreiveJobList ();
-  GList *current  = job_list;
+  GList *job_list      = batch->RetreiveJobList ();
+  GList *current_job   = job_list;
+  GList *current_piste = _piste_list;
 
-  while (current)
+  while (current_job && current_piste)
   {
-    Job *job = (Job *) current->data;
+    Job   *job   = (Job *) current_job->data;
+    Piste *piste = (Piste *) current_piste->data;
 
-    batch->SetVisibility (job,
-                          0);
+    piste->AddJob (job);
 
-    current = g_list_next (current);
+    current_job   = g_list_next (current_job);
+    current_piste = g_list_next (current_piste);
+    if (current_piste == NULL)
+    {
+      current_piste = _piste_list;
+    }
   }
 
   g_list_free (job_list);
@@ -608,5 +615,23 @@ extern "C" G_MODULE_EXPORT gchar *on_timeline_format_value (GtkScale *scale,
 extern "C" G_MODULE_EXPORT void on_timeline_value_changed (GtkRange *range,
                                                            gpointer  user_data)
 {
-  gtk_range_get_value (range);
+  guint value = (guint) gtk_range_get_value (range);
+  guint delta = value % 10;
+
+  if (delta)
+  {
+    if (delta > 5)
+    {
+      gtk_range_set_value (range,
+                           value + 10 - (value%10));
+    }
+    else
+    {
+      gtk_range_set_value (range,
+                           value - (value%10));
+    }
+  }
+  else
+  {
+  }
 }

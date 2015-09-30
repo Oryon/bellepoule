@@ -58,6 +58,8 @@ class Batch : public Module
 
     void OnAssign ();
 
+    void OnCancelAssign ();
+
   private:
     guint32       _id;
     GtkListStore *_job_store;

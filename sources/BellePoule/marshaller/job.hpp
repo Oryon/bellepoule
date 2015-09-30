@@ -20,6 +20,7 @@
 #include "util/object.hpp"
 
 class Batch;
+class Piste;
 
 class Job : public Object
 {
@@ -45,6 +46,7 @@ class Job : public Object
     guint     _uuid;
     GdkColor *_gdk_color;
     Batch    *_batch;
+    Piste    *_piste;
 
     ~Job ();
 

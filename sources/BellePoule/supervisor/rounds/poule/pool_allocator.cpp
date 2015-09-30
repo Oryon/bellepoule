@@ -1869,9 +1869,18 @@ namespace Pool
         PoolZone *zone = (PoolZone *) g_slist_nth_data (_drop_zones,
                                                         pool->GetNumber () - 1);
 
-        DropObject (referee,
-                    NULL,
-                    zone);
+        if (message->GetFitness () > 0)
+        {
+          DropObject (referee,
+                      NULL,
+                      zone);
+        }
+        else
+        {
+          pool->RemoveReferee ((Player *) referee);
+          FillPoolTable (zone);
+          FixUpTablesBounds ();
+        }
       }
     }
   }
