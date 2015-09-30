@@ -17,6 +17,7 @@
 #include "network/message.hpp"
 #include "network/ring.hpp"
 #include "application/weapon.hpp"
+#include "actors/referee.hpp"
 #include "hall.hpp"
 
 #include "marshaller.hpp"
@@ -26,7 +27,7 @@ Marshaller::Marshaller ()
   : Module ("marshaller.glade")
 {
   {
-    _hall = new Hall ();
+    _hall = new Hall (this);
 
     Plug (_hall,
           _glade->GetWidget ("hall_viewport"));
@@ -72,24 +73,45 @@ void Marshaller::Start ()
 }
 
 // --------------------------------------------------------------------------------
-void Marshaller::OnHttpPost (Net::Message *message)
+Referee *Marshaller::GetReferee (guint ref)
 {
-  Net::Ring::Store (message);
+  GSList *current = _referee_list->GetList ();
 
+  while (current)
+  {
+    Referee *referee = (Referee *) current->data;
+
+    if (referee->GetRef () == ref)
+    {
+      return referee;
+    }
+
+    current = g_slist_next (current);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Marshaller::OnHttpPost (Net::Message *message)
+{
   if (message->GetFitness () > 0)
   {
     if (message->Is ("Competition"))
     {
       _hall->ManageContest (message,
                             GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
+      return TRUE;
     }
     else if (message->Is ("Job"))
     {
       _hall->ManageJob (message);
+      return TRUE;
     }
     else if (message->Is ("Referee"))
     {
       ManageReferee (message);
+      return TRUE;
     }
   }
   else
@@ -97,12 +119,16 @@ void Marshaller::OnHttpPost (Net::Message *message)
     if (message->Is ("Competition"))
     {
       _hall->DropContest (message);
+      return TRUE;
     }
     else if (message->Is ("Job"))
     {
-      //_hall->ManageJob (message);
+      _hall->DropJob (message);
+      return TRUE;
     }
   }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------

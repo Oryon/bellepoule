@@ -24,12 +24,12 @@
 #include "util/wifi_code.hpp"
 #include "util/object.hpp"
 #include "network/partner.hpp"
-#include "network/uploader.hpp"
+#include "network/message_uploader.hpp"
 
 class WifiCode;
 class Weapon;
 
-class Player : public Object, Net::Uploader::Listener
+class Player : public Object, Net::MessageUploader::Listener
 {
   public:
     class AttributeId : public Object
@@ -95,8 +95,6 @@ class Player : public Object, Net::Uploader::Listener
     void RemoveCbkOwner (Object *owner);
 
   public:
-    guint GetDndRef ();
-
     guint GetRef ();
     void  SetRef (guint ref);
 
@@ -120,7 +118,7 @@ class Player : public Object, Net::Uploader::Listener
     void FeedParcel (Net::Message *parcel);
 
     gboolean SendMessage (const gchar *where,
-                          const gchar *message);
+                          const gchar *msg);
 
   public:
     virtual void Save (xmlTextWriter *xml_writer);
@@ -179,7 +177,6 @@ class Player : public Object, Net::Uploader::Listener
     static guint   _next_ref;
     static GSList *_attributes_model;
 
-    guint         _dnd_ref;
     guint         _ref;
     guint         _nb_matchs;
     Weapon       *_weapon;
@@ -191,7 +188,7 @@ class Player : public Object, Net::Uploader::Listener
                        guint      step);
 
   private:
-    void OnUploadStatus (Net::Uploader::PeerStatus peer_status);
+    void OnUploadStatus (Net::MessageUploader::PeerStatus peer_status);
 
     void Use ();
 

@@ -28,10 +28,12 @@ typedef enum
 } ColumnId;
 
 // --------------------------------------------------------------------------------
-Batch::Batch (const gchar *id)
+Batch::Batch (const gchar *id,
+              Listener    *listener)
   : Module ("batch.glade")
 {
-  _name = NULL;
+  _name     = NULL;
+  _listener = listener;
 
   _id = (guint32) g_ascii_strtoull (id,
                                     NULL,
@@ -225,7 +227,68 @@ void Batch::SetVisibility (Job      *job,
 }
 
 // --------------------------------------------------------------------------------
-void Batch::LoadJob (Net::Message *message)
+GList *Batch::RetreiveJobList ()
+{
+  GList       *list = NULL;
+  GtkTreeIter  iter;
+  gboolean     iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
+                                                              &iter);
+
+  while (iter_is_valid)
+  {
+    Job      *current_job;
+    gboolean  visibility;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
+                        &iter,
+                        JOB_ptr,        &current_job,
+                        JOB_visibility, &visibility,
+                        -1);
+
+    if (visibility)
+    {
+      list = g_list_append (list,
+                            current_job);
+    }
+
+    iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
+                                              &iter);
+  }
+
+  return list;
+}
+
+// --------------------------------------------------------------------------------
+void Batch::RemoveJob (Net::Message *message)
+{
+  GtkTreeIter iter;
+  gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
+                                                             &iter);
+
+  while (iter_is_valid)
+  {
+    Job *current_job;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
+                        &iter,
+                        JOB_ptr, &current_job,
+                        -1);
+
+    if (current_job->GetUUID () == current_job->GetUUID ())
+    {
+      current_job->Release ();
+      gtk_list_store_remove (_job_store,
+                             &iter);
+      break;
+    }
+
+    iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
+                                              &iter);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Batch::Load (Net::Message *message)
 {
   gchar     *xml = message->GetString ("xml");
   xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
@@ -244,7 +307,8 @@ void Batch::LoadJob (Net::Message *message)
 
       if (xml_nodeset->nodeNr == 1)
       {
-        LoadJob (xml_nodeset->nodeTab[0]);
+        LoadJob (xml_nodeset->nodeTab[0],
+                 message->GetUUID ());
       }
 
       xmlXPathFreeObject  (xml_object);
@@ -260,7 +324,8 @@ void Batch::LoadJob (Net::Message *message)
 }
 
 // --------------------------------------------------------------------------------
-void Batch::LoadJob (xmlNode *xml_node)
+void Batch::LoadJob (xmlNode *xml_node,
+                     guint    uuid)
 {
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
@@ -282,7 +347,7 @@ void Batch::LoadJob (xmlNode *xml_node)
         GtkTreeIter  iter;
         gchar       *attr;
         gchar       *name;
-        Job         *job = new Job (this, _gdk_color);
+        Job         *job = new Job (this, uuid, _gdk_color);
 
         attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
         if (attr)
@@ -306,7 +371,8 @@ void Batch::LoadJob (xmlNode *xml_node)
         g_free (name);
       }
 
-      LoadJob (n->children);
+      LoadJob (n->children,
+               uuid);
     }
   }
 }
@@ -326,4 +392,34 @@ void Batch::OnDragDataGet (GtkWidget        *widget,
                             (guchar *) &_id,
                             sizeof (_id));
   }
+}
+
+// --------------------------------------------------------------------------------
+void Batch::OnAssign ()
+{
+  _listener->OnBatchAssignmentRequest (this);
+}
+
+// --------------------------------------------------------------------------------
+void Batch::OnCancelAssign ()
+{
+  _listener->OnBatchAssignmentRequest (this);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_assign_toolbutton_clicked (GtkToolButton *widget,
+                                                              Object        *owner)
+{
+  Batch *b = dynamic_cast <Batch *> (owner);
+
+  b->OnAssign ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_cancel_toolbutton_clicked (GtkToolButton *widget,
+                                                              Object        *owner)
+{
+  Batch *b = dynamic_cast <Batch *> (owner);
+
+  b->OnCancelAssign ();
 }

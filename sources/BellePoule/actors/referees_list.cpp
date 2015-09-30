@@ -72,12 +72,9 @@ namespace People
       filter->ShowAttribute ("participation_rate");
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
-      filter->ShowAttribute ("level");
       filter->ShowAttribute ("club");
       filter->ShowAttribute ("league");
       filter->ShowAttribute ("country");
-      filter->ShowAttribute ("birth_date");
-      filter->ShowAttribute ("licence");
 
       SetFilter (filter);
       CreateForm (filter,
@@ -268,7 +265,7 @@ namespace People
     {
       GSList  *selected    = GetSelectedPlayers ();
       Player  *referee     = (Player *) selected->data;
-      guint32  referee_ref = referee->GetDndRef ();
+      guint32  referee_ref = referee->GetRef ();
 
       gtk_selection_data_set (data,
                               gtk_selection_data_get_target (data),

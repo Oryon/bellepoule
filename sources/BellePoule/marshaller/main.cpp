@@ -78,9 +78,7 @@ gboolean MarshallerApp::OnHttpPost (Net::Message *message)
 {
   if (Application::OnHttpPost (message) == FALSE)
   {
-    _marshaller->OnHttpPost (message);
-
-    return FALSE;
+    return _marshaller->OnHttpPost (message);
   }
 
   return TRUE;

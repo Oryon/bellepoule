@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/global.hpp"
+#include "network/file_uploader.hpp"
 
 #include "ecosystem.hpp"
 
@@ -114,12 +115,16 @@ WifiCode *EcoSystem::GetAdminCode ()
 }
 
 // --------------------------------------------------------------------------------
-Net::Uploader *EcoSystem::GetUpLoader ()
+void EcoSystem::UploadFile (const gchar *filename)
 {
-  return new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
-                            NULL,
-                            gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
-                            gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+  Net::FileUploader *uploader;
+
+  uploader = new Net::FileUploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
+                                    gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
+                                    gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+
+  uploader->UploadFile (filename);
+  uploader->Release ();
 }
 
 // --------------------------------------------------------------------------------

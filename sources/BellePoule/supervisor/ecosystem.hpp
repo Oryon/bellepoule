@@ -19,7 +19,6 @@
 
 #include "util/object.hpp"
 #include "util/glade.hpp"
-#include "network/uploader.hpp"
 #include "util/wifi_code.hpp"
 #include "network/wifi_network.hpp"
 
@@ -28,7 +27,7 @@ class EcoSystem : public Object
   public:
     EcoSystem (Glade *glade);
 
-    Net::Uploader *GetUpLoader ();
+    void UploadFile (const gchar *filename);
 
     WifiCode *GetAdminCode ();
 

@@ -22,28 +22,25 @@
 namespace Net
 {
   class Message;
+  class MessageUploader;
 
   class Partner : public Object
   {
     public:
       Partner (Message *message);
 
-      gboolean SendMessage (Message *message);
+      void SendMessage (Message *message);
 
       gboolean Is (Partner *partner);
 
       gboolean HasRole (const gchar *role);
 
-      void Store (Message *message);
-
       const gchar *GetAddress ();
 
     private:
-      gchar *_ip;
-      gchar *_role;
-      gchar *_address;
-      guint  _port;
-      GList *_message_list;
+      gchar           *_role;
+      gchar           *_address;
+      MessageUploader *_uploader;
 
       ~Partner ();
   };

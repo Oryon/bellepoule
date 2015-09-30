@@ -39,7 +39,7 @@
 #include "actors/checkin.hpp"
 #include "actors/referees_list.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
-#include "network/uploader.hpp"
+#include "ecosystem.hpp"
 
 #include "application/version.h"
 #include "application/weapon.hpp"
@@ -755,6 +755,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       xmlXPathFreeContext (xml_context);
     }
 
+    Spread ();
+
     _schedule->Load (doc,
                      contest_keyword,
                      _referees_list);
@@ -818,9 +820,9 @@ Contest::~Contest ()
 
   gdk_color_free (_gdk_color);
 
-  Object::TryToRelease (_referees_list);
-
   Object::TryToRelease (_schedule);
+
+  Object::TryToRelease (_referees_list);
 
   if (_save_timeout_id > 0)
   {
@@ -982,7 +984,7 @@ void Contest::LatchPlayerList ()
 }
 
 // --------------------------------------------------------------------------------
-Player *Contest::GetRefereeFromDndRef (guint ref)
+Player *Contest::GetRefereeFromRef (guint ref)
 {
   if (ref)
   {
@@ -992,7 +994,7 @@ Player *Contest::GetRefereeFromDndRef (guint ref)
     {
       Player *player = (Player *) current->data;
 
-      if (player->GetDndRef () == ref)
+      if (player->GetRef () == ref)
       {
         return player;
       }
@@ -1277,6 +1279,7 @@ void Contest::ReadProperties ()
   }
 
   _schedule->ApplyNewConfig ();
+  Spread ();
   DisplayProperties ();
 }
 
@@ -1336,8 +1339,6 @@ void Contest::DisplayProperties ()
                           GTK_STATE_ACTIVE,
                           _gdk_color);
   }
-
-  Spread ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1366,10 +1367,9 @@ void Contest::Publish ()
   if (_tournament && (_schedule->ScoreStuffingIsAllowed () == FALSE))
   {
     {
-      Net::Uploader *uploader = _tournament->GetFtpUpLoader ();
+      EcoSystem *ecosystem = _tournament->GetEcosystem ();
 
-      uploader->UploadFile (_filename);
-      uploader->Release ();
+      ecosystem->UploadFile (_filename);
     }
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))

@@ -14,43 +14,17 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef job_hpp
-#define job_hpp
+#ifndef referee_pool_hpp
+#define referee_pool_hpp
 
-#include "util/object.hpp"
+#include <gtk/gtk.h>
 
-class Batch;
-class Piste;
+class Referee;
 
-class Job : public Object
+class RefereePool
 {
   public:
-    Job (Batch    *batch,
-         guint     uuid,
-         GdkColor *gdk_color);
-
-    void SetName (const gchar *name);
-
-    const gchar *GetName ();
-
-    Batch *GetBatch ();
-
-    GdkColor *GetGdkColor ();
-
-    guint GetUUID ();
-
-    Net::Message *GetRoadMap ();
-
-  private:
-    gchar    *_name;
-    guint     _uuid;
-    GdkColor *_gdk_color;
-    Batch    *_batch;
-    Piste    *_piste;
-
-    ~Job ();
-
-    void FeedParcel (Net::Message *parcel);
+    virtual Referee *GetReferee (guint ref) = 0;
 };
 
 #endif

@@ -240,20 +240,16 @@ namespace Net
         if (client_response)
         {
           struct MHD_Response *response;
-          char                *page;
 
-          page = g_strdup (client_response);
-          g_free (client_response);
-
-          response = MHD_create_response_from_data (strlen (page),
-                                                    (void *) page,
-                                                    MHD_YES,
-                                                    MHD_NO);
+          response = MHD_create_response_from_buffer (strlen (client_response),
+                                                      (void *) client_response,
+                                                      MHD_RESPMEM_MUST_COPY);
           ret = MHD_queue_response (connection,
                                     MHD_HTTP_OK,
                                     response);
 
           MHD_destroy_response (response);
+          g_free (client_response);
         }
       }
     }
@@ -300,21 +296,30 @@ namespace Net
 
           g_idle_add ((GSourceFunc) DeferedPost,
                       defered_data);
-        }
 
-        {
-          struct MHD_Response *response;
-          static const gchar  *message  = GREEN "Reçu 5 sur 5\n" ESC;
+          {
+            struct MHD_Response *response;
+#if 0
+            {
+              gchar *message = g_strdup_printf ("uuid %d received\n" ESC,
+                                                defered_data->_message->GetUUID ());
 
-          response = MHD_create_response_from_data (strlen (message),
-                                                    (void *) message,
-                                                    MHD_NO,
-                                                    MHD_NO);
-          ret = MHD_queue_response (connection,
-                                    MHD_HTTP_OK,
-                                    response);
+              response = MHD_create_response_from_buffer (strlen (message) + 1,
+                                                          (void *) message,
+                                                          MHD_RESPMEM_MUST_COPY);
+              g_free (message);
+            }
+#else
+            response = MHD_create_response_from_buffer (0,
+                                                        NULL,
+                                                        MHD_RESPMEM_PERSISTENT);
+#endif
+            ret = MHD_queue_response (connection,
+                                      MHD_HTTP_OK,
+                                      response);
 
-          MHD_destroy_response (response);
+            MHD_destroy_response (response);
+          }
         }
       }
     }

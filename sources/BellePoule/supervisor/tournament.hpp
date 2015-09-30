@@ -68,9 +68,9 @@ class Tournament : public Module
 
     void OpenUriContest (const gchar *uri);
 
-    Net::Uploader *GetFtpUpLoader ();
+    EcoSystem *GetEcosystem ();
 
-    gboolean OnHttpPost (const gchar *data);
+    gboolean OnHttpPost (Net::Message *message);
 
     gchar *OnHttpGet (const gchar *url);
 

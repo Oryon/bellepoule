@@ -14,22 +14,28 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "network/message.hpp"
+
 #include "job.hpp"
 
 // --------------------------------------------------------------------------------
 Job::Job (Batch    *batch,
+          guint     uuid,
           GdkColor *gdk_color)
   : Object ("Job")
 {
   _gdk_color = gdk_color_copy (gdk_color);
   _name      = NULL;
   _batch     = batch;
+  _uuid      = uuid;
+
+  Disclose ("Roadmap");
+  _parcel->Set ("listener", uuid);
 }
 
 // --------------------------------------------------------------------------------
 Job::~Job ()
 {
-  printf ("%s ==> deleted\n", _name);
   g_free         (_name);
   gdk_color_free (_gdk_color);
 }
@@ -47,6 +53,18 @@ const gchar *Job::GetName ()
 }
 
 // --------------------------------------------------------------------------------
+Net::Message *Job::GetRoadMap ()
+{
+  return _parcel;
+}
+
+// --------------------------------------------------------------------------------
+guint Job::GetUUID ()
+{
+  return _uuid;
+}
+
+// --------------------------------------------------------------------------------
 Batch *Job::GetBatch ()
 {
   return _batch;
@@ -56,4 +74,9 @@ Batch *Job::GetBatch ()
 GdkColor *Job::GetGdkColor ()
 {
   return _gdk_color;
+}
+
+// --------------------------------------------------------------------------------
+void Job::FeedParcel (Net::Message *parcel)
+{
 }

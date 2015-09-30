@@ -19,6 +19,7 @@
 #include "util/global.hpp"
 #include "util/module.hpp"
 #include "util/canvas.hpp"
+#include "actors/referee.hpp"
 #include "job.hpp"
 
 #include "batch.hpp"
@@ -34,9 +35,14 @@ Piste::Piste (GooCanvasItem *parent,
               Module        *container)
   : DropZone (container)
 {
-  _horizontal = TRUE;
-  _listener   = NULL;
-  _job_list   = NULL;
+  _horizontal   = TRUE;
+  _listener     = NULL;
+  _time_slots   = NULL;
+  _referee_list = NULL;
+
+  _current_timeslot = new TimeSlot (this);
+  _time_slots = g_list_append (_time_slots,
+                               _current_timeslot);
 
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
@@ -135,21 +141,10 @@ Piste::Piste (GooCanvasItem *parent,
 // --------------------------------------------------------------------------------
 Piste::~Piste ()
 {
-  {
-    GList *current = _job_list;
+  g_list_free_full (_time_slots,
+                    (GDestroyNotify) TryToRelease);
 
-    while (current)
-    {
-      Job   *job   = (Job *) current->data;
-      Batch *batch = job->GetBatch ();
-
-      batch->SetVisibility (job,
-                            TRUE);
-      job->RemoveObjectListener (this);
-
-      current = g_list_next (current);
-    }
-  }
+  g_list_free (_referee_list);
 
   goo_canvas_item_remove (_root_item);
   g_free (_color);
@@ -165,48 +160,38 @@ void Piste::SetListener (Listener *listener)
 // --------------------------------------------------------------------------------
 void Piste::AddJob (Job *job)
 {
-  _job_list = g_list_insert_sorted (_job_list,
-                                    job,
-                                    (GCompareFunc) CompareJob);
-
-  job->AddObjectListener (this);
-
-  {
-    Batch *batch = job->GetBatch ();
-
-    batch->SetVisibility (job,
-                          FALSE);;
-  }
-
-  RefreshDecoration ();
+  _current_timeslot->AddJob (job);
 }
 
 // --------------------------------------------------------------------------------
-void Piste::OnObjectDeleted (Object *object)
-{
-  Job *job = (Job *) object;
-
-  if (job)
-  {
-    GList *node = g_list_find (_job_list,
-                               job);
-
-    if (node)
-    {
-      _job_list = g_list_delete_link (_job_list,
-                                      node);
-    }
-
-    RefreshDecoration ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Piste::RefreshDecoration ()
+void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 {
   GString     *match_name = g_string_new ("");
-  GList       *current    = _job_list;
+  GList       *current    = _current_timeslot->GetJobList ();
   const gchar *last_name  = NULL;
+
+  {
+    g_free (_color);
+    _color = g_strdup ("lightgrey");
+    SetColor (_color);
+
+    g_object_set (G_OBJECT (_title_item),
+                  "text", "",
+                  NULL);
+  }
+
+  if (_current_timeslot->GetRefereeList ())
+  {
+    g_object_set (G_OBJECT (_status_item),
+                  "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                  NULL);
+  }
+  else
+  {
+    g_object_set (G_OBJECT (_status_item),
+                  "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                  NULL);
+  }
 
   for (guint i = 0; current != NULL; i++)
   {
@@ -258,9 +243,7 @@ void Piste::RefreshDecoration ()
 // --------------------------------------------------------------------------------
 void Piste::AddReferee (Referee *referee)
 {
-  g_object_set (G_OBJECT (_status_item),
-                "visibility", GOO_CANVAS_ITEM_VISIBLE,
-                NULL);
+  _current_timeslot->AddReferee (referee);
 }
 
 // --------------------------------------------------------------------------------
@@ -380,6 +363,21 @@ gboolean Piste::OnButtonRelease (GooCanvasItem  *item,
   }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Piste::Disable ()
+{
+  GList *current = _time_slots;
+
+  while (current)
+  {
+    TimeSlot *timeslot = (TimeSlot *) current->data;
+
+    timeslot->Cancel ();
+
+    current = g_list_next (current);
+  }
 }
 
 // --------------------------------------------------------------------------------

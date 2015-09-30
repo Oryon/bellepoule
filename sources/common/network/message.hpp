@@ -42,9 +42,15 @@ namespace Net
 
       gchar *GetSender ();
 
+      guint GetUUID ();
+
       void Spread ();
 
       void Recall ();
+
+      void SetPassPhrase (const gchar *passphrase);
+
+      const gchar *GetPassPhrase ();
 
       void SetFitness (const guint value);
 
@@ -70,6 +76,7 @@ namespace Net
     private:
       gboolean  _is_valid;
       GKeyFile *_key_file;
+      gchar    *_passphrase;
   };
 }
 #endif

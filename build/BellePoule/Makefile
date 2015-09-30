@@ -148,7 +148,7 @@ OBJ_LIB += $(SRC:.cpp=.o)
 SRC_MARSHALLER = $(wildcard sources/BellePoule/marshaller/*.cpp)
 OBJ_MARSHALLER = $(SRC_MARSHALLER:.cpp=.o)
 ifeq ($(UBUNTU), windows)
-OBJ_MARSHALLER += sources/BellePoule/windows.o
+OBJ_MARSHALLER += sources/BellePoule/marshaller/marshaller-ico.o
 endif
 
 SRC_SUPERVISOR  = $(wildcard sources/BellePoule/supervisor/*.cpp)
@@ -157,7 +157,7 @@ SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*/*.cpp)
 SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*/*/*.cpp)
 OBJ_SUPERVISOR = $(SRC_SUPERVISOR:.cpp=.o)
 ifeq ($(UBUNTU), windows)
-OBJ_SUPERVISOR += sources/BellePoule/windows.o
+OBJ_SUPERVISOR += sources/BellePoule/supervisor/supervisor-ico.o
 endif
 
 ifeq ($(UBUNTU), windows)
@@ -261,8 +261,8 @@ prepare_www:
 	sed -i 's/bellepouledebug/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop.sh
 
 prepare_windows_resources:
-	mkdir -p $(PACKAGE)/$(RELEASE)/resources
-	cp -f ../../resources/exe.ico $(PACKAGE)/$(RELEASE)/resources
+	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade/images
+	cp -f ../../resources/glade/images/exe.ico $(PACKAGE)/$(RELEASE)/resources/glade/images
 
 prepare_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/translations

@@ -73,7 +73,7 @@ class Contest : public Module
 
     void AddFencer (Player *player);
 
-    Player *GetRefereeFromDndRef (guint ref);
+    Player *GetRefereeFromRef (guint ref);
 
     State GetState ();
 

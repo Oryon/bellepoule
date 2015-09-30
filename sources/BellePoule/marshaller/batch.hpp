@@ -27,16 +27,28 @@ class Job;
 class Batch : public Module
 {
   public:
-    Batch (const gchar *id);
+    class Listener
+    {
+      public:
+        virtual void OnBatchAssignmentRequest (Batch *batch) = 0;
+    };
+
+  public:
+    Batch (const gchar *id,
+           Listener    *listener);
 
     void AttachTo (GtkNotebook *to);
 
-    void LoadJob (Net::Message *message);
+    void Load (Net::Message *message);
 
     void SetVisibility (Job      *job,
                         gboolean  visibility);
 
+    void RemoveJob (Net::Message *message);
+
     guint GetId ();
+
+    GList *RetreiveJobList ();
 
     const gchar *GetName ();
 
@@ -44,7 +56,9 @@ class Batch : public Module
 
     GSList *GetCurrentSelection ();
 
-    GdkColor *GetColor ();
+    void OnAssign ();
+
+    void OnCancelAssign ();
 
   private:
     guint32       _id;
@@ -52,10 +66,12 @@ class Batch : public Module
     guint32       _dnd_key;
     GdkColor     *_gdk_color;
     gchar        *_name;
+    Listener     *_listener;
 
     virtual ~Batch ();
 
-    void LoadJob (xmlNode *xml_node);
+    void LoadJob (xmlNode *xml_node,
+                  guint    uuid);
 
     void SetProperty (Net::Message *message,
                       const gchar  *property);

@@ -14,43 +14,47 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef job_hpp
-#define job_hpp
+#ifndef timeslot_hpp
+#define timeslot_hpp
 
 #include "util/object.hpp"
 
-class Batch;
-class Piste;
+class Job;
+class Referee;
 
-class Job : public Object
+class TimeSlot :
+  public Object,
+  public Object::Listener
 {
   public:
-    Job (Batch    *batch,
-         guint     uuid,
-         GdkColor *gdk_color);
+    class Owner
+    {
+      public:
+        virtual void  OnTimeSlotUpdated (TimeSlot *timeslot) = 0;
+        virtual guint GetId () = 0;
+    };
 
-    void SetName (const gchar *name);
+  public:
+    TimeSlot (Owner *owner);
 
-    const gchar *GetName ();
+    void AddJob (Job *job);
 
-    Batch *GetBatch ();
+    void AddReferee (Referee *referee);
 
-    GdkColor *GetGdkColor ();
+    GList *GetJobList ();
 
-    guint GetUUID ();
+    GList *GetRefereeList ();
 
-    Net::Message *GetRoadMap ();
+    void Cancel ();
 
   private:
-    gchar    *_name;
-    guint     _uuid;
-    GdkColor *_gdk_color;
-    Batch    *_batch;
-    Piste    *_piste;
+    Owner *_owner;
+    GList *_job_list;
+    GList *_referee_list;
 
-    ~Job ();
+    virtual ~TimeSlot ();
 
-    void FeedParcel (Net::Message *parcel);
+    void OnObjectDeleted (Object *object);
 };
 
 #endif

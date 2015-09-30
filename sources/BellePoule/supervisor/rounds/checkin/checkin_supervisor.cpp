@@ -1154,7 +1154,7 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  Player *CheckinSupervisor::GetFencerFromDndRef (guint ref)
+  Player *CheckinSupervisor::GetFencerFromRef (guint ref)
   {
     GSList *current = _player_list;
 
@@ -1162,7 +1162,7 @@ namespace People
     {
       Player *player = (Player *) current->data;
 
-      if (player->GetDndRef () == ref)
+      if (player->GetRef () == ref)
       {
         return player;
       }
@@ -1183,7 +1183,7 @@ namespace People
     {
       GSList  *selected   = GetSelectedPlayers ();
       Player  *fencer     = (Player *) selected->data;
-      guint32  fencer_ref = fencer->GetDndRef ();
+      guint32  fencer_ref = fencer->GetRef ();
 
       gtk_selection_data_set (selection_data,
                               gtk_selection_data_get_target (selection_data),
@@ -1242,8 +1242,8 @@ namespace People
     {
       if (selection_data && (gtk_selection_data_get_length (selection_data) >= 0))
       {
-        guint32 *toto   = (guint32 *) gtk_selection_data_get_data (selection_data);
-        Player  *fencer = GetFencerFromDndRef (*toto);
+        guint32 *ref    = (guint32 *) gtk_selection_data_get_data (selection_data);
+        Player  *fencer = GetFencerFromRef (*ref);
 
         _dnd_config->SetFloatingObject (fencer);
       }

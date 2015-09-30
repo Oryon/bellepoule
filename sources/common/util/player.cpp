@@ -18,7 +18,6 @@
 #include <string.h>
 
 #include "util/attribute.hpp"
-#include "network/cryptor.hpp"
 #include "network/message.hpp"
 
 #include "actors/player_factory.hpp" // !!
@@ -31,9 +30,7 @@ guint Player::_next_ref = 0;
 Player::Player (const gchar *player_class)
   : Object ("Player")
 {
-  _dnd_ref = _next_ref;
-
-  _ref = _next_ref;
+   _ref = _next_ref;
   _next_ref++;
 
   _nb_matchs = 0;
@@ -464,12 +461,6 @@ void Player::RemoveAttribute (AttributeId *attr_id)
 }
 
 // --------------------------------------------------------------------------------
-guint Player::GetDndRef ()
-{
-  return _dnd_ref;
-}
-
-// --------------------------------------------------------------------------------
 guint Player::GetRef ()
 {
   return _ref;
@@ -752,7 +743,7 @@ void Player::FeedParcel (Net::Message *parcel)
 
 // --------------------------------------------------------------------------------
 gboolean Player::SendMessage (const gchar *where,
-                              const gchar *message)
+                              const gchar *msg)
 {
   Player::AttributeId  attr_id ("IP");
   Attribute           *ip_attr = GetAttribute (&attr_id);
@@ -763,7 +754,7 @@ gboolean Player::SendMessage (const gchar *where,
 
     if (ip && (ip[0] != 0))
     {
-      Net::Uploader *uploader;
+      Net::MessageUploader *uploader;
 
       {
         gchar *url;
@@ -777,42 +768,30 @@ gboolean Player::SendMessage (const gchar *where,
           url = g_strdup_printf ("http://%s:35831", ip);
         }
 
-        uploader = new Net::Uploader (url,
-                                      this,
-                                      NULL, NULL);
+        uploader = new Net::MessageUploader (url,
+                                             this);
 
         g_free (url);
       }
 
       {
-        gchar        *encrypted_msg;
-        gchar        *secret_key;
-        guchar       *iv;
-        Net::Cryptor *cryptor       = new Net::Cryptor ();
-        gchar        *full_message  = g_strdup_printf ("%s/%s?ref=%d\n"
-                                                       "%s",
-                                                       where, _player_class, GetRef (),
-                                                       message);
+        Net::Message *message    = new Net::Message ("MessageUploader::raw_content");
+        WifiCode     *wifi_code  = (WifiCode *) GetFlashCode ();
+        gchar        *passphrase = wifi_code->GetKey ();
+        gchar        *content    = g_strdup_printf ("%s/%s?ref=%d\n"
+                                                    "%s",
+                                                    where, _player_class, GetRef (),
+                                                    msg);
 
-        {
-          WifiCode *wifi_code = (WifiCode *) GetFlashCode ();
+        message->SetPassPhrase (passphrase);
+        message->Set ("content",
+                      content);
 
-          secret_key = wifi_code->GetKey ();
-        }
+        uploader->PushMessage (message);
 
-        printf ("%s\n", full_message);
-
-        encrypted_msg = cryptor->Encrypt (full_message,
-                                          secret_key,
-                                          &iv);
-        uploader->UploadString (encrypted_msg,
-                                iv);
-
-        g_free (full_message);
-        g_free (encrypted_msg);
-        g_free (secret_key);
-        g_free (iv);
-        cryptor->Release ();
+        message->Release ();
+        g_free (passphrase);
+        g_free (content);
       }
 
       uploader->Release ();
@@ -836,11 +815,11 @@ void Player::Drop ()
 }
 
 // --------------------------------------------------------------------------------
-void Player::OnUploadStatus (Net::Uploader::PeerStatus peer_status)
+void Player::OnUploadStatus (Net::MessageUploader::PeerStatus peer_status)
 {
-  Player::AttributeId  connection_attr_id ("connection");
+  Player::AttributeId connection_attr_id ("connection");
 
-  if (peer_status == Net::Uploader::CONN_ERROR)
+  if (peer_status == Net::MessageUploader::CONN_ERROR)
   {
     SetAttributeValue (&connection_attr_id,
                        "Broken");

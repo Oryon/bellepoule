@@ -28,6 +28,13 @@ namespace Net
   class Ring
   {
     public:
+      class Listener
+      {
+        public:
+          virtual void OnMessage (Net::Message *message) = 0;
+      };
+
+    public:
       static void Join (const gchar *role,
                         guint        unicast_port,
                         GtkWidget   *partner_indicator);
@@ -40,9 +47,13 @@ namespace Net
 
       static void RecallMessage (Message *message);
 
-      static void Store (Message *message);
-
       static const gchar *GetRole ();
+
+      static void RegisterListener (Listener *listener);
+
+      static void UnregisterListener (Listener *listener);
+
+      static void PostToListener (Net::Message *message);
 
     private:
       Ring ();
@@ -58,6 +69,7 @@ namespace Net
       static GList     *_partner_list;
       static GList     *_message_list;
       static GtkWidget *_partner_indicator;
+      static GList     *_listeners;
 
       static gboolean OnMulticast (Message *message);
 

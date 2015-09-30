@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Yannick Le Roux.
+// Copyright (C) 2011 Yannick Le Roux.
 // This file is part of BellePoule.
 //
 //   BellePoule is free software: you can redistribute it and/or modify
@@ -14,43 +14,40 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef job_hpp
-#define job_hpp
+#ifndef file_upload_hpp
+#define file_upload_hpp
 
-#include "util/object.hpp"
+#include "uploader.hpp"
 
-class Batch;
-class Piste;
-
-class Job : public Object
+namespace Net
 {
-  public:
-    Job (Batch    *batch,
-         guint     uuid,
-         GdkColor *gdk_color);
+  class FileUploader : public Uploader
+  {
+    public:
+      FileUploader (const gchar  *url,
+                    const gchar  *user,
+                    const gchar  *passwd);
 
-    void SetName (const gchar *name);
+      void UploadFile (const gchar *filename);
 
-    const gchar *GetName ();
+    private:
+      gchar *_user;
+      gchar *_passwd;
+      gchar *_drop_dir;
+      gchar *_url;
+      gchar *_filename;
 
-    Batch *GetBatch ();
+      virtual ~FileUploader ();
 
-    GdkColor *GetGdkColor ();
+      void PushMessage (Message *message);
 
-    guint GetUUID ();
+      void SetCurlOptions (CURL *curl);
 
-    Net::Message *GetRoadMap ();
+      const gchar *GetUrl ();
 
-  private:
-    gchar    *_name;
-    guint     _uuid;
-    GdkColor *_gdk_color;
-    Batch    *_batch;
-    Piste    *_piste;
+      static gpointer SenderThread (FileUploader *uploader);
+  };
 
-    ~Job ();
-
-    void FeedParcel (Net::Message *parcel);
-};
-
+}
 #endif
+

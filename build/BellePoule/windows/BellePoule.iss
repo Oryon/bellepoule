@@ -190,7 +190,7 @@ Source: "..\..\..\resources\glade\images\*.png"; DestDir: "{app}\share\{#PRODUCT
 Source: "..\..\..\resources\glade\images\*.jpg"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\images\"; Flags: ignoreversion
 Source: "..\..\..\resources\glade\*.glade"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\"; Flags: ignoreversion
 Source: "..\..\..\resources\countries\*"; DestDir: "{app}\share\{#PRODUCT}\resources\countries\"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\exe.ico"; DestDir: "{app}\share\{#PRODUCT}\resources\"; Flags: ignoreversion
+Source: "..\..\..\resources\glade\images\exe.ico"; DestDir: "{app}\share\{#PRODUCT}\resources\"; Flags: ignoreversion
 
 Source: "..\..\..\resources\localized_data\*"; DestDir: "{app}\share\{#PRODUCT}\resources\localized_data\"; Flags: ignoreversion recursesubdirs
 

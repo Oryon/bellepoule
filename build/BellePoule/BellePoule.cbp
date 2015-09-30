@@ -227,6 +227,12 @@
 		<Unit filename="../../sources/BellePoule/marshaller/piste.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/timeslot.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/timeslot.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/attendees.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
@@ -479,6 +485,12 @@
 		<Unit filename="../../sources/common/network/downloader.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/file_uploader.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/file_uploader.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/http_server.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
@@ -489,6 +501,12 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/message.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/message_uploader.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/message_uploader.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/partner.cpp">

@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "network/ring.hpp"
 #include "rounds/barrage/barrage.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "rounds/classification/general_classification.hpp"
@@ -120,10 +121,9 @@ gboolean BellPouleApp::OnHttpPost (Net::Message *message)
 {
   if (Application::OnHttpPost (message) == FALSE)
   {
-    if (_tournament)
-    {
-      return _tournament->OnHttpPost (message->GetString ("content"));
-    }
+    Net::Ring::PostToListener (message);
+
+    return _tournament->OnHttpPost (message);
   }
 
   return FALSE;

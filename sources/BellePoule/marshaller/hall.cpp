@@ -14,13 +14,15 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "actors/referee.hpp"
 #include "job.hpp"
 #include "batch.hpp"
+#include "referee_pool.hpp"
 
 #include "hall.hpp"
 
 // --------------------------------------------------------------------------------
-Hall::Hall ()
+Hall::Hall (RefereePool *referee_pool)
   : CanvasModule ("hall.glade")
 {
   _piste_list    = NULL;
@@ -32,6 +34,20 @@ Hall::Hall ()
              2.0);
 
   _batch_list = NULL;
+
+  _referee_pool = referee_pool;
+
+  {
+    GtkScale *scale = GTK_SCALE (_glade->GetWidget ("timeline"));
+
+    for (guint i = 0; i <= 10; i++)
+    {
+      gtk_scale_add_mark (scale,
+                          i*10,
+                          GTK_POS_BOTTOM,
+                          NULL);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -98,12 +114,10 @@ Object *Hall::GetDropObjectFromRef (guint32 ref,
 {
   if (strcmp (g_quark_to_string (key), "bellepoule/referee") == 0)
   {
-    printf ("====> %d\n", ref);
-    return this;
+    return _referee_pool->GetReferee (ref);
   }
   else if (strcmp (g_quark_to_string (key), "bellepoule/job") == 0)
   {
-    printf ("====> %d\n", ref);
     return GetBatch (ref);
   }
 
@@ -140,7 +154,12 @@ void Hall::DropObject (Object   *object,
   }
 
   {
-    piste->AddReferee (NULL);
+    Referee *refere = dynamic_cast <Referee *> (object);
+
+    if (refere)
+    {
+      piste->AddReferee (refere);
+    }
   }
 }
 
@@ -156,7 +175,8 @@ void Hall::ManageContest (Net::Message *message,
 
     if (batch == NULL)
     {
-      batch = new Batch (id);
+      batch = new Batch (id,
+                         this);
 
       _batch_list = g_list_prepend (_batch_list,
                                     batch);
@@ -202,10 +222,42 @@ void Hall::ManageJob (Net::Message *message)
 
   if (batch)
   {
-    batch->LoadJob (message);
+    batch->Load (message);
   }
 
   g_free (id);
+}
+
+// --------------------------------------------------------------------------------
+void Hall::DropJob (Net::Message *message)
+{
+  guint32 contest_id;
+
+  {
+    gchar *id = message->GetString ("contest");
+
+    contest_id = (guint32) g_ascii_strtoull (id,
+                                             NULL,
+                                             16);
+    g_free (id);
+  }
+
+  {
+    GList *current = _batch_list;
+
+    while (current)
+    {
+      Batch *batch = (Batch *) current->data;
+
+      if (batch->GetId () == contest_id)
+      {
+        batch->RemoveJob (message);
+        break;
+      }
+
+      current = g_list_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -377,6 +429,7 @@ void Hall::RemovePiste (Piste *piste)
       _piste_list = g_list_remove_link (_piste_list,
                                         node);
 
+      piste->Disable ();
       piste->Release ();
     }
   }
@@ -500,6 +553,31 @@ gboolean Hall::OnMotionNotify (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
+void Hall::OnBatchAssignmentRequest (Batch *batch)
+{
+  GList *job_list      = batch->RetreiveJobList ();
+  GList *current_job   = job_list;
+  GList *current_piste = _piste_list;
+
+  while (current_job && current_piste)
+  {
+    Job   *job   = (Job *) current_job->data;
+    Piste *piste = (Piste *) current_piste->data;
+
+    piste->AddJob (job);
+
+    current_job   = g_list_next (current_job);
+    current_piste = g_list_next (current_piste);
+    if (current_piste == NULL)
+    {
+      current_piste = _piste_list;
+    }
+  }
+
+  g_list_free (job_list);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_add_piste_button_clicked (GtkWidget *widget,
                                                              Object    *owner)
 {
@@ -524,4 +602,36 @@ extern "C" G_MODULE_EXPORT void on_remove_piste_button_clicked (GtkWidget *widge
   Hall *h = dynamic_cast <Hall *> (owner);
 
   h->RemoveSelected ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT gchar *on_timeline_format_value (GtkScale *scale,
+                                                            gdouble   value)
+{
+  return g_strdup_printf ("T0+%02d\'", (guint) value);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_timeline_value_changed (GtkRange *range,
+                                                           gpointer  user_data)
+{
+  guint value = (guint) gtk_range_get_value (range);
+  guint delta = value % 10;
+
+  if (delta)
+  {
+    if (delta > 5)
+    {
+      gtk_range_set_value (range,
+                           value + 10 - (value%10));
+    }
+    else
+    {
+      gtk_range_set_value (range,
+                           value - (value%10));
+    }
+  }
+  else
+  {
+  }
 }

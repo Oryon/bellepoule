@@ -42,6 +42,7 @@ namespace Net
   GList     *Ring::_partner_list      = NULL;
   GList     *Ring::_message_list      = NULL;
   GtkWidget *Ring::_partner_indicator = NULL;
+  GList     *Ring::_listeners         = NULL;
 
   // --------------------------------------------------------------------------------
   Ring::Ring ()
@@ -365,14 +366,14 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::Synchronize (Partner *partner)
   {
-    GList *current = _message_list;
+    GList *current = g_list_last (_message_list);
 
     while (current)
     {
       Message *message = (Message *) current->data;
 
       partner->SendMessage (message);
-      current = g_list_next (current);
+      current = g_list_previous (current);
     }
   }
 
@@ -407,37 +408,49 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::RecallMessage (Message *message)
   {
-    message->SetFitness (0);
-    Send (message);
+    GList *node = g_list_find (_message_list,
+                               message);
 
+    if (node)
     {
-      GList *node = g_list_find (_message_list,
-                                 message);
+      message->SetFitness (0);
+      Send (message);
 
-      if (node)
-      {
-        _message_list = g_list_delete_link (_message_list,
-                                            node);
-      }
+      _message_list = g_list_delete_link (_message_list,
+                                          node);
     }
   }
 
   // -------------------------------------------------------------------------------
-  void Ring::Store (Message *message)
+  void Ring::RegisterListener (Listener *listener)
   {
-    GList *current = _partner_list;
-    gchar *role    = message->GetSender ();
+    _listeners = g_list_prepend (_listeners,
+                                 listener);
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::UnregisterListener (Listener *listener)
+  {
+    GList *node = g_list_find (_listeners,
+                               listener);
+
+    if (node)
+    {
+      _listeners = g_list_delete_link (_listeners,
+                                       node);
+    }
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::PostToListener (Net::Message *message)
+  {
+    GList *current = _listeners;
 
     while (current)
     {
-      Partner *partner = (Partner *) current->data;
+      Listener *listener = (Listener *) current->data;
 
-      if (partner->HasRole (role))
-      {
-        partner->Store (message);
-        break;
-      }
-
+      listener->OnMessage (message);
       current = g_list_next (current);
     }
   }
