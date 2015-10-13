@@ -784,7 +784,7 @@ Public License instead of this License.  But first, please read
   <object class="GtkImage" id="image14">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">images/marshaller-small.png</property>
+    <property name="stock">gtk-network</property>
   </object>
   <object class="GtkImage" id="image15">
     <property name="visible">True</property>
@@ -1665,7 +1665,6 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
             </child>
             <child>
               <object class="GtkImageMenuItem" id="ring_menuitem">
-                <property name="label" translatable="yes">Referees</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">False</property>

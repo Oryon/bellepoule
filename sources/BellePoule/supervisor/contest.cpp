@@ -1794,13 +1794,19 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                                    &result_matrix);
   }
 
-  goo_canvas_rect_new (goo_canvas_get_root_item (canvas),
-                       0.0, 0.0,
-                       100.0, PRINT_HEADER_HEIGHT,
-                       "stroke-color", "grey",
-                       "fill-color", gdk_color_to_string (_gdk_color),
-                       "line-width", 0.3,
-                       NULL);
+  {
+    gchar *color = gdk_color_to_string (_gdk_color);
+
+    goo_canvas_rect_new (goo_canvas_get_root_item (canvas),
+                         0.0, 0.0,
+                         100.0, PRINT_HEADER_HEIGHT,
+                         "stroke-color", "grey",
+                         "fill-color", color,
+                         "line-width", 0.3,
+                         NULL);
+
+    g_free (color);
+  }
 
   {
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),

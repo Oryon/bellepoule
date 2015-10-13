@@ -35,14 +35,10 @@ Piste::Piste (GooCanvasItem *parent,
               Module        *container)
   : DropZone (container)
 {
-  _horizontal   = TRUE;
-  _listener     = NULL;
-  _time_slots   = NULL;
-  _referee_list = NULL;
-
-  _current_timeslot = new TimeSlot (this);
-  _time_slots = g_list_append (_time_slots,
-                               _current_timeslot);
+  _horizontal       = TRUE;
+  _listener         = NULL;
+  _timeslots        = NULL;
+  _current_timeslot = NULL;
 
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
@@ -141,10 +137,8 @@ Piste::Piste (GooCanvasItem *parent,
 // --------------------------------------------------------------------------------
 Piste::~Piste ()
 {
-  g_list_free_full (_time_slots,
+  g_list_free_full (_timeslots,
                     (GDestroyNotify) TryToRelease);
-
-  g_list_free (_referee_list);
 
   goo_canvas_item_remove (_root_item);
   g_free (_color);
@@ -158,98 +152,183 @@ void Piste::SetListener (Listener *listener)
 }
 
 // --------------------------------------------------------------------------------
-void Piste::AddJob (Job *job)
+void Piste::ScheduleJob (Job *job)
 {
-  _current_timeslot->AddJob (job);
+  TimeSlot *timeslot = GetFreeTimeslot ();
+
+  timeslot->AddJob (job);
 }
 
 // --------------------------------------------------------------------------------
-void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
+void Piste::SetCurrentTimeslot (GDateTime *start_time)
 {
-  GString     *match_name = g_string_new ("");
-  GList       *current    = _current_timeslot->GetJobList ();
-  const gchar *last_name  = NULL;
+  GList *current = _timeslots;
 
+  _current_timeslot = NULL;
+  while (current)
   {
-    g_free (_color);
-    _color = g_strdup ("lightgrey");
-    SetColor (_color);
+    TimeSlot *timeslot = (TimeSlot *) current->data;
 
-    g_object_set (G_OBJECT (_title_item),
-                  "text", "",
-                  NULL);
-  }
-
-  if (_current_timeslot->GetRefereeList ())
-  {
-    g_object_set (G_OBJECT (_status_item),
-                  "visibility", GOO_CANVAS_ITEM_VISIBLE,
-                  NULL);
-  }
-  else
-  {
-    g_object_set (G_OBJECT (_status_item),
-                  "visibility", GOO_CANVAS_ITEM_INVISIBLE,
-                  NULL);
-  }
-
-  for (guint i = 0; current != NULL; i++)
-  {
-    Job *job = (Job *) current->data;
-
-    if (i == 0)
+    if (g_date_time_compare (timeslot->GetStartTime (),
+                             start_time) <= 0)
     {
+      GDateTime *end_time = g_date_time_add (timeslot->GetStartTime (),
+                                             timeslot->GetDuration  ());
+
+      if (g_date_time_compare (start_time,
+                               end_time) <= 0)
       {
-        g_free (_color);
-        _color = gdk_color_to_string (job->GetGdkColor ());
-
-        SetColor (_color);
+        _current_timeslot = timeslot;
+        g_free (end_time);
+        break;
       }
-
-      {
-        Batch *batch = job->GetBatch ();
-
-        g_object_set (G_OBJECT (_title_item),
-                      "text", batch->GetName (),
-                      NULL);
-      }
-
-      g_string_append (match_name, job->GetName ());
-    }
-    else
-    {
-      if (i == 1)
-      {
-        g_string_append (match_name, " ... ");
-      }
-
-      last_name = job->GetName ();
+      g_free (end_time);
     }
 
     current = g_list_next (current);
   }
 
-  if (last_name)
+  if (_current_timeslot == NULL)
   {
-    g_string_append (match_name, last_name);
+    _current_timeslot = new TimeSlot (this,
+                                      start_time);
+  }
+}
+
+// --------------------------------------------------------------------------------
+TimeSlot *Piste::GetFreeTimeslot ()
+{
+  TimeSlot  *free_timeslot;
+  GList     *last_node     = g_list_last (_timeslots);
+  GDateTime *start_time;
+
+  if (last_node)
+  {
+    TimeSlot *last = (TimeSlot *) last_node->data;
+
+    start_time = g_date_time_add (last->GetStartTime (),
+                                  last->GetDuration ());
+  }
+  else
+  {
+    start_time = g_date_time_new_now_local ();
   }
 
-  g_object_set (G_OBJECT (_match_item),
-                "text", match_name->str,
-                NULL);
-  g_string_free (match_name, TRUE);
+  free_timeslot = new TimeSlot (this,
+                                start_time);
+  _timeslots = g_list_append (_timeslots,
+                               free_timeslot);
+
+  return free_timeslot;
+}
+
+// --------------------------------------------------------------------------------
+void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
+{
+  if (timeslot == _timeslots->data)
+  {
+    GString     *match_name = g_string_new ("");
+    GList       *current    = timeslot->GetJobList ();
+    const gchar *last_name  = NULL;
+
+    {
+      g_free (_color);
+      _color = g_strdup ("lightgrey");
+      SetColor (_color);
+
+      g_object_set (G_OBJECT (_title_item),
+                    "text", "",
+                    NULL);
+    }
+
+    if (timeslot->GetRefereeList ())
+    {
+      g_object_set (G_OBJECT (_status_item),
+                    "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                    NULL);
+    }
+    else
+    {
+      g_object_set (G_OBJECT (_status_item),
+                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                    NULL);
+    }
+
+    for (guint i = 0; current != NULL; i++)
+    {
+      Job *job = (Job *) current->data;
+
+      if (i == 0)
+      {
+        {
+          g_free (_color);
+          _color = gdk_color_to_string (job->GetGdkColor ());
+
+          SetColor (_color);
+        }
+
+        {
+          Batch *batch = job->GetBatch ();
+
+          g_object_set (G_OBJECT (_title_item),
+                        "text", batch->GetName (),
+                        NULL);
+        }
+
+        g_string_append (match_name, job->GetName ());
+      }
+      else
+      {
+        if (i == 1)
+        {
+          g_string_append (match_name, " ... ");
+        }
+
+        last_name = job->GetName ();
+      }
+
+      current = g_list_next (current);
+    }
+
+    if (last_name)
+    {
+      g_string_append (match_name, last_name);
+    }
+
+    g_object_set (G_OBJECT (_match_item),
+                  "text", match_name->str,
+                  NULL);
+    g_string_free (match_name, TRUE);
+  }
+
+  if (timeslot->GetJobList () == NULL)
+  {
+    GList *node = g_list_find (_timeslots,
+                               timeslot);
+
+    if (node)
+    {
+      _timeslots = g_list_delete_link (_timeslots,
+                                        node);
+    }
+    timeslot->Release ();
+  }
+
 }
 
 // --------------------------------------------------------------------------------
 void Piste::AddReferee (Referee *referee)
 {
-  _current_timeslot->AddReferee (referee);
+  TimeSlot *timeslot = GetFreeTimeslot ();
+
+  timeslot->AddReferee (referee);
 }
 
 // --------------------------------------------------------------------------------
 void Piste::RemoveBatch (Batch *batch)
 {
-  GList *current_timeslot = _time_slots;
+  GList *timeslot_list    = g_list_copy (_timeslots);
+  GList *current_timeslot = timeslot_list;
 
   while (current_timeslot)
   {
@@ -276,6 +355,8 @@ void Piste::RemoveBatch (Batch *batch)
 
     current_timeslot = g_list_next (current_timeslot);
   }
+
+  g_list_free (timeslot_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -400,7 +481,7 @@ gboolean Piste::OnButtonRelease (GooCanvasItem  *item,
 // --------------------------------------------------------------------------------
 void Piste::Disable ()
 {
-  GList *current = _time_slots;
+  GList *current = _timeslots;
 
   while (current)
   {
@@ -527,4 +608,30 @@ gint Piste::CompareJob (Job *a,
                         Job *b)
 {
   return strcmp (a->GetName (), b->GetName ());
+}
+
+// --------------------------------------------------------------------------------
+gint Piste::CompareAvailbility (Piste *a,
+                                Piste *b)
+{
+  GList *timeslot_a = g_list_last (a->_timeslots);
+  GList *timeslot_b = g_list_last (b->_timeslots);
+
+  if (timeslot_a && timeslot_b)
+  {
+    return TimeSlot::CompareAvailbility ((TimeSlot *) timeslot_a->data,
+                                         (TimeSlot *) timeslot_b->data);
+  }
+  else if (timeslot_a == timeslot_b)
+  {
+    return a->_id - b->_id;
+  }
+  else if (timeslot_b == NULL)
+  {
+    return 1;
+  }
+  else
+  {
+    return -1;
+  }
 }

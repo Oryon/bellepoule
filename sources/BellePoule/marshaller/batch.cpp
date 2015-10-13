@@ -32,8 +32,10 @@ Batch::Batch (const gchar *id,
               Listener    *listener)
   : Module ("batch.glade")
 {
-  _name     = NULL;
-  _listener = listener;
+  _name           = NULL;
+  _listener       = listener;
+  _scheduled_list = NULL;
+  _pending_list   = NULL;
 
   _id = (guint32) g_ascii_strtoull (id,
                                     NULL,
@@ -69,6 +71,9 @@ Batch::~Batch ()
   gdk_color_free (_gdk_color);
   g_free (_name);
 
+  g_list_free (_scheduled_list);
+  g_list_free (_pending_list);
+
   {
     GtkTreeIter iter;
     gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
@@ -97,6 +102,12 @@ Batch::~Batch ()
 guint32 Batch::GetId ()
 {
   return _id;
+}
+
+// --------------------------------------------------------------------------------
+GdkColor *Batch::GetColor ()
+{
+  return _gdk_color;
 }
 
 // --------------------------------------------------------------------------------
@@ -218,6 +229,28 @@ void Batch::SetVisibility (Job      *job,
       gtk_list_store_set (_job_store, &iter,
                           JOB_visibility, visibility,
                           -1);
+
+      if (visibility == FALSE)
+      {
+        GList *node = g_list_find (_pending_list,
+                                   job);
+        _pending_list = g_list_delete_link (_pending_list,
+                                            node);
+
+        _scheduled_list = g_list_insert_sorted (_scheduled_list,
+                                                job,
+                                                (GCompareFunc) Job::CompareStartTime);
+      }
+      else
+      {
+        GList *node = g_list_find (_scheduled_list,
+                                   job);
+        _scheduled_list = g_list_delete_link (_scheduled_list,
+                                              node);
+
+        _pending_list = g_list_prepend (_pending_list,
+                                        job);
+      }
       break;
     }
 
@@ -227,35 +260,15 @@ void Batch::SetVisibility (Job      *job,
 }
 
 // --------------------------------------------------------------------------------
-GList *Batch::RetreiveJobList ()
+GList *Batch::GetScheduledJobs ()
 {
-  GList       *list = NULL;
-  GtkTreeIter  iter;
-  gboolean     iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
-                                                              &iter);
+  return _scheduled_list;
+}
 
-  while (iter_is_valid)
-  {
-    Job      *current_job;
-    gboolean  visibility;
-
-    gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
-                        &iter,
-                        JOB_ptr,        &current_job,
-                        JOB_visibility, &visibility,
-                        -1);
-
-    if (visibility)
-    {
-      list = g_list_append (list,
-                            current_job);
-    }
-
-    iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
-                                              &iter);
-  }
-
-  return list;
+// --------------------------------------------------------------------------------
+GList *Batch::GetPendingJobs ()
+{
+  return _pending_list;
 }
 
 // --------------------------------------------------------------------------------
@@ -369,6 +382,9 @@ void Batch::LoadJob (xmlNode *xml_node,
                             JOB_visibility, 1,
                             -1);
         g_free (name);
+
+        _pending_list = g_list_append (_pending_list,
+                                       job);
       }
 
       LoadJob (n->children,

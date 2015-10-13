@@ -23,6 +23,7 @@
 #include "batch.hpp"
 
 class RefereePool;
+class Timeline;
 
 class Hall :
   public CanvasModule,
@@ -54,8 +55,6 @@ class Hall :
 
     void DropJob (Net::Message *message);
 
-    void AssignBatch (Batch *batch);
-
   private:
     GooCanvasItem *_root;
     GList         *_piste_list;
@@ -65,6 +64,7 @@ class Hall :
     gdouble        _drag_y;
     GList         *_batch_list;
     RefereePool   *_referee_pool;
+    Timeline      *_timeline;
 
     ~Hall ();
 

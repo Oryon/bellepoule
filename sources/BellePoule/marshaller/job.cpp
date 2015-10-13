@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/message.hpp"
+#include "timeslot.hpp"
 
 #include "job.hpp"
 
@@ -44,6 +45,18 @@ Job::~Job ()
 void Job::SetName (const gchar *name)
 {
   _name = g_strdup (name);
+}
+
+// --------------------------------------------------------------------------------
+void Job::SetTimslot (TimeSlot *timeslot)
+{
+  _timeslot = timeslot;
+}
+
+// --------------------------------------------------------------------------------
+TimeSlot *Job::GetTimslot ()
+{
+  return _timeslot;
 }
 
 // --------------------------------------------------------------------------------
@@ -77,6 +90,12 @@ GdkColor *Job::GetGdkColor ()
 }
 
 // --------------------------------------------------------------------------------
-void Job::FeedParcel (Net::Message *parcel)
+gint Job::CompareStartTime (Job *a,
+                            Job *b)
 {
+  TimeSlot *timeslot_a = a->GetTimslot ();
+  TimeSlot *timeslot_b = b->GetTimslot ();
+
+  return g_date_time_compare (timeslot_a->GetStartTime (),
+                              timeslot_b->GetStartTime ());
 }

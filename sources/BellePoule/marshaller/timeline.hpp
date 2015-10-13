@@ -14,48 +14,30 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef job_hpp
-#define job_hpp
+#ifndef timeline_hpp
+#define timeline_hpp
 
-#include "util/object.hpp"
+#include "util/canvas_module.hpp"
 
 class Batch;
-class TimeSlot;
 
-class Job : public Object
+class Timeline : public CanvasModule
 {
   public:
-    Job (Batch    *batch,
-         guint     uuid,
-         GdkColor *gdk_color);
+    Timeline ();
 
-    void SetName (const gchar *name);
+    void AddBatch (Batch *batch);
 
-    void SetTimslot (TimeSlot *timeslot);
+    void RemoveBatch (Batch *batch);
 
-    TimeSlot *GetTimslot ();
-
-    const gchar *GetName ();
-
-    Batch *GetBatch ();
-
-    GdkColor *GetGdkColor ();
-
-    guint GetUUID ();
-
-    Net::Message *GetRoadMap ();
-
-    static gint CompareStartTime (Job *a,
-                                  Job *b);
+    void Redraw ();
 
   private:
-    gchar    *_name;
-    guint     _uuid;
-    GdkColor *_gdk_color;
-    Batch    *_batch;
-    TimeSlot *_timeslot;
+    GList *_batch_list;
 
-    ~Job ();
+    ~Timeline ();
+
+    void OnPlugged ();
 };
 
 #endif

@@ -49,7 +49,9 @@ class Batch : public Module
 
     guint GetId ();
 
-    GList *RetreiveJobList ();
+    GList *GetScheduledJobs ();
+
+    GList *GetPendingJobs ();
 
     const gchar *GetName ();
 
@@ -61,6 +63,8 @@ class Batch : public Module
 
     void OnCancelAssign ();
 
+    GdkColor *GetColor ();
+
   private:
     guint32       _id;
     GtkListStore *_job_store;
@@ -68,6 +72,8 @@ class Batch : public Module
     GdkColor     *_gdk_color;
     gchar        *_name;
     Listener     *_listener;
+    GList        *_scheduled_list;
+    GList        *_pending_list;
 
     virtual ~Batch ();
 
