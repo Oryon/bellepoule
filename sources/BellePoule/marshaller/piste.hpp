@@ -52,13 +52,13 @@ class Piste :
 
     void RemoveBatch (Batch *batch);
 
-    void SetCurrentTimeslot (GDateTime *start_time);
-
     void Disable ();
 
     void Select ();
 
     void UnSelect ();
+
+    void DisplayAtTime (GDateTime *time);
 
     void Translate (gdouble tx,
                     gdouble ty);
@@ -117,6 +117,8 @@ class Piste :
     void OnTimeSlotUpdated (TimeSlot *timeslot);
 
     TimeSlot *GetFreeTimeslot ();
+
+    TimeSlot *GetTimeslotAt (GDateTime *time);
 
     static gboolean OnButtonPress (GooCanvasItem  *item,
                                    GooCanvasItem  *target,

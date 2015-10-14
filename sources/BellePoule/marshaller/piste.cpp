@@ -160,11 +160,10 @@ void Piste::ScheduleJob (Job *job)
 }
 
 // --------------------------------------------------------------------------------
-void Piste::SetCurrentTimeslot (GDateTime *start_time)
+TimeSlot *Piste::GetTimeslotAt (GDateTime *start_time)
 {
   GList *current = _timeslots;
 
-  _current_timeslot = NULL;
   while (current)
   {
     TimeSlot *timeslot = (TimeSlot *) current->data;
@@ -178,21 +177,24 @@ void Piste::SetCurrentTimeslot (GDateTime *start_time)
       if (g_date_time_compare (start_time,
                                end_time) <= 0)
       {
-        _current_timeslot = timeslot;
-        g_free (end_time);
-        break;
+        g_date_time_unref (end_time);
+        return timeslot;
       }
-      g_free (end_time);
+     g_date_time_unref (end_time);
     }
 
     current = g_list_next (current);
   }
 
-  if (_current_timeslot == NULL)
-  {
-    _current_timeslot = new TimeSlot (this,
-                                      start_time);
-  }
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Piste::DisplayAtTime (GDateTime *time)
+{
+  _current_timeslot = GetTimeslotAt (time);
+
+  OnTimeSlotUpdated (_current_timeslot);
 }
 
 // --------------------------------------------------------------------------------
@@ -225,10 +227,8 @@ TimeSlot *Piste::GetFreeTimeslot ()
 // --------------------------------------------------------------------------------
 void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 {
-  if (timeslot == _timeslots->data)
   {
     GString     *match_name = g_string_new ("");
-    GList       *current    = timeslot->GetJobList ();
     const gchar *last_name  = NULL;
 
     {
@@ -241,7 +241,7 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
                     NULL);
     }
 
-    if (timeslot->GetRefereeList ())
+    if (timeslot && timeslot->GetRefereeList ())
     {
       g_object_set (G_OBJECT (_status_item),
                     "visibility", GOO_CANVAS_ITEM_VISIBLE,
@@ -254,40 +254,45 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
                     NULL);
     }
 
-    for (guint i = 0; current != NULL; i++)
+    if (timeslot)
     {
-      Job *job = (Job *) current->data;
+      GList *current = timeslot->GetJobList ();
 
-      if (i == 0)
+      for (guint i = 0; current != NULL; i++)
       {
-        {
-          g_free (_color);
-          _color = gdk_color_to_string (job->GetGdkColor ());
+        Job *job = (Job *) current->data;
 
-          SetColor (_color);
+        if (i == 0)
+        {
+          {
+            g_free (_color);
+            _color = gdk_color_to_string (job->GetGdkColor ());
+
+            SetColor (_color);
+          }
+
+          {
+            Batch *batch = job->GetBatch ();
+
+            g_object_set (G_OBJECT (_title_item),
+                          "text", batch->GetName (),
+                          NULL);
+          }
+
+          g_string_append (match_name, job->GetName ());
+        }
+        else
+        {
+          if (i == 1)
+          {
+            g_string_append (match_name, " ... ");
+          }
+
+          last_name = job->GetName ();
         }
 
-        {
-          Batch *batch = job->GetBatch ();
-
-          g_object_set (G_OBJECT (_title_item),
-                        "text", batch->GetName (),
-                        NULL);
-        }
-
-        g_string_append (match_name, job->GetName ());
+        current = g_list_next (current);
       }
-      else
-      {
-        if (i == 1)
-        {
-          g_string_append (match_name, " ... ");
-        }
-
-        last_name = job->GetName ();
-      }
-
-      current = g_list_next (current);
     }
 
     if (last_name)
@@ -301,7 +306,7 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
     g_string_free (match_name, TRUE);
   }
 
-  if (timeslot->GetJobList () == NULL)
+  if (timeslot && (timeslot->GetJobList () == NULL))
   {
     GList *node = g_list_find (_timeslots,
                                timeslot);
@@ -309,11 +314,10 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
     if (node)
     {
       _timeslots = g_list_delete_link (_timeslots,
-                                        node);
+                                       node);
     }
     timeslot->Release ();
   }
-
 }
 
 // --------------------------------------------------------------------------------
