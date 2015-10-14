@@ -19,6 +19,7 @@
 
 #include "job.hpp"
 #include "batch.hpp"
+#include "timeslot.hpp"
 
 typedef enum
 {

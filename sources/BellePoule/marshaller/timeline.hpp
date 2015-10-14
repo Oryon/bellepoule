@@ -33,11 +33,39 @@ class Timeline : public CanvasModule
     void Redraw ();
 
   private:
-    GList *_batch_list;
+    static const guint HOURS_MONITORED = 10;
+
+    GList         *_batch_list;
+    gdouble        _cursor_x;
+    GtkAllocation  _allocation;
+    gdouble        _time_scale;
+    gdouble        _batch_scale;
+    GDateTime     *_origin;
 
     ~Timeline ();
 
     void OnPlugged ();
+
+    void DrawTimes ();
+
+    void DrawCursors ();
+
+    void DrawSlots ();
+
+    static gboolean OnButtonPress (GooCanvasItem  *item,
+                                   GooCanvasItem  *target,
+                                   GdkEventButton *event,
+                                   Timeline       *timeline);
+
+    static gboolean OnButtonRelease (GooCanvasItem  *item,
+                                     GooCanvasItem  *target,
+                                     GdkEventButton *event,
+                                     Timeline       *timeline);
+
+    static gboolean OnMotion (GooCanvasItem  *item,
+                              GooCanvasItem  *target_item,
+                              GdkEventMotion *event,
+                              Timeline       *timeline);
 };
 
 #endif

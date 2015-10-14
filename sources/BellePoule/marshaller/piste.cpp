@@ -207,7 +207,7 @@ TimeSlot *Piste::GetFreeTimeslot ()
     TimeSlot *last = (TimeSlot *) last_node->data;
 
     start_time = g_date_time_add (last->GetStartTime (),
-                                  last->GetDuration ());
+                                  last->GetDuration () + 5*G_TIME_SPAN_MINUTE);
   }
   else
   {

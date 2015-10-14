@@ -94,7 +94,7 @@ void TimeSlot::AddJob (Job *job)
 {
   _job_list = g_list_append (_job_list,
                              job);
-  _duration += 10*60*1000*1000;
+  _duration += 30*G_TIME_SPAN_MINUTE;
 
   job->AddObjectListener (this);
   job->SetTimslot        (this);
