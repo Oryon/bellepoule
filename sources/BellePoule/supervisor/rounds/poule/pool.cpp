@@ -124,6 +124,12 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  guint Pool::GetPiste ()
+  {
+    return _piste;
+  }
+
+  // --------------------------------------------------------------------------------
   void Pool::Wipe ()
   {
     if (_score_collector)
@@ -2101,7 +2107,14 @@ namespace Pool
   {
     if (message->GetInteger ("listener") == _parcel->GetUUID ())
     {
-      _piste = message->GetInteger ("piste");
+      if (message->GetFitness () > 0)
+      {
+        _piste = message->GetInteger ("piste");
+      }
+      else
+      {
+        _piste = 0;
+      }
 
       if (_roadmap_listener)
       {

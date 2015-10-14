@@ -18,6 +18,7 @@
 #include "job.hpp"
 #include "batch.hpp"
 #include "referee_pool.hpp"
+#include "timeline.hpp"
 
 #include "hall.hpp"
 
@@ -31,23 +32,20 @@ Hall::Hall (RefereePool *referee_pool)
   _dragging = FALSE;
 
   SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")),
-             2.0);
+             1.5);
 
   _batch_list = NULL;
 
   _referee_pool = referee_pool;
 
   {
-    GtkScale *scale = GTK_SCALE (_glade->GetWidget ("timeline"));
+    _timeline = new Timeline (this);
 
-    for (guint i = 0; i <= 10; i++)
-    {
-      gtk_scale_add_mark (scale,
-                          i*10,
-                          GTK_POS_BOTTOM,
-                          NULL);
-    }
+    Plug (_timeline,
+          _glade->GetWidget ("timeline_viewport"));
   }
+
+  OnTimelineCursorMoved ();
 }
 
 // --------------------------------------------------------------------------------
@@ -58,6 +56,8 @@ Hall::~Hall ()
 
   g_list_free_full (_batch_list,
                     (GDestroyNotify) Object::TryToRelease);
+
+  _timeline->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ void Hall::DropObject (Object   *object,
       {
         Job *job = (Job *) current->data;
 
-        piste->AddJob (job);
+        piste->ScheduleJob (job);
 
         current = g_slist_next (current);
       }
@@ -182,6 +182,7 @@ void Hall::ManageContest (Net::Message *message,
                                     batch);
 
       batch->AttachTo (notebook);
+      _timeline->AddBatch (batch);
     }
 
     batch->SetProperties (message);
@@ -207,6 +208,7 @@ void Hall::DropContest (Net::Message *message)
       _batch_list = g_list_delete_link (_batch_list,
                                         node);
 
+      _timeline->RemoveBatch (batch);
       batch->Release ();
     }
 
@@ -268,12 +270,8 @@ void Hall::AddPiste ()
 
   piste->SetListener (this);
 
-  {
-    _drop_zones = g_slist_append (_drop_zones,
-                                  piste);
-
-    piste->Draw (GetRootItem ());
-  }
+  _drop_zones = g_slist_append (_drop_zones,
+                                piste);
 
   {
     GList *before = _piste_list;
@@ -360,6 +358,8 @@ void Hall::RemoveSelected ()
 
   g_list_free (_selected_list);
   _selected_list = NULL;
+
+  Timeline::Redraw (_timeline);
 }
 
 // --------------------------------------------------------------------------------
@@ -555,26 +555,101 @@ gboolean Hall::OnMotionNotify (GooCanvasItem  *item,
 // --------------------------------------------------------------------------------
 void Hall::OnBatchAssignmentRequest (Batch *batch)
 {
-  GList *job_list      = batch->RetreiveJobList ();
-  GList *current_job   = job_list;
-  GList *current_piste = _piste_list;
+  GtkWidget *dialog = _glade->GetWidget ("job_dialog");
 
-  while (current_job && current_piste)
   {
-    Job   *job   = (Job *) current_job->data;
-    Piste *piste = (Piste *) current_piste->data;
+    GtkSpinButton *hour   = GTK_SPIN_BUTTON (_glade->GetWidget ("hour_spinbutton"));
+    GtkSpinButton *minute = GTK_SPIN_BUTTON (_glade->GetWidget ("minute_spinbutton"));
 
-    piste->AddJob (job);
+    GDateTime *time = g_date_time_new_now_local ();
 
-    current_job   = g_list_next (current_job);
-    current_piste = g_list_next (current_piste);
-    if (current_piste == NULL)
+    gtk_spin_button_set_value  (hour, g_date_time_get_hour     (time));
+    gtk_spin_button_set_value  (minute, g_date_time_get_minute (time));
+  }
+
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
+  {
+    if (_piste_list)
     {
-      current_piste = _piste_list;
+      GList *pending_jobs  = g_list_copy (batch->GetPendingJobs ());
+      GList *current_job   = pending_jobs;
+      GList *current_piste = NULL;
+
+      while (current_job)
+      {
+        Job   *job   = (Job *) current_job->data;
+        Piste *piste;
+
+        if (current_piste == NULL)
+        {
+          _piste_list = g_list_sort (_piste_list,
+                                     (GCompareFunc) Piste::CompareAvailbility);
+          current_piste = _piste_list;
+        }
+
+        piste = (Piste *) current_piste->data;
+        piste->ScheduleJob (job);
+
+        current_job   = g_list_next (current_job);
+        current_piste = g_list_next (current_piste);
+      }
+
+      g_list_free (pending_jobs);
+
+      Timeline::Redraw (_timeline);
     }
   }
 
-  g_list_free (job_list);
+  gtk_widget_hide (dialog);
+}
+
+// --------------------------------------------------------------------------------
+void Hall::OnTimelineCursorMoved ()
+{
+  {
+    GDateTime *cursor = _timeline->RetreiveCursorTime ();
+    GtkLabel  *clock  = GTK_LABEL (_glade->GetWidget ("clock_label"));
+    gchar     *text;
+
+    text = g_strdup_printf ("%02d:%02d", g_date_time_get_hour (cursor),
+                                         g_date_time_get_minute (cursor));
+
+    gtk_label_set_text (clock,
+                        text);
+
+    g_free (text);
+    g_date_time_unref (cursor);
+  }
+
+  {
+    GList *current_piste = _piste_list;
+
+    while (current_piste)
+    {
+      Piste *piste = (Piste *) current_piste->data;
+
+      //piste->OnTimeSlotUpdated (NULL);
+
+      current_piste = g_list_next (current_piste);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Hall::OnBatchAssignmentCancel (Batch *batch)
+{
+  GList *current_piste = _piste_list;
+
+  while (current_piste)
+  {
+    Piste *piste = (Piste *) current_piste->data;
+
+    piste->RemoveBatch (batch);
+
+    current_piste = g_list_next (current_piste);
+  }
+
+  Timeline::Redraw (_timeline);
 }
 
 // --------------------------------------------------------------------------------
@@ -609,29 +684,4 @@ extern "C" G_MODULE_EXPORT gchar *on_timeline_format_value (GtkScale *scale,
                                                             gdouble   value)
 {
   return g_strdup_printf ("T0+%02d\'", (guint) value);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_timeline_value_changed (GtkRange *range,
-                                                           gpointer  user_data)
-{
-  guint value = (guint) gtk_range_get_value (range);
-  guint delta = value % 10;
-
-  if (delta)
-  {
-    if (delta > 5)
-    {
-      gtk_range_set_value (range,
-                           value + 10 - (value%10));
-    }
-    else
-    {
-      gtk_range_set_value (range,
-                           value - (value%10));
-    }
-  }
-  else
-  {
-  }
 }

@@ -35,22 +35,34 @@ class TimeSlot :
     };
 
   public:
-    TimeSlot (Owner *owner);
+    TimeSlot (Owner     *owner,
+              GDateTime *start_time);
 
     void AddJob (Job *job);
 
-    void AddReferee (Referee *referee);
+    void RemoveJob (Job *job);
 
     GList *GetJobList ();
+
+    void AddReferee (Referee *referee);
 
     GList *GetRefereeList ();
 
     void Cancel ();
 
+    GDateTime *GetStartTime ();
+
+    GTimeSpan GetDuration ();
+
+    static gint CompareAvailbility (TimeSlot *a,
+                                    TimeSlot *b);
+
   private:
-    Owner *_owner;
-    GList *_job_list;
-    GList *_referee_list;
+    Owner     *_owner;
+    GList     *_job_list;
+    GList     *_referee_list;
+    GDateTime *_start_time;
+    GTimeSpan  _duration;
 
     virtual ~TimeSlot ();
 

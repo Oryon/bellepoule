@@ -35,6 +35,8 @@ Marshaller::Marshaller ()
 
   _referee_list = NULL;
 
+  gtk_window_maximize (GTK_WINDOW (_glade->GetWidget ("root")));
+
   {
     GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("referee_notebook"));
     GSList      *current  = Weapon::GetList ();

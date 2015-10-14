@@ -21,13 +21,15 @@
 #include "network/message.hpp"
 #include "piste.hpp"
 #include "batch.hpp"
+#include "timeline.hpp"
 
 class RefereePool;
 
 class Hall :
   public CanvasModule,
   public Piste::Listener,
-  public Batch::Listener
+  public Batch::Listener,
+  public Timeline::Listener
 {
   public:
     Hall (RefereePool *referee_pool);
@@ -54,8 +56,6 @@ class Hall :
 
     void DropJob (Net::Message *message);
 
-    void AssignBatch (Batch *batch);
-
   private:
     GooCanvasItem *_root;
     GList         *_piste_list;
@@ -65,6 +65,7 @@ class Hall :
     gdouble        _drag_y;
     GList         *_batch_list;
     RefereePool   *_referee_pool;
+    Timeline      *_timeline;
 
     ~Hall ();
 
@@ -100,6 +101,10 @@ class Hall :
                              GdkEventMotion *event);
 
     void OnBatchAssignmentRequest (Batch *batch);
+
+    void OnBatchAssignmentCancel (Batch *batch);
+
+    void OnTimelineCursorMoved ();
 };
 
 #endif

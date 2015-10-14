@@ -20,12 +20,17 @@
 #include "timeslot.hpp"
 
 // --------------------------------------------------------------------------------
-TimeSlot::TimeSlot (Owner *owner)
+TimeSlot::TimeSlot (Owner     *owner,
+                    GDateTime *start_time)
   : Object ("TimeSlot")
 {
   _job_list     = NULL;
   _referee_list = NULL;
   _owner        = owner;
+  _duration     = 0;
+
+  _start_time = start_time;
+  g_date_time_ref (_start_time);
 }
 
 // --------------------------------------------------------------------------------
@@ -50,25 +55,38 @@ TimeSlot::~TimeSlot ()
   }
 
   g_list_free (_referee_list);
+
+  g_date_time_unref (_start_time);
+}
+
+// --------------------------------------------------------------------------------
+GDateTime *TimeSlot::GetStartTime ()
+{
+  return _start_time;;
+}
+
+// --------------------------------------------------------------------------------
+GTimeSpan TimeSlot::GetDuration ()
+{
+  return _duration;
 }
 
 // --------------------------------------------------------------------------------
 void TimeSlot::Cancel ()
 {
-  GList *current = _job_list;
+  GList *job_list = g_list_copy (_job_list);
+  GList *current  = job_list;
 
   while (current)
   {
-    Job          *job     = (Job *) current->data;
-    Net::Message *roadmap = job->GetRoadMap ();
-    Batch        *batch   = job->GetBatch ();
+    Job *job = (Job *) current->data;
 
-    batch->SetVisibility (job,
-                          TRUE);
-    roadmap->Recall ();
+    RemoveJob (job);
 
     current = g_list_next (current);
   }
+
+  g_list_free (job_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -76,8 +94,10 @@ void TimeSlot::AddJob (Job *job)
 {
   _job_list = g_list_append (_job_list,
                              job);
+  _duration += 30*G_TIME_SPAN_MINUTE;
 
   job->AddObjectListener (this);
+  job->SetTimslot        (this);
 
   {
     Net::Message *roadmap = job->GetRoadMap ();
@@ -98,8 +118,40 @@ void TimeSlot::AddJob (Job *job)
     Batch *batch = job->GetBatch ();
 
     batch->SetVisibility (job,
-                          FALSE);;
+                          FALSE);
   }
+
+  _owner->OnTimeSlotUpdated (this);
+}
+
+// --------------------------------------------------------------------------------
+void TimeSlot::RemoveJob (Job *job)
+{
+  _duration -= 10*60*1000*1000;
+
+  {
+    GList *node = g_list_find (_job_list,
+                               job);
+
+    _job_list = g_list_delete_link (_job_list,
+                                    node);
+  }
+
+  {
+    Net::Message *roadmap = job->GetRoadMap ();
+
+    roadmap->Recall ();
+  }
+
+  {
+    Batch *batch = job->GetBatch ();
+
+    batch->SetVisibility (job,
+                          TRUE);;
+  }
+
+  job->RemoveObjectListener (this);
+  job->SetTimslot           (NULL);
 
   _owner->OnTimeSlotUpdated (this);
 }
@@ -158,4 +210,18 @@ GList *TimeSlot::GetJobList ()
 GList *TimeSlot::GetRefereeList ()
 {
   return _referee_list;
+}
+
+// --------------------------------------------------------------------------------
+gint TimeSlot::CompareAvailbility (TimeSlot *a,
+                                   TimeSlot *b)
+{
+  GDateTime *time_a = g_date_time_add (a->_start_time, a->_duration);
+  GDateTime *time_b = g_date_time_add (b->_start_time, b->_duration);
+  gint       delta  = g_date_time_compare (time_a, time_b);
+
+  g_date_time_unref (time_a);
+  g_date_time_unref (time_b);
+
+  return delta;
 }

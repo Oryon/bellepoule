@@ -27,10 +27,10 @@ class Job;
 class Batch : public Module
 {
   public:
-    class Listener
+    struct Listener
     {
-      public:
-        virtual void OnBatchAssignmentRequest (Batch *batch) = 0;
+      virtual void OnBatchAssignmentRequest (Batch *batch) = 0;
+      virtual void OnBatchAssignmentCancel  (Batch *batch) = 0;
     };
 
   public:
@@ -48,7 +48,9 @@ class Batch : public Module
 
     guint GetId ();
 
-    GList *RetreiveJobList ();
+    GList *GetScheduledJobs ();
+
+    GList *GetPendingJobs ();
 
     const gchar *GetName ();
 
@@ -60,6 +62,8 @@ class Batch : public Module
 
     void OnCancelAssign ();
 
+    GdkColor *GetColor ();
+
   private:
     guint32       _id;
     GtkListStore *_job_store;
@@ -67,6 +71,8 @@ class Batch : public Module
     GdkColor     *_gdk_color;
     gchar        *_name;
     Listener     *_listener;
+    GList        *_scheduled_list;
+    GList        *_pending_list;
 
     virtual ~Batch ();
 

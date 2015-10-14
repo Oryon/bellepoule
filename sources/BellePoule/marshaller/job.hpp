@@ -20,7 +20,7 @@
 #include "util/object.hpp"
 
 class Batch;
-class Piste;
+class TimeSlot;
 
 class Job : public Object
 {
@@ -30,6 +30,10 @@ class Job : public Object
          GdkColor *gdk_color);
 
     void SetName (const gchar *name);
+
+    void SetTimslot (TimeSlot *timeslot);
+
+    TimeSlot *GetTimslot ();
 
     const gchar *GetName ();
 
@@ -41,16 +45,17 @@ class Job : public Object
 
     Net::Message *GetRoadMap ();
 
+    static gint CompareStartTime (Job *a,
+                                  Job *b);
+
   private:
     gchar    *_name;
     guint     _uuid;
     GdkColor *_gdk_color;
     Batch    *_batch;
-    Piste    *_piste;
+    TimeSlot *_timeslot;
 
     ~Job ();
-
-    void FeedParcel (Net::Message *parcel);
 };
 
 #endif

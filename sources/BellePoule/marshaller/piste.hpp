@@ -25,19 +25,19 @@
 class Module;
 class Referee;
 class Job;
+class Batch;
 
 class Piste :
   public DropZone,
   public TimeSlot::Owner
 {
   public:
-    class Listener
+    struct Listener
     {
-      public:
-        virtual void OnPisteButtonEvent (Piste          *piste,
-                                         GdkEventButton *event) = 0;
-        virtual void OnPisteMotionEvent (Piste          *piste,
-                                         GdkEventMotion *event) = 0;
+      virtual void OnPisteButtonEvent (Piste          *piste,
+                                       GdkEventButton *event) = 0;
+      virtual void OnPisteMotionEvent (Piste          *piste,
+                                       GdkEventMotion *event) = 0;
     };
 
   public:
@@ -46,9 +46,13 @@ class Piste :
 
     void SetListener (Listener *listener);
 
-    void AddJob (Job *job);
+    void ScheduleJob (Job *job);
 
     void AddReferee (Referee *referee);
+
+    void RemoveBatch (Batch *batch);
+
+    void SetCurrentTimeslot (GDateTime *start_time);
 
     void Disable ();
 
@@ -72,6 +76,9 @@ class Piste :
     void GetHorizontalCoord (gdouble *x,
                              gdouble *y);
 
+    static gboolean CompareAvailbility (Piste *a,
+                                        Piste *b);
+
   private:
     static const gdouble _W;
     static const gdouble _H;
@@ -90,8 +97,7 @@ class Piste :
     gboolean         _horizontal;
     gchar           *_color;
     gchar           *_focus_color;
-    GList           *_time_slots;
-    GList           *_referee_list;
+    GList           *_timeslots;
     TimeSlot        *_current_timeslot;
 
     ~Piste ();
@@ -109,6 +115,8 @@ class Piste :
     void OnObjectDeleted (Object *object);
 
     void OnTimeSlotUpdated (TimeSlot *timeslot);
+
+    TimeSlot *GetFreeTimeslot ();
 
     static gboolean OnButtonPress (GooCanvasItem  *item,
                                    GooCanvasItem  *target,

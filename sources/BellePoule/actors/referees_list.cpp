@@ -67,11 +67,9 @@ namespace People
                            this);
 
       filter->ShowAttribute ("attending");
-      filter->ShowAttribute ("connection");
       filter->ShowAttribute ("availability");
-      filter->ShowAttribute ("participation_rate");
       filter->ShowAttribute ("name");
-      filter->ShowAttribute ("first_name");
+      filter->ShowAttribute ("participation_rate");
       filter->ShowAttribute ("club");
       filter->ShowAttribute ("league");
       filter->ShowAttribute ("country");
