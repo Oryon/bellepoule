@@ -32,13 +32,12 @@ class Piste :
   public TimeSlot::Owner
 {
   public:
-    class Listener
+    struct Listener
     {
-      public:
-        virtual void OnPisteButtonEvent (Piste          *piste,
-                                         GdkEventButton *event) = 0;
-        virtual void OnPisteMotionEvent (Piste          *piste,
-                                         GdkEventMotion *event) = 0;
+      virtual void OnPisteButtonEvent (Piste          *piste,
+                                       GdkEventButton *event) = 0;
+      virtual void OnPisteMotionEvent (Piste          *piste,
+                                       GdkEventMotion *event) = 0;
     };
 
   public:

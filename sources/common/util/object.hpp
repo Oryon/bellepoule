@@ -73,10 +73,9 @@ namespace Net
 class Object
 {
   public:
-    class Listener
+    struct Listener
     {
-      public:
-        virtual void OnObjectDeleted (Object *object) = 0;
+      virtual void OnObjectDeleted (Object *object) = 0;
     };
 
   public:

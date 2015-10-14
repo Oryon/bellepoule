@@ -24,23 +24,34 @@ class Batch;
 class Timeline : public CanvasModule
 {
   public:
-    Timeline ();
+    struct Listener
+    {
+      virtual void OnTimelineCursorMoved () = 0;
+    };
+
+  public:
+    Timeline (Listener *listener);
 
     void AddBatch (Batch *batch);
 
     void RemoveBatch (Batch *batch);
 
-    void Redraw ();
+    GDateTime *RetreiveCursorTime ();
+
+    static gboolean Redraw (Timeline *tl);
 
   private:
     static const guint HOURS_MONITORED = 10;
+    static const guint START_MARGING   = 15*G_TIME_SPAN_MINUTE;
 
     GList         *_batch_list;
-    gdouble        _cursor_x;
+    GTimeSpan      _cursor;
     GtkAllocation  _allocation;
     gdouble        _time_scale;
     gdouble        _batch_scale;
     GDateTime     *_origin;
+    guint          _redraw_timeout;
+    Listener      *_listener;
 
     ~Timeline ();
 
@@ -55,17 +66,17 @@ class Timeline : public CanvasModule
     static gboolean OnButtonPress (GooCanvasItem  *item,
                                    GooCanvasItem  *target,
                                    GdkEventButton *event,
-                                   Timeline       *timeline);
+                                   Timeline       *tl);
 
     static gboolean OnButtonRelease (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
-                                     Timeline       *timeline);
+                                     Timeline       *tl);
 
     static gboolean OnMotion (GooCanvasItem  *item,
                               GooCanvasItem  *target_item,
                               GdkEventMotion *event,
-                              Timeline       *timeline);
+                              Timeline       *tl);
 };
 
 #endif

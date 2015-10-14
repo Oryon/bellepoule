@@ -39,11 +39,13 @@ Hall::Hall (RefereePool *referee_pool)
   _referee_pool = referee_pool;
 
   {
-    _timeline = new Timeline ();
+    _timeline = new Timeline (this);
 
     Plug (_timeline,
           _glade->GetWidget ("timeline_viewport"));
   }
+
+  OnTimelineCursorMoved ();
 }
 
 // --------------------------------------------------------------------------------
@@ -268,12 +270,8 @@ void Hall::AddPiste ()
 
   piste->SetListener (this);
 
-  {
-    _drop_zones = g_slist_append (_drop_zones,
-                                  piste);
-
-    piste->Draw (GetRootItem ());
-  }
+  _drop_zones = g_slist_append (_drop_zones,
+                                piste);
 
   {
     GList *before = _piste_list;
@@ -361,7 +359,7 @@ void Hall::RemoveSelected ()
   g_list_free (_selected_list);
   _selected_list = NULL;
 
-  _timeline->Redraw ();
+  Timeline::Redraw (_timeline);
 }
 
 // --------------------------------------------------------------------------------
@@ -598,11 +596,43 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
 
       g_list_free (pending_jobs);
 
-      _timeline->Redraw ();
+      Timeline::Redraw (_timeline);
     }
   }
 
   gtk_widget_hide (dialog);
+}
+
+// --------------------------------------------------------------------------------
+void Hall::OnTimelineCursorMoved ()
+{
+  {
+    GDateTime *cursor = _timeline->RetreiveCursorTime ();
+    GtkLabel  *clock  = GTK_LABEL (_glade->GetWidget ("clock_label"));
+    gchar     *text;
+
+    text = g_strdup_printf ("%02d:%02d", g_date_time_get_hour (cursor),
+                                         g_date_time_get_minute (cursor));
+
+    gtk_label_set_text (clock,
+                        text);
+
+    g_free (text);
+    g_date_time_unref (cursor);
+  }
+
+  {
+    GList *current_piste = _piste_list;
+
+    while (current_piste)
+    {
+      Piste *piste = (Piste *) current_piste->data;
+
+      //piste->OnTimeSlotUpdated (NULL);
+
+      current_piste = g_list_next (current_piste);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -619,7 +649,7 @@ void Hall::OnBatchAssignmentCancel (Batch *batch)
     current_piste = g_list_next (current_piste);
   }
 
-  _timeline->Redraw ();
+  Timeline::Redraw (_timeline);
 }
 
 // --------------------------------------------------------------------------------

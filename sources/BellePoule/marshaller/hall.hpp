@@ -21,14 +21,15 @@
 #include "network/message.hpp"
 #include "piste.hpp"
 #include "batch.hpp"
+#include "timeline.hpp"
 
 class RefereePool;
-class Timeline;
 
 class Hall :
   public CanvasModule,
   public Piste::Listener,
-  public Batch::Listener
+  public Batch::Listener,
+  public Timeline::Listener
 {
   public:
     Hall (RefereePool *referee_pool);
@@ -102,6 +103,8 @@ class Hall :
     void OnBatchAssignmentRequest (Batch *batch);
 
     void OnBatchAssignmentCancel (Batch *batch);
+
+    void OnTimelineCursorMoved ();
 };
 
 #endif

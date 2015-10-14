@@ -20,11 +20,13 @@
 #include "timeline.hpp"
 
 // --------------------------------------------------------------------------------
-Timeline::Timeline ()
+Timeline::Timeline (Listener *listener)
   : CanvasModule ("timeline.glade",
                   "canvas_scrolled_window")
 {
-  _batch_list = NULL;
+  _batch_list     = NULL;
+  _redraw_timeout = 0;
+  _listener       = listener;
 
   {
     GDateTime *now = g_date_time_new_now_local ();
@@ -34,8 +36,12 @@ Timeline::Timeline ()
                                     0,
                                     0,
                                     0,
-                                    -g_date_time_get_minute (now),
+                                    -g_date_time_get_minute (now) - START_MARGING/G_TIME_SPAN_MINUTE,
                                     -g_date_time_get_second (now));
+
+    _cursor = g_date_time_difference (now,
+                                      _origin);
+
     g_date_time_unref (now);
   }
 }
@@ -43,6 +49,11 @@ Timeline::Timeline ()
 // --------------------------------------------------------------------------------
 Timeline::~Timeline ()
 {
+  if (_redraw_timeout > 0)
+  {
+    g_source_remove (_redraw_timeout);
+  }
+
   g_list_free       (_batch_list);
   g_date_time_unref (_origin);
 }
@@ -81,14 +92,17 @@ void Timeline::RemoveBatch (Batch *batch)
 // --------------------------------------------------------------------------------
 void Timeline::DrawTimes ()
 {
-  for (guint i = 1; i < HOURS_MONITORED; i++)
+  for (guint i = 0; i <= HOURS_MONITORED; i++)
   {
-    guint  h    = g_date_time_get_hour (_origin) + i;
+    guint  h    = (g_date_time_get_hour (_origin) + i+1) % 24;
     gchar *font = g_strdup_printf (BP_FONT "%dpx", 10);
     gchar *time = g_strdup_printf ("<span background=\"white\">%02d:00</span>", h);
 
+    font = g_strdup_printf (BP_FONT "%dpx", 10);
+    time = g_strdup_printf ("<span background=\"white\">%02d:00</span>", h);
+
     goo_canvas_rect_new (GetRootItem (),
-                         i * G_TIME_SPAN_HOUR * _time_scale,
+                         (i*G_TIME_SPAN_HOUR + START_MARGING) * _time_scale,
                          0.7 * _batch_scale,
                          0.5,
                          0.3 * _batch_scale,
@@ -97,7 +111,7 @@ void Timeline::DrawTimes ()
                          NULL);
     goo_canvas_text_new (GetRootItem (),
                          time,
-                         i * G_TIME_SPAN_HOUR * _time_scale,
+                         (i*G_TIME_SPAN_HOUR + START_MARGING) *_time_scale,
                          _batch_scale,
                          -1.0,
                          GTK_ANCHOR_S,
@@ -130,7 +144,7 @@ void Timeline::DrawCursors ()
 
   {
     GooCanvasItem *item = goo_canvas_rect_new (GetRootItem (),
-                                               (gdouble)_allocation.width / 4.0,
+                                               _cursor * _time_scale,
                                                0.0,
                                                2.0,
                                                _batch_scale,
@@ -181,43 +195,62 @@ void Timeline::DrawSlots ()
 }
 
 // --------------------------------------------------------------------------------
-void Timeline::Redraw ()
+gboolean Timeline::Redraw (Timeline *tl)
 {
-  Wipe ();
+  tl->Wipe ();
 
   {
-    gtk_widget_get_allocation (GetRootWidget (),
-                               &_allocation);
+    gtk_widget_get_allocation (tl->GetRootWidget (),
+                               &tl->_allocation);
 
-    _time_scale  = (gdouble)_allocation.width / (G_TIME_SPAN_HOUR * HOURS_MONITORED);
-    _batch_scale = (gdouble)_allocation.height;
+    tl->_batch_scale = (gdouble)tl->_allocation.height;
+    tl->_time_scale  = (gdouble)tl->_allocation.width
+      / (HOURS_MONITORED*G_TIME_SPAN_HOUR + START_MARGING);
   }
 
-  DrawSlots   ();
-  DrawTimes   ();
-  DrawCursors ();
+  tl->DrawSlots   ();
+  tl->DrawTimes   ();
+  tl->DrawCursors ();
+
+  if (tl->_redraw_timeout > 0)
+  {
+    g_source_remove (tl->_redraw_timeout);
+  }
+
+  tl->_redraw_timeout = g_timeout_add_seconds (60,
+                                               (GSourceFunc) Redraw,
+                                               tl);
+
+  return G_SOURCE_CONTINUE;
 }
 
 // --------------------------------------------------------------------------------
 gboolean Timeline::OnButtonPress (GooCanvasItem  *item,
                                   GooCanvasItem  *target,
                                   GdkEventButton *event,
-                                  Timeline       *timeline)
+                                  Timeline       *tl)
 {
-  timeline->_cursor_x = event->x_root;
+  tl->_cursor = event->x_root / tl->_time_scale;
 
   g_signal_connect (G_OBJECT (item), "motion-notify-event",
-                    G_CALLBACK (OnMotion), timeline);
+                    G_CALLBACK (OnMotion), tl);
   g_signal_connect (G_OBJECT (item), "button_release_event",
-                    G_CALLBACK (OnButtonRelease), timeline);
+                    G_CALLBACK (OnButtonRelease), tl);
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+GDateTime *Timeline::RetreiveCursorTime ()
+{
+  return g_date_time_add (_origin,
+                          _cursor);
 }
 
 // --------------------------------------------------------------------------------
 gboolean Timeline::OnMotion (GooCanvasItem  *item,
                              GooCanvasItem  *target_item,
                              GdkEventMotion *event,
-                             Timeline       *timeline)
+                             Timeline       *tl)
 {
   if (item)
   {
@@ -227,16 +260,21 @@ gboolean Timeline::OnMotion (GooCanvasItem  *item,
     {
       new_x = 2.0;
     }
-    if (new_x > timeline->_allocation.width - 2.0)
+    if (new_x > tl->_allocation.width - 2.0)
     {
-      new_x = timeline->_allocation.width - 2.0;
+      new_x = tl->_allocation.width - 2.0;
     }
 
     goo_canvas_item_translate (item,
-                               new_x - timeline->_cursor_x,
+                               new_x - tl->_cursor * tl->_time_scale,
                                0.0);
 
-    timeline->_cursor_x = new_x;
+    tl->_cursor = new_x / tl->_time_scale;
+
+    if (tl->_listener)
+    {
+      tl->_listener->OnTimelineCursorMoved ();
+    }
     return TRUE;
   }
 
@@ -247,14 +285,14 @@ gboolean Timeline::OnMotion (GooCanvasItem  *item,
 gboolean Timeline::OnButtonRelease (GooCanvasItem  *item,
                                     GooCanvasItem  *target,
                                     GdkEventButton *event,
-                                    Timeline       *timeline)
+                                    Timeline       *tl)
 {
   __gcc_extension__ g_signal_handlers_disconnect_by_func (item,
                                                           (void *) OnButtonRelease,
-                                                          timeline);
+                                                          tl);
   __gcc_extension__ g_signal_handlers_disconnect_by_func (item,
                                                           (void *) OnMotion,
-                                                          timeline);
+                                                          tl);
   return TRUE;
 }
 
@@ -265,5 +303,5 @@ extern "C" G_MODULE_EXPORT void on_canvas_scrolled_window_size_allocate (GtkWidg
 {
   Timeline *timeline = dynamic_cast <Timeline *> (object);
 
-  timeline->Redraw ();
+  Timeline::Redraw (timeline);
 }
