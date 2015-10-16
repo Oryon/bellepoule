@@ -18,13 +18,25 @@
 #define referee_pool_hpp
 
 #include <gtk/gtk.h>
+#include "actors/referees_list.hpp"
 
 class Referee;
 
-class RefereePool
+class RefereePool : public Object
 {
   public:
-    virtual Referee *GetReferee (guint ref) = 0;
+    RefereePool ();
+
+    void ManageList (People::RefereesList *list);
+
+    void ManageReferee (Net::Message *message);
+
+    Referee *GetReferee (guint ref);
+
+  private:
+    People::RefereesList *_referee_list;
+
+    ~RefereePool ();
 };
 
 #endif

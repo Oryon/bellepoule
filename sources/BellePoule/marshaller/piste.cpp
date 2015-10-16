@@ -224,8 +224,8 @@ gboolean Piste::TimeIsInTimeslot (GDateTime *time,
 TimeSlot *Piste::GetFreeTimeslot ()
 {
   TimeSlot  *free_timeslot;
-  GList     *last_node     = g_list_last (_timeslots);
   GDateTime *start_time;
+  GList     *last_node     = g_list_last (_timeslots);
 
   if (last_node)
   {

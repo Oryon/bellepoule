@@ -571,7 +571,7 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
 
     GDateTime *time = g_date_time_new_now_local ();
 
-    gtk_spin_button_set_value  (hour, g_date_time_get_hour     (time));
+    gtk_spin_button_set_value  (hour,   g_date_time_get_hour   (time));
     gtk_spin_button_set_value  (minute, g_date_time_get_minute (time));
   }
 

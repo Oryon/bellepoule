@@ -18,12 +18,11 @@
 #define marshaller_hpp
 
 #include "util/module.hpp"
-#include "actors/referees_list.hpp"
 #include "referee_pool.hpp"
 
 class Hall;
 
-class Marshaller : public Module, public RefereePool
+class Marshaller : public Module
 {
   public:
     Marshaller ();
@@ -33,14 +32,10 @@ class Marshaller : public Module, public RefereePool
     gboolean OnHttpPost (Net::Message *message);
 
   private:
-    Hall                 *_hall;
-    People::RefereesList *_referee_list;
+    Hall        *_hall;
+    RefereePool *_referee_pool;
 
     virtual ~Marshaller ();
-
-    void ManageReferee (Net::Message *message);
-
-    Referee *GetReferee (guint ref);
 };
 
 #endif
