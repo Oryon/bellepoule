@@ -35,10 +35,11 @@ Piste::Piste (GooCanvasItem *parent,
               Module        *container)
   : DropZone (container)
 {
-  _horizontal       = TRUE;
-  _listener         = NULL;
-  _timeslots        = NULL;
-  _current_timeslot = NULL;
+  _horizontal = TRUE;
+  _listener   = NULL;
+  _timeslots  = NULL;
+
+  _display_time = g_date_time_new_now_local ();
 
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
@@ -143,6 +144,11 @@ Piste::~Piste ()
   goo_canvas_item_remove (_root_item);
   g_free (_color);
   g_free (_focus_color);
+
+  if (_display_time)
+  {
+    g_date_time_unref (_display_time);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -168,19 +174,10 @@ TimeSlot *Piste::GetTimeslotAt (GDateTime *start_time)
   {
     TimeSlot *timeslot = (TimeSlot *) current->data;
 
-    if (g_date_time_compare (timeslot->GetStartTime (),
-                             start_time) <= 0)
+    if (TimeIsInTimeslot (start_time,
+                          timeslot))
     {
-      GDateTime *end_time = g_date_time_add (timeslot->GetStartTime (),
-                                             timeslot->GetDuration  ());
-
-      if (g_date_time_compare (start_time,
-                               end_time) <= 0)
-      {
-        g_date_time_unref (end_time);
-        return timeslot;
-      }
-     g_date_time_unref (end_time);
+      return timeslot;
     }
 
     current = g_list_next (current);
@@ -192,9 +189,35 @@ TimeSlot *Piste::GetTimeslotAt (GDateTime *start_time)
 // --------------------------------------------------------------------------------
 void Piste::DisplayAtTime (GDateTime *time)
 {
-  _current_timeslot = GetTimeslotAt (time);
+  if (_display_time)
+  {
+    g_date_time_unref (_display_time);
+  }
+  _display_time = g_date_time_add (time, 0);
 
-  OnTimeSlotUpdated (_current_timeslot);
+  CleanDisplay      ();
+  OnTimeSlotUpdated (GetTimeslotAt (time));
+}
+
+// --------------------------------------------------------------------------------
+gboolean Piste::TimeIsInTimeslot (GDateTime *time,
+                                  TimeSlot  *timeslot)
+{
+  if (timeslot && (g_date_time_compare (timeslot->GetStartTime (), time) <= 0))
+  {
+    GDateTime *end_time = g_date_time_add (timeslot->GetStartTime (),
+                                           timeslot->GetDuration  ());
+
+    if (g_date_time_compare (time,
+                             end_time) <= 0)
+    {
+      g_date_time_unref (end_time);
+      return TRUE;
+    }
+    g_date_time_unref (end_time);
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -225,36 +248,42 @@ TimeSlot *Piste::GetFreeTimeslot ()
 }
 
 // --------------------------------------------------------------------------------
+void Piste::CleanDisplay ()
+{
+  g_free (_color);
+  _color = g_strdup ("lightgrey");
+  SetColor (_color);
+
+  g_object_set (G_OBJECT (_title_item),
+                "text", "",
+                NULL);
+
+  g_object_set (G_OBJECT (_status_item),
+                "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                NULL);
+
+  g_object_set (G_OBJECT (_match_item),
+                "text", "",
+                NULL);
+}
+
+// --------------------------------------------------------------------------------
 void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 {
+  if (TimeIsInTimeslot (_display_time, timeslot))
   {
     GString     *match_name = g_string_new ("");
     const gchar *last_name  = NULL;
 
-    {
-      g_free (_color);
-      _color = g_strdup ("lightgrey");
-      SetColor (_color);
+    CleanDisplay ();
 
-      g_object_set (G_OBJECT (_title_item),
-                    "text", "",
-                    NULL);
-    }
-
-    if (timeslot && timeslot->GetRefereeList ())
+    if (timeslot->GetRefereeList ())
     {
       g_object_set (G_OBJECT (_status_item),
                     "visibility", GOO_CANVAS_ITEM_VISIBLE,
                     NULL);
     }
-    else
-    {
-      g_object_set (G_OBJECT (_status_item),
-                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
-                    NULL);
-    }
 
-    if (timeslot)
     {
       GList *current = timeslot->GetJobList ();
 

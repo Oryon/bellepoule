@@ -98,7 +98,7 @@ class Piste :
     gchar           *_color;
     gchar           *_focus_color;
     GList           *_timeslots;
-    TimeSlot        *_current_timeslot;
+    GDateTime       *_display_time;
 
     ~Piste ();
 
@@ -114,7 +114,12 @@ class Piste :
 
     void OnObjectDeleted (Object *object);
 
+    void CleanDisplay ();
+
     void OnTimeSlotUpdated (TimeSlot *timeslot);
+
+    gboolean TimeIsInTimeslot (GDateTime *time,
+                               TimeSlot  *timeslot);
 
     TimeSlot *GetFreeTimeslot ();
 

@@ -41,6 +41,7 @@ Timeline::Timeline (Listener *listener)
 
     _cursor = g_date_time_difference (now,
                                       _origin);
+    _cursor += 5 * G_TIME_SPAN_MINUTE;
 
     g_date_time_unref (now);
   }

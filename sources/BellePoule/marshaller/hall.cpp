@@ -312,6 +312,13 @@ void Hall::AddPiste ()
     piste->Translate (0.5,
                       0.5);
   }
+
+  {
+    GDateTime *cursor = _timeline->RetreiveCursorTime ();
+
+    piste->DisplayAtTime (cursor);
+    g_date_time_unref (cursor);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -598,6 +605,7 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
       g_list_free (pending_jobs);
 
       Timeline::Redraw (_timeline);
+      OnTimelineCursorMoved ();
     }
   }
 
