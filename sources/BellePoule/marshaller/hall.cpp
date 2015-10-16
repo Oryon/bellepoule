@@ -149,6 +149,7 @@ void Hall::DropObject (Object   *object,
       }
 
       g_slist_free (selection);
+      Timeline::Redraw (_timeline);
       return;
     }
   }
@@ -310,6 +311,13 @@ void Hall::AddPiste ()
   {
     piste->Translate (0.5,
                       0.5);
+  }
+
+  {
+    GDateTime *cursor = _timeline->RetreiveCursorTime ();
+
+    piste->DisplayAtTime (cursor);
+    g_date_time_unref (cursor);
   }
 }
 
@@ -597,6 +605,7 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
       g_list_free (pending_jobs);
 
       Timeline::Redraw (_timeline);
+      OnTimelineCursorMoved ();
     }
   }
 
@@ -606,10 +615,11 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
 // --------------------------------------------------------------------------------
 void Hall::OnTimelineCursorMoved ()
 {
+  GDateTime *cursor = _timeline->RetreiveCursorTime ();
+
   {
-    GDateTime *cursor = _timeline->RetreiveCursorTime ();
-    GtkLabel  *clock  = GTK_LABEL (_glade->GetWidget ("clock_label"));
-    gchar     *text;
+    GtkLabel *clock = GTK_LABEL (_glade->GetWidget ("clock_label"));
+    gchar    *text;
 
     text = g_strdup_printf ("%02d:%02d", g_date_time_get_hour (cursor),
                                          g_date_time_get_minute (cursor));
@@ -618,7 +628,6 @@ void Hall::OnTimelineCursorMoved ()
                         text);
 
     g_free (text);
-    g_date_time_unref (cursor);
   }
 
   {
@@ -628,11 +637,13 @@ void Hall::OnTimelineCursorMoved ()
     {
       Piste *piste = (Piste *) current_piste->data;
 
-      //piste->OnTimeSlotUpdated (NULL);
+      piste->DisplayAtTime (cursor);
 
       current_piste = g_list_next (current_piste);
     }
   }
+
+  g_date_time_unref (cursor);
 }
 
 // --------------------------------------------------------------------------------

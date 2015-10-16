@@ -35,10 +35,11 @@ Piste::Piste (GooCanvasItem *parent,
               Module        *container)
   : DropZone (container)
 {
-  _horizontal       = TRUE;
-  _listener         = NULL;
-  _timeslots        = NULL;
-  _current_timeslot = NULL;
+  _horizontal = TRUE;
+  _listener   = NULL;
+  _timeslots  = NULL;
+
+  _display_time = g_date_time_new_now_local ();
 
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
@@ -143,6 +144,11 @@ Piste::~Piste ()
   goo_canvas_item_remove (_root_item);
   g_free (_color);
   g_free (_focus_color);
+
+  if (_display_time)
+  {
+    g_date_time_unref (_display_time);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -160,39 +166,58 @@ void Piste::ScheduleJob (Job *job)
 }
 
 // --------------------------------------------------------------------------------
-void Piste::SetCurrentTimeslot (GDateTime *start_time)
+TimeSlot *Piste::GetTimeslotAt (GDateTime *start_time)
 {
   GList *current = _timeslots;
 
-  _current_timeslot = NULL;
   while (current)
   {
     TimeSlot *timeslot = (TimeSlot *) current->data;
 
-    if (g_date_time_compare (timeslot->GetStartTime (),
-                             start_time) <= 0)
+    if (TimeIsInTimeslot (start_time,
+                          timeslot))
     {
-      GDateTime *end_time = g_date_time_add (timeslot->GetStartTime (),
-                                             timeslot->GetDuration  ());
-
-      if (g_date_time_compare (start_time,
-                               end_time) <= 0)
-      {
-        _current_timeslot = timeslot;
-        g_free (end_time);
-        break;
-      }
-      g_free (end_time);
+      return timeslot;
     }
 
     current = g_list_next (current);
   }
 
-  if (_current_timeslot == NULL)
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Piste::DisplayAtTime (GDateTime *time)
+{
+  if (_display_time)
   {
-    _current_timeslot = new TimeSlot (this,
-                                      start_time);
+    g_date_time_unref (_display_time);
   }
+  _display_time = g_date_time_add (time, 0);
+
+  CleanDisplay      ();
+  OnTimeSlotUpdated (GetTimeslotAt (time));
+}
+
+// --------------------------------------------------------------------------------
+gboolean Piste::TimeIsInTimeslot (GDateTime *time,
+                                  TimeSlot  *timeslot)
+{
+  if (timeslot && (g_date_time_compare (timeslot->GetStartTime (), time) <= 0))
+  {
+    GDateTime *end_time = g_date_time_add (timeslot->GetStartTime (),
+                                           timeslot->GetDuration  ());
+
+    if (g_date_time_compare (time,
+                             end_time) <= 0)
+    {
+      g_date_time_unref (end_time);
+      return TRUE;
+    }
+    g_date_time_unref (end_time);
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -223,23 +248,34 @@ TimeSlot *Piste::GetFreeTimeslot ()
 }
 
 // --------------------------------------------------------------------------------
+void Piste::CleanDisplay ()
+{
+  g_free (_color);
+  _color = g_strdup ("lightgrey");
+  SetColor (_color);
+
+  g_object_set (G_OBJECT (_title_item),
+                "text", "",
+                NULL);
+
+  g_object_set (G_OBJECT (_status_item),
+                "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                NULL);
+
+  g_object_set (G_OBJECT (_match_item),
+                "text", "",
+                NULL);
+}
+
+// --------------------------------------------------------------------------------
 void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 {
-  if (timeslot == _timeslots->data)
+  if (TimeIsInTimeslot (_display_time, timeslot))
   {
     GString     *match_name = g_string_new ("");
-    GList       *current    = timeslot->GetJobList ();
     const gchar *last_name  = NULL;
 
-    {
-      g_free (_color);
-      _color = g_strdup ("lightgrey");
-      SetColor (_color);
-
-      g_object_set (G_OBJECT (_title_item),
-                    "text", "",
-                    NULL);
-    }
+    CleanDisplay ();
 
     if (timeslot->GetRefereeList ())
     {
@@ -247,47 +283,45 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
                     "visibility", GOO_CANVAS_ITEM_VISIBLE,
                     NULL);
     }
-    else
+
     {
-      g_object_set (G_OBJECT (_status_item),
-                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
-                    NULL);
-    }
+      GList *current = timeslot->GetJobList ();
 
-    for (guint i = 0; current != NULL; i++)
-    {
-      Job *job = (Job *) current->data;
-
-      if (i == 0)
+      for (guint i = 0; current != NULL; i++)
       {
-        {
-          g_free (_color);
-          _color = gdk_color_to_string (job->GetGdkColor ());
+        Job *job = (Job *) current->data;
 
-          SetColor (_color);
+        if (i == 0)
+        {
+          {
+            g_free (_color);
+            _color = gdk_color_to_string (job->GetGdkColor ());
+
+            SetColor (_color);
+          }
+
+          {
+            Batch *batch = job->GetBatch ();
+
+            g_object_set (G_OBJECT (_title_item),
+                          "text", batch->GetName (),
+                          NULL);
+          }
+
+          g_string_append (match_name, job->GetName ());
+        }
+        else
+        {
+          if (i == 1)
+          {
+            g_string_append (match_name, " ... ");
+          }
+
+          last_name = job->GetName ();
         }
 
-        {
-          Batch *batch = job->GetBatch ();
-
-          g_object_set (G_OBJECT (_title_item),
-                        "text", batch->GetName (),
-                        NULL);
-        }
-
-        g_string_append (match_name, job->GetName ());
+        current = g_list_next (current);
       }
-      else
-      {
-        if (i == 1)
-        {
-          g_string_append (match_name, " ... ");
-        }
-
-        last_name = job->GetName ();
-      }
-
-      current = g_list_next (current);
     }
 
     if (last_name)
@@ -301,7 +335,7 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
     g_string_free (match_name, TRUE);
   }
 
-  if (timeslot->GetJobList () == NULL)
+  if (timeslot && (timeslot->GetJobList () == NULL))
   {
     GList *node = g_list_find (_timeslots,
                                timeslot);
@@ -309,11 +343,10 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
     if (node)
     {
       _timeslots = g_list_delete_link (_timeslots,
-                                        node);
+                                       node);
     }
     timeslot->Release ();
   }
-
 }
 
 // --------------------------------------------------------------------------------

@@ -52,13 +52,13 @@ class Piste :
 
     void RemoveBatch (Batch *batch);
 
-    void SetCurrentTimeslot (GDateTime *start_time);
-
     void Disable ();
 
     void Select ();
 
     void UnSelect ();
+
+    void DisplayAtTime (GDateTime *time);
 
     void Translate (gdouble tx,
                     gdouble ty);
@@ -98,7 +98,7 @@ class Piste :
     gchar           *_color;
     gchar           *_focus_color;
     GList           *_timeslots;
-    TimeSlot        *_current_timeslot;
+    GDateTime       *_display_time;
 
     ~Piste ();
 
@@ -114,9 +114,16 @@ class Piste :
 
     void OnObjectDeleted (Object *object);
 
+    void CleanDisplay ();
+
     void OnTimeSlotUpdated (TimeSlot *timeslot);
 
+    gboolean TimeIsInTimeslot (GDateTime *time,
+                               TimeSlot  *timeslot);
+
     TimeSlot *GetFreeTimeslot ();
+
+    TimeSlot *GetTimeslotAt (GDateTime *time);
 
     static gboolean OnButtonPress (GooCanvasItem  *item,
                                    GooCanvasItem  *target,
