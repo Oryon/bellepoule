@@ -36,7 +36,8 @@ class TimeSlot :
 
   public:
     TimeSlot (Owner     *owner,
-              GDateTime *start_time);
+              GDateTime *start_time,
+              GTimeSpan  duration);
 
     void AddJob (Job *job);
 

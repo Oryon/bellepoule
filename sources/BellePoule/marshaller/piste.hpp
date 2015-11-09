@@ -46,7 +46,7 @@ class Piste :
 
     void SetListener (Listener *listener);
 
-    void ScheduleJob (Job *job);
+    TimeSlot *GetFreeTimeslot (GTimeSpan duration);
 
     void AddReferee (Referee *referee);
 
@@ -120,8 +120,6 @@ class Piste :
 
     gboolean TimeIsInTimeslot (GDateTime *time,
                                TimeSlot  *timeslot);
-
-    TimeSlot *GetFreeTimeslot ();
 
     TimeSlot *GetTimeslotAt (GDateTime *time);
 

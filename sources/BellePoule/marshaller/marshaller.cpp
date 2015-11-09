@@ -26,14 +26,7 @@
 Marshaller::Marshaller ()
   : Module ("marshaller.glade")
 {
-  {
-    _hall = new Hall (this);
-
-    Plug (_hall,
-          _glade->GetWidget ("hall_viewport"));
-  }
-
-  _referee_list = NULL;
+  _referee_pool = new RefereePool ();
 
   gtk_window_maximize (GTK_WINDOW (_glade->GetWidget ("root")));
 
@@ -47,10 +40,7 @@ Marshaller::Marshaller ()
       People::RefereesList *list     = new People::RefereesList (NULL);
       GtkWidget            *viewport = gtk_viewport_new (NULL, NULL);
 
-      if (_referee_list == NULL)
-      {
-        _referee_list = list;
-      }
+      _referee_pool->ManageList (list);
 
       gtk_notebook_append_page (notebook,
                                 viewport,
@@ -60,6 +50,13 @@ Marshaller::Marshaller ()
 
       current = g_slist_next (current);
     }
+  }
+
+  {
+    _hall = new Hall (_referee_pool);
+
+    Plug (_hall,
+          _glade->GetWidget ("hall_viewport"));
   }
 }
 
@@ -72,26 +69,6 @@ Marshaller::~Marshaller ()
 // --------------------------------------------------------------------------------
 void Marshaller::Start ()
 {
-}
-
-// --------------------------------------------------------------------------------
-Referee *Marshaller::GetReferee (guint ref)
-{
-  GSList *current = _referee_list->GetList ();
-
-  while (current)
-  {
-    Referee *referee = (Referee *) current->data;
-
-    if (referee->GetRef () == ref)
-    {
-      return referee;
-    }
-
-    current = g_slist_next (current);
-  }
-
-  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -112,7 +89,7 @@ gboolean Marshaller::OnHttpPost (Net::Message *message)
     }
     else if (message->Is ("Referee"))
     {
-      ManageReferee (message);
+      _referee_pool->ManageReferee (message);
       return TRUE;
     }
   }
@@ -131,39 +108,4 @@ gboolean Marshaller::OnHttpPost (Net::Message *message)
   }
 
   return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-void Marshaller::ManageReferee (Net::Message *message)
-{
-  gchar     *xml = message->GetString ("xml");
-  xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
-
-  if (doc)
-  {
-    xmlXPathInit ();
-
-    {
-      xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-      xmlXPathObject  *xml_object;
-      xmlNodeSet      *xml_nodeset;
-
-      xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
-      xml_nodeset = xml_object->nodesetval;
-
-      if (xml_nodeset->nodeNr == 1)
-      {
-        _referee_list->LoadPlayer (xml_nodeset->nodeTab[0],
-                                   "Referee",
-                                   NULL);
-        _referee_list->OnListChanged ();
-      }
-
-      xmlXPathFreeObject  (xml_object);
-      xmlXPathFreeContext (xml_context);
-    }
-    xmlFreeDoc (doc);
-  }
-
-  g_free (xml);
 }

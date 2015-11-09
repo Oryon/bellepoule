@@ -158,14 +158,6 @@ void Piste::SetListener (Listener *listener)
 }
 
 // --------------------------------------------------------------------------------
-void Piste::ScheduleJob (Job *job)
-{
-  TimeSlot *timeslot = GetFreeTimeslot ();
-
-  timeslot->AddJob (job);
-}
-
-// --------------------------------------------------------------------------------
 TimeSlot *Piste::GetTimeslotAt (GDateTime *start_time)
 {
   GList *current = _timeslots;
@@ -221,28 +213,60 @@ gboolean Piste::TimeIsInTimeslot (GDateTime *time,
 }
 
 // --------------------------------------------------------------------------------
-TimeSlot *Piste::GetFreeTimeslot ()
+TimeSlot *Piste::GetFreeTimeslot (GTimeSpan duration)
 {
   TimeSlot  *free_timeslot;
-  GList     *last_node     = g_list_last (_timeslots);
-  GDateTime *start_time;
+  GList     *next          = NULL;
+  TimeSlot  *current_slot  = NULL;
 
-  if (last_node)
   {
-    TimeSlot *last = (TimeSlot *) last_node->data;
+    GList *current = _timeslots;
 
-    start_time = g_date_time_add (last->GetStartTime (),
-                                  last->GetDuration () + 5*G_TIME_SPAN_MINUTE);
+    while (current)
+    {
+       current_slot = (TimeSlot *) current->data;
+       next         = g_list_next (current);
+
+      if (next)
+      {
+        TimeSlot *next_slot = (TimeSlot *) next->data;
+
+        if (g_date_time_difference (next_slot->GetStartTime (),
+                                    current_slot->GetStartTime ()) > duration)
+        {
+          break;
+        }
+      }
+      else
+      {
+        break;
+      }
+
+      current = next;
+    }
   }
-  else
+
   {
-    start_time = g_date_time_new_now_local ();
+    GDateTime *start_time = NULL;
+
+    if (current_slot)
+    {
+      start_time = g_date_time_add (current_slot->GetStartTime (),
+                                    current_slot->GetDuration () + 5*G_TIME_SPAN_MINUTE);
+    }
+    else
+    {
+      start_time = g_date_time_new_now_local ();
+    }
+
+    free_timeslot = new TimeSlot (this,
+                                  start_time,
+                                  duration);
   }
 
-  free_timeslot = new TimeSlot (this,
-                                start_time);
-  _timeslots = g_list_append (_timeslots,
-                               free_timeslot);
+  _timeslots = g_list_insert_before (_timeslots,
+                                     next,
+                                     free_timeslot);
 
   return free_timeslot;
 }
@@ -352,7 +376,7 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 // --------------------------------------------------------------------------------
 void Piste::AddReferee (Referee *referee)
 {
-  TimeSlot *timeslot = GetFreeTimeslot ();
+  TimeSlot *timeslot = GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
 
   timeslot->AddReferee (referee);
 }

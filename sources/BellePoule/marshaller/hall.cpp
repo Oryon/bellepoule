@@ -141,9 +141,10 @@ void Hall::DropObject (Object   *object,
 
       while (current)
       {
-        Job *job = (Job *) current->data;
+        Job      *job      = (Job *) current->data;
+        TimeSlot *timeslot = piste->GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
 
-        piste->ScheduleJob (job);
+        timeslot->AddJob (job);
 
         current = g_slist_next (current);
       }
@@ -571,7 +572,7 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
 
     GDateTime *time = g_date_time_new_now_local ();
 
-    gtk_spin_button_set_value  (hour, g_date_time_get_hour     (time));
+    gtk_spin_button_set_value  (hour,   g_date_time_get_hour   (time));
     gtk_spin_button_set_value  (minute, g_date_time_get_minute (time));
   }
 
@@ -579,14 +580,14 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
   {
     if (_piste_list)
     {
-      GList *pending_jobs  = g_list_copy (batch->GetPendingJobs ());
-      GList *current_job   = pending_jobs;
-      GList *current_piste = NULL;
+      GList *pending_jobs    = g_list_copy (batch->GetPendingJobs ());
+      GList *current_job     = pending_jobs;
+      GList *current_piste   = NULL;
 
       while (current_job)
       {
-        Job   *job   = (Job *) current_job->data;
-        Piste *piste;
+        Job     *job     = (Job *) current_job->data;
+        Referee *referee = _referee_pool->GetRefereeFor (job);
 
         if (current_piste == NULL)
         {
@@ -595,8 +596,12 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
           current_piste = _piste_list;
         }
 
-        piste = (Piste *) current_piste->data;
-        piste->ScheduleJob (job);
+        {
+          Piste    *piste    = (Piste *) current_piste->data;
+          TimeSlot *timeslot = piste->GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
+
+          timeslot->AddJob (job);
+        }
 
         current_job   = g_list_next (current_job);
         current_piste = g_list_next (current_piste);
