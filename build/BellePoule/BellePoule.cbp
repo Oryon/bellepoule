@@ -227,6 +227,12 @@
 		<Unit filename="../../sources/BellePoule/marshaller/piste.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/referee_pool.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/referee_pool.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/timeline.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>

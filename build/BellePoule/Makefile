@@ -68,7 +68,7 @@ CFLAGS += -Wno-vla
 CFLAGS += -Wno-deprecated-declarations
 CFLAGS += -Wredundant-decls
 CFLAGS += -Wunreachable-code
-CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libssl)
+CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
 endif
 
 ifeq ($(UBUNTU), windows)
@@ -93,6 +93,8 @@ CFLAGS += -Isources/BellePoule
 #-- LDFLAGS -----------------------------------------
 #----------------------------------------------------
 LDFLAGS  = -lstdc++
+LDFLAGS += -lssl
+LDFLAGS += -lcrypto
 LDFLAGS += -L$(OUTPUT)
 
 ifeq ($(UBUNTU), windows)
@@ -118,8 +120,6 @@ LDFLAGS += -lcurl
 LDFLAGS += -lcurldll
 LDFLAGS += -lz
 LDFLAGS += -lzdll
-LDFLAGS += -lssl
-LDFLAGS += -lcrypto
 LDFLAGS += -lmicrohttpd
 LDFLAGS += -lqrencode
 LDFLAGS += -liphlpapi
@@ -129,7 +129,7 @@ LDFLAGS += -L/usr/i586-mingw32msvc/lib
 LDFLAGS += -L/home/yannick/.wine/drive_c/MinGW/lib
 LDFLAGS += -L/home/yannick/.wine/drive_c/MinGW/msys/1.0/lib
 else
-LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libssl)
+LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
 endif
 
 ifeq ($(OUTPUT), Release)

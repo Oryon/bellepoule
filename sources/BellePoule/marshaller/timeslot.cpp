@@ -21,13 +21,14 @@
 
 // --------------------------------------------------------------------------------
 TimeSlot::TimeSlot (Owner     *owner,
-                    GDateTime *start_time)
+                    GDateTime *start_time,
+                    GTimeSpan  duration)
   : Object ("TimeSlot")
 {
   _job_list     = NULL;
   _referee_list = NULL;
   _owner        = owner;
-  _duration     = 0;
+  _duration     = duration;
 
   _start_time = start_time;
   g_date_time_ref (_start_time);
@@ -94,7 +95,6 @@ void TimeSlot::AddJob (Job *job)
 {
   _job_list = g_list_append (_job_list,
                              job);
-  _duration += 30*G_TIME_SPAN_MINUTE;
 
   job->AddObjectListener (this);
   job->SetTimslot        (this);
@@ -127,7 +127,7 @@ void TimeSlot::AddJob (Job *job)
 // --------------------------------------------------------------------------------
 void TimeSlot::RemoveJob (Job *job)
 {
-  _duration -= 10*60*1000*1000;
+  _duration = 0;
 
   {
     GList *node = g_list_find (_job_list,
