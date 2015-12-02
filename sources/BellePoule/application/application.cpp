@@ -376,6 +376,8 @@ void Application::Start (int    argc,
                                               "Werner Huysmans       (Dutch)\n"
                                               "Farid Elkhalki        (Japanese)\n"
                                               "Jean-François Brun    (Japanese)\n"
+                                              "Adolpho Jayme         (Spanish)\n"
+                                              "Angel Oliver          (Spanish)\n"
                                               "Alexis Pigeon         (Spanish)\n"
                                               "Paulo Morales         (Spanish)\n"
                                               "Ignacio Gil           (Spanish)\n"
