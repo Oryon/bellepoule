@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-07-13 17:22+0200\n"
-"PO-Revision-Date: 2015-07-13 15:46+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2016-01-01 22:04+0000\n"
+"Last-Translator: Jean-Marc <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-11-19 05:11+0000\n"
-"X-Generator: Launchpad (build 17850)\n"
+"X-Launchpad-Export-Date: 2016-01-02 05:12+0000\n"
+"X-Generator: Launchpad (build 17865)\n"
 "Language: \n"
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -80,7 +80,7 @@ msgid "Veteran 4"
 msgstr "Vétéran 4"
 
 msgid "Choose a file..."
-msgstr "Choisissez un fichier de sauvegarde ..."
+msgstr "Choisissez un fichier de sauvegarde..."
 
 msgid "BellePoule files (.cotcot)"
 msgstr "Les fichiers BellePoule (.cotcot)"
@@ -222,7 +222,7 @@ msgid "Formula"
 msgstr "Formule"
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>Voulez-vous vraiment annuler la phase courante ?</big></b>"
+msgstr "<b><big>Voulez-vous vraiment annuler la phase actuelle ?</big></b>"
 
 msgid "Go back to the previous round?"
 msgstr "Revenir à la phase précédente ?"
@@ -265,7 +265,7 @@ msgid "Restart BellePoule for this change to take effect"
 msgstr "Redémarrez BellePoule pour appliquer les changements"
 
 msgid "Choose a competion file to open... "
-msgstr "Choisissez un fichier de compétition à ouvrir ... "
+msgstr "Choisissez un fichier de compétition à ouvrir... "
 
 msgid "Competition files (.cotcot / .xml)"
 msgstr "Fichiers de compétition (.cotcot / .xml)"
@@ -280,7 +280,7 @@ msgid "Meal tickets"
 msgstr "Tickets repas"
 
 msgid "Choose a backup files location..."
-msgstr "Choisissez un dossier pour les sauvegardes de secours ..."
+msgstr "Choisissez un dossier pour les sauvegardes de secours..."
 
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
 msgstr "<b><big>Voulez-vous vraiment quitter BellePoule ?</big></b>"
@@ -292,7 +292,7 @@ msgid "All the unsaved competions will be lost."
 msgstr "Toutes les compétitions non sauvegardées seront perdues."
 
 msgid "Choose a fencer file to import..."
-msgstr "Choisissez un fichier de tireurs à importer ..."
+msgstr "Choisissez un fichier de tireurs à importer..."
 
 msgid "Fencer files"
 msgstr "Fichiers de tireurs"
@@ -322,7 +322,7 @@ msgid "Expected fencers"
 msgstr "Tireurs attendus"
 
 msgid "Expected teams"
-msgstr "Equipes attendues"
+msgstr "Équipes attendues"
 
 msgid "Team size"
 msgstr "Taille des équipes"
@@ -355,7 +355,7 @@ msgid "General classification"
 msgstr "Classement général"
 
 msgid "Choose a target file..."
-msgstr "Choisissez un fichier de destination ..."
+msgstr "Choisissez un fichier de destination..."
 
 msgid "All FFF files (.FFF)"
 msgstr "Tous les fichiers FFF (.FFF)"
@@ -413,7 +413,7 @@ msgstr "Score max"
 
 #, c-format
 msgid "Pool #%02d"
-msgstr "Poule N° %02d"
+msgstr "Poule n° %02d"
 
 msgid "Referee"
 msgstr "Arbitre"
@@ -488,7 +488,7 @@ msgid "All"
 msgstr "Toutes"
 
 msgid "Third place"
-msgstr "3ème place"
+msgstr "3e place"
 
 msgid "None"
 msgstr "Aucune"
@@ -644,7 +644,7 @@ msgid "Event"
 msgstr "Événement"
 
 msgid "Save the current state of the competition."
-msgstr "Sauvegarde l'état courant de la compétition."
+msgstr "Sauvegarde l'état actuel de la compétition."
 
 msgid "To specify the features of the competition."
 msgstr "Permet de renseigner les caractéristiques de la compétition."
@@ -694,7 +694,7 @@ msgid "Pool sheets printing"
 msgstr "Impression des feuilles de poule"
 
 msgid "<b><big>Print...</big></b>"
-msgstr "<b><big>Imprimer ...</big></b>"
+msgstr "<b><big>Imprimer...</big></b>"
 
 msgid "All the pools"
 msgstr "Toutes les poules"
@@ -778,7 +778,7 @@ msgid "<b>Score</b>"
 msgstr "<b>Score</b>"
 
 msgid "Fill in a match"
-msgstr "Saisir un match ..."
+msgstr "Saisir un match..."
 
 msgid ""
 "Fill in all the scores randomly.\n"
@@ -855,7 +855,7 @@ msgid "Backup"
 msgstr "Sauvegarde de secours"
 
 msgid "Backup files location..."
-msgstr "Dossier des sauvegardes de secours ..."
+msgstr "Dossier des sauvegardes de secours..."
 
 msgid "Activate"
 msgstr "Activer"
@@ -870,7 +870,7 @@ msgid "Print payment book"
 msgstr "Imprimer le registre des paiements"
 
 msgid "Ecosystem"
-msgstr "Ecosystème"
+msgstr "Écosystème"
 
 msgid "WIFI"
 msgstr "WIFI"
@@ -885,7 +885,7 @@ msgid "New version!"
 msgstr "Nouvelle version !"
 
 msgid "Open an example..."
-msgstr "Ouvrir un exemple ..."
+msgstr "Ouvrir un exemple..."
 
 msgid "User manual"
 msgstr "Manuel de l'utilisateur"
