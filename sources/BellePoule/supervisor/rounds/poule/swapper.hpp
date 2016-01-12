@@ -17,7 +17,8 @@
 #ifndef swapper_hpp
 #define swapper_hpp
 
-#include <glib.h>
+#include <gtk/gtk.h>
+#include "pool_zone.hpp"
 
 namespace Pool
 {
@@ -26,15 +27,22 @@ namespace Pool
     public:
       virtual void Delete () = 0;
 
-      virtual void Init (GSList *zones,
-                         guint   fencer_count) = 0;
+      virtual void Configure (GSList *zones,
+                              GSList *criteria_list) = 0;
 
-      virtual void Swap (GSList *criteria_list,
-                         GSList *fencer_list) = 0;
+      virtual void Swap (GSList *fencer_list) = 0;
+
+      virtual void CheckCurrentDistribution () = 0;
 
       virtual guint HasErrors () = 0;
 
       virtual guint GetMoved () = 0;
+
+      virtual void MoveFencer (Player   *player,
+                               PoolZone *from_pool,
+                               PoolZone *to_pool) = 0;
+
+      virtual gboolean IsAnError (Player *fencer) = 0;
 
     protected:
       Swapper () {};

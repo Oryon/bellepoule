@@ -14,77 +14,59 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "snake.hpp"
+#include "util/object.hpp"
 
-namespace SmartSwapper
+#include "pool_proxy.hpp"
+#include "criteria.hpp"
+
+#include "fencer_proxy.hpp"
+
+namespace NeoSwapper
 {
   // --------------------------------------------------------------------------------
-  Snake::Snake (guint length)
-    : Object ("SmartSwapper::Snake")
+  FencerProxy::FencerProxy (Player    *player,
+                            guint      rank,
+                            PoolProxy *original_pool,
+                            guint      criteria_count)
+    : Object ("SmartSwapper::FencerProxy")
   {
-    _length = length;
+    _player        = player;
+    _rank          = rank;
+    _original_pool = original_pool;
+    _new_pool      = original_pool;
+    _criterias     = g_new0 (Criteria *, criteria_count);
   }
 
   // --------------------------------------------------------------------------------
-  Snake::~Snake ()
+  FencerProxy::~FencerProxy ()
   {
+    g_free (_criterias);
   }
 
   // --------------------------------------------------------------------------------
-  void Snake::Reset (guint position)
+  gboolean FencerProxy::HasQuark (guint  at_depth,
+                                  GQuark quark)
   {
-    _request_count = 0;
-    _odd_cursor    = position;
-    _even_cursor   = position;
+    return _criterias[at_depth]->HasQuark (quark);
   }
 
   // --------------------------------------------------------------------------------
-  guint Snake::GetNextEvenCursor ()
+  void FencerProxy::SetCriteria (guint     at_depth,
+                                 Criteria *criteria)
   {
-    if (_even_cursor > 1)
-    {
-      _even_cursor--;
-      return _even_cursor;
-    }
-    else
-    {
-      return GetNextOddCursor ();
-    }
+    _criterias[at_depth] = criteria;
   }
 
   // --------------------------------------------------------------------------------
-  guint Snake::GetNextOddCursor ()
+  Criteria *FencerProxy::GetCriteria (guint at_depth)
   {
-    if (_odd_cursor < _length)
-    {
-      _odd_cursor++;
-      return _odd_cursor;
-    }
-    else
-    {
-      return GetNextEvenCursor ();
-    }
+    return _criterias[at_depth];
   }
 
   // --------------------------------------------------------------------------------
-  guint Snake::GetNextPosition ()
+  gint FencerProxy::CompareRank (FencerProxy *a,
+                                 FencerProxy *b)
   {
-    _request_count++;
-
-    if (_request_count == 1)
-    {
-      return _odd_cursor;
-    }
-    else
-    {
-      if (_request_count % 2)
-      {
-        return GetNextEvenCursor ();
-      }
-      else
-      {
-        return GetNextOddCursor ();
-      }
-    }
+    return a->_rank - b->_rank;
   }
 }

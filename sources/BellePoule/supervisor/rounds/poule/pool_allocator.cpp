@@ -23,7 +23,7 @@
 
 #include "util/global.hpp"
 
-#include "smart_swapper/smart_swapper.hpp"
+#include "neo_swapper/neo_swapper.hpp"
 #include "dispatcher/dispatcher.hpp"
 #include "../../contest.hpp"
 
@@ -47,6 +47,9 @@ namespace Pool
 
   const gchar *Allocator::_class_name     = N_ ("Pools arrangement");
   const gchar *Allocator::_xml_class_name = "";
+
+  GdkPixbuf *Allocator::_warning_pixbuf = NULL;
+  GdkPixbuf *Allocator::_moved_pixbuf   = NULL;
 
   // --------------------------------------------------------------------------------
   Allocator::Allocator (StageClass *stage_class)
@@ -116,14 +119,16 @@ namespace Pool
 
       filter->ShowAttribute ("stage_start_rank");
       filter->ShowAttribute ("name");
-      filter->ShowAttribute ("first_name");
+      //filter->ShowAttribute ("first_name");
+      filter->ShowAttribute ("country");
+      filter->ShowAttribute ("league");
       filter->ShowAttribute ("club");
 
       SetFilter (filter);
       filter->Release ();
     }
 
-    _swapper = SmartSwapper::SmartSwapper::Create (this);
+    _swapper = NeoSwapper::Swapper::Create (this);
 
     {
       GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("swapping_criteria_hbox"));
@@ -209,6 +214,26 @@ namespace Pool
     RegisterStageClass (gettext (_class_name),
                         _xml_class_name,
                         CreateInstance);
+
+    {
+      GtkWidget *image;
+
+      image = gtk_image_new ();
+      g_object_ref_sink (image);
+      _warning_pixbuf = gtk_widget_render_icon (image,
+                                                GTK_STOCK_DIALOG_WARNING,
+                                                GTK_ICON_SIZE_BUTTON,
+                                                NULL);
+      g_object_unref (image);
+
+      image = gtk_image_new ();
+      g_object_ref_sink (image);
+      _moved_pixbuf = gtk_widget_render_icon (image,
+                                              GTK_STOCK_REFRESH,
+                                              GTK_ICON_SIZE_BUTTON,
+                                              NULL);
+      g_object_unref (image);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -298,7 +323,8 @@ namespace Pool
         {
           Pool *source_pool = source_pool_zone->GetPool ();
 
-          source_pool->RemoveFencer (floating_object);
+          source_pool->RemoveFencer (floating_object,
+                                     this);
         }
 
         {
@@ -306,6 +332,13 @@ namespace Pool
 
           target_pool->AddFencer (floating_object,
                                   this);
+        }
+
+        {
+          _swapper->MoveFencer ((Player *) floating_object,
+                                source_pool_zone,
+                                target_pool_zone);
+          DisplaySwapperError ();
         }
 
         _fencer_list->Update (floating_object);
@@ -334,8 +367,8 @@ namespace Pool
     {
       FillPoolTable (source_pool_zone);
       FillPoolTable (target_pool_zone);
-      SignalStatusUpdate ();
       FixUpTablesBounds ();
+      SignalStatusUpdate ();
     }
   }
 
@@ -455,8 +488,8 @@ namespace Pool
         }
       }
     }
+    DisplaySwapperError ();
     FixUpTablesBounds ();
-
     SignalStatusUpdate ();
   }
 
@@ -710,6 +743,7 @@ namespace Pool
                                       GetName (),
                                       GetId () + 1);
             current_pool->RegisterRoadmapListener (this);
+            current_pool->SetStrengthContributors (_selected_config->_size - _selected_config->_size%2);
 
             {
               current_zone = new PoolZone (this,
@@ -780,6 +814,10 @@ namespace Pool
         else
         {
           current_pool = NULL;
+
+          _swapper->Configure (_drop_zones,
+                               _swapping_criteria_list);
+          _swapper->CheckCurrentDistribution ();
           return;
         }
       }
@@ -985,6 +1023,7 @@ namespace Pool
                                    GetName (),
                                    GetId () + 1);
         pool_table[i]->RegisterRoadmapListener (this);
+        pool_table[i]->SetStrengthContributors (_selected_config->_size - _selected_config->_size%2);
 
         {
           PoolZone *zone = new PoolZone (this,
@@ -995,29 +1034,11 @@ namespace Pool
         }
       }
 
+      _swapper->Configure (_drop_zones,
+                           _swapping_criteria_list);
       if (_seeding_balanced->_value)
       {
-        _swapper->Init (_drop_zones,
-                        nb_fencer);
-        if (_swapping_criteria_list)
-        {
-          _swapper->Swap (_swapping_criteria_list,
-                          shortlist);
-        }
-        else
-        {
-          _swapper->Swap (NULL,
-                          shortlist);
-        }
-
-        {
-          gchar *figures = g_strdup_printf ("Moved : %d",
-                                            _swapper->GetMoved ());
-
-          gtk_widget_set_tooltip_text (swapping_hbox,
-                                       figures);
-          g_free (figures);
-        }
+        _swapper->Swap (shortlist);
       }
       else
       {
@@ -1051,7 +1072,11 @@ namespace Pool
                            "original_pool",
                            (void *) pool->GetNumber ());
           player->RemoveData (this,
+                              "status_item");
+#ifdef DEBUG
+          player->RemoveData (this,
                               "swapped_from");
+#endif
           pool->AddFencer (player,
                            this);
         }
@@ -1062,6 +1087,40 @@ namespace Pool
         _nb_matchs = GetNbMatchs ();
         RefreshMatchRate (_nb_matchs);
       }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::DisplaySwapperError ()
+  {
+    if (_swapper->HasErrors ())
+    {
+      GdkColor *gdk_color = g_new (GdkColor, 1);
+
+      gdk_color_parse ("#c52222", gdk_color);
+
+      gtk_widget_modify_bg (_glade->GetWidget ("swapping_box"),
+                            GTK_STATE_NORMAL,
+                            gdk_color);
+      g_free (gdk_color);
+    }
+    else
+    {
+      gtk_widget_modify_bg (_glade->GetWidget ("swapping_box"),
+                            GTK_STATE_NORMAL,
+                            NULL);
+    }
+
+
+    {
+      gchar *tooltip = g_strdup_printf ("%d error(s)",
+                                        _swapper->GetMoved ());
+
+      gtk_widget_set_tooltip_text (_glade->GetWidget ("swapping_box"),
+                                   tooltip);
+      gtk_widget_set_tooltip_text (_glade->GetWidget ("swapping_criteria_hbox"),
+                                   tooltip);
+      g_free (tooltip);
     }
   }
 
@@ -1131,6 +1190,43 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::FixUpTablesBounds ()
   {
+    {
+      GSList *current_zone = _drop_zones;
+
+      while (current_zone)
+      {
+        Pool   *pool           = GetPoolOf (current_zone);
+        GSList *current_fencer = pool->GetFencerList ();
+
+        while (current_fencer)
+        {
+          Player        *fencer      = (Player *) current_fencer->data;
+          GooCanvasItem *status_item = (GooCanvasItem *) fencer->GetPtrData (this, "status_item");
+
+          if (_swapper->IsAnError (fencer))
+          {
+            g_object_set (G_OBJECT (status_item),
+                          "pixbuf", _warning_pixbuf,
+                          NULL);
+          }
+          else if (fencer->GetUIntData (this, "original_pool") != pool->GetNumber ())
+          {
+            g_object_set (G_OBJECT (status_item),
+                          "pixbuf", _moved_pixbuf,
+                          NULL);
+          }
+          else
+          {
+            g_object_set (G_OBJECT (status_item),
+                          "pixbuf", NULL,
+                          NULL);
+          }
+          current_fencer = g_slist_next (current_fencer);
+        }
+
+        current_zone = g_slist_next (current_zone);
+      }
+    }
     if (_selected_config)
     {
       GSList *current = _drop_zones;
@@ -1232,7 +1328,7 @@ namespace Pool
         }
         else
         {
-          icon_name = g_strdup (GTK_STOCK_DIALOG_WARNING);
+          icon_name = g_strdup (GTK_STOCK_DIALOG_ERROR);
           pool->SetData (this, "is_balanced", 0);
         }
 
@@ -1251,6 +1347,20 @@ namespace Pool
                       "font", BP_FONT "bold 18px",
                       NULL);
         Canvas::SetTableItemAttribute (item, "y-align", 1.0);
+      }
+
+      // Strength
+      {
+        gchar *strength = g_strdup_printf ("%d", pool->GetStrength ());
+
+        item = Canvas::PutTextInTable (header_table,
+                                       strength,
+                                       0, column_count++);
+        g_object_set (G_OBJECT (item),
+                      "font", BP_FONT "Bold Italic 14px",
+                      "fill_color", "blue",
+                      NULL);
+        g_free (strength);
       }
 
       // Piste
@@ -1368,8 +1478,6 @@ namespace Pool
   {
     if (player)
     {
-      Pool *pool = zone->GetPool ();
-
       if (player->Is ("Referee"))
       {
         static gchar  *referee_icon = NULL;
@@ -1384,12 +1492,12 @@ namespace Pool
       }
       else
       {
-        if (player->GetUIntData (this, "original_pool") != pool->GetNumber ())
-        {
-          Canvas::PutStockIconInTable (table,
-                                       GTK_STOCK_REFRESH,
+        GooCanvasItem *status_item = Canvas::PutPixbufInTable (table,
+                                                               NULL,
                                        indice+1, 0);
-        }
+        player->SetData (this,
+                         "status_item",
+                         status_item);
 #ifdef DEBUG
         {
           guint swapped_from = player->GetUIntData (this, "swapped_from");
@@ -1549,52 +1657,38 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gboolean Allocator::IsOver ()
   {
-    if (_swapper->HasErrors ())
-    {
-      return FALSE;
-    }
-    else
-    {
-      GSList *current = _drop_zones;
+    GSList *current = _drop_zones;
 
-      while (current)
+    while (current)
+    {
+      Pool *pool = GetPoolOf (current);
+
+      if (pool->GetUIntData (this, "is_balanced") == 0)
       {
-        Pool *pool = GetPoolOf (current);
-
-        if (pool->GetUIntData (this, "is_balanced") == 0)
-        {
-          return FALSE;
-        }
-        current = g_slist_next (current);
+        return FALSE;
       }
+      current = g_slist_next (current);
     }
+
     return TRUE;
   }
 
   // --------------------------------------------------------------------------------
   gchar *Allocator::GetError ()
   {
-    if (_swapper->HasErrors ())
-    {
-      return g_strdup_printf ("<span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
-                              gettext ("Swapping failed"));
-    }
-    else
-    {
-      GSList *current = _drop_zones;
+    GSList *current = _drop_zones;
 
-      while (current)
+    while (current)
+    {
+      Pool *pool = GetPoolOf (current);
+
+      if (pool->GetUIntData (this, "is_balanced") == 0)
       {
-        Pool *pool = GetPoolOf (current);
-
-        if (pool->GetUIntData (this, "is_balanced") == 0)
-        {
-          return g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
-                                  " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
-                                  pool->GetName (), gettext ("Wrong fencers count!"));
-        }
-        current = g_slist_next (current);
+        return g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
+                                " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
+                                pool->GetName (), gettext ("Wrong fencers count!"));
       }
+      current = g_slist_next (current);
     }
 
     return NULL;

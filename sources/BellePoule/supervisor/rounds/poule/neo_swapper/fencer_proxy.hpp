@@ -14,41 +14,45 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef smart_profiles_hpp
-#define smart_profiles_hpp
+#ifndef fencer_proxy_hpp
+#define fencer_proxy_hpp
 
 #include "util/object.hpp"
+#include "util/player.hpp"
 
-namespace SmartSwapper
+namespace NeoSwapper
 {
-  class PoolProfiles
+  class PoolProxy;
+  class Criteria;
+
+  class FencerProxy : public Object
   {
     public:
-      void Configure (guint nb_fencer,
-                      guint nb_pool);
+      Player    *_player;
+      PoolProxy *_original_pool;
+      PoolProxy *_new_pool;
+      guint      _rank;
 
-      void ChangeFencerCount (guint old_count,
-                              guint new_count);
+      FencerProxy (Player    *player,
+                   guint      rank,
+                   PoolProxy *original_pool,
+                   guint      criteria_count);
 
-      guint GetSize (guint type);
+      gboolean HasQuark (guint  at_depth,
+                         GQuark quark);
 
-      gboolean Exists (guint type);
+      void SetCriteria (guint     at_depth,
+                        Criteria *criteria);
+
+      Criteria *GetCriteria (guint at_depth);
+
+      static gint CompareRank (FencerProxy *a,
+                               FencerProxy *b);
 
     private:
-      typedef enum
-      {
-        SMALL,
-        BIG,
+      Criteria **_criterias;
 
-        PROFILE_TYPE_LEN
-      } ProfileType;
-
-      guint _small_size;
-      guint _big_size;
-      guint _max_big_count;
-      guint _big_count;
-
-      guint _sizes[PROFILE_TYPE_LEN];
+      ~FencerProxy ();
   };
 }
 

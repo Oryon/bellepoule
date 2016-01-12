@@ -14,65 +14,73 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "pool_profiles.hpp"
+#include "list_crawler.hpp"
 
-namespace SmartSwapper
+namespace NeoSwapper
 {
   // --------------------------------------------------------------------------------
-  void PoolProfiles::Configure (guint nb_fencer,
-                                guint nb_pool)
+  ListCrawler::ListCrawler (GList *list)
+    : Object ("SmartSwapper::ListCrawler")
   {
-    _small_size    = nb_fencer / nb_pool;
-    _big_size      = 0;
-    _big_count     = 0;
-    _max_big_count = nb_fencer % nb_pool;
-    if (_max_big_count)
-    {
-      _big_size = _small_size+1;
-    }
+    _list         = list;
+    _left_cursor  = NULL;
+    _right_cursor = NULL;
 
-    _sizes[SMALL] = _small_size;
-    _sizes[BIG]   = _big_size;
+    _request_count = 0;
   }
 
   // --------------------------------------------------------------------------------
-  guint PoolProfiles::GetSize (guint type)
+  ListCrawler::~ListCrawler ()
   {
-    return _sizes[type];
   }
 
   // --------------------------------------------------------------------------------
-  gboolean PoolProfiles::Exists (guint type)
+  void ListCrawler::Reset (guint position)
   {
-    return ((type < PROFILE_TYPE_LEN) && (_sizes[type] > 0));
+    _request_count = 0;
+
+    _left_cursor  = g_list_nth (_list, position);
+    _right_cursor = _left_cursor;
+
+    _left_cursor  = g_list_previous (_left_cursor);
+    _right_cursor = g_list_next (_right_cursor);
   }
 
   // --------------------------------------------------------------------------------
-  void PoolProfiles::ChangeFencerCount (guint old_count,
-                                        guint new_count)
+  GList *ListCrawler::GetNext ()
   {
-    if (old_count < new_count)
-    {
-      if (new_count == _big_size)
-      {
-        _big_count++;
-      }
-    }
-    else if (old_count > new_count)
-    {
-      if (old_count == _big_size)
-      {
-        _big_count--;
-      }
-    }
+    GList *next;
 
-    if (_big_count >= _max_big_count)
+    if ((_left_cursor == NULL) && (_right_cursor == NULL))
     {
-      _sizes[BIG] = 0;
+      next = NULL;
+    }
+    else if (_left_cursor == NULL)
+    {
+      next = _right_cursor;
+      _right_cursor = g_list_next (_right_cursor);
+    }
+    else if (_right_cursor == NULL)
+    {
+      next = _left_cursor;
+      _left_cursor = g_list_previous (_left_cursor);
     }
     else
     {
-      _sizes[BIG] = _big_size;
+      _request_count++;
+
+      if (_request_count % 2)
+      {
+        next = _right_cursor;
+        _right_cursor = g_list_next (_right_cursor);
+      }
+      else
+      {
+        next = _left_cursor;
+        _left_cursor = g_list_previous (_left_cursor);
+      }
     }
+
+    return next;
   }
 }

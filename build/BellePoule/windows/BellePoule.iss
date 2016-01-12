@@ -114,6 +114,7 @@ Source: "..\..\..\resources\translations\ar\*"; DestDir: "{app}\share\{#PRODUCT}
 Source: "..\..\..\resources\translations\es\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\es"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\it\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\it"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\ko\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ko"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\pt\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\pt"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\pt_br\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\pt_br"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\sv\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\sv"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\ja\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ja"; Flags: ignoreversion recursesubdirs
@@ -168,6 +169,11 @@ Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\l
 Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
 
 Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
