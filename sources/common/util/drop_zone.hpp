@@ -18,6 +18,7 @@
 #define drop_zone_hpp
 
 #include <gtk/gtk.h>
+#include <goocanvas.h>
 
 #include "module.hpp"
 #include "object.hpp"

@@ -96,25 +96,27 @@ namespace Pool
         guint _nb_overloaded;
       } Configuration;
 
-      GSList             *_config_list;
-      Configuration      *_best_config;
-      Configuration      *_selected_config;
-      GooCanvas          *_canvas;
-      GooCanvasItem      *_main_table;
-      GtkListStore       *_combobox_store;
-      Data               *_swapping;
-      Data               *_seeding_balanced;
-      GSList             *_swapping_criteria_list;
-      gdouble             _max_w;
-      gdouble             _max_h;
-      gdouble             _print_scale;
-      gdouble             _page_h;
-      guint               _nb_page;
-      gboolean            _loaded;
-      SensitivityTrigger  _swapping_sensitivity_trigger;
+      static GdkPixbuf    *_warning_pixbuf;
+      static GdkPixbuf    *_moved_pixbuf;
+      GSList              *_config_list;
+      Configuration       *_best_config;
+      Configuration       *_selected_config;
+      GooCanvas           *_canvas;
+      GooCanvasItem       *_main_table;
+      GtkListStore        *_combobox_store;
+      Data                *_swapping;
+      Data                *_seeding_balanced;
+      GSList              *_swapping_criteria_list;
+      gdouble              _max_w;
+      gdouble              _max_h;
+      gdouble              _print_scale;
+      gdouble              _page_h;
+      guint                _nb_page;
+      gboolean             _loaded;
+      SensitivityTrigger   _swapping_sensitivity_trigger;
       People::PlayersList *_fencer_list;
-      gint                _nb_matchs;
-      Swapper            *_swapper;
+      gint                 _nb_matchs;
+      Swapper             *_swapper;
 
       void Setup ();
       void PopulateFencerList ();
@@ -149,6 +151,7 @@ namespace Pool
 
       void OnUnPlugged ();
 
+      void DisplaySwapperError ();
       static Stage *CreateInstance (StageClass *stage_class);
 
       void Load (xmlNode *xml_node);

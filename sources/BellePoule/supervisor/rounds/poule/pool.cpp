@@ -39,28 +39,30 @@ namespace Pool
     : CanvasModule ("pool.glade",
                     "canvas_scrolled_window")
   {
-    _number             = number;
-    _fencer_list        = NULL;
-    _referee_list       = NULL;
-    _piste              = 0;
-    _sorted_fencer_list = NULL;
-    _match_list         = NULL;
-    _is_over            = FALSE;
-    _has_error          = FALSE;
-    _title_table        = NULL;
-    _status_item        = NULL;
-    _status_pixbuf      = NULL;
-    _locked             = FALSE;
-    _max_score          = max_score;
-    _display_data       = NULL;
-    _nb_drop            = 0;
-    _rand_seed          = rand_seed;
-    _xml_player_tag     = xml_player_tag;
+      _number                = number;
+      _fencer_list           = NULL;
+      _referee_list          = NULL;
+      _piste                 = 0;
+      _sorted_fencer_list    = NULL;
+      _match_list            = NULL;
+      _is_over               = FALSE;
+      _has_error             = FALSE;
+      _title_table           = NULL;
+      _status_item           = NULL;
+      _status_pixbuf         = NULL;
+      _locked                = FALSE;
+      _max_score             = max_score;
+      _display_data          = NULL;
+      _nb_drop               = 0;
+      _rand_seed             = rand_seed;
+      _xml_player_tag        = xml_player_tag;
+      _strength              = 0;
+      _strength_contributors = 0;
 
-    _status_listener    = NULL;
-    _roadmap_listener   = NULL;
+      _status_listener       = NULL;
+      _roadmap_listener      = NULL;
 
-    _score_collector = NULL;
+      _score_collector       = NULL;
 
     {
       gchar *text = g_strdup_printf (gettext ("Pool #%02d"), _number);
@@ -244,6 +246,18 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  guint Pool::GetStrength ()
+  {
+    return _strength;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::SetStrengthContributors (gint contributors_count)
+  {
+    _strength_contributors = contributors_count;
+  }
+
+  // --------------------------------------------------------------------------------
   gchar *Pool::GetName ()
   {
     return _name;
@@ -329,17 +343,42 @@ namespace Pool
                                                         (GCompareDataFunc) Player::Compare,
                                                         &attr_id);
       }
+
+      RefreshStrength (rank_owner);
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::RemoveFencer (Player *player)
+  void Pool::RemoveFencer (Player *player,
+                           Object *rank_owner)
   {
     if (g_slist_find (_fencer_list,
                       player))
     {
       _fencer_list = g_slist_remove (_fencer_list,
                                      player);
+      RefreshStrength (rank_owner);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::RefreshStrength (Object *rank_owner)
+  {
+    GSList *current = _fencer_list;
+
+    _strength = 0;
+    for (guint i = 0 ; current && (i < _strength_contributors); i++)
+    {
+      Player              *player = (Player *) current->data;
+      Player::AttributeId  attr_id ("stage_start_rank", rank_owner);
+      Attribute           *stage_start_rank = player->GetAttribute (&attr_id);
+
+      if (stage_start_rank)
+      {
+        _strength += stage_start_rank->GetUIntValue ();
+      }
+
+      current = g_slist_next (current);
     }
   }
 

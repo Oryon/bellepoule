@@ -67,11 +67,12 @@ namespace Pool
       void  AddFencer     (Player *player, Object *rank_owner);
       void  AddReferee    (Player *player);
       void  CreateMatchs  (GSList *affinity_criteria_list);
-      void  RemoveFencer  (Player *player);
+      void  RemoveFencer  (Player *player, Object *rank_owner);
       void  RemoveReferee (Player *player);
       guint GetNbPlayers  ();
       guint GetNbMatchs   ();
       guint GetNumber     ();
+      guint GetStrength   ();
       void  DropPlayer    (Player *player, gchar *reason);
       void  RestorePlayer (Player *player);
       void  CleanScores   ();
@@ -86,6 +87,8 @@ namespace Pool
 
       void  RegisterStatusListener (StatusListener *listener);
       void  RegisterRoadmapListener (RoadmapListener *listener);
+
+      void SetStrengthContributors (gint contributors_count);
 
       gboolean IsOver ();
       gboolean HasError ();
@@ -153,6 +156,8 @@ namespace Pool
     GSList          *_display_data;
     guint            _nb_drop;
     const gchar     *_xml_player_tag;
+    guint            _strength;
+    guint            _strength_contributors;
     Dispatcher      *_dispatcher;
 
     StatusListener  *_status_listener;
@@ -183,6 +188,7 @@ namespace Pool
 
       void SortPlayers ();
 
+      void RefreshStrength (Object *rank_owner);
       Player *GetPlayer (guint   i,
                          GSList *in_list);
 

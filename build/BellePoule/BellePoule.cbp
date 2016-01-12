@@ -344,6 +344,36 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/dispatcher/test.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/criteria.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/criteria.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/fencer_proxy.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/fencer_proxy.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/list_crawler.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/list_crawler.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/neo_swapper.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/neo_swapper.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/pool_proxy.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/pool_proxy.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
@@ -366,42 +396,6 @@
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool_zone.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/criteria_value.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/criteria_value.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_data.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_data.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_fencer.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_fencer.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_profiles.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_profiles.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/smart_swapper.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/smart_swapper.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/snake.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/snake.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/swapper.hpp">

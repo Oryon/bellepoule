@@ -14,35 +14,30 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef pool_fencer_hpp
-#define pool_fencer_hpp
+#ifndef list_crawler_hpp
+#define list_crawler_hpp
 
 #include "util/object.hpp"
-#include "util/player.hpp"
 
-namespace SmartSwapper
+namespace NeoSwapper
 {
-  class PoolData;
-
-  class Fencer : public Object
+  class ListCrawler : public Object
   {
     public:
-      Player   *_player;
-      GQuark   *_criteria_quarks;
-      PoolData *_original_pool;
-      PoolData *_new_pool;
-      guint     _rank;
+      ListCrawler (GList *list);
 
-      Fencer (Player   *player,
-              guint     rank,
-              PoolData *original_pool,
-              guint     criteria_count);
+      void Reset (guint position);
 
-      static gint CompareRank (Fencer *a,
-                               Fencer *b);
+      GList *GetNext ();
 
     private:
-      ~Fencer ();
+      GList *_list;
+      GList *_left_cursor;
+      GList *_right_cursor;
+
+      guint _request_count;
+
+      ~ListCrawler ();
   };
 }
 
