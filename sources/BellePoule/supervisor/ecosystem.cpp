@@ -60,9 +60,9 @@ EcoSystem::EcoSystem (Glade *glade)
     gtk_list_store_set (model, &iter,
                         FTP_NAME_str,   "<b><big>Escrime Info  </big></b>",
                         FTP_PIXBUF_pix, pixbuf,
-                        FTP_URL_str,    "ftp://www.escrime-info.com/web",
-                        FTP_USER_str,   "belle_poule",
-                        FTP_PASSWD_str, "tH3MF8huHX",
+                        FTP_URL_str,    "ftp://www.escrime-info.com/web/Greg/resultats",
+                        FTP_USER_str,   "resultxml",
+                        FTP_PASSWD_str, "xmlpower",
                         -1);
     g_object_unref (pixbuf);
   }
@@ -115,16 +115,26 @@ WifiCode *EcoSystem::GetAdminCode ()
 }
 
 // --------------------------------------------------------------------------------
-void EcoSystem::UploadFile (const gchar *filename)
+void EcoSystem::UploadFile (const gchar *filename,
+                            const gchar *remote_dir,
+                            const gchar *remote_file)
 {
   Net::FileUploader *uploader;
 
-  uploader = new Net::FileUploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
+  uploader = new Net::FileUploader (GetRemoteSiteUrl (),
                                     gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
                                     gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
 
-  uploader->UploadFile (filename);
+  uploader->UploadFile (filename,
+                        remote_dir,
+                        remote_file);
   uploader->Release ();
+}
+
+// --------------------------------------------------------------------------------
+const gchar *EcoSystem::GetRemoteSiteUrl ()
+{
+  return gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry")))));
 }
 
 // --------------------------------------------------------------------------------

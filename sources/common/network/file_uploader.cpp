@@ -23,11 +23,11 @@ namespace Net
                               const gchar  *user,
                               const gchar  *passwd)
   {
-    _drop_dir = g_strdup (url);;
-    _user     = g_strdup (user);
-    _passwd   = g_strdup (passwd);
-    _filename = NULL;
-    _url      = NULL;
+    _full_url  = NULL;
+    _user      = g_strdup (user);
+    _passwd    = g_strdup (passwd);
+    _file_path = NULL;
+    _url       = g_strdup (url);
   }
 
   // --------------------------------------------------------------------------------
@@ -36,22 +36,28 @@ namespace Net
     printf (RED "FileUploader ***************>> Release\n" ESC);
     g_free (_user);
     g_free (_passwd);
-    g_free (_filename);
-    g_free (_drop_dir);
+    g_free (_file_path);
+    g_free (_full_url);
     g_free (_url);
   }
 
   // --------------------------------------------------------------------------------
-  void FileUploader::UploadFile (const gchar *filename)
+  void FileUploader::UploadFile (const gchar *file_path,
+                                 const gchar *remote_dir,
+                                 const gchar *remote_file)
   {
-    _filename = g_strdup (filename);
+    _file_path = g_strdup (file_path);
 
-    if (_filename && _drop_dir)
+    if (_file_path)
     {
-      gchar *base_name = g_path_get_basename (_filename);
-
-      _url = g_strdup_printf ("%s/%s", _drop_dir, base_name);
-      g_free (base_name);
+      if (remote_dir == NULL)
+      {
+        _full_url = g_strdup_printf ("%s/%s", _url, remote_file);
+      }
+      else
+      {
+        _full_url = g_strdup_printf ("%s/%s/%s", _url, remote_dir, remote_file);
+      }
     }
 
 
@@ -92,7 +98,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   const gchar *FileUploader::GetUrl ()
   {
-    return _url;
+    return _full_url;
   }
 
   // --------------------------------------------------------------------------------
@@ -100,12 +106,12 @@ namespace Net
   {
     uploader->Init ();
 
-    if (uploader->_filename)
+    if (uploader->_file_path)
     {
       GError *error = NULL;
       gchar  *data_copy;
 
-      if (g_file_get_contents (uploader->_filename,
+      if (g_file_get_contents (uploader->_file_path,
                                &data_copy,
                                NULL,
                                &error) == FALSE)

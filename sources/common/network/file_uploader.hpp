@@ -28,14 +28,16 @@ namespace Net
                     const gchar  *user,
                     const gchar  *passwd);
 
-      void UploadFile (const gchar *filename);
+      void UploadFile (const gchar *file_path,
+                       const gchar *remote_dir,
+                       const gchar *remote_file);
 
     private:
       gchar *_user;
       gchar *_passwd;
-      gchar *_drop_dir;
+      gchar *_full_url;
       gchar *_url;
-      gchar *_filename;
+      gchar *_file_path;
 
       virtual ~FileUploader ();
 

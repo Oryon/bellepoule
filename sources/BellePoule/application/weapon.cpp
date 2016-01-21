@@ -20,11 +20,13 @@ GSList *Weapon::_list = NULL;
 
 // --------------------------------------------------------------------------------
 Weapon::Weapon (const gchar *image,
-                const gchar *xml_image)
+                const gchar *xml_image,
+                const gchar *greg_image)
   : Object ("Weapon")
 {
-  _image     = g_strdup (image);
-  _xml_image = g_strdup (xml_image);
+  _image      = g_strdup (image);
+  _xml_image  = g_strdup (xml_image);
+  _greg_image = g_strdup (greg_image);
 
   _list = g_slist_prepend (_list,
                            this);
@@ -112,4 +114,10 @@ const gchar *Weapon::GetImage ()
 const gchar *Weapon::GetXmlImage ()
 {
   return _xml_image;
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Weapon::GetGregImage ()
+{
+  return _greg_image;
 }

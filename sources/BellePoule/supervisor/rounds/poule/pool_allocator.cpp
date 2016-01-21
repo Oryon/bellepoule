@@ -1493,8 +1493,8 @@ namespace Pool
       else
       {
         GooCanvasItem *status_item = Canvas::PutPixbufInTable (table,
-                                                               NULL,
-                                       indice+1, 0);
+                                                               _moved_pixbuf,
+                                                               indice+1, 0);
         player->SetData (this,
                          "status_item",
                          status_item);

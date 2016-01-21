@@ -27,7 +27,11 @@ class EcoSystem : public Object
   public:
     EcoSystem (Glade *glade);
 
-    void UploadFile (const gchar *filename);
+    void UploadFile (const gchar *filename,
+                     const gchar *remote_dir,
+                     const gchar *remote_file);
+
+    const gchar *GetRemoteSiteUrl ();
 
     WifiCode *GetAdminCode ();
 
