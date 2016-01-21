@@ -222,7 +222,8 @@ gboolean Timeline::Redraw (Timeline *tl)
                                                (GSourceFunc) Redraw,
                                                tl);
 
-  return G_SOURCE_CONTINUE;
+  //return G_SOURCE_CONTINUE;
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------

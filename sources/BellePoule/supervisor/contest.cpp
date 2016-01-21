@@ -68,6 +68,13 @@ const gchar *Contest::gender_xml_alias[_nb_gender] =
   "FM"
 };
 
+const gchar *Contest::gender_greg[_nb_gender] =
+{
+  "H",
+  "D",
+  "H"
+};
+
 const gchar *Contest::category_image[_nb_category] =
 {
   N_ ("U8"),
@@ -114,6 +121,44 @@ const gchar *Contest::category_xml_alias[_nb_category] =
   "V",
   "V",
   "V"
+};
+
+const gchar *Contest::category_greg[_nb_category] =
+{
+  "Po",
+  "Pu",
+  "B",
+  "M",
+  "C",
+  "J",
+  "S",
+  "V",
+  "V",
+  "V",
+  "V",
+  "V"
+};
+
+const gchar *Contest::level_image[_nb_level] =
+{
+  N_ ("Ligue"),
+  N_ ("Zone"),
+  N_ ("Circuit national"),
+  N_ ("Coupe du monde"),
+  N_ ("Championnats de France"),
+  N_ ("Championnats du monde"),
+  N_ ("Autre")
+};
+
+const gchar *Contest::level_xml_image[_nb_level] =
+{
+  "L",
+  "Z",
+  "CN",
+  "A",
+  "F",
+  "IE",
+  "X"
 };
 
 GList *Contest::_color_list = NULL;
@@ -234,11 +279,12 @@ Contest::Contest (gboolean for_duplication )
   }
 
   _read_only  = FALSE;
-  _level      = NULL;
+  _authority  = NULL;
   _filename   = NULL;
   _tournament = NULL;
   _weapon     = Weapon::GetDefault ();
   _category   = 0;
+  _level      = 0;
   _gender     = 0;
   _team_event = FALSE;
   _derived    = FALSE;
@@ -348,6 +394,18 @@ Contest::Contest (gboolean for_duplication )
     }
     gtk_container_add (GTK_CONTAINER (box), _category_combo);
     gtk_widget_show (_category_combo);
+  }
+
+  {
+    GtkWidget *box = _glade->GetWidget ("level_box");
+
+    _level_combo = gtk_combo_box_text_new ();
+    for (guint i = 0; i < _nb_level; i ++)
+    {
+      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_level_combo), gettext (level_image[i]));
+    }
+    gtk_container_add (GTK_CONTAINER (box), _level_combo);
+    gtk_widget_show (_level_combo);
   }
 }
 
@@ -584,8 +642,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Championnat");
         if (attr)
         {
-          g_free (_level);
-          _level = g_strdup (attr);
+          g_free (_authority);
+          _authority = g_strdup (attr);
           xmlFree (attr);
         }
 
@@ -713,6 +771,20 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
           xmlFree (attr);
         }
 
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Niveau");
+        if (attr)
+        {
+          for (guint i = 0; i < _nb_level; i++)
+          {
+            if (strcmp (attr, level_xml_image[i]) == 0)
+            {
+              _level = i;
+              break;
+            }
+          }
+          xmlFree (attr);
+        }
+
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Organisateur");
         if (attr)
         {
@@ -802,7 +874,7 @@ Contest::~Contest ()
     g_free (www_file);
   }
 
-  g_free (_level);
+  g_free (_authority);
   g_free (_id);
   g_free (_name);
   g_free (_filename);
@@ -939,9 +1011,9 @@ Contest *Contest::Duplicate ()
   contest->_schedule->CreateDefault (TRUE);
   contest->_derived = TRUE;
 
-  if (_level)
+  if (_authority)
   {
-    contest->_level = g_strdup (_level);
+    contest->_authority = g_strdup (_authority);
   }
   if (_id)
   {
@@ -952,6 +1024,7 @@ Contest *Contest::Duplicate ()
   contest->_web_site   = g_strdup (_web_site);
   contest->_location   = g_strdup (_location);
   contest->_category   = _category;
+  contest->_level      = _level;
   contest->_weapon     = _weapon;
   contest->_gender     = _gender;
   contest->_day        = _day;
@@ -1180,6 +1253,9 @@ void Contest::FillInProperties ()
   gtk_combo_box_set_active (GTK_COMBO_BOX (_category_combo),
                             _category);
 
+  gtk_combo_box_set_active (GTK_COMBO_BOX (_level_combo),
+                            _level);
+
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("allow_radiobutton")),
                                 _schedule->ScoreStuffingIsAllowed ());
 
@@ -1224,6 +1300,7 @@ void Contest::ReadProperties ()
   _weapon   = Weapon::GetFromIndex (gtk_combo_box_get_active (GTK_COMBO_BOX (_weapon_combo)));
   _gender   = gtk_combo_box_get_active (GTK_COMBO_BOX (_gender_combo));
   _category = gtk_combo_box_get_active (GTK_COMBO_BOX (_category_combo));
+  _level    = gtk_combo_box_get_active (GTK_COMBO_BOX (_level_combo));
 
   _day   = GetUIntData (this, "day");
   _month = GetUIntData (this, "month");
@@ -1328,6 +1405,13 @@ void Contest::DisplayProperties ()
                         gettext (category_image[_category]));
   }
 
+  w = _glade->GetWidget ("contest_level_label");
+  if (w)
+  {
+    gtk_label_set_text (GTK_LABEL (w),
+                        gettext (level_image[_level]));
+  }
+
   if (_gdk_color)
   {
     GtkWidget *tab = _glade->GetWidget ("eventbox");
@@ -1366,10 +1450,54 @@ void Contest::Publish ()
 {
   if (_tournament && (_schedule->ScoreStuffingIsAllowed () == FALSE))
   {
-    {
-      EcoSystem *ecosystem = _tournament->GetEcosystem ();
+    EcoSystem   *ecosystem = _tournament->GetEcosystem ();
+    const gchar *url       = ecosystem->GetRemoteSiteUrl ();
 
-      ecosystem->UploadFile (_filename);
+    if (url[0] == 0)
+    {
+      return;
+    }
+
+    if (strstr (url, "www.escrime-info.com"))
+    {
+      gchar time_stamp[] = "20001231";
+
+      {
+        GDate *date = g_date_new_dmy (_day,
+                                      (GDateMonth) _month,
+                                      _year);
+
+        g_date_strftime (time_stamp,
+                         strlen (time_stamp)+1,
+                         "%Y%m%d",
+                         date);
+        g_date_free (date);
+      }
+
+      {
+        gchar *remote_file = g_strdup_printf ("%s%s-%s.xml", time_stamp, _location, _name);
+        gchar *remote_dir  = g_strdup_printf ("%s%s%s/%s",
+                                              _weapon->GetGregImage (),
+                                              gender_greg[_gender],
+                                              category_greg[_category],
+                                              level_xml_image[_level]);
+
+
+        ecosystem->UploadFile (_filename,
+                               remote_dir,
+                               remote_file);
+        g_free (remote_file);
+        g_free (remote_dir);
+      }
+    }
+    else
+    {
+      gchar *base_name = g_path_get_basename (_filename);
+
+      ecosystem->UploadFile (_filename,
+                             NULL,
+                             base_name);
+      g_free (base_name);
     }
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))
@@ -1484,11 +1612,11 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
       }
     }
 
-    if (_level)
+    if (_authority)
     {
       xmlTextWriterWriteAttribute (xml_writer,
                                    BAD_CAST "Championnat",
-                                   BAD_CAST _level);
+                                   BAD_CAST _authority);
     }
 
     if (_id)
@@ -1513,6 +1641,9 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
     xmlTextWriterWriteAttribute (xml_writer,
                                  BAD_CAST "Categorie",
                                  BAD_CAST category_xml_image[_category]);
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "Niveau",
+                                 BAD_CAST level_xml_image[_level]);
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "Date",
                                        "%02d.%02d.%d", _day, _month, _year);

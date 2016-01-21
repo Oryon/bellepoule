@@ -23,7 +23,8 @@ class Weapon : public Object
 {
   public:
     Weapon (const gchar *image,
-            const gchar *xml_image);
+            const gchar *xml_image,
+            const gchar *greg_image);
 
   public:
     static GSList *GetList ();
@@ -39,6 +40,8 @@ class Weapon : public Object
 
     const gchar *GetXmlImage ();
 
+    const gchar *GetGregImage ();
+
     guint GetIndex ();
 
     gboolean IsTheSameThan (Weapon *than);
@@ -48,6 +51,7 @@ class Weapon : public Object
 
     gchar *_image;
     gchar *_xml_image;
+    gchar *_greg_image;
 
     virtual ~Weapon ();
 };
