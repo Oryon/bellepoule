@@ -425,16 +425,8 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::ImportFFF (gchar *filename)
   {
-    gchar *file_content = GetFileContent (filename);
-    gchar *utf8_content = g_convert (file_content,
-                                     -1,
-                                     "UTF-8",
-                                     "ISO-8859-1",
-                                     NULL,
-                                     NULL,
-                                     NULL);
+    gchar *utf8_content = GetFileContent (filename);
 
-    g_free (file_content);
     if (utf8_content)
     {
       gchar **lines = g_strsplit_set (utf8_content,

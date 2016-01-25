@@ -364,6 +364,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::RefreshStrength (Object *rank_owner)
   {
+#ifdef DEBUG
     GSList *current = _fencer_list;
 
     _strength = 0;
@@ -380,6 +381,7 @@ namespace Pool
 
       current = g_slist_next (current);
     }
+#endif
   }
 
   // --------------------------------------------------------------------------------
