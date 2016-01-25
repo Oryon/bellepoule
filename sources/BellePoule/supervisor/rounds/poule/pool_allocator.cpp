@@ -119,9 +119,12 @@ namespace Pool
 
       filter->ShowAttribute ("stage_start_rank");
       filter->ShowAttribute ("name");
-      //filter->ShowAttribute ("first_name");
+#ifdef DEBUG
       filter->ShowAttribute ("country");
       filter->ShowAttribute ("league");
+#else
+      filter->ShowAttribute ("first_name");
+#endif
       filter->ShowAttribute ("club");
 
       SetFilter (filter);
@@ -1350,6 +1353,7 @@ namespace Pool
       }
 
       // Strength
+#ifdef DEBUG
       {
         gchar *strength = g_strdup_printf ("%d", pool->GetStrength ());
 
@@ -1362,6 +1366,7 @@ namespace Pool
                       NULL);
         g_free (strength);
       }
+#endif
 
       // Piste
       {

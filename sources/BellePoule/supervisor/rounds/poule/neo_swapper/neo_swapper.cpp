@@ -597,10 +597,12 @@ namespace NeoSwapper
     {
       Criteria *criteria = fencer->GetCriteria (depth);
 
+      if (criteria == NULL)
+      {
+        return TRUE;
+      }
       return criteria->FreePlaceIn (pool_proxy);
     }
-
-    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

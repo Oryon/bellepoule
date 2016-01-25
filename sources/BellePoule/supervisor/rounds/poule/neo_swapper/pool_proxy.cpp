@@ -59,8 +59,11 @@ namespace NeoSwapper
     {
       Criteria *criteria = fencer->GetCriteria (i);
 
-      criteria->ChangeScore (1,
-                             this);
+      if (criteria)
+      {
+        criteria->ChangeScore (1,
+                               this);
+      }
     }
   }
 
@@ -111,8 +114,11 @@ namespace NeoSwapper
     {
       Criteria *criteria = fencer->GetCriteria (i);
 
-      criteria->ChangeScore (-1,
-                             this);
+      if (criteria)
+      {
+        criteria->ChangeScore (-1,
+                               this);
+      }
     }
   }
 

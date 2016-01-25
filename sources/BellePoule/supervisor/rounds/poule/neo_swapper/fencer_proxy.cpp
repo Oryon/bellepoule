@@ -47,7 +47,12 @@ namespace NeoSwapper
   gboolean FencerProxy::HasQuark (guint  at_depth,
                                   GQuark quark)
   {
+    if (_criterias[at_depth])
+    {
     return _criterias[at_depth]->HasQuark (quark);
+    }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
