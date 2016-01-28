@@ -1,48 +1,45 @@
-# Spanish translation for bellepoule
-# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
-# This file is distributed under the same license as the BellePoule package.
+# Catalan (Valencian) translation for bellepoule
+# Copyright (c) 2016 Rosetta Contributors and Canonical Ltd 2016
+# This file is distributed under the same license as the bellepoule package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2015-07-13 17:22+0200\n"
-"PO-Revision-Date: 2016-01-27 13:31+0000\n"
+"PO-Revision-Date: 2016-01-27 13:35+0000\n"
 "Last-Translator: Angel Oliver <axel.tomcat@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: Catalan (Valencian) <ca@valencia@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2016-01-28 05:13+0000\n"
 "X-Generator: Launchpad (build 17902)\n"
-"Language: \n"
-
-msgid "Fenced places"
-msgstr "Puestos que se tiran"
 
 msgid "Classification"
-msgstr "Clasificación"
+msgstr "Classificació"
 
 msgid "Sabre"
-msgstr "Sable"
+msgstr "Sabre"
 
 msgid "Epée"
-msgstr "Espada"
+msgstr "Espasa"
 
 msgid "Foil"
-msgstr "Florete"
+msgstr "Floret"
 
 msgid "Educ"
-msgstr "Aprendizaje"
+msgstr "Aprenentatge"
 
 msgid "Male"
-msgstr "Masculino"
+msgstr "Masculí"
 
 msgid "Female"
-msgstr "Femenino"
+msgstr "Femení"
 
 msgid "Mixed"
-msgstr "Mixto"
+msgstr "Mixt"
 
 msgid "U8"
 msgstr "M8"
@@ -63,145 +60,145 @@ msgid "U18"
 msgstr "M18"
 
 msgid "Senior"
-msgstr "Sénior"
+msgstr "Sènior"
 
 msgid "Veteran"
-msgstr "Veterano"
+msgstr "Veterà"
 
 msgid "Veteran 1"
-msgstr "Veterano 1"
+msgstr "Veterà 1"
 
 msgid "Veteran 2"
-msgstr "Veterano 2"
+msgstr "Veterà 2"
 
 msgid "Veteran 3"
-msgstr "Veterano 3"
+msgstr "Veterà 3"
 
 msgid "Veteran 4"
-msgstr "Veterano 4"
+msgstr "Veterà 4"
 
 msgid "Choose a file..."
-msgstr "Elija un archivo..."
+msgstr "Trie un arxiu..."
 
 msgid "BellePoule files (.cotcot)"
-msgstr "Archivos BellePoule"
+msgstr "Arxius BellePoule (.cotcot)"
 
 msgid "All files"
-msgstr "Todos los archivos"
+msgstr "Tots els arxius"
 
 msgid "Close without saving"
-msgstr "Cerrar sin guardar cambios"
+msgstr "Tancar sense guardar canvis"
 
 msgid "ref"
-msgstr "ref"
+msgstr "arb"
 
 msgid "place"
-msgstr "posición"
+msgstr "Posició"
 
 msgid "team"
-msgstr "equipo"
+msgstr "equip"
 
 msgid "last name"
-msgstr "apellido(s)"
+msgstr "cognom (s)"
 
 msgid "first name"
-msgstr "nombre"
+msgstr "nom"
 
 msgid "date of birth"
-msgstr "fecha de nacimiento"
+msgstr "data de naixement"
 
 msgid "gender"
-msgstr "sexo"
+msgstr "sexe"
 
 msgid "country"
 msgstr "país"
 
 msgid "league"
-msgstr "liga"
+msgstr "lliga"
 
 msgid "club"
 msgstr "club"
 
 msgid "licence"
-msgstr "licencia"
+msgstr "llicencia"
 
 msgid "IP address"
-msgstr "Dirección IP"
+msgstr "Adreça IP"
 
 msgid "rate"
-msgstr "porcentaje"
+msgstr "percentatge"
 
 msgid "level"
-msgstr "nivel"
+msgstr "nivell"
 
 msgid "ranking"
-msgstr "clasificación"
+msgstr "classificació"
 
 msgid "presence"
 msgstr "presencia"
 
 msgid "exported"
-msgstr "exportado"
+msgstr "exportat"
 
 msgid "global status"
-msgstr "estado global"
+msgstr "estat global"
 
 msgid "Qualified"
-msgstr "Clasificado"
+msgstr "Classificat"
 
 msgid "Not qualified"
-msgstr "No clasificado"
+msgstr "No classificat"
 
 msgid "Withdrawal"
-msgstr "Retirado"
+msgstr "Retirat"
 
 msgid "Excluded"
-msgstr "Excluído"
+msgstr "Exclòs"
 
 msgid "Forfeit"
-msgstr "Abandono"
+msgstr "Abandó"
 
 msgid "status"
-msgstr "estado"
+msgstr "estat"
 
 msgid "pool #"
 msgstr "poule nº"
 
 msgid "Victories"
-msgstr "Victorias"
+msgstr "Victòries"
 
 msgid "Bouts"
-msgstr "Asaltos"
+msgstr "Assalts"
 
 msgid "Vict./Bouts (‰)"
-msgstr "Vict./Asaltos (‰)"
+msgstr "Vict./Assalts (‰)"
 
 msgid "index"
-msgstr "índice"
+msgstr "índex"
 
 msgid "Hits scored"
-msgstr "Tocados dados"
+msgstr "Tocats donats"
 
 msgid "Round start rank"
-msgstr "Clasificación a principio de ronda"
+msgstr "Classificació a principi de ronda"
 
 msgid "promoted"
-msgstr "Exento"
+msgstr "Exempt"
 
 msgid "availability"
-msgstr "disponibilidad"
+msgstr "disponibilitat"
 
 msgid "Busy"
-msgstr "Ocupado"
+msgstr "Ocupat"
 
 msgid "Absent"
-msgstr "Ausente"
+msgstr "Absent"
 
 msgid "Free"
-msgstr "Libre"
+msgstr "Lliure"
 
 msgid "connection"
-msgstr "conexión"
+msgstr "connexió"
 
 msgid "Broken"
 msgstr "Defectuosos"
@@ -210,161 +207,161 @@ msgid "Waiting"
 msgstr "En espera"
 
 msgid "OK"
-msgstr "Aceptar"
+msgstr "Acceptar"
 
 msgid "Manual"
 msgstr "Manual"
 
 #, c-format
 msgid "Round #%d"
-msgstr "Ronda nº %d"
+msgstr "Ronda n %d"
 
 msgid "Formula"
 msgstr "Fórmula"
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>¿Está seguro que quiere cancelar la ronda actual?</big></b>"
+msgstr "<b><big>Està segur que vol cancel·lar la ronda actual?</big></b>"
 
 msgid "Go back to the previous round?"
-msgstr "¿Volver a la ronda anterior?"
+msgstr "Tornar a la ronda anterior?"
 
 msgid "All the inputs of this round will be cancelled."
-msgstr "Todos los valores introducidos en esta ronda serán cancelados"
+msgstr "Tots els valors introduïts en aquesta ronda seran cancel·lats"
 
 msgid ""
 "<b><big>Because of ties, the quota is exceeded.\n"
 "Do you wish to add a barrage round?</big></b>"
 msgstr ""
-"<b><big>Se ha excedido la cuota debido a un empate.\n"
-"¿Desea añadir una ronda de desempate?</big></b>"
+"<b><big>S'ha excedit la quota a causa d'un empat.\n"
+"Desitja afegir una ronda de desempat?</big></b>"
 
 msgid "Barrage"
 msgstr "Desempate"
 
 msgid "Meal"
-msgstr "Comida"
+msgstr "Menjar"
 
 msgid "Drink"
-msgstr "Bebida"
+msgstr "Beguda"
 
 msgid "Dessert"
 msgstr "Postre"
 
 msgid "Coffee"
-msgstr "Café"
+msgstr "Cafè"
 
 msgid "Payment book"
-msgstr "Recibos"
+msgstr "Llibre de pagament"
 
 msgid "Page"
-msgstr "Página"
+msgstr "Pàgina"
 
 msgid "Signature"
-msgstr "Firma"
+msgstr "Signatura"
 
 msgid "Restart BellePoule for this change to take effect"
-msgstr "Reinicie BellePoule para que este cambio surta efecto"
+msgstr "Reinicie BellePoule perquè aquest canvi faça efecte"
 
 msgid "Choose a competion file to open... "
-msgstr "Elija un archivo de competición para abrir... "
+msgstr "Trie un arxiu de competició per a obrir... "
 
 msgid "Competition files (.cotcot / .xml)"
-msgstr "Archivos de competición (.cotcot / .xml)"
+msgstr "Arxius de competició (.cotcot / .xml)"
 
 msgid "Recently opened files"
-msgstr "Archivos abiertos recientemente"
+msgstr "Arxius oberts recentment"
 
 msgid "BellePoule files"
-msgstr "Archivos BellePoule"
+msgstr "Arxius BellePoule"
 
 msgid "Meal tickets"
-msgstr "Vales de comida"
+msgstr "Vals de menjar"
 
 msgid "Choose a backup files location..."
-msgstr "Seleccione una ubicación para las copias de seguridad"
+msgstr "Seleccione una ubicació per a les còpies de seguretat"
 
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>Está seguro que quiere salir de BellePoule</big></b>"
+msgstr "<b><big>Està segur que vol eixir de BellePoule</big></b>"
 
 msgid "Quit BellePoule?"
-msgstr "¿Salir de BellePoule?"
+msgstr "Eixir de BellePoule?"
 
 msgid "All the unsaved competions will be lost."
-msgstr "Todas las competiciones no guardadas se perderán."
+msgstr "Totes les competicions no guardades es perdran."
 
 msgid "Choose a fencer file to import..."
-msgstr "Elegir un archivo de tiradores a importar..."
+msgstr "Triar un arxiu de tiradors a importar..."
 
 msgid "Fencer files"
-msgstr "Archivos de tiradores"
+msgstr "Arxius de tiradors"
 
 msgid "Referee files"
-msgstr "Archivo de arbitros"
+msgstr "Arxiu d'àrbitres"
 
 msgid "List of registered"
-msgstr "Lista de inscritos"
+msgstr "Llista d'inscrits"
 
 msgid "List of presents"
-msgstr "Lista de presentes"
+msgstr "Llista de presents"
 
 msgid "List of absents"
-msgstr "Lista de ausentes"
+msgstr "Llista d'absents"
 
 msgid "Fencer list"
-msgstr "Lista de tiradores"
+msgstr "Llista de tiradors"
 
 msgid "Check-in"
-msgstr "Registro"
+msgstr "Registre"
 
 msgid "** Without team **"
-msgstr "**Sin equipo**"
+msgstr "**Sense equip**"
 
 msgid "Expected fencers"
-msgstr "Tiradores previstos"
+msgstr "Tiradors previstos"
 
 msgid "Expected teams"
-msgstr "Equipos previstos"
+msgstr "Equips previstos"
 
 msgid "Team size"
-msgstr "Tamaño del equipo"
+msgstr "Grandària de l'equip"
 
 #, c-format
 msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr "Has configurado el tamaño mínimo de equipo con <b>%d</b> tiradores"
+msgstr "Has configurat la grandària mínima d'equip amb <b>%d</b> tiradors"
 
 msgid "Tick the present players of the team."
-msgstr "Selecciona los tiradores presentes del equipo"
+msgstr "Selecciona els tiradors presents de l'equip"
 
 msgid "Untick the absent players of the team."
-msgstr "Desmarca los tiradores ausentes del equipo"
+msgstr "Desmarca els tiradors absents de l'equip"
 
 msgid "when unknown"
-msgstr "Cuando no esté determinado"
+msgstr "Quan no estiga determinat"
 
 msgid "<b>Smartpoule</b> configuration code"
-msgstr "Código de configuración <b>Smartpoule</b>"
+msgstr "Codi de configuració <b>Smartpoule</b>"
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
 msgstr ""
-"Desmarcar esta casilla para agilizar la entrada de datos. El campo "
-"correspondiente será ignorado al pulsar la tecla TAB."
+"Desmarcar aquesta casella per a agilitzar l'entrada de dades. El camp "
+"corresponent serà ignorat en prémer la tecla TAB."
 
 msgid "General classification"
-msgstr "Clasificación general"
+msgstr "Classificació general"
 
 msgid "Choose a target file..."
-msgstr "Seleccione un archivo destino"
+msgstr "Seleccione un arxiu destí"
 
 msgid "All FFF files (.FFF)"
-msgstr "Todos los archivos FFF (.FFF)"
+msgstr "Tots els arxius FFF (.FFF)"
 
 msgid "All PDF files (.PDF)"
-msgstr "Todos los archivos PDF (.pdf)"
+msgstr "Tots els arxius PDF (.PDF)"
 
 msgid "All HTML files (.HTML)"
-msgstr "Todos los archivos HTML (.HTML)"
+msgstr "Tots els arxius HTML (.HTML)"
 
 msgid "Copy"
 msgstr "Copiar"
@@ -373,80 +370,80 @@ msgid "Paste"
 msgstr "Pegar"
 
 msgid "Choose a rank file to apply..."
-msgstr "Escoja un archivo de ranking a aplicar"
+msgstr "Esculla un arxiu de rànquing a aplicar"
 
 msgid "Rank files: cotcot, xml, txt (France)"
-msgstr "Archivos de ranking: cotcot, XML, TXT (Francia)"
+msgstr "Arxius de rànquing: cotcot, XML, TXT (França)"
 
 msgid "Split"
 msgstr "Dividir"
 
 msgid "List of fencers to extract"
-msgstr "Lista de tiradores a extraer"
+msgstr "Llista de tiradors a extraure"
 
 msgid "Pools arrangement"
-msgstr "Distribución de poules"
+msgstr "Distribució de poules"
 
 msgid "or"
 msgstr "o"
 
 msgid "Swapping failed"
-msgstr "Intercambio fallido"
+msgstr "Intercanvi fallit"
 
 msgid "Wrong fencers count!"
-msgstr "¡Número incorrecto de tiradores!"
+msgstr "Nombre incorrecte de tiradors!"
 
 msgid "Allocation"
-msgstr "Ubicación"
+msgstr "Ubicació"
 
 msgid "Seeding"
-msgstr "Compartiendo"
+msgstr "Compartint"
 
 msgid "Balanced"
-msgstr "Equilibrado"
+msgstr "Equilibrat"
 
 msgid "Grouped by strength"
-msgstr "Agrupados por fuerza"
+msgstr "Agrupats per força"
 
 msgid "Max score"
-msgstr "Resultado máximo"
+msgstr "Resultat màxim"
 
 #, c-format
 msgid "Pool #%02d"
 msgstr "Poule nº %02d"
 
 msgid "Referee"
-msgstr "Árbitro"
+msgstr "Àrbitre"
 
 msgid "Piste"
 msgstr "Pista"
 
 msgid "Status"
-msgstr "Estado"
+msgstr "Estat"
 
 msgid "Vict./Matchs"
-msgstr "Vict./Asaltos"
+msgstr "Vict./Assalts"
 
 msgid "H. scored"
-msgstr "T. dados"
+msgstr "T. donats"
 
 msgid "H. received"
-msgstr "T. recibidos"
+msgstr "T. rebuts"
 
 msgid "Index"
-msgstr "Índice"
+msgstr "Índex"
 
 msgid "Place"
-msgstr "Lugar"
+msgstr "Lloc"
 
 msgid "Pools"
 msgstr "Poules"
 
 msgid "Bout without winner!"
-msgstr "¡Asalto sin vencedor!"
+msgstr "Assalt sense vencedor!"
 
 msgid "Winner"
-msgstr "Vencedor"
+msgstr "Guanyador"
 
 msgid "Final"
 msgstr "Final"
@@ -456,171 +453,174 @@ msgstr "Semifinal"
 
 #, c-format
 msgid "Table of %d"
-msgstr "Tabla de %d"
+msgstr "Taula de %d"
 
 msgid "Place #"
-msgstr "Puesto nº"
+msgstr "Lloc n"
 
 msgid "cutting"
-msgstr "corte"
+msgstr "tall"
 
 msgid "Table"
-msgstr "Tabla"
+msgstr "Taula"
 
 #, c-format
 msgid "%s: score sheets printing"
-msgstr "%s: imprimir los resultados"
+msgstr "%s: imprimir els resultats"
 
 #, c-format
 msgid "Match %s"
-msgstr "Asalto %s"
+msgstr "Assalt %s"
 
 msgid "No winner!"
-msgstr "¡No hay un vencedor!"
+msgstr "No hi ha un guanyador!"
 
 msgid "Table classification"
-msgstr "Tabla de resultados"
+msgstr "Taula de resultats"
+
+msgid "Fenced places"
+msgstr "Llocs que es tiren"
 
 msgid "All"
-msgstr "Todo"
+msgstr "Tot"
 
 msgid "Third place"
-msgstr "Tercer lugar"
+msgstr "Tercer lloc"
 
 msgid "None"
-msgstr "Ninguno"
+msgstr "Cap"
 
 msgid "Long text"
-msgstr "Texto extendido"
+msgstr "Text estès"
 
 msgid "Short text"
-msgstr "Texto corto"
+msgstr "Text curt"
 
 msgid "Graphic"
-msgstr "Gráfico"
+msgstr "Gràfic"
 
 msgid "Data to display"
-msgstr "Datos a mostrar"
+msgstr "Dades a mostrar"
 
 msgid "Visibility"
-msgstr "Visibilidad"
+msgstr "Visibilitat"
 
 msgid "Data"
-msgstr "Datos"
+msgstr "Dades"
 
 msgid "Look"
-msgstr "Apariencia"
+msgstr "Aparença"
 
 msgid "For arbitration"
-msgstr "Pendientes de arbitrar"
+msgstr "Pendents d'arbitrar"
 
 msgid "Content designed for the referees."
-msgstr "Contenido diseñado para los árbitros."
+msgstr "Contingut dissenyat per als arbitres"
 
 msgid "For the bulletin board"
-msgstr "Para el Foro de discusiones"
+msgstr "Per al Fòrum de *discuciones"
 
 msgid "<b>For what?</b>"
-msgstr "<b>¿Para qué?</b>"
+msgstr "<b>Per a què?</b>"
 
 msgid "Promoted"
-msgstr "Exento"
+msgstr "Exempt"
 
 msgid "Eliminated"
-msgstr "Eliminado"
+msgstr "Eliminat"
 
 msgid "Fencer list printing"
-msgstr "Imprimiendo la lista de tiradores"
+msgstr "Imprimint la llista de tiradors"
 
 msgid "<b><big>What do you want to print?</big></b>"
-msgstr "<b><big>¿Qué quiere imprimir?</big></b>"
+msgstr "<b><big>Què vol imprimir?</big></b>"
 
 msgid "All the presents"
-msgstr "Todos los presentes"
+msgstr "Tots els presents"
 
 msgid "All the absents"
-msgstr "Todos los ausentes"
+msgstr "Tots els absents"
 
 msgid "Presents"
-msgstr "Presentes"
+msgstr "Presents"
 
 msgid "Absents"
-msgstr "Ausentes"
+msgstr "Absents"
 
 msgid "all"
-msgstr "todos"
+msgstr "tots"
 
 msgid "Import fencers"
-msgstr "Importar tiradores"
+msgstr "Importar tiradors"
 
 msgid "Import ranking"
-msgstr "Importar ranking"
+msgstr "Importar rànquing"
 
 msgid "Minimum team size"
-msgstr "Tamaño mínimo del equipo"
+msgstr "Grandària mínima de l'equip"
 
 msgid "Team classification"
-msgstr "Clasificación de equipo"
+msgstr "Classificació d'equip"
 
 msgid "Manually assigned"
-msgstr "Designado a mano"
+msgstr "Designat a mà"
 
 msgid "Derived from fencer classification"
-msgstr "Deducido de la clasificación del tirador"
+msgstr "Deduït de la classificació del tirador"
 
 msgid "Date of competition"
-msgstr "Fecha de la competición"
+msgstr "Data de la competició"
 
 msgid "Competition properties"
-msgstr "Propiedades de la competición"
+msgstr "Propietats de la competició"
 
 msgid "Weapon"
-msgstr "Modalidad"
+msgstr "Modalitat"
 
 msgid "Gender"
-msgstr "Sexo"
+msgstr "Gènere"
 
 msgid "Category"
-msgstr "Categoría"
+msgstr "Categoria"
 
 msgid "Individual"
 msgstr "Individual"
 
 msgid "Team"
-msgstr "Equipo"
+msgstr "Equip"
 
 msgid "<b>Type</b>"
-msgstr "<b>Tipo</b>"
+msgstr "<b>Tipus</b>"
 
 msgid "Title"
-msgstr "Título"
+msgstr "Títol"
 
 msgid "Organizer"
-msgstr "Organizador"
+msgstr "Organitzador"
 
 msgid "Web site"
-msgstr "Sitio web"
+msgstr "Lloc web"
 
 msgid "Location"
-msgstr "Ubicación"
+msgstr "Ubicació"
 
 msgid "<b>Overviews</b>"
 msgstr "<b>Vista general</b>"
 
 msgid "Date"
-msgstr "Fecha"
+msgstr "Data"
 
 msgid "Scratch"
 msgstr "Scratch"
 
 msgid "Start"
-msgstr "Inicio"
+msgstr "Inici"
 
 msgid "<b>Date / Time</b>"
-msgstr "<b>Fecha / Hora</b>"
+msgstr "<b>Data / Hora</b>"
 
 msgid "Allow"
-msgstr "Permitir"
+msgstr "Permetre"
 
 msgid "Forbid"
 msgstr "Prohibir"
@@ -630,30 +630,30 @@ msgid ""
 "score\n"
 "stuffing"
 msgstr ""
-"Rellenar\n"
-"resultados\n"
-"automáticamente"
+"Emplenar\n"
+"resultats\n"
+"automàticament"
 
 msgid "<b>Scores</b>"
-msgstr "<b>Resultados</b>"
+msgstr "<b>Resultats</b>"
 
 msgid "Event"
-msgstr "Evento"
+msgstr "Esdeveniment"
 
 msgid "Save the current state of the competition."
-msgstr "Guardar el estado actual de la competición"
+msgstr "Guardar l'estat actual de la competició"
 
 msgid "To specify the features of the competition."
-msgstr "Especificar las características de la competición."
+msgstr "Especificar les característiques de la competició."
 
 msgid "Referees"
-msgstr "Árbitros"
+msgstr "Àrbitres"
 
 msgid "Man"
-msgstr "Hombre"
+msgstr "Home"
 
 msgid "Form"
-msgstr "Formulario"
+msgstr "Formulari"
 
 msgid "Export to <b>HTML</b>"
 msgstr "Exportar a <b>HTML</b>"
@@ -666,104 +666,104 @@ msgstr "Exportar a <b>PDF</b>"
 
 msgid "Mask or unmask some data type as well as define their display order."
 msgstr ""
-"Mostrar u ocultar ciertos datos, así como definir el orden en el que "
-"aparecen."
+"Mostrar o ocultar certes dades, així com definir l'ordre en el qual "
+"apareixen."
 
 msgid "Print"
 msgstr "Imprimir"
 
 msgid "Number of pools"
-msgstr "Número de Poules"
+msgstr "Nombre de Poules"
 
 msgid "Fencers / pools"
-msgstr "Tiradores / Poules"
+msgstr "Tiradors / Poules"
 
 msgid "Swapping"
-msgstr "Intercambio"
+msgstr "Intercanvi"
 
 msgid "Name"
-msgstr "Nombre"
+msgstr "Nom"
 
 msgid "Number"
-msgstr "Número"
+msgstr "Nombre"
 
 msgid "Pool sheets printing"
-msgstr "Impresión de las hojas de poules"
+msgstr "Impressió de les fulles de poules"
 
 msgid "<b><big>Print...</big></b>"
 msgstr "<b><big>Imprimir...</big></b>"
 
 msgid "All the pools"
-msgstr "Todas las poules"
+msgstr "Totes les poules"
 
 msgid "Only the selected pool"
-msgstr "Sólo la poule seleccionada"
+msgstr "Només la poule seleccionada"
 
 msgid "<b>What?</b>"
-msgstr "<b>¿Qué?</b>"
+msgstr "<b>Què?</b>"
 
 msgid "Matches watermarked"
-msgstr "Hoja de encuentro con marca de agua"
+msgstr "Fulla de encontre amb marca d'aigua"
 
 msgid "Automatic stuffing"
-msgstr "Relleno automático"
+msgstr "Emplenat automàtic"
 
 msgid "Combined classification"
-msgstr "Clasificación combinada"
+msgstr "Classificació combinada"
 
 msgid "Single classification"
-msgstr "Clasificación simple"
+msgstr "Classificació simple"
 
 msgid "Import referee file"
-msgstr "Importar archivo árbitro"
+msgstr "Importar arxiu d'àrbitre"
 
 msgid "Add"
-msgstr "Añadir"
+msgstr "Afegir"
 
 msgid "Remove"
 msgstr "Eliminar"
 
 msgid "<b>Schedule</b>"
-msgstr "<b>Programación</b>"
+msgstr "<b>Programació</b>"
 
 msgid "<b>Parameters</b>"
-msgstr "<b>Parámetros</b>"
+msgstr "<b>Paràmetres</b>"
 
 msgid "Previous round"
 msgstr "Ronda anterior"
 
 msgid "Next round"
-msgstr "Próxima ronda"
+msgstr "Pròxima ronda"
 
 msgid "Table printing"
-msgstr "Impresión de la tabla"
+msgstr "Impressió de la taula"
 
 msgid "<b><big>How to print?</big></b>"
-msgstr "<b><big>¿Cómo imprimir?</big></b>"
+msgstr "<b><big>Com imprimir?</big></b>"
 
 msgid "The table"
-msgstr "Tabla"
+msgstr "Taula"
 
 msgid "Score sheets"
-msgstr "Hojas de resultados"
+msgstr "Marcadors"
 
 msgid "Pending"
-msgstr "Pendiente"
+msgstr "Pendent"
 
 msgid ""
 "<b><big>Which score sheets of the selected table do you want to "
 "print?</big></b>"
 msgstr ""
-"<b><big>¿Que resultado de la tabla seleccionada quiere imprimir?</big></b>"
+"<b><big>Quin resultat de la taula seleccionada vol imprimir?</big></b>"
 
 msgid "All the score sheets"
-msgstr "Todos los resultados"
+msgstr "Tots els resultats"
 
 msgid "The pending score sheets"
-msgstr "Resultados pendientes"
+msgstr "Resultats pendents"
 
 msgid "<b>Match</b>"
-msgstr "<b>Asalto</b>"
+msgstr "<b>Assalt</b>"
 
 msgid "A fencer"
 msgstr "Tirador A"
@@ -772,26 +772,26 @@ msgid "B fencer"
 msgstr "Tirador B"
 
 msgid "<b>Score</b>"
-msgstr "Resultado"
+msgstr "<b>Resultat</b>"
 
 msgid "Fill in a match"
-msgstr "Rellenar un asalto"
+msgstr "Emplenar un assalt"
 
 msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
-"Rellenar todos los marcadores de forma aleatoria.\n"
-"Para activar/desactivar este botón, ir a las propiedades de la competición."
+"Emplenar tots els marcadors de forma aleatòria.\n"
+"Per a activar/desactivar aquest botó, anar a les propietats de la competició."
 
 msgid "From"
-msgstr "Desde"
+msgstr "Des de"
 
 msgid "To"
-msgstr "Hasta"
+msgstr "Fins a"
 
 msgid "For place"
-msgstr "Por posición"
+msgstr "Per posició"
 
 msgid "Zoom"
 msgstr "Zoom"
@@ -801,7 +801,7 @@ msgid ""
 "\n"
 "\n"
 msgstr ""
-"Aplicación para la gestión de competiciones de esgrima.\n"
+"Aplicació per a la gestió de competicions d'esgrima\n"
 "\n"
 "\n"
 
@@ -809,49 +809,49 @@ msgid "WPA"
 msgstr "WPA"
 
 msgid "Security"
-msgstr "Seguridad"
+msgstr "Seguretat"
 
 msgid "Passphrase"
-msgstr "Contraseña"
+msgstr "Contrasenya"
 
 msgid ""
 "Enter your WIFI network settings here.\n"
 "They will be used to automatically configure\n"
 "the smarthphones running <b>SmartPoule</b>"
 msgstr ""
-"Introduzca la configuración de su red WiFi aquí.\n"
-"Se utilizará para configurar automáticamente\n"
-"los «smartphones» que ejecuten la aplicación <b>SmartPoule</b>"
+"Introduïsca la configuració de la seua xarxa *WiFi ací.\n"
+"S'utilitzarà per a configurar automàticament\n"
+"els «smartphones» que executen l'aplicació <b>SmartPoule</b>"
 
 msgid "User"
-msgstr "Usuario"
+msgstr "Usuari"
 
 msgid "Password"
-msgstr "Contraseña"
+msgstr "Contrasenya"
 
 msgid "FTP server"
 msgstr "Servidor FTP"
 
 msgid "<b>Web site</b>"
-msgstr "<b>Sitio Web</b>"
+msgstr "<b>Lloc web</b>"
 
 msgid "<b>Video server</b>"
 msgstr "<b>Servidor de vídeo</b>"
 
 msgid "BellePoule - Fencing tournament"
-msgstr "BellePoule - Competición de esgrima"
+msgstr "BellePoule - Competició d'esgrima"
 
 msgid "File"
-msgstr "Archivo"
+msgstr "Arxiu"
 
 msgid "Recently opened"
-msgstr "Abierto recientemente"
+msgstr "Obert recentment"
 
 msgid "Backup"
-msgstr "Copia de seguridad"
+msgstr "Còpia de seguretat"
 
 msgid "Backup files location..."
-msgstr "Ubicación de las copias de seguridad"
+msgstr "Ubicació de les còpies de seguretat"
 
 msgid "Activate"
 msgstr "Activar"
@@ -860,31 +860,31 @@ msgid "Deactivate"
 msgstr "Desactivar"
 
 msgid "Print meal tickets"
-msgstr "Imprimir vales comida"
+msgstr "Imprimir vals de menjar"
 
 msgid "Print payment book"
-msgstr "Imprimir libro de pagos"
+msgstr "Imprimir llibre de pagaments"
 
 msgid "Ecosystem"
-msgstr "Entorno"
+msgstr "Entorn"
 
 msgid "WIFI"
-msgstr "WiFi"
+msgstr "WIFI"
 
 msgid "Score sheet scanner"
-msgstr "Escáner de hojas de resultados"
+msgstr "Escàner de fulles de resultats"
 
 msgid "Publication"
-msgstr "Publicación"
+msgstr "Publicació"
 
 msgid "New version!"
-msgstr "¡Versión nueva!"
+msgstr "Versió nova!"
 
 msgid "Open an example..."
-msgstr "Abrir un ejemplo..."
+msgstr "Obrir un exemple..."
 
 msgid "User manual"
-msgstr "Manual de usuario"
+msgstr "Manual d'usuari"
 
 msgid "Fencer file template (.csv)"
 msgstr "Plantilla de tirador (.csv)"
@@ -894,21 +894,9 @@ msgid ""
 "to make your smarphone\n"
 "a score sheet scanner."
 msgstr ""
-"Escanee este código con <b>SmartPoule</b>\n"
-"para hacer de su «smartphone» un escáner\n"
-"de hojas de resultado."
+"Escanege aquest codi amb <b>SmartPoule</b\n"
+"per a fer de la seua «smartphone» un escàner\n"
+"de fulles de resultat.\""
 
 msgid "<b>Score sheet scanner</b>"
-msgstr "<b>Escáner de hojas de resultado</b>"
-
-#~ msgid "9999"
-#~ msgstr "9999"
-
-#~ msgid "31/03/2009"
-#~ msgstr "31/03/2009"
-
-#~ msgid ":"
-#~ msgstr ":"
-
-#~ msgid "points"
-#~ msgstr "puntos"
+msgstr "<b>Escàner de fulles de resultat</b>"
