@@ -152,9 +152,10 @@ namespace Net
     {
       struct curl_slist *header = SetHeader (NULL);
 
-      curl_easy_setopt (_curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) _data_length);
-      curl_easy_setopt (_curl, CURLOPT_URL,              url);
-      curl_easy_setopt (_curl, CURLOPT_HTTPHEADER,       header);
+      curl_easy_setopt (_curl, CURLOPT_INFILESIZE_LARGE,        (curl_off_t) _data_length);
+      curl_easy_setopt (_curl, CURLOPT_URL,                     url);
+      curl_easy_setopt (_curl, CURLOPT_HTTPHEADER,              header);
+      curl_easy_setopt (_curl, CURLOPT_FTP_CREATE_MISSING_DIRS, CURLFTP_CREATE_DIR_RETRY);
 
       _bytes_uploaded = 0;
 

@@ -25,6 +25,7 @@
 #include "util/global.hpp"
 #include "util/attribute.hpp"
 #include "util/player.hpp"
+#include "util/dnd_config.hpp"
 #include "../../classification.hpp"
 #include "../../contest.hpp"
 
@@ -679,7 +680,7 @@ namespace Table
       TableZone *zone = (TableZone *) match->GetPtrData (table_set,
                                                          "drop_zone");
 
-      if (match->IsOver ())
+      if ((score_collector == NULL) || match->IsOver ())
       {
         zone->FreeReferees ();
         table_set->SpreadWinners ();
