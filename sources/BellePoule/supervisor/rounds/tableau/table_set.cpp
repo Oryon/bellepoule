@@ -99,6 +99,18 @@ namespace Table
     _short_name = g_strdup_printf ("%s%d", gettext ("Place #"), first_place);
 
     {
+      GtkWidget *image;
+
+      image = gtk_image_new ();
+      g_object_ref_sink (image);
+      _printer_pixbuf = gtk_widget_render_icon (image,
+                                                GTK_STOCK_PRINT,
+                                                GTK_ICON_SIZE_BUTTON,
+                                                NULL);
+      g_object_unref (image);
+    }
+
+    {
       _quick_score_collector = new ScoreCollector (this,
                                                    (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore,
                                                    FALSE);
@@ -1367,19 +1379,29 @@ namespace Table
       Player *winner = data->_match->GetWinner ();
 
       // _print_goo_icon
-      if (   (data->_match->IsOver () == FALSE)
-          && data->_match->GetOpponent (0)
-          && data->_match->GetOpponent (1))
+      if (data->_print_goo_icon)
       {
-        g_object_set (data->_print_goo_icon,
-                      "visibility", GOO_CANVAS_ITEM_VISIBLE,
-                      NULL);
-      }
-      else
-      {
-        g_object_set (data->_print_goo_icon,
-                      "visibility", GOO_CANVAS_ITEM_HIDDEN,
-                      NULL);
+        if (   (data->_match->IsOver () == FALSE)
+            && data->_match->GetOpponent (0)
+            && data->_match->GetOpponent (1))
+        {
+          g_object_set (data->_print_goo_icon,
+                        "pixbuf", table_set->_printer_pixbuf,
+                        NULL);
+        }
+        else
+        {
+          // Workaround. Visibility make issues!
+          GdkPixbuf *empty_pixbuf = gdk_pixbuf_new_subpixbuf (table_set->_printer_pixbuf,
+                                                      0,
+                                                      0,
+                                                      1,
+                                                      1);
+          g_object_set (data->_print_goo_icon,
+                        "pixbuf", empty_pixbuf,
+                        NULL);
+          g_object_unref (empty_pixbuf);
+        }
       }
 
       // _fencer_goo_image
