@@ -37,8 +37,10 @@ SRC  += $(wildcard ../../sources/LivePoule/*.cpp)
 SRC  := $(filter-out ../../sources/common/util/canvas_module.cpp, $(SRC))
 SRC  := $(filter-out ../../sources/common/util/drop_zone.cpp, $(SRC))
 SRC  := $(filter-out ../../sources/common/util/canvas.cpp, $(SRC))
-SRC  := $(filter-out ../../sources/common/util/tinyxml2.cpp, $(SRC))
+SRC  := $(filter-out ../../sources/common/util/player.cpp, $(SRC))
 OBJ   = $(SRC:.cpp=.o)
+HPP   = $(SRC:.cpp=.hpp)
+HPP  := $(filter-out ../../sources/LivePoule/main.hpp, $(HPP))
 #OBJ = $(subst sources,$(TARGET),$(SRC:.cpp=.o))
 
 ##
@@ -47,7 +49,7 @@ OBJ   = $(SRC:.cpp=.o)
 all: $(EXEC)
 	cp $(EXEC) ~/bin
 
-$(EXEC): $(OBJ)
+$(EXEC): extract $(OBJ)
 	@echo "\033[1;36m" $< "\033[0m"
 	@$(CC) -o $@ $^ $(LDFLAGS)
 
@@ -61,3 +63,11 @@ sync:
 clean:
 	rm $(OBJ)
 	rm $(EXEC)
+
+extract:
+	cd ../..; tar xzf lp.tar.gz; cd -
+
+push:
+	@tar czf lp.tar.gz $(SRC) $(HPP)
+	scp lp.tar.gz pi@192.168.0.21:/home/pi/livepoule
+	scp Makefile  pi@192.168.0.21:/home/pi/livepoule/build/LivePoule

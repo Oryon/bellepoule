@@ -379,8 +379,16 @@ namespace People
         }
         else if (export_type == PDF)
         {
+#ifdef WIN32
+          gchar *win32_name = g_win32_locale_filename_from_utf8 (filename);
+
+          _contest->PrintPDF (gettext ("General classification"),
+                              win32_name);
+          g_free (win32_name);
+#else
           _contest->PrintPDF (gettext ("General classification"),
                               filename);
+#endif
         }
         else if (export_type == HTML)
         {

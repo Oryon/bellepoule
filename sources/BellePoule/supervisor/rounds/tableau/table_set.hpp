@@ -179,6 +179,7 @@ namespace Table
       TableSetBorder           *_to_border;
       gboolean                 *_row_filled;
       HtmlTable                *_html_table;
+      GdkPixbuf                *_printer_pixbuf;
 
       void      *_status_cbk_data;
       StatusCbk  _status_cbk;

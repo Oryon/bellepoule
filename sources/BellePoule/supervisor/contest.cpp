@@ -1460,7 +1460,18 @@ void Contest::Publish ()
 
     if (strstr (url, "www.escrime-info.com"))
     {
-      gchar time_stamp[] = "20001231";
+      gchar        time_stamp[] = "20001231";
+      const gchar *type;
+
+      if (_team_event)
+      {
+        type = "equipes";
+      }
+      else
+      {
+        type = "indiv";
+      }
+
 
       {
         GDate *date = g_date_new_dmy (_day,
@@ -1475,7 +1486,7 @@ void Contest::Publish ()
       }
 
       {
-        gchar *remote_file = g_strdup_printf ("%s%s-%s.xml", time_stamp, _location, _name);
+        gchar *remote_file = g_strdup_printf ("%s%s-%s %s.xml", time_stamp, _location, _name, type);
         gchar *remote_dir  = g_strdup_printf ("%s%s%s/%s",
                                               _weapon->GetGregImage (),
                                               gender_greg[_gender],
