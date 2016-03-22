@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/fie_time.hpp"
 #include "actors/referee.hpp"
 #include "job.hpp"
 #include "batch.hpp"
@@ -30,8 +31,7 @@ TimeSlot::TimeSlot (Owner     *owner,
   _owner        = owner;
   _duration     = duration;
 
-  _start_time = start_time;
-  g_date_time_ref (_start_time);
+  _start_time = new FieTime (start_time);
 }
 
 // --------------------------------------------------------------------------------
@@ -57,13 +57,26 @@ TimeSlot::~TimeSlot ()
 
   g_list_free (_referee_list);
 
-  g_date_time_unref (_start_time);
+  _start_time->Release ();
 }
 
 // --------------------------------------------------------------------------------
 GDateTime *TimeSlot::GetStartTime ()
 {
-  return _start_time;
+  return _start_time->GetDateTime ();
+}
+
+// --------------------------------------------------------------------------------
+GTimeSpan TimeSlot::GetInterval (TimeSlot *with)
+{
+  GTimeSpan  interval;
+  GDateTime *end_time = g_date_time_add (_start_time->GetDateTime (), _duration);
+
+  interval = g_date_time_difference (end_time,
+                                     with->GetStartTime ());
+  g_date_time_unref (end_time);
+
+  return interval;
 }
 
 // --------------------------------------------------------------------------------
@@ -104,6 +117,9 @@ void TimeSlot::AddJob (Job *job)
 
     roadmap->Set ("piste",
                   _owner->GetId ());
+
+    roadmap->Set ("start_time",
+                  _start_time->GetXmlImage ());
 
     if (_referee_list)
     {
@@ -216,8 +232,8 @@ GList *TimeSlot::GetRefereeList ()
 gint TimeSlot::CompareAvailbility (TimeSlot *a,
                                    TimeSlot *b)
 {
-  GDateTime *time_a = g_date_time_add (a->_start_time, a->_duration);
-  GDateTime *time_b = g_date_time_add (b->_start_time, b->_duration);
+  GDateTime *time_a = g_date_time_add (a->_start_time->GetDateTime (), a->_duration);
+  GDateTime *time_b = g_date_time_add (b->_start_time->GetDateTime (), b->_duration);
   gint       delta  = g_date_time_compare (time_a, time_b);
 
   g_date_time_unref (time_a);

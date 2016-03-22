@@ -1353,7 +1353,7 @@ namespace Pool
       }
 
       // Strength
-#ifdef DEBUG
+#ifdef DEBUG_SWAPPING
       {
         gchar *strength = g_strdup_printf ("%d", pool->GetStrength ());
 
@@ -1380,8 +1380,7 @@ namespace Pool
                                          label,
                                          0, column_count++);
           g_object_set (G_OBJECT (item),
-                        "font",       BP_FONT "bold italic 14px",
-                        "fill-color", "darkblue",
+                        "font", BP_FONT "bold italic 14px",
                         NULL);
           Canvas::SetTableItemAttribute (item, "y-align", 1.0);
           g_free (label);
@@ -1391,11 +1390,10 @@ namespace Pool
       // Time
       {
         item = Canvas::PutTextInTable (header_table,
-                                       "14h30",
+                                       pool->GetStartTime (),
                                        0, column_count++);
         g_object_set (G_OBJECT (item),
-                      "font",       BP_FONT "bold italic 14px",
-                      "fill-color", "darkblue",
+                      "font", BP_FONT "bold italic 14px",
                       NULL);
         Canvas::SetTableItemAttribute (item, "y-align", 1.0);
       }
@@ -1406,6 +1404,10 @@ namespace Pool
       Canvas::SetTableItemAttribute (header_table,
                                      "columns", g_slist_length (layout_list) + column_count);
 
+      //g_object_set (G_OBJECT (header_table),
+                    //"horz-grid-line-width", 2.0,
+                    //"vert-grid-line-width", 2.0,
+                    //NULL);
       //g_object_set (G_OBJECT (table),
                     //"horz-grid-line-width", 2.0,
                     //"vert-grid-line-width", 2.0,

@@ -21,6 +21,7 @@
 
 class Job;
 class Referee;
+class FieTime;
 
 class TimeSlot :
   public Object,
@@ -55,6 +56,8 @@ class TimeSlot :
 
     GTimeSpan GetDuration ();
 
+    GTimeSpan GetInterval (TimeSlot *with);
+
     static gint CompareAvailbility (TimeSlot *a,
                                     TimeSlot *b);
 
@@ -62,7 +65,7 @@ class TimeSlot :
     Owner     *_owner;
     GList     *_job_list;
     GList     *_referee_list;
-    GDateTime *_start_time;
+    FieTime   *_start_time;
     GTimeSpan  _duration;
 
     virtual ~TimeSlot ();
