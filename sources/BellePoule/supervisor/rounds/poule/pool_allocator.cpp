@@ -1998,6 +1998,9 @@ namespace Pool
   void Allocator::OnPoolRoadmap (Pool         *pool,
                                  Net::Message *message)
   {
+    PoolZone *zone = (PoolZone *) g_slist_nth_data (_drop_zones,
+                                                    pool->GetNumber () - 1);
+
     gtk_widget_hide (_glade->GetWidget ("marshaller_spinner"));
     gtk_widget_show (_glade->GetWidget ("marshaller_image"));
 
@@ -2007,23 +2010,22 @@ namespace Pool
 
       if (referee)
       {
-        PoolZone *zone = (PoolZone *) g_slist_nth_data (_drop_zones,
-                                                        pool->GetNumber () - 1);
-
         if (message->GetFitness () > 0)
         {
           DropObject (referee,
                       NULL,
                       zone);
+          return;
         }
         else
         {
           pool->RemoveReferee ((Player *) referee);
-          FillPoolTable (zone);
-          FixUpTablesBounds ();
         }
       }
     }
+
+    FillPoolTable (zone);
+    FixUpTablesBounds ();
   }
 
   // --------------------------------------------------------------------------------

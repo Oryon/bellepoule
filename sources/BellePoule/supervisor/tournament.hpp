@@ -104,8 +104,6 @@ class Tournament : public Module
 
     void RefreshMatchRate (Player *referee);
 
-    Contest *FetchContest (const gchar *id);
-
     Player *UpdateConnectionStatus (GSList      *player_list,
                                     guint        ref,
                                     const gchar *ip_address,

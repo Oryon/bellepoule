@@ -169,7 +169,7 @@ void Hall::DropObject (Object   *object,
 void Hall::ManageContest (Net::Message *message,
                           GtkNotebook  *notebook)
 {
-  gchar *id = message->GetString ("id");
+  gchar *id = message->GetString ("uuid");
 
   if (id)
   {

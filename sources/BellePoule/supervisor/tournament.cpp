@@ -581,27 +581,6 @@ Player *Tournament::UpdateConnectionStatus (GSList      *player_list,
 }
 
 // --------------------------------------------------------------------------------
-Contest *Tournament::FetchContest (const gchar *id)
-{
-  if (id)
-  {
-    GSList *current = _contest_list;
-
-    while (current)
-    {
-      Contest *contest = (Contest *) current->data;
-
-      if (strcmp (contest->GetId (), id) == 0)
-      {
-        return contest;
-      }
-      current = g_slist_next (current);
-    }
-  }
-  return NULL;
-}
-
-// --------------------------------------------------------------------------------
 gboolean Tournament::OnHttpPost (Net::Message *message)
 {
   gboolean  result = FALSE;
@@ -739,7 +718,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
       response = g_string_append (response,
                                   "<Competition ");
 
-      response = g_string_append (response, "ID=\"");
+      response = g_string_append (response, "UUID=\"");
       response = g_string_append (response, contest->GetId ());
       response = g_string_append (response, "\" ");
 

@@ -376,9 +376,12 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 // --------------------------------------------------------------------------------
 void Piste::AddReferee (Referee *referee)
 {
-  TimeSlot *timeslot = GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
+  TimeSlot *timeslot = GetTimeslotAt (_display_time);
 
-  timeslot->AddReferee (referee);
+  if (timeslot)
+  {
+    timeslot->AddReferee (referee);
+  }
 }
 
 // --------------------------------------------------------------------------------
