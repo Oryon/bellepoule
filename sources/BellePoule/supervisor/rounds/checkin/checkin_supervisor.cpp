@@ -1154,25 +1154,6 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  Player *CheckinSupervisor::GetFencerFromRef (guint ref)
-  {
-    GSList *current = _player_list;
-
-    while (current)
-    {
-      Player *player = (Player *) current->data;
-
-      if (player->GetRef () == ref)
-      {
-        return player;
-      }
-      current = g_slist_next (current);
-    }
-
-    return NULL;
-  }
-
-  // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnDragDataGet (GtkWidget        *widget,
                                          GdkDragContext   *drag_context,
                                          GtkSelectionData *selection_data,

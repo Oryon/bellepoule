@@ -47,6 +47,8 @@ namespace People
 
       void Update (Player *player);
 
+      Player *GetPlayerFromRef (guint ref);
+
       GSList *GetList ();
 
       virtual guint PreparePrint (GtkPrintOperation *operation,

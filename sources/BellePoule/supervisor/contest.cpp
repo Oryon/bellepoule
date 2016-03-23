@@ -1066,23 +1066,7 @@ void Contest::LatchPlayerList ()
 // --------------------------------------------------------------------------------
 Player *Contest::GetRefereeFromRef (guint ref)
 {
-  if (ref)
-  {
-    GSList *current = _referees_list->GetList ();
-
-    while (current)
-    {
-      Player *player = (Player *) current->data;
-
-      if (player->GetRef () == ref)
-      {
-        return player;
-      }
-      current = g_slist_next (current);
-    }
-  }
-
-  return NULL;
+  return _referees_list->GetPlayerFromRef (ref);
 }
 
 // --------------------------------------------------------------------------------

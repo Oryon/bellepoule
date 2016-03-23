@@ -47,6 +47,9 @@ namespace People
                           const gchar *player_class,
                           Player      *owner);
 
+      void RegisterPlayer (Player *player,
+                           Player *owner);
+
       void SaveList (xmlTextWriter *xml_writer,
                      const gchar   *player_class = NULL);
 

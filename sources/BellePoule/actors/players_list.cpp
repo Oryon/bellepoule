@@ -268,6 +268,28 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  Player *PlayersList::GetPlayerFromRef (guint ref)
+  {
+    if (ref)
+    {
+      GSList *current = _player_list;
+
+      while (current)
+      {
+        Player *player = (Player *) current->data;
+
+        if (player->GetRef () == ref)
+        {
+          return player;
+        }
+        current = g_slist_next (current);
+      }
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   void PlayersList::Update (Player *player)
   {
     GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
