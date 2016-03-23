@@ -32,6 +32,8 @@ namespace People
     public:
       RefereesList (Contest *contest);
 
+      void ConvertFromBaseToResult ();
+
     protected:
       virtual ~RefereesList ();
 

@@ -423,6 +423,11 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void Checkin::ConvertFromBaseToResult ()
+  {
+  }
+
+  // --------------------------------------------------------------------------------
   void Checkin::ImportFFF (gchar *filename)
   {
     gchar *utf8_content = GetFileContent (filename);

@@ -54,6 +54,8 @@ namespace People
 
       void ImportFFF (gchar *filename);
 
+      virtual void ConvertFromBaseToResult ();
+
     public:
       void on_add_player_button_clicked ();
 
