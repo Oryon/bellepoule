@@ -152,6 +152,16 @@ namespace People
 
     player->Load (xml_node);
 
+    RegisterPlayer (player,
+                    owner);
+
+    return player;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::RegisterPlayer (Player *player,
+                                Player *owner)
+  {
     // FFE issue
     GuessPlayerLeague (player);
 
@@ -159,8 +169,6 @@ namespace People
                     owner);
     Add (player);
     player->Release ();
-
-    return player;
   }
 
   // --------------------------------------------------------------------------------
@@ -420,6 +428,11 @@ namespace People
     }
 
     return file_content;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::ConvertFromBaseToResult ()
+  {
   }
 
   // --------------------------------------------------------------------------------

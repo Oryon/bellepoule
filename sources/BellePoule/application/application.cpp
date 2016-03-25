@@ -173,7 +173,7 @@ void Application::Prepare ()
   {
     AttributeDesc *desc;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "ref", "ID", gettext ("ref"));
+    desc = AttributeDesc::Declare (G_TYPE_UINT, "ref", "ID", gettext ("ref"));
     desc->_rights = AttributeDesc::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "final_rank", "Classement", gettext ("place"));

@@ -51,7 +51,8 @@ Attribute *Attribute::New (const gchar *name)
     {
       return new BooleanAttribute (desc);
     }
-    else if (desc->_type == G_TYPE_INT)
+    else if (   (desc->_type == G_TYPE_INT)
+             || (desc->_type == G_TYPE_UINT))
     {
       return new IntAttribute (desc);
     }
@@ -441,7 +442,14 @@ void IntAttribute::TreeStoreSet (GtkTreeStore        *store,
 // --------------------------------------------------------------------------------
 gchar *IntAttribute::GetUserImage (AttributeDesc::Look look)
 {
-  return g_strdup_printf ("%d", _value);
+  if (_desc->_type == G_TYPE_UINT)
+  {
+    return g_strdup_printf ("%u", _value);
+  }
+  else
+  {
+    return g_strdup_printf ("%d", _value);
+  }
 }
 
 // --------------------------------------------------------------------------------

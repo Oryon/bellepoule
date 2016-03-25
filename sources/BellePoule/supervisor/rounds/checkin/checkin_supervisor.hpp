@@ -113,8 +113,6 @@ namespace People
 
       void SetTeamEvent (gboolean team_event);
 
-      Player *GetFencerFromRef (guint ref);
-
       void OnPlayerRemoved (Player *player);
 
       void OnAttendingChanged (Player *player,

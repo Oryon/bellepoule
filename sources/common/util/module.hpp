@@ -26,7 +26,6 @@
 #include "glade.hpp"
 #include "user_config.hpp"
 
-class Player;
 class Module : public virtual Object
 {
   public:
@@ -85,10 +84,6 @@ class Module : public virtual Object
                              GtkPrintContext   *context) {};
 
     virtual State GetState ();
-
-    virtual void RefreshMatchRate (gint delta);
-
-    virtual void RefreshMatchRate (Player *player);
 
     GdkPixbuf *GetPixbuf (const gchar *icon);
 

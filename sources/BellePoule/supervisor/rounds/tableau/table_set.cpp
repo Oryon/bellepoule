@@ -74,7 +74,6 @@ namespace Table
     _tables         = NULL;
     _match_to_print = NULL;
     _nb_tables      = 0;
-    _nb_matchs      = 0;
     _locked         = FALSE;
     _id             = id;
     _attendees      = NULL;
@@ -97,6 +96,18 @@ namespace Table
     _max_score = supervisor->GetMaxScore ();
 
     _short_name = g_strdup_printf ("%s%d", gettext ("Place #"), first_place);
+
+    {
+      GtkWidget *image;
+
+      image = gtk_image_new ();
+      g_object_ref_sink (image);
+      _printer_pixbuf = gtk_widget_render_icon (image,
+                                                GTK_STOCK_PRINT,
+                                                GTK_ICON_SIZE_BUTTON,
+                                                NULL);
+      g_object_unref (image);
+    }
 
     {
       _quick_score_collector = new ScoreCollector (this,
@@ -177,7 +188,6 @@ namespace Table
     if (_is_active == FALSE)
     {
       _is_active = TRUE;
-      _supervisor->RefreshMatchRate (_nb_matchs);
     }
   }
 
@@ -187,7 +197,6 @@ namespace Table
     if (_is_active == TRUE)
     {
       _is_active = FALSE;
-      _supervisor->RefreshMatchRate (-_nb_matchs);
     }
   }
 
@@ -708,11 +717,6 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::DeleteTree ()
   {
-    if (_is_active)
-    {
-      _supervisor->RefreshMatchRate (-_nb_matchs);
-    }
-
     __gcc_extension__ g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
                                                             (void *) on_from_to_table_combobox_changed,
                                                             (Object *) this);
@@ -828,11 +832,6 @@ namespace Table
 
       _from_border->UnMuteCallbacks ();
       _to_border->UnMuteCallbacks   ();
-    }
-
-    if (_is_active)
-    {
-      _supervisor->RefreshMatchRate (_nb_matchs);
     }
   }
 
@@ -1367,19 +1366,29 @@ namespace Table
       Player *winner = data->_match->GetWinner ();
 
       // _print_goo_icon
-      if (   (data->_match->IsOver () == FALSE)
-          && data->_match->GetOpponent (0)
-          && data->_match->GetOpponent (1))
+      if (data->_print_goo_icon)
       {
-        g_object_set (data->_print_goo_icon,
-                      "visibility", GOO_CANVAS_ITEM_VISIBLE,
-                      NULL);
-      }
-      else
-      {
-        g_object_set (data->_print_goo_icon,
-                      "visibility", GOO_CANVAS_ITEM_HIDDEN,
-                      NULL);
+        if (   (data->_match->IsOver () == FALSE)
+            && data->_match->GetOpponent (0)
+            && data->_match->GetOpponent (1))
+        {
+          g_object_set (data->_print_goo_icon,
+                        "pixbuf", table_set->_printer_pixbuf,
+                        NULL);
+        }
+        else
+        {
+          // Workaround. Visibility make issues!
+          GdkPixbuf *empty_pixbuf = gdk_pixbuf_new_subpixbuf (table_set->_printer_pixbuf,
+                                                      0,
+                                                      0,
+                                                      1,
+                                                      1);
+          g_object_set (data->_print_goo_icon,
+                        "pixbuf", empty_pixbuf,
+                        NULL);
+          g_object_unref (empty_pixbuf);
+        }
       }
 
       // _fencer_goo_image
@@ -1605,8 +1614,6 @@ namespace Table
     data->_connector        = NULL;
     data->_match = new Match (_max_score);
 
-    _nb_matchs++;
-
     {
       gchar *name_space = g_strdup_printf ("%d-%d.", _first_place, data->_table->GetSize ()*2);
 
@@ -1717,7 +1724,6 @@ namespace Table
             to_data->_match->SetOpponent (1, player);
           }
         }
-        _nb_matchs--;
       }
       else if (to_data)
       {
@@ -1769,7 +1775,6 @@ namespace Table
         parent_data->_match->SetOpponent (1, NULL);
       }
     }
-    _nb_matchs--;
   }
 
   // --------------------------------------------------------------------------------

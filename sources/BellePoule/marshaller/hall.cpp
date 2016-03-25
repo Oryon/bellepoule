@@ -169,7 +169,7 @@ void Hall::DropObject (Object   *object,
 void Hall::ManageContest (Net::Message *message,
                           GtkNotebook  *notebook)
 {
-  gchar *id = message->GetString ("id");
+  gchar *id = message->GetString ("uuid");
 
   if (id)
   {
@@ -600,7 +600,8 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
           Piste    *piste    = (Piste *) current_piste->data;
           TimeSlot *timeslot = piste->GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
 
-          timeslot->AddJob (job);
+          timeslot->AddJob     (job);
+          timeslot->AddReferee (referee);
         }
 
         current_job   = g_list_next (current_job);

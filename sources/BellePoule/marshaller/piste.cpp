@@ -224,15 +224,15 @@ TimeSlot *Piste::GetFreeTimeslot (GTimeSpan duration)
 
     while (current)
     {
-       current_slot = (TimeSlot *) current->data;
-       next         = g_list_next (current);
+      current_slot = (TimeSlot *) current->data;
+      next         = g_list_next (current);
 
       if (next)
       {
-        TimeSlot *next_slot = (TimeSlot *) next->data;
+        TimeSlot  *next_slot = (TimeSlot *) next->data;
+        GTimeSpan  interval  = current_slot->GetInterval (next_slot);
 
-        if (g_date_time_difference (next_slot->GetStartTime (),
-                                    current_slot->GetStartTime ()) > duration)
+        if (interval > duration)
         {
           break;
         }
@@ -376,9 +376,12 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 // --------------------------------------------------------------------------------
 void Piste::AddReferee (Referee *referee)
 {
-  TimeSlot *timeslot = GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
+  TimeSlot *timeslot = GetTimeslotAt (_display_time);
 
-  timeslot->AddReferee (referee);
+  if (timeslot)
+  {
+    timeslot->AddReferee (referee);
+  }
 }
 
 // --------------------------------------------------------------------------------

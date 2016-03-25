@@ -147,6 +147,42 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void RefereesList::ConvertFromBaseToResult ()
+  {
+    Player::AttributeId name_attr_id      ("name");
+    Player::AttributeId firstname_attr_id ("first_name");
+    GChecksum *checksum = g_checksum_new (G_CHECKSUM_SHA1);
+    GSList    *current  = GetList ();
+
+    while (current)
+    {
+      Player *referee = (Player *) current->data;
+      Attribute           *name_attr      = referee->GetAttribute (&name_attr_id);
+      Attribute           *firstname_attr = referee->GetAttribute (&firstname_attr_id);
+      gchar               *digest;
+
+      g_checksum_update (checksum,
+                         (guchar *) name_attr->GetStrValue (),
+                         -1);
+      g_checksum_update (checksum,
+                         (guchar *) firstname_attr->GetStrValue (),
+                         -1);
+
+      digest = g_strdup (g_checksum_get_string (checksum));
+      digest[8] = 0;
+      referee->SetRef (g_ascii_strtoll (digest,
+                                        NULL,
+                                        16));
+      g_free (digest);
+      g_checksum_reset (checksum);
+
+      current = g_slist_next (current);
+    }
+
+    g_checksum_free (checksum);
+  }
+
+  // --------------------------------------------------------------------------------
   void RefereesList::Monitor (Player *referee)
   {
     Checkin::Monitor (referee);

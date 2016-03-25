@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/message.hpp"
+#include "actors/player_factory.hpp"
 #include "actors/referee.hpp"
 #include "referee_pool.hpp"
 
@@ -63,7 +64,11 @@ Referee *RefereePool::GetReferee (guint ref)
 // --------------------------------------------------------------------------------
 Referee *RefereePool::GetRefereeFor (Job *job)
 {
-  return NULL;
+  GSList  *list    = _referee_list->GetList ();
+  guint    count   = g_slist_length (list);
+  Referee *referee = (Referee *) g_slist_nth_data (list, g_random_int_range (0, count));
+
+  return referee;
 }
 
 // --------------------------------------------------------------------------------
@@ -86,10 +91,20 @@ void RefereePool::ManageReferee (Net::Message *message)
 
       if (xml_nodeset->nodeNr == 1)
       {
-        _referee_list->LoadPlayer (xml_nodeset->nodeTab[0],
-                                   "Referee",
-                                   NULL);
-        _referee_list->OnListChanged ();
+        Player *player = PlayerFactory::CreatePlayer ("Referee");
+
+        player->Load (xml_nodeset->nodeTab[0]);
+
+        if (_referee_list->GetPlayerFromRef (player->GetRef ()) == NULL)
+        {
+          _referee_list->RegisterPlayer (player,
+                                         NULL);
+          _referee_list->OnListChanged ();
+        }
+        else
+        {
+          player->Release ();
+        }
       }
 
       xmlXPathFreeObject  (xml_object);

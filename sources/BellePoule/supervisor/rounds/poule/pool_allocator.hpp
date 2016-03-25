@@ -115,7 +115,6 @@ namespace Pool
       gboolean             _loaded;
       SensitivityTrigger   _swapping_sensitivity_trigger;
       People::PlayersList *_fencer_list;
-      gint                 _nb_matchs;
       Swapper             *_swapper;
 
       void Setup ();

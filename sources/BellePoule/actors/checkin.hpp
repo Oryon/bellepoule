@@ -47,12 +47,17 @@ namespace People
                           const gchar *player_class,
                           Player      *owner);
 
+      void RegisterPlayer (Player *player,
+                           Player *owner);
+
       void SaveList (xmlTextWriter *xml_writer,
                      const gchar   *player_class = NULL);
 
       void ImportCSV (gchar *filename);
 
       void ImportFFF (gchar *filename);
+
+      virtual void ConvertFromBaseToResult ();
 
     public:
       void on_add_player_button_clicked ();

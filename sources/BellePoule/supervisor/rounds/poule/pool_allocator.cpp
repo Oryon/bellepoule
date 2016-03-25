@@ -61,7 +61,6 @@ namespace Pool
     _main_table             = NULL;
     _swapping_criteria_list = NULL;
     _loaded                 = FALSE;
-    _nb_matchs              = 0;
 
     _max_score = new Data ("ScoreMax",
                            5);
@@ -728,11 +727,6 @@ namespace Pool
               CreatePools ();
               DeletePools ();
             }
-
-            {
-              _nb_matchs = GetNbMatchs ();
-              RefreshMatchRate (_nb_matchs);
-            }
           }
 
           {
@@ -1085,11 +1079,6 @@ namespace Pool
         }
       }
       g_free (pool_table);
-
-      {
-        _nb_matchs = GetNbMatchs ();
-        RefreshMatchRate (_nb_matchs);
-      }
     }
   }
 
@@ -1353,7 +1342,7 @@ namespace Pool
       }
 
       // Strength
-#ifdef DEBUG
+#ifdef DEBUG_SWAPPING
       {
         gchar *strength = g_strdup_printf ("%d", pool->GetStrength ());
 
@@ -1380,8 +1369,7 @@ namespace Pool
                                          label,
                                          0, column_count++);
           g_object_set (G_OBJECT (item),
-                        "font",       BP_FONT "bold italic 14px",
-                        "fill-color", "darkblue",
+                        "font", BP_FONT "bold italic 14px",
                         NULL);
           Canvas::SetTableItemAttribute (item, "y-align", 1.0);
           g_free (label);
@@ -1391,11 +1379,10 @@ namespace Pool
       // Time
       {
         item = Canvas::PutTextInTable (header_table,
-                                       "14h30",
+                                       pool->GetStartTime (),
                                        0, column_count++);
         g_object_set (G_OBJECT (item),
-                      "font",       BP_FONT "bold italic 14px",
-                      "fill-color", "darkblue",
+                      "font", BP_FONT "bold italic 14px",
                       NULL);
         Canvas::SetTableItemAttribute (item, "y-align", 1.0);
       }
@@ -1406,6 +1393,10 @@ namespace Pool
       Canvas::SetTableItemAttribute (header_table,
                                      "columns", g_slist_length (layout_list) + column_count);
 
+      //g_object_set (G_OBJECT (header_table),
+                    //"horz-grid-line-width", 2.0,
+                    //"vert-grid-line-width", 2.0,
+                    //NULL);
       //g_object_set (G_OBJECT (table),
                     //"horz-grid-line-width", 2.0,
                     //"vert-grid-line-width", 2.0,
@@ -1622,9 +1613,6 @@ namespace Pool
 
     CanvasModule::Wipe ();
     _main_table = NULL;
-
-    RefreshMatchRate (-_nb_matchs);
-    _nb_matchs = 0;
   }
 
   // --------------------------------------------------------------------------------
@@ -1996,6 +1984,9 @@ namespace Pool
   void Allocator::OnPoolRoadmap (Pool         *pool,
                                  Net::Message *message)
   {
+    PoolZone *zone = (PoolZone *) g_slist_nth_data (_drop_zones,
+                                                    pool->GetNumber () - 1);
+
     gtk_widget_hide (_glade->GetWidget ("marshaller_spinner"));
     gtk_widget_show (_glade->GetWidget ("marshaller_image"));
 
@@ -2005,23 +1996,22 @@ namespace Pool
 
       if (referee)
       {
-        PoolZone *zone = (PoolZone *) g_slist_nth_data (_drop_zones,
-                                                        pool->GetNumber () - 1);
-
         if (message->GetFitness () > 0)
         {
           DropObject (referee,
                       NULL,
                       zone);
+          return;
         }
         else
         {
           pool->RemoveReferee ((Player *) referee);
-          FillPoolTable (zone);
-          FixUpTablesBounds ();
         }
       }
     }
+
+    FillPoolTable (zone);
+    FixUpTablesBounds ();
   }
 
   // --------------------------------------------------------------------------------

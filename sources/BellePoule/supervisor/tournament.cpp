@@ -42,7 +42,6 @@ Tournament::Tournament ()
   _contest_list = NULL;
   _referee_list = NULL;
   _referee_ref  = 1;
-  _nb_matchs    = 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -581,27 +580,6 @@ Player *Tournament::UpdateConnectionStatus (GSList      *player_list,
 }
 
 // --------------------------------------------------------------------------------
-Contest *Tournament::FetchContest (const gchar *id)
-{
-  if (id)
-  {
-    GSList *current = _contest_list;
-
-    while (current)
-    {
-      Contest *contest = (Contest *) current->data;
-
-      if (strcmp (contest->GetId (), id) == 0)
-      {
-        return contest;
-      }
-      current = g_slist_next (current);
-    }
-  }
-  return NULL;
-}
-
-// --------------------------------------------------------------------------------
 gboolean Tournament::OnHttpPost (Net::Message *message)
 {
   gboolean  result = FALSE;
@@ -739,7 +717,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
       response = g_string_append (response,
                                   "<Competition ");
 
-      response = g_string_append (response, "ID=\"");
+      response = g_string_append (response, "UUID=\"");
       response = g_string_append (response, contest->GetId ());
       response = g_string_append (response, "\" ");
 
@@ -775,42 +753,6 @@ gchar *Tournament::OnHttpGet (const gchar *url)
   }
 
   return result;
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::RefreshMatchRate (gint delta)
-{
-  _nb_matchs += delta;
-
-  {
-    GSList *current = _referee_list;
-
-    while (current)
-    {
-      Player *referee = (Player *) current->data;
-
-      RefreshMatchRate (referee);
-
-      current = g_slist_next (current);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::RefreshMatchRate (Player *referee)
-{
-  Player::AttributeId attr_id ("participation_rate");
-
-  if (_nb_matchs)
-  {
-    referee->SetAttributeValue (&attr_id,
-                                referee->GetNbMatchs () * 100 / _nb_matchs);
-  }
-  else
-  {
-    referee->SetAttributeValue (&attr_id,
-                                (guint) 0);
-  }
 }
 
 // --------------------------------------------------------------------------------

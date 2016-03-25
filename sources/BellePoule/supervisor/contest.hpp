@@ -140,7 +140,8 @@ class Contest : public Module
     static GList *_color_list;
 
     gchar           *_authority;
-    gchar           *_id;
+    gchar           *_fie_id;
+    gchar           *_uuid;
     gchar           *_name;
     gchar           *_organizer;
     gchar           *_location;

@@ -22,6 +22,7 @@
 #include <cairo-pdf.h>
 
 #include "util/global.hpp"
+#include "util/fie_time.hpp"
 #include "network/message.hpp"
 #include "../../match.hpp"
 
@@ -43,6 +44,7 @@ namespace Pool
       _fencer_list           = NULL;
       _referee_list          = NULL;
       _piste                 = 0;
+      _start_time            = NULL;
       _sorted_fencer_list    = NULL;
       _match_list            = NULL;
       _is_over               = FALSE;
@@ -85,6 +87,7 @@ namespace Pool
     DeleteMatchs ();
 
     g_free (_name);
+    Object::TryToRelease (_start_time);
 
     while (_referee_list)
     {
@@ -129,6 +132,17 @@ namespace Pool
   guint Pool::GetPiste ()
   {
     return _piste;
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Pool::GetStartTime ()
+  {
+    if (_start_time)
+    {
+      return _start_time->GetImage ();
+    }
+
+    return "";
   }
 
   // --------------------------------------------------------------------------------
@@ -639,7 +653,7 @@ namespace Pool
 
         if (_piste)
         {
-          gchar *piste = g_strdup_printf ("%02d", _piste);
+          gchar *piste = g_strdup_printf ("#%02d @ %s", _piste, _start_time->GetImage ());
 
           goo_canvas_text_new (piste_group,
                                piste,
@@ -2148,13 +2162,15 @@ namespace Pool
   {
     if (message->GetInteger ("listener") == _parcel->GetUUID ())
     {
+      _piste = 0;
+
+      Object::TryToRelease (_start_time);
+      _start_time = NULL;
+
       if (message->GetFitness () > 0)
       {
-        _piste = message->GetInteger ("piste");
-      }
-      else
-      {
-        _piste = 0;
+        _piste      = message->GetInteger ("piste");
+        _start_time = new FieTime (message->GetString  ("start_time"));
       }
 
       if (_roadmap_listener)
@@ -2180,6 +2196,13 @@ namespace Pool
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "Piste",
                                          "%d", _piste);
+    }
+
+    if (_start_time)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Date",
+                                         "%s", _start_time->GetXmlImage ());
     }
 
     if (_sorted_fencer_list)

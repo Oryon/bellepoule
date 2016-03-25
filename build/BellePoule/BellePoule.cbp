@@ -593,6 +593,12 @@
 		<Unit filename="../../sources/common/util/drop_zone.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/util/fie_time.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/fie_time.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/util/filter.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>

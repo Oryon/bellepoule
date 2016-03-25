@@ -271,12 +271,8 @@ Contest::Contest (gboolean for_duplication )
 {
   _save_timeout_id = 0;
 
-  {
-    time_t current_time;
-
-    time (&current_time);
-    _id = g_strdup_printf ("%x", (GTime) current_time);
-  }
+  _uuid   = g_strdup_printf ("%x", g_random_int ());
+  _fie_id = g_strdup        (_uuid);
 
   _read_only  = FALSE;
   _authority  = NULL;
@@ -650,8 +646,16 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
         if (attr)
         {
-          g_free (_id);
-          _id = g_strdup (attr);
+          g_free (_fie_id);
+          _fie_id = g_strdup (attr);
+          xmlFree (attr);
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "UUID");
+        if (attr)
+        {
+          g_free (_uuid);
+          _uuid = g_strdup (attr);
           xmlFree (attr);
         }
 
@@ -845,6 +849,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
 
       checkin->ConvertFromBaseToResult ();
+      _referees_list->ConvertFromBaseToResult ();
     }
   }
 
@@ -875,7 +880,8 @@ Contest::~Contest ()
   }
 
   g_free (_authority);
-  g_free (_id);
+  g_free (_fie_id);
+  g_free (_uuid);
   g_free (_name);
   g_free (_filename);
   g_free (_organizer);
@@ -912,7 +918,7 @@ void Contest::FeedParcel (Net::Message *parcel)
 {
   gchar *color = gdk_color_to_string (_gdk_color);
 
-  parcel->Set ("id",       _id);
+  parcel->Set ("uuid",     _uuid);
   parcel->Set ("color",    color);
   parcel->Set ("weapon",   _weapon->GetImage ());
   parcel->Set ("gender",   gender_image[_gender]);
@@ -1015,9 +1021,10 @@ Contest *Contest::Duplicate ()
   {
     contest->_authority = g_strdup (_authority);
   }
-  if (_id)
+  if (_fie_id)
   {
-    contest->_id = g_strdup (_id);
+    g_free (contest->_fie_id);
+    contest->_fie_id = g_strdup (_fie_id);
   }
   contest->_name       = g_strdup (_name);
   contest->_organizer  = g_strdup (_organizer);
@@ -1059,23 +1066,7 @@ void Contest::LatchPlayerList ()
 // --------------------------------------------------------------------------------
 Player *Contest::GetRefereeFromRef (guint ref)
 {
-  if (ref)
-  {
-    GSList *current = _referees_list->GetList ();
-
-    while (current)
-    {
-      Player *player = (Player *) current->data;
-
-      if (player->GetRef () == ref)
-      {
-        return player;
-      }
-      current = g_slist_next (current);
-    }
-  }
-
-  return NULL;
+  return _referees_list->GetPlayerFromRef (ref);
 }
 
 // --------------------------------------------------------------------------------
@@ -1460,7 +1451,18 @@ void Contest::Publish ()
 
     if (strstr (url, "www.escrime-info.com"))
     {
-      gchar time_stamp[] = "20001231";
+      gchar        time_stamp[] = "20001231";
+      const gchar *type;
+
+      if (_team_event)
+      {
+        type = "equipes";
+      }
+      else
+      {
+        type = "indiv";
+      }
+
 
       {
         GDate *date = g_date_new_dmy (_day,
@@ -1475,7 +1477,7 @@ void Contest::Publish ()
       }
 
       {
-        gchar *remote_file = g_strdup_printf ("%s%s-%s.xml", time_stamp, _location, _name);
+        gchar *remote_file = g_strdup_printf ("%s%s-%s %s.xml", time_stamp, _location, _name, type);
         gchar *remote_dir  = g_strdup_printf ("%s%s%s/%s",
                                               _weapon->GetGregImage (),
                                               gender_greg[_gender],
@@ -1619,11 +1621,18 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
                                    BAD_CAST _authority);
     }
 
-    if (_id)
+    if (_fie_id)
     {
       xmlTextWriterWriteAttribute (xml_writer,
                                    BAD_CAST "ID",
-                                   BAD_CAST _id);
+                                   BAD_CAST _fie_id);
+    }
+
+    if (_uuid)
+    {
+      xmlTextWriterWriteAttribute (xml_writer,
+                                   BAD_CAST "UUID",
+                                   BAD_CAST _uuid);
     }
 
     xmlTextWriterWriteFormatAttribute (xml_writer,
@@ -2171,7 +2180,7 @@ gchar *Contest::GetName ()
 // --------------------------------------------------------------------------------
 gchar *Contest::GetId ()
 {
-  return _id;
+  return _uuid;
 }
 
 // --------------------------------------------------------------------------------
