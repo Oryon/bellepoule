@@ -74,7 +74,6 @@ namespace Table
     _tables         = NULL;
     _match_to_print = NULL;
     _nb_tables      = 0;
-    _nb_matchs      = 0;
     _locked         = FALSE;
     _id             = id;
     _attendees      = NULL;
@@ -189,7 +188,6 @@ namespace Table
     if (_is_active == FALSE)
     {
       _is_active = TRUE;
-      _supervisor->RefreshMatchRate (_nb_matchs);
     }
   }
 
@@ -199,7 +197,6 @@ namespace Table
     if (_is_active == TRUE)
     {
       _is_active = FALSE;
-      _supervisor->RefreshMatchRate (-_nb_matchs);
     }
   }
 
@@ -720,11 +717,6 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::DeleteTree ()
   {
-    if (_is_active)
-    {
-      _supervisor->RefreshMatchRate (-_nb_matchs);
-    }
-
     __gcc_extension__ g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
                                                             (void *) on_from_to_table_combobox_changed,
                                                             (Object *) this);
@@ -840,11 +832,6 @@ namespace Table
 
       _from_border->UnMuteCallbacks ();
       _to_border->UnMuteCallbacks   ();
-    }
-
-    if (_is_active)
-    {
-      _supervisor->RefreshMatchRate (_nb_matchs);
     }
   }
 
@@ -1627,8 +1614,6 @@ namespace Table
     data->_connector        = NULL;
     data->_match = new Match (_max_score);
 
-    _nb_matchs++;
-
     {
       gchar *name_space = g_strdup_printf ("%d-%d.", _first_place, data->_table->GetSize ()*2);
 
@@ -1739,7 +1724,6 @@ namespace Table
             to_data->_match->SetOpponent (1, player);
           }
         }
-        _nb_matchs--;
       }
       else if (to_data)
       {
@@ -1791,7 +1775,6 @@ namespace Table
         parent_data->_match->SetOpponent (1, NULL);
       }
     }
-    _nb_matchs--;
   }
 
   // --------------------------------------------------------------------------------

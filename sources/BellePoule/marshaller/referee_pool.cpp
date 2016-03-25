@@ -64,7 +64,11 @@ Referee *RefereePool::GetReferee (guint ref)
 // --------------------------------------------------------------------------------
 Referee *RefereePool::GetRefereeFor (Job *job)
 {
-  return NULL;
+  GSList  *list    = _referee_list->GetList ();
+  guint    count   = g_slist_length (list);
+  Referee *referee = (Referee *) g_slist_nth_data (list, g_random_int_range (0, count));
+
+  return referee;
 }
 
 // --------------------------------------------------------------------------------

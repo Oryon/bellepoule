@@ -91,7 +91,6 @@ class Tournament : public Module
 
     GSList         *_contest_list;
     GSList         *_referee_list;
-    guint           _nb_matchs;
     Net::WebServer *_web_server;
     gboolean        _print_meal_tickets;
     EcoSystem      *_ecosystem;
@@ -99,10 +98,6 @@ class Tournament : public Module
     virtual ~Tournament ();
 
     void SetBackupLocation (gchar *location);
-
-    void RefreshMatchRate (gint delta);
-
-    void RefreshMatchRate (Player *referee);
 
     Player *UpdateConnectionStatus (GSList      *player_list,
                                     guint        ref,

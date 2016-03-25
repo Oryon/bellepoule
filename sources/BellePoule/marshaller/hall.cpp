@@ -600,7 +600,8 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
           Piste    *piste    = (Piste *) current_piste->data;
           TimeSlot *timeslot = piste->GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
 
-          timeslot->AddJob (job);
+          timeslot->AddJob     (job);
+          timeslot->AddReferee (referee);
         }
 
         current_job   = g_list_next (current_job);

@@ -24,6 +24,8 @@
 #include "module.hpp"
 #include "drop_zone.hpp"
 
+class Player;
+
 class CanvasModule : public Module
 {
   public:

@@ -42,7 +42,6 @@ Tournament::Tournament ()
   _contest_list = NULL;
   _referee_list = NULL;
   _referee_ref  = 1;
-  _nb_matchs    = 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -754,42 +753,6 @@ gchar *Tournament::OnHttpGet (const gchar *url)
   }
 
   return result;
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::RefreshMatchRate (gint delta)
-{
-  _nb_matchs += delta;
-
-  {
-    GSList *current = _referee_list;
-
-    while (current)
-    {
-      Player *referee = (Player *) current->data;
-
-      RefreshMatchRate (referee);
-
-      current = g_slist_next (current);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::RefreshMatchRate (Player *referee)
-{
-  Player::AttributeId attr_id ("participation_rate");
-
-  if (_nb_matchs)
-  {
-    referee->SetAttributeValue (&attr_id,
-                                referee->GetNbMatchs () * 100 / _nb_matchs);
-  }
-  else
-  {
-    referee->SetAttributeValue (&attr_id,
-                                (guint) 0);
-  }
 }
 
 // --------------------------------------------------------------------------------

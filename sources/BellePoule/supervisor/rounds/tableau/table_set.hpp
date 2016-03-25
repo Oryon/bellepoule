@@ -148,7 +148,6 @@ namespace Table
       Supervisor               *_supervisor;
       GNode                    *_tree_root;
       guint                     _nb_tables;
-      guint                     _nb_matchs;
       gint                      _table_to_stuff;
       GtkTreeStore             *_quick_search_treestore;
       GtkTreeModelFilter       *_quick_search_filter;

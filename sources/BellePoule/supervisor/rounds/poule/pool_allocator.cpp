@@ -61,7 +61,6 @@ namespace Pool
     _main_table             = NULL;
     _swapping_criteria_list = NULL;
     _loaded                 = FALSE;
-    _nb_matchs              = 0;
 
     _max_score = new Data ("ScoreMax",
                            5);
@@ -728,11 +727,6 @@ namespace Pool
               CreatePools ();
               DeletePools ();
             }
-
-            {
-              _nb_matchs = GetNbMatchs ();
-              RefreshMatchRate (_nb_matchs);
-            }
           }
 
           {
@@ -1085,11 +1079,6 @@ namespace Pool
         }
       }
       g_free (pool_table);
-
-      {
-        _nb_matchs = GetNbMatchs ();
-        RefreshMatchRate (_nb_matchs);
-      }
     }
   }
 
@@ -1624,9 +1613,6 @@ namespace Pool
 
     CanvasModule::Wipe ();
     _main_table = NULL;
-
-    RefreshMatchRate (-_nb_matchs);
-    _nb_matchs = 0;
   }
 
   // --------------------------------------------------------------------------------

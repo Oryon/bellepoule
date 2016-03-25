@@ -173,8 +173,6 @@ namespace People
       referee->SetRef (g_ascii_strtoll (digest,
                                         NULL,
                                         16));
-      printf ("%s ====> %lx (%ld)\n", g_checksum_get_string (checksum),
-              g_ascii_strtoll  (digest, NULL, 16), sizeof (guint32));
       g_free (digest);
       g_checksum_reset (checksum);
 

@@ -129,7 +129,6 @@ void RefereeZone::AddReferee (Player *referee)
                     referee) == NULL)
   {
     referee->AddMatchs (GetNbMatchs ());
-    _container->RefreshMatchRate (referee);
 
     _referee_list = g_slist_prepend (_referee_list,
                                      referee);
@@ -145,7 +144,6 @@ void RefereeZone::AddReferee (Player *referee)
 void RefereeZone::RemoveReferee (Player *referee)
 {
   referee->RemoveMatchs (GetNbMatchs ());
-  _container->RefreshMatchRate (referee);
 
   _referee_list = g_slist_remove (_referee_list,
                                   referee);

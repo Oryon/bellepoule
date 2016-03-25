@@ -17,8 +17,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "util/player.hpp"
-
 #include "attribute.hpp"
 
 #include "module.hpp"
@@ -375,24 +373,6 @@ void Module::UnPlug ()
     {
       _filter->UnPlug ();
     }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Module::RefreshMatchRate (gint delta)
-{
-  if (_owner)
-  {
-    _owner->RefreshMatchRate (delta);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Module::RefreshMatchRate (Player *player)
-{
-  if (_owner)
-  {
-    _owner->RefreshMatchRate (player);
   }
 }
 
