@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-13 17:22+0200\n"
+"POT-Creation-Date: 2016-03-26 21:57+0100\n"
 "PO-Revision-Date: 2013-04-11 00:53+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Korean <ko@li.org>\n"
+"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2016-02-17 05:13+0000\n"
 "X-Generator: Launchpad (build 17925)\n"
-"Language: ko\n"
 
 msgid "Classification"
 msgstr "순위"
@@ -76,6 +76,27 @@ msgid "Veteran 3"
 msgstr ""
 
 msgid "Veteran 4"
+msgstr ""
+
+msgid "League"
+msgstr ""
+
+msgid "Regional"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "World cup"
+msgstr ""
+
+msgid "National championships"
+msgstr ""
+
+msgid "World championships"
+msgstr ""
+
+msgid "Other"
 msgstr ""
 
 msgid "Choose a file..."
@@ -334,16 +355,15 @@ msgstr ""
 msgid "Untick the absent players of the team."
 msgstr ""
 
-msgid "when unknown"
-msgstr ""
-
 msgid "<b>Smartpoule</b> configuration code"
 msgstr ""
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
-msgstr "데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르면 관련 필드가 무시됩니다."
+msgstr ""
+"데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르"
+"면 관련 필드가 무시됩니다."
 
 msgid "General classification"
 msgstr "전체 순위"
@@ -382,9 +402,6 @@ msgid "Pools arrangement"
 msgstr "풀 배치"
 
 msgid "or"
-msgstr ""
-
-msgid "Swapping failed"
 msgstr ""
 
 msgid "Wrong fencers count!"
@@ -565,6 +582,9 @@ msgstr ""
 msgid "Derived from fencer classification"
 msgstr ""
 
+msgid "when unknown"
+msgstr ""
+
 msgid "Date of competition"
 msgstr "경기 일자"
 
@@ -579,6 +599,9 @@ msgstr "성별"
 
 msgid "Category"
 msgstr "카테고리"
+
+msgid "Level"
+msgstr ""
 
 msgid "Individual"
 msgstr ""
@@ -746,8 +769,8 @@ msgid "Pending"
 msgstr "지연된는 중"
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big></b>"
 
 msgid "All the score sheets"

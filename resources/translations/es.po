@@ -6,19 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-13 17:22+0200\n"
+"POT-Creation-Date: 2016-03-26 21:57+0100\n"
 "PO-Revision-Date: 2016-01-27 13:31+0000\n"
 "Last-Translator: Angel Oliver <axel.tomcat@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2016-02-17 05:13+0000\n"
 "X-Generator: Launchpad (build 17925)\n"
-"Language: \n"
-
-msgid "Fenced places"
-msgstr "Puestos que se tiran"
 
 msgid "Classification"
 msgstr "Clasificación"
@@ -79,6 +76,27 @@ msgstr "Veterano 3"
 
 msgid "Veteran 4"
 msgstr "Veterano 4"
+
+msgid "League"
+msgstr ""
+
+msgid "Regional"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "World cup"
+msgstr ""
+
+msgid "National championships"
+msgstr ""
+
+msgid "World championships"
+msgstr ""
+
+msgid "Other"
+msgstr ""
 
 msgid "Choose a file..."
 msgstr "Elija un archivo..."
@@ -338,9 +356,6 @@ msgstr "Selecciona los tiradores presentes del equipo"
 msgid "Untick the absent players of the team."
 msgstr "Desmarca los tiradores ausentes del equipo"
 
-msgid "when unknown"
-msgstr "Cuando no esté determinado"
-
 msgid "<b>Smartpoule</b> configuration code"
 msgstr "Código de configuración <b>Smartpoule</b>"
 
@@ -389,9 +404,6 @@ msgstr "Distribución de poules"
 
 msgid "or"
 msgstr "o"
-
-msgid "Swapping failed"
-msgstr "Intercambio fallido"
 
 msgid "Wrong fencers count!"
 msgstr "¡Número incorrecto de tiradores!"
@@ -481,6 +493,9 @@ msgstr "¡No hay un vencedor!"
 msgid "Table classification"
 msgstr "Tabla de resultados"
 
+msgid "Fenced places"
+msgstr "Puestos que se tiran"
+
 msgid "All"
 msgstr "Todo"
 
@@ -568,6 +583,9 @@ msgstr "Designado a mano"
 msgid "Derived from fencer classification"
 msgstr "Deducido de la clasificación del tirador"
 
+msgid "when unknown"
+msgstr "Cuando no esté determinado"
+
 msgid "Date of competition"
 msgstr "Fecha de la competición"
 
@@ -582,6 +600,9 @@ msgstr "Sexo"
 
 msgid "Category"
 msgstr "Categoría"
+
+msgid "Level"
+msgstr ""
 
 msgid "Individual"
 msgstr "Individual"
@@ -751,8 +772,8 @@ msgid "Pending"
 msgstr "Pendiente"
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
 "<b><big>¿Que resultado de la tabla seleccionada quiere imprimir?</big></b>"
 
@@ -900,6 +921,9 @@ msgstr ""
 
 msgid "<b>Score sheet scanner</b>"
 msgstr "<b>Escáner de hojas de resultado</b>"
+
+#~ msgid "Swapping failed"
+#~ msgstr "Intercambio fallido"
 
 #~ msgid "9999"
 #~ msgstr "9999"

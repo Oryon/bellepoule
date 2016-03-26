@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-13 17:22+0200\n"
+"POT-Creation-Date: 2016-03-26 21:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,6 +75,27 @@ msgid "Veteran 3"
 msgstr ""
 
 msgid "Veteran 4"
+msgstr ""
+
+msgid "League"
+msgstr ""
+
+msgid "Regional"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "World cup"
+msgstr ""
+
+msgid "National championships"
+msgstr ""
+
+msgid "World championships"
+msgstr ""
+
+msgid "Other"
 msgstr ""
 
 msgid "Choose a file..."
@@ -333,9 +354,6 @@ msgstr ""
 msgid "Untick the absent players of the team."
 msgstr ""
 
-msgid "when unknown"
-msgstr ""
-
 msgid "<b>Smartpoule</b> configuration code"
 msgstr ""
 
@@ -381,9 +399,6 @@ msgid "Pools arrangement"
 msgstr ""
 
 msgid "or"
-msgstr ""
-
-msgid "Swapping failed"
 msgstr ""
 
 msgid "Wrong fencers count!"
@@ -564,6 +579,9 @@ msgstr ""
 msgid "Derived from fencer classification"
 msgstr ""
 
+msgid "when unknown"
+msgstr ""
+
 msgid "Date of competition"
 msgstr ""
 
@@ -577,6 +595,9 @@ msgid "Gender"
 msgstr ""
 
 msgid "Category"
+msgstr ""
+
+msgid "Level"
 msgstr ""
 
 msgid "Individual"

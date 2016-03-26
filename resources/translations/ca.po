@@ -6,11 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2015-07-13 17:22+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-03-26 21:57+0100\n"
 "PO-Revision-Date: 2016-01-31 20:44+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Catalan (Valencian) <ca@valencia@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -76,6 +77,27 @@ msgstr "Veterà 3"
 
 msgid "Veteran 4"
 msgstr "Veterà 4"
+
+msgid "League"
+msgstr ""
+
+msgid "Regional"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "World cup"
+msgstr ""
+
+msgid "National championships"
+msgstr ""
+
+msgid "World championships"
+msgstr ""
+
+msgid "Other"
+msgstr ""
 
 msgid "Choose a file..."
 msgstr "Trie un arxiu..."
@@ -335,9 +357,6 @@ msgstr "Selecciona els tiradors presents de l'equip"
 msgid "Untick the absent players of the team."
 msgstr "Desmarca els tiradors absents de l'equip"
 
-msgid "when unknown"
-msgstr "Quan no estiga determinat"
-
 msgid "<b>Smartpoule</b> configuration code"
 msgstr "Codi de configuració <b>Smartpoule</b>"
 
@@ -386,9 +405,6 @@ msgstr "Distribució de poules"
 
 msgid "or"
 msgstr "o"
-
-msgid "Swapping failed"
-msgstr "Intercanvi fallit"
 
 msgid "Wrong fencers count!"
 msgstr "Nombre incorrecte de tiradors!"
@@ -568,6 +584,9 @@ msgstr "Designat a mà"
 msgid "Derived from fencer classification"
 msgstr "Deduït de la classificació del tirador"
 
+msgid "when unknown"
+msgstr "Quan no estiga determinat"
+
 msgid "Date of competition"
 msgstr "Data de la competició"
 
@@ -582,6 +601,9 @@ msgstr "Gènere"
 
 msgid "Category"
 msgstr "Categoria"
+
+msgid "Level"
+msgstr ""
 
 msgid "Individual"
 msgstr "Individual"
@@ -751,10 +773,9 @@ msgid "Pending"
 msgstr "Pendent"
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-msgstr ""
-"<b><big>Quin resultat de la taula seleccionada vol imprimir?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
+msgstr "<b><big>Quin resultat de la taula seleccionada vol imprimir?</big></b>"
 
 msgid "All the score sheets"
 msgstr "Tots els resultats"
@@ -900,3 +921,6 @@ msgstr ""
 
 msgid "<b>Score sheet scanner</b>"
 msgstr "<b>Escàner de fulles de resultat</b>"
+
+#~ msgid "Swapping failed"
+#~ msgstr "Intercanvi fallit"

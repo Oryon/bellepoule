@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-13 17:22+0200\n"
+"POT-Creation-Date: 2016-03-26 21:57+0100\n"
 "PO-Revision-Date: 2016-01-01 22:04+0000\n"
 "Last-Translator: Jean-Marc <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2016-02-17 05:13+0000\n"
 "X-Generator: Launchpad (build 17925)\n"
-"Language: \n"
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -78,6 +78,27 @@ msgstr "Vétéran 3"
 
 msgid "Veteran 4"
 msgstr "Vétéran 4"
+
+msgid "League"
+msgstr ""
+
+msgid "Regional"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "World cup"
+msgstr ""
+
+msgid "National championships"
+msgstr ""
+
+msgid "World championships"
+msgstr ""
+
+msgid "Other"
+msgstr ""
 
 msgid "Choose a file..."
 msgstr "Choisissez un fichier de sauvegarde..."
@@ -338,9 +359,6 @@ msgstr "Cochez les tireurs présents de l'équipe."
 msgid "Untick the absent players of the team."
 msgstr "Décochez les tireurs absents de l'équipe."
 
-msgid "when unknown"
-msgstr "si inconnu"
-
 msgid "<b>Smartpoule</b> configuration code"
 msgstr "Code de configuration de <b>SmartPoule</b>"
 
@@ -389,9 +407,6 @@ msgstr "Composition poules"
 
 msgid "or"
 msgstr "ou"
-
-msgid "Swapping failed"
-msgstr "Erreur de décalage"
 
 msgid "Wrong fencers count!"
 msgstr "Mauvais nombre de tireurs !"
@@ -571,6 +586,9 @@ msgstr "Assigné manuellement"
 msgid "Derived from fencer classification"
 msgstr "Dérivé des classements individuels"
 
+msgid "when unknown"
+msgstr "si inconnu"
+
 msgid "Date of competition"
 msgstr "Date de la compétition"
 
@@ -585,6 +603,9 @@ msgstr "Sexe"
 
 msgid "Category"
 msgstr "Categorie"
+
+msgid "Level"
+msgstr ""
 
 msgid "Individual"
 msgstr "Individuelle"
@@ -754,8 +775,8 @@ msgid "Pending"
 msgstr "En attente"
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
 "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
 
@@ -905,6 +926,9 @@ msgstr ""
 msgid "<b>Score sheet scanner</b>"
 msgstr "<b>Scanner de feuilles de match</b>"
 
+#~ msgid "Swapping failed"
+#~ msgstr "Erreur de décalage"
+
 #~ msgid "Décallage"
 #~ msgstr "Décalage"
 
@@ -940,5 +964,5 @@ msgstr "<b>Scanner de feuilles de match</b>"
 #~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
 #~ "tableaux et autres phases."
 #~ msgstr ""
-#~ "To configure the schedule of the competition in terms of pools, tables and "
-#~ "other rounds."
+#~ "To configure the schedule of the competition in terms of pools, tables "
+#~ "and other rounds."
