@@ -10,12 +10,15 @@ msgstr ""
 "PO-Revision-Date: 2016-01-27 13:31+0000\n"
 "Last-Translator: Angel Oliver <axel.tomcat@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-02-17 05:13+0000\n"
-"X-Generator: Launchpad (build 17925)\n"
+"X-Launchpad-Export-Date: 2016-03-27 05:20+0000\n"
+"X-Generator: Launchpad (build 17967)\n"
+"Language: \n"
+
+msgid "Fenced places"
+msgstr "Puestos que se tiran"
 
 msgid "Classification"
 msgstr "Clasificación"
@@ -493,9 +496,6 @@ msgstr "¡No hay un vencedor!"
 msgid "Table classification"
 msgstr "Tabla de resultados"
 
-msgid "Fenced places"
-msgstr "Puestos que se tiran"
-
 msgid "All"
 msgstr "Todo"
 
@@ -772,8 +772,8 @@ msgid "Pending"
 msgstr "Pendiente"
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to print?</"
-"big></b>"
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
 msgstr ""
 "<b><big>¿Que resultado de la tabla seleccionada quiere imprimir?</big></b>"
 
@@ -921,9 +921,6 @@ msgstr ""
 
 msgid "<b>Score sheet scanner</b>"
 msgstr "<b>Escáner de hojas de resultado</b>"
-
-#~ msgid "Swapping failed"
-#~ msgstr "Intercambio fallido"
 
 #~ msgid "9999"
 #~ msgstr "9999"

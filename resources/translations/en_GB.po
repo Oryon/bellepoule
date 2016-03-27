@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-13 17:22+0200\n"
+"POT-Creation-Date: 2016-03-26 21:57+0100\n"
 "PO-Revision-Date: 2015-07-14 12:29+0000\n"
 "Last-Translator: Mikael Hiort af Ornäs <lakritslemmel@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-02-17 05:13+0000\n"
-"X-Generator: Launchpad (build 17925)\n"
+"X-Launchpad-Export-Date: 2016-03-27 05:20+0000\n"
+"X-Generator: Launchpad (build 17967)\n"
 
 msgid "Classification"
 msgstr "Classification"
@@ -75,6 +75,27 @@ msgstr "Veteran Cat 3"
 
 msgid "Veteran 4"
 msgstr "Veteran Cat 4"
+
+msgid "League"
+msgstr ""
+
+msgid "Regional"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "World cup"
+msgstr ""
+
+msgid "National championships"
+msgstr ""
+
+msgid "World championships"
+msgstr ""
+
+msgid "Other"
+msgstr ""
 
 msgid "Choose a file..."
 msgstr "Choose a file..."
@@ -334,9 +355,6 @@ msgstr "Tick the present fencers of the team."
 msgid "Untick the absent players of the team."
 msgstr "Untick the absent fencers of the team."
 
-msgid "when unknown"
-msgstr "when unknown"
-
 msgid "<b>Smartpoule</b> configuration code"
 msgstr "Configuration code for <b>SmartPoule</b>"
 
@@ -385,9 +403,6 @@ msgstr "Pools arrangement"
 
 msgid "or"
 msgstr "or"
-
-msgid "Swapping failed"
-msgstr "Swapping failed"
 
 msgid "Wrong fencers count!"
 msgstr "Invalid fencers count!"
@@ -567,6 +582,9 @@ msgstr "Manually assigned"
 msgid "Derived from fencer classification"
 msgstr "Derived from fencer classification"
 
+msgid "when unknown"
+msgstr "when unknown"
+
 msgid "Date of competition"
 msgstr "Date of competition"
 
@@ -581,6 +599,9 @@ msgstr "Gender"
 
 msgid "Category"
 msgstr "Category"
+
+msgid "Level"
+msgstr ""
 
 msgid "Individual"
 msgstr "Individual"
