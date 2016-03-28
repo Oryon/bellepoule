@@ -46,7 +46,7 @@ class Contest : public Module
 
     static void Cleanup ();
 
-    static Contest *Create ();
+    void AskForSettings ();
 
     Contest *Duplicate ();
 
@@ -72,6 +72,8 @@ class Contest : public Module
                     guint   rank);
 
     void AddFencer (Player *player);
+
+    void ManageReferee (Net::Message *message);
 
     Player *GetRefereeFromRef (guint ref);
 

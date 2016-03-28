@@ -583,90 +583,109 @@ Player *Tournament::UpdateConnectionStatus (GSList      *player_list,
 gboolean Tournament::OnHttpPost (Net::Message *message)
 {
   gboolean  result = FALSE;
-  gchar    *data   = message->GetString ("content");
 
-  if (data)
+  if (message->Is ("RegisteredReferee"))
   {
-    gchar **lines = g_strsplit_set (data,
-                                    "\n",
-                                    0);
-    if (lines[0])
+    GSList *current = _contest_list;
+
+    while (current)
     {
-      const gchar *body = data;
+      Contest *contest = (Contest *) current->data;
 
-      body = strstr (body, "\n"); if (body) body++;
-      // Source
+      contest->ManageReferee (message);
+
+      current = g_slist_next (current);
+    }
+
+    result = TRUE;
+  }
+  else
+  {
+    gchar *data = message->GetString ("content");
+
+    if (data)
+    {
+      gchar **lines = g_strsplit_set (data,
+                                      "\n",
+                                      0);
+      if (lines[0])
       {
-        gchar **tokens = g_strsplit_set (lines[0],
-                                         "/",
-                                         0);
-
-        if (tokens && tokens[0] && tokens[1] && tokens[2]) // ex: /10.12.74.121/1
-        {
-          // Status feedback
-          UpdateConnectionStatus (_referee_list,
-                                  atoi (tokens[2]),
-                                  tokens[1],
-                                  "OK");
-        }
-        g_strfreev (tokens);
-      }
-
-      // Request type
-      if (lines[1])
-      {
-        gchar **tokens = g_strsplit_set (lines[1],
-                                         "/",
-                                         0);
+        const gchar *body = data;
 
         body = strstr (body, "\n"); if (body) body++;
-        if (tokens && tokens[0] && tokens[1])
+        // Source
         {
-          // Competition data
-          if (   (strcmp (tokens[1], "Score") == 0)       // ex: /Score/Competition/61/2/1/1
-              || (strcmp (tokens[1], "ScoreSheet") == 0)) // ex: /ScoreSheet/Competition/61/2/1
+          gchar **tokens = g_strsplit_set (lines[0],
+                                           "/",
+                                           0);
+
+          if (tokens && tokens[0] && tokens[1] && tokens[2]) // ex: /10.12.74.121/1
           {
-            if (tokens[2] && (strcmp (tokens[2], "Competition") == 0))
+            // Status feedback
+            UpdateConnectionStatus (_referee_list,
+                                    atoi (tokens[2]),
+                                    tokens[1],
+                                    "OK");
+          }
+          g_strfreev (tokens);
+        }
+
+        // Request type
+        if (lines[1])
+        {
+          gchar **tokens = g_strsplit_set (lines[1],
+                                           "/",
+                                           0);
+
+          body = strstr (body, "\n"); if (body) body++;
+          if (tokens && tokens[0] && tokens[1])
+          {
+            // Competition data
+            if (   (strcmp (tokens[1], "Score") == 0)       // ex: /Score/Competition/61/2/1/1
+                || (strcmp (tokens[1], "ScoreSheet") == 0)) // ex: /ScoreSheet/Competition/61/2/1
             {
-              gchar *competition_id = tokens[3];
-
-              if (competition_id)
+              if (tokens[2] && (strcmp (tokens[2], "Competition") == 0))
               {
-                GSList *current = _contest_list;
+                gchar *competition_id = tokens[3];
 
-                while (current)
+                if (competition_id)
                 {
-                  Contest *contest = (Contest *) current->data;
+                  GSList *current = _contest_list;
 
-                  if (strcmp (contest->GetId (), competition_id) == 0)
+                  while (current)
                   {
-                    if (strcmp (tokens[1], "ScoreSheet") == 0)
+                    Contest *contest = (Contest *) current->data;
+
+                    if (strcmp (contest->GetId (), competition_id) == 0)
                     {
-                      GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
-                      gint        page = gtk_notebook_page_num (nb,
-                                                                contest->GetRootWidget ());
+                      if (strcmp (tokens[1], "ScoreSheet") == 0)
+                      {
+                        GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
+                        gint        page = gtk_notebook_page_num (nb,
+                                                                  contest->GetRootWidget ());
 
-                      g_object_set (G_OBJECT (nb),
-                                    "page", page,
-                                    NULL);
+                        g_object_set (G_OBJECT (nb),
+                                      "page", page,
+                                      NULL);
+                      }
+
+                      result = contest->OnHttpPost (tokens[1],
+                                                    (const gchar**) &tokens[4],
+                                                    body);
+                      break;
                     }
-
-                    result = contest->OnHttpPost (tokens[1],
-                                                  (const gchar**) &tokens[4],
-                                                  body);
-                    break;
+                    current = g_slist_next (current);
                   }
-                  current = g_slist_next (current);
                 }
               }
             }
           }
+          g_strfreev (tokens);
         }
-        g_strfreev (tokens);
       }
+      g_strfreev (lines);
+      g_free (data);
     }
-    g_strfreev (lines);
-    g_free (data);
   }
 
   return result;
@@ -813,11 +832,13 @@ Contest *Tournament::GetContest (const gchar *filename)
 // --------------------------------------------------------------------------------
 void Tournament::OnNew ()
 {
-  Contest *contest = Contest::Create ();
+  Contest *contest = new Contest ();
+
+  Manage (contest);
+  contest->AskForSettings ();
 
   Plug (contest,
         NULL);
-  Manage (contest);
 }
 
 // --------------------------------------------------------------------------------
@@ -1007,6 +1028,7 @@ void Tournament::OpenUriContest (const gchar *uri)
         {
           contest = new Contest ();
 
+          Manage (contest);
           Plug (contest,
                 NULL);
 
@@ -1020,20 +1042,17 @@ void Tournament::OpenUriContest (const gchar *uri)
         if (g_str_has_suffix (uri,
                               people_suffix_table[i]))
         {
-          contest = Contest::Create ();
+          contest = new Contest ();
 
-          if (contest)
-          {
-            Plug (contest,
-                  NULL);
+          Manage (contest);
+          contest->AskForSettings ();
+          Plug (contest,
+                NULL);
 
-            contest->LoadFencerFile (uri);
-          }
+          contest->LoadFencerFile (uri);
           break;
         }
       }
-
-      Manage (contest);
     }
 
     ResetCursor ();

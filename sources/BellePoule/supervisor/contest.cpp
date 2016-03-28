@@ -38,6 +38,7 @@
 #include "util/canvas.hpp"
 #include "actors/checkin.hpp"
 #include "actors/referees_list.hpp"
+#include "actors/player_factory.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "ecosystem.hpp"
 
@@ -831,8 +832,6 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       xmlXPathFreeContext (xml_context);
     }
 
-    Spread ();
-
     _schedule->Load (doc,
                      contest_keyword,
                      _referees_list);
@@ -860,6 +859,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
   _referees_list->Disclose ("Referee");
   _referees_list->Spread ();
+
+  Spread ();
 }
 
 // --------------------------------------------------------------------------------
@@ -973,24 +974,22 @@ void Contest::AddFencer (Player *fencer)
 }
 
 // --------------------------------------------------------------------------------
-Contest *Contest::Create ()
+void Contest::AskForSettings ()
 {
-  Contest *contest = new Contest ();
+  _schedule->SetScoreStuffingPolicy (FALSE);
 
-  contest->_schedule->SetScoreStuffingPolicy (FALSE);
+  FillInProperties ();
+  _schedule->CreateDefault ();
 
-  contest->FillInProperties ();
-  contest->_schedule->CreateDefault ();
-
-  contest->_schedule->SetTeamEvent (FALSE);
+  _schedule->SetTeamEvent (FALSE);
 
   {
-    gtk_dialog_run (GTK_DIALOG (contest->_properties_dialog));
-    contest->ReadProperties ();
-    gtk_widget_hide (contest->_properties_dialog);
+    gtk_dialog_run (GTK_DIALOG (_properties_dialog));
+    ReadProperties ();
+    gtk_widget_hide (_properties_dialog);
   }
 
-  if (contest->_read_only == FALSE)
+  if (_read_only == FALSE)
   {
     GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
                                                                   NULL,
@@ -999,14 +998,12 @@ Contest *Contest::Create ()
                                                                   GTK_STOCK_SAVE_AS, GTK_RESPONSE_ACCEPT,
                                                                   NULL));
 
-    contest->GetSaveFileName (chooser,
-                              "default_dir_name");
+    GetSaveFileName (chooser,
+                     "default_dir_name");
     gtk_widget_destroy (chooser);
   }
 
-  contest->Save ();
-
-  return contest;
+  Save ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1067,6 +1064,52 @@ void Contest::LatchPlayerList ()
 Player *Contest::GetRefereeFromRef (guint ref)
 {
   return _referees_list->GetPlayerFromRef (ref);
+}
+
+// --------------------------------------------------------------------------------
+void Contest::ManageReferee (Net::Message *message)
+{
+  gchar     *xml = message->GetString ("xml");
+  xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
+
+  if (doc)
+  {
+    xmlXPathInit ();
+
+    {
+      xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+      xmlXPathObject  *xml_object;
+      xmlNodeSet      *xml_nodeset;
+
+      xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
+      xml_nodeset = xml_object->nodesetval;
+
+      if (xml_nodeset->nodeNr == 1)
+      {
+        Player *referee = PlayerFactory::CreatePlayer ("Referee");
+
+        referee->Load (xml_nodeset->nodeTab[0]);
+
+        {
+          Player *old = _referees_list->GetPlayerFromRef (referee->GetRef ());
+
+          if (old)
+          {
+            _referees_list->Remove (old);
+          }
+        }
+
+        _referees_list->Add (referee);
+        referee->Release ();
+      }
+
+      xmlXPathFreeObject  (xml_object);
+      xmlXPathFreeContext (xml_context);
+    }
+    xmlFreeDoc (doc);
+  }
+
+  g_free (xml);
 }
 
 // --------------------------------------------------------------------------------
