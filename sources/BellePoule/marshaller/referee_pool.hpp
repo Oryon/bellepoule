@@ -36,6 +36,8 @@ class RefereePool : public Object
 
     Referee *GetRefereeFor (Job *job);
 
+    void Spread ();
+
   private:
     People::RefereesList *_referee_list;
 

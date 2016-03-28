@@ -190,6 +190,8 @@ void Hall::ManageContest (Net::Message *message,
     batch->SetProperties (message);
 
     g_free (id);
+
+    _referee_pool->Spread ();
   }
 }
 
