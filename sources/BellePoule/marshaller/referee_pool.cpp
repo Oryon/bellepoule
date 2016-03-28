@@ -42,6 +42,16 @@ void RefereePool::ManageList (People::RefereesList *list)
 }
 
 // --------------------------------------------------------------------------------
+void RefereePool::Spread ()
+{
+  if (_referee_list)
+  {
+    _referee_list->Disclose ("RegisteredReferee");
+    _referee_list->Spread ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 Referee *RefereePool::GetReferee (guint ref)
 {
   GSList *current = _referee_list->GetList ();
@@ -91,19 +101,19 @@ void RefereePool::ManageReferee (Net::Message *message)
 
       if (xml_nodeset->nodeNr == 1)
       {
-        Player *player = PlayerFactory::CreatePlayer ("Referee");
+        Player *referee = PlayerFactory::CreatePlayer ("Referee");
 
-        player->Load (xml_nodeset->nodeTab[0]);
+        referee->Load (xml_nodeset->nodeTab[0]);
 
-        if (_referee_list->GetPlayerFromRef (player->GetRef ()) == NULL)
+        if (_referee_list->GetPlayerFromRef (referee->GetRef ()) == NULL)
         {
-          _referee_list->RegisterPlayer (player,
+          _referee_list->RegisterPlayer (referee,
                                          NULL);
           _referee_list->OnListChanged ();
         }
         else
         {
-          player->Release ();
+          referee->Release ();
         }
       }
 

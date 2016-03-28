@@ -39,6 +39,8 @@ namespace People
 
       virtual void Add (Player *player);
 
+      void Remove (Player *player);
+
       void Wipe ();
 
       void SetFilter (Filter *filter);
@@ -87,8 +89,6 @@ namespace People
       void UpdateHierarchy (Player *player);
 
       void RemoveSelection ();
-
-      void Remove (Player *player);
 
       void SetSensitiveState (gboolean sensitive_value);
 
