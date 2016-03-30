@@ -1095,11 +1095,14 @@ void Contest::ManageReferee (Net::Message *message)
 
           if (old)
           {
-            _referees_list->Remove (old);
+            old->UpdateFrom (referee);
+          }
+          else
+          {
+            _referees_list->Add (referee);
           }
         }
 
-        _referees_list->Add (referee);
         referee->Release ();
       }
 

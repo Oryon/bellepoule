@@ -67,6 +67,8 @@ class Player : public Object, Net::MessageUploader::Listener
 
     Player *Duplicate ();
 
+    void UpdateFrom (Player *from);
+
     virtual gboolean IsSticky ();
 
   public:

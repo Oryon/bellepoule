@@ -85,7 +85,16 @@ gboolean Player::IsSticky ()
 // --------------------------------------------------------------------------------
 Player *Player::Duplicate ()
 {
-  Player *player       = Clone ();
+  Player *player = Clone ();
+
+  player->UpdateFrom (this);
+
+  return player;
+}
+
+// --------------------------------------------------------------------------------
+void Player::UpdateFrom (Player *from)
+{
   GSList *current_desc = AttributeDesc::GetList ();
 
   while (current_desc)
@@ -96,23 +105,21 @@ Player *Player::Duplicate ()
     if (desc->_scope == AttributeDesc::GLOBAL)
     {
       AttributeId  attr_id (desc->_code_name);
-      Attribute   *attr = GetAttribute (&attr_id);
+      Attribute   *attr = from->GetAttribute (&attr_id);
 
       if (attr)
       {
         Attribute *new_attr = attr->Duplicate ();
 
-        player->SetData (attr_id._owner,
-                         attr_id._name,
-                         new_attr,
-                         (GDestroyNotify) Object::TryToRelease);
+        SetData (attr_id._owner,
+                 attr_id._name,
+                 new_attr,
+                 (GDestroyNotify) Object::TryToRelease);
       }
     }
 
     current_desc = g_slist_next (current_desc);
   }
-
-  return player;
 }
 
 // --------------------------------------------------------------------------------
