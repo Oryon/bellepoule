@@ -298,6 +298,11 @@ GObject *Module::GetGObject (const gchar *name)
 // --------------------------------------------------------------------------------
 void Module::SetFilter (Filter *filter)
 {
+  if (_filter)
+  {
+    _filter->Release ();
+  }
+
   _filter = filter;
 
   if (_filter)

@@ -22,7 +22,7 @@
 
 class Hall;
 
-class Marshaller : public Module
+class Marshaller : public Module, public People::RefereesList::Listener
 {
   public:
     Marshaller ();
@@ -36,6 +36,12 @@ class Marshaller : public Module
     RefereePool *_referee_pool;
 
     virtual ~Marshaller ();
+
+    void OnEvent (const gchar *event);
+
+    void OnRefereeListExpanded ();
+
+    void OnRefereeListCollapsed ();
 };
 
 #endif
