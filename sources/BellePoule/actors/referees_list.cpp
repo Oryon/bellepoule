@@ -31,16 +31,20 @@
 namespace People
 {
   // --------------------------------------------------------------------------------
-  RefereesList::RefereesList (Contest *contest)
+  RefereesList::RefereesList (Listener *listener)
     : Checkin ("referees.glade",
                "Referee",
                NULL)
   {
-    _contest = contest;
+    _listener = listener;
+
+    g_signal_connect (_glade->GetGObject ("referee_expander"),
+                      "notify::expanded",
+                      G_CALLBACK (OnExpanded),
+                      this);
 
     {
       GSList *attr_list;
-      Filter *filter;
 
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
@@ -63,21 +67,31 @@ namespace People
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
 
-      filter->ShowAttribute ("attending");
-      filter->ShowAttribute ("availability");
-      filter->ShowAttribute ("name");
-      filter->ShowAttribute ("participation_rate");
-      filter->ShowAttribute ("club");
-      filter->ShowAttribute ("league");
-      filter->ShowAttribute ("country");
+      {
+        _collapsed_filter = new Filter (attr_list,
+                                        this);
+        _collapsed_filter->ShowAttribute ("name");
+        _collapsed_filter->ShowAttribute ("participation_rate");
+      }
 
-      SetFilter (filter);
-      CreateForm (filter,
-                  "Referee");
-      filter->Release ();
+      {
+        _expanded_filter = new Filter (g_slist_copy (attr_list),
+                                       this);
+
+        _expanded_filter->ShowAttribute ("attending");
+        _expanded_filter->ShowAttribute ("availability");
+        _expanded_filter->ShowAttribute ("name");
+        _expanded_filter->ShowAttribute ("participation_rate");
+        _expanded_filter->ShowAttribute ("club");
+        _expanded_filter->ShowAttribute ("league");
+        _expanded_filter->ShowAttribute ("country");
+
+        SetFilter (_expanded_filter);
+
+        CreateForm (_expanded_filter,
+                    "Referee");
+      }
     }
 
     {
@@ -98,6 +112,8 @@ namespace People
   // --------------------------------------------------------------------------------
   RefereesList::~RefereesList ()
   {
+    _collapsed_filter->Release ();
+    _expanded_filter->Release  ();
   }
 
   // --------------------------------------------------------------------------------
@@ -307,5 +323,23 @@ namespace People
                               (guchar *) &referee_ref,
                               sizeof (referee_ref));
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::OnExpanded (GtkExpander  *expander,
+                                 GParamSpec   *param_spec,
+                                 RefereesList *referees_list)
+  {
+    if (gtk_expander_get_expanded (expander))
+    {
+      referees_list->SetFilter (referees_list->_expanded_filter);
+      referees_list->_listener->OnRefereeListExpanded ();
+    }
+    else
+    {
+      referees_list->SetFilter (referees_list->_collapsed_filter);
+      referees_list->_listener->OnRefereeListCollapsed ();
+    }
+    referees_list->OnAttrListUpdated ();
   }
 }

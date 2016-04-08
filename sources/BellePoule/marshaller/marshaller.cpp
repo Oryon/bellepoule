@@ -37,7 +37,7 @@ Marshaller::Marshaller ()
     while (current)
     {
       Weapon               *weapon   = (Weapon *) current->data;
-      People::RefereesList *list     = new People::RefereesList (NULL);
+      People::RefereesList *list     = new People::RefereesList (this);
       GtkWidget            *viewport = gtk_viewport_new (NULL, NULL);
 
       _referee_pool->ManageList (list);
@@ -108,4 +108,25 @@ gboolean Marshaller::OnHttpPost (Net::Message *message)
   }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Marshaller::OnRefereeListExpanded ()
+{
+  GtkPaned *paned = GTK_PANED (_glade->GetWidget ("hpaned"));
+  GtkAllocation  allocation;
+
+  gtk_widget_get_allocation (GetRootWidget (),
+                             &allocation);
+  printf ("==> %d\n", allocation.width);
+
+  gtk_paned_set_position (paned, allocation.width);
+}
+
+// --------------------------------------------------------------------------------
+void Marshaller::OnRefereeListCollapsed ()
+{
+  GtkPaned *paned = GTK_PANED (_glade->GetWidget ("hpaned"));
+
+  gtk_paned_set_position (paned, 0);
 }

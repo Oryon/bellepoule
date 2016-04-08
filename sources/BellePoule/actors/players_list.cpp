@@ -141,7 +141,7 @@ namespace People
   {
     Module::SetFilter (filter);
 
-    if (_filter)
+    if (_filter && (_store == NULL))
     {
       GSList *current = _filter->GetAttrList ();
       guint   nb_attr = g_slist_length (current);
@@ -954,7 +954,7 @@ namespace People
       Player              *p = (Player *) current->data;
 
       current_ref = _store->GetTreeRowRef (model,
-                                            p);
+                                           p);
       if (current_ref)
       {
         GtkTreePath *current_path = gtk_tree_row_reference_get_path (current_ref);

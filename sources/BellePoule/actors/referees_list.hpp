@@ -23,14 +23,18 @@
 
 #include "checkin.hpp"
 
-class Contest;
-
 namespace People
 {
   class RefereesList : public Checkin
   {
     public:
-      RefereesList (Contest *contest);
+      struct Listener
+      {
+        virtual void OnRefereeListExpanded  () = 0;
+        virtual void OnRefereeListCollapsed () = 0;
+      };
+
+      RefereesList (Listener *listener);
 
       void ConvertFromBaseToResult ();
 
@@ -38,8 +42,10 @@ namespace People
       virtual ~RefereesList ();
 
     private:
-      Contest *_contest;
-      guint32  _dnd_key;
+      Listener *_listener;
+      guint32   _dnd_key;
+      Filter   *_expanded_filter;
+      Filter   *_collapsed_filter;
 
       void Monitor (Player *referee);
 
@@ -68,6 +74,10 @@ namespace People
                                               Attribute *attr,
                                               Object    *owner,
                                               guint      step);
+
+      static void OnExpanded (GtkExpander  *expander,
+                              GParamSpec   *param_spec,
+                              RefereesList *referees_list);
 
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,
