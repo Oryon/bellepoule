@@ -373,7 +373,6 @@
           <object class="GtkExpander" id="referee_expander">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="expanded">True</property>
             <child>
               <object class="GtkHBox" id="hbox1">
                 <property name="visible">True</property>

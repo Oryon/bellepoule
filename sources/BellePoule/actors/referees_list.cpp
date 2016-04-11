@@ -73,6 +73,8 @@ namespace People
                                         this);
         _collapsed_filter->ShowAttribute ("name");
         _collapsed_filter->ShowAttribute ("participation_rate");
+
+        SetFilter (_collapsed_filter);
       }
 
       {
@@ -86,8 +88,6 @@ namespace People
         _expanded_filter->ShowAttribute ("club");
         _expanded_filter->ShowAttribute ("league");
         _expanded_filter->ShowAttribute ("country");
-
-        SetFilter (_expanded_filter);
 
         CreateForm (_expanded_filter,
                     "Referee");
