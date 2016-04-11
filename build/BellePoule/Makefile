@@ -274,7 +274,7 @@ prepare_resources:
 	cp -rf ../../resources/translations/ru    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/ar    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/es    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/ca    $(PACKAGE)/$(RELEASE)/resources/translations
+#	cp -rf ../../resources/translations/ca    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/it    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/ko    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/pt    $(PACKAGE)/$(RELEASE)/resources/translations
