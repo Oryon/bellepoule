@@ -6,9 +6,9 @@ PRODUCT = bellepoulebeta
 OUTPUT  = Release
 PACKAGE = $(HOME)/PPA/$(PRODUCT)
 VERSION = 5.0
-STEP    = ubuntu1
+STEP    = ubuntu2
 RELEASE = $(PRODUCT)_$(VERSION)
-UBUNTU  = precise
+UBUNTU  = trusty
 V       = 1
 DATE    = $(shell date -R)
 
@@ -390,7 +390,6 @@ help:
 	@echo "cp ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/bellepoulebeta/bin"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
-	@echo "make -s UBUNTU=precise V=$(V) package"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
 	@echo "make -s UBUNTU=vivid   V=$(V) package"
 	@echo "make -s UBUNTU=wily    V=$(V) package"
