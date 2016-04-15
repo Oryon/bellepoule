@@ -979,7 +979,7 @@ Public License instead of this License.  But first, please read
           <object class="GtkHPaned" id="hpaned">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="position">170</property>
+            <property name="position">10</property>
             <child>
               <object class="GtkVBox" id="vbox2">
                 <property name="visible">True</property>
@@ -1074,7 +1074,7 @@ Public License instead of this License.  But first, please read
                 </child>
               </object>
               <packing>
-                <property name="resize">False</property>
+                <property name="resize">True</property>
                 <property name="shrink">True</property>
               </packing>
             </child>
