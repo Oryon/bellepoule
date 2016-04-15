@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2016-03-26 21:57+0100\n"
-"PO-Revision-Date: 2016-04-13 21:10+0000\n"
+"PO-Revision-Date: 2016-04-14 23:47+0000\n"
 "Last-Translator: Dominik <nitride@tlen.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-04-14 05:39+0000\n"
-"X-Generator: Launchpad (build 17990)\n"
+"X-Launchpad-Export-Date: 2016-04-15 05:39+0000\n"
+"X-Generator: Launchpad (build 17995)\n"
 
 msgid "Classification"
 msgstr "Klasyfikacja"
@@ -33,13 +33,13 @@ msgid "Educ"
 msgstr "Educ"
 
 msgid "Male"
-msgstr "Mężczyzna"
+msgstr "Mężczyzn"
 
 msgid "Female"
-msgstr "Kobieta"
+msgstr "Kobiet"
 
 msgid "Mixed"
-msgstr "Mieszany"
+msgstr "Mieszana"
 
 msgid "U8"
 msgstr "U8"
@@ -183,7 +183,7 @@ msgid "status"
 msgstr "status"
 
 msgid "pool #"
-msgstr "grupa #"
+msgstr "grupa"
 
 msgid "Victories"
 msgstr "Wygrane"
@@ -201,7 +201,7 @@ msgid "Hits scored"
 msgstr "zdobyte punkty"
 
 msgid "Round start rank"
-msgstr "ranking"
+msgstr "liczba porządkowa"
 
 msgid "promoted"
 msgstr "awansowany"
@@ -235,7 +235,7 @@ msgstr "Podręcznik"
 
 #, c-format
 msgid "Round #%d"
-msgstr "Runda #%d"
+msgstr "Runda %d"
 
 msgid "Formula"
 msgstr "Formuła"
@@ -425,7 +425,7 @@ msgstr "Maksymalna ilość trafień"
 
 #, c-format
 msgid "Pool #%02d"
-msgstr "Grupa #%02d"
+msgstr "Grupa %02d"
 
 msgid "Referee"
 msgstr "Sędzia"
@@ -474,7 +474,7 @@ msgid "Place #"
 msgstr "Miejsce #"
 
 msgid "cutting"
-msgstr "tnący"
+msgstr "(podział)"
 
 msgid "Table"
 msgstr "Tabela"
@@ -497,7 +497,7 @@ msgid "Fenced places"
 msgstr "Ranking szermierzy"
 
 msgid "All"
-msgstr "Wszystko"
+msgstr "Wszystkie"
 
 msgid "Third place"
 msgstr "Miejsce trzecie"
@@ -551,7 +551,7 @@ msgid "<b><big>What do you want to print?</big></b>"
 msgstr "<b><big>Co chcesz wydrukować?</big></b>"
 
 msgid "All the presents"
-msgstr "Wszystkie dostępne"
+msgstr "Wszyscy dostępni"
 
 msgid "All the absents"
 msgstr "Wszyscy nieobecni"
@@ -563,7 +563,7 @@ msgid "Absents"
 msgstr "Nieobecni"
 
 msgid "all"
-msgstr "wszystko"
+msgstr "wszyscy"
 
 msgid "Import fencers"
 msgstr "Import listy szablistów"
@@ -575,7 +575,7 @@ msgid "Minimum team size"
 msgstr "Minimalna wielkość drużyny"
 
 msgid "Team classification"
-msgstr "Klasyfikacja drużyny"
+msgstr "Klasyfikacja drużynowa"
 
 msgid "Manually assigned"
 msgstr "Przypisany ręcznie"
@@ -635,7 +635,7 @@ msgid "Scratch"
 msgstr "Scratch"
 
 msgid "Start"
-msgstr "Uruchom"
+msgstr "Start"
 
 msgid "<b>Date / Time</b>"
 msgstr "<b>Data / Czas</b>"
@@ -698,7 +698,7 @@ msgid "Fencers / pools"
 msgstr "Szermierze / grupy"
 
 msgid "Swapping"
-msgstr "Rozdziel wg."
+msgstr "Usuń duble"
 
 msgid "Name"
 msgstr "Nazwa"
@@ -767,7 +767,7 @@ msgid "Score sheets"
 msgstr "Arkusz wyników"
 
 msgid "Pending"
-msgstr "Oczekiwanie"
+msgstr "Oczekujące"
 
 msgid ""
 "<b><big>Which score sheets of the selected table do you want to "
