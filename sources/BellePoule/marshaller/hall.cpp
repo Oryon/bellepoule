@@ -591,23 +591,26 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
         Job     *job     = (Job *) current_job->data;
         Referee *referee = _referee_pool->GetRefereeFor (job);
 
-        if (current_piste == NULL)
+        if (referee)
         {
-          _piste_list = g_list_sort (_piste_list,
-                                     (GCompareFunc) Piste::CompareAvailbility);
-          current_piste = _piste_list;
+          if (current_piste == NULL)
+          {
+            _piste_list = g_list_sort (_piste_list,
+                                       (GCompareFunc) Piste::CompareAvailbility);
+            current_piste = _piste_list;
+          }
+
+          {
+            Piste    *piste    = (Piste *) current_piste->data;
+            TimeSlot *timeslot = piste->GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
+
+            timeslot->AddJob     (job);
+            timeslot->AddReferee (referee);
+          }
+
+          current_piste = g_list_next (current_piste);
         }
-
-        {
-          Piste    *piste    = (Piste *) current_piste->data;
-          TimeSlot *timeslot = piste->GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
-
-          timeslot->AddJob     (job);
-          timeslot->AddReferee (referee);
-        }
-
         current_job   = g_list_next (current_job);
-        current_piste = g_list_next (current_piste);
       }
 
       g_list_free (pending_jobs);

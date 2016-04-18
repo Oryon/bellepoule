@@ -37,6 +37,7 @@ Batch::Batch (const gchar *id,
   _listener       = listener;
   _scheduled_list = NULL;
   _pending_list   = NULL;
+  _weapon         = NULL;
 
   _id = (guint32) g_ascii_strtoull (id,
                                     NULL,
@@ -97,6 +98,8 @@ Batch::~Batch ()
 
     gtk_list_store_clear (_job_store);
   }
+
+  g_free (_weapon);
 }
 
 // --------------------------------------------------------------------------------
@@ -121,16 +124,18 @@ const gchar *Batch::GetName ()
 void Batch::SetProperty (Net::Message *message,
                          const gchar  *property)
 {
-  gchar    *property_widget = g_strdup_printf ("contest_%s_label", property);
-  GtkLabel *label           = GTK_LABEL (_glade->GetGObject (property_widget));
-  gchar    *value;
+  gchar         *property_widget = g_strdup_printf ("contest_%s_label", property);
+  GtkLabel      *label           = GTK_LABEL (_glade->GetGObject (property_widget));
+  AttributeDesc *desc            = AttributeDesc::GetDescFromCodeName (property);
+  gchar         *xml             = message->GetString (property);
+  gchar         *image           = desc->GetUserImage (xml, AttributeDesc::LONG_TEXT);
 
-  value = message->GetString (property);
   gtk_label_set_text (label,
-                      gettext (value));
+                      gettext (image));
 
+  g_free (image);
   g_free (property_widget);
-  g_free (value);
+  g_free (xml);
 }
 
 // --------------------------------------------------------------------------------
@@ -138,7 +143,9 @@ void Batch::SetProperties (Net::Message *message)
 {
   SetProperty (message, "gender");
   SetProperty (message, "weapon");
-  SetProperty (message, "category");
+  SetProperty (message, "level");
+
+  _weapon = message->GetString ("weapon");
 
   {
     GtkWidget *tab   = _glade->GetWidget ("notebook_title");
@@ -158,6 +165,12 @@ void Batch::SetProperties (Net::Message *message)
 
     g_free (color);
   }
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Batch::GetWeaponCode ()
+{
+  return _weapon;
 }
 
 // --------------------------------------------------------------------------------
