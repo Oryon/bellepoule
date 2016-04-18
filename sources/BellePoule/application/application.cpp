@@ -163,10 +163,10 @@ void Application::Prepare ()
 
   // Weapon
   {
-    new Weapon ("Educ",  "EE", "S");
-    new Weapon ("Foil",  "F",  "F");
-    new Weapon ("Epée",  "E",  "E");
-    new Weapon ("Sabre", "S",  "S");
+    new Weapon ("Educ",  "X", "S");
+    new Weapon ("Foil",  "F", "F");
+    new Weapon ("Epée",  "E", "E");
+    new Weapon ("Sabre", "S", "S");
   }
 
   // Attributes definition
@@ -196,6 +196,16 @@ void Application::Prepare ()
     desc->_favorite_look      = AttributeDesc::GRAPHICAL;
     desc->AddDiscreteValues ("M", gettext ("Male"), "resources/glade/images/male.png",
                              "F", gettext ("Female"), "resources/glade/images/female.png", NULL);
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "weapon", "Arme", gettext ("weapon"));
+    desc->_uniqueness         = AttributeDesc::NOT_SINGULAR;
+    desc->_rights             = AttributeDesc::PRIVATE;
+    desc->_free_value_allowed = FALSE;
+    desc->_favorite_look      = AttributeDesc::SHORT_TEXT;
+    desc->AddDiscreteValues ("X", gettext ("Educ"),  NULL,
+                             "F", gettext ("Foil"),  NULL,
+                             "E", gettext ("Epée"),  NULL,
+                             "S", gettext ("Sabre"), NULL, NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
@@ -338,30 +348,6 @@ void Application::Start (int    argc,
     gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (w),
                                   (const gchar *) version);
     g_free (version);
-  }
-
-  {
-    GtkWidget   *w         = GTK_WIDGET (_main_module->GetGObject ("about_dialog"));
-    const gchar *authors[] = {"Florence Blanchard",
-                              "Laurent Bonnot",
-                              "Tony (ajs New Mexico)",
-                              "Emmanuel Chaix",
-                              "Julien Diaz",
-                              "Olivier Larcher",
-                              "Yannick Le Roux",
-                              "Jean-Pierre Mahé",
-                              "Pierre Moro",
-                              "Killian Poulet",
-                              "Michel Relet",
-                              "Vincent Rémy",
-                              "Tina Schliemann",
-                              "Dom Walden",
-                              "Claude Simonnot",
-                              "Sébastien Vermandel",
-                              NULL};
-
-    gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (w),
-                                  authors);
   }
 
   {

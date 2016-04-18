@@ -39,9 +39,12 @@ class RefereePool : public Object
     void Spread ();
 
   private:
-    People::RefereesList *_referee_list;
+    GList *_list_by_weapon;
 
     ~RefereePool ();
+
+    static void SpreadWeapon (People::RefereesList *list,
+                              RefereePool          *rp);
 };
 
 #endif

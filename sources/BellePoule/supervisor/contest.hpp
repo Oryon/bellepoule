@@ -29,7 +29,7 @@
 
 namespace People
 {
-  class Checkin;
+  class RefereesList;
 }
 
 class Tournament;
@@ -141,36 +141,36 @@ class Contest : public Module
 
     static GList *_color_list;
 
-    gchar           *_authority;
-    gchar           *_fie_id;
-    gchar           *_uuid;
-    gchar           *_name;
-    gchar           *_organizer;
-    gchar           *_location;
-    gchar           *_web_site;
-    guint            _category;
-    guint            _level;
-    gchar           *_filename;
-    Weapon          *_weapon;
-    guint            _gender;
-    guint            _day;
-    guint            _month;
-    guint            _year;
-    gboolean         _team_event;
-    Data            *_manual_classification;
-    Data            *_minimum_team_size;
-    Data            *_default_classification;
-    Time            *_checkin_time;
-    Time            *_scratch_time;
-    Time            *_start_time;
-    Schedule        *_schedule;
-    Tournament      *_tournament;
-    gboolean         _derived;
-    GdkColor        *_gdk_color;
-    guint            _save_timeout_id;
-    People::Checkin *_referees_list;
-    State            _state;
-    gboolean         _read_only;
+    gchar                *_authority;
+    gchar                *_fie_id;
+    gchar                *_uuid;
+    gchar                *_name;
+    gchar                *_organizer;
+    gchar                *_location;
+    gchar                *_web_site;
+    guint                 _category;
+    guint                 _level;
+    gchar                *_filename;
+    Weapon               *_weapon;
+    guint                 _gender;
+    guint                 _day;
+    guint                 _month;
+    guint                 _year;
+    gboolean              _team_event;
+    Data                 *_manual_classification;
+    Data                 *_minimum_team_size;
+    Data                 *_default_classification;
+    Time                 *_checkin_time;
+    Time                 *_scratch_time;
+    Time                 *_start_time;
+    Schedule             *_schedule;
+    Tournament           *_tournament;
+    gboolean              _derived;
+    GdkColor             *_gdk_color;
+    guint                 _save_timeout_id;
+    People::RefereesList *_referees_list;
+    State                 _state;
+    gboolean              _read_only;
 
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;

@@ -40,6 +40,7 @@ Marshaller::Marshaller ()
       People::RefereesList *list     = new People::RefereesList (this);
       GtkWidget            *viewport = gtk_viewport_new (NULL, NULL);
 
+      list->SetWeapon (weapon);
       _referee_pool->ManageList (list);
 
       gtk_notebook_append_page (notebook,

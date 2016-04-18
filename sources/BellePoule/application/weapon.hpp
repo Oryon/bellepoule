@@ -44,8 +44,6 @@ class Weapon : public Object
 
     guint GetIndex ();
 
-    gboolean IsTheSameThan (Weapon *than);
-
   private:
     static GSList *_list;
 

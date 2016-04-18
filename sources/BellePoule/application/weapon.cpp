@@ -99,12 +99,6 @@ Weapon *Weapon::GetDefault ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Weapon::IsTheSameThan (Weapon *than)
-{
-  return (strcmp (_xml_image, than->_xml_image) == 0);
-}
-
-// --------------------------------------------------------------------------------
 const gchar *Weapon::GetImage ()
 {
   return _image;
