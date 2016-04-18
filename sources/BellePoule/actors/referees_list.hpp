@@ -23,6 +23,8 @@
 
 #include "checkin.hpp"
 
+class Weapon;
+
 namespace People
 {
   class RefereesList : public Checkin
@@ -36,6 +38,10 @@ namespace People
 
       RefereesList (Listener *listener);
 
+      void SetWeapon (Weapon *weapon);
+
+      const gchar *GetWeaponCode ();
+
       void ConvertFromBaseToResult ();
 
     protected:
@@ -46,6 +52,7 @@ namespace People
       guint32   _dnd_key;
       Filter   *_expanded_filter;
       Filter   *_collapsed_filter;
+      Weapon   *_weapon;
 
       void Monitor (Player *referee);
 

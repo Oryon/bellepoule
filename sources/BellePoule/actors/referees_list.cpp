@@ -25,6 +25,7 @@
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
 #include "util/player.hpp"
+#include "application/weapon.hpp"
 
 #include "referees_list.hpp"
 
@@ -37,6 +38,7 @@ namespace People
                NULL)
   {
     _listener = listener;
+    _weapon   = NULL;
 
     g_signal_connect (_glade->GetGObject ("referee_expander"),
                       "notify::expanded",
@@ -73,6 +75,8 @@ namespace People
                                         this);
         _collapsed_filter->ShowAttribute ("name");
         _collapsed_filter->ShowAttribute ("participation_rate");
+
+        SetFilter (_collapsed_filter);
       }
 
       {
@@ -86,8 +90,6 @@ namespace People
         _expanded_filter->ShowAttribute ("club");
         _expanded_filter->ShowAttribute ("league");
         _expanded_filter->ShowAttribute ("country");
-
-        SetFilter (_expanded_filter);
 
         CreateForm (_expanded_filter,
                     "Referee");
@@ -114,6 +116,8 @@ namespace People
   {
     _collapsed_filter->Release ();
     _expanded_filter->Release  ();
+
+    Object::TryToRelease (_weapon);
   }
 
   // --------------------------------------------------------------------------------
@@ -167,15 +171,22 @@ namespace People
   {
     Player::AttributeId name_attr_id      ("name");
     Player::AttributeId firstname_attr_id ("first_name");
+    Player::AttributeId weapon_attr_id    ("weapon");
     GChecksum *checksum = g_checksum_new (G_CHECKSUM_SHA1);
     GSList    *current  = GetList ();
 
     while (current)
     {
-      Player *referee = (Player *) current->data;
-      Attribute           *name_attr      = referee->GetAttribute (&name_attr_id);
-      Attribute           *firstname_attr = referee->GetAttribute (&firstname_attr_id);
-      gchar               *digest;
+      Player    *referee        = (Player *) current->data;
+      Attribute *name_attr      = referee->GetAttribute ( &name_attr_id);
+      Attribute *firstname_attr = referee->GetAttribute ( &firstname_attr_id);
+      gchar     *digest;
+
+      if (_weapon)
+      {
+        referee->SetAttributeValue (&weapon_attr_id,
+                                    _weapon->GetXmlImage ());
+      }
 
       g_checksum_update (checksum,
                          (guchar *) name_attr->GetStrValue (),
@@ -196,6 +207,24 @@ namespace People
     }
 
     g_checksum_free (checksum);
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::SetWeapon (Weapon *weapon)
+  {
+    _weapon = weapon;
+    _weapon->Retain ();
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *RefereesList::GetWeaponCode ()
+  {
+    if (_weapon)
+    {
+      return _weapon->GetXmlImage ();
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------

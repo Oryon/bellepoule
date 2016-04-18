@@ -848,6 +848,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
 
       checkin->ConvertFromBaseToResult ();
+      _referees_list->SetWeapon (_weapon);
       _referees_list->ConvertFromBaseToResult ();
     }
   }

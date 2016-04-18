@@ -76,11 +76,11 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Icons]
-Name: "{userprograms}\{#PRODUCT}\marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exee"
-Name: "{userprograms}\{#PRODUCT}\supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exee"
+Name: "{userprograms}\{#PRODUCT}\marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exe"
+Name: "{userprograms}\{#PRODUCT}\supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exe"
 Name: "{userprograms}\{#PRODUCT}\Uninstall {#PRODUCT}"; Filename: "{uninstallexe}"
-Name: "{commonprograms}\{#PRODUCT}\marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exee"
-Name: "{commonprograms}\{#PRODUCT}\supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exee"
+Name: "{commonprograms}\{#PRODUCT}\marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exe"
+Name: "{commonprograms}\{#PRODUCT}\supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exe"
 Name: "{commonprograms}\{#PRODUCT}\Uninstall {#PRODUCT}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\{#PRODUCT}-marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: desktopicon; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exe"
 Name: "{userdesktop}\{#PRODUCT}-supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: desktopicon; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exe"
@@ -109,7 +109,8 @@ Source: "..\..\..\resources\translations\index.txt"; DestDir: "{app}\share\{#PRO
 Source: "..\..\..\resources\translations\fr\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\fr"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\de\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\de"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\nl\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\nl"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\ca\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ca"; Flags: ignoreversion recursesubdirs
+;Source: "..\..\..\resources\translations\pl\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\pl"; Flags: ignoreversion recursesubdirs
+;Source: "..\..\..\resources\translations\ca\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ca"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\ru\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ru"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\ar\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ar"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\es\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\es"; Flags: ignoreversion recursesubdirs
@@ -140,6 +141,11 @@ Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\l
 Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\pl\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\pl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pl\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pl\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pl\LC_MESSAGES"; Flags: ignoreversion
 
 Source: "{#MINGW}\share\locale\ca\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\ca\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\ca\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ca\LC_MESSAGES"; Flags: ignoreversion
@@ -181,10 +187,10 @@ Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\
 Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt_BR\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\pt_BR\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt_BR\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pt_BR\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt_BR\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pt_BR\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt_BR\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt_BR\LC_MESSAGES"; Flags: ignoreversion
 
 Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
