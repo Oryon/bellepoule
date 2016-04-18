@@ -345,7 +345,7 @@ void Batch::LoadJob (xmlNode *xml_node,
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, "TourDePoules") == 0)
+      if (g_strcmp0 ((char *) n->name, "TourDePoules") == 0)
       {
         GtkLabel *label = GTK_LABEL (_glade->GetWidget ("batch_label"));
         gchar    *name;
@@ -356,7 +356,7 @@ void Batch::LoadJob (xmlNode *xml_node,
         gtk_label_set_text (label, name);
         g_free (name);
       }
-      else if (strcmp ((char *) n->name, "Poule") == 0)
+      else if (g_strcmp0 ((char *) n->name, "Poule") == 0)
       {
         GtkTreeIter  iter;
         gchar       *attr;

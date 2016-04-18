@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -728,7 +727,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
           for (i = 0; i < _nb_gender; i++)
           {
-            if (strcmp (attr, gender_xml_image[i]) == 0)
+            if (g_strcmp0 (attr, gender_xml_image[i]) == 0)
             {
               _gender = i;
               break;
@@ -738,7 +737,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
           {
             for (i = 0; i < _nb_gender; i++)
             {
-              if (strcmp (attr, gender_xml_alias[i]) == 0)
+              if (g_strcmp0 (attr, gender_xml_alias[i]) == 0)
               {
                 _gender = i;
                 break;
@@ -756,7 +755,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
           for (i = 0; i < _nb_category; i++)
           {
-            if (strcmp (attr, category_xml_alias[i]) == 0)
+            if (g_strcmp0 (attr, category_xml_alias[i]) == 0)
             {
               _category = i;
               break;
@@ -766,7 +765,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
           {
             for (i = 0; i < _nb_category; i++)
             {
-              if (strcmp (attr, category_xml_image[i]) == 0)
+              if (g_strcmp0 (attr, category_xml_image[i]) == 0)
               {
                 _category = i;
                 break;
@@ -781,7 +780,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           for (guint i = 0; i < _nb_level; i++)
           {
-            if (strcmp (attr, level_xml_image[i]) == 0)
+            if (g_strcmp0 (attr, level_xml_image[i]) == 0)
             {
               _level = i;
               break;

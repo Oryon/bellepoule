@@ -175,12 +175,12 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
 
     if (tokens && tokens[0] && tokens[1] && tokens[2])
     {
-      if (strcmp (tokens[1], "ScoreSheet") == 0)
+      if (g_strcmp0 (tokens[1], "ScoreSheet") == 0)
       {
         wifi_code = _ecosystem->GetAdminCode ();
       }
-      else if (   (strcmp (tokens[1], "HandShake") == 0)
-               || (strcmp (tokens[1], "Score")     == 0))
+      else if (   (g_strcmp0 (tokens[1], "HandShake") == 0)
+               || (g_strcmp0 (tokens[1], "Score")     == 0))
       {
         GSList *current = _referee_list;
         guint   ref     = atoi (tokens[2]);
@@ -641,10 +641,10 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
           if (tokens && tokens[0] && tokens[1])
           {
             // Competition data
-            if (   (strcmp (tokens[1], "Score") == 0)       // ex: /Score/Competition/61/2/1/1
-                || (strcmp (tokens[1], "ScoreSheet") == 0)) // ex: /ScoreSheet/Competition/61/2/1
+            if (   (g_strcmp0 (tokens[1], "Score") == 0)       // ex: /Score/Competition/61/2/1/1
+                || (g_strcmp0 (tokens[1], "ScoreSheet") == 0)) // ex: /ScoreSheet/Competition/61/2/1
             {
-              if (tokens[2] && (strcmp (tokens[2], "Competition") == 0))
+              if (tokens[2] && (g_strcmp0 (tokens[2], "Competition") == 0))
               {
                 gchar *competition_id = tokens[3];
 
@@ -656,9 +656,9 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
                   {
                     Contest *contest = (Contest *) current->data;
 
-                    if (strcmp (contest->GetId (), competition_id) == 0)
+                    if (g_strcmp0 (contest->GetId (), competition_id) == 0)
                     {
-                      if (strcmp (tokens[1], "ScoreSheet") == 0)
+                      if (g_strcmp0 (tokens[1], "ScoreSheet") == 0)
                       {
                         GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
                         gint        page = gtk_notebook_page_num (nb,
@@ -710,7 +710,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
         Contest *contest = (Contest *) current->data;
 
         if (    contest->GetFilename ()
-             && (strcmp (contest->GetId (), id) == 0))
+             && (g_strcmp0 (contest->GetId (), id) == 0))
         {
           g_file_get_contents (contest->GetFilename (),
                                &result,
@@ -722,7 +722,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
       }
     }
   }
-  else if (strcmp (url, "/tournament") == 0)
+  else if (g_strcmp0 (url, "/tournament") == 0)
   {
     GSList  *current  = _contest_list;
     GString *response = g_string_new ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -818,7 +818,7 @@ Contest *Tournament::GetContest (const gchar *filename)
   {
     Contest *contest = (Contest *) current->data;
 
-    if (strcmp (filename, contest->GetFilename ()) == 0)
+    if (g_strcmp0 (filename, contest->GetFilename ()) == 0)
     {
       return contest;
     }

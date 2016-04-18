@@ -150,12 +150,12 @@ void RefereePool::ManageReferee (Net::Message *message)
                 referee_list->RegisterPlayer (referee,
                                               NULL);
                 referee_list->OnListChanged ();
-                break;
               }
               else
               {
                 referee->Release ();
               }
+              break;
             }
 
             current_weapon = g_list_next (current_weapon);

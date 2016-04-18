@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string.h>
 #include <stdlib.h>
 
 #include "global.hpp"
@@ -238,7 +237,7 @@ gint AttributeDesc::CompareTextColumn (GtkTreeModel *model,
   gtk_tree_model_get (model, b,
                       DISCRETE_XML_IMAGE_str, (void *) &b_image,
                       -1);
-  result = strcmp (a_image, b_image);
+  result = g_strcmp0 (a_image, b_image);
 
   g_free (a_image);
   g_free (b_image);
@@ -878,7 +877,7 @@ void AttributeDesc::CreateExcludingList (GSList **list, ...)
     va_start (ap, list);
     while ((name = va_arg (ap, char *)))
     {
-      if (strcmp (name, desc->_code_name) == 0)
+      if (g_strcmp0 (name, desc->_code_name) == 0)
       {
         break;
       }
@@ -912,7 +911,7 @@ void AttributeDesc::CreateIncludingList (GSList **list, ...)
     va_start (ap, list);
     while ((name = va_arg (ap, char *)))
     {
-      if (strcmp (name, desc->_code_name) == 0)
+      if (g_strcmp0 (name, desc->_code_name) == 0)
       {
         new_list = g_slist_append (new_list,
                                    desc);
@@ -942,7 +941,7 @@ AttributeDesc *AttributeDesc::GetDescFromCodeName (const gchar *code_name)
   {
     AttributeDesc *attr_desc = (AttributeDesc *) current->data;
 
-    if (strcmp (attr_desc->_code_name, code_name) == 0)
+    if (g_strcmp0 (attr_desc->_code_name, code_name) == 0)
     {
       return attr_desc;
     }
@@ -961,7 +960,7 @@ AttributeDesc *AttributeDesc::GetDescFromXmlName (const gchar *xml_name)
   {
     AttributeDesc *attr_desc = (AttributeDesc *) current->data;
 
-    if (strcmp (attr_desc->_xml_name, xml_name) == 0)
+    if (g_strcmp0 (attr_desc->_xml_name, xml_name) == 0)
     {
       return attr_desc;
     }
@@ -983,7 +982,7 @@ AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name,
 
     if (attr_desc->MatchCriteria (criteria))
     {
-      if (strcmp (user_name, attr_desc->_user_name) == 0)
+      if (g_strcmp0 (user_name, attr_desc->_user_name) == 0)
       {
         return attr_desc;
       }

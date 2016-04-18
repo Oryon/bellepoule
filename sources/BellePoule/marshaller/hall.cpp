@@ -112,11 +112,11 @@ void Hall::OnPlugged ()
 Object *Hall::GetDropObjectFromRef (guint32 ref,
                                     guint   key)
 {
-  if (strcmp (g_quark_to_string (key), "bellepoule/referee") == 0)
+  if (g_strcmp0 (g_quark_to_string (key), "bellepoule/referee") == 0)
   {
     return _referee_pool->GetReferee (ref);
   }
-  else if (strcmp (g_quark_to_string (key), "bellepoule/job") == 0)
+  else if (g_strcmp0 (g_quark_to_string (key), "bellepoule/job") == 0)
   {
     return GetBatch (ref);
   }

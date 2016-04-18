@@ -14,9 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdlib.h>
-#include <string.h>
-
 #include "attribute.hpp"
 #include "module.hpp"
 
@@ -127,7 +124,7 @@ guint Filter::GetAttributeId (const gchar *name)
   {
     AttributeDesc *desc = (AttributeDesc *) current->data;
 
-    if (strcmp (desc->_code_name, name) == 0)
+    if (g_strcmp0 (desc->_code_name, name) == 0)
     {
       return i;
     }
@@ -179,7 +176,7 @@ void Filter::ShowAttribute (const gchar *name)
       sibling = gtk_tree_iter_copy (&iter);
     }
 
-    if (strcmp (current_name, name) == 0)
+    if (g_strcmp0 (current_name, name) == 0)
     {
       Layout *attr_layout = new Layout ();
 

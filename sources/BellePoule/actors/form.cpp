@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <gdk/gdkkeysyms.h>
-#include <string.h>
 #include <ctype.h>
 
 #include "util/attribute.hpp"
@@ -514,7 +513,7 @@ namespace People
   {
     for (guint i = 0; i < _page_count; i++)
     {
-      if (strcmp (_pages[i]._player_class, page) == 0)
+      if (g_strcmp0 (_pages[i]._player_class, page) == 0)
       {
         _pages[i]._visible = TRUE;
         break;
@@ -527,7 +526,7 @@ namespace People
   {
     for (guint i = 0; i < _page_count; i++)
     {
-      if (strcmp (_pages[i]._player_class, page) == 0)
+      if (g_strcmp0 (_pages[i]._player_class, page) == 0)
       {
         _pages[i]._visible = FALSE;
         break;

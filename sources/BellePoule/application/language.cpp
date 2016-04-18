@@ -140,7 +140,7 @@ void Language::Populate (GtkMenuItem  *menu_item,
           g_signal_connect (item, "toggled",
                             G_CALLBACK (OnLocaleToggled), (void *)
                             g_strdup (tokens[0]));
-          if (favorite && strcmp (favorite, tokens[0]) == 0)
+          if (favorite && g_strcmp0 (favorite, tokens[0]) == 0)
           {
             gtk_menu_item_set_label (menu_item,
                                      tokens[0]);

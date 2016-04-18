@@ -316,7 +316,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
             va_start (ap, player);
             for (guint i = 0; (pango_arg = va_arg (ap, char *)); i++)
             {
-              if (strcmp (pango_arg, attr_layout->_desc->_code_name) == 0)
+              if (g_strcmp0 (pango_arg, attr_layout->_desc->_code_name) == 0)
               {
                 image = g_string_append (image,
                                          va_arg (ap, char *));

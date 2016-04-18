@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string.h>
 #include <errno.h>
 
 #ifdef WIN32
@@ -186,7 +185,7 @@ namespace Net
   {
     gchar *role = message->GetString ("role");
 
-    if (strcmp (role, _role) != 0)
+    if (g_strcmp0 (role, _role) != 0)
     {
       if (message->Is ("Announcement"))
       {

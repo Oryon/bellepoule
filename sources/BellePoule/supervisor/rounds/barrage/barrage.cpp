@@ -242,12 +242,12 @@ namespace People
     {
       if (n->type == XML_ELEMENT_NODE)
       {
-        if (strcmp ((char *) n->name, _xml_class_name) == 0)
+        if (g_strcmp0 ((char *) n->name, _xml_class_name) == 0)
         {
           _loaded_so_far  = 0;
           _promoted_count = 0;
         }
-        else if (strcmp ((char *) n->name, GetXmlPlayerTag ()) == 0)
+        else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
           LoadAttendees (n);
           if (_short_list_length == 0)
