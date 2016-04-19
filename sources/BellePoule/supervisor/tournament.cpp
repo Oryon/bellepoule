@@ -1028,11 +1028,12 @@ void Tournament::OpenUriContest (const gchar *uri)
         {
           contest = new Contest ();
 
+          contest->LoadXml (uri);
+
           Manage (contest);
           Plug (contest,
                 NULL);
 
-          contest->LoadXml (uri);
           break;
         }
       }
@@ -1044,12 +1045,13 @@ void Tournament::OpenUriContest (const gchar *uri)
         {
           contest = new Contest ();
 
+          contest->LoadFencerFile (uri);
+
           Manage (contest);
           contest->AskForSettings ();
           Plug (contest,
                 NULL);
 
-          contest->LoadFencerFile (uri);
           break;
         }
       }
