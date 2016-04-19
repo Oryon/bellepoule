@@ -198,7 +198,7 @@ void Hall::ManageContest (Net::Message *message,
 // --------------------------------------------------------------------------------
 void Hall::DropContest (Net::Message *message)
 {
-  gchar *id = message->GetString ("id");
+  gchar *id = message->GetString ("uuid");
 
   if (id)
   {
