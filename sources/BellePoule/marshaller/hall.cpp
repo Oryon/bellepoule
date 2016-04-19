@@ -150,7 +150,7 @@ void Hall::DropObject (Object   *object,
       }
 
       g_slist_free (selection);
-      Timeline::Redraw (_timeline);
+      _timeline->Redraw ();
       return;
     }
   }
@@ -258,6 +258,7 @@ void Hall::DropJob (Net::Message *message)
       if (batch->GetId () == contest_id)
       {
         batch->RemoveJob (message);
+        _timeline->Redraw ();
         break;
       }
 
@@ -370,7 +371,7 @@ void Hall::RemoveSelected ()
   g_list_free (_selected_list);
   _selected_list = NULL;
 
-  Timeline::Redraw (_timeline);
+  _timeline->Redraw ();
 }
 
 // --------------------------------------------------------------------------------
@@ -615,7 +616,7 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
 
       g_list_free (pending_jobs);
 
-      Timeline::Redraw (_timeline);
+      _timeline->Redraw ();
       OnTimelineCursorMoved ();
     }
   }
@@ -671,7 +672,7 @@ void Hall::OnBatchAssignmentCancel (Batch *batch)
     current_piste = g_list_next (current_piste);
   }
 
-  Timeline::Redraw (_timeline);
+  _timeline->Redraw ();
 }
 
 // --------------------------------------------------------------------------------

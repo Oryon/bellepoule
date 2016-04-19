@@ -38,7 +38,9 @@ class Timeline : public CanvasModule
 
     GDateTime *RetreiveCursorTime ();
 
-    static gboolean Redraw (Timeline *tl);
+    gboolean Redraw ();
+
+    static gboolean RedrawCbk (Timeline *tl);
 
   private:
     static const guint HOURS_MONITORED = 10;

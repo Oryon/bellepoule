@@ -19,7 +19,6 @@
 
 #include "job.hpp"
 #include "batch.hpp"
-#include "timeslot.hpp"
 
 typedef enum
 {
@@ -303,9 +302,25 @@ void Batch::RemoveJob (Net::Message *message)
 
     if (current_job->GetUUID () == current_job->GetUUID ())
     {
-      current_job->Release ();
       gtk_list_store_remove (_job_store,
                              &iter);
+
+      {
+        GList *node = g_list_find (_pending_list,
+                                   current_job);
+        _pending_list = g_list_delete_link (_pending_list,
+                                            node);
+      }
+
+      {
+        GList *node = g_list_find (_scheduled_list,
+                                   current_job);
+        _scheduled_list = g_list_delete_link (_scheduled_list,
+                                              node);
+      }
+
+      current_job->Release ();
+
       break;
     }
 

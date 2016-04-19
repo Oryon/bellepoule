@@ -143,8 +143,6 @@ void TimeSlot::AddJob (Job *job)
 // --------------------------------------------------------------------------------
 void TimeSlot::RemoveJob (Job *job)
 {
-  _duration = 0;
-
   {
     GList *node = g_list_find (_job_list,
                                job);
@@ -170,6 +168,8 @@ void TimeSlot::RemoveJob (Job *job)
   job->SetTimslot           (NULL);
 
   _owner->OnTimeSlotUpdated (this);
+
+  _duration = 0;
 }
 
 // --------------------------------------------------------------------------------
