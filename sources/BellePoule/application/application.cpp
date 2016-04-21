@@ -48,6 +48,10 @@ Application::Application (const gchar   *config_file,
   _language    = NULL;
   _main_module = NULL;
 
+  g_setenv ("UBUNTU_MENUPROXY",
+            "0",
+            TRUE);
+
   _role = g_strdup (config_file);
 
   // g_mem_set_vtable (glib_mem_profiler_table);
