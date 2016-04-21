@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdlib.h>
-#include <string.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "network/message.hpp"
@@ -234,11 +233,11 @@ namespace Pool
       {
         pool_index--;
 
-        if (strcmp (command, "ScoreSheet") == 0)
+        if (g_strcmp0 (command, "ScoreSheet") == 0)
         {
           OnPoolSelected (pool_index);
         }
-        else if (strcmp (command, "Score") == 0)
+        else if (g_strcmp0 (command, "Score") == 0)
         {
           for (guint i = 0; i < _allocator->GetNbPools (); i++)
           {
@@ -661,7 +660,7 @@ namespace Pool
     {
       Stage::StageClass *provider_class = previous->GetClass ();
 
-      if (strcmp (provider_class->_xml_name, Allocator::_xml_class_name) == 0)
+      if (g_strcmp0 (provider_class->_xml_name, Allocator::_xml_class_name) == 0)
       {
         return previous;
       }

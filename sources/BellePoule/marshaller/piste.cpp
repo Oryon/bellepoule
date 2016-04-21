@@ -667,7 +667,7 @@ void Piste::MonitorEvent (GooCanvasItem *item)
 gint Piste::CompareJob (Job *a,
                         Job *b)
 {
-  return strcmp (a->GetName (), b->GetName ());
+  return g_strcmp0 (a->GetName (), b->GetName ());
 }
 
 // --------------------------------------------------------------------------------

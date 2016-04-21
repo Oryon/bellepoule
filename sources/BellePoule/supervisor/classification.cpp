@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string.h>
 #include <glib/gstdio.h>
 
 #include "util/attribute.hpp"
@@ -200,7 +199,7 @@ void Classification::WriteFFFString (FILE        *file,
       gsize  bytes_written;
       gchar *xml_image = attr->GetXmlImage ();
 
-      if (strcmp (attr_name, "birth_date") == 0)
+      if (g_strcmp0 (attr_name, "birth_date") == 0)
       {
         GDate date;
 

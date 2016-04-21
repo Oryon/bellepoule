@@ -17,6 +17,8 @@
 #include "network/message.hpp"
 #include "actors/player_factory.hpp"
 #include "actors/referee.hpp"
+#include "job.hpp"
+#include "batch.hpp"
 #include "referee_pool.hpp"
 
 // --------------------------------------------------------------------------------
@@ -90,22 +92,27 @@ Referee *RefereePool::GetReferee (guint ref)
 // --------------------------------------------------------------------------------
 Referee *RefereePool::GetRefereeFor (Job *job)
 {
-  GList *current_weapon = _list_by_weapon;
+  GList *current = _list_by_weapon;
+  Batch *batch   = job->GetBatch ();
 
-  while (current_weapon)
+  while (current)
   {
-    People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
-    GSList               *list         = referee_list->GetList ();
-    guint                 count        = g_slist_length (list);
+    People::RefereesList *referee_list = (People::RefereesList *) current->data;
 
-    if (count)
+    if (g_strcmp0 (referee_list->GetWeaponCode (), batch->GetWeaponCode ()) == 0)
     {
-      Referee *referee = (Referee *) g_slist_nth_data (list, g_random_int_range (0, count));
+      GSList *list  = referee_list->GetList ();
+      guint   count = g_slist_length (list);
 
-      return referee;
+      if (count)
+      {
+        Referee *referee = (Referee *) g_slist_nth_data (list, g_random_int_range (0, count));
+
+        return referee;
+      }
     }
 
-    current_weapon = g_list_next (current_weapon);
+    current = g_list_next (current);
   }
   return NULL;
 }
@@ -150,12 +157,12 @@ void RefereePool::ManageReferee (Net::Message *message)
                 referee_list->RegisterPlayer (referee,
                                               NULL);
                 referee_list->OnListChanged ();
-                break;
               }
               else
               {
                 referee->Release ();
               }
+              break;
             }
 
             current_weapon = g_list_next (current_weapon);

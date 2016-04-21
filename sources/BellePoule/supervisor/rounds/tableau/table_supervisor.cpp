@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string.h>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
@@ -513,7 +512,7 @@ namespace Table
 
       if (path)
       {
-        if (strcmp (command, "ScoreSheet") == 0)
+        if (g_strcmp0 (command, "ScoreSheet") == 0)
         {
           gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
                                     path,
@@ -530,7 +529,7 @@ namespace Table
                                                        data);
           }
         }
-        else if (strcmp (command, "Score") == 0)
+        else if (g_strcmp0 (command, "Score") == 0)
         {
           GtkTreeIter  iter;
           TableSet    *table_set;
@@ -577,14 +576,14 @@ namespace Table
     {
       if (n->type == XML_ELEMENT_NODE)
       {
-        if (strcmp ((char *) n->name, _xml_class_name) == 0)
+        if (g_strcmp0 ((char *) n->name, _xml_class_name) == 0)
         {
         }
-        else if (strcmp ((char *) n->name, GetXmlPlayerTag ()) == 0)
+        else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
           LoadAttendees (n);
         }
-        else if (strcmp ((char *) n->name, "SuiteDeTableaux") == 0)
+        else if (g_strcmp0 ((char *) n->name, "SuiteDeTableaux") == 0)
         {
           GtkTreeIter  iter;
           TableSet    *table_set;

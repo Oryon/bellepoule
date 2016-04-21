@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
 #include <goocanvas.h>
@@ -188,7 +187,7 @@ namespace People
     {
       GtkActionGroup *group = (GtkActionGroup *) groups->data;
 
-      if (strcmp (gtk_action_group_get_name (group), "PlayersListActionGroup") == 0)
+      if (g_strcmp0 (gtk_action_group_get_name (group), "PlayersListActionGroup") == 0)
       {
         GList *actions = gtk_action_group_list_actions (group);
 
@@ -196,7 +195,7 @@ namespace People
         {
           GtkAction *action = (GtkAction *) actions->data;
 
-          if (strcmp (gtk_action_get_name (action), name) == 0)
+          if (g_strcmp0 (gtk_action_get_name (action), name) == 0)
           {
             return action;
           }
@@ -1160,7 +1159,7 @@ namespace People
             gchar *font;
             gchar *image = attr->GetUserImage (attr_layout->_look);
 
-            if ((_flat_print == FALSE) && (bar && strcmp (attr->GetCodeName (), "name") == 0))
+            if ((_flat_print == FALSE) && (bar && g_strcmp0 (attr->GetCodeName (), "name") == 0))
             {
               font = g_strdup_printf (BP_FONT "Bold %dpx", guint (PRINT_FONT_HEIGHT));
             }

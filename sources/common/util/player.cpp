@@ -14,9 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdlib.h>
-#include <string.h>
-
 #include "util/attribute.hpp"
 #include "network/message.hpp"
 
@@ -336,7 +333,7 @@ void Player::NotifyChange (Attribute *attr,
 
     client = (Client *) list->data;
     if (   (client->_steps & step)
-        && (strcmp (client->_attr_name, attr->GetCodeName ()) == 0))
+        && (g_strcmp0 (client->_attr_name, attr->GetCodeName ()) == 0))
     {
       client->_change_cbk (this,
                            attr,
@@ -542,7 +539,7 @@ void Player::SaveAttributes (xmlTextWriter *xml_writer)
     {
       gboolean saving_allowed = TRUE;
 
-      if (strcmp (desc->_code_name, "final_rank") == 0)
+      if (g_strcmp0 (desc->_code_name, "final_rank") == 0)
       {
         AttributeId  exported_id ("exported");
         Attribute   *exported_attr = GetAttribute (&exported_id);
@@ -559,7 +556,7 @@ void Player::SaveAttributes (xmlTextWriter *xml_writer)
         {
           gchar *xml_image = attr->GetXmlImage ();
 
-          if (strcmp (desc->_code_name, "birth_date") == 0)
+          if (g_strcmp0 (desc->_code_name, "birth_date") == 0)
           {
             GDate date;
 
@@ -629,7 +626,7 @@ void Player::Load (xmlNode *xml_node)
         SetAttributeValue (&attr_id,
                            value);
 
-        if (strcmp (desc->_code_name, "ref") == 0)
+        if (g_strcmp0 (desc->_code_name, "ref") == 0)
         {
           Attribute *attr = GetAttribute (&attr_id);
 
@@ -639,7 +636,7 @@ void Player::Load (xmlNode *xml_node)
           }
         }
 
-        if (strcmp (desc->_code_name, "birth_date") == 0)
+        if (g_strcmp0 (desc->_code_name, "birth_date") == 0)
         {
           Attribute *attr = GetAttribute (&attr_id);
 
@@ -675,7 +672,7 @@ void Player::Load (xmlNode *xml_node)
           }
         }
 
-        if (strcmp (desc->_code_name, "global_status") == 0)
+        if (g_strcmp0 (desc->_code_name, "global_status") == 0)
         {
           if (value[0] == 'F')
           {

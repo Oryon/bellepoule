@@ -48,6 +48,10 @@ Application::Application (const gchar   *config_file,
   _language    = NULL;
   _main_module = NULL;
 
+  g_setenv ("UBUNTU_MENUPROXY",
+            "0",
+            TRUE);
+
   _role = g_strdup (config_file);
 
   // g_mem_set_vtable (glib_mem_profiler_table);
@@ -438,13 +442,13 @@ gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cb
         }
         else if (atoi (local_version) == atoi (remote_version))
         {
-          if (strcmp (local_maturity, remote_maturity) != 0)
+          if (g_strcmp0 (local_maturity, remote_maturity) != 0)
           {
             if (*remote_maturity == '\0')
             {
               new_version_detected = TRUE;
             }
-            else if (strcmp (local_maturity, remote_maturity) < 0)
+            else if (g_strcmp0 (local_maturity, remote_maturity) < 0)
             {
               new_version_detected = TRUE;
             }
@@ -454,13 +458,13 @@ gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cb
             new_version_detected = TRUE;
           }
         }
-        else if (strcmp (VERSION_BRANCH, "UNSTABLE") == 0)
+        else if (g_strcmp0 (VERSION_BRANCH, "UNSTABLE") == 0)
         {
           char *stable_version = g_key_file_get_string (version_file,
                                                         "STABLE",
                                                         "version",
                                                         NULL);
-          if (stable_version && strcmp (remote_version, stable_version) <= 0)
+          if (stable_version && g_strcmp0 (remote_version, stable_version) <= 0)
           {
             new_version_detected = TRUE;
           }

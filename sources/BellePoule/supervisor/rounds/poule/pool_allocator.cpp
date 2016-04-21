@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string.h>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
@@ -635,7 +634,7 @@ namespace Pool
 
                 attr_desc = (AttributeDesc *) g_object_get_data (G_OBJECT (togglebutton), "criteria_attribute");
 
-                if (strcmp (tokens[i], attr_desc->_code_name) == 0)
+                if (g_strcmp0 (tokens[i], attr_desc->_code_name) == 0)
                 {
                   _swapping_criteria_list = g_slist_append (_swapping_criteria_list,
                                                             attr_desc);
@@ -685,7 +684,7 @@ namespace Pool
       if (n->type == XML_ELEMENT_NODE)
       {
         if (   (_loaded == FALSE)
-            && strcmp ((char *) n->name, next_stage_class->_xml_name) == 0)
+            && g_strcmp0 ((char *) n->name, next_stage_class->_xml_name) == 0)
         {
           LoadConfiguration (xml_node);
 
@@ -700,7 +699,7 @@ namespace Pool
           }
           _loaded = TRUE;
         }
-        else if (strcmp ((char *) n->name, "Poule") == 0)
+        else if (g_strcmp0 ((char *) n->name, "Poule") == 0)
         {
           if (_config_list == NULL)
           {
@@ -762,7 +761,7 @@ namespace Pool
             }
           }
         }
-        else if (strcmp ((char *) n->name, GetXmlPlayerTag ()) == 0)
+        else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
           if (current_pool == NULL)
           {
@@ -785,7 +784,7 @@ namespace Pool
             }
           }
         }
-        else if (strcmp ((char *) n->name, "Arbitre") == 0)
+        else if (g_strcmp0 ((char *) n->name, "Arbitre") == 0)
         {
           gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
 
@@ -800,7 +799,7 @@ namespace Pool
             xmlFree (attr);
           }
         }
-        else if (strcmp ((char *) n->name, "Match") == 0)
+        else if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
           current_pool->CreateMatchs (_swapping_criteria_list);
           current_pool->Load (n,

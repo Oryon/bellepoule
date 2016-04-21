@@ -62,7 +62,7 @@ Weapon *Weapon::GetFromXml (const gchar *xml)
   {
     Weapon *weapon = (Weapon *) current->data;
 
-    if (strcmp (xml, weapon->_xml_image) == 0)
+    if (g_strcmp0 (xml, weapon->_xml_image) == 0)
     {
       return weapon;
     }

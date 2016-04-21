@@ -337,10 +337,10 @@ namespace People
     {
       if (n->type == XML_ELEMENT_NODE)
       {
-        if (strcmp ((char *) n->name, "Tireurs") == 0)
+        if (g_strcmp0 ((char *) n->name, "Tireurs") == 0)
         {
         }
-        else if (strcmp ((char *) n->name, "Tireur") == 0)
+        else if (g_strcmp0 ((char *) n->name, "Tireur") == 0)
         {
           gchar *rank                   = (gchar *) xmlGetProp (n, BAD_CAST "Classement");
           guint  rank_value             = atoi (rank);

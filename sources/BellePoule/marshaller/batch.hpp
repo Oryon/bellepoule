@@ -64,6 +64,8 @@ class Batch : public Module
 
     GdkColor *GetColor ();
 
+    const gchar *GetWeaponCode ();
+
   private:
     guint32       _id;
     GtkListStore *_job_store;
@@ -73,6 +75,7 @@ class Batch : public Module
     Listener     *_listener;
     GList        *_scheduled_list;
     GList        *_pending_list;
+    gchar        *_weapon;
 
     virtual ~Batch ();
 

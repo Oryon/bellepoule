@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdlib.h>
-#include <string.h>
 
 #include "classification.hpp"
 #include "contest.hpp"
@@ -816,7 +815,7 @@ Stage::StageClass *Stage::GetClass (const gchar *name)
     {
       StageClass *stage_class = (StageClass *) current->data;
 
-      if (strcmp (name, stage_class->_xml_name) == 0)
+      if (g_strcmp0 (name, stage_class->_xml_name) == 0)
       {
         return stage_class;
       }

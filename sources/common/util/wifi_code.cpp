@@ -108,7 +108,7 @@ gchar *WifiCode::GetIpAddress ()
 
       while (adapter)
       {
-        if (strcmp (adapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
+        if (g_strcmp0 (adapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
         {
           ip_address = g_strdup (adapter->IpAddressList.IpAddress.String);
           break;

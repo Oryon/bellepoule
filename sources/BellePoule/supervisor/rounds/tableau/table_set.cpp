@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string.h>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
@@ -603,11 +602,11 @@ namespace Table
 
       if (n->type == XML_ELEMENT_NODE)
       {
-        if ((_loaded == FALSE) && (strcmp ((char *) n->name, "SuiteDeTableaux") == 0))
+        if ((_loaded == FALSE) && (g_strcmp0 ((char *) n->name, "SuiteDeTableaux") == 0))
         {
           _loaded = TRUE;
         }
-        else if (strcmp ((char *) n->name, "Tableau") == 0)
+        else if (g_strcmp0 ((char *) n->name, "Tableau") == 0)
         {
           gchar *prop;
 
@@ -2011,7 +2010,7 @@ namespace Table
         return FALSE;
       }
 
-      if (strcmp (command, "ScoreSheet") == 0)
+      if (g_strcmp0 (command, "ScoreSheet") == 0)
       {
         GtkTreeIter filter_iter;
 
@@ -2024,7 +2023,7 @@ namespace Table
           return TRUE;
         }
       }
-      else if (strcmp (command, "Score") == 0)
+      else if (g_strcmp0 (command, "Score") == 0)
       {
         Match *match;
 

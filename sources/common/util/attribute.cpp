@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string.h>
 #include <stdlib.h>
 
 #include "attribute.hpp"
@@ -245,12 +244,7 @@ gint TextAttribute::CompareWith (Attribute *with)
 // --------------------------------------------------------------------------------
 gint TextAttribute::CompareWith (const gchar *with)
 {
-  if (with)
-  {
-    return (strcmp ((const gchar *) GetStrValue (), with));
-  }
-
-  return -1;
+  return (g_strcmp0 ((const gchar *) GetStrValue (), with));
 }
 
 // --------------------------------------------------------------------------------

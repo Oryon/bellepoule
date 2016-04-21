@@ -14,8 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string.h>
-
 #include "network/message.hpp"
 
 #include "flash_code.hpp"
@@ -55,7 +53,7 @@ Object::Object (const gchar *class_name)
     _class_name = class_name;
   }
 
-  if (_klass_to_track && strcmp (_klass_to_track, _class_name) == 0)
+  if (_klass_to_track && g_strcmp0 (_klass_to_track, _class_name) == 0)
   {
     printf ("%s creation\n    ", _class_name);
     Dump ();
@@ -68,7 +66,7 @@ Object::Object (const gchar *class_name)
     {
       ClassStatus *status = (ClassStatus *) current->data;
 
-      if (strcmp (status->_name, _class_name) == 0)
+      if (g_strcmp0 (status->_name, _class_name) == 0)
       {
         status->_nb_objects++;
         return;
@@ -122,7 +120,7 @@ Object::~Object ()
 #ifdef DEBUG
   _nb_objects--;
 
-  if (_klass_to_track && strcmp (_klass_to_track, _class_name) == 0)
+  if (_klass_to_track && g_strcmp0 (_klass_to_track, _class_name) == 0)
   {
     printf ("%s destruction\n    ", _class_name);
     Dump ();
@@ -135,7 +133,7 @@ Object::~Object ()
     status = (ClassStatus *) g_list_nth_data (_list,
                                               i);
 
-    if (strcmp (status->_name, _class_name) == 0)
+    if (g_strcmp0 (status->_name, _class_name) == 0)
     {
       status->_nb_objects--;
       return;
@@ -230,7 +228,7 @@ void Object::Retain ()
 {
   _ref_count++;
 #ifdef DEBUG
-  if (_klass_to_track && strcmp (_klass_to_track, _class_name) == 0)
+  if (_klass_to_track && g_strcmp0 (_klass_to_track, _class_name) == 0)
   {
     printf ("%s retained\n    ", _class_name);
     Dump ();
@@ -242,7 +240,7 @@ void Object::Retain ()
 void Object::Release ()
 {
 #ifdef DEBUG
-  if (_klass_to_track && strcmp (_klass_to_track, _class_name) == 0)
+  if (_klass_to_track && g_strcmp0 (_klass_to_track, _class_name) == 0)
   {
     printf ("%s released\n    ", _class_name);
     Dump ();

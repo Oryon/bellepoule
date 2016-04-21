@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <gdk/gdkkeysyms.h>
-#include <string.h>
 #include <ctype.h>
 
 #include <libxml/xmlwriter.h>
@@ -132,8 +131,8 @@ namespace People
       Player::AttributeId  availability_attr_id ("availability");
       Attribute           *availability_attr = referee->GetAttribute (&availability_attr_id);
 
-      if (strcmp (availability_attr->GetStrValue (),
-                  "Absent") == 0)
+      if (g_strcmp0 (availability_attr->GetStrValue (),
+                     "Absent") == 0)
       {
         referee->SetAttributeValue (&availability_attr_id,
                                     "Free");
