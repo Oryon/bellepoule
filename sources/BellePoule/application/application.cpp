@@ -21,9 +21,11 @@
 #include <gdk/gdkkeysyms.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <shellapi.h>
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN
+#  endif
+#  include <windows.h>
+#  include <shellapi.h>
 #endif
 
 #include "util/attribute.hpp"
