@@ -81,8 +81,8 @@ void RefereeZone::BookReferee (Player *referee)
   {
     Player::AttributeId attr_id ("availability");
 
-    if (strcmp (referee->GetAttribute (&attr_id)->GetStrValue (),
-                "Free") == 0)
+    if (g_strcmp0 (referee->GetAttribute (&attr_id)->GetStrValue (),
+                   "Free") == 0)
     {
       referee->SetAttributeValue (&attr_id,
                                   "Busy");
@@ -110,7 +110,7 @@ void RefereeZone::FreeReferee (Player *referee)
     Player::AttributeId attr_id ("availability");
     Attribute           *attr = referee->GetAttribute (&attr_id);
 
-    if (attr && strcmp (attr->GetStrValue (), "Busy") == 0)
+    if (attr && g_strcmp0 (attr->GetStrValue (), "Busy") == 0)
     {
       referee->SetAttributeValue (&attr_id,
                                   "Free");

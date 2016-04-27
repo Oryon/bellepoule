@@ -21,9 +21,11 @@
 #include <gdk/gdkkeysyms.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <shellapi.h>
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN
+#  endif
+#  include <windows.h>
+#  include <shellapi.h>
 #endif
 
 #include "util/attribute.hpp"
@@ -47,6 +49,10 @@ Application::Application (const gchar   *config_file,
 {
   _language    = NULL;
   _main_module = NULL;
+
+  g_setenv ("UBUNTU_MENUPROXY",
+            "0",
+            TRUE);
 
   _role = g_strdup (config_file);
 
@@ -438,13 +444,13 @@ gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cb
         }
         else if (atoi (local_version) == atoi (remote_version))
         {
-          if (strcmp (local_maturity, remote_maturity) != 0)
+          if (g_strcmp0 (local_maturity, remote_maturity) != 0)
           {
             if (*remote_maturity == '\0')
             {
               new_version_detected = TRUE;
             }
-            else if (strcmp (local_maturity, remote_maturity) < 0)
+            else if (g_strcmp0 (local_maturity, remote_maturity) < 0)
             {
               new_version_detected = TRUE;
             }
@@ -454,13 +460,13 @@ gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cb
             new_version_detected = TRUE;
           }
         }
-        else if (strcmp (VERSION_BRANCH, "UNSTABLE") == 0)
+        else if (g_strcmp0 (VERSION_BRANCH, "UNSTABLE") == 0)
         {
           char *stable_version = g_key_file_get_string (version_file,
                                                         "STABLE",
                                                         "version",
                                                         NULL);
-          if (stable_version && strcmp (remote_version, stable_version) <= 0)
+          if (stable_version && g_strcmp0 (remote_version, stable_version) <= 0)
           {
             new_version_detected = TRUE;
           }

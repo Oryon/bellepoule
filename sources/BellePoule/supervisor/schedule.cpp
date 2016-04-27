@@ -687,12 +687,12 @@ gboolean Schedule::OnHttpPost (const gchar *command,
 
       if (stage->GetId () == phase_id)
       {
-        if (strcmp (command, "ScoreSheet") == 0)
+        if (g_strcmp0 (command, "ScoreSheet") == 0)
         {
           gtk_notebook_set_current_page  (GTK_NOTEBOOK (GetRootWidget ()),
                                           phase_id);
         }
-        else if (strcmp (command, "Score") == 0)
+        else if (g_strcmp0 (command, "Score") == 0)
         {
           if (stage->Locked ())
           {
@@ -734,8 +734,8 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
                      context,
                      page_nr);
 
-  if (strcmp ((const gchar *) g_object_get_data (G_OBJECT (operation), "Print::PageName"),
-              gettext ("Formula")) == 0)
+  if (g_strcmp0 ((const gchar *) g_object_get_data (G_OBJECT (operation), "Print::PageName"),
+                 gettext ("Formula")) == 0)
 
   {
     cairo_t *cr      = gtk_print_context_get_cairo_context (context);
@@ -1414,7 +1414,7 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
     Stage             *stage       = (Stage *) g_list_nth_data (_stage_list, _current_stage);
     Stage::StageClass *stage_class = stage->GetClass ();
 
-    if (strcmp (stage_class->_xml_name, "Barrage") == 0)
+    if (g_strcmp0 (stage_class->_xml_name, "Barrage") == 0)
     {
       RemoveStage (stage);
     }

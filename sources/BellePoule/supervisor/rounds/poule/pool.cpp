@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdlib.h>
-#include <string.h>
 #include <gdk/gdkkeysyms.h>
 #include <goocanvas.h>
 #include <cairo.h>
@@ -1593,8 +1592,8 @@ namespace Pool
         {
           const gchar *connection_status = connection_attr->GetStrValue ();
 
-          if (   (strcmp (connection_status, "Broken") == 0)
-              || (strcmp (connection_status, "Waiting") == 0))
+          if (   (g_strcmp0 (connection_status, "Broken") == 0)
+              || (g_strcmp0 (connection_status, "Waiting") == 0))
           {
             _status_pixbuf = connection_attr->GetPixbuf ();
             break;
@@ -1934,7 +1933,7 @@ namespace Pool
                                   &iter,
                                   AttributeDesc::DISCRETE_XML_IMAGE_str, &code,
                                   -1);
-              if (strcmp (text, code) == 0)
+              if (g_strcmp0 (text, code) == 0)
               {
                 gtk_combo_box_set_active_iter (GTK_COMBO_BOX (data),
                                                &iter);
@@ -2318,12 +2317,12 @@ namespace Pool
         static xmlNode *A = NULL;
         static xmlNode *B = NULL;
 
-        if (strcmp ((char *) n->name, "Match") == 0)
+        if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
           A = NULL;
           B = NULL;
         }
-        else if (strcmp ((char *) n->name, _xml_player_tag) == 0)
+        else if (g_strcmp0 ((char *) n->name, _xml_player_tag) == 0)
         {
           if (A == NULL)
           {

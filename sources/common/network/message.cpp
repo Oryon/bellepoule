@@ -88,14 +88,7 @@ namespace Net
                                                   "name",
                                                   NULL);
 
-    if (name && field_name)
-    {
-      result = (strcmp (name, field_name) == 0);
-    }
-    else
-    {
-      result = (name == field_name);
-    }
+    result = (g_strcmp0 (name, field_name) == 0);
 
     g_free (field_name);
     return result;

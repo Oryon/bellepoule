@@ -196,31 +196,37 @@ void Timeline::DrawSlots ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Timeline::Redraw (Timeline *tl)
+gboolean Timeline::RedrawCbk (Timeline *tl)
 {
-  tl->Wipe ();
+  return tl->Redraw ();
+}
+
+// --------------------------------------------------------------------------------
+gboolean Timeline::Redraw ()
+{
+  Wipe ();
 
   {
-    gtk_widget_get_allocation (tl->GetRootWidget (),
-                               &tl->_allocation);
+    gtk_widget_get_allocation (GetRootWidget (),
+                               &_allocation);
 
-    tl->_batch_scale = (gdouble)tl->_allocation.height;
-    tl->_time_scale  = (gdouble)tl->_allocation.width
+    _batch_scale = (gdouble)_allocation.height;
+    _time_scale  = (gdouble)_allocation.width
       / (HOURS_MONITORED*G_TIME_SPAN_HOUR + START_MARGING);
   }
 
-  tl->DrawSlots   ();
-  tl->DrawTimes   ();
-  tl->DrawCursors ();
+  DrawSlots   ();
+  DrawTimes   ();
+  DrawCursors ();
 
-  if (tl->_redraw_timeout > 0)
+  if (_redraw_timeout > 0)
   {
-    g_source_remove (tl->_redraw_timeout);
+    g_source_remove (_redraw_timeout);
   }
 
-  tl->_redraw_timeout = g_timeout_add_seconds (60,
-                                               (GSourceFunc) Redraw,
-                                               tl);
+  _redraw_timeout = g_timeout_add_seconds (60,
+                                           (GSourceFunc) RedrawCbk,
+                                           this);
 
   //return G_SOURCE_CONTINUE;
   return TRUE;
@@ -305,5 +311,5 @@ extern "C" G_MODULE_EXPORT void on_canvas_scrolled_window_size_allocate (GtkWidg
 {
   Timeline *timeline = dynamic_cast <Timeline *> (object);
 
-  Timeline::Redraw (timeline);
+  Timeline::RedrawCbk (timeline);
 }

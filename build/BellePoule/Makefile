@@ -6,7 +6,7 @@ PRODUCT = bellepoulebeta
 OUTPUT  = Release
 PACKAGE = $(HOME)/PPA/$(PRODUCT)
 VERSION = 5.0
-STEP    = ubuntu2
+STEP    = ubuntu3
 RELEASE = $(PRODUCT)_$(VERSION)
 UBUNTU  = trusty
 V       = 1
@@ -16,11 +16,17 @@ DATE    = $(shell date -R)
 #-- Compilers ---------------------------------------
 #----------------------------------------------------
 ifeq ($(UBUNTU), windows)
-CC = i586-mingw32msvc-g++
-AR = i586-mingw32msvc-ar
+#MINGW=i686-w64-mingw32
+MINGW=$(HOME)/.wine/drive_c/MinGW
+PKG_CONFIG = $(MINGW)-pkg-config
+CC         = $(MINGW)/bin/g++.exe
+AR         = $(MINGW)/bin/ar.exe
+WINDRES    = i686-w64-mingw32-windres
 else
-CC = g++
-AR = ar
+PKG_CONFIG = pkg-config
+CC         = g++
+AR         = ar
+WINDRES    = $(MINGW)-windres
 endif
 
 ifeq ($(OUTPUT), Debug)
@@ -68,22 +74,23 @@ CFLAGS += -Wno-vla
 CFLAGS += -Wno-deprecated-declarations
 CFLAGS += -Wredundant-decls
 CFLAGS += -Wunreachable-code
-CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
 endif
 
 ifeq ($(UBUNTU), windows)
-CFLAGS += -I/usr/i586-mingw32msvc/include
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/msys/1.0/include
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/gtk-2.0
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/cairo
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/gdk-pixbuf-2.0
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/glib-2.0
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/lib/glib-2.0/include
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/pango-1.0
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/lib/gtk-2.0/include
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/atk-1.0
-CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/goocanvas-1.0.0/goocanvas
+CFLAGS += -I$(MINGW)/include
+CFLAGS += -I$(MINGW)/msys/1.0/include
+CFLAGS += -I$(MINGW)/include
+CFLAGS += -I$(MINGW)/include/gtk-2.0
+CFLAGS += -I$(MINGW)/include/cairo
+CFLAGS += -I$(MINGW)/include/gdk-pixbuf-2.0
+CFLAGS += -I$(MINGW)/include/glib-2.0
+CFLAGS += -I$(MINGW)/lib/glib-2.0/include
+CFLAGS += -I$(MINGW)/include/pango-1.0
+CFLAGS += -I$(MINGW)/lib/gtk-2.0/include
+CFLAGS += -I$(MINGW)/include/atk-1.0
+CFLAGS += -I$(MINGW)/include/goocanvas-1.0.0/goocanvas
+else
+CFLAGS += $(shell $(PKG_CONFIG) --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
 endif
 
 CFLAGS += -Isources/common
@@ -125,11 +132,10 @@ LDFLAGS += -lqrencode
 LDFLAGS += -liphlpapi
 LDFLAGS += -lpthreadGC2
 LDFLAGS += -lxml2
-LDFLAGS += -L/usr/i586-mingw32msvc/lib
-LDFLAGS += -L/home/yannick/.wine/drive_c/MinGW/lib
-LDFLAGS += -L/home/yannick/.wine/drive_c/MinGW/msys/1.0/lib
+LDFLAGS += -L$(MINGW)/lib
+LDFLAGS += -L$(MINGW)/msys/1.0/lib
 else
-LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
 endif
 
 ifeq ($(OUTPUT), Release)
@@ -161,7 +167,7 @@ OBJ_SUPERVISOR += sources/BellePoule/supervisor/supervisor-ico.o
 endif
 
 ifeq ($(UBUNTU), windows)
-SHARED_LIB = 
+SHARED_LIB =
 RPATH      =
 STATIC_LIB = $(OUTPUT)/lib$(PRODUCT).a
 else
@@ -204,7 +210,7 @@ $(OUTPUT)/$(PRODUCT)-marshaller: $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHALLER)
 
 %.o: %.rc
 	@echo "\033[1;33m" $@ "\033[0m"
-	@i586-mingw32msvc-windres --output=$@ --input=$<
+	@$(WINDRES) --output=$@ --input=$<
 
 #--
 
@@ -263,6 +269,7 @@ prepare_www:
 prepare_windows_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade/images
 	cp -f ../../resources/glade/images/exe.ico $(PACKAGE)/$(RELEASE)/resources/glade/images
+	ln -s $(MINGW)/bin/*dll $(PACKAGE)/$(RELEASE)
 
 prepare_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/translations
@@ -386,14 +393,14 @@ help:
 	@echo "make -s UBUNTU=windows V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "make -s UBUNTU=windows V=$(V)"
-	@echo "cp Release/$(PRODUCT)-marshaller ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/$(PRODUCT)-marshaller.exe"
-	@echo "cp Release/$(PRODUCT)-supervisor ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/$(PRODUCT)-supervisor.exe"
+	@echo "cp Release/$(PRODUCT)-*.exe ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/"
 	@echo "cp ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/bellepoulebeta/bin"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
 	@echo "make -s UBUNTU=vivid   V=$(V) package"
 	@echo "make -s UBUNTU=wily    V=$(V) package"
+	@echo "make -s UBUNTU=xenial  V=$(V) package"
 	@echo ""
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo ""

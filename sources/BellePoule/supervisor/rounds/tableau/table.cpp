@@ -307,11 +307,11 @@ namespace Table
     {
       if (n->type == XML_ELEMENT_NODE)
       {
-        if ((_loaded == FALSE) && (strcmp ((char *) n->name, "Tableau") == 0))
+        if ((_loaded == FALSE) && (g_strcmp0 ((char *) n->name, "Tableau") == 0))
         {
           _loaded = TRUE;
         }
-        else if (strcmp ((char *) n->name, "Match") == 0)
+        else if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
           gchar  *attr    = (gchar *) xmlGetProp (n, BAD_CAST "ID");
           GSList *current = _match_list;
@@ -326,7 +326,7 @@ namespace Table
             if (id)
             {
               id++;
-              if (strcmp (id, number) == 0)
+              if (g_strcmp0 (id, number) == 0)
               {
                 LoadMatch (n,
                            match);
@@ -358,7 +358,7 @@ namespace Table
         static xmlNode *A = NULL;
         static xmlNode *B = NULL;
 
-        if (strcmp ((char *) n->name, "Match") == 0)
+        if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
           gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
 
@@ -371,7 +371,7 @@ namespace Table
           }
           xmlFree (attr);
         }
-        else if (strcmp ((char *) n->name, "Arbitre") == 0)
+        else if (g_strcmp0 ((char *) n->name, "Arbitre") == 0)
         {
           gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
 
@@ -382,7 +382,7 @@ namespace Table
             xmlFree (attr);
           }
         }
-        else if (strcmp ((char *) n->name, _xml_player_tag) == 0)
+        else if (g_strcmp0 ((char *) n->name, _xml_player_tag) == 0)
         {
           if (A == NULL)
           {

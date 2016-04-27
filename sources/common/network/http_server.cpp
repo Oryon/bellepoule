@@ -209,7 +209,7 @@ namespace Net
                                   const char         *key,
                                   const char         *value)
   {
-    if (strcmp (key, "IV") == 0)
+    if (g_strcmp0 (key, "IV") == 0)
     {
       gsize out_len;
 
@@ -230,7 +230,7 @@ namespace Net
   {
     int ret = MHD_NO;
 
-    if (_http_GET_cbk && (strcmp (method, "GET") == 0))
+    if (_http_GET_cbk && (g_strcmp0 (method, "GET") == 0))
     {
       if (*upload_data_size == 0)
       {
@@ -253,7 +253,7 @@ namespace Net
         }
       }
     }
-    else if (_http_POST_cbk && ((strcmp (method, "POST") == 0) || (strcmp (method, "PUT") == 0)))
+    else if (_http_POST_cbk && ((g_strcmp0 (method, "POST") == 0) || (g_strcmp0 (method, "PUT") == 0)))
     {
       if (*upload_data_size)
       {

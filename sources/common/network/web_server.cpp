@@ -14,6 +14,10 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef WIN32
+#include "windows.h"
+#endif
+
 #include "util/global.hpp"
 
 #include "web_server.hpp"

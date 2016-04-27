@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <gdk/gdkkeysyms.h>
-#include <string.h>
 #include <ctype.h>
 #include <libxml/xmlwriter.h>
 
@@ -114,21 +113,21 @@ namespace People
     {
       if (n->type == XML_ELEMENT_NODE)
       {
-        if (strcmp ((char *) n->name, player_class_xml_tag) == 0)
+        if (g_strcmp0 ((char *) n->name, player_class_xml_tag) == 0)
         {
           owner = LoadPlayer (n,
                               player_class,
                               NULL);
         }
         else if (   _gathering_class
-                 && (strcmp (player_class, _gathering_class) == 0)
-                 && (strcmp ((char *) n->name, base_class_xml_tag) == 0))
+                 && (g_strcmp0 (player_class, _gathering_class) == 0)
+                 && (g_strcmp0 ((char *) n->name, base_class_xml_tag) == 0))
         {
           LoadPlayer (n,
                       _base_class,
                       owner);
         }
-        else if (strcmp ((char *) n->name, players_class_xml_tag) != 0)
+        else if (g_strcmp0 ((char *) n->name, players_class_xml_tag) != 0)
         {
           owner = NULL;
           OnListChanged ();

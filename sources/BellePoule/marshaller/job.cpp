@@ -29,6 +29,7 @@ Job::Job (Batch    *batch,
   _name      = NULL;
   _batch     = batch;
   _uuid      = uuid;
+  _timeslot  = NULL;
 
   Disclose ("Roadmap");
   _parcel->Set ("listener", uuid);
@@ -37,6 +38,11 @@ Job::Job (Batch    *batch,
 // --------------------------------------------------------------------------------
 Job::~Job ()
 {
+  if (_timeslot)
+  {
+    _timeslot->RemoveJob (this);
+  }
+
   g_free         (_name);
   gdk_color_free (_gdk_color);
 }

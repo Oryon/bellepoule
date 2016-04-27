@@ -19,7 +19,6 @@
 
 #include "job.hpp"
 #include "batch.hpp"
-#include "timeslot.hpp"
 
 typedef enum
 {
@@ -37,6 +36,7 @@ Batch::Batch (const gchar *id,
   _listener       = listener;
   _scheduled_list = NULL;
   _pending_list   = NULL;
+  _weapon         = NULL;
 
   _id = (guint32) g_ascii_strtoull (id,
                                     NULL,
@@ -97,6 +97,8 @@ Batch::~Batch ()
 
     gtk_list_store_clear (_job_store);
   }
+
+  g_free (_weapon);
 }
 
 // --------------------------------------------------------------------------------
@@ -121,16 +123,18 @@ const gchar *Batch::GetName ()
 void Batch::SetProperty (Net::Message *message,
                          const gchar  *property)
 {
-  gchar    *property_widget = g_strdup_printf ("contest_%s_label", property);
-  GtkLabel *label           = GTK_LABEL (_glade->GetGObject (property_widget));
-  gchar    *value;
+  gchar         *property_widget = g_strdup_printf ("contest_%s_label", property);
+  GtkLabel      *label           = GTK_LABEL (_glade->GetGObject (property_widget));
+  AttributeDesc *desc            = AttributeDesc::GetDescFromCodeName (property);
+  gchar         *xml             = message->GetString (property);
+  gchar         *image           = desc->GetUserImage (xml, AttributeDesc::LONG_TEXT);
 
-  value = message->GetString (property);
   gtk_label_set_text (label,
-                      gettext (value));
+                      gettext (image));
 
+  g_free (image);
   g_free (property_widget);
-  g_free (value);
+  g_free (xml);
 }
 
 // --------------------------------------------------------------------------------
@@ -138,7 +142,9 @@ void Batch::SetProperties (Net::Message *message)
 {
   SetProperty (message, "gender");
   SetProperty (message, "weapon");
-  SetProperty (message, "category");
+  SetProperty (message, "level");
+
+  _weapon = message->GetString ("weapon");
 
   {
     GtkWidget *tab   = _glade->GetWidget ("notebook_title");
@@ -158,6 +164,12 @@ void Batch::SetProperties (Net::Message *message)
 
     g_free (color);
   }
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Batch::GetWeaponCode ()
+{
+  return _weapon;
 }
 
 // --------------------------------------------------------------------------------
@@ -290,9 +302,25 @@ void Batch::RemoveJob (Net::Message *message)
 
     if (current_job->GetUUID () == current_job->GetUUID ())
     {
-      current_job->Release ();
       gtk_list_store_remove (_job_store,
                              &iter);
+
+      {
+        GList *node = g_list_find (_pending_list,
+                                   current_job);
+        _pending_list = g_list_delete_link (_pending_list,
+                                            node);
+      }
+
+      {
+        GList *node = g_list_find (_scheduled_list,
+                                   current_job);
+        _scheduled_list = g_list_delete_link (_scheduled_list,
+                                              node);
+      }
+
+      current_job->Release ();
+
       break;
     }
 
@@ -345,7 +373,7 @@ void Batch::LoadJob (xmlNode *xml_node,
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, "TourDePoules") == 0)
+      if (g_strcmp0 ((char *) n->name, "TourDePoules") == 0)
       {
         GtkLabel *label = GTK_LABEL (_glade->GetWidget ("batch_label"));
         gchar    *name;
@@ -356,7 +384,7 @@ void Batch::LoadJob (xmlNode *xml_node,
         gtk_label_set_text (label, name);
         g_free (name);
       }
-      else if (strcmp ((char *) n->name, "Poule") == 0)
+      else if (g_strcmp0 ((char *) n->name, "Poule") == 0)
       {
         GtkTreeIter  iter;
         gchar       *attr;

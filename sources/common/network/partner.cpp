@@ -57,12 +57,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   gboolean Partner::HasRole (const gchar *role)
   {
-    if (_role && role)
-    {
-      return (strcmp (_role, _role) == 0);
-    }
-
-    return (_role == _role);
+    return (g_strcmp0 (_role, _role) == 0);
   }
 
   // --------------------------------------------------------------------------------

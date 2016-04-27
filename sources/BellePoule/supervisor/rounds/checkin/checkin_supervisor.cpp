@@ -338,7 +338,7 @@ namespace People
 
       if (_contest->IsTeamEvent ())
       {
-        if ((strcmp (player_class, "Fencer") == 0) && player->Is ("Fencer"))
+        if ((g_strcmp0 (player_class, "Fencer") == 0) && player->Is ("Fencer"))
         {
           Fencer *fencer = (Fencer *) player;
           Team   *team   = fencer->GetTeam ();

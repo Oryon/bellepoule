@@ -14,9 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdlib.h>
-#include <string.h>
-
 #include "attribute.hpp"
 
 #include "module.hpp"
@@ -766,9 +763,9 @@ GtkTreeModel *Module::GetStatusModel ()
                             AttributeDesc::DISCRETE_XML_IMAGE_str, &xml_image,
                             AttributeDesc::DISCRETE_LONG_TEXT_str, &user_image,
                             AttributeDesc::DISCRETE_ICON_pix,      &icon, -1);
-        if (   (strcmp ("Q", xml_image) == 0)
-            || (strcmp ("A", xml_image) == 0)
-            || (strcmp ("E", xml_image) == 0))
+        if (   (g_strcmp0 ("Q", xml_image) == 0)
+            || (g_strcmp0 ("A", xml_image) == 0)
+            || (g_strcmp0 ("E", xml_image) == 0))
         {
           GtkTreeIter pool_iter;
 

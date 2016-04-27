@@ -112,11 +112,11 @@ void Hall::OnPlugged ()
 Object *Hall::GetDropObjectFromRef (guint32 ref,
                                     guint   key)
 {
-  if (strcmp (g_quark_to_string (key), "bellepoule/referee") == 0)
+  if (g_strcmp0 (g_quark_to_string (key), "bellepoule/referee") == 0)
   {
     return _referee_pool->GetReferee (ref);
   }
-  else if (strcmp (g_quark_to_string (key), "bellepoule/job") == 0)
+  else if (g_strcmp0 (g_quark_to_string (key), "bellepoule/job") == 0)
   {
     return GetBatch (ref);
   }
@@ -150,7 +150,7 @@ void Hall::DropObject (Object   *object,
       }
 
       g_slist_free (selection);
-      Timeline::Redraw (_timeline);
+      _timeline->Redraw ();
       return;
     }
   }
@@ -198,7 +198,7 @@ void Hall::ManageContest (Net::Message *message,
 // --------------------------------------------------------------------------------
 void Hall::DropContest (Net::Message *message)
 {
-  gchar *id = message->GetString ("id");
+  gchar *id = message->GetString ("uuid");
 
   if (id)
   {
@@ -258,6 +258,7 @@ void Hall::DropJob (Net::Message *message)
       if (batch->GetId () == contest_id)
       {
         batch->RemoveJob (message);
+        _timeline->Redraw ();
         break;
       }
 
@@ -370,7 +371,7 @@ void Hall::RemoveSelected ()
   g_list_free (_selected_list);
   _selected_list = NULL;
 
-  Timeline::Redraw (_timeline);
+  _timeline->Redraw ();
 }
 
 // --------------------------------------------------------------------------------
@@ -591,28 +592,31 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
         Job     *job     = (Job *) current_job->data;
         Referee *referee = _referee_pool->GetRefereeFor (job);
 
-        if (current_piste == NULL)
+        if (referee)
         {
-          _piste_list = g_list_sort (_piste_list,
-                                     (GCompareFunc) Piste::CompareAvailbility);
-          current_piste = _piste_list;
+          if (current_piste == NULL)
+          {
+            _piste_list = g_list_sort (_piste_list,
+                                       (GCompareFunc) Piste::CompareAvailbility);
+            current_piste = _piste_list;
+          }
+
+          {
+            Piste    *piste    = (Piste *) current_piste->data;
+            TimeSlot *timeslot = piste->GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
+
+            timeslot->AddJob     (job);
+            timeslot->AddReferee (referee);
+          }
+
+          current_piste = g_list_next (current_piste);
         }
-
-        {
-          Piste    *piste    = (Piste *) current_piste->data;
-          TimeSlot *timeslot = piste->GetFreeTimeslot (30*G_TIME_SPAN_MINUTE);
-
-          timeslot->AddJob     (job);
-          timeslot->AddReferee (referee);
-        }
-
         current_job   = g_list_next (current_job);
-        current_piste = g_list_next (current_piste);
       }
 
       g_list_free (pending_jobs);
 
-      Timeline::Redraw (_timeline);
+      _timeline->Redraw ();
       OnTimelineCursorMoved ();
     }
   }
@@ -668,7 +672,7 @@ void Hall::OnBatchAssignmentCancel (Batch *batch)
     current_piste = g_list_next (current_piste);
   }
 
-  Timeline::Redraw (_timeline);
+  _timeline->Redraw ();
 }
 
 // --------------------------------------------------------------------------------
