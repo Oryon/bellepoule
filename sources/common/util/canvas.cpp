@@ -185,6 +185,21 @@ GooCanvasItem *Canvas::PutPixbufInTable (GooCanvasItem *table,
                                          guint          row,
                                          guint          column)
 {
+  static GdkPixbuf *empty_pixbuf = NULL;
+
+  if (pixbuf == NULL)
+  {
+    if (empty_pixbuf == NULL)
+    {
+      empty_pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
+                                     FALSE,
+                                     8,
+                                     1,
+                                     1);
+    }
+    pixbuf = empty_pixbuf;
+  }
+
   GooCanvasItem *item = goo_canvas_image_new (table,
                                               pixbuf,
                                               0.0,

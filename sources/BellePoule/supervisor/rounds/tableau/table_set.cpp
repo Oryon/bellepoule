@@ -421,7 +421,7 @@ namespace Table
       SetZoomer (zoomer);
     }
 
-    if (_tree_root)
+    if (_tree_root && GetCanvas ())
     {
       Wipe ();
 
