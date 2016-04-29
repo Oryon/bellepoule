@@ -9,7 +9,7 @@ VERSION = 5.0
 STEP    = ubuntu3
 RELEASE = $(PRODUCT)_$(VERSION)
 UBUNTU  = trusty
-V       = 1
+V       = 2
 DATE    = $(shell date -R)
 
 #----------------------------------------------------
@@ -314,7 +314,7 @@ prepare_changelog:
 	rm -f $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "$(PRODUCT) ($(VERSION)$(STEP)~$(UBUNTU)$(V)) $(UBUNTU); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo "  * Miscellaneous improvments" >> $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo "  * Miscellaneous improvements" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo " -- betonniere <bellepoule.dev@free.fr>  $(DATE)" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 
