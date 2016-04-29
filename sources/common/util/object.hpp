@@ -20,30 +20,30 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
+#define BP_FONT "Sans "
+
 #ifdef WIN32
-#define RED     ""
-#define GREEN   ""
-#define YELLOW  ""
-#define BLUE    ""
-#define MAGENTA ""
-#define CYAN    ""
-#define WHITE   ""
-#define ESC     ""
-#define BP_FONT "Sans "
+#  define RED     ""
+#  define GREEN   ""
+#  define YELLOW  ""
+#  define BLUE    ""
+#  define MAGENTA ""
+#  define CYAN    ""
+#  define WHITE   ""
+#  define ESC     ""
 #else
-#define RED     "\033[1;31m"
-#define GREEN   "\033[1;32m"
-#define YELLOW  "\033[1;33m"
-#define BLUE    "\033[1;34m"
-#define MAGENTA "\033[1;35m"
-#define CYAN    "\033[1;36m"
-#define WHITE   "\033[0;37m"
-#define ESC     "\033[0m"
-#if PANGO_VERSION_MAJOR == 1 && PANGO_VERSION_MINOR > 30
-#define BP_FONT "Nimbus Sans L "
-#else
-#define BP_FONT "Sans "
-#endif
+#  define RED     "\033[1;31m"
+#  define GREEN   "\033[1;32m"
+#  define YELLOW  "\033[1;33m"
+#  define BLUE    "\033[1;34m"
+#  define MAGENTA "\033[1;35m"
+#  define CYAN    "\033[1;36m"
+#  define WHITE   "\033[0;37m"
+#  define ESC     "\033[0m"
+#  if PANGO_VERSION_MAJOR == 1 && PANGO_VERSION_MINOR > 30 && PANGO_VERSION_MINOR < 38
+#    undef  BP_FONT                  // workaround for Pango bug #700592
+#    define BP_FONT "Nimbus Sans L " // https://bugzilla.gnome.org/show_bug.cgi?id=700592
+#  endif
 #endif
 
 #if GTK_MAJOR_VERSION >= 3
