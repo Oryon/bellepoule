@@ -44,16 +44,18 @@ Piste::Piste (GooCanvasItem *parent,
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
 
+  // Background
   {
     _drop_rect = goo_canvas_rect_new (_root_item,
                                       0.0, 0.0,
                                       _W, _H,
-                                      //"line-width",   _BORDER_W,
-                                      //"stroke-color", "black",
+                                      "line-width",   _BORDER_W,
+                                      //"stroke-color", "green",
                                       NULL);
     MonitorEvent (_drop_rect);
   }
 
+  // Progression
   {
     _progress_item = goo_canvas_rect_new (_root_item,
                                           _BORDER_W,
@@ -66,67 +68,74 @@ Piste::Piste (GooCanvasItem *parent,
     MonitorEvent (_progress_item);
   }
 
+  // #
   {
     _id_item = goo_canvas_text_new (_root_item,
                                     "",
                                     1.0, 1.0,
                                     -1.0,
                                     GTK_ANCHOR_NW,
-                                    "fill-color", "black",
                                     "font", BP_FONT "bold 10px",
                                     NULL);
     MonitorEvent (_id_item);
   }
 
+  // Title
   {
     _title_item = goo_canvas_text_new (_root_item,
                                        "",
                                        _W/2.0, 1.0,
                                        -1.0,
                                        GTK_ANCHOR_NORTH,
-                                       "fill-color", "black",
-                                       "font", BP_FONT "8px",
+                                       "font",       BP_FONT "8px",
+                                       "use-markup", TRUE,
                                        NULL);
     MonitorEvent (_title_item);
   }
 
+  // Referee
   {
-    _match_item = goo_canvas_text_new (_root_item,
-                                       "",
-                                       _W/2.0, 9.0,
-                                       -1.0,
-                                       GTK_ANCHOR_NORTH,
-                                       "fill-color", "black",
-                                       "font", BP_FONT "bold 8px",
-                                       NULL);
-    MonitorEvent (_match_item);
-  }
+    _referee_table = goo_canvas_table_new (_root_item,
+                                           "x", (gdouble) 10.0,
+                                           "y", _H*0.5,
+                                           "column-spacing", (gdouble) 4.0,
+                                           NULL);
 
-  {
-    gchar     *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "images", "referee.png", NULL);
-    GdkPixbuf *pixbuf    = container->GetPixbuf (icon_file);
+    {
+      gchar         *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "images", "referee.png", NULL);
+      GdkPixbuf     *pixbuf    = container->GetPixbuf (icon_file);
+      GooCanvasItem *icon      = Canvas::PutPixbufInTable (_referee_table,
+                                                           pixbuf,
+                                                           0, 1);
 
-    _status_item = goo_canvas_image_new (_root_item,
-                                         pixbuf,
-                                         (_W - 10.0) * 2.0,
-                                         5.0,
-                                         NULL);
-    MonitorEvent (_status_item);
+      goo_canvas_item_scale (icon,
+                             0.5,
+                             0.5);
 
-    goo_canvas_item_scale (_status_item,
-                           0.5,
-                           0.5);
-    g_object_set (G_OBJECT (_status_item),
-                  "visibility", GOO_CANVAS_ITEM_INVISIBLE,
-                  NULL);
+      g_object_unref (pixbuf);
+      g_free (icon_file);
+    }
 
-    g_object_unref (pixbuf);
-    g_free (icon_file);
+    {
+      _referee_name = Canvas::PutTextInTable (_referee_table,
+                                              "",
+                                              0, 2);
+      g_object_set (G_OBJECT (_referee_name),
+                    "font", BP_FONT "bold 6px",
+                    NULL);
+      Canvas::SetTableItemAttribute (_referee_name, "y-align", 1.0);
+    }
+
+    MonitorEvent (_referee_table);
   }
 
   goo_canvas_item_translate (_root_item,
                              _RESOLUTION,
                              _RESOLUTION);
+
+  g_object_set (G_OBJECT (_referee_table),
+                "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                NULL);
 
   SetId (1);
 
@@ -282,12 +291,8 @@ void Piste::CleanDisplay ()
                 "text", "",
                 NULL);
 
-  g_object_set (G_OBJECT (_status_item),
+  g_object_set (G_OBJECT (_referee_table),
                 "visibility", GOO_CANVAS_ITEM_INVISIBLE,
-                NULL);
-
-  g_object_set (G_OBJECT (_match_item),
-                "text", "",
                 NULL);
 }
 
@@ -296,16 +301,25 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 {
   if (TimeIsInTimeslot (_display_time, timeslot))
   {
-    GString     *match_name = g_string_new ("");
-    const gchar *last_name  = NULL;
+    GString     *match_name   = g_string_new ("");
+    const gchar *last_name    = NULL;
+    GList       *referee_list = timeslot->GetRefereeList ();
 
     CleanDisplay ();
 
-    if (timeslot->GetRefereeList ())
+    if (referee_list)
     {
-      g_object_set (G_OBJECT (_status_item),
+      Referee *referee = (Referee *) referee_list->data;
+      gchar   *name    = referee->GetName ();
+
+      g_object_set (G_OBJECT (_referee_table),
                     "visibility", GOO_CANVAS_ITEM_VISIBLE,
                     NULL);
+
+      g_object_set (G_OBJECT (_referee_name),
+                    "text", name,
+                    NULL);
+      g_free (name);
     }
 
     {
@@ -326,10 +340,8 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 
           {
             Batch *batch = job->GetBatch ();
-
-            g_object_set (G_OBJECT (_title_item),
-                          "text", batch->GetName (),
-                          NULL);
+            g_string_append (match_name, batch->GetName ());
+            g_string_append (match_name, " - <b>");
           }
 
           g_string_append (match_name, job->GetName ());
@@ -353,7 +365,9 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
       g_string_append (match_name, last_name);
     }
 
-    g_object_set (G_OBJECT (_match_item),
+    g_string_append (match_name, "</b>");
+
+    g_object_set (G_OBJECT (_title_item),
                   "text", match_name->str,
                   NULL);
     g_string_free (match_name, TRUE);
@@ -556,23 +570,17 @@ void Piste::Disable ()
 // --------------------------------------------------------------------------------
 void Piste::Select ()
 {
-  GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 10.0, 1.0);
-
   g_object_set (_drop_rect,
-                "line-dash", dash,
+                "line-width", _BORDER_W*4.0,
                 NULL);
-  goo_canvas_line_dash_unref (dash);
 }
 
 // --------------------------------------------------------------------------------
 void Piste::UnSelect ()
 {
-  GooCanvasLineDash *dash = goo_canvas_line_dash_new (0);
-
   g_object_set (_drop_rect,
-                "line-dash", dash,
+                "line-width", _BORDER_W,
                 NULL);
-  goo_canvas_line_dash_unref (dash);
 }
 
 // --------------------------------------------------------------------------------

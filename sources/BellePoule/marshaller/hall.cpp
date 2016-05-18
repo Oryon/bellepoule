@@ -105,6 +105,10 @@ void Hall::OnPlugged ()
   }
 
   AddPiste ();
+  AddPiste ();
+  AddPiste ();
+  AddPiste ();
+  AddPiste ();
   RestoreZoomFactor ();
 }
 
