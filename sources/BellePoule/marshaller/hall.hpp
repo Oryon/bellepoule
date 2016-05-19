@@ -24,6 +24,7 @@
 #include "timeline.hpp"
 
 class RefereePool;
+class Lasso;
 
 class Hall :
   public CanvasModule,
@@ -57,21 +58,25 @@ class Hall :
     void DropJob (Net::Message *message);
 
   private:
-    GooCanvasItem *_root;
-    GList         *_piste_list;
-    GList         *_selected_list;
-    gboolean       _dragging;
-    gdouble        _drag_x;
-    gdouble        _drag_y;
-    GList         *_batch_list;
-    RefereePool   *_referee_pool;
-    Timeline      *_timeline;
+    GList       *_piste_list;
+    GList       *_selected_list;
+    gboolean     _dragging;
+    gdouble      _drag_x;
+    gdouble      _drag_y;
+    GList       *_batch_list;
+    RefereePool *_referee_pool;
+    Timeline    *_timeline;
+    Lasso       *_lasso;
 
     ~Hall ();
 
     void OnPlugged ();
 
-    void CancelSeletion ();
+    void CancelSelection ();
+
+    void SelectPiste (Piste *piste);
+
+    void UnSelectPiste (Piste *piste);
 
     Batch *GetBatch (const gchar *id);
 
@@ -84,15 +89,22 @@ class Hall :
                      DropZone *source_zone,
                      DropZone *target_zone);
 
-    static gboolean OnSelected (GooCanvasItem  *goo_rect,
-                                GooCanvasItem  *target,
-                                GdkEventButton *event,
-                                Hall           *hall);
+    static gboolean OnButtonPress (GooCanvasItem  *goo_rect,
+                                   GooCanvasItem  *target,
+                                   GdkEventButton *event,
+                                   Hall           *hall);
+
+    static gboolean OnButtonReleased (GooCanvasItem  *goo_rect,
+                                      GooCanvasItem  *target,
+                                      GdkEventButton *event,
+                                      Hall           *hall);
 
     static gboolean OnMotionNotify (GooCanvasItem  *item,
                                     GooCanvasItem  *target,
                                     GdkEventMotion *event,
                                     Hall           *hall);
+
+    gboolean OnCursorMotion (GdkEventMotion *event);
 
     void OnPisteButtonEvent (Piste          *piste,
                              GdkEventButton *event);

@@ -321,6 +321,12 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
                     NULL);
       g_free (name);
     }
+    else
+    {
+      g_object_set (G_OBJECT (_referee_table),
+                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                    NULL);
+    }
 
     {
       GList *current = timeslot->GetJobList ();
@@ -340,6 +346,7 @@ void Piste::OnTimeSlotUpdated (TimeSlot *timeslot)
 
           {
             Batch *batch = job->GetBatch ();
+
             g_string_append (match_name, batch->GetName ());
             g_string_append (match_name, " - <b>");
           }
@@ -519,6 +526,16 @@ void Piste::SetId (guint id)
 }
 
 // --------------------------------------------------------------------------------
+void Piste::ConvertFromPisteSpace (gdouble *x,
+                                   gdouble *y)
+{
+  goo_canvas_convert_from_item_space  (goo_canvas_item_get_canvas (_root_item),
+                                       _root_item,
+                                       x,
+                                       y);
+}
+
+// --------------------------------------------------------------------------------
 gboolean Piste::OnButtonPress (GooCanvasItem  *item,
                                GooCanvasItem  *target,
                                GdkEventButton *event,
@@ -565,6 +582,20 @@ void Piste::Disable ()
 
     current = g_list_next (current);
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Piste::Overlaps (GooCanvasBounds *rectangle)
+{
+  GooCanvasBounds bounds;
+
+  goo_canvas_item_get_bounds (_root_item,
+                              &bounds);
+
+  return !(   rectangle->y2 < bounds.y1
+           || rectangle->y1 > bounds.y2
+           || rectangle->x2 < bounds.x1
+           || rectangle->x1 > bounds.x2);
 }
 
 // --------------------------------------------------------------------------------

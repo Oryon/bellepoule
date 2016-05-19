@@ -167,6 +167,9 @@ void TimeSlot::RemoveJob (Job *job)
   job->RemoveObjectListener (this);
   job->SetTimslot           (NULL);
 
+  g_list_free (_referee_list);
+  _referee_list = NULL;
+
   _owner->OnTimeSlotUpdated (this);
 
   _duration = 0;

@@ -19,6 +19,7 @@
 #include "batch.hpp"
 #include "referee_pool.hpp"
 #include "timeline.hpp"
+#include "lasso.hpp"
 
 #include "hall.hpp"
 
@@ -45,6 +46,8 @@ Hall::Hall (RefereePool *referee_pool)
           _glade->GetWidget ("timeline_viewport"));
   }
 
+  _lasso = new Lasso ();
+
   OnTimelineCursorMoved ();
 }
 
@@ -58,6 +61,7 @@ Hall::~Hall ()
                     (GDestroyNotify) Object::TryToRelease);
 
   _timeline->Release ();
+  _lasso->Release    ();
 }
 
 // --------------------------------------------------------------------------------
@@ -65,31 +69,17 @@ void Hall::OnPlugged ()
 {
   CanvasModule::OnPlugged ();
 
-  _root = goo_canvas_group_new (GetRootItem (),
-                                NULL);
-
-  g_signal_connect (_root,
+  g_signal_connect (GetRootItem (),
                     "motion_notify_event",
                     G_CALLBACK (OnMotionNotify),
                     this);
-
-#if 1
-  {
-    GooCanvasItem *rect = goo_canvas_rect_new (_root,
-                                               0.0, 0.0, 300, 150,
-                                               "line-width", 0.0,
-                                               "fill-color", "White",
-                                               NULL);
-    g_signal_connect (rect,
-                      "motion_notify_event",
-                      G_CALLBACK (OnMotionNotify),
-                      this);
-  }
-#endif
-
   g_signal_connect (GetRootItem (),
                     "button_press_event",
-                    G_CALLBACK (OnSelected),
+                    G_CALLBACK (OnButtonPress),
+                    this);
+  g_signal_connect (GetRootItem (),
+                    "button_release_event",
+                    G_CALLBACK (OnButtonReleased),
                     this);
 
 
@@ -275,7 +265,7 @@ void Hall::DropJob (Net::Message *message)
 void Hall::AddPiste ()
 {
   GList *anchor = g_list_last (_piste_list);
-  Piste *piste  = new Piste (_root, this);
+  Piste *piste  = new Piste (GetRootItem (), this);
 
   piste->SetListener (this);
 
@@ -452,18 +442,31 @@ void Hall::RemovePiste (Piste *piste)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Hall::OnSelected (GooCanvasItem  *item,
-                           GooCanvasItem  *target,
-                           GdkEventButton *event,
-                           Hall           *hall)
+gboolean Hall::OnButtonPress (GooCanvasItem  *item,
+                              GooCanvasItem  *target,
+                              GdkEventButton *event,
+                              Hall           *hall)
 {
-  hall->CancelSeletion ();
+  hall->CancelSelection ();
+  hall->_lasso->Throw (hall->GetRootItem (),
+                       event);
 
   return TRUE;
 }
 
 // --------------------------------------------------------------------------------
-void Hall::CancelSeletion ()
+gboolean Hall::OnButtonReleased (GooCanvasItem  *item,
+                                 GooCanvasItem  *target,
+                                 GdkEventButton *event,
+                                 Hall           *hall)
+{
+  hall->_lasso->Pull ();
+
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void Hall::CancelSelection ()
 {
   GList *current = _selected_list;
 
@@ -481,36 +484,46 @@ void Hall::CancelSeletion ()
 }
 
 // --------------------------------------------------------------------------------
+void Hall::SelectPiste (Piste *piste)
+{
+  _selected_list = g_list_prepend (_selected_list,
+                                   piste);
+
+  piste->Select ();
+}
+
+// --------------------------------------------------------------------------------
+void Hall::UnSelectPiste (Piste *piste)
+{
+  GList *selected_node = g_list_find (_selected_list, piste);
+
+  _selected_list = g_list_remove_link (_selected_list,
+                                       selected_node);
+  piste->UnSelect ();
+}
+
+// --------------------------------------------------------------------------------
 void Hall::OnPisteButtonEvent (Piste          *piste,
                                GdkEventButton *event)
 {
   if (event->type == GDK_BUTTON_PRESS)
   {
-    GList *selected_node = g_list_find (_selected_list, piste);
-
-    if (selected_node)
+    if (g_list_find (_selected_list, piste))
     {
       if (event->state & GDK_CONTROL_MASK)
       {
-        _selected_list = g_list_remove_link (_selected_list,
-                                             selected_node);
-        piste->UnSelect ();
+        UnSelectPiste (piste);
       }
     }
     else
     {
       if ((event->state & GDK_CONTROL_MASK) == 0)
       {
-        CancelSeletion ();
+        CancelSelection ();
       }
+      SelectPiste (piste);
 
-      {
-        _selected_list = g_list_prepend (_selected_list,
-                                         piste);
-
-        piste->Select ();
-        SetCursor (GDK_FLEUR);
-      }
+      SetCursor (GDK_FLEUR);
     }
 
     {
@@ -524,9 +537,14 @@ void Hall::OnPisteButtonEvent (Piste          *piste,
   }
   else
   {
-    _dragging = FALSE;
+    _lasso->Pull ();
 
-    AlignSelectedOnGrid ();
+    if (_dragging)
+    {
+      _dragging = FALSE;
+
+      AlignSelectedOnGrid ();
+    }
   }
 }
 
@@ -551,10 +569,42 @@ void Hall::OnPisteMotionEvent (Piste          *piste,
                          new_y - _drag_y);
     }
   }
-  else if (g_list_find (_selected_list, piste) == NULL)
+  else
   {
-    ResetCursor ();
+    piste->ConvertFromPisteSpace (&event->x,
+                                  &event->y);
+    OnCursorMotion (event);
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Hall::OnCursorMotion (GdkEventMotion *event)
+{
+  ResetCursor ();
+
+  if (_lasso->OnCursorMotion (event))
+  {
+    GooCanvasBounds  bounds;
+    GList           *current;
+
+    _lasso->GetBounds (&bounds);
+
+    current = _piste_list;
+    while (current)
+    {
+      Piste *piste = (Piste *) current->data;
+
+      UnSelectPiste (piste);
+      if (piste->Overlaps (&bounds))
+      {
+        SelectPiste (piste);
+      }
+
+      current = g_list_next (current);
+    }
+  }
+
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -563,9 +613,7 @@ gboolean Hall::OnMotionNotify (GooCanvasItem  *item,
                                GdkEventMotion *event,
                                Hall           *hall)
 {
-  hall->ResetCursor ();
-
-  return TRUE;
+  return hall->OnCursorMotion (event);
 }
 
 // --------------------------------------------------------------------------------

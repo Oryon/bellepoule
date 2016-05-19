@@ -206,6 +206,12 @@
 		<Unit filename="../../sources/BellePoule/marshaller/hall.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/lasso.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/lasso.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/job.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
