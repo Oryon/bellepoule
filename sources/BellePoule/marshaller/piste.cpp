@@ -261,11 +261,43 @@ TimeSlot *Piste::GetFreeTimeslot (GTimeSpan duration)
     if (current_slot)
     {
       start_time = g_date_time_add (current_slot->GetStartTime (),
-                                    current_slot->GetDuration () + 5*G_TIME_SPAN_MINUTE);
+                                    current_slot->GetDuration ());
     }
     else
     {
-      start_time = g_date_time_new_now_local ();
+      GDateTime *now = g_date_time_new_now_local ();
+      GDateTime *tmp;
+
+      tmp = g_date_time_add_minutes (now, 15);
+      g_date_time_unref (now);
+      now = tmp;
+
+      // Round minutes
+      {
+        gint minutes = g_date_time_get_minute (now);
+        gint crumbs  = minutes % 15;
+
+        if (crumbs > 15/2)
+        {
+          tmp = g_date_time_add_minutes (now, 15 - crumbs);
+          g_date_time_unref (now);
+          now = tmp;
+        }
+        else
+        {
+          tmp = g_date_time_add_minutes (now, -crumbs);
+          g_date_time_unref (now);
+          now = tmp;
+        }
+      }
+
+      start_time = g_date_time_new_local (g_date_time_get_year         (now),
+                                          g_date_time_get_month        (now),
+                                          g_date_time_get_day_of_month (now),
+                                          g_date_time_get_hour         (now),
+                                          g_date_time_get_minute       (now),
+                                          0);
+      g_date_time_unref (now);
     }
 
     free_timeslot = new TimeSlot (this,

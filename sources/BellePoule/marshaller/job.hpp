@@ -31,7 +31,7 @@ class Job : public Object
 
     void SetName (const gchar *name);
 
-    void SetTimslot (TimeSlot *timeslot);
+    void SetTimeSlot (TimeSlot *timeslot);
 
     TimeSlot *GetTimslot ();
 

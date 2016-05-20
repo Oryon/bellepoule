@@ -175,7 +175,7 @@ void Timeline::DrawSlots ()
       TimeSlot  *slot  = job->GetTimslot ();
       GDateTime *start = slot->GetStartTime ();
       gdouble    x     = g_date_time_difference (start, _origin) * _time_scale;
-      gdouble    w     = slot->GetDuration () * _time_scale;
+      gdouble    w     = (slot->GetDuration () - 3*G_TIME_SPAN_MINUTE) * _time_scale;
 
       goo_canvas_rect_new (GetRootItem (),
                            x,
