@@ -41,12 +41,18 @@ void Lasso::Throw (GooCanvasItem  *surface,
   _x = event->x;
   _y = event->y;
 
-  _rectangle = goo_canvas_rect_new (surface,
-                                    _x, _y,
-                                    0.0, 0.0,
-                                    "line-width",   2.0,
-                                    "stroke-color", "#990012",
-                                    NULL);
+  {
+    GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 3.0, 0.8);
+
+    _rectangle = goo_canvas_rect_new (surface,
+                                      _x, _y,
+                                      0.0, 0.0,
+                                      "line-width",   1.0,
+                                      "line-dash",    dash,
+                                      NULL);
+    goo_canvas_line_dash_unref (dash);
+  }
+
   goo_canvas_item_get_bounds (_rectangle,
                               &_bounds);
 }

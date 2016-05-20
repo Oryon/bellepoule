@@ -447,11 +447,16 @@ gboolean Hall::OnButtonPress (GooCanvasItem  *item,
                               GdkEventButton *event,
                               Hall           *hall)
 {
-  hall->CancelSelection ();
-  hall->_lasso->Throw (hall->GetRootItem (),
-                       event);
+  if (event->button == 1)
+  {
+    hall->CancelSelection ();
+    hall->_lasso->Throw (hall->GetRootItem (),
+                         event);
 
-  return TRUE;
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -460,9 +465,14 @@ gboolean Hall::OnButtonReleased (GooCanvasItem  *item,
                                  GdkEventButton *event,
                                  Hall           *hall)
 {
-  hall->_lasso->Pull ();
+  if (event->button == 1)
+  {
+    hall->_lasso->Pull ();
 
-  return TRUE;
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------

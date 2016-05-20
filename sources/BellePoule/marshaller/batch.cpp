@@ -54,6 +54,13 @@ Batch::Batch (const gchar *id,
   _gdk_color = NULL;
 
   {
+    GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("treeview"));
+
+    gtk_tree_selection_set_mode (gtk_tree_view_get_selection (treeview),
+                                 GTK_SELECTION_MULTIPLE);
+  }
+
+  {
     GtkWidget *source = _glade->GetWidget ("treeview");
 
     _dnd_key = _dnd_config->AddTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
