@@ -149,7 +149,7 @@ void Batch::SetProperties (Net::Message *message)
 {
   SetProperty (message, "gender");
   SetProperty (message, "weapon");
-  SetProperty (message, "level");
+  SetProperty (message, "category");
 
   _weapon = message->GetString ("weapon");
 
@@ -182,8 +182,13 @@ const gchar *Batch::GetWeaponCode ()
 // --------------------------------------------------------------------------------
 void Batch::AttachTo (GtkNotebook *to)
 {
+  GtkWidget *root = GetRootWidget ();
+
+  g_object_set_data (G_OBJECT (root),
+                     "batch",
+                     this);
   gtk_notebook_append_page (to,
-                            GetRootWidget (),
+                            root,
                             _glade->GetWidget ("notebook_title"));
 }
 

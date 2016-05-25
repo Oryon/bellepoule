@@ -382,7 +382,7 @@ gboolean Object::OnMessage (Net::Message *message)
 void Object::Dump ()
 {
 #ifdef DEBUG
-  printf ("%p\n", (void *) this);
+  printf ("%p ==> %s\n", (void *) this, _class_name);
 #endif
 }
 

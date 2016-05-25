@@ -919,11 +919,11 @@ void Contest::FeedParcel (Net::Message *parcel)
 {
   gchar *color = gdk_color_to_string (_gdk_color);
 
-  parcel->Set ("uuid",   _uuid);
-  parcel->Set ("color",  color);
-  parcel->Set ("weapon", _weapon->GetXmlImage ());
-  parcel->Set ("gender", gender_xml_image[_gender]);
-  parcel->Set ("level",  category_xml_image[_category]);
+  parcel->Set ("uuid",     _uuid);
+  parcel->Set ("color",    color);
+  parcel->Set ("weapon",   _weapon->GetXmlImage ());
+  parcel->Set ("gender",   gender_xml_image[_gender]);
+  parcel->Set ("category", category_xml_image[_category]);
 
   g_free (color);
 }

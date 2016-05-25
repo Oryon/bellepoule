@@ -24,9 +24,11 @@
 #include "hall.hpp"
 
 // --------------------------------------------------------------------------------
-Hall::Hall (RefereePool *referee_pool)
+Hall::Hall (RefereePool *referee_pool,
+            Listener    *listener)
   : CanvasModule ("hall.glade")
 {
+  _listener      = listener;
   _piste_list    = NULL;
   _selected_list = NULL;
 
@@ -177,11 +179,14 @@ void Hall::ManageContest (Net::Message *message,
       _batch_list = g_list_prepend (_batch_list,
                                     batch);
 
+      batch->SetProperties (message);
       batch->AttachTo (notebook);
       _timeline->AddBatch (batch);
     }
-
-    batch->SetProperties (message);
+    else
+    {
+      batch->SetProperties (message);
+    }
 
     g_free (id);
 
@@ -631,15 +636,7 @@ void Hall::OnBatchAssignmentRequest (Batch *batch)
 {
   GtkWidget *dialog = _glade->GetWidget ("job_dialog");
 
-  {
-    GtkSpinButton *hour   = GTK_SPIN_BUTTON (_glade->GetWidget ("hour_spinbutton"));
-    GtkSpinButton *minute = GTK_SPIN_BUTTON (_glade->GetWidget ("minute_spinbutton"));
-
-    GDateTime *time = g_date_time_new_now_local ();
-
-    gtk_spin_button_set_value  (hour,   g_date_time_get_hour   (time));
-    gtk_spin_button_set_value  (minute, g_date_time_get_minute (time));
-  }
+  _listener->OnExposeWeapon (batch->GetWeaponCode ());
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
   {
@@ -692,13 +689,16 @@ void Hall::OnTimelineCursorMoved ()
   GDateTime *cursor = _timeline->RetreiveCursorTime ();
 
   {
-    GtkLabel *clock = GTK_LABEL (_glade->GetWidget ("clock_label"));
+    GtkLabel *clock       = GTK_LABEL (_glade->GetWidget ("clock_label"));
+    GtkLabel *popup_clock = GTK_LABEL (_glade->GetWidget ("cursor_date"));
     gchar    *text;
 
     text = g_strdup_printf ("%02d:%02d", g_date_time_get_hour (cursor),
                                          g_date_time_get_minute (cursor));
 
     gtk_label_set_text (clock,
+                        text);
+    gtk_label_set_text (popup_clock,
                         text);
 
     g_free (text);
@@ -735,6 +735,8 @@ void Hall::OnBatchAssignmentCancel (Batch *batch)
   }
 
   _timeline->Redraw ();
+
+  _listener->OnExposeWeapon (batch->GetWeaponCode ());
 }
 
 // --------------------------------------------------------------------------------

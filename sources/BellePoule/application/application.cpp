@@ -240,7 +240,7 @@ void Application::Prepare ()
     desc->_favorite_look  = AttributeDesc::GRAPHICAL;
     desc->_rights         = AttributeDesc::PRIVATE;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "level", "Categorie", gettext ("level"));
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "category", "Categorie", gettext ("level"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "ranking", "Ranking", gettext ("ranking"));

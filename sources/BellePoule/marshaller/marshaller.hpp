@@ -19,10 +19,12 @@
 
 #include "util/module.hpp"
 #include "referee_pool.hpp"
+#include "hall.hpp"
 
-class Hall;
-
-class Marshaller : public Module, public People::RefereesList::Listener
+class Marshaller :
+  public Module,
+  public People::RefereesList::Listener,
+  public Hall::Listener
 {
   public:
     Marshaller ();
@@ -30,6 +32,8 @@ class Marshaller : public Module, public People::RefereesList::Listener
     void Start ();
 
     gboolean OnHttpPost (Net::Message *message);
+
+    void OnExposeWeapon (const gchar *weapon_code);
 
   private:
     Hall        *_hall;

@@ -25,15 +25,10 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">images/shuffle.png</property>
   </object>
-  <object class="GtkImage" id="image4">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">images/shuffle.png</property>
-  </object>
   <object class="GtkImage" id="image5">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">images/shuffle.png</property>
+    <property name="stock">gtk-execute</property>
   </object>
   <object class="GtkListStore" id="liststore">
     <columns>
@@ -68,7 +63,6 @@
                   <object class="GtkToolButton" id="assign_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Assign</property>
                     <property name="use_underline">True</property>
                     <property name="icon_widget">image5</property>
@@ -83,10 +77,9 @@
                   <object class="GtkToolButton" id="cancel_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Undo</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-clear</property>
+                    <property name="stock_id">gtk-undo</property>
                     <signal name="clicked" handler="on_cancel_toolbutton_clicked" swapped="no"/>
                   </object>
                   <packing>

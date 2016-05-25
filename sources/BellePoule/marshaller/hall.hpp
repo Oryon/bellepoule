@@ -33,7 +33,14 @@ class Hall :
   public Timeline::Listener
 {
   public:
-    Hall (RefereePool *referee_pool);
+    struct Listener
+    {
+      virtual void OnExposeWeapon (const gchar *weapon) = 0;
+    };
+
+  public:
+    Hall (RefereePool *referee_pool,
+          Listener    *listener);
 
     void AddPiste ();
 
@@ -67,6 +74,7 @@ class Hall :
     RefereePool *_referee_pool;
     Timeline    *_timeline;
     Lasso       *_lasso;
+    Listener    *_listener;
 
     ~Hall ();
 
