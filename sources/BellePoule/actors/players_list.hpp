@@ -118,6 +118,9 @@ namespace People
 
       void SetPasteVisibility (gboolean visibility);
 
+      void SetVisibileFunc (GtkTreeModelFilterVisibleFunc func,
+                            gpointer                      data);
+
     private:
       static GSList *_clipboard;
 

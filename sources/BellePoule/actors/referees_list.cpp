@@ -87,6 +87,9 @@ namespace People
         CreateForm (_expanded_filter,
                     "Referee");
       }
+
+      SetVisibileFunc ((GtkTreeModelFilterVisibleFunc) RefereeIsVisible,
+                       this);
     }
 
     {
@@ -257,6 +260,30 @@ namespace People
           referee->SetAttributeValue (&availability_attr_id,
                                       "Absent");
         }
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean RefereesList::RefereeIsVisible (GtkTreeModel *model,
+                                           GtkTreeIter  *iter,
+                                           RefereesList *referee_list)
+  {
+    if (referee_list->_filter == referee_list->_expanded_filter)
+    {
+      return TRUE;
+    }
+    else
+    {
+      Player *referee = GetPlayer (model,
+                                   iter);
+
+      if (referee)
+      {
+        Player::AttributeId  attending_attr_id ("attending");
+        Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);
+
+        return (attending_attr->GetUIntValue () != 0);
       }
     }
   }

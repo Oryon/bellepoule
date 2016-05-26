@@ -59,6 +59,10 @@ namespace People
       void OnPlayerEventFromForm (Player            *referee,
                                   Form::PlayerEvent  event);
 
+      static gboolean RefereeIsVisible (GtkTreeModel *model,
+                                        GtkTreeIter  *iter,
+                                        RefereesList *referee_list);
+
       static void OnAvailabilityChanged (Player    *referee,
                                          Attribute *attr,
                                          Object    *owner,

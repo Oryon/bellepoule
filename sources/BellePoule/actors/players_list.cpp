@@ -179,6 +179,14 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void PlayersList::SetVisibileFunc (GtkTreeModelFilterVisibleFunc func,
+                                     gpointer                      data)
+  {
+    _store->SetVisibileFunc (func,
+                             data);
+  }
+
+  // --------------------------------------------------------------------------------
   GtkAction *PlayersList::GetAction (const gchar *name)
   {
     GList *groups = gtk_ui_manager_get_action_groups (_ui_manager);
@@ -256,8 +264,8 @@ namespace People
     _store->Update (player);
 
     {
-      GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
-      GtkTreeRowReference *ref   = _store->GetTreeRowRef (GTK_TREE_MODEL (model), player);
+      GtkTreeModel        *model = gtk_tree_view_get_model (_tree_view);
+      GtkTreeRowReference *ref   = _store->GetTreeRowRef (model, player);
       GtkTreePath         *path  = gtk_tree_row_reference_get_path (ref);
 
       gtk_tree_view_expand_to_path (_tree_view,
@@ -291,8 +299,10 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::Update (Player *player)
   {
-    GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
-    GtkTreeRowReference *ref   = _store->GetTreeRowRef (GTK_TREE_MODEL (model),
+    GtkTreeModelFilter  *filter = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (_tree_view));
+    GtkTreeModel        *model  = gtk_tree_model_filter_get_model (filter);
+    GtkTreeStore        *store  = GTK_TREE_STORE (model);
+    GtkTreeRowReference *ref   = _store->GetTreeRowRef (model,
                                                         player);
 
     if (ref)
@@ -301,7 +311,7 @@ namespace People
       GtkTreeIter  iter;
 
       path = gtk_tree_row_reference_get_path (ref);
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (model),
+      gtk_tree_model_get_iter (model,
                                &iter,
                                path);
       gtk_tree_path_free (path);
@@ -319,27 +329,27 @@ namespace People
           attr_id->Release ();
           if (attr)
           {
-            attr->TreeStoreSet (model, &iter,
+            attr->TreeStoreSet (store, &iter,
                                 i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-            attr->TreeStoreSet (model, &iter,
+            attr->TreeStoreSet (store, &iter,
                                 i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-            attr->TreeStoreSet (model, &iter,
+            attr->TreeStoreSet (store, &iter,
                                 i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
           }
           else
           {
-            desc->TreeStoreSetDefault (model, &iter,
+            desc->TreeStoreSetDefault (store, &iter,
                                        i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-            desc->TreeStoreSetDefault (model, &iter,
+            desc->TreeStoreSetDefault (store, &iter,
                                        i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-            desc->TreeStoreSetDefault (model, &iter,
+            desc->TreeStoreSetDefault (store, &iter,
                                        i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
           }
           attr_list = g_slist_next (attr_list);
         }
 
-        gtk_tree_store_set (model, &iter,
-                            gtk_tree_model_get_n_columns (GTK_TREE_MODEL (model)) - 1,
+        gtk_tree_store_set (store, &iter,
+                            gtk_tree_model_get_n_columns (GTK_TREE_MODEL (store)) - 1,
                             player, -1);
       }
     }
@@ -514,6 +524,8 @@ namespace People
         layout_list = g_slist_next (layout_list);
       }
     }
+
+    _store->Refilter ();
   }
 
   // --------------------------------------------------------------------------------
@@ -794,8 +806,9 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::RemoveSelection ()
   {
-    GList        *ref_list = NULL;
-    GtkTreeModel *model    = gtk_tree_view_get_model (_tree_view);
+    GList              *ref_list = NULL;
+    GtkTreeModelFilter *filter   = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (_tree_view));
+    GtkTreeModel       *model    = gtk_tree_model_filter_get_model (filter);
 
     {
       GtkTreeSelection *selection            = gtk_tree_view_get_selection (_tree_view);
