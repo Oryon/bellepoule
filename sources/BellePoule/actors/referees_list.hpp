@@ -30,13 +30,7 @@ namespace People
   class RefereesList : public Checkin
   {
     public:
-      struct Listener
-      {
-        virtual void OnRefereeListExpanded  () = 0;
-        virtual void OnRefereeListCollapsed () = 0;
-      };
-
-      RefereesList (Listener *listener);
+      RefereesList ();
 
       void SetWeapon (Weapon *weapon);
 
@@ -44,15 +38,18 @@ namespace People
 
       void ConvertFromBaseToResult ();
 
+      void Expand ();
+
+      void Collapse ();
+
     protected:
       virtual ~RefereesList ();
 
     private:
-      Listener *_listener;
-      guint32   _dnd_key;
-      Filter   *_expanded_filter;
-      Filter   *_collapsed_filter;
-      Weapon   *_weapon;
+      guint32  _dnd_key;
+      Filter  *_expanded_filter;
+      Filter  *_collapsed_filter;
+      Weapon  *_weapon;
 
       void Monitor (Player *referee);
 
@@ -81,10 +78,6 @@ namespace People
                                               Attribute *attr,
                                               Object    *owner,
                                               guint      step);
-
-      static void OnExpanded (GtkExpander  *expander,
-                              GParamSpec   *param_spec,
-                              RefereesList *referees_list);
 
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,

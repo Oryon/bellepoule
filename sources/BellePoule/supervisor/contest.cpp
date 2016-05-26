@@ -322,7 +322,7 @@ Contest::Contest (gboolean for_duplication )
            "SensitiveWidgetForCheckinStage",
            _glade->GetWidget ("team_vbox"));
 
-  _referees_list = new People::RefereesList (NULL);
+  _referees_list = new People::RefereesList ();
 
   {
     GTimeVal  current_time;

@@ -23,7 +23,6 @@
 
 class Marshaller :
   public Module,
-  public People::RefereesList::Listener,
   public Hall::Listener
 {
   public:
@@ -35,6 +34,10 @@ class Marshaller :
 
     void OnExposeWeapon (const gchar *weapon_code);
 
+    void OnRefereeListExpand ();
+
+    void OnRefereeListCollapse ();
+
   private:
     Hall        *_hall;
     RefereePool *_referee_pool;
@@ -42,10 +45,6 @@ class Marshaller :
     virtual ~Marshaller ();
 
     void OnEvent (const gchar *event);
-
-    void OnRefereeListExpanded ();
-
-    void OnRefereeListCollapsed ();
 };
 
 #endif
