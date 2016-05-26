@@ -689,17 +689,15 @@ void Hall::OnTimelineCursorMoved ()
   GDateTime *cursor = _timeline->RetreiveCursorTime ();
 
   {
-    GtkLabel *clock       = GTK_LABEL (_glade->GetWidget ("clock_label"));
     GtkLabel *popup_clock = GTK_LABEL (_glade->GetWidget ("cursor_date"));
     gchar    *text;
 
-    text = g_strdup_printf ("%02d:%02d", g_date_time_get_hour (cursor),
-                                         g_date_time_get_minute (cursor));
+    text = g_strdup_printf ("<span weight=\"bold\" background=\"black\" foreground=\"white\"> %02d:%02d </span>",
+                            g_date_time_get_hour (cursor),
+                            g_date_time_get_minute (cursor));
 
-    gtk_label_set_text (clock,
-                        text);
-    gtk_label_set_text (popup_clock,
-                        text);
+    gtk_label_set_markup (popup_clock,
+                          text);
 
     g_free (text);
   }

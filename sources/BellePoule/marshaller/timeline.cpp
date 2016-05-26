@@ -96,10 +96,8 @@ void Timeline::DrawTimes ()
   for (guint i = 0; i <= HOURS_MONITORED; i++)
   {
     guint  h    = (g_date_time_get_hour (_origin) + i+1) % 24;
-    gchar *font = g_strdup_printf (BP_FONT "%dpx", 10);
     gchar *time = g_strdup_printf ("<span background=\"white\">%02d:00</span>", h);
 
-    font = g_strdup_printf (BP_FONT "%dpx", 10);
     time = g_strdup_printf ("<span background=\"white\">%02d:00</span>", h);
 
     goo_canvas_rect_new (GetRootItem (),
@@ -117,11 +115,10 @@ void Timeline::DrawTimes ()
                          -1.0,
                          GTK_ANCHOR_S,
                          "fill-color", "grey",
-                         "font",       font,
+                         "font",       BP_FONT "10px",
                          "use-markup", TRUE,
                          NULL);
     g_free (time);
-    g_free (font);
   }
 }
 
@@ -144,16 +141,28 @@ void Timeline::DrawCursors ()
   }
 
   {
-    GooCanvasItem *item = goo_canvas_rect_new (GetRootItem (),
-                                               _cursor * _time_scale,
-                                               0.0,
-                                               2.0,
-                                               _batch_scale,
-                                               "fill-color",     "black",
-                                               "stroke-pattern", NULL,
-                                               NULL);
+    _goo_cursor = goo_canvas_rect_new (GetRootItem (),
+                                       _cursor * _time_scale,
+                                       0.0,
+                                       2.0,
+                                       _batch_scale,
+                                       "fill-color",     "black",
+                                       "stroke-pattern", NULL,
+                                       NULL);
+    g_signal_connect (_goo_cursor, "button_press_event",
+                      G_CALLBACK (OnButtonPress), this);
 
-    g_signal_connect (item, "button_press_event",
+    _goo_cursor_time = goo_canvas_text_new (GetRootItem (),
+                                            "",
+                                            _cursor * _time_scale,
+                                            _batch_scale/2.0,
+                                            -1.0,
+                                            GTK_ANCHOR_W,
+                                            "font",       BP_FONT "10px",
+                                            "use-markup", TRUE,
+                                            NULL);
+    RefreshCursorTime ();
+    g_signal_connect (_goo_cursor_time, "button_press_event",
                       G_CALLBACK (OnButtonPress), this);
   }
 }
@@ -238,7 +247,7 @@ gboolean Timeline::OnButtonPress (GooCanvasItem  *item,
                                   GdkEventButton *event,
                                   Timeline       *tl)
 {
-  tl->_cursor = event->x_root / tl->_time_scale;
+  tl->_drag_start = event->x;
 
   g_signal_connect (G_OBJECT (item), "motion-notify-event",
                     G_CALLBACK (OnMotion), tl);
@@ -262,22 +271,37 @@ gboolean Timeline::OnMotion (GooCanvasItem  *item,
 {
   if (item)
   {
-    gdouble new_x = event->x_root;
-
-    if (new_x < 2.0)
+    // Translation
     {
-      new_x = 2.0;
+      gdouble drag_now = event->x;
+
+      if (drag_now < 2.0)
+      {
+        drag_now = 2.0;
+      }
+      if (drag_now > tl->_allocation.width - 2.0)
+      {
+        drag_now = tl->_allocation.width - 2.0;
+      }
+
+      goo_canvas_item_translate (tl->_goo_cursor,
+                                 drag_now - tl->_drag_start,
+                                 0.0);
+      goo_canvas_item_translate (tl->_goo_cursor_time,
+                                 drag_now - tl->_drag_start,
+                                 0.0);
     }
-    if (new_x > tl->_allocation.width - 2.0)
+
+    // Update the cursor attribute
     {
-      new_x = tl->_allocation.width - 2.0;
+      GooCanvasBounds bounds;
+
+      goo_canvas_item_get_bounds (tl->_goo_cursor,
+                                  &bounds);
+      tl->_cursor = bounds.x1 / tl->_time_scale;
     }
 
-    goo_canvas_item_translate (item,
-                               new_x - tl->_cursor * tl->_time_scale,
-                               0.0);
-
-    tl->_cursor = new_x / tl->_time_scale;
+    tl->RefreshCursorTime ();
 
     if (tl->_listener)
     {
@@ -287,6 +311,22 @@ gboolean Timeline::OnMotion (GooCanvasItem  *item,
   }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Timeline::RefreshCursorTime ()
+{
+  GDateTime *time = RetreiveCursorTime ();
+  gchar     *text = g_strdup_printf (" <span weight=\"bold\" background=\"black\" foreground=\"white\"> %02d:%02d </span>",
+                                     g_date_time_get_hour   (time),
+                                     g_date_time_get_minute (time));
+
+  g_object_set (G_OBJECT (_goo_cursor_time),
+                "text", text,
+                NULL);
+
+  g_free (text);
+  g_date_time_unref (time);
 }
 
 // --------------------------------------------------------------------------------
