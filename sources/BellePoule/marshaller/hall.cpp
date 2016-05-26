@@ -49,6 +49,7 @@ Hall::Hall (RefereePool *referee_pool,
   }
 
   _lasso = new Lasso ();
+  _clock = new Clock (this);
 
   OnTimelineCursorMoved ();
 }
@@ -64,6 +65,7 @@ Hall::~Hall ()
 
   _timeline->Release ();
   _lasso->Release    ();
+  _clock->Release    ();
 }
 
 // --------------------------------------------------------------------------------
@@ -102,6 +104,15 @@ void Hall::OnPlugged ()
   AddPiste ();
   AddPiste ();
   RestoreZoomFactor ();
+}
+
+// --------------------------------------------------------------------------------
+void Hall::OnNewTime (const gchar *time)
+{
+  GtkLabel *clock = GTK_LABEL (_glade->GetWidget ("clock_label"));
+
+  gtk_label_set_text (clock,
+                      time);
 }
 
 // --------------------------------------------------------------------------------

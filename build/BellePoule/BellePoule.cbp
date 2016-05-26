@@ -200,22 +200,28 @@
 		<Unit filename="../../sources/BellePoule/marshaller/batch.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/clock.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/clock.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/hall.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/hall.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/marshaller/lasso.cpp">
-			<Option target="Marshaller_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/marshaller/lasso.hpp">
-			<Option target="Marshaller_Debug" />
-		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/job.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/job.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/lasso.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/lasso.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/main.cpp">

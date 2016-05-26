@@ -22,6 +22,7 @@
 #include "piste.hpp"
 #include "batch.hpp"
 #include "timeline.hpp"
+#include "clock.hpp"
 
 class RefereePool;
 class Lasso;
@@ -30,7 +31,8 @@ class Hall :
   public CanvasModule,
   public Piste::Listener,
   public Batch::Listener,
-  public Timeline::Listener
+  public Timeline::Listener,
+  public Clock::Listener
 {
   public:
     struct Listener
@@ -74,6 +76,7 @@ class Hall :
     RefereePool *_referee_pool;
     Timeline    *_timeline;
     Lasso       *_lasso;
+    Clock       *_clock;
     Listener    *_listener;
 
     ~Hall ();
@@ -96,6 +99,8 @@ class Hall :
     void DropObject (Object   *object,
                      DropZone *source_zone,
                      DropZone *target_zone);
+
+    void OnNewTime (const gchar *time);
 
     static gboolean OnButtonPress (GooCanvasItem  *goo_rect,
                                    GooCanvasItem  *target,
