@@ -22,20 +22,15 @@ namespace Net
 {
   // --------------------------------------------------------------------------------
   Downloader::Downloader (const gchar *name,
-                          Callback     callback,
-                          gpointer     user_data)
+                          Listener    *listener)
     : Object ("Downloader")
   {
-    _callback = callback;
-    _callback_data._downloader = this;
-    _callback_data._user_data  = user_data;
-
-    _data    = NULL;
-    _address = NULL;
-
-    _killed = FALSE;
-
-    _name = g_strdup (name);
+    _listener = listener;
+    _data     = NULL;
+    _size     = 0;
+    _address  = NULL;
+    _killed   = FALSE;
+    _name     = g_strdup (name);
   }
 
   // --------------------------------------------------------------------------------
@@ -47,20 +42,19 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Downloader::Start (const gchar *address,
-                          guint        refresh_period)
+  void Downloader::Start (const gchar *address)
   {
     GError *error = NULL;
 
     _address = g_strdup (address);
-    _period  = refresh_period;
 
     Retain ();
 
-    if (!g_thread_create ((GThreadFunc) ThreadFunction,
-                          this,
-                          FALSE,
-                          &error))
+    _thread = g_thread_create ((GThreadFunc) ThreadFunction,
+                               this,
+                               FALSE,
+                               &error);
+    if (_thread == NULL)
     {
       g_printerr ("Failed to create Downloader thread: %s\n", error->message);
       g_error_free (error);
@@ -100,11 +94,10 @@ namespace Net
   // --------------------------------------------------------------------------------
   gpointer Downloader::ThreadFunction (Downloader *downloader)
   {
-    while (downloader->_killed == FALSE)
     {
       CURL *curl_handle;
 
-      downloader->_data = (char *) g_malloc (1);
+      downloader->_data = NULL;
       downloader->_size = 0;
 
       curl_handle = curl_easy_init ();
@@ -122,22 +115,10 @@ namespace Net
 
       curl_easy_perform (curl_handle);
       curl_easy_cleanup (curl_handle);
-
-      g_idle_add ((GSourceFunc) downloader->_callback,
-                  &downloader->_callback_data);
-
-      if (downloader->_period == 0)
-      {
-        break;
-      }
-
-#ifdef WINDOWS_TEMPORARY_PATCH
-      Sleep (downloader->_period);
-#else
-      sleep (downloader->_period/1000);
-#endif
-      g_print ("%s\n", downloader->_name);
     }
+
+    g_idle_add ((GSourceFunc) FeedbackFunction,
+                downloader);
 
     downloader->Release ();
 
@@ -145,13 +126,13 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Downloader::GetData ()
+  gboolean Downloader::FeedbackFunction (Downloader *downloader)
   {
-    if (_size)
+    if (downloader->_killed == FALSE)
     {
-      return _data;
+      downloader->_listener->OnDownloaderData (downloader,
+                                               downloader->_data);
     }
-
-    return NULL;
+    return FALSE;
   }
 }

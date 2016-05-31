@@ -27,7 +27,10 @@ class Application;
 class Module;
 class Language;
 
-class Application : public Object, Net::HttpServer::Client
+class Application :
+  public Object,
+         Net::HttpServer::Client,
+         Net::Downloader::Listener
 {
   public:
     virtual void Prepare ();
@@ -56,6 +59,9 @@ class Application : public Object, Net::HttpServer::Client
     Net::Downloader *_version_downloader;
     Net::HttpServer *_http_server;
 
+    void OnDownloaderData (Net::Downloader  *downloader,
+                           const gchar      *data);
+
     virtual gchar *GetSecretKey (const gchar *authentication_scheme);
 
     static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
@@ -74,8 +80,6 @@ class Application : public Object, Net::HttpServer::Client
                             gpointer        user_data);
 
     static gboolean IsCsvReady (AttributeDesc *desc);
-
-    static gboolean OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data);
 
     static gboolean HttpPostCbk (Net::HttpServer::Client *client,
                                  Net::Message            *message);

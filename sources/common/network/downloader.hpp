@@ -27,34 +27,28 @@ namespace Net
   class Downloader : public Object
   {
     public:
-      typedef struct
+      struct Listener
       {
-        void       *_user_data;
-        Downloader *_downloader;
-      } CallbackData;
+        virtual void OnDownloaderData (Downloader  *downloader,
+                                       const gchar *data) = 0;
+      };
 
-      typedef gboolean (*Callback) (CallbackData *data);
-
+    public:
       Downloader (const gchar *name,
-                  Callback     callback,
-                  gpointer     user_data);
+                  Listener    *listener);
 
-      void Start (const gchar *address,
-                  guint        refresh_period = 0);
+      void Start (const gchar *address);
 
       void Kill ();
 
-      gchar *GetData ();
-
     private:
-      Callback      _callback;
-      CallbackData  _callback_data;
-      gchar        *_data;
-      size_t        _size;
-      gchar        *_address;
-      guint         _period;
-      gboolean      _killed;
-      gchar        *_name;
+      Listener *_listener;
+      GThread  *_thread;
+      gchar    *_data;
+      size_t    _size;
+      gchar    *_address;
+      gboolean  _killed;
+      gchar    *_name;
 
       static size_t AddText (void   *contents,
                              size_t  size,
@@ -62,6 +56,8 @@ namespace Net
                              Downloader *downloader);
 
       static gpointer ThreadFunction (Downloader *downloader);
+
+      static gboolean FeedbackFunction (Downloader *downloader);
 
       virtual ~Downloader ();
   };

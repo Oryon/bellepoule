@@ -125,7 +125,6 @@ Application::Application (const gchar   *config_file,
 
   {
     _version_downloader = new Net::Downloader ("_version_downloader",
-                                               OnLatestVersionReceived,
                                                this);
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
   }
@@ -400,11 +399,9 @@ void Application::Start (int    argc,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data)
+void Application::OnDownloaderData (Net::Downloader  *downloader,
+                                    const gchar      *data)
 {
-  Application *application = (Application *) cbk_data->_user_data;
-  gchar       *data        = application->_version_downloader->GetData ();
-
   if (data)
   {
     GKeyFile *version_file = g_key_file_new ();
@@ -475,7 +472,7 @@ gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cb
 
       if (new_version_detected)
       {
-        Module *main_module = application->_main_module;
+        Module *main_module = _main_module;
         gchar  *label       = g_strdup_printf ("%s.%s.%s", remote_version, remote_revision, remote_maturity);
 
         gtk_menu_item_set_label (GTK_MENU_ITEM (main_module->GetGObject ("new_version_menuitem")),
@@ -488,11 +485,9 @@ gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cb
     g_key_file_free (version_file);
   }
 
-  application->_version_downloader->Kill    ();
-  application->_version_downloader->Release ();
-  application->_version_downloader = NULL;
-
-  return FALSE;
+  _version_downloader->Kill    ();
+  _version_downloader->Release ();
+  _version_downloader = NULL;
 }
 
 // --------------------------------------------------------------------------------
