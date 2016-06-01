@@ -71,7 +71,6 @@ void Team::SetAttendingFromMembers ()
     {
       Player    *player    = (Player *) current->data;
       Attribute *attending = player->GetAttribute (&attending_attr_id);
-      Attribute *rank      = player->GetAttribute (&ranking_attr_id);
 
       if (attending && attending->GetUIntValue ())
       {
@@ -79,11 +78,12 @@ void Team::SetAttendingFromMembers ()
 
         if (present_count <= _minimum_size->_value)
         {
-          guint value = rank->GetUIntValue ();
+          guint      value = _default_classification->_value;
+          Attribute *rank  = player->GetAttribute (&ranking_attr_id);
 
-          if (value == 0)
+          if (rank)
           {
-            value = _default_classification->_value;
+            value = rank->GetUIntValue ();
           }
           team_rank += value;
         }
