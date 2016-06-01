@@ -485,7 +485,6 @@ void Application::OnDownloaderData (Net::Downloader  *downloader,
     g_key_file_free (version_file);
   }
 
-  _version_downloader->Kill    ();
   _version_downloader->Release ();
   _version_downloader = NULL;
 }
