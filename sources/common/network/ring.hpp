@@ -84,6 +84,9 @@ namespace Net
 
       static void Multicast (Message *message);
 
+      static gboolean JoinMulticast (GSocket      *socket,
+                                     GInetAddress *group);
+
       static void Send (Message *message);
 
       static gboolean MulticastListener (GSocket      *socket,

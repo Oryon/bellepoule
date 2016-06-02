@@ -99,30 +99,18 @@ namespace Net
           g_warning ("g_socket_bind: %s\n", error->message);
           g_clear_error (&error);
         }
-        else
+        else if (JoinMulticast (socket,
+                                multicast_group))
         {
-          g_socket_join_multicast_group (socket,
-                                         multicast_group,
-                                         FALSE,
-                                         NULL,
-                                         &error);
-          if (error)
-          {
-            g_warning ("g_socket_join_multicast_group: %s\n", error->message);
-            g_clear_error (&error);
-          }
-          else
-          {
-            GSource *source = g_socket_create_source (socket,
-                                                      (GIOCondition) (G_IO_IN|G_IO_ERR|G_IO_HUP),
-                                                      NULL);
-            g_source_set_callback (source,
-                                   (GSourceFunc) MulticastListener,
-                                   NULL,
-                                   NULL);
-            g_source_attach (source, NULL);
-            g_source_unref (source);
-          }
+          GSource *source = g_socket_create_source (socket,
+                                                    (GIOCondition) (G_IO_IN|G_IO_ERR|G_IO_HUP),
+                                                    NULL);
+          g_source_set_callback (source,
+                                 (GSourceFunc) MulticastListener,
+                                 NULL,
+                                 NULL);
+          g_source_attach (source, NULL);
+          g_source_unref (source);
         }
 
         _multicast_address = g_inet_socket_address_new (multicast_group,
@@ -134,6 +122,47 @@ namespace Net
 
       AnnounceAvailability ();
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Ring::JoinMulticast (GSocket      *socket,
+                                GInetAddress *group)
+  {
+#if GLIB_CHECK_VERSION(2,32,0)
+    {
+      GError  *error  = NULL;
+      g_socket_join_multicast_group (socket,
+                                     group,
+                                     FALSE,
+                                     NULL,
+                                     &error);
+      if (error)
+      {
+        g_warning ("g_socket_join_multicast_group: %s\n", error->message);
+        g_clear_error (&error);
+        return FALSE;
+      }
+      return TRUE;
+    }
+#else
+    {
+      struct ip_mreq option;
+      int            fd     = g_socket_get_fd (socket);
+
+      option.imr_interface.s_addr = htonl     (INADDR_ANY);
+      option.imr_multiaddr.s_addr = inet_addr (ANNOUNCE_GROUP);
+      if (setsockopt (fd,
+                      IPPROTO_IP,
+                      IP_ADD_MEMBERSHIP,
+                      (const char *) &option,
+                      sizeof (option)) < 0)
+      {
+        g_warning ("setsockopt: %s", strerror (errno));
+        return FALSE;
+      }
+      return TRUE;
+    }
+#endif
   }
 
   // --------------------------------------------------------------------------------
@@ -241,7 +270,7 @@ namespace Net
                                     GIOCondition  condition,
                                     gpointer      user_data)
   {
-    //(GIOCondition) (G_IO_IN|G_IO_ERR|G_IO_HUP),
+    // G_IO_IN G_IO_ERR G_IO_HUP
     if (condition == G_IO_IN)
     {
       GError *error       = NULL;
