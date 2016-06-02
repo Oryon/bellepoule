@@ -6,10 +6,10 @@ PRODUCT = bellepoulebeta
 OUTPUT  = Release
 PACKAGE = $(HOME)/PPA/$(PRODUCT)
 VERSION = 5.0
-STEP    = ubuntu3
+STEP    = ubuntu1
 RELEASE = $(PRODUCT)_$(VERSION)
 UBUNTU  = trusty
-V       = 2
+V       = 3
 DATE    = $(shell date -R)
 
 #----------------------------------------------------

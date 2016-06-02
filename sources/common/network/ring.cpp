@@ -16,15 +16,6 @@
 
 #include <errno.h>
 
-#ifdef WIN32
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif
-
 #include "util/object.hpp"
 #include "http_server.hpp" // !!
 #include "partner.hpp"
@@ -142,41 +133,49 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Ring::Multicast (Message *message)
   {
-    struct sockaddr_in  addr;
-    int                 fd;
+    GError  *error  = NULL;
+    GSocket *socket;
 
-    if ((fd = socket (AF_INET,
-                      SOCK_DGRAM,
-                      0)) < 0)
+    socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
+                           G_SOCKET_TYPE_DATAGRAM,
+                           G_SOCKET_PROTOCOL_DEFAULT,
+                           &error);
+    if (error)
     {
-      g_warning ("socket: %s", strerror (errno));
-      return;
+      g_warning ("g_socket_new: %s\n", error->message);
+      g_clear_error (&error);
     }
-
+    else
     {
-      memset (&addr,
-              0,
-              sizeof(addr));
+      GSocketAddress *socket_address;
 
-      addr.sin_family      = AF_INET;
-      addr.sin_addr.s_addr = inet_addr (ANNOUNCE_GROUP);
-      addr.sin_port        = htons     (ANNOUNCE_PORT);
-    }
-
-    {
-      gchar *parcel = message->GetParcel ();
-
-      if (sendto (fd,
-                  parcel,
-                  strlen (parcel) + 1,
-                  0,
-                  (struct sockaddr *) &addr,
-                  sizeof(addr)) < 0)
       {
-        g_warning ("sendto: %s", strerror (errno));
+        GInetAddress *inet_address = g_inet_address_new_from_string (ANNOUNCE_GROUP);
+
+        socket_address = g_inet_socket_address_new (inet_address,
+                                                    ANNOUNCE_PORT);
+        g_object_unref (inet_address);
       }
 
-      g_free (parcel);
+      {
+        gchar *parcel = message->GetParcel ();
+
+        g_socket_send_to (socket,
+                          socket_address,
+                          parcel,
+                          strlen (parcel) + 1,
+                          NULL,
+                          &error);
+        if (error)
+        {
+          g_warning ("sendto: %s", strerror (errno));
+          g_clear_error (&error);
+        }
+
+        g_free (parcel);
+      }
+
+      g_object_unref (socket_address);
     }
   }
 
