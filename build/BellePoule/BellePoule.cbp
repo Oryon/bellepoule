@@ -533,6 +533,12 @@
 		<Unit filename="../../sources/common/network/partner.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/pipe.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/pipe.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/ring.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>

@@ -72,8 +72,6 @@ namespace Net
       static GList          *_listeners;
       static GSocketAddress *_multicast_address;
 
-      static void OnMulticast (Message *message);
-
       static void Add (Partner *partner);
 
       static void Remove (const gchar *role);
@@ -87,11 +85,16 @@ namespace Net
       static gboolean JoinMulticast (GSocket      *socket,
                                      GInetAddress *group);
 
+      static gboolean OnMulticast (GSocket      *socket,
+                                   GIOCondition  condition,
+                                   gpointer      user_data);
+
       static void Send (Message *message);
 
-      static gboolean MulticastListener (GSocket      *socket,
-                                         GIOCondition  condition,
-                                         gpointer      user_data);
+      static gboolean OnIncommingConnection (GSocketService    *service,
+                                             GSocketConnection *connection,
+                                             GObject           *source_object,
+                                             gpointer           user_data);
   };
 }
 #endif

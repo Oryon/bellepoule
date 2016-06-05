@@ -20,6 +20,7 @@
 #include "http_server.hpp" // !!
 #include "partner.hpp"
 #include "message.hpp"
+#include "pipe.hpp"
 #include "ring.hpp"
 
 namespace Net
@@ -70,6 +71,29 @@ namespace Net
         gtk_widget_set_tooltip_text (_partner_indicator, "");
       }
 
+      // Message service
+      {
+        GError         *error   = NULL;
+        GSocketService *service = g_socket_service_new ();
+
+        g_socket_listener_add_inet_port (G_SOCKET_LISTENER (service),
+                                         50000,
+                                         NULL,
+                                         &error);
+        if (error != NULL)
+        {
+          g_warning ("g_socket_listener_add_inet_port: %s", error->message);
+          g_error_free (error);
+        }
+
+        g_signal_connect (service,
+                          "incoming",
+                          G_CALLBACK (OnIncommingConnection),
+                          NULL);
+
+        g_socket_service_start (service);
+      }
+
       // Multicast listener
       {
         GInetAddress *multicast_group = g_inet_address_new_from_string (ANNOUNCE_GROUP);
@@ -106,7 +130,7 @@ namespace Net
                                                     (GIOCondition) (G_IO_IN|G_IO_ERR|G_IO_HUP),
                                                     NULL);
           g_source_set_callback (source,
-                                 (GSourceFunc) MulticastListener,
+                                 (GSourceFunc) OnMulticast,
                                  NULL,
                                  NULL);
           g_source_attach (source, NULL);
@@ -244,34 +268,19 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  void Ring::OnMulticast (Message *message)
+  gboolean Ring::OnMulticast (GSocket      *socket,
+                              GIOCondition  condition,
+                              gpointer      user_data)
   {
-    gchar *role = message->GetString ("role");
-
-    if (g_strcmp0 (role, _role) != 0)
+    if (condition == G_IO_HUP)
     {
-      if (message->Is ("Announcement"))
-      {
-        Remove (role);
-        Add (new Partner (message));
-      }
-      else if (message->Is ("Farewell"))
-      {
-        Remove (role);
-      }
+      g_warning ("Multicast error: G_IO_HUP\n");
     }
-
-    g_free (role);
-    message->Release ();
-  }
-
-  // -------------------------------------------------------------------------------
-  gboolean Ring::MulticastListener (GSocket      *socket,
-                                    GIOCondition  condition,
-                                    gpointer      user_data)
-  {
-    // G_IO_IN G_IO_ERR G_IO_HUP
-    if (condition == G_IO_IN)
+    if (condition == G_IO_ERR)
+    {
+      g_warning ("Multicast error: G_IO_ERR\n");
+    }
+    else if (condition == G_IO_IN)
     {
       GError *error       = NULL;
       gchar   buffer[500];
@@ -283,16 +292,44 @@ namespace Net
                         &error);
       if (error)
       {
-        g_error ("g_socket_receive: %s", error->message);
+        g_warning ("g_socket_receive: %s", error->message);
         g_clear_error (&error);
       }
       else
       {
-        OnMulticast (new Message ((guint8 *) buffer));
+        Message *message = new Message ((guint8 *) buffer);
+        gchar   *role    = message->GetString ("role");
+
+        if (g_strcmp0 (role, _role) != 0)
+        {
+          if (message->Is ("Announcement"))
+          {
+            Remove (role);
+            Add (new Partner (message));
+          }
+          else if (message->Is ("Farewell"))
+          {
+            Remove (role);
+          }
+        }
+
+        g_free (role);
+        message->Release ();
       }
     }
 
     return TRUE; //G_SOURCE_CONTINUE
+  }
+
+  // -------------------------------------------------------------------------------
+  gboolean Ring::OnIncommingConnection (GSocketService    *service,
+                                        GSocketConnection *connection,
+                                        GObject           *source_object,
+                                        gpointer           user_data)
+  {
+    new Pipe (connection);
+
+    return FALSE;
   }
 
   // -------------------------------------------------------------------------------
@@ -452,4 +489,46 @@ namespace Net
       current = g_list_next (current);
     }
   }
+
+
+
+
+
+  /*
+static gboolean data_received (GIOChannel   *channel,
+                               GIOCondition  cond,
+                               gpointer      data)
+{
+  printf ("coucou");
+  return TRUE;
+}
+
+  {
+    GSocketClient     *socket_client     = g_socket_client_new ();
+    GError            *error             = NULL;
+    GSocketConnection *socket_connection;
+    GSocket           *socket;
+    GIOChannel        *channel;
+
+    socket_connection = g_socket_client_connect_to_host (socket_client,
+                                                         "localhost",
+                                                         6000,
+                                                         NULL,
+                                                         &error);
+    if (error != NULL)
+    {
+      printf("%s\n", error->message);
+      g_error_free (error);
+    }
+
+    socket = g_socket_connection_get_socket (socket_connection);
+    channel = g_io_channel_unix_new (g_socket_get_fd (socket));
+
+    g_io_add_watch (channel,
+                    (GIOCondition) (G_IO_IN | G_IO_ERR | G_IO_HUP),
+                    data_received,
+                    NULL);
+  }
+  */
+
 }
