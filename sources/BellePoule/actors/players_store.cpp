@@ -71,18 +71,6 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersStore::SetVisibilityColumn (gint column)
-  {
-    gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER (_flat_store->_gtk_tree_filter),
-                                              column * AttributeDesc::NB_LOOK);
-    gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (_flat_store->_gtk_tree_filter));
-
-    gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER (_tree_store->_gtk_tree_filter),
-                                              column * AttributeDesc::NB_LOOK);
-    gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (_tree_store->_gtk_tree_filter));
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean PlayersStore::SelectFlatMode (GtkTreeView *view)
   {
     if (GTK_TREE_MODEL (_flat_store->_gtk_tree_filter) != gtk_tree_view_get_model (view))
@@ -160,7 +148,7 @@ namespace People
 
           if (path)
           {
-            gtk_tree_model_get_iter (GTK_TREE_MODEL (store->_gtk_tree_filter),
+            gtk_tree_model_get_iter (GTK_TREE_MODEL (store->_gtk_tree_store),
                                      &team_iter,
                                      path);
             has_team = TRUE;
@@ -233,7 +221,7 @@ namespace People
   GtkTreeRowReference *PlayersStore::GetTreeRowRef (GtkTreeModel *model,
                                                     Player       *player)
   {
-    if (_flat_store->_gtk_tree_filter == model)
+    if (_flat_store->_gtk_tree_store == GTK_TREE_STORE (model))
     {
       return (GtkTreeRowReference *) player->GetPtrData (_flat_store,
                                                          "tree_row_ref");

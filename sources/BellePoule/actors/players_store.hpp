@@ -41,8 +41,6 @@ namespace People
 
       void SetSearchColumn (gint column);
 
-      void SetVisibilityColumn (gint column);
-
       gboolean SelectTreeMode (GtkTreeView *view);
 
       void Wipe ();

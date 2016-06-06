@@ -286,6 +286,7 @@ namespace People
         return (attending_attr->GetUIntValue () != 0);
       }
     }
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

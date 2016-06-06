@@ -264,7 +264,8 @@ namespace People
     _store->Update (player);
 
     {
-      GtkTreeModel        *model = gtk_tree_view_get_model (_tree_view);
+      GtkTreeModelFilter  *filter = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (_tree_view));
+      GtkTreeModel        *model  = gtk_tree_model_filter_get_model (filter);
       GtkTreeRowReference *ref   = _store->GetTreeRowRef (model, player);
       GtkTreePath         *path  = gtk_tree_row_reference_get_path (ref);
 
@@ -955,10 +956,11 @@ namespace People
   // --------------------------------------------------------------------------------
   Player *PlayersList::GetPlayer (const gchar *path_string)
   {
-    Player       *result  = NULL;
-    GtkTreePath  *path    = gtk_tree_path_new_from_string (path_string);
-    GSList       *current = _player_list;
-    GtkTreeModel *model   = gtk_tree_view_get_model (_tree_view);
+    Player             *result  = NULL;
+    GtkTreePath        *path    = gtk_tree_path_new_from_string (path_string);
+    GSList             *current = _player_list;
+    GtkTreeModelFilter *filter  = GTK_TREE_MODEL_FILTER (gtk_tree_view_get_model (_tree_view));
+    GtkTreeModel       *model   = gtk_tree_model_filter_get_model (filter);
 
     while (current)
     {
