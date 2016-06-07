@@ -28,6 +28,7 @@ namespace People
                                            types);
     _gtk_tree_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (_gtk_tree_store),
                                                   NULL);
+    _gtk_tree_sort = gtk_tree_model_sort_new_with_model (_gtk_tree_filter);
   }
 
   // --------------------------------------------------------------------------------
@@ -73,10 +74,10 @@ namespace People
   // --------------------------------------------------------------------------------
   gboolean PlayersStore::SelectFlatMode (GtkTreeView *view)
   {
-    if (GTK_TREE_MODEL (_flat_store->_gtk_tree_filter) != gtk_tree_view_get_model (view))
+    if (GTK_TREE_MODEL (_flat_store->_gtk_tree_sort) != gtk_tree_view_get_model (view))
     {
       gtk_tree_view_set_model (view,
-                               GTK_TREE_MODEL (_flat_store->_gtk_tree_filter));
+                               GTK_TREE_MODEL (_flat_store->_gtk_tree_sort));
       gtk_tree_view_set_search_column (view,
                                        _search_column);
       return TRUE;
@@ -87,10 +88,10 @@ namespace People
   // --------------------------------------------------------------------------------
   gboolean PlayersStore::SelectTreeMode (GtkTreeView *view)
   {
-    if (GTK_TREE_MODEL (_tree_store->_gtk_tree_filter) != gtk_tree_view_get_model (view))
+    if (GTK_TREE_MODEL (_tree_store->_gtk_tree_sort) != gtk_tree_view_get_model (view))
     {
       gtk_tree_view_set_model (view,
-                               GTK_TREE_MODEL (_tree_store->_gtk_tree_filter));
+                               GTK_TREE_MODEL (_tree_store->_gtk_tree_sort));
       gtk_tree_view_set_search_column (view,
                                        _search_column);
       return TRUE;
@@ -218,10 +219,54 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  GtkTreeRowReference *PlayersStore::GetTreeRowRef (GtkTreeModel *model,
-                                                    Player       *player)
+  GtkTreePath *PlayersStore::GetStorePathFromViewPath (GtkTreeView *view,
+                                                       GtkTreePath *view_path)
   {
-    if (_flat_store->_gtk_tree_store == GTK_TREE_STORE (model))
+    GtkTreeModel *model_sort = gtk_tree_view_get_model (view);
+    GtkTreePath  *sort_path;
+    GtkTreePath  *store_path;
+
+    if (_flat_store->_gtk_tree_sort == model_sort)
+    {
+      sort_path = gtk_tree_model_sort_convert_path_to_child_path (GTK_TREE_MODEL_SORT (_flat_store->_gtk_tree_sort),
+                                                                  view_path);
+      store_path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (_flat_store->_gtk_tree_filter),
+                                                                                            sort_path);
+    }
+    else
+    {
+      sort_path = gtk_tree_model_sort_convert_path_to_child_path (GTK_TREE_MODEL_SORT (_tree_store->_gtk_tree_sort),
+                                                                  view_path);
+      store_path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (_tree_store->_gtk_tree_filter),
+                                                                                            sort_path);
+    }
+    gtk_tree_path_free (sort_path);
+
+    return store_path;
+  }
+
+  // --------------------------------------------------------------------------------
+  GtkTreeStore *PlayersStore::GetTreeStore (GtkTreeView *view)
+  {
+    GtkTreeModel *model = gtk_tree_view_get_model (view);
+
+    if (_flat_store->_gtk_tree_sort == model)
+    {
+      return _flat_store->_gtk_tree_store;
+    }
+    else
+    {
+      return _tree_store->_gtk_tree_store;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  GtkTreeRowReference *PlayersStore::GetTreeRowRef (GtkTreeView *view,
+                                                    Player      *player)
+  {
+    GtkTreeModel *model = gtk_tree_view_get_model (view);
+
+    if (_flat_store->_gtk_tree_sort == model)
     {
       return (GtkTreeRowReference *) player->GetPtrData (_flat_store,
                                                          "tree_row_ref");
@@ -262,14 +307,14 @@ namespace People
                                       Object                 *user_data)
   {
     user_data->Retain ();
-    gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_flat_store->_gtk_tree_store),
+    gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_flat_store->_gtk_tree_sort),
                                      sort_column_id,
                                      sort_func,
                                      user_data,
                                      (GDestroyNotify) Object::TryToRelease);
 
     user_data->Retain ();
-    gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_tree_store->_gtk_tree_store),
+    gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_tree_store->_gtk_tree_sort),
                                      sort_column_id,
                                      sort_func,
                                      user_data,
@@ -296,5 +341,4 @@ namespace People
                                             data,
                                             NULL);
   }
-
 }

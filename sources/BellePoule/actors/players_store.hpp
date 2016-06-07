@@ -54,14 +54,20 @@ namespace People
 
       void Refilter ();
 
-      GtkTreeRowReference *GetTreeRowRef (GtkTreeModel *model,
-                                          Player       *player);
+      GtkTreeStore *GetTreeStore (GtkTreeView *view);
+
+      GtkTreePath *GetStorePathFromViewPath (GtkTreeView *view,
+                                             GtkTreePath *view_path);
+
+      GtkTreeRowReference *GetTreeRowRef (GtkTreeView *view,
+                                          Player      *player);
 
     private:
       class StoreObject : public Object
       {
         public:
           GtkTreeModel *_gtk_tree_filter;
+          GtkTreeModel *_gtk_tree_sort;
           GtkTreeStore *_gtk_tree_store;
 
           StoreObject (gint   n_columns,
