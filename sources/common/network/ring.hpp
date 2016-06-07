@@ -90,11 +90,6 @@ namespace Net
                                    gpointer      user_data);
 
       static void Send (Message *message);
-
-      static gboolean OnIncommingConnection (GSocketService    *service,
-                                             GSocketConnection *connection,
-                                             GObject           *source_object,
-                                             gpointer           user_data);
   };
 }
 #endif
