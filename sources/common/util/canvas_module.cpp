@@ -104,8 +104,7 @@ GooCanvas *CanvasModule::CreateCanvas ()
 
   g_object_set (G_OBJECT (canvas),
                 "automatic-bounds", TRUE,
-                "bounds-padding", 10.0,
-                "bounds-from-origin", FALSE,
+                "bounds-padding",   10.0,
                 NULL);
 
   return canvas;
