@@ -43,6 +43,12 @@ void RefereePool::ManageList (People::RefereesList *list)
 }
 
 // --------------------------------------------------------------------------------
+GList *RefereePool::GetList ()
+{
+  return _list_by_weapon;
+}
+
+// --------------------------------------------------------------------------------
 void RefereePool::Spread ()
 {
   g_list_foreach (_list_by_weapon,

@@ -31,18 +31,12 @@
 namespace People
 {
   // --------------------------------------------------------------------------------
-  RefereesList::RefereesList (Listener *listener)
+  RefereesList::RefereesList ()
     : Checkin ("referees.glade",
                "Referee",
                NULL)
   {
-    _listener = listener;
-    _weapon   = NULL;
-
-    g_signal_connect (_glade->GetGObject ("referee_expander"),
-                      "notify::expanded",
-                      G_CALLBACK (OnExpanded),
-                      this);
+    _weapon = NULL;
 
     {
       GSList *attr_list;
@@ -93,6 +87,9 @@ namespace People
         CreateForm (_expanded_filter,
                     "Referee");
       }
+
+      SetVisibileFunc ((GtkTreeModelFilterVisibleFunc) RefereeIsVisible,
+                       this);
     }
 
     {
@@ -268,6 +265,31 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean RefereesList::RefereeIsVisible (GtkTreeModel *model,
+                                           GtkTreeIter  *iter,
+                                           RefereesList *referee_list)
+  {
+    if (referee_list->_filter == referee_list->_expanded_filter)
+    {
+      return TRUE;
+    }
+    else
+    {
+      Player *referee = GetPlayer (model,
+                                   iter);
+
+      if (referee)
+      {
+        Player::AttributeId  attending_attr_id ("attending");
+        Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);
+
+        return (attending_attr->GetUIntValue () != 0);
+      }
+    }
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   void RefereesList::OnAttendingChanged (Player    *referee,
                                          Attribute *attr,
                                          Object    *owner,
@@ -354,20 +376,26 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void RefereesList::OnExpanded (GtkExpander  *expander,
-                                 GParamSpec   *param_spec,
-                                 RefereesList *referees_list)
+  void RefereesList::Expand ()
   {
-    if (gtk_expander_get_expanded (expander))
-    {
-      referees_list->SetFilter (referees_list->_expanded_filter);
-      referees_list->_listener->OnRefereeListExpanded ();
-    }
-    else
-    {
-      referees_list->SetFilter (referees_list->_collapsed_filter);
-      referees_list->_listener->OnRefereeListCollapsed ();
-    }
-    referees_list->OnAttrListUpdated ();
+    GtkWidget *panel = _glade->GetWidget ("edit_panel");
+
+    gtk_widget_show (panel);
+
+    SetFilter (_expanded_filter);
+
+    OnAttrListUpdated ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::Collapse ()
+  {
+    GtkWidget *panel = _glade->GetWidget ("edit_panel");
+
+    gtk_widget_hide (panel);
+
+    SetFilter (_collapsed_filter);
+
+    OnAttrListUpdated ();
   }
 }

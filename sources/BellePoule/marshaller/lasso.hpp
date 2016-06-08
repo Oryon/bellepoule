@@ -14,48 +14,33 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef job_hpp
-#define job_hpp
+#ifndef lasso_hpp
+#define lasso_hpp
 
+#include "goocanvas.h"
 #include "util/object.hpp"
 
-class Batch;
-class TimeSlot;
-
-class Job : public Object
+class Lasso : public Object
 {
   public:
-    Job (Batch    *batch,
-         guint     uuid,
-         GdkColor *gdk_color);
+    Lasso ();
 
-    void SetName (const gchar *name);
+    void Throw (GooCanvasItem  *surface,
+                GdkEventButton *event);
 
-    void SetTimeSlot (TimeSlot *timeslot);
+    void Pull ();
 
-    TimeSlot *GetTimslot ();
+    gboolean OnCursorMotion (GdkEventMotion *event);
 
-    const gchar *GetName ();
-
-    Batch *GetBatch ();
-
-    GdkColor *GetGdkColor ();
-
-    guint GetUUID ();
-
-    Net::Message *GetRoadMap ();
-
-    static gint CompareStartTime (Job *a,
-                                  Job *b);
+    void GetBounds (GooCanvasBounds *bounds);
 
   private:
-    gchar    *_name;
-    guint     _uuid;
-    GdkColor *_gdk_color;
-    Batch    *_batch;
-    TimeSlot *_timeslot;
+    GooCanvasItem   *_rectangle;
+    gdouble          _x;
+    gdouble          _y;
+    GooCanvasBounds  _bounds;
 
-    ~Job ();
+    virtual ~Lasso ();
 };
 
 #endif

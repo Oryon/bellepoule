@@ -18,7 +18,6 @@
 #include "network/ring.hpp"
 #include "application/weapon.hpp"
 #include "actors/referee.hpp"
-#include "hall.hpp"
 
 #include "marshaller.hpp"
 
@@ -37,7 +36,7 @@ Marshaller::Marshaller ()
     while (current)
     {
       Weapon               *weapon   = (Weapon *) current->data;
-      People::RefereesList *list     = new People::RefereesList (this);
+      People::RefereesList *list     = new People::RefereesList ();
       GtkWidget            *viewport = gtk_viewport_new (NULL, NULL);
 
       list->SetWeapon (weapon);
@@ -54,7 +53,8 @@ Marshaller::Marshaller ()
   }
 
   {
-    _hall = new Hall (_referee_pool);
+    _hall = new Hall (_referee_pool,
+                      this);
 
     Plug (_hall,
           _glade->GetWidget ("hall_viewport"));
@@ -112,21 +112,99 @@ gboolean Marshaller::OnHttpPost (Net::Message *message)
 }
 
 // --------------------------------------------------------------------------------
-void Marshaller::OnRefereeListExpanded ()
+void Marshaller::OnRefereeListExpand ()
 {
-  GtkPaned *paned = GTK_PANED (_glade->GetWidget ("hpaned"));
-  GtkAllocation  allocation;
+  {
+    GtkPaned      *paned      = GTK_PANED (_glade->GetWidget ("hpaned"));
+    GtkAllocation  allocation;
 
-  gtk_widget_get_allocation (GetRootWidget (),
-                             &allocation);
+    gtk_widget_get_allocation (GetRootWidget (),
+                               &allocation);
 
-  gtk_paned_set_position (paned, allocation.width);
+    gtk_paned_set_position (paned, allocation.width);
+  }
+
+  {
+    GList *current = _referee_pool->GetList ();
+
+    while (current)
+    {
+      People::RefereesList *list = (People::RefereesList *) current->data;
+
+      list->Expand ();
+
+      current = g_list_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
-void Marshaller::OnRefereeListCollapsed ()
+void Marshaller::OnRefereeListCollapse ()
 {
-  GtkPaned *paned = GTK_PANED (_glade->GetWidget ("hpaned"));
+  {
+    GtkPaned *paned = GTK_PANED (_glade->GetWidget ("hpaned"));
 
-  gtk_paned_set_position (paned, 0);
+    gtk_paned_set_position (paned, 0);
+  }
+
+  {
+    GList *current = _referee_pool->GetList ();
+
+    while (current)
+    {
+      People::RefereesList *list = (People::RefereesList *) current->data;
+
+      list->Collapse ();
+
+      current = g_list_next (current);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Marshaller::OnExposeWeapon (const gchar *weapon_code)
+{
+  GSList *current = Weapon::GetList ();
+
+  for (guint i = 0; current != NULL; i++)
+  {
+    Weapon *weapon = (Weapon *) current->data;
+
+    if (g_strcmp0 (weapon->GetXmlImage (), weapon_code) == 0)
+    {
+      gtk_notebook_set_current_page (GTK_NOTEBOOK (_glade->GetWidget ("referee_notebook")),
+                                     i);
+      break;
+    }
+
+    current = g_slist_next (current);
+  }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_batch_notebook_switch_page (GtkNotebook *notebook,
+                                                               gpointer     page,
+                                                               guint        page_num,
+                                                               Object      *owner)
+{
+  Marshaller *m     = dynamic_cast <Marshaller *> (owner);
+  Batch      *batch = (Batch *) g_object_get_data (G_OBJECT (page), "batch");
+
+  m->OnExposeWeapon (batch->GetWeaponCode ());
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_edit_referees_toggled (GtkToggleButton *togglebutton,
+                                                          Object          *owner)
+{
+  Marshaller *m = dynamic_cast <Marshaller *> (owner);
+
+  if (gtk_toggle_button_get_active (togglebutton))
+  {
+    m->OnRefereeListExpand ();
+  }
+  else
+  {
+    m->OnRefereeListCollapse ();
+  }
 }

@@ -14,48 +14,31 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef job_hpp
-#define job_hpp
+#ifndef clock_hpp
+#define clock_hpp
 
 #include "util/object.hpp"
 
-class Batch;
-class TimeSlot;
-
-class Job : public Object
+class Clock : public Object
 {
   public:
-    Job (Batch    *batch,
-         guint     uuid,
-         GdkColor *gdk_color);
+    struct Listener
+    {
+      virtual void OnNewTime (const gchar *time) = 0;
+    };
 
-    void SetName (const gchar *name);
-
-    void SetTimeSlot (TimeSlot *timeslot);
-
-    TimeSlot *GetTimslot ();
-
-    const gchar *GetName ();
-
-    Batch *GetBatch ();
-
-    GdkColor *GetGdkColor ();
-
-    guint GetUUID ();
-
-    Net::Message *GetRoadMap ();
-
-    static gint CompareStartTime (Job *a,
-                                  Job *b);
+  public:
+    Clock (Listener *listener);
 
   private:
-    gchar    *_name;
-    guint     _uuid;
-    GdkColor *_gdk_color;
-    Batch    *_batch;
-    TimeSlot *_timeslot;
+    Listener *_listener;
+    guint     _tag;
 
-    ~Job ();
+    ~Clock ();
+
+    void SetupTimeout ();
+
+    static gboolean OnTimeout (Clock *clock);
 };
 
 #endif

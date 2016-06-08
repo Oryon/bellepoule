@@ -55,6 +55,9 @@ Player::Player (const gchar *player_class)
 
     attr_id._name = (gchar *) "global_status";
     SetAttributeValue (&attr_id, "F");
+
+    attr_id._name = (gchar *) "ranking";
+    SetAttributeValue (&attr_id, (guint) 0);
   }
 }
 

@@ -22,17 +22,27 @@
 #include "piste.hpp"
 #include "batch.hpp"
 #include "timeline.hpp"
+#include "clock.hpp"
 
 class RefereePool;
+class Lasso;
 
 class Hall :
   public CanvasModule,
   public Piste::Listener,
   public Batch::Listener,
-  public Timeline::Listener
+  public Timeline::Listener,
+  public Clock::Listener
 {
   public:
-    Hall (RefereePool *referee_pool);
+    struct Listener
+    {
+      virtual void OnExposeWeapon (const gchar *weapon) = 0;
+    };
+
+  public:
+    Hall (RefereePool *referee_pool,
+          Listener    *listener);
 
     void AddPiste ();
 
@@ -57,21 +67,27 @@ class Hall :
     void DropJob (Net::Message *message);
 
   private:
-    GooCanvasItem *_root;
-    GList         *_piste_list;
-    GList         *_selected_list;
-    gboolean       _dragging;
-    gdouble        _drag_x;
-    gdouble        _drag_y;
-    GList         *_batch_list;
-    RefereePool   *_referee_pool;
-    Timeline      *_timeline;
+    GList       *_piste_list;
+    GList       *_selected_list;
+    gboolean     _dragging;
+    gdouble      _drag_x;
+    gdouble      _drag_y;
+    GList       *_batch_list;
+    RefereePool *_referee_pool;
+    Timeline    *_timeline;
+    Lasso       *_lasso;
+    Clock       *_clock;
+    Listener    *_listener;
 
     ~Hall ();
 
     void OnPlugged ();
 
-    void CancelSeletion ();
+    void CancelSelection ();
+
+    void SelectPiste (Piste *piste);
+
+    void UnSelectPiste (Piste *piste);
 
     Batch *GetBatch (const gchar *id);
 
@@ -84,15 +100,24 @@ class Hall :
                      DropZone *source_zone,
                      DropZone *target_zone);
 
-    static gboolean OnSelected (GooCanvasItem  *goo_rect,
-                                GooCanvasItem  *target,
-                                GdkEventButton *event,
-                                Hall           *hall);
+    void OnNewTime (const gchar *time);
+
+    static gboolean OnButtonPress (GooCanvasItem  *goo_rect,
+                                   GooCanvasItem  *target,
+                                   GdkEventButton *event,
+                                   Hall           *hall);
+
+    static gboolean OnButtonReleased (GooCanvasItem  *goo_rect,
+                                      GooCanvasItem  *target,
+                                      GdkEventButton *event,
+                                      Hall           *hall);
 
     static gboolean OnMotionNotify (GooCanvasItem  *item,
                                     GooCanvasItem  *target,
                                     GdkEventMotion *event,
                                     Hall           *hall);
+
+    gboolean OnCursorMotion (GdkEventMotion *event);
 
     void OnPisteButtonEvent (Piste          *piste,
                              GdkEventButton *event);

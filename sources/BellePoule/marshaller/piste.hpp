@@ -44,6 +44,9 @@ class Piste :
     Piste (GooCanvasItem *parent,
            Module        *container);
 
+    void ConvertFromPisteSpace (gdouble *x,
+                                gdouble *y);
+
     void SetListener (Listener *listener);
 
     TimeSlot *GetFreeTimeslot (GTimeSpan duration);
@@ -53,6 +56,8 @@ class Piste :
     void RemoveBatch (Batch *batch);
 
     void Disable ();
+
+    gboolean Overlaps (GooCanvasBounds *rectangle);
 
     void Select ();
 
@@ -90,9 +95,9 @@ class Piste :
     GooCanvasItem   *_rect_item;
     GooCanvasItem   *_progress_item;
     GooCanvasItem   *_id_item;
-    GooCanvasItem   *_match_item;
     GooCanvasItem   *_title_item;
-    GooCanvasItem   *_status_item;
+    GooCanvasItem   *_referee_table;
+    GooCanvasItem   *_referee_name;
     guint            _id;
     gboolean         _horizontal;
     gchar           *_color;

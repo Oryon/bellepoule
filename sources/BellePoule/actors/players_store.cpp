@@ -20,21 +20,49 @@
 namespace People
 {
   // --------------------------------------------------------------------------------
+  PlayersStore::StoreObject::StoreObject (gint   n_columns,
+                                          GType *types)
+    : Object ("PlayersStore::StoreObject")
+  {
+    _gtk_tree_store = gtk_tree_store_newv (n_columns,
+                                           types);
+    _gtk_tree_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (_gtk_tree_store),
+                                                  NULL);
+    _gtk_tree_sort = gtk_tree_model_sort_new_with_model (_gtk_tree_filter);
+  }
+
+  // --------------------------------------------------------------------------------
+  PlayersStore::StoreObject::~StoreObject ()
+  {
+    g_object_unref (G_OBJECT (_gtk_tree_filter));
+    g_object_unref (G_OBJECT (_gtk_tree_store));
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersStore::StoreObject::Wipe ()
+  {
+    gtk_tree_store_clear (_gtk_tree_store);
+  }
+}
+
+namespace People
+{
+  // --------------------------------------------------------------------------------
   PlayersStore::PlayersStore (gint   n_columns,
                               GType *types)
     : Object ("PlayersStore")
   {
-    _flat_store._gtk_tree_store = gtk_tree_store_newv (n_columns,
-                                                       types);
-    _tree_store._gtk_tree_store = gtk_tree_store_newv (n_columns,
-                                                       types);
+    _flat_store = new StoreObject (n_columns,
+                                   types);
+    _tree_store = new StoreObject (n_columns,
+                                   types);
   }
 
   // --------------------------------------------------------------------------------
   PlayersStore::~PlayersStore ()
   {
-    g_object_unref (_flat_store._gtk_tree_store);
-    g_object_unref (_tree_store._gtk_tree_store);
+    _flat_store->Release ();
+    _tree_store->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -44,18 +72,12 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  gboolean PlayersStore::IsInFlatMode (GtkTreeView *view)
-  {
-    return (GTK_TREE_MODEL (_flat_store._gtk_tree_store) == gtk_tree_view_get_model (view));
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean PlayersStore::SelectFlatMode (GtkTreeView *view)
   {
-    if (GTK_TREE_MODEL (_flat_store._gtk_tree_store) != gtk_tree_view_get_model (view))
+    if (GTK_TREE_MODEL (_flat_store->_gtk_tree_sort) != gtk_tree_view_get_model (view))
     {
       gtk_tree_view_set_model (view,
-                               GTK_TREE_MODEL (_flat_store._gtk_tree_store));
+                               GTK_TREE_MODEL (_flat_store->_gtk_tree_sort));
       gtk_tree_view_set_search_column (view,
                                        _search_column);
       return TRUE;
@@ -66,10 +88,10 @@ namespace People
   // --------------------------------------------------------------------------------
   gboolean PlayersStore::SelectTreeMode (GtkTreeView *view)
   {
-    if (GTK_TREE_MODEL (_tree_store._gtk_tree_store) != gtk_tree_view_get_model (view))
+    if (GTK_TREE_MODEL (_tree_store->_gtk_tree_sort) != gtk_tree_view_get_model (view))
     {
       gtk_tree_view_set_model (view,
-                               GTK_TREE_MODEL (_tree_store._gtk_tree_store));
+                               GTK_TREE_MODEL (_tree_store->_gtk_tree_sort));
       gtk_tree_view_set_search_column (view,
                                        _search_column);
       return TRUE;
@@ -91,7 +113,7 @@ namespace People
 
     if (player->Is ("Team") == FALSE)
     {
-      Append (&_flat_store,
+      Append (_flat_store,
               player,
               NULL);
 
@@ -103,7 +125,7 @@ namespace People
       }
     }
 
-    Append (&_tree_store,
+    Append (_tree_store,
             player,
             team);
   }
@@ -162,9 +184,9 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersStore::Remove (Player *player)
   {
-    Remove (&_flat_store,
+    Remove (_flat_store,
             player);
-    Remove (&_tree_store,
+    Remove (_tree_store,
             player);
   }
 
@@ -197,17 +219,61 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  GtkTreeRowReference *PlayersStore::GetTreeRowRef (GtkTreeModel *store,
-                                                    Player       *player)
+  GtkTreePath *PlayersStore::GetStorePathFromViewPath (GtkTreeView *view,
+                                                       GtkTreePath *view_path)
   {
-    if (_flat_store._gtk_tree_store == GTK_TREE_STORE (store))
+    GtkTreeModel *model_sort = gtk_tree_view_get_model (view);
+    GtkTreePath  *sort_path;
+    GtkTreePath  *store_path;
+
+    if (_flat_store->_gtk_tree_sort == model_sort)
     {
-      return (GtkTreeRowReference *) player->GetPtrData (&_flat_store,
+      sort_path = gtk_tree_model_sort_convert_path_to_child_path (GTK_TREE_MODEL_SORT (_flat_store->_gtk_tree_sort),
+                                                                  view_path);
+      store_path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (_flat_store->_gtk_tree_filter),
+                                                                                            sort_path);
+    }
+    else
+    {
+      sort_path = gtk_tree_model_sort_convert_path_to_child_path (GTK_TREE_MODEL_SORT (_tree_store->_gtk_tree_sort),
+                                                                  view_path);
+      store_path = gtk_tree_model_filter_convert_path_to_child_path (GTK_TREE_MODEL_FILTER (_tree_store->_gtk_tree_filter),
+                                                                                            sort_path);
+    }
+    gtk_tree_path_free (sort_path);
+
+    return store_path;
+  }
+
+  // --------------------------------------------------------------------------------
+  GtkTreeStore *PlayersStore::GetTreeStore (GtkTreeView *view)
+  {
+    GtkTreeModel *model = gtk_tree_view_get_model (view);
+
+    if (_flat_store->_gtk_tree_sort == model)
+    {
+      return _flat_store->_gtk_tree_store;
+    }
+    else
+    {
+      return _tree_store->_gtk_tree_store;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  GtkTreeRowReference *PlayersStore::GetTreeRowRef (GtkTreeView *view,
+                                                    Player      *player)
+  {
+    GtkTreeModel *model = gtk_tree_view_get_model (view);
+
+    if (_flat_store->_gtk_tree_sort == model)
+    {
+      return (GtkTreeRowReference *) player->GetPtrData (_flat_store,
                                                          "tree_row_ref");
     }
     else
     {
-      return (GtkTreeRowReference *) player->GetPtrData (&_tree_store,
+      return (GtkTreeRowReference *) player->GetPtrData (_tree_store,
                                                          "tree_row_ref");
     }
   }
@@ -231,8 +297,8 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersStore::Wipe ()
   {
-    gtk_tree_store_clear (_flat_store._gtk_tree_store);
-    gtk_tree_store_clear (_tree_store._gtk_tree_store);
+    _flat_store->Wipe ();
+    _tree_store->Wipe ();
   }
 
   // --------------------------------------------------------------------------------
@@ -241,17 +307,38 @@ namespace People
                                       Object                 *user_data)
   {
     user_data->Retain ();
-    gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_flat_store._gtk_tree_store),
+    gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_flat_store->_gtk_tree_sort),
                                      sort_column_id,
                                      sort_func,
                                      user_data,
                                      (GDestroyNotify) Object::TryToRelease);
 
     user_data->Retain ();
-    gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_tree_store._gtk_tree_store),
+    gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_tree_store->_gtk_tree_sort),
                                      sort_column_id,
                                      sort_func,
                                      user_data,
                                      (GDestroyNotify) Object::TryToRelease);
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersStore::Refilter ()
+  {
+    gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (_flat_store->_gtk_tree_filter));
+    gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (_tree_store->_gtk_tree_filter));
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersStore::SetVisibileFunc (GtkTreeModelFilterVisibleFunc func,
+                                      gpointer                      data)
+  {
+    gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (_flat_store->_gtk_tree_filter),
+                                            func,
+                                            data,
+                                            NULL);
+    gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (_tree_store->_gtk_tree_filter),
+                                            func,
+                                            data,
+                                            NULL);
   }
 }

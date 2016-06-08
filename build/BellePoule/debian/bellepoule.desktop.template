@@ -2,7 +2,7 @@
 Version=4.0
 Type=Application
 Terminal=false
-Exec=/usr/bin/__PRODUCT__-__EXE__
+Exec=/usr/bin/__PRODUCT__-__EXE__ %F
 Icon=/usr/share/__PRODUCT__/resources/glade/images/__EXE__.png
 Name=__PRODUCT__-__EXE__
 Comment=Fencing Management Software

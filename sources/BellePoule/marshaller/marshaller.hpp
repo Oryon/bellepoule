@@ -19,10 +19,11 @@
 
 #include "util/module.hpp"
 #include "referee_pool.hpp"
+#include "hall.hpp"
 
-class Hall;
-
-class Marshaller : public Module, public People::RefereesList::Listener
+class Marshaller :
+  public Module,
+  public Hall::Listener
 {
   public:
     Marshaller ();
@@ -31,6 +32,12 @@ class Marshaller : public Module, public People::RefereesList::Listener
 
     gboolean OnHttpPost (Net::Message *message);
 
+    void OnExposeWeapon (const gchar *weapon_code);
+
+    void OnRefereeListExpand ();
+
+    void OnRefereeListCollapse ();
+
   private:
     Hall        *_hall;
     RefereePool *_referee_pool;
@@ -38,10 +45,6 @@ class Marshaller : public Module, public People::RefereesList::Listener
     virtual ~Marshaller ();
 
     void OnEvent (const gchar *event);
-
-    void OnRefereeListExpanded ();
-
-    void OnRefereeListCollapsed ();
 };
 
 #endif

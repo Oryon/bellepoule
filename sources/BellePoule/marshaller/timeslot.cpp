@@ -110,7 +110,7 @@ void TimeSlot::AddJob (Job *job)
                              job);
 
   job->AddObjectListener (this);
-  job->SetTimslot        (this);
+  job->SetTimeSlot       (this);
 
   {
     Net::Message *roadmap = job->GetRoadMap ();
@@ -165,7 +165,10 @@ void TimeSlot::RemoveJob (Job *job)
   }
 
   job->RemoveObjectListener (this);
-  job->SetTimslot           (NULL);
+  job->SetTimeSlot          (NULL);
+
+  g_list_free (_referee_list);
+  _referee_list = NULL;
 
   _owner->OnTimeSlotUpdated (this);
 

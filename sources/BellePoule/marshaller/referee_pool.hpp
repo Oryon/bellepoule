@@ -38,6 +38,8 @@ class RefereePool : public Object
 
     void Spread ();
 
+    GList *GetList ();
+
   private:
     GList *_list_by_weapon;
 

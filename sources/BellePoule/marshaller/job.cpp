@@ -54,7 +54,7 @@ void Job::SetName (const gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-void Job::SetTimslot (TimeSlot *timeslot)
+void Job::SetTimeSlot (TimeSlot *timeslot)
 {
   _timeslot = timeslot;
 }

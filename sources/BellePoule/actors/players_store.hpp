@@ -49,15 +49,34 @@ namespace People
                             GtkTreeIterCompareFunc  sort_func,
                             Object                 *user_data);
 
-      GtkTreeRowReference *GetTreeRowRef (GtkTreeModel *store,
-                                          Player       *player);
+      void SetVisibileFunc (GtkTreeModelFilterVisibleFunc func,
+                            gpointer                      data);
 
-      gboolean IsInFlatMode (GtkTreeView *view);
+      void Refilter ();
+
+      GtkTreeStore *GetTreeStore (GtkTreeView *view);
+
+      GtkTreePath *GetStorePathFromViewPath (GtkTreeView *view,
+                                             GtkTreePath *view_path);
+
+      GtkTreeRowReference *GetTreeRowRef (GtkTreeView *view,
+                                          Player      *player);
 
     private:
-      struct StoreObject : public Object
+      class StoreObject : public Object
       {
-        GtkTreeStore *_gtk_tree_store;
+        public:
+          GtkTreeModel *_gtk_tree_filter;
+          GtkTreeModel *_gtk_tree_sort;
+          GtkTreeStore *_gtk_tree_store;
+
+          StoreObject (gint   n_columns,
+                       GType *types);
+
+          void Wipe ();
+
+        private:
+          ~StoreObject ();
       };
 
       ~PlayersStore ();
@@ -73,9 +92,9 @@ namespace People
                                             GtkTreeStore *store);
 
     private:
-      StoreObject _flat_store;
-      StoreObject _tree_store;
-      gint        _search_column;
+      StoreObject *_flat_store;
+      StoreObject *_tree_store;
+      gint         _search_column;
   };
 }
 

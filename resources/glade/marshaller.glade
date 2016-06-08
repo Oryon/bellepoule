@@ -770,7 +770,6 @@ Public License instead of this License.  But first, please read
                 <property name="label" translatable="yes">File</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="image">image9</property>
                 <property name="use_stock">False</property>
                 <property name="always_show_image">True</property>
@@ -783,7 +782,6 @@ Public License instead of this License.  But first, please read
                         <property name="label">gtk-new</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="always_show_image">True</property>
@@ -795,7 +793,6 @@ Public License instead of this License.  But first, please read
                         <property name="label">gtk-open</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="always_show_image">True</property>
@@ -813,7 +810,6 @@ Public License instead of this License.  But first, please read
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="always_show_image">True</property>
@@ -828,7 +824,6 @@ Public License instead of this License.  But first, please read
               <object class="GtkImageMenuItem" id="locale_menuitem">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="image">image6</property>
                 <property name="use_stock">False</property>
                 <property name="always_show_image">True</property>
@@ -840,7 +835,6 @@ Public License instead of this License.  But first, please read
                       <object class="GtkMenuItem" id="translate_menuitem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label">Translate into your language ...</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_translate_menuitem_activate" swapped="no"/>
@@ -861,7 +855,6 @@ Public License instead of this License.  But first, please read
                 <property name="label" translatable="yes">New version!</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="right_justified">True</property>
                 <property name="image">image8</property>
                 <property name="use_stock">False</property>
@@ -874,7 +867,6 @@ Public License instead of this License.  But first, please read
                       <object class="GtkMenuItem" id="new_version_menuitem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label">menuitem3</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_new_version_menuitem_activate" swapped="no"/>
@@ -888,7 +880,6 @@ Public License instead of this License.  But first, please read
               <object class="GtkImageMenuItem" id="ring_menuitem">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="right_justified">True</property>
                 <property name="image">image2</property>
                 <property name="use_stock">False</property>
@@ -901,7 +892,6 @@ Public License instead of this License.  But first, please read
                       <object class="GtkMenuItem" id="new_version_menuitem1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                       </object>
                     </child>
                   </object>
@@ -913,7 +903,6 @@ Public License instead of this License.  But first, please read
                 <property name="label">gtk-help</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="right_justified">True</property>
                 <property name="use_underline">True</property>
                 <property name="use_stock">True</property>
@@ -927,7 +916,6 @@ Public License instead of this License.  But first, please read
                         <property name="label" translatable="yes">Open an example...</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="image">image1</property>
                         <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
@@ -939,7 +927,6 @@ Public License instead of this License.  But first, please read
                         <property name="label" translatable="yes">User manual</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="image">image3</property>
                         <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
@@ -957,7 +944,6 @@ Public License instead of this License.  But first, please read
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="always_show_image">True</property>
@@ -989,14 +975,46 @@ Public License instead of this License.  But first, please read
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImage" id="image4">
+                      <object class="GtkToggleButton" id="edit_referees">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="icon_name">preferences-desktop-theme</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <signal name="toggled" handler="on_edit_referees_toggled" swapped="no"/>
+                        <child>
+                          <object class="GtkVBox" id="vbox4">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkImage" id="image4">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="stock">gtk-edit</property>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label2">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Pointer</property>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
+                        <property name="padding">5</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -1061,10 +1079,54 @@ Public License instead of this License.  But first, please read
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkNotebook" id="batch_notebook">
+                  <object class="GtkVBox" id="vbox3">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="tab_pos">right</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkHBox" id="hbox1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">7</property>
+                            <property name="label" translatable="yes">Matches</property>
+                            <attributes>
+                              <attribute name="weight" value="bold"/>
+                              <attribute name="absolute-size" value="26100"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkNotebook" id="batch_notebook">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="tab_pos">right</property>
+                        <signal name="switch-page" handler="on_batch_notebook_switch_page" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>

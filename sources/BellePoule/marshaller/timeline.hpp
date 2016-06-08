@@ -48,11 +48,14 @@ class Timeline : public CanvasModule
 
     GList         *_batch_list;
     GTimeSpan      _cursor;
+    gdouble        _drag_start;
     GtkAllocation  _allocation;
     gdouble        _time_scale;
     gdouble        _batch_scale;
     GDateTime     *_origin;
     guint          _redraw_timeout;
+    GooCanvasItem *_goo_cursor;
+    GooCanvasItem *_goo_cursor_time;
     Listener      *_listener;
 
     ~Timeline ();
@@ -64,6 +67,8 @@ class Timeline : public CanvasModule
     void DrawCursors ();
 
     void DrawSlots ();
+
+    void RefreshCursorTime ();
 
     static gboolean OnButtonPress (GooCanvasItem  *item,
                                    GooCanvasItem  *target,

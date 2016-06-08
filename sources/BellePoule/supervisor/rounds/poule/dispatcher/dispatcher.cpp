@@ -159,7 +159,7 @@ namespace Pool
       Object::TryToRelease (affinity);
     }
 
-    if (biggest_team_size > _pool_size/2)
+    if ((biggest_team_size < 2) || (biggest_team_size > _pool_size/2))
     {
       if ((_pool_size >= 2) &&  (_pool_size <= _MAX_POOL_SIZE))
       {

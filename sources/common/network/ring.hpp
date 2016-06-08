@@ -63,15 +63,14 @@ namespace Net
       static const gchar *ANNOUNCE_GROUP;
       static const guint  ANNOUNCE_PORT = 35000;
 
-      static gchar     *_role;
-      static gchar     *_ip_address;
-      static guint      _unicast_port;
-      static GList     *_partner_list;
-      static GList     *_message_list;
-      static GtkWidget *_partner_indicator;
-      static GList     *_listeners;
-
-      static gboolean OnMulticast (Message *message);
+      static gchar          *_role;
+      static gchar          *_ip_address;
+      static guint           _unicast_port;
+      static GList          *_partner_list;
+      static GList          *_message_list;
+      static GtkWidget      *_partner_indicator;
+      static GList          *_listeners;
+      static GSocketAddress *_multicast_address;
 
       static void Add (Partner *partner);
 
@@ -83,9 +82,14 @@ namespace Net
 
       static void Multicast (Message *message);
 
-      static void Send (Message *message);
+      static gboolean JoinMulticast (GSocket      *socket,
+                                     GInetAddress *group);
 
-      static gpointer MulticastListener ();
+      static gboolean OnMulticast (GSocket      *socket,
+                                   GIOCondition  condition,
+                                   gpointer      user_data);
+
+      static void Send (Message *message);
   };
 }
 #endif

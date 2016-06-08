@@ -16,15 +16,6 @@
 
 #include <errno.h>
 
-#ifdef WIN32
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif
-
 #include "util/object.hpp"
 #include "http_server.hpp" // !!
 #include "partner.hpp"
@@ -35,13 +26,14 @@ namespace Net
 {
   const gchar *Ring::ANNOUNCE_GROUP = "225.0.0.35";
 
-  gchar     *Ring::_role              = NULL;
-  gchar     *Ring::_ip_address        = NULL;
-  guint      Ring::_unicast_port      = 0;
-  GList     *Ring::_partner_list      = NULL;
-  GList     *Ring::_message_list      = NULL;
-  GtkWidget *Ring::_partner_indicator = NULL;
-  GList     *Ring::_listeners         = NULL;
+  gchar          *Ring::_role              = NULL;
+  gchar          *Ring::_ip_address        = NULL;
+  guint           Ring::_unicast_port      = 0;
+  GList          *Ring::_partner_list      = NULL;
+  GList          *Ring::_message_list      = NULL;
+  GtkWidget      *Ring::_partner_indicator = NULL;
+  GList          *Ring::_listeners         = NULL;
+  GSocketAddress *Ring::_multicast_address = NULL;
 
   // --------------------------------------------------------------------------------
   Ring::Ring ()
@@ -78,22 +70,99 @@ namespace Net
         gtk_widget_set_tooltip_text (_partner_indicator, "");
       }
 
-      // Listen to partner announcement
+      // Multicast listener
       {
-        GError *error = NULL;
+        GInetAddress *multicast_group = g_inet_address_new_from_string (ANNOUNCE_GROUP);
+        GError       *error           = NULL;
+        GSocket      *socket;
 
-        if (!g_thread_create ((GThreadFunc) MulticastListener,
-                              0,
-                              FALSE,
-                              &error))
+        socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
+                               G_SOCKET_TYPE_DATAGRAM,
+                               G_SOCKET_PROTOCOL_DEFAULT,
+                               NULL);
+
         {
-          g_warning ("Failed to create MulticastListener thread: %s\n", error->message);
-          g_error_free (error);
+          GInetAddress   *any_ip        = g_inet_address_new_any    (G_SOCKET_FAMILY_IPV4);
+          GSocketAddress *bound_address = g_inet_socket_address_new (any_ip, ANNOUNCE_PORT);
+
+          g_socket_bind (socket,
+                         bound_address,
+                         TRUE,
+                         &error);
+
+          g_object_unref (any_ip);
+          g_object_unref (bound_address);
         }
+
+        if (error)
+        {
+          g_warning ("g_socket_bind: %s\n", error->message);
+          g_clear_error (&error);
+        }
+        else if (JoinMulticast (socket,
+                                multicast_group))
+        {
+          GSource *source = g_socket_create_source (socket,
+                                                    (GIOCondition) (G_IO_IN|G_IO_ERR|G_IO_HUP),
+                                                    NULL);
+          g_source_set_callback (source,
+                                 (GSourceFunc) OnMulticast,
+                                 NULL,
+                                 NULL);
+          g_source_attach (source, NULL);
+          g_source_unref (source);
+        }
+
+        _multicast_address = g_inet_socket_address_new (multicast_group,
+                                                        ANNOUNCE_PORT);
+
+        g_object_unref (multicast_group);
+        g_object_unref (socket);
       }
 
       AnnounceAvailability ();
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Ring::JoinMulticast (GSocket      *socket,
+                                GInetAddress *group)
+  {
+#if GLIB_CHECK_VERSION(2,32,0)
+    {
+      GError  *error  = NULL;
+      g_socket_join_multicast_group (socket,
+                                     group,
+                                     FALSE,
+                                     NULL,
+                                     &error);
+      if (error)
+      {
+        g_warning ("g_socket_join_multicast_group: %s\n", error->message);
+        g_clear_error (&error);
+        return FALSE;
+      }
+      return TRUE;
+    }
+#else
+    {
+      struct ip_mreq option;
+      int            fd     = g_socket_get_fd (socket);
+
+      option.imr_interface.s_addr = htonl     (INADDR_ANY);
+      option.imr_multiaddr.s_addr = inet_addr (ANNOUNCE_GROUP);
+      if (setsockopt (fd,
+                      IPPROTO_IP,
+                      IP_ADD_MEMBERSHIP,
+                      (const char *) &option,
+                      sizeof (option)) < 0)
+      {
+        g_warning ("setsockopt: %s", strerror (errno));
+        return FALSE;
+      }
+      return TRUE;
+    }
+#endif
   }
 
   // --------------------------------------------------------------------------------
@@ -142,38 +211,32 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Ring::Multicast (Message *message)
   {
-    struct sockaddr_in  addr;
-    int                 fd;
+    GError  *error  = NULL;
+    GSocket *socket;
 
-    if ((fd = socket (AF_INET,
-                      SOCK_DGRAM,
-                      0)) < 0)
+    socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
+                           G_SOCKET_TYPE_DATAGRAM,
+                           G_SOCKET_PROTOCOL_DEFAULT,
+                           &error);
+    if (error)
     {
-      g_warning ("socket: %s", strerror (errno));
-      return;
+      g_warning ("g_socket_new: %s\n", error->message);
+      g_clear_error (&error);
     }
-
-    {
-      memset (&addr,
-              0,
-              sizeof(addr));
-
-      addr.sin_family      = AF_INET;
-      addr.sin_addr.s_addr = inet_addr (ANNOUNCE_GROUP);
-      addr.sin_port        = htons     (ANNOUNCE_PORT);
-    }
-
+    else
     {
       gchar *parcel = message->GetParcel ();
 
-      if (sendto (fd,
-                  parcel,
-                  strlen (parcel) + 1,
-                  0,
-                  (struct sockaddr *) &addr,
-                  sizeof(addr)) < 0)
+      g_socket_send_to (socket,
+                        _multicast_address,
+                        parcel,
+                        strlen (parcel) + 1,
+                        NULL,
+                        &error);
+      if (error)
       {
         g_warning ("sendto: %s", strerror (errno));
+        g_clear_error (&error);
       }
 
       g_free (parcel);
@@ -181,119 +244,57 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  gboolean Ring::OnMulticast (Message *message)
+  gboolean Ring::OnMulticast (GSocket      *socket,
+                              GIOCondition  condition,
+                              gpointer      user_data)
   {
-    gchar *role = message->GetString ("role");
-
-    if (g_strcmp0 (role, _role) != 0)
+    if (condition == G_IO_HUP)
     {
-      if (message->Is ("Announcement"))
+      g_warning ("Multicast error: G_IO_HUP\n");
+    }
+    if (condition == G_IO_ERR)
+    {
+      g_warning ("Multicast error: G_IO_ERR\n");
+    }
+    else if (condition == G_IO_IN)
+    {
+      GError *error       = NULL;
+      gchar   buffer[500];
+
+      g_socket_receive (socket,
+                        buffer,
+                        sizeof (buffer),
+                        NULL,
+                        &error);
+      if (error)
       {
-        Remove (role);
-        Add (new Partner (message));
+        g_warning ("g_socket_receive: %s", error->message);
+        g_clear_error (&error);
       }
-      else if (message->Is ("Farewell"))
-      {
-        Remove (role);
-      }
-    }
-
-    g_free (role);
-    message->Release ();
-
-    return FALSE;
-  }
-
-  // -------------------------------------------------------------------------------
-  gpointer Ring::MulticastListener ()
-  {
-    struct sockaddr_in addr;
-    int                fd;
-
-    if ((fd = socket (AF_INET,
-                      SOCK_DGRAM,
-                      0)) < 0)
-    {
-      g_warning ("socket: %s", strerror (errno));
-      return NULL;
-    }
-
-    // allow multiple sockets to use the same PORT number
-    {
-      guint yes = 1;
-
-      if (setsockopt (fd,
-                      SOL_SOCKET,
-                      SO_REUSEADDR,
-                      (const char *) &yes,
-                      sizeof (yes)) < 0)
-      {
-        g_warning ("setsockopt: %s", strerror (errno));
-        return NULL;
-      }
-    }
-
-    {
-      memset (&addr,
-              0,
-              sizeof(addr));
-
-      addr.sin_family      = AF_INET;
-      addr.sin_addr.s_addr = htonl (INADDR_ANY);
-      addr.sin_port        = htons (ANNOUNCE_PORT);
-    }
-
-    if (bind (fd,
-              (struct sockaddr *) &addr,
-              sizeof (addr)) < 0)
-    {
-      g_warning ("socket: %s", strerror (errno));
-      return NULL;
-    }
-
-    // use setsockopt() to request that the kernel join a multicast group
-    {
-      struct ip_mreq option;
-
-      option.imr_multiaddr.s_addr = inet_addr (ANNOUNCE_GROUP);
-      option.imr_interface.s_addr = htonl     (INADDR_ANY);
-      if (setsockopt (fd,
-                      IPPROTO_IP,
-                      IP_ADD_MEMBERSHIP,
-                      (const char *) &option,
-                      sizeof (option)) < 0)
-      {
-        g_warning ("setsockopt: %s", strerror (errno));
-        return NULL;
-      }
-    }
-
-    while (1)
-    {
-      struct sockaddr_in from;
-      socklen_t          addrlen = sizeof (from);
-      gchar              buffer[500];
-      ssize_t            size;
-
-      if ((size = recvfrom (fd,
-                            buffer,
-                            sizeof (buffer),
-                            0,
-                            (struct sockaddr *) &from,
-                            &addrlen)) < 0)
-      {
-        g_warning ("recvfrom: %s", strerror (errno));
-      }
-
+      else
       {
         Message *message = new Message ((guint8 *) buffer);
+        gchar   *role    = message->GetString ("role");
 
-        g_idle_add ((GSourceFunc) OnMulticast,
-                    message);
+        if (g_strcmp0 (role, _role) != 0)
+        {
+          if (message->Is ("Announcement"))
+          {
+            Remove (role);
+            Add (new Partner (message));
+          }
+          else if (message->Is ("Farewell"))
+          {
+            Remove (role);
+          }
+        }
+
+        g_free (role);
+        message->Release ();
       }
     }
 
-    return NULL;
+    return TRUE; //G_SOURCE_CONTINUE
   }
 
   // -------------------------------------------------------------------------------

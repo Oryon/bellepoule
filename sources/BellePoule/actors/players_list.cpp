@@ -179,6 +179,14 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void PlayersList::SetVisibileFunc (GtkTreeModelFilterVisibleFunc func,
+                                     gpointer                      data)
+  {
+    _store->SetVisibileFunc (func,
+                             data);
+  }
+
+  // --------------------------------------------------------------------------------
   GtkAction *PlayersList::GetAction (const gchar *name)
   {
     GList *groups = gtk_ui_manager_get_action_groups (_ui_manager);
@@ -256,8 +264,7 @@ namespace People
     _store->Update (player);
 
     {
-      GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
-      GtkTreeRowReference *ref   = _store->GetTreeRowRef (GTK_TREE_MODEL (model), player);
+      GtkTreeRowReference *ref   = _store->GetTreeRowRef (_tree_view, player);
       GtkTreePath         *path  = gtk_tree_row_reference_get_path (ref);
 
       gtk_tree_view_expand_to_path (_tree_view,
@@ -291,17 +298,17 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::Update (Player *player)
   {
-    GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
-    GtkTreeRowReference *ref   = _store->GetTreeRowRef (GTK_TREE_MODEL (model),
-                                                        player);
+    GtkTreeRowReference *ref = _store->GetTreeRowRef (_tree_view,
+                                                      player);
 
     if (ref)
     {
-      GtkTreePath *path;
-      GtkTreeIter  iter;
+      GtkTreePath  *path;
+      GtkTreeIter   iter;
+      GtkTreeStore *store = _store->GetTreeStore (_tree_view);
 
       path = gtk_tree_row_reference_get_path (ref);
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (model),
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (store),
                                &iter,
                                path);
       gtk_tree_path_free (path);
@@ -319,27 +326,27 @@ namespace People
           attr_id->Release ();
           if (attr)
           {
-            attr->TreeStoreSet (model, &iter,
+            attr->TreeStoreSet (store, &iter,
                                 i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-            attr->TreeStoreSet (model, &iter,
+            attr->TreeStoreSet (store, &iter,
                                 i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-            attr->TreeStoreSet (model, &iter,
+            attr->TreeStoreSet (store, &iter,
                                 i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
           }
           else
           {
-            desc->TreeStoreSetDefault (model, &iter,
+            desc->TreeStoreSetDefault (store, &iter,
                                        i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-            desc->TreeStoreSetDefault (model, &iter,
+            desc->TreeStoreSetDefault (store, &iter,
                                        i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-            desc->TreeStoreSetDefault (model, &iter,
+            desc->TreeStoreSetDefault (store, &iter,
                                        i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
           }
           attr_list = g_slist_next (attr_list);
         }
 
-        gtk_tree_store_set (model, &iter,
-                            gtk_tree_model_get_n_columns (GTK_TREE_MODEL (model)) - 1,
+        gtk_tree_store_set (store, &iter,
+                            gtk_tree_model_get_n_columns (GTK_TREE_MODEL (store)) - 1,
                             player, -1);
       }
     }
@@ -514,6 +521,8 @@ namespace People
         layout_list = g_slist_next (layout_list);
       }
     }
+
+    _store->Refilter ();
   }
 
   // --------------------------------------------------------------------------------
@@ -795,7 +804,7 @@ namespace People
   void PlayersList::RemoveSelection ()
   {
     GList        *ref_list = NULL;
-    GtkTreeModel *model    = gtk_tree_view_get_model (_tree_view);
+    GtkTreeModel *model    = GTK_TREE_MODEL (_store->GetTreeStore (_tree_view));
 
     {
       GtkTreeSelection *selection            = gtk_tree_view_get_selection (_tree_view);
@@ -845,8 +854,17 @@ namespace People
         {
           GtkTreeRowReference *ref;
 
-          ref = gtk_tree_row_reference_new (model,
-                                            (GtkTreePath *) current->data);
+          {
+            GtkTreePath *path;
+            GtkTreePath *view_path = (GtkTreePath *) current->data;
+
+            path = _store->GetStorePathFromViewPath (_tree_view,
+                                                     view_path);
+            ref = gtk_tree_row_reference_new (model,
+                                              path);
+            gtk_tree_path_free (path);
+          }
+
           ref_list = g_list_append (ref_list,
                                     ref);
 
@@ -874,7 +892,7 @@ namespace People
         while (current_player)
         {
           Player              *player     = (Player *) current_player->data;
-          GtkTreeRowReference *player_ref = _store->GetTreeRowRef (model, player);
+          GtkTreeRowReference *player_ref = _store->GetTreeRowRef (_tree_view, player);
 
           if (player_ref)
           {
@@ -942,17 +960,24 @@ namespace People
   // --------------------------------------------------------------------------------
   Player *PlayersList::GetPlayer (const gchar *path_string)
   {
-    Player       *result  = NULL;
-    GtkTreePath  *path    = gtk_tree_path_new_from_string (path_string);
-    GSList       *current = _player_list;
-    GtkTreeModel *model   = gtk_tree_view_get_model (_tree_view);
+    Player      *result  = NULL;
+    GtkTreePath *path;
+    GSList      *current = _player_list;
+
+    {
+      GtkTreePath *view_path = gtk_tree_path_new_from_string (path_string);
+
+      path = _store->GetStorePathFromViewPath (_tree_view,
+                                               view_path);
+      gtk_tree_path_free (view_path);
+    }
 
     while (current)
     {
       GtkTreeRowReference *current_ref;
       Player              *p = (Player *) current->data;
 
-      current_ref = _store->GetTreeRowRef (model,
+      current_ref = _store->GetTreeRowRef (_tree_view,
                                            p);
       if (current_ref)
       {
