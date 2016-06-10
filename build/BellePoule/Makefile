@@ -6,10 +6,10 @@ PRODUCT = bellepoulebeta
 OUTPUT  = Release
 PACKAGE = $(HOME)/PPA/$(PRODUCT)
 VERSION = 5.0
-STEP    = ubuntu1
+STEP    = ubuntu5
 RELEASE = $(PRODUCT)_$(VERSION)
 UBUNTU  = trusty
-V       = 3
+V       = 1
 DATE    = $(shell date -R)
 
 #----------------------------------------------------
@@ -105,7 +105,9 @@ LDFLAGS += -lcrypto
 LDFLAGS += -L$(OUTPUT)
 
 ifeq ($(UBUNTU), windows)
+ifeq ($(OUTPUT), Release)
 LDFLAGS += -mwindows
+endif
 LDFLAGS += -lgtk-win32-2.0
 LDFLAGS += -lgobject-2.0
 LDFLAGS += -lglib-2.0
@@ -393,7 +395,10 @@ help:
 	@echo "make -s UBUNTU=windows V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "make -s UBUNTU=windows V=$(V)"
+	@echo ""
 	@echo "cp Release/$(PRODUCT)-*.exe ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/"
+	@echo "cp Debug/$(PRODUCT)-*.exe ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/"
+	@echo ""
 	@echo "cp ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/bellepoulebeta/bin"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"

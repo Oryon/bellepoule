@@ -227,6 +227,8 @@ namespace Net
     {
       gchar *parcel = message->GetParcel ();
 
+      g_socket_set_blocking (socket, FALSE);
+
       g_socket_send_to (socket,
                         _multicast_address,
                         parcel,
