@@ -1084,11 +1084,13 @@ void Tournament::OnRecent ()
   GtkWidget *dialog = gtk_recent_chooser_dialog_new (gettext ("Recently opened files"),
                                                      NULL,
                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                                     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                                     GTK_STOCK_OPEN,   GTK_RESPONSE_ACCEPT,
                                                      NULL);
 
-  gtk_recent_chooser_set_show_tips  (GTK_RECENT_CHOOSER (dialog),
-                                     TRUE);
+  gtk_recent_chooser_set_show_tips (GTK_RECENT_CHOOSER (dialog),
+                                    TRUE);
+  gtk_recent_chooser_set_show_not_found (GTK_RECENT_CHOOSER (dialog),
+                                         FALSE);
 
   {
     GtkRecentFilter *filter = gtk_recent_filter_new ();
