@@ -3,7 +3,7 @@ EXEC = livepoule
 CC = arm-linux-gnueabihf-gcc
 
 CFLAGS  =
-CFLAGS += -DWIRING_PI
+CFLAGS += -DLIVE_POOL
 CFLAGS += -Wshadow
 CFLAGS += -Winit-self
 CFLAGS += -Wredundant-decls
@@ -32,12 +32,16 @@ LDFLAGS += $(shell pkg-config --libs gtk+-3.0 libxml-2.0 libcurl libmicrohttpd l
 LDFLAGS += -lwiringPi
 LDFLAGS += -rdynamic
 
+RESOURCES = ../../resources
+EXAMPLE   = ../../Exemples
+
 SRC   = $(wildcard ../../sources/common/*/*.cpp)
 SRC  += $(wildcard ../../sources/LivePoule/*.cpp)
 SRC  := $(filter-out ../../sources/common/util/canvas_module.cpp, $(SRC))
 SRC  := $(filter-out ../../sources/common/util/drop_zone.cpp, $(SRC))
 SRC  := $(filter-out ../../sources/common/util/canvas.cpp, $(SRC))
 SRC  := $(filter-out ../../sources/common/util/player.cpp, $(SRC))
+SRC  := $(filter-out ../../sources/common/network/web_server.cpp, $(SRC))
 OBJ   = $(SRC:.cpp=.o)
 HPP   = $(SRC:.cpp=.hpp)
 HPP  := $(filter-out ../../sources/LivePoule/main.hpp, $(HPP))
@@ -46,10 +50,10 @@ HPP  := $(filter-out ../../sources/LivePoule/main.hpp, $(HPP))
 ##
 ## Compilation section
 ##
-all: $(EXEC)
-	cp $(EXEC) ~/bin
+all: extract $(EXEC)
+	mv $(EXEC) /home/pi/livepoule/bin
 
-$(EXEC): extract $(OBJ)
+$(EXEC): $(OBJ)
 	@echo "\033[1;36m" $< "\033[0m"
 	@$(CC) -o $@ $^ $(LDFLAGS)
 
@@ -67,7 +71,13 @@ clean:
 extract:
 	cd ../..; tar xzf lp.tar.gz; cd -
 
-push:
+push_share:
+	@tar czf share.tar.gz $(EXAMPLE) $(RESOURCES)
+	scp share.tar.gz pi@192.168.0.13:/home/pi/livepoule/share/livepoule
+	rm share.tar.gz
+
+push_src:
 	@tar czf lp.tar.gz $(SRC) $(HPP)
-	scp lp.tar.gz pi@192.168.0.21:/home/pi/livepoule
-	scp Makefile  pi@192.168.0.21:/home/pi/livepoule/build/LivePoule
+	scp lp.tar.gz pi@192.168.0.13:/home/pi/livepoule/build
+	scp Makefile  pi@192.168.0.13:/home/pi/livepoule/build/build/LivePoule
+	rm lp.tar.gz

@@ -76,7 +76,7 @@ class Screen : public Module, Net::HttpServer::Client
                     const gchar *data,
                     const gchar *name);
 
-    gboolean OnHttpPost (const gchar *data);
+    gboolean OnHttpPost (Net::Message *message);
 
     gchar *GetSecretKey (const gchar *authentication_scheme);
 
@@ -88,7 +88,7 @@ class Screen : public Module, Net::HttpServer::Client
 
   private:
     static gboolean HttpPostCbk (Net::HttpServer::Client *client,
-                                 const gchar             *data);
+                                 Net::Message            *message);
 
     static gboolean OnLightEvent (Screen *screen);
 

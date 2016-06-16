@@ -28,8 +28,6 @@ class Gpio : public Object
           GSourceFunc  handler,
           void        *context);
 
-    void GenerateFakeEvent ();
-
     guint GetVoltageState ();
 
   protected:
@@ -37,13 +35,12 @@ class Gpio : public Object
 
   private:
     guint         _pin_id;
-    guint         _fake_voltage;
     GSourceFunc   _event_handler;
     void         *_context;
 
     static void OnEvent (Gpio *gpio);
 
-    static gpointer FakeLoop (Gpio *gpio);
+    void SetPinMode (const gchar *mode);
 };
 
 #endif

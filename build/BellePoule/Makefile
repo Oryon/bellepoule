@@ -4,7 +4,7 @@
 PRODUCT = bellepoulebeta
 #PRODUCT = bellepoule
 OUTPUT  = Release
-PACKAGE = $(HOME)/PPA/$(PRODUCT)
+PACKAGE = $(HOME)/Project/PPA/$(PRODUCT)
 VERSION = 5.0
 STEP    = ubuntu5
 RELEASE = $(PRODUCT)_$(VERSION)

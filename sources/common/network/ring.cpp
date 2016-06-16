@@ -237,7 +237,7 @@ namespace Net
                         &error);
       if (error)
       {
-        g_warning ("sendto: %s", strerror (errno));
+        g_warning ("sendto: %s", error->message);
         g_clear_error (&error);
       }
 

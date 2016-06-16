@@ -17,6 +17,7 @@
 #include <gtk/gtk.h>
 
 #include "util/object.hpp"
+#include "util/global.hpp"
 #include "util/wifi_code.hpp"
 #include "screen.hpp"
 #include "gpio.hpp"
@@ -66,8 +67,6 @@ int main (int argc, char **argv)
 
   // Init
   {
-    gchar *install_dirname;
-
     {
       gchar *binary_dir;
 
@@ -81,7 +80,7 @@ int main (int argc, char **argv)
       g_log_set_default_handler (LogHandler,
                                  NULL);
 #ifdef DEBUG
-      install_dirname = g_build_filename (binary_dir, "..", "..", "..", NULL);
+      Global::_share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);
 #else
       {
         gchar *basename = g_path_get_basename (argv[0]);
@@ -92,7 +91,7 @@ int main (int argc, char **argv)
           basename = g_strdup ("bellepoule");
         }
 
-        install_dirname = g_build_filename (binary_dir, "..", "share", basename, NULL);
+        Global::_share_dir = g_build_filename (binary_dir, "..", "share", basename, NULL);
         g_free (basename);
       }
 #endif
@@ -105,10 +104,8 @@ int main (int argc, char **argv)
     //Object::Track ("Player");
 
     {
-      Object::SetProgramPath (install_dirname);
-
       {
-        gchar *translation_path = g_build_filename (install_dirname, "resources", "countries", "translations", NULL);
+        gchar *translation_path = g_build_filename (Global::_share_dir, "resources", "countries", "translations", NULL);
 
         bindtextdomain ("countries", translation_path);
         bind_textdomain_codeset ("countries", "UTF-8");
@@ -117,7 +114,7 @@ int main (int argc, char **argv)
       }
 
       {
-        gchar *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
+        gchar *translation_path = g_build_filename (Global::_share_dir, "resources", "translations", NULL);
 
         bindtextdomain ("BellePoule", translation_path);
         bind_textdomain_codeset ("BellePoule", "UTF-8");
@@ -127,8 +124,6 @@ int main (int argc, char **argv)
 
       textdomain ("BellePoule");
     }
-
-    g_free (install_dirname);
   }
 
   WifiCode::SetPort (35832);
