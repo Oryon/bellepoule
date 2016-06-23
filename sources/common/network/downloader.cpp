@@ -50,18 +50,10 @@ namespace Net
 
     Retain ();
 
-#if GLIB_CHECK_VERSION (2,32,0)
     _thread = g_thread_try_new (_name,
                                 (GThreadFunc) ThreadFunction,
                                 this,
                                 &error);
-#else
-    _thread = g_thread_create ((GThreadFunc) ThreadFunction,
-                               this,
-                               FALSE,
-                               &error);
-#endif
-
     if (_thread == NULL)
     {
       g_printerr ("Failed to create Downloader thread: %s\n", error->message);

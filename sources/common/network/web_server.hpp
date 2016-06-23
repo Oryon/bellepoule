@@ -17,7 +17,6 @@
 #ifndef web_server_linux_hpp
 #define web_server_linux_hpp
 
-#include <pthread.h>
 #include <glib.h>
 
 #include "util/object.hpp"
@@ -39,7 +38,7 @@ namespace Net
       void Stop ();
 
     private:
-      pthread_mutex_t  _mutex;  // GMutex are not available on windows
+      GMutex           _mutex;
       StateFunc        _state_func;
       Object          *_owner;
       gboolean         _in_progress;

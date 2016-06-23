@@ -29,10 +29,7 @@ namespace Net
                         Object    *owner)
     : Object ("WebServer")
   {
-    if (pthread_mutex_init (&_mutex, NULL) != 0)
-    {
-      g_warning ("pthread_mutex_init: failed");
-    }
+    g_mutex_init (&_mutex);
 
     _in_progress  = FALSE;
     _on           = FALSE;
@@ -44,10 +41,10 @@ namespace Net
   // --------------------------------------------------------------------------------
   WebServer::~WebServer ()
   {
-    pthread_mutex_lock (&_mutex);
+    g_mutex_lock (&_mutex);
     ShutDown (this);
 
-    pthread_mutex_destroy (&_mutex);
+    g_mutex_clear (&_mutex);
   }
 
   // --------------------------------------------------------------------------------
@@ -63,24 +60,24 @@ namespace Net
   // --------------------------------------------------------------------------------
   void WebServer::Start ()
   {
-    if (pthread_mutex_trylock (&_mutex) == 0)
+    if (g_mutex_trylock (&_mutex) == FALSE)
     {
-      g_thread_create ((GThreadFunc) StartUp,
-                       this,
-                       FALSE,
-                       NULL);
+      g_thread_try_new ("WebServer::Start",
+                        (GThreadFunc) StartUp,
+                        this,
+                        NULL);
     }
   }
 
   // --------------------------------------------------------------------------------
   void WebServer::Stop ()
   {
-    if (pthread_mutex_trylock (&_mutex) == 0)
+    if (g_mutex_trylock (&_mutex) == FALSE)
     {
-      g_thread_create ((GThreadFunc) ShutDown,
-                       this,
-                       FALSE,
-                       NULL);
+      g_thread_try_new ("WebServer::Stop",
+                        (GThreadFunc) ShutDown,
+                        this,
+                        NULL);
     }
   }
 
@@ -153,7 +150,7 @@ namespace Net
       server->_on          = (server->_failed == FALSE);
       server->_in_progress = FALSE;
     }
-    pthread_mutex_unlock (&server->_mutex);
+    g_mutex_unlock (&server->_mutex);
 
     g_idle_add ((GSourceFunc) OnProgress,
                 server);
@@ -172,7 +169,7 @@ namespace Net
       server->_on          = (server->_failed == TRUE);
       server->_in_progress = FALSE;
     }
-    pthread_mutex_unlock (&server->_mutex);
+    g_mutex_unlock (&server->_mutex);
 
     g_idle_add ((GSourceFunc) OnProgress,
                 server);
