@@ -296,7 +296,7 @@ namespace Net
       }
     }
 
-    return TRUE; //G_SOURCE_CONTINUE
+    return G_SOURCE_CONTINUE;
   }
 
   // -------------------------------------------------------------------------------

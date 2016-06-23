@@ -59,5 +59,5 @@ gboolean Clock::OnTimeout (Clock *clock)
   clock->SetupTimeout ();
   g_date_time_unref (now);
 
-  return FALSE;
+  return G_SOURCE_REMOVE;
 }

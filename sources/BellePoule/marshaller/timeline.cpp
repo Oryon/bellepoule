@@ -237,8 +237,7 @@ gboolean Timeline::Redraw ()
                                            (GSourceFunc) RedrawCbk,
                                            this);
 
-  //return G_SOURCE_CONTINUE;
-  return TRUE;
+  return G_SOURCE_CONTINUE;
 }
 
 // --------------------------------------------------------------------------------

@@ -184,6 +184,6 @@ namespace Net
                          server->_on,
                          server->_owner);
 
-    return FALSE;
+    return G_SOURCE_REMOVE;
   }
 }
