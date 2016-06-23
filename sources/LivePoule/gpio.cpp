@@ -19,9 +19,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#ifdef WIRING_PI
 #include <wiringPi.h>
-#endif
 
 #include "gpio.hpp"
 
@@ -31,14 +29,12 @@ Gpio::Gpio (guint        pin_id,
             void        *context)
   : Object ("Gpio")
 {
-  _pin_id        = pin_id;
+  _pin_id        = wpiPinToGpio (pin_id);
   _event_handler = handler;
   _context       = context;
-  _fake_voltage  = 0;
 
-#ifdef WIRING_PI
-  pinMode         (_pin_id, INPUT);
-  pullUpDnControl (_pin_id, PUD_UP);
+  SetPinMode ("in"); // pinMode         (_pin_id, INPUT);
+  SetPinMode ("up"); // pullUpDnControl (_pin_id, PUD_UP);
 
   if (wiringPiISR (_pin_id,
                    INT_EDGE_BOTH,
@@ -47,7 +43,6 @@ Gpio::Gpio (guint        pin_id,
   {
     g_warning ("OnSignal[%d] registration error", _pin_id);
   }
-#endif
 }
 
 // --------------------------------------------------------------------------------
@@ -58,29 +53,13 @@ Gpio::~Gpio ()
 // --------------------------------------------------------------------------------
 void Gpio::Init ()
 {
-#ifdef WIRING_PI
-  wiringPiSetup () ;
-#endif
-}
-
-// --------------------------------------------------------------------------------
-void Gpio::GenerateFakeEvent ()
-{
-#ifndef WIRING_PI
-  g_thread_new (NULL,
-                (GThreadFunc) FakeLoop,
-                this);
-#endif
+  wiringPiSetupSys () ;
 }
 
 // --------------------------------------------------------------------------------
 guint Gpio::GetVoltageState ()
 {
-#ifdef WIRING_PI
   return digitalRead (_pin_id);
-#else
-  return _fake_voltage;
-#endif
 }
 
 // --------------------------------------------------------------------------------
@@ -91,25 +70,24 @@ void Gpio::OnEvent (Gpio *gpio)
 }
 
 // --------------------------------------------------------------------------------
-gpointer Gpio::FakeLoop (Gpio *gpio)
+void Gpio::SetPinMode (const gchar *mode)
 {
-  while (1)
+  GError *error           = NULL;
+  gchar  *standard_output;
+  gchar  *standard_error;
+  gint    exit_status;
+  gchar  *cmd;
+
+  cmd = g_strdup_printf ("gpio -g mode %d %s", _pin_id, mode);
+  g_spawn_command_line_sync (cmd,
+                             &standard_output,
+                             &standard_error,
+                             &exit_status,
+                             &error);
+  if (error)
   {
-    gint32 delay = g_random_int_range (1, 10);
-
-    sleep (delay);
-
-    if (gpio->_fake_voltage)
-    {
-      gpio->_fake_voltage = 0;
-    }
-    else
-    {
-      gpio->_fake_voltage = 1;
-    }
-
-    gpio->OnEvent (gpio);
+    g_warning ("g_spawn_command_line_sync: %s", error->message);
+    g_clear_error (&error);
   }
-
-  return NULL;
+  g_free (cmd);
 }

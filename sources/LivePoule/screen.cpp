@@ -16,6 +16,7 @@
 
 #include <glib/gstdio.h>
 #include <gio/gunixsocketaddress.h>
+#include "network/message.hpp"
 
 #include "screen.hpp"
 
@@ -259,8 +260,6 @@ void Screen::ToggleWifiCode ()
 
     if (gtk_widget_get_visible (spinner) == FALSE)
     {
-      GtkWidget *spinner = _glade->GetWidget ("spinner");
-
       gtk_widget_set_visible (spinner, TRUE);
       _wpa->ConfigureNetwork ((GSourceFunc) OnNetworkConfigured,
                               this);
@@ -313,12 +312,14 @@ void Screen::ChangeStripId (gint step)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Screen::OnHttpPost (const gchar *data)
+gboolean Screen::OnHttpPost (Net::Message *message)
 {
-  gboolean result = FALSE;
+  gboolean  result = FALSE;
+  gchar    *data   = message->GetString ("content");
 
   if (data)
   {
+    printf (BLUE "%s\n" ESC, data);
     if (strstr (data, "coucou"))
     {
       gtk_widget_set_visible (_glade->GetWidget ("code_image"),
@@ -366,6 +367,7 @@ gboolean Screen::OnHttpPost (const gchar *data)
         g_key_file_free (key_file);
       }
     }
+    g_free (data);
   }
 
   return result;
@@ -507,11 +509,11 @@ gchar *Screen::GetSecretKey (const gchar *authentication_scheme)
 
 // --------------------------------------------------------------------------------
 gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
-                              const gchar             *data)
+                              Net::Message            *message)
 {
   Screen *screen = (Screen *) client;
 
-  return screen->OnHttpPost (data);
+  return screen->OnHttpPost (message);
 }
 
 // --------------------------------------------------------------------------------

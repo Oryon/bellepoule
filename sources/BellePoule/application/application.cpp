@@ -70,7 +70,7 @@ Application::Application (const gchar   *config_file,
         g_free (program);
       }
 
-#ifdef DEBUG
+#if defined(DEBUG) && defined(G_OS_UNIX)
       g_log_set_default_handler (LogHandler,
                                  NULL);
       Global::_share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);

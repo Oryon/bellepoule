@@ -18,7 +18,6 @@
 #define wifi_code_hpp
 
 #include "util/object.hpp"
-#include "util/player.hpp"
 #include "network/wifi_network.hpp"
 #include "flash_code.hpp"
 
@@ -31,7 +30,7 @@ class WifiCode : public FlashCode
 
     WifiCode (Player *player);
 
-    static void SetPort (guint port);
+    static void SetIpPort (guint port);
 
     void SetWifiNetwork (Net::WifiNetwork *network);
 

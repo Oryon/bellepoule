@@ -42,11 +42,10 @@ namespace Net
     {
       GError *error = NULL;
 
-      _sender_thread = g_thread_create ((GThreadFunc) Loop,
-                                        this,
-                                        TRUE,
-                                        &error);
-
+      _sender_thread = g_thread_try_new ("MessageUploader",
+                                         (GThreadFunc) Loop,
+                                         this,
+                                         &error);
       if (_sender_thread == NULL)
       {
         g_printerr ("Failed to create Uploader thread: %s\n", error->message);

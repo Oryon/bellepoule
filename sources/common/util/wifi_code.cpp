@@ -28,7 +28,9 @@
 #endif
 #include <qrencode.h>
 
+#ifndef LIVE_POOL
 #include "util/player.hpp"
+#endif
 #include "wifi_code.hpp"
 
 Net::WifiNetwork *WifiCode::_wifi_network = NULL;
@@ -63,7 +65,7 @@ void WifiCode::SetWifiNetwork (Net::WifiNetwork *network)
 }
 
 // --------------------------------------------------------------------------------
-void WifiCode::SetPort (guint port)
+void WifiCode::SetIpPort (guint port)
 {
   _port = port;
 }
@@ -215,6 +217,7 @@ gchar *WifiCode::GetText ()
   gchar *key     = GetKey ();
   gchar *text;
 
+#ifndef LIVE_POOL
   if (_player)
   {
     text = g_strdup_printf ("%s%s:%d-%s-%d-%s",
@@ -226,6 +229,7 @@ gchar *WifiCode::GetText ()
                             key);
   }
   else
+#endif
   {
     text = g_strdup_printf ("%s%s:%d-%s-0-%s",
                             network,

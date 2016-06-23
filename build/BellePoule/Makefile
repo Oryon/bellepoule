@@ -4,30 +4,31 @@
 PRODUCT = bellepoulebeta
 #PRODUCT = bellepoule
 OUTPUT  = Release
-PACKAGE = $(HOME)/PPA/$(PRODUCT)
+PACKAGE = $(HOME)/Project/PPA/$(PRODUCT)
 VERSION = 5.0
-STEP    = ubuntu1
+STEP    = ubuntu5
 RELEASE = $(PRODUCT)_$(VERSION)
 UBUNTU  = trusty
-V       = 3
+V       = 1
 DATE    = $(shell date -R)
 
 #----------------------------------------------------
 #-- Compilers ---------------------------------------
 #----------------------------------------------------
 ifeq ($(UBUNTU), windows)
-#MINGW=i686-w64-mingw32
-MINGW=$(HOME)/.wine/drive_c/MinGW
-PKG_CONFIG = $(MINGW)-pkg-config
-CC         = $(MINGW)/bin/g++.exe
-AR         = $(MINGW)/bin/ar.exe
-WINDRES    = i686-w64-mingw32-windres
+CC_FAMILY = i686-w64-mingw32-
+EXE       = .exe
+MINGW=$(HOME)/.local/share/crossroad/roads/w32/bellepoule
+PKG_CONFIG = env PKG_CONFIG_PATH= PKG_CONFIG_LIBDIR=$(MINGW)/lib/pkgconfig $(CC_FAMILY)pkg-config
 else
+CC_FAMILY  =
+EXE        =
 PKG_CONFIG = pkg-config
-CC         = g++
-AR         = ar
-WINDRES    = $(MINGW)-windres
 endif
+
+WINDRES = $(CC_FAMILY)windres
+CC      = $(CC_FAMILY)g++
+AR      = $(CC_FAMILY)ar
 
 ifeq ($(OUTPUT), Debug)
 CC += -g
@@ -42,56 +43,37 @@ CFLAGS  =
 CFLAGS += -pedantic
 CFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
-CFLAGS += -DGDK_DISABLE_DEPRECATED
 CFLAGS += -DGSEAL_ENABLE
+
 CFLAGS += -Wall
 CFLAGS += -Wcast-align
 CFLAGS += -Wextra
 CFLAGS += -Winit-self
 CFLAGS += -Wmissing-include-dirs
-CFLAGS += -Wno-long-long
-CFLAGS += -Wno-unused-parameter
-CFLAGS += -Wno-variadic-macros
+CFLAGS += -Wredundant-decls
 CFLAGS += -Wshadow
 CFLAGS += -Wswitch-default
 CFLAGS += -Wswitch-enum
 CFLAGS += -Wundef
+CFLAGS += -Wunreachable-code
+
+CFLAGS += -Wno-int-to-pointer-cast
+CFLAGS += -Wno-long-long
+CFLAGS += -Wno-unused-parameter
+CFLAGS += -Wno-variadic-macros
+CFLAGS += -Wno-vla
 ifeq ($(OUTPUT), Debug)
 CFLAGS += -DDEBUG=1
 endif
 
 ifeq ($(UBUNTU), windows)
-CFLAGS += -mms-bitfields
-CFLAGS += -D_FILE_OFFSET_BITS=32
 CFLAGS += -DWINDOWS_TEMPORARY_PATCH=1
 CFLAGS += -DWIN32
-CFLAGS += -DLIBXML2_STATIC
 else
-CFLAGS += -std=c++98
 CFLAGS += -fPIC
-CFLAGS += -Wno-int-to-pointer-cast
-CFLAGS += -Wno-vla
-CFLAGS += -Wno-deprecated-declarations
-CFLAGS += -Wredundant-decls
-CFLAGS += -Wunreachable-code
 endif
 
-ifeq ($(UBUNTU), windows)
-CFLAGS += -I$(MINGW)/include
-CFLAGS += -I$(MINGW)/msys/1.0/include
-CFLAGS += -I$(MINGW)/include
-CFLAGS += -I$(MINGW)/include/gtk-2.0
-CFLAGS += -I$(MINGW)/include/cairo
-CFLAGS += -I$(MINGW)/include/gdk-pixbuf-2.0
-CFLAGS += -I$(MINGW)/include/glib-2.0
-CFLAGS += -I$(MINGW)/lib/glib-2.0/include
-CFLAGS += -I$(MINGW)/include/pango-1.0
-CFLAGS += -I$(MINGW)/lib/gtk-2.0/include
-CFLAGS += -I$(MINGW)/include/atk-1.0
-CFLAGS += -I$(MINGW)/include/goocanvas-1.0.0/goocanvas
-else
-CFLAGS += $(shell $(PKG_CONFIG) --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
-endif
+CFLAGS += $(shell $(PKG_CONFIG) --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libzmq)
 
 CFLAGS += -Isources/common
 CFLAGS += -Isources/BellePoule
@@ -105,38 +87,13 @@ LDFLAGS += -lcrypto
 LDFLAGS += -L$(OUTPUT)
 
 ifeq ($(UBUNTU), windows)
-LDFLAGS += -mwindows
-LDFLAGS += -lgtk-win32-2.0
-LDFLAGS += -lgobject-2.0
-LDFLAGS += -lglib-2.0
-LDFLAGS += -llibgthread-2.0
-LDFLAGS += -lgoocanvas
-LDFLAGS += -lgdk-win32-2.0
-LDFLAGS += -latk-1.0
-LDFLAGS += -lgio-2.0
-LDFLAGS += -lgdk_pixbuf-2.0
-LDFLAGS += -lpangowin32-1.0
-LDFLAGS += -lgdi32
-LDFLAGS += -lpangocairo-1.0
-LDFLAGS += -lpango-1.0
-LDFLAGS += -lcairo
-LDFLAGS += -lgmodule-2.0
-LDFLAGS += -lintl
 LDFLAGS += -lws2_32
-LDFLAGS += -lcurl
-LDFLAGS += -lcurldll
-LDFLAGS += -lz
-LDFLAGS += -lzdll
-LDFLAGS += -lmicrohttpd
-LDFLAGS += -lqrencode
 LDFLAGS += -liphlpapi
-LDFLAGS += -lpthreadGC2
-LDFLAGS += -lxml2
-LDFLAGS += -L$(MINGW)/lib
-LDFLAGS += -L$(MINGW)/msys/1.0/lib
-else
-LDFLAGS += $(shell $(PKG_CONFIG) --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
+ifeq ($(OUTPUT), Release)
+LDFLAGS += -mwindows
 endif
+endif
+LDFLAGS += $(shell $(PKG_CONFIG) --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libzmq)
 
 ifeq ($(OUTPUT), Release)
 LDFLAGS += -s
@@ -179,7 +136,7 @@ endif
 #----------------------------------------------------
 #-- Targets -----------------------------------------
 #----------------------------------------------------
-all: output $(OUTPUT)/$(PRODUCT)-marshaller $(OUTPUT)/$(PRODUCT)-supervisor
+all: output $(OUTPUT)/$(PRODUCT)-marshaller$(EXE) $(OUTPUT)/$(PRODUCT)-supervisor$(EXE)
 
 output:
 	@mkdir -p $(OUTPUT)
@@ -194,11 +151,11 @@ $(STATIC_LIB): $(OBJ_LIB)
 	@echo "\033[1;31m" $@ "\033[0m"
 	@$(AR) rcs $@ $^
 
-$(OUTPUT)/$(PRODUCT)-supervisor: $(SHARED_LIB) $(STATIC_LIB) $(OBJ_SUPERVISOR)
+$(OUTPUT)/$(PRODUCT)-supervisor$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_SUPERVISOR)
 	@echo "\033[1;31m" $@ "\033[0m"
 	@$(CC) -o $@ $(OBJ_SUPERVISOR) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(LDFLAGS)
 
-$(OUTPUT)/$(PRODUCT)-marshaller: $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHALLER)
+$(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHALLER)
 	@echo "\033[1;31m" $@ "\033[0m"
 	@$(CC) -o $@ $(OBJ_MARSHALLER) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(LDFLAGS)
 
@@ -214,8 +171,10 @@ $(OUTPUT)/$(PRODUCT)-marshaller: $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHALLER)
 
 #--
 
-cflags:
+flags:
 	@echo $(CFLAGS)
+	@echo "---------------"
+	@echo $(LDFLAGS)
 
 valgrind:
 	G_SLICE=always-malloc G_DEBUG=gc-friendly valgrind --log-file=memory_leak.log --tool=memcheck --leak-check=full --leak-resolution=high --num-callers=20 $(OUTPUT)/$(PRODUCT)
@@ -393,8 +352,11 @@ help:
 	@echo "make -s UBUNTU=windows V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "make -s UBUNTU=windows V=$(V)"
-	@echo "cp Release/$(PRODUCT)-*.exe ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/"
-	@echo "cp ~/Project/BellePoule/trunk/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/bellepoulebeta/bin"
+	@echo ""
+	@echo "cp Release/$(PRODUCT)-*.exe ~/Project/Gtk/trunk/build/BellePoule/windows/exe/"
+	@echo "cp Debug/$(PRODUCT)-*.exe ~/Project/Gtk/trunk/build/BellePoule/windows/exe/"
+	@echo ""
+	@echo "cp ~/Project/Gtk/trunk/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/$(PRODUCT)/bin"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"

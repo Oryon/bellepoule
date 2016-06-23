@@ -64,10 +64,10 @@ namespace Net
     {
       GError *error = NULL;
 
-      GThread *sender_thread = g_thread_create ((GThreadFunc) SenderThread,
-                                                this,
-                                                FALSE,
-                                                &error);
+      GThread *sender_thread = g_thread_try_new ("FileUploader",
+                                                 (GThreadFunc) SenderThread,
+                                                 this,
+                                                 &error);
 
       if (sender_thread == NULL)
       {
