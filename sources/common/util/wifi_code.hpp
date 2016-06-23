@@ -30,7 +30,7 @@ class WifiCode : public FlashCode
 
     WifiCode (Player *player);
 
-    static void SetPort (guint port);
+    static void SetIpPort (guint port);
 
     void SetWifiNetwork (Net::WifiNetwork *network);
 

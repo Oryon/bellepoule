@@ -65,7 +65,7 @@ void WifiCode::SetWifiNetwork (Net::WifiNetwork *network)
 }
 
 // --------------------------------------------------------------------------------
-void WifiCode::SetPort (guint port)
+void WifiCode::SetIpPort (guint port)
 {
   _port = port;
 }

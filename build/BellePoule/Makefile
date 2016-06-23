@@ -43,20 +43,25 @@ CFLAGS  =
 CFLAGS += -pedantic
 CFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
-CFLAGS += -DGDK_DISABLE_DEPRECATED
 CFLAGS += -DGSEAL_ENABLE
+
 CFLAGS += -Wall
 CFLAGS += -Wcast-align
 CFLAGS += -Wextra
 CFLAGS += -Winit-self
 CFLAGS += -Wmissing-include-dirs
-CFLAGS += -Wno-long-long
-CFLAGS += -Wno-unused-parameter
-CFLAGS += -Wno-variadic-macros
+CFLAGS += -Wredundant-decls
 CFLAGS += -Wshadow
 CFLAGS += -Wswitch-default
 CFLAGS += -Wswitch-enum
 CFLAGS += -Wundef
+CFLAGS += -Wunreachable-code
+
+CFLAGS += -Wno-int-to-pointer-cast
+CFLAGS += -Wno-long-long
+CFLAGS += -Wno-unused-parameter
+CFLAGS += -Wno-variadic-macros
+CFLAGS += -Wno-vla
 ifeq ($(OUTPUT), Debug)
 CFLAGS += -DDEBUG=1
 endif
@@ -65,13 +70,7 @@ ifeq ($(UBUNTU), windows)
 CFLAGS += -DWINDOWS_TEMPORARY_PATCH=1
 CFLAGS += -DWIN32
 else
-CFLAGS += -std=c++98
 CFLAGS += -fPIC
-CFLAGS += -Wno-int-to-pointer-cast
-CFLAGS += -Wno-vla
-CFLAGS += -Wno-deprecated-declarations
-CFLAGS += -Wredundant-decls
-CFLAGS += -Wunreachable-code
 endif
 
 CFLAGS += $(shell $(PKG_CONFIG) --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libzmq)

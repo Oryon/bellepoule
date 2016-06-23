@@ -319,6 +319,7 @@ gboolean Screen::OnHttpPost (Net::Message *message)
 
   if (data)
   {
+    printf (BLUE "%s\n" ESC, data);
     if (strstr (data, "coucou"))
     {
       gtk_widget_set_visible (_glade->GetWidget ("code_image"),

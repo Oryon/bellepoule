@@ -97,7 +97,7 @@ void BellPouleApp::Start (int    argc,
 {
   _tournament = new Tournament ();
 
-  WifiCode::SetPort (35830);
+  WifiCode::SetIpPort (35830);
   People::Splitting::SetHostTournament (_tournament);
 
   _main_module = _tournament;
