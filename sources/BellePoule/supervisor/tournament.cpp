@@ -1423,25 +1423,6 @@ extern "C" G_MODULE_EXPORT void on_payment_menuitem_activate (GtkMenuItem *menui
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_QuickPoule_button_clicked (GtkButton *widget,
-                                                              gpointer   user_data)
-{
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecute (NULL,
-                "open",
-                "https://play.google.com/store/apps/details?id=betton.escrime.quickpoule",
-                NULL,
-                NULL,
-                SW_SHOWNORMAL);
-#else
-  gtk_show_uri (NULL,
-                "https://play.google.com/store/apps/details?id=betton.escrime.quickpoule",
-                GDK_CURRENT_TIME,
-                NULL);
-#endif
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_SmartPoule_button_clicked (GtkButton *widget,
                                                               gpointer   user_data)
 {
