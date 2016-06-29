@@ -75,6 +75,8 @@ void Marshaller::Start ()
 // --------------------------------------------------------------------------------
 gboolean Marshaller::OnHttpPost (Net::Message *message)
 {
+  message->Dump ();
+
   if (message->GetFitness () > 0)
   {
     if (message->Is ("Competition"))
@@ -93,6 +95,10 @@ gboolean Marshaller::OnHttpPost (Net::Message *message)
       _referee_pool->ManageReferee (message);
       return TRUE;
     }
+    else if (message->Is ("Fencer"))
+    {
+      return TRUE;
+    }
   }
   else
   {
@@ -104,6 +110,10 @@ gboolean Marshaller::OnHttpPost (Net::Message *message)
     else if (message->Is ("Job"))
     {
       _hall->DropJob (message);
+      return TRUE;
+    }
+    else if (message->Is ("Fencer"))
+    {
       return TRUE;
     }
   }

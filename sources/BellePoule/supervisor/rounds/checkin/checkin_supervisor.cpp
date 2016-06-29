@@ -768,6 +768,9 @@ namespace People
     _form->Lock ();
 
     DisableDragAndDrop ();
+
+    Disclose ("Fencer");
+    Spread  ();
   }
 
   // --------------------------------------------------------------------------------
@@ -826,6 +829,8 @@ namespace People
     SetPasteVisibility (TRUE);
     _form->UnLock ();
     EnableDragAndDrop ();
+
+    Recall ();
   }
 
   // --------------------------------------------------------------------------------

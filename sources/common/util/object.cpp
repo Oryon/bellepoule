@@ -113,7 +113,7 @@ Object::~Object ()
 
   if (_parcel)
   {
-    _parcel->Recall  ();
+    Recall  ();
     _parcel->Release ();
   }
 
@@ -349,11 +349,11 @@ void Object::Disclose (const gchar *as)
 }
 
 // --------------------------------------------------------------------------------
-void Object::Conceal ()
+void Object::Recall ()
 {
   if (_parcel)
   {
-    _parcel->Conceal ();
+    _parcel->Recall ();
   }
 }
 

@@ -72,6 +72,8 @@ namespace People
 
       void Spread ();
 
+      void Recall ();
+
       void DumpToHTML (FILE *file);
 
       static const guint NO_RIGHT   = 0x00000000;

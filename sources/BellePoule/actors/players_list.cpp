@@ -1620,6 +1620,21 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void PlayersList::Recall ()
+  {
+    GSList *current = _player_list;
+
+    while (current)
+    {
+      Player *p = (Player *) current->data;
+
+      p->Recall ();
+
+      current = g_slist_next (current);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void PlayersList::Disclose (const gchar *as)
   {
     GSList *current = _player_list;
