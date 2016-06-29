@@ -83,7 +83,7 @@ void FieTime::MakeImages ()
                                "%k:%M");
 
   _xml_image = g_date_time_format (_date_time,
-                                   "%d.%m.%Y %k:%M");
+                                   "%d.%m.%Y %R");
 }
 
 // --------------------------------------------------------------------------------
