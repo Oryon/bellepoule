@@ -118,6 +118,8 @@ namespace People
       void OnAttendingChanged (Player *player,
                                guint   value);
 
+      void FeedParcel (Net::Message *parcel);
+
       void EnableDragAndDrop ();
 
       void DisableDragAndDrop ();

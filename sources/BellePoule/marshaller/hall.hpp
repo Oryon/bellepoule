@@ -64,7 +64,11 @@ class Hall :
 
     void ManageJob (Net::Message *message);
 
+    void ManageFencer (Net::Message *message);
+
     void DropJob (Net::Message *message);
+
+    void DropFencer (Net::Message *message);
 
   private:
     GList       *_piste_list;

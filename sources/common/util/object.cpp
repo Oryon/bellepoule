@@ -340,12 +340,14 @@ gint Object::GetIntData (Object      *owner,
 }
 
 // --------------------------------------------------------------------------------
-void Object::Disclose (const gchar *as)
+Net::Message *Object::Disclose (const gchar *as)
 {
   if (_parcel == NULL)
   {
     _parcel = new Net::Message (as);
   }
+
+  return _parcel;
 }
 
 // --------------------------------------------------------------------------------

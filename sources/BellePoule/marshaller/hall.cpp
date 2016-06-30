@@ -245,6 +245,21 @@ void Hall::ManageJob (Net::Message *message)
 }
 
 // --------------------------------------------------------------------------------
+void Hall::ManageFencer (Net::Message *message)
+{
+  gchar *id    = message->GetString ("contest");
+  Batch *batch = GetBatch (id);
+
+  if (batch)
+  {
+    printf ("%s ==============>\n", id);
+    message->Dump ();
+  }
+
+  g_free (id);
+}
+
+// --------------------------------------------------------------------------------
 void Hall::DropJob (Net::Message *message)
 {
   guint32 contest_id;
@@ -275,6 +290,21 @@ void Hall::DropJob (Net::Message *message)
       current = g_list_next (current);
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+void Hall::DropFencer (Net::Message *message)
+{
+  gchar *id    = message->GetString ("contest");
+  Batch *batch = GetBatch (id);
+
+  if (batch)
+  {
+    printf ("%s ==============>\n", id);
+    message->Dump ();
+  }
+
+  g_free (id);
 }
 
 // --------------------------------------------------------------------------------

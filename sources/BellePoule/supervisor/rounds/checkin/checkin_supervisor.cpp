@@ -769,8 +769,15 @@ namespace People
 
     DisableDragAndDrop ();
 
-    Disclose ("Fencer");
-    Spread  ();
+    Disclose ("Fencer", this);
+    Spread   ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::FeedParcel (Net::Message *parcel)
+  {
+    parcel->Set ("contest",
+                 _contest->GetId ());
   }
 
   // --------------------------------------------------------------------------------

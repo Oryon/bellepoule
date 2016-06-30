@@ -75,8 +75,6 @@ void Marshaller::Start ()
 // --------------------------------------------------------------------------------
 gboolean Marshaller::OnHttpPost (Net::Message *message)
 {
-  message->Dump ();
-
   if (message->GetFitness () > 0)
   {
     if (message->Is ("Competition"))
@@ -97,6 +95,7 @@ gboolean Marshaller::OnHttpPost (Net::Message *message)
     }
     else if (message->Is ("Fencer"))
     {
+      _hall->ManageFencer (message);
       return TRUE;
     }
   }
@@ -114,6 +113,7 @@ gboolean Marshaller::OnHttpPost (Net::Message *message)
     }
     else if (message->Is ("Fencer"))
     {
+      _hall->DropFencer (message);
       return TRUE;
     }
   }

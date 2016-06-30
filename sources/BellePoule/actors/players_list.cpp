@@ -1635,15 +1635,20 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::Disclose (const gchar *as)
+  void PlayersList::Disclose (const gchar *as,
+                              Object      *extra_feeder)
   {
     GSList *current = _player_list;
 
     while (current)
     {
-      Player *p = (Player *) current->data;
+      Player       *p      = (Player *) current->data;
+      Net::Message *parcel = p->Disclose (as);
 
-      p->Disclose (as);
+      if (extra_feeder)
+      {
+        extra_feeder->FeedParcel (parcel);
+      }
 
       current = g_slist_next (current);
     }
