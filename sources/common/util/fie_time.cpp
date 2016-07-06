@@ -22,17 +22,13 @@
 FieTime::FieTime (GDateTime *time)
   : Object ("FieTime")
 {
-  _date_time = time;
-  g_date_time_ref (_date_time);
-
-  MakeImages ();
+  MakeImages (time);
 }
 
 // --------------------------------------------------------------------------------
 FieTime::FieTime (const gchar *time)
   : Object ("FieTime")
 {
-  _date_time = NULL;
   _image     = NULL;
   _xml_image = NULL;
 
@@ -52,38 +48,38 @@ FieTime::FieTime (const gchar *time)
 
       if (token_count == 5)
       {
+        GDateTime *date_time;
+
         // JJ.MM.AAAA HH:MI
-        _date_time = g_date_time_new_local (atoi (tokens[2]),
-                                            atoi (tokens[1]),
-                                            atoi (tokens[0]),
-                                            atoi (tokens[3]),
-                                            atoi (tokens[4]),
-                                            0.0);
+        date_time = g_date_time_new_local (atoi (tokens[2]),
+                                           atoi (tokens[1]),
+                                           atoi (tokens[0]),
+                                           atoi (tokens[3]),
+                                           atoi (tokens[4]),
+                                           0.0);
+        MakeImages (date_time);
       }
 
       g_strfreev (tokens);
     }
   }
-
-  MakeImages ();
 }
 
 // --------------------------------------------------------------------------------
 FieTime::~FieTime ()
 {
-  g_date_time_unref (_date_time);
   g_free (_image);
   g_free (_xml_image);
 }
 
 // --------------------------------------------------------------------------------
-void FieTime::MakeImages ()
+void FieTime::MakeImages (GDateTime *date_time)
 {
-  _image = g_date_time_format (_date_time,
+  _image = g_date_time_format (date_time,
                                "%k:%M");
 
-  _xml_image = g_date_time_format (_date_time,
-                                   "%d.%m.%Y %k:%M");
+  _xml_image = g_date_time_format (date_time,
+                                   "%d.%m.%Y %R");
 }
 
 // --------------------------------------------------------------------------------
@@ -96,10 +92,4 @@ const gchar *FieTime::GetImage ()
 const gchar *FieTime::GetXmlImage ()
 {
   return _xml_image;
-}
-
-// --------------------------------------------------------------------------------
-GDateTime *FieTime::GetDateTime ()
-{
-  return _date_time;
 }

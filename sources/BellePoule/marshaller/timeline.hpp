@@ -19,71 +19,74 @@
 
 #include "util/canvas_module.hpp"
 
-class Batch;
-
-class Timeline : public CanvasModule
+namespace Marshaller
 {
-  public:
-    struct Listener
-    {
-      virtual void OnTimelineCursorMoved () = 0;
-    };
+  class Batch;
 
-  public:
-    Timeline (Listener *listener);
+  class Timeline : public CanvasModule
+  {
+    public:
+      struct Listener
+      {
+        virtual void OnTimelineCursorMoved () = 0;
+      };
 
-    void AddBatch (Batch *batch);
+    public:
+      Timeline (Listener *listener);
 
-    void RemoveBatch (Batch *batch);
+      void AddBatch (Batch *batch);
 
-    GDateTime *RetreiveCursorTime ();
+      void RemoveBatch (Batch *batch);
 
-    gboolean Redraw ();
+      GDateTime *RetreiveCursorTime ();
 
-    static gboolean RedrawCbk (Timeline *tl);
+      gboolean Redraw ();
 
-  private:
-    static const guint HOURS_MONITORED = 10;
-    static const guint START_MARGING   = 15*G_TIME_SPAN_MINUTE;
+      static gboolean RedrawCbk (Timeline *tl);
 
-    GList         *_batch_list;
-    GTimeSpan      _cursor;
-    gdouble        _drag_start;
-    GtkAllocation  _allocation;
-    gdouble        _time_scale;
-    gdouble        _batch_scale;
-    GDateTime     *_origin;
-    guint          _redraw_timeout;
-    GooCanvasItem *_goo_cursor;
-    GooCanvasItem *_goo_cursor_time;
-    Listener      *_listener;
+    private:
+      static const guint HOURS_MONITORED = 10;
+      static const guint START_MARGING   = 15*G_TIME_SPAN_MINUTE;
 
-    ~Timeline ();
+      GList         *_batch_list;
+      GTimeSpan      _cursor;
+      gdouble        _drag_start;
+      GtkAllocation  _allocation;
+      gdouble        _time_scale;
+      gdouble        _batch_scale;
+      GDateTime     *_origin;
+      guint          _redraw_timeout;
+      GooCanvasItem *_goo_cursor;
+      GooCanvasItem *_goo_cursor_time;
+      Listener      *_listener;
 
-    void OnPlugged ();
+      ~Timeline ();
 
-    void DrawTimes ();
+      void OnPlugged ();
 
-    void DrawCursors ();
+      void DrawTimes ();
 
-    void DrawSlots ();
+      void DrawCursors ();
 
-    void RefreshCursorTime ();
+      void DrawSlots ();
 
-    static gboolean OnButtonPress (GooCanvasItem  *item,
-                                   GooCanvasItem  *target,
-                                   GdkEventButton *event,
-                                   Timeline       *tl);
+      void RefreshCursorTime ();
 
-    static gboolean OnButtonRelease (GooCanvasItem  *item,
+      static gboolean OnButtonPress (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
                                      Timeline       *tl);
 
-    static gboolean OnMotion (GooCanvasItem  *item,
-                              GooCanvasItem  *target_item,
-                              GdkEventMotion *event,
-                              Timeline       *tl);
-};
+      static gboolean OnButtonRelease (GooCanvasItem  *item,
+                                       GooCanvasItem  *target,
+                                       GdkEventButton *event,
+                                       Timeline       *tl);
+
+      static gboolean OnMotion (GooCanvasItem  *item,
+                                GooCanvasItem  *target_item,
+                                GdkEventMotion *event,
+                                Timeline       *tl);
+  };
+}
 
 #endif

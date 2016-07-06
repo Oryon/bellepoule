@@ -128,41 +128,20 @@ namespace Net
   gboolean Ring::JoinMulticast (GSocket      *socket,
                                 GInetAddress *group)
   {
-#if GLIB_CHECK_VERSION(2,32,0)
-    {
-      GError  *error  = NULL;
-      g_socket_join_multicast_group (socket,
-                                     group,
-                                     FALSE,
-                                     NULL,
-                                     &error);
-      if (error)
-      {
-        g_warning ("g_socket_join_multicast_group: %s\n", error->message);
-        g_clear_error (&error);
-        return FALSE;
-      }
-      return TRUE;
-    }
-#else
-    {
-      struct ip_mreq option;
-      int            fd     = g_socket_get_fd (socket);
+    GError *error = NULL;
 
-      option.imr_interface.s_addr = htonl     (INADDR_ANY);
-      option.imr_multiaddr.s_addr = inet_addr (ANNOUNCE_GROUP);
-      if (setsockopt (fd,
-                      IPPROTO_IP,
-                      IP_ADD_MEMBERSHIP,
-                      (const char *) &option,
-                      sizeof (option)) < 0)
-      {
-        g_warning ("setsockopt: %s", strerror (errno));
-        return FALSE;
-      }
-      return TRUE;
+    g_socket_join_multicast_group (socket,
+                                   group,
+                                   FALSE,
+                                   NULL,
+                                   &error);
+    if (error)
+    {
+      g_warning ("g_socket_join_multicast_group: %s\n", error->message);
+      g_clear_error (&error);
+      return FALSE;
     }
-#endif
+    return TRUE;
   }
 
   // --------------------------------------------------------------------------------
@@ -296,7 +275,7 @@ namespace Net
       }
     }
 
-    return TRUE; //G_SOURCE_CONTINUE
+    return G_SOURCE_CONTINUE;
   }
 
   // -------------------------------------------------------------------------------

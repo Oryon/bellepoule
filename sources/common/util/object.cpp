@@ -113,7 +113,7 @@ Object::~Object ()
 
   if (_parcel)
   {
-    _parcel->Recall  ();
+    Recall  ();
     _parcel->Release ();
   }
 
@@ -340,20 +340,22 @@ gint Object::GetIntData (Object      *owner,
 }
 
 // --------------------------------------------------------------------------------
-void Object::Disclose (const gchar *as)
+Net::Message *Object::Disclose (const gchar *as)
 {
   if (_parcel == NULL)
   {
     _parcel = new Net::Message (as);
   }
+
+  return _parcel;
 }
 
 // --------------------------------------------------------------------------------
-void Object::Conceal ()
+void Object::Recall ()
 {
   if (_parcel)
   {
-    _parcel->Conceal ();
+    _parcel->Recall ();
   }
 }
 

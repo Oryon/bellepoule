@@ -23,128 +23,131 @@
 #include "timeslot.hpp"
 
 class Module;
-class Referee;
-class Job;
-class Batch;
 
-class Piste :
-  public DropZone,
-  public TimeSlot::Owner
+namespace Marshaller
 {
-  public:
-    struct Listener
-    {
-      virtual void OnPisteButtonEvent (Piste          *piste,
-                                       GdkEventButton *event) = 0;
-      virtual void OnPisteMotionEvent (Piste          *piste,
-                                       GdkEventMotion *event) = 0;
-    };
+  class Job;
+  class Batch;
+  class EnlistedReferee;
 
-  public:
-    Piste (GooCanvasItem *parent,
-           Module        *container);
+  class Piste :
+    public DropZone,
+    public TimeSlot::Owner
+  {
+    public:
+      struct Listener
+      {
+        virtual void OnPisteButtonEvent (Piste          *piste,
+                                         GdkEventButton *event) = 0;
+        virtual void OnPisteMotionEvent (Piste          *piste,
+                                         GdkEventMotion *event) = 0;
+      };
 
-    void ConvertFromPisteSpace (gdouble *x,
-                                gdouble *y);
+    public:
+      Piste (GooCanvasItem *parent,
+             Module        *container);
 
-    void SetListener (Listener *listener);
+      void ConvertFromPisteSpace (gdouble *x,
+                                  gdouble *y);
 
-    TimeSlot *GetFreeTimeslot (GTimeSpan duration);
+      void SetListener (Listener *listener);
 
-    void AddReferee (Referee *referee);
+      GList *GetFreeSlots (GDateTime *from,
+                           GTimeSpan  duration);
 
-    void RemoveBatch (Batch *batch);
+      void AddReferee (EnlistedReferee *referee);
 
-    void Disable ();
+      void RemoveBatch (Batch *batch);
 
-    gboolean Overlaps (GooCanvasBounds *rectangle);
+      void Disable ();
 
-    void Select ();
+      gboolean Overlaps (GooCanvasBounds *rectangle);
 
-    void UnSelect ();
+      void Select ();
 
-    void DisplayAtTime (GDateTime *time);
+      void UnSelect ();
 
-    void Translate (gdouble tx,
-                    gdouble ty);
+      void DisplayAtTime (GDateTime *time);
 
-    void Rotate ();
+      void Translate (gdouble tx,
+                      gdouble ty);
 
-    guint GetId ();
+      void Rotate ();
 
-    void SetId (guint id);
+      guint GetId ();
 
-    void AlignOnGrid ();
+      void SetId (guint id);
 
-    void AnchorTo (Piste *piste);
+      void AlignOnGrid ();
 
-    void GetHorizontalCoord (gdouble *x,
-                             gdouble *y);
+      void AnchorTo (Piste *piste);
 
-    static gboolean CompareAvailbility (Piste *a,
-                                        Piste *b);
+      void GetHorizontalCoord (gdouble *x,
+                               gdouble *y);
 
-  private:
-    static const gdouble _W;
-    static const gdouble _H;
-    static const gdouble _BORDER_W;
-    static const gdouble _RESOLUTION;
+      static const gdouble _W;
+      static const gdouble _H;
+      static const gdouble _BORDER_W;
+      static const gdouble _RESOLUTION;
 
-    Piste::Listener *_listener;
-    GooCanvasItem   *_root_item;
-    GooCanvasItem   *_rect_item;
-    GooCanvasItem   *_progress_item;
-    GooCanvasItem   *_id_item;
-    GooCanvasItem   *_title_item;
-    GooCanvasItem   *_referee_table;
-    GooCanvasItem   *_referee_name;
-    guint            _id;
-    gboolean         _horizontal;
-    gchar           *_color;
-    gchar           *_focus_color;
-    GList           *_timeslots;
-    GDateTime       *_display_time;
+      Piste::Listener *_listener;
+      GooCanvasItem   *_root_item;
+      GooCanvasItem   *_rect_item;
+      GooCanvasItem   *_progress_item;
+      GooCanvasItem   *_id_item;
+      GooCanvasItem   *_title_item;
+      GooCanvasItem   *_referee_table;
+      GooCanvasItem   *_referee_name;
+      guint            _id;
+      gboolean         _horizontal;
+      gchar           *_color;
+      gchar           *_focus_color;
+      GList           *_timeslots;
+      GDateTime       *_display_time;
 
-    ~Piste ();
+      ~Piste ();
 
-    void Focus ();
+      void Focus ();
 
-    void Unfocus ();
+      void Unfocus ();
 
-    void SetColor (const gchar *color);
+      void SetColor (const gchar *color);
 
-    void MonitorEvent (GooCanvasItem *item);
+      void MonitorEvent (GooCanvasItem *item);
 
-    gdouble GetGridAdjustment (gdouble coordinate);
+      gdouble GetGridAdjustment (gdouble coordinate);
 
-    void OnObjectDeleted (Object *object);
+      void OnObjectDeleted (Object *object);
 
-    void CleanDisplay ();
+      void CleanDisplay ();
 
-    void OnTimeSlotUpdated (TimeSlot *timeslot);
+      void OnSlotUpdated (TimeSlot *timeslot);
 
-    gboolean TimeIsInTimeslot (GDateTime *time,
-                               TimeSlot  *timeslot);
+      void  OnSlotLocked  (TimeSlot *timeslot);
 
-    TimeSlot *GetTimeslotAt (GDateTime *time);
+      gboolean TimeIsInTimeslot (GDateTime *time,
+                                 TimeSlot  *timeslot);
 
-    static gboolean OnButtonPress (GooCanvasItem  *item,
-                                   GooCanvasItem  *target,
-                                   GdkEventButton *event,
-                                   Piste          *piste);
+      TimeSlot *GetTimeslotAt (GDateTime *time);
 
-    static gboolean OnButtonRelease (GooCanvasItem  *item,
+      static gboolean OnButtonPress (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
                                      Piste          *piste);
 
-    static gboolean OnMotionNotify (GooCanvasItem  *item,
-                                    GooCanvasItem  *target,
-                                    GdkEventMotion *event,
-                                    Piste          *piste);
+      static gboolean OnButtonRelease (GooCanvasItem  *item,
+                                       GooCanvasItem  *target,
+                                       GdkEventButton *event,
+                                       Piste          *piste);
 
-    static gint CompareJob (Job *a,
-                            Job *b);
-};
+      static gboolean OnMotionNotify (GooCanvasItem  *item,
+                                      GooCanvasItem  *target,
+                                      GdkEventMotion *event,
+                                      Piste          *piste);
+
+      static gint CompareJob (Job *a,
+                              Job *b);
+  };
+}
 
 #endif

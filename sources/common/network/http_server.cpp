@@ -200,7 +200,7 @@ namespace Net
 
     delete (defered_data);
 
-    return FALSE;
+    return G_SOURCE_REMOVE;
   }
 
   // --------------------------------------------------------------------------------

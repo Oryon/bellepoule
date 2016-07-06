@@ -162,7 +162,7 @@ $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHAL
 #--
 
 %.o: %.cpp
-	@echo "\033[1;34m" $@ "\033[0m"
+	@echo "\033[0;0m" $(notdir $@) "\033[0m"
 	@$(CC) -o $@ -c $< $(CFLAGS)
 
 %.o: %.rc

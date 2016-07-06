@@ -112,9 +112,9 @@ class Object
 
     void RemoveObjectListener (Listener *listener);
 
-    virtual void Disclose (const gchar *as);
+    virtual Net::Message *Disclose (const gchar *as);
 
-    virtual void Conceal ();
+    virtual void Recall ();
 
     virtual void FeedParcel (Net::Message *parcel);
 

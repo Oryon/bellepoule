@@ -207,6 +207,12 @@
 		<Unit filename="../../sources/BellePoule/marshaller/clock.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/enlisted_referee.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/enlisted_referee.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/hall.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>

@@ -16,48 +16,51 @@
 
 #include "clock.hpp"
 
-// --------------------------------------------------------------------------------
-Clock::Clock (Listener *listener)
-  : Object ("Clock")
+namespace Marshaller
 {
-  _listener = listener;
-  _tag      = 0;
-
-  OnTimeout (this);
-}
-
-// --------------------------------------------------------------------------------
-Clock::~Clock ()
-{
-  if (_tag)
+  // --------------------------------------------------------------------------------
+  Clock::Clock (Listener *listener)
+    : Object ("Clock")
   {
-    g_source_remove (_tag);
+    _listener = listener;
+    _tag      = 0;
+
+    OnTimeout (this);
   }
-}
 
-// --------------------------------------------------------------------------------
-void Clock::SetupTimeout ()
-{
-  GDateTime *now     = g_date_time_new_now_local ();
-  guint      seconds = g_date_time_get_second (now);
+  // --------------------------------------------------------------------------------
+  Clock::~Clock ()
+  {
+    if (_tag)
+    {
+      g_source_remove (_tag);
+    }
+  }
 
-  _tag = g_timeout_add_seconds (60-seconds,
-                                (GSourceFunc) OnTimeout,
-                                this);
-  g_date_time_unref (now);
-}
+  // --------------------------------------------------------------------------------
+  void Clock::SetupTimeout ()
+  {
+    GDateTime *now     = g_date_time_new_now_local ();
+    guint      seconds = g_date_time_get_second (now);
 
-// --------------------------------------------------------------------------------
-gboolean Clock::OnTimeout (Clock *clock)
-{
-  GDateTime *now  = g_date_time_new_now_local ();
-  gchar     *time = g_strdup_printf ("%02d:%02d",
-                                     g_date_time_get_hour   (now),
-                                     g_date_time_get_minute (now));
+    _tag = g_timeout_add_seconds (60-seconds,
+                                  (GSourceFunc) OnTimeout,
+                                  this);
+    g_date_time_unref (now);
+  }
 
-  clock->_listener->OnNewTime (time);
-  clock->SetupTimeout ();
-  g_date_time_unref (now);
+  // --------------------------------------------------------------------------------
+  gboolean Clock::OnTimeout (Clock *clock)
+  {
+    GDateTime *now  = g_date_time_new_now_local ();
+    gchar     *time = g_strdup_printf ("%02d:%02d",
+                                       g_date_time_get_hour   (now),
+                                       g_date_time_get_minute (now));
 
-  return FALSE;
+    clock->_listener->OnNewTime (time);
+    clock->SetupTimeout ();
+    g_date_time_unref (now);
+
+    return G_SOURCE_REMOVE;
+  }
 }

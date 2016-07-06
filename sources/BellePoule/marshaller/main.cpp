@@ -16,78 +16,83 @@
 
 #include "application/application.hpp"
 #include "actors/referee.hpp"
+#include "actors/fencer.hpp"
 #include "marshaller.hpp"
 
-// --------------------------------------------------------------------------------
-class MarshallerApp : public Application
+namespace Marshaller
 {
-  public:
-    MarshallerApp (int *argc, char ***argv);
-
-  private:
-    Marshaller *_marshaller;
-
-    virtual ~MarshallerApp ();
-
-    void Prepare ();
-
-    void Start (int argc, char **argv);
-
-    gboolean OnHttpPost (Net::Message *message);
-};
-
-// --------------------------------------------------------------------------------
-MarshallerApp::MarshallerApp (int    *argc,
-                              char ***argv)
-  : Application ("Marshaller", 35840, argc, argv)
-{
-}
-
-// --------------------------------------------------------------------------------
-MarshallerApp::~MarshallerApp ()
-{
-  _main_module->Release ();
-}
-
-// --------------------------------------------------------------------------------
-void MarshallerApp::Prepare ()
-{
-  Referee::RegisterPlayerClass ();
-
-  Application::Prepare ();
-}
-
-// --------------------------------------------------------------------------------
-void MarshallerApp::Start (int    argc,
-                           char **argv)
-{
-  _marshaller = new Marshaller ();
-
-  _main_module = _marshaller;
-
-  Application::Start (argc,
-                      argv);
-
-  _marshaller->Start ();
-
-  gtk_main ();
-}
-
-// --------------------------------------------------------------------------------
-gboolean MarshallerApp::OnHttpPost (Net::Message *message)
-{
-  if (Application::OnHttpPost (message) == FALSE)
+  // --------------------------------------------------------------------------------
+  class MarshallerApp : public Application
   {
-    return _marshaller->OnHttpPost (message);
+    public:
+      MarshallerApp (int *argc, char ***argv);
+
+    private:
+      Marshaller *_marshaller;
+
+      virtual ~MarshallerApp ();
+
+      void Prepare ();
+
+      void Start (int argc, char **argv);
+
+      gboolean OnHttpPost (Net::Message *message);
+  };
+
+  // --------------------------------------------------------------------------------
+  MarshallerApp::MarshallerApp (int    *argc,
+                                char ***argv)
+    : Application ("Marshaller", 35840, argc, argv)
+  {
   }
 
-  return TRUE;
+  // --------------------------------------------------------------------------------
+  MarshallerApp::~MarshallerApp ()
+  {
+    _main_module->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void MarshallerApp::Prepare ()
+  {
+    Referee::RegisterPlayerClass ();
+    Fencer::RegisterPlayerClass  ();
+
+    Application::Prepare ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void MarshallerApp::Start (int    argc,
+                             char **argv)
+  {
+    _marshaller = new Marshaller ();
+
+    _main_module = _marshaller;
+
+    Application::Start (argc,
+                        argv);
+
+    _marshaller->Start ();
+
+    gtk_main ();
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean MarshallerApp::OnHttpPost (Net::Message *message)
+  {
+    if (Application::OnHttpPost (message) == FALSE)
+    {
+      return _marshaller->OnHttpPost (message);
+    }
+
+    return TRUE;
+  }
 }
 
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
-  Application *application = new MarshallerApp (&argc, &argv);
+  Application *application = new Marshaller::MarshallerApp (&argc, &argv);
 
   application->Prepare ();
 

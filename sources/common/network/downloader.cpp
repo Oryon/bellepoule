@@ -138,6 +138,6 @@ namespace Net
       downloader->_listener->OnDownloaderData (downloader,
                                                downloader->_data);
     }
-    return FALSE;
+    return G_SOURCE_REMOVE;
   }
 }

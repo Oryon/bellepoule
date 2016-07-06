@@ -16,171 +16,181 @@
 
 #include "network/message.hpp"
 #include "actors/player_factory.hpp"
-#include "actors/referee.hpp"
+#include "enlisted_referee.hpp"
 #include "job.hpp"
+#include "timeslot.hpp"
 #include "batch.hpp"
 #include "referee_pool.hpp"
 
-// --------------------------------------------------------------------------------
-RefereePool::RefereePool ()
-  : Object ("marshaller.glade")
+namespace Marshaller
 {
-  _list_by_weapon = NULL;
-}
-
-// --------------------------------------------------------------------------------
-RefereePool::~RefereePool ()
-{
-  g_list_free_full (_list_by_weapon,
-                    (GDestroyNotify) Object::TryToRelease);
-}
-
-// --------------------------------------------------------------------------------
-void RefereePool::ManageList (People::RefereesList *list)
-{
-  _list_by_weapon = g_list_prepend (_list_by_weapon,
-                                    list);
-}
-
-// --------------------------------------------------------------------------------
-GList *RefereePool::GetList ()
-{
-  return _list_by_weapon;
-}
-
-// --------------------------------------------------------------------------------
-void RefereePool::Spread ()
-{
-  g_list_foreach (_list_by_weapon,
-                  (GFunc) SpreadWeapon,
-                  this);
-}
-
-// --------------------------------------------------------------------------------
-void RefereePool::SpreadWeapon (People::RefereesList *list,
-                                RefereePool          *rp)
-{
-  if (list)
+  // --------------------------------------------------------------------------------
+  RefereePool::RefereePool ()
+    : Object ("marshaller.glade")
   {
-    list->Disclose ("RegisteredReferee");
-    list->Spread ();
+    _list_by_weapon = NULL;
   }
-}
 
-// --------------------------------------------------------------------------------
-Referee *RefereePool::GetReferee (guint ref)
-{
-  GList *current_weapon = _list_by_weapon;
-
-  while (current_weapon)
+  // --------------------------------------------------------------------------------
+  RefereePool::~RefereePool ()
   {
-    People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
-    GSList               *current      = referee_list->GetList ();
+    g_list_free_full (_list_by_weapon,
+                      (GDestroyNotify) Object::TryToRelease);
+  }
 
-    while (current)
+  // --------------------------------------------------------------------------------
+  void RefereePool::ManageList (People::RefereesList *list)
+  {
+    _list_by_weapon = g_list_prepend (_list_by_weapon,
+                                      list);
+  }
+
+  // --------------------------------------------------------------------------------
+  GList *RefereePool::GetList ()
+  {
+    return _list_by_weapon;
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereePool::Spread ()
+  {
+    g_list_foreach (_list_by_weapon,
+                    (GFunc) SpreadWeapon,
+                    this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereePool::SpreadWeapon (People::RefereesList *list,
+                                  RefereePool          *rp)
+  {
+    if (list)
     {
-      Referee *referee = (Referee *) current->data;
-
-      if (referee->GetRef () == ref)
-      {
-        return referee;
-      }
-
-      current = g_slist_next (current);
+      list->Disclose ("RegisteredReferee");
+      list->Spread ();
     }
-
-    current_weapon = g_list_next (current_weapon);
   }
 
-  return NULL;
-}
-
-// --------------------------------------------------------------------------------
-Referee *RefereePool::GetRefereeFor (Job *job)
-{
-  GList *current = _list_by_weapon;
-  Batch *batch   = job->GetBatch ();
-
-  while (current)
+  // --------------------------------------------------------------------------------
+  EnlistedReferee *RefereePool::GetReferee (guint ref)
   {
-    People::RefereesList *referee_list = (People::RefereesList *) current->data;
+    GList *current_weapon = _list_by_weapon;
 
-    if (g_strcmp0 (referee_list->GetWeaponCode (), batch->GetWeaponCode ()) == 0)
+    while (current_weapon)
     {
-      GSList *list  = referee_list->GetList ();
-      guint   count = g_slist_length (list);
+      People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
+      GSList               *current      = referee_list->GetList ();
 
-      if (count)
+      while (current)
       {
-        Referee *referee = (Referee *) g_slist_nth_data (list, g_random_int_range (0, count));
+        EnlistedReferee *referee = (EnlistedReferee *) current->data;
 
-        return referee;
-      }
-    }
-
-    current = g_list_next (current);
-  }
-  return NULL;
-}
-
-// --------------------------------------------------------------------------------
-void RefereePool::ManageReferee (Net::Message *message)
-{
-  gchar     *xml = message->GetString ("xml");
-  xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
-
-  if (doc)
-  {
-    xmlXPathInit ();
-
-    {
-      xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-      xmlXPathObject  *xml_object;
-      xmlNodeSet      *xml_nodeset;
-
-      xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
-      xml_nodeset = xml_object->nodesetval;
-
-      if (xml_nodeset->nodeNr == 1)
-      {
-        Player *referee = PlayerFactory::CreatePlayer ("Referee");
-        Player::AttributeId  weapon_attr_id ("weapon");
-
-        referee->Load (xml_nodeset->nodeTab[0]);
-
+        if (referee->GetRef () == ref)
         {
-          Attribute *weapon_attr    = referee->GetAttribute (&weapon_attr_id);
-          GList     *current_weapon = _list_by_weapon;
+          return referee;
+        }
 
-          while (current_weapon)
+        current = g_slist_next (current);
+      }
+
+      current_weapon = g_list_next (current_weapon);
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  EnlistedReferee *RefereePool::GetRefereeFor (Job      *job,
+                                               TimeSlot *slot)
+  {
+    GList *current_weapon = _list_by_weapon;
+    Batch *batch   = job->GetBatch ();
+
+    while (current_weapon)
+    {
+      People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
+
+      if (g_strcmp0 (referee_list->GetWeaponCode (), batch->GetWeaponCode ()) == 0)
+      {
+        GSList *current_referee  = referee_list->GetList ();
+
+        while (current_referee)
+        {
+          EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+
+          if (referee->IsAvailableFor (slot))
           {
-            People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
-
-            if (g_strcmp0 (referee_list->GetWeaponCode (), weapon_attr->GetStrValue ()) == 0)
-            {
-              if (referee_list->GetPlayerFromRef (referee->GetRef ()) == NULL)
-              {
-                referee_list->RegisterPlayer (referee,
-                                              NULL);
-                referee_list->OnListChanged ();
-              }
-              else
-              {
-                referee->Release ();
-              }
-              break;
-            }
-
-            current_weapon = g_list_next (current_weapon);
+            return referee;
           }
+
+          current_referee = g_slist_next (current_referee);
         }
       }
 
-      xmlXPathFreeObject  (xml_object);
-      xmlXPathFreeContext (xml_context);
+      current_weapon = g_list_next (current_weapon);
     }
-    xmlFreeDoc (doc);
+
+    return NULL;
   }
 
-  g_free (xml);
+  // --------------------------------------------------------------------------------
+  void RefereePool::ManageReferee (Net::Message *message)
+  {
+    gchar     *xml = message->GetString ("xml");
+    xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
+
+    if (doc)
+    {
+      xmlXPathInit ();
+
+      {
+        xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+        xmlXPathObject  *xml_object;
+        xmlNodeSet      *xml_nodeset;
+
+        xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
+        xml_nodeset = xml_object->nodesetval;
+
+        if (xml_nodeset->nodeNr == 1)
+        {
+          Player *referee = new EnlistedReferee ();
+          Player::AttributeId weapon_attr_id ("weapon");
+
+          referee->Load (xml_nodeset->nodeTab[0]);
+
+          {
+            Attribute *weapon_attr    = referee->GetAttribute (&weapon_attr_id);
+            GList     *current_weapon = _list_by_weapon;
+
+            while (current_weapon)
+            {
+              People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
+
+              if (g_strcmp0 (referee_list->GetWeaponCode (), weapon_attr->GetStrValue ()) == 0)
+              {
+                if (referee_list->GetPlayerFromRef (referee->GetRef ()) == NULL)
+                {
+                  referee_list->RegisterPlayer (referee,
+                                                NULL);
+                  referee_list->OnListChanged ();
+                }
+                else
+                {
+                  referee->Release ();
+                }
+                break;
+              }
+
+              current_weapon = g_list_next (current_weapon);
+            }
+          }
+        }
+
+        xmlXPathFreeObject  (xml_object);
+        xmlXPathFreeContext (xml_context);
+      }
+      xmlFreeDoc (doc);
+    }
+
+    g_free (xml);
+  }
 }

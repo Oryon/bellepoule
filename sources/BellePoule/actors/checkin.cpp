@@ -206,6 +206,50 @@ namespace People
           g_free (licence_string);
         }
       }
+      else // FFE provides Ref's leagues in UPPER CASE :-(
+      {
+        AttributeDesc *desc = AttributeDesc::GetDescFromCodeName ("league");
+
+        if (desc)
+        {
+          GtkTreeIter  iter;
+          gboolean     iter_is_valid;
+          gchar       *casefold      = g_utf8_casefold (league_attr->GetStrValue (), -1);
+
+          iter_is_valid = gtk_tree_model_get_iter_first (desc->_discrete_model,
+                                                         &iter);
+          for (guint i = 0; iter_is_valid; i++)
+          {
+            gchar *xml_image;
+            gchar *xml_casefold;
+
+            gtk_tree_model_get (desc->_discrete_model,
+                                &iter,
+                                AttributeDesc::DISCRETE_XML_IMAGE_str, &xml_image, -1);
+            xml_casefold = g_utf8_casefold (xml_image, -1);
+
+            if (g_utf8_collate (casefold, xml_casefold) == 0)
+            {
+              Player::AttributeId attr_id ("league");
+
+              player->SetAttributeValue (&attr_id, xml_image);
+              g_free (xml_casefold);
+              g_free (xml_image);
+              break;
+            }
+            else
+            {
+              g_free (xml_casefold);
+              g_free (xml_image);
+            }
+
+            iter_is_valid = gtk_tree_model_iter_next (desc->_discrete_model,
+                                                      &iter);
+          }
+
+          g_free (casefold);
+        }
+      }
     }
   }
 

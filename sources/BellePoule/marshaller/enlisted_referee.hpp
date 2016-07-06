@@ -14,50 +14,32 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef job_hpp
-#define job_hpp
+#ifndef enlisted_refree_hpp
+#define enlisted_refree_hpp
 
-#include "util/object.hpp"
+#include "util/player.hpp"
+#include "actors/referee.hpp"
 
 namespace Marshaller
 {
-  class Batch;
   class TimeSlot;
 
-  class Job : public Object
+  class EnlistedReferee : public Referee
   {
     public:
-      Job (Batch    *batch,
-           guint     uuid,
-           GdkColor *gdk_color);
+      EnlistedReferee ();
 
-      void SetName (const gchar *name);
+      void AddSlot (TimeSlot *slot);
 
-      void SetTimeSlot (TimeSlot *timeslot);
+      gboolean IsAvailableFor (TimeSlot *slot);
 
-      TimeSlot *GetTimslot ();
-
-      const gchar *GetName ();
-
-      Batch *GetBatch ();
-
-      GdkColor *GetGdkColor ();
-
-      guint GetUUID ();
-
-      Net::Message *GetRoadMap ();
-
-      static gint CompareStartTime (Job *a,
-                                    Job *b);
+      static void OnRemovedFromSlot (EnlistedReferee *referee,
+                                     TimeSlot        *slot);
 
     private:
-      gchar    *_name;
-      guint     _uuid;
-      GdkColor *_gdk_color;
-      Batch    *_batch;
-      TimeSlot *_timeslot;
+      GList *_slots;
 
-      ~Job ();
+      virtual ~EnlistedReferee ();
   };
 }
 

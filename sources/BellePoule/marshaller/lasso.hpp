@@ -20,27 +20,30 @@
 #include "goocanvas.h"
 #include "util/object.hpp"
 
-class Lasso : public Object
+namespace Marshaller
 {
-  public:
-    Lasso ();
+  class Lasso : public Object
+  {
+    public:
+      Lasso ();
 
-    void Throw (GooCanvasItem  *surface,
-                GdkEventButton *event);
+      void Throw (GooCanvasItem  *surface,
+                  GdkEventButton *event);
 
-    void Pull ();
+      void Pull ();
 
-    gboolean OnCursorMotion (GdkEventMotion *event);
+      gboolean OnCursorMotion (GdkEventMotion *event);
 
-    void GetBounds (GooCanvasBounds *bounds);
+      void GetBounds (GooCanvasBounds *bounds);
 
-  private:
-    GooCanvasItem   *_rectangle;
-    gdouble          _x;
-    gdouble          _y;
-    GooCanvasBounds  _bounds;
+    private:
+      GooCanvasItem   *_rectangle;
+      gdouble          _x;
+      gdouble          _y;
+      GooCanvasBounds  _bounds;
 
-    virtual ~Lasso ();
-};
+      virtual ~Lasso ();
+  };
+}
 
 #endif

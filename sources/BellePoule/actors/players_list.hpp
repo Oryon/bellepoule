@@ -68,9 +68,12 @@ namespace People
 
       void CollapseAll ();
 
-      void Disclose (const gchar *as);
+      void Disclose (const gchar *as,
+                     Object      *extra_feeder = NULL);
 
       void Spread ();
+
+      void Recall ();
 
       void DumpToHTML (FILE *file);
 

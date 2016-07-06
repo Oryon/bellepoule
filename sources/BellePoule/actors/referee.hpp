@@ -28,13 +28,14 @@ class Referee : public Player
 
     const gchar *GetXmlTag ();
 
-  private:
-    static const gchar *_class_name;
-    static const gchar *_xml_tag;
-
+  protected:
     Referee ();
 
     virtual ~Referee ();
+
+  private:
+    static const gchar *_class_name;
+    static const gchar *_xml_tag;
 
     Player *Clone ();
 };

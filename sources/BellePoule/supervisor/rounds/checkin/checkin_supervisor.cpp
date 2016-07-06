@@ -768,6 +768,16 @@ namespace People
     _form->Lock ();
 
     DisableDragAndDrop ();
+
+    Disclose ("Fencer", this);
+    Spread   ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::FeedParcel (Net::Message *parcel)
+  {
+    parcel->Set ("contest",
+                 _contest->GetId ());
   }
 
   // --------------------------------------------------------------------------------
@@ -826,6 +836,8 @@ namespace People
     SetPasteVisibility (TRUE);
     _form->UnLock ();
     EnableDragAndDrop ();
+
+    Recall ();
   }
 
   // --------------------------------------------------------------------------------

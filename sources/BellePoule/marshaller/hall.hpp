@@ -24,112 +24,122 @@
 #include "timeline.hpp"
 #include "clock.hpp"
 
-class RefereePool;
-class Lasso;
-
-class Hall :
-  public CanvasModule,
-  public Piste::Listener,
-  public Batch::Listener,
-  public Timeline::Listener,
-  public Clock::Listener
+namespace Marshaller
 {
-  public:
-    struct Listener
-    {
-      virtual void OnExposeWeapon (const gchar *weapon) = 0;
-    };
+  class RefereePool;
+  class Lasso;
 
-  public:
-    Hall (RefereePool *referee_pool,
-          Listener    *listener);
+  class Hall :
+    public CanvasModule,
+    public Piste::Listener,
+    public Batch::Listener,
+    public Timeline::Listener,
+    public Clock::Listener
+  {
+    public:
+      struct Listener
+      {
+        virtual void OnExposeWeapon (const gchar *weapon) = 0;
+      };
 
-    void AddPiste ();
+    public:
+      Hall (RefereePool *referee_pool,
+            Listener    *listener);
 
-    void RemovePiste (Piste *piste);
+      void AddPiste ();
 
-    void TranslateSelected (gdouble tx,
-                            gdouble ty);
+      void RemovePiste (Piste *piste);
 
-    void RotateSelected ();
+      void TranslateSelected (gdouble tx,
+                              gdouble ty);
 
-    void RemoveSelected ();
+      void RotateSelected ();
 
-    void AlignSelectedOnGrid ();
+      void RemoveSelected ();
 
-    void ManageContest (Net::Message *message,
-                        GtkNotebook  *notebook);
+      void AlignSelectedOnGrid ();
 
-    void DropContest (Net::Message *message);
+      void ManageContest (Net::Message *message,
+                          GtkNotebook  *notebook);
 
-    void ManageJob (Net::Message *message);
+      void DropContest (Net::Message *message);
 
-    void DropJob (Net::Message *message);
+      void ManageJob (Net::Message *message);
 
-  private:
-    GList       *_piste_list;
-    GList       *_selected_list;
-    gboolean     _dragging;
-    gdouble      _drag_x;
-    gdouble      _drag_y;
-    GList       *_batch_list;
-    RefereePool *_referee_pool;
-    Timeline    *_timeline;
-    Lasso       *_lasso;
-    Clock       *_clock;
-    Listener    *_listener;
+      void ManageFencer (Net::Message *message);
 
-    ~Hall ();
+      void DropJob (Net::Message *message);
 
-    void OnPlugged ();
+      void DropFencer (Net::Message *message);
 
-    void CancelSelection ();
+    private:
+      GList       *_piste_list;
+      GList       *_selected_list;
+      gboolean     _dragging;
+      gdouble      _drag_x;
+      gdouble      _drag_y;
+      GList       *_batch_list;
+      RefereePool *_referee_pool;
+      Timeline    *_timeline;
+      Lasso       *_lasso;
+      Clock       *_clock;
+      Listener    *_listener;
 
-    void SelectPiste (Piste *piste);
+      ~Hall ();
 
-    void UnSelectPiste (Piste *piste);
+      void OnPlugged ();
 
-    Batch *GetBatch (const gchar *id);
+      void CancelSelection ();
 
-    Batch *GetBatch (guint id);
+      void SelectPiste (Piste *piste);
 
-    Object *GetDropObjectFromRef (guint32 ref,
-                                  guint   key);
+      void UnSelectPiste (Piste *piste);
 
-    void DropObject (Object   *object,
-                     DropZone *source_zone,
-                     DropZone *target_zone);
+      Batch *GetBatch (const gchar *id);
 
-    void OnNewTime (const gchar *time);
+      Batch *GetBatch (guint id);
 
-    static gboolean OnButtonPress (GooCanvasItem  *goo_rect,
-                                   GooCanvasItem  *target,
-                                   GdkEventButton *event,
-                                   Hall           *hall);
+      GList *GetFreeSlots (GDateTime *from,
+                           GTimeSpan  duration);
 
-    static gboolean OnButtonReleased (GooCanvasItem  *goo_rect,
+      Object *GetDropObjectFromRef (guint32 ref,
+                                    guint   key);
+
+      void DropObject (Object   *object,
+                       DropZone *source_zone,
+                       DropZone *target_zone);
+
+      void OnNewTime (const gchar *time);
+
+      static gboolean OnButtonPress (GooCanvasItem  *goo_rect,
+                                     GooCanvasItem  *target,
+                                     GdkEventButton *event,
+                                     Hall           *hall);
+
+      static gboolean OnButtonReleased (GooCanvasItem  *goo_rect,
+                                        GooCanvasItem  *target,
+                                        GdkEventButton *event,
+                                        Hall           *hall);
+
+      static gboolean OnMotionNotify (GooCanvasItem  *item,
                                       GooCanvasItem  *target,
-                                      GdkEventButton *event,
+                                      GdkEventMotion *event,
                                       Hall           *hall);
 
-    static gboolean OnMotionNotify (GooCanvasItem  *item,
-                                    GooCanvasItem  *target,
-                                    GdkEventMotion *event,
-                                    Hall           *hall);
+      gboolean OnCursorMotion (GdkEventMotion *event);
 
-    gboolean OnCursorMotion (GdkEventMotion *event);
+      void OnPisteButtonEvent (Piste          *piste,
+                               GdkEventButton *event);
 
-    void OnPisteButtonEvent (Piste          *piste,
-                             GdkEventButton *event);
+      void OnPisteMotionEvent (Piste          *piste,
+                               GdkEventMotion *event);
 
-    void OnPisteMotionEvent (Piste          *piste,
-                             GdkEventMotion *event);
+      void OnBatchAssignmentRequest (Batch *batch);
 
-    void OnBatchAssignmentRequest (Batch *batch);
+      void OnBatchAssignmentCancel (Batch *batch);
 
-    void OnBatchAssignmentCancel (Batch *batch);
-
-    void OnTimelineCursorMoved ();
-};
+      void OnTimelineCursorMoved ();
+  };
+}
 
 #endif

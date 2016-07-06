@@ -139,7 +139,7 @@ namespace Net
     uploader->_listener->OnUploadStatus (uploader->_peer_status);
     uploader->Release ();
 
-    return FALSE;
+    return G_SOURCE_REMOVE;
   }
 
   // --------------------------------------------------------------------------------

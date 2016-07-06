@@ -21,30 +21,33 @@
 #include "referee_pool.hpp"
 #include "hall.hpp"
 
-class Marshaller :
-  public Module,
-  public Hall::Listener
+namespace Marshaller
 {
-  public:
-    Marshaller ();
+  class Marshaller :
+    public Module,
+    public Hall::Listener
+  {
+    public:
+      Marshaller ();
 
-    void Start ();
+      void Start ();
 
-    gboolean OnHttpPost (Net::Message *message);
+      gboolean OnHttpPost (Net::Message *message);
 
-    void OnExposeWeapon (const gchar *weapon_code);
+      void OnExposeWeapon (const gchar *weapon_code);
 
-    void OnRefereeListExpand ();
+      void OnRefereeListExpand ();
 
-    void OnRefereeListCollapse ();
+      void OnRefereeListCollapse ();
 
-  private:
-    Hall        *_hall;
-    RefereePool *_referee_pool;
+    private:
+      Hall        *_hall;
+      RefereePool *_referee_pool;
 
-    virtual ~Marshaller ();
+      virtual ~Marshaller ();
 
-    void OnEvent (const gchar *event);
-};
+      void OnEvent (const gchar *event);
+  };
+}
 
 #endif
