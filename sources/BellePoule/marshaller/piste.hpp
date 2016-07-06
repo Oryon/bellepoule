@@ -20,7 +20,7 @@
 #include <goocanvas.h>
 
 #include "util/drop_zone.hpp"
-#include "timeslot.hpp"
+#include "slot.hpp"
 
 class Module;
 
@@ -32,7 +32,7 @@ namespace Marshaller
 
   class Piste :
     public DropZone,
-    public TimeSlot::Owner
+    public Slot::Owner
   {
     public:
       struct Listener
@@ -102,7 +102,7 @@ namespace Marshaller
       gboolean         _horizontal;
       gchar           *_color;
       gchar           *_focus_color;
-      GList           *_timeslots;
+      GList           *_slots;
       GDateTime       *_display_time;
 
       ~Piste ();
@@ -121,14 +121,14 @@ namespace Marshaller
 
       void CleanDisplay ();
 
-      void OnSlotUpdated (TimeSlot *timeslot);
+      void OnSlotUpdated (Slot *slot);
 
-      void  OnSlotLocked  (TimeSlot *timeslot);
+      void  OnSlotLocked  (Slot *slot);
 
-      gboolean TimeIsInTimeslot (GDateTime *time,
-                                 TimeSlot  *timeslot);
+      gboolean TimeIsInSlot (GDateTime *time,
+                             Slot      *slot);
 
-      TimeSlot *GetTimeslotAt (GDateTime *time);
+      Slot *GetSlotAt (GDateTime *time);
 
       static gboolean OnButtonPress (GooCanvasItem  *item,
                                      GooCanvasItem  *target,

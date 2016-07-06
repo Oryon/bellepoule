@@ -15,7 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "batch.hpp"
-#include "timeslot.hpp"
+#include "slot.hpp"
 #include "job.hpp"
 #include "timeline.hpp"
 
@@ -183,10 +183,10 @@ namespace Marshaller
       while (current_job != NULL)
       {
         Job       *job   = (Job *) current_job->data;
-        TimeSlot  *slot  = job->GetTimslot ();
+        Slot      *slot  = job->GetSlot ();
         GDateTime *start = slot->GetStartTime ();
-        gdouble    x     = g_date_time_difference (start, _origin) * _time_scale;
-        gdouble    w     = (slot->GetDuration () - 3*G_TIME_SPAN_MINUTE) * _time_scale;
+        gdouble    x     = g_date_time_difference (start, _origin) *_time_scale;
+        gdouble    w     = (slot->GetDuration () - 3 *G_TIME_SPAN_MINUTE) *_time_scale;
 
         goo_canvas_rect_new (GetRootItem (),
                              x,

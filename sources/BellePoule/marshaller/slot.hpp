@@ -14,8 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef timeslot_hpp
-#define timeslot_hpp
+#ifndef slot_hpp
+#define slot_hpp
 
 #include "util/object.hpp"
 
@@ -26,7 +26,7 @@ namespace Marshaller
   class Job;
   class EnlistedReferee;
 
-  class TimeSlot :
+  class Slot :
     public Object,
     public Object::Listener
   {
@@ -34,15 +34,15 @@ namespace Marshaller
       class Owner
       {
         public:
-          virtual void  OnSlotUpdated (TimeSlot *timeslot) = 0;
-          virtual void  OnSlotLocked  (TimeSlot *timeslot) = 0;
+          virtual void  OnSlotUpdated (Slot *slot) = 0;
+          virtual void  OnSlotLocked  (Slot *slot) = 0;
           virtual guint GetId () = 0;
       };
 
     public:
-      TimeSlot (Owner     *owner,
-                GDateTime *start_time,
-                GTimeSpan  duration);
+      Slot (Owner     *owner,
+            GDateTime *start_time,
+            GTimeSpan  duration);
 
       void AddJob (Job *job);
 
@@ -60,12 +60,12 @@ namespace Marshaller
 
       GTimeSpan GetDuration ();
 
-      GTimeSpan GetInterval (TimeSlot *with);
+      GTimeSpan GetInterval (Slot *with);
 
-      gboolean Overlaps (TimeSlot *what);
+      gboolean Overlaps (Slot *what);
 
-      static gint CompareAvailbility (TimeSlot *a,
-                                      TimeSlot *b);
+      static gint CompareAvailbility (Slot *a,
+                                      Slot *b);
 
     private:
       Owner     *_owner;
@@ -76,7 +76,7 @@ namespace Marshaller
       GDateTime *_end;
       GTimeSpan  _duration;
 
-      virtual ~TimeSlot ();
+      virtual ~Slot ();
 
       void OnObjectDeleted (Object *object);
   };

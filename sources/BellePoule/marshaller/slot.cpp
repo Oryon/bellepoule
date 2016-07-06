@@ -18,15 +18,15 @@
 #include "enlisted_referee.hpp"
 #include "job.hpp"
 #include "batch.hpp"
-#include "timeslot.hpp"
+#include "slot.hpp"
 
 namespace Marshaller
 {
   // --------------------------------------------------------------------------------
-  TimeSlot::TimeSlot (Owner     *owner,
-                      GDateTime *start_time,
-                      GTimeSpan  duration)
-    : Object ("TimeSlot")
+  Slot::Slot (Owner     *owner,
+              GDateTime *start_time,
+              GTimeSpan  duration)
+    : Object ("Slot")
   {
     _job_list     = NULL;
     _referee_list = NULL;
@@ -42,7 +42,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  TimeSlot::~TimeSlot ()
+  Slot::~Slot ()
   {
     {
       GList *current = _job_list;
@@ -71,13 +71,13 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GDateTime *TimeSlot::GetStartTime ()
+  GDateTime *Slot::GetStartTime ()
   {
     return _start;
   }
 
   // --------------------------------------------------------------------------------
-  GTimeSpan TimeSlot::GetInterval (TimeSlot *with)
+  GTimeSpan Slot::GetInterval (Slot *with)
   {
     GTimeSpan  interval;
     GDateTime *end_time = g_date_time_add (_start, _duration);
@@ -90,7 +90,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TimeSlot::Overlaps (TimeSlot *what)
+  gboolean Slot::Overlaps (Slot *what)
   {
     if (g_date_time_compare (_start, what->_start) >= 0)
     {
@@ -103,13 +103,13 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GTimeSpan TimeSlot::GetDuration ()
+  GTimeSpan Slot::GetDuration ()
   {
     return _duration;
   }
 
   // --------------------------------------------------------------------------------
-  void TimeSlot::Cancel ()
+  void Slot::Cancel ()
   {
     GList *job_list = g_list_copy (_job_list);
     GList *current  = job_list;
@@ -127,13 +127,13 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void TimeSlot::AddJob (Job *job)
+  void Slot::AddJob (Job *job)
   {
     _job_list = g_list_append (_job_list,
                                job);
 
     job->AddObjectListener (this);
-    job->SetTimeSlot       (this);
+    job->SetSlot           (this);
 
     {
       Net::Message *roadmap = job->GetRoadMap ();
@@ -166,7 +166,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void TimeSlot::RemoveJob (Job *job)
+  void Slot::RemoveJob (Job *job)
   {
     {
       GList *node = g_list_find (_job_list,
@@ -190,7 +190,7 @@ namespace Marshaller
     }
 
     job->RemoveObjectListener (this);
-    job->SetTimeSlot          (NULL);
+    job->SetSlot              (NULL);
 
     {
       g_list_foreach (_referee_list,
@@ -206,7 +206,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void TimeSlot::AddReferee (EnlistedReferee *referee)
+  void Slot::AddReferee (EnlistedReferee *referee)
   {
     _referee_list = g_list_prepend (_referee_list,
                                     referee);
@@ -232,7 +232,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void TimeSlot::OnObjectDeleted (Object *object)
+  void Slot::OnObjectDeleted (Object *object)
   {
     Job *job = (Job *) object;
 
@@ -252,20 +252,20 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *TimeSlot::GetJobList ()
+  GList *Slot::GetJobList ()
   {
     return _job_list;
   }
 
   // --------------------------------------------------------------------------------
-  GList *TimeSlot::GetRefereeList ()
+  GList *Slot::GetRefereeList ()
   {
     return _referee_list;
   }
 
   // --------------------------------------------------------------------------------
-  gint TimeSlot::CompareAvailbility (TimeSlot *a,
-                                     TimeSlot *b)
+  gint Slot::CompareAvailbility (Slot *a,
+                                 Slot *b)
   {
     gint delta = g_date_time_compare (a->_end, b->_end);
 
