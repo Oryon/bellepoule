@@ -20,33 +20,38 @@
 #include <gtk/gtk.h>
 #include "actors/referees_list.hpp"
 
-class Referee;
-class Job;
-
-class RefereePool : public Object
+namespace Marshaller
 {
-  public:
-    RefereePool ();
+  class Job;
+  class TimeSlot;
+  class EnlistedReferee;
 
-    void ManageList (People::RefereesList *list);
+  class RefereePool : public Object
+  {
+    public:
+      RefereePool ();
 
-    void ManageReferee (Net::Message *message);
+      void ManageList (People::RefereesList *list);
 
-    Referee *GetReferee (guint ref);
+      void ManageReferee (Net::Message *message);
 
-    Referee *GetRefereeFor (Job *job);
+      EnlistedReferee *GetReferee (guint ref);
 
-    void Spread ();
+      EnlistedReferee *GetRefereeFor (Job      *job,
+                                      TimeSlot *slot);
 
-    GList *GetList ();
+      void Spread ();
 
-  private:
-    GList *_list_by_weapon;
+      GList *GetList ();
 
-    ~RefereePool ();
+    private:
+      GList *_list_by_weapon;
 
-    static void SpreadWeapon (People::RefereesList *list,
-                              RefereePool          *rp);
-};
+      ~RefereePool ();
+
+      static void SpreadWeapon (People::RefereesList *list,
+                                RefereePool          *rp);
+  };
+}
 
 #endif

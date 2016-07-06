@@ -19,89 +19,92 @@
 
 #include "job.hpp"
 
-// --------------------------------------------------------------------------------
-Job::Job (Batch    *batch,
-          guint     uuid,
-          GdkColor *gdk_color)
-  : Object ("Job")
+namespace Marshaller
 {
-  _gdk_color = gdk_color_copy (gdk_color);
-  _name      = NULL;
-  _batch     = batch;
-  _uuid      = uuid;
-  _timeslot  = NULL;
-
-  Disclose ("Roadmap");
-  _parcel->Set ("listener", uuid);
-}
-
-// --------------------------------------------------------------------------------
-Job::~Job ()
-{
-  if (_timeslot)
+  // --------------------------------------------------------------------------------
+  Job::Job (Batch    *batch,
+            guint     uuid,
+            GdkColor *gdk_color)
+    : Object ("Job")
   {
-    _timeslot->RemoveJob (this);
+    _gdk_color = gdk_color_copy (gdk_color);
+    _name      = NULL;
+    _batch     = batch;
+    _uuid      = uuid;
+    _timeslot  = NULL;
+
+    Disclose ("Roadmap");
+    _parcel->Set ("listener", uuid);
   }
 
-  g_free         (_name);
-  gdk_color_free (_gdk_color);
-}
+  // --------------------------------------------------------------------------------
+  Job::~Job ()
+  {
+    if (_timeslot)
+    {
+      _timeslot->RemoveJob (this);
+    }
 
-// --------------------------------------------------------------------------------
-void Job::SetName (const gchar *name)
-{
-  _name = g_strdup (name);
-}
+    g_free         (_name);
+    gdk_color_free (_gdk_color);
+  }
 
-// --------------------------------------------------------------------------------
-void Job::SetTimeSlot (TimeSlot *timeslot)
-{
-  _timeslot = timeslot;
-}
+  // --------------------------------------------------------------------------------
+  void Job::SetName (const gchar *name)
+  {
+    _name = g_strdup (name);
+  }
 
-// --------------------------------------------------------------------------------
-TimeSlot *Job::GetTimslot ()
-{
-  return _timeslot;
-}
+  // --------------------------------------------------------------------------------
+  void Job::SetTimeSlot (TimeSlot *timeslot)
+  {
+    _timeslot = timeslot;
+  }
 
-// --------------------------------------------------------------------------------
-const gchar *Job::GetName ()
-{
-  return _name;
-}
+  // --------------------------------------------------------------------------------
+  TimeSlot *Job::GetTimslot ()
+  {
+    return _timeslot;
+  }
 
-// --------------------------------------------------------------------------------
-Net::Message *Job::GetRoadMap ()
-{
-  return _parcel;
-}
+  // --------------------------------------------------------------------------------
+  const gchar *Job::GetName ()
+  {
+    return _name;
+  }
 
-// --------------------------------------------------------------------------------
-guint Job::GetUUID ()
-{
-  return _uuid;
-}
+  // --------------------------------------------------------------------------------
+  Net::Message *Job::GetRoadMap ()
+  {
+    return _parcel;
+  }
 
-// --------------------------------------------------------------------------------
-Batch *Job::GetBatch ()
-{
-  return _batch;
-}
+  // --------------------------------------------------------------------------------
+  guint Job::GetUUID ()
+  {
+    return _uuid;
+  }
 
-// --------------------------------------------------------------------------------
-GdkColor *Job::GetGdkColor ()
-{
-  return _gdk_color;
-}
+  // --------------------------------------------------------------------------------
+  Batch *Job::GetBatch ()
+  {
+    return _batch;
+  }
 
-// --------------------------------------------------------------------------------
-gint Job::CompareStartTime (Job *a,
-                            Job *b)
-{
-  TimeSlot *timeslot_a = a->GetTimslot ();
-  TimeSlot *timeslot_b = b->GetTimslot ();
+  // --------------------------------------------------------------------------------
+  GdkColor *Job::GetGdkColor ()
+  {
+    return _gdk_color;
+  }
 
-  return g_date_time_compare (timeslot_a->GetStartTime (),
-                              timeslot_b->GetStartTime ());
+  // --------------------------------------------------------------------------------
+  gint Job::CompareStartTime (Job *a,
+                              Job *b)
+  {
+    TimeSlot *timeslot_a = a->GetTimslot ();
+    TimeSlot *timeslot_b = b->GetTimslot ();
+
+    return g_date_time_compare (timeslot_a->GetStartTime (),
+                                timeslot_b->GetStartTime ());
+  }
 }

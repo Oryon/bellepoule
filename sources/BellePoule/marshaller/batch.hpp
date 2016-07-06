@@ -22,74 +22,84 @@
 #include "network/message.hpp"
 #include "util/module.hpp"
 
-class Job;
-
-class Batch : public Module
+namespace Marshaller
 {
-  public:
-    struct Listener
-    {
-      virtual void OnBatchAssignmentRequest (Batch *batch) = 0;
-      virtual void OnBatchAssignmentCancel  (Batch *batch) = 0;
-    };
+  class Job;
 
-  public:
-    Batch (const gchar *id,
-           Listener    *listener);
+  class Batch : public Module
+  {
+    public:
+      struct Listener
+      {
+        virtual void OnBatchAssignmentRequest (Batch *batch) = 0;
+        virtual void OnBatchAssignmentCancel  (Batch *batch) = 0;
+      };
 
-    void AttachTo (GtkNotebook *to);
+    public:
+      Batch (const gchar *id,
+             Listener    *listener);
 
-    void Load (Net::Message *message);
+      void AttachTo (GtkNotebook *to);
 
-    void SetVisibility (Job      *job,
-                        gboolean  visibility);
+      void Load (Net::Message *message);
 
-    void RemoveJob (Net::Message *message);
+      void SetVisibility (Job      *job,
+                          gboolean  visibility);
 
-    guint GetId ();
+      void RemoveJob (Net::Message *message);
 
-    GList *GetScheduledJobs ();
+      guint GetId ();
 
-    GList *GetPendingJobs ();
+      GList *GetScheduledJobs ();
 
-    const gchar *GetName ();
+      GList *GetPendingJobs ();
 
-    void SetProperties (Net::Message *message);
+      const gchar *GetName ();
 
-    GSList *GetCurrentSelection ();
+      void SetProperties (Net::Message *message);
 
-    void OnAssign ();
+      GSList *GetCurrentSelection ();
 
-    void OnCancelAssign ();
+      void OnAssign ();
 
-    GdkColor *GetColor ();
+      void OnCancelAssign ();
 
-    const gchar *GetWeaponCode ();
+      GdkColor *GetColor ();
 
-  private:
-    guint32       _id;
-    GtkListStore *_job_store;
-    guint32       _dnd_key;
-    GdkColor     *_gdk_color;
-    gchar        *_name;
-    Listener     *_listener;
-    GList        *_scheduled_list;
-    GList        *_pending_list;
-    gchar        *_weapon;
+      const gchar *GetWeaponCode ();
 
-    virtual ~Batch ();
+      void ManageFencer (Net::Message *message);
 
-    void LoadJob (xmlNode *xml_node,
-                  guint    uuid);
+      void DropFencer (Net::Message *message);
 
-    void SetProperty (Net::Message *message,
-                      const gchar  *property);
+    private:
+      guint32       _id;
+      GtkListStore *_job_store;
+      guint32       _dnd_key;
+      GdkColor     *_gdk_color;
+      gchar        *_name;
+      Listener     *_listener;
+      GList        *_scheduled_list;
+      GList        *_pending_list;
+      GList        *_fencer_list;
+      gchar        *_weapon;
 
-    void OnDragDataGet (GtkWidget        *widget,
-                        GdkDragContext   *drag_context,
-                        GtkSelectionData *data,
-                        guint             key,
-                        guint             time);
-};
+      virtual ~Batch ();
+
+      void LoadJob (xmlNode *xml_node,
+                    guint    uuid);
+
+      Job *GetJob (guint uuid);
+
+      void SetProperty (Net::Message *message,
+                        const gchar  *property);
+
+      void OnDragDataGet (GtkWidget        *widget,
+                          GdkDragContext   *drag_context,
+                          GtkSelectionData *data,
+                          guint             key,
+                          guint             time);
+  };
+}
 
 #endif

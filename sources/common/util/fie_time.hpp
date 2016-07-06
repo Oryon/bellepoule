@@ -30,16 +30,13 @@ class FieTime : public Object
 
     const gchar *GetXmlImage ();
 
-    GDateTime *GetDateTime ();
-
   private:
-    GDateTime *_date_time;
-    gchar     *_image;
-    gchar     *_xml_image;
+    gchar *_image;
+    gchar *_xml_image;
 
     virtual ~FieTime ();
 
-    void MakeImages ();
+    void MakeImages (GDateTime *date_time);
 };
 
 #endif

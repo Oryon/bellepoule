@@ -19,26 +19,29 @@
 
 #include "util/object.hpp"
 
-class Clock : public Object
+namespace Marshaller
 {
-  public:
-    struct Listener
-    {
-      virtual void OnNewTime (const gchar *time) = 0;
-    };
+  class Clock : public Object
+  {
+    public:
+      struct Listener
+      {
+        virtual void OnNewTime (const gchar *time) = 0;
+      };
 
-  public:
-    Clock (Listener *listener);
+    public:
+      Clock (Listener *listener);
 
-  private:
-    Listener *_listener;
-    guint     _tag;
+    private:
+      Listener *_listener;
+      guint     _tag;
 
-    ~Clock ();
+      ~Clock ();
 
-    void SetupTimeout ();
+      void SetupTimeout ();
 
-    static gboolean OnTimeout (Clock *clock);
-};
+      static gboolean OnTimeout (Clock *clock);
+  };
+}
 
 #endif

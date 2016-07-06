@@ -16,99 +16,102 @@
 
 #include "lasso.hpp"
 
-// --------------------------------------------------------------------------------
-Lasso::Lasso ()
-  : Object ("Lasso")
+namespace Marshaller
 {
-  _rectangle = NULL;
-}
-
-// --------------------------------------------------------------------------------
-Lasso::~Lasso ()
-{
-}
-
-// --------------------------------------------------------------------------------
-void Lasso::GetBounds (GooCanvasBounds *bounds)
-{
-  *bounds = _bounds;
-}
-
-// --------------------------------------------------------------------------------
-void Lasso::Throw (GooCanvasItem  *surface,
-                   GdkEventButton *event)
-{
-  _x = event->x;
-  _y = event->y;
-
+  // --------------------------------------------------------------------------------
+  Lasso::Lasso ()
+    : Object ("Lasso")
   {
-    GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 3.0, 0.8);
-
-    _rectangle = goo_canvas_rect_new (surface,
-                                      _x, _y,
-                                      0.0, 0.0,
-                                      "line-width",   1.0,
-                                      "line-dash",    dash,
-                                      NULL);
-    goo_canvas_line_dash_unref (dash);
-  }
-
-  goo_canvas_item_get_bounds (_rectangle,
-                              &_bounds);
-}
-
-// --------------------------------------------------------------------------------
-void Lasso::Pull ()
-{
-  if (_rectangle)
-  {
-    goo_canvas_item_remove (_rectangle);
     _rectangle = NULL;
   }
-}
 
-// --------------------------------------------------------------------------------
-gboolean Lasso::OnCursorMotion (GdkEventMotion *event)
-{
-  if (_rectangle)
+  // --------------------------------------------------------------------------------
+  Lasso::~Lasso ()
   {
-    gdouble top;
-    gdouble left;
-    gdouble width;
-    gdouble height;
-
-    if (event->x < _x)
-    {
-       width = _x - event->x;
-       left  = event->x;
-    }
-    else
-    {
-       width = event->x - _x;
-       left  = _x;
-    }
-
-    if (event->y < _y)
-    {
-      height = _y - event->y;
-      top    = event->y;
-    }
-    else
-    {
-      height = event->y - _y;
-      top    = _y;
-    }
-
-    g_object_set (G_OBJECT (_rectangle),
-                  "x",      left,
-                  "y",      top,
-                  "width",  width,
-                  "height", height,
-                  NULL);
-    goo_canvas_item_get_bounds (_rectangle,
-                                &_bounds);
-    return TRUE;
   }
 
-  return FALSE;
+  // --------------------------------------------------------------------------------
+  void Lasso::GetBounds (GooCanvasBounds *bounds)
+  {
+    *bounds = _bounds;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Lasso::Throw (GooCanvasItem  *surface,
+                     GdkEventButton *event)
+  {
+    _x = event->x;
+    _y = event->y;
+
+    {
+      GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 3.0, 0.8);
+
+      _rectangle = goo_canvas_rect_new (surface,
+                                        _x, _y,
+                                        0.0, 0.0,
+                                        "line-width",   1.0,
+                                        "line-dash",    dash,
+                                        NULL);
+      goo_canvas_line_dash_unref (dash);
+    }
+
+    goo_canvas_item_get_bounds (_rectangle,
+                                &_bounds);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Lasso::Pull ()
+  {
+    if (_rectangle)
+    {
+      goo_canvas_item_remove (_rectangle);
+      _rectangle = NULL;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Lasso::OnCursorMotion (GdkEventMotion *event)
+  {
+    if (_rectangle)
+    {
+      gdouble top;
+      gdouble left;
+      gdouble width;
+      gdouble height;
+
+      if (event->x < _x)
+      {
+        width = _x - event->x;
+        left  = event->x;
+      }
+      else
+      {
+        width = event->x - _x;
+        left  = _x;
+      }
+
+      if (event->y < _y)
+      {
+        height = _y - event->y;
+        top    = event->y;
+      }
+      else
+      {
+        height = event->y - _y;
+        top    = _y;
+      }
+
+      g_object_set (G_OBJECT (_rectangle),
+                    "x",      left,
+                    "y",      top,
+                    "width",  width,
+                    "height", height,
+                    NULL);
+      goo_canvas_item_get_bounds (_rectangle,
+                                  &_bounds);
+      return TRUE;
+    }
+
+    return FALSE;
+  }
 }

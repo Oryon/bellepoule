@@ -19,58 +19,67 @@
 
 #include "util/object.hpp"
 
-class Job;
-class Referee;
 class FieTime;
 
-class TimeSlot :
-  public Object,
-  public Object::Listener
+namespace Marshaller
 {
-  public:
-    class Owner
-    {
-      public:
-        virtual void  OnTimeSlotUpdated (TimeSlot *timeslot) = 0;
-        virtual guint GetId () = 0;
-    };
+  class Job;
+  class EnlistedReferee;
 
-  public:
-    TimeSlot (Owner     *owner,
-              GDateTime *start_time,
-              GTimeSpan  duration);
+  class TimeSlot :
+    public Object,
+    public Object::Listener
+  {
+    public:
+      class Owner
+      {
+        public:
+          virtual void  OnSlotUpdated (TimeSlot *timeslot) = 0;
+          virtual void  OnSlotLocked  (TimeSlot *timeslot) = 0;
+          virtual guint GetId () = 0;
+      };
 
-    void AddJob (Job *job);
+    public:
+      TimeSlot (Owner     *owner,
+                GDateTime *start_time,
+                GTimeSpan  duration);
 
-    void RemoveJob (Job *job);
+      void AddJob (Job *job);
 
-    GList *GetJobList ();
+      void RemoveJob (Job *job);
 
-    void AddReferee (Referee *referee);
+      GList *GetJobList ();
 
-    GList *GetRefereeList ();
+      void AddReferee (EnlistedReferee *referee);
 
-    void Cancel ();
+      GList *GetRefereeList ();
 
-    GDateTime *GetStartTime ();
+      void Cancel ();
 
-    GTimeSpan GetDuration ();
+      GDateTime *GetStartTime ();
 
-    GTimeSpan GetInterval (TimeSlot *with);
+      GTimeSpan GetDuration ();
 
-    static gint CompareAvailbility (TimeSlot *a,
-                                    TimeSlot *b);
+      GTimeSpan GetInterval (TimeSlot *with);
 
-  private:
-    Owner     *_owner;
-    GList     *_job_list;
-    GList     *_referee_list;
-    FieTime   *_start_time;
-    GTimeSpan  _duration;
+      gboolean Overlaps (TimeSlot *what);
 
-    virtual ~TimeSlot ();
+      static gint CompareAvailbility (TimeSlot *a,
+                                      TimeSlot *b);
 
-    void OnObjectDeleted (Object *object);
-};
+    private:
+      Owner     *_owner;
+      GList     *_job_list;
+      GList     *_referee_list;
+      FieTime   *_fie_time;
+      GDateTime *_start;
+      GDateTime *_end;
+      GTimeSpan  _duration;
+
+      virtual ~TimeSlot ();
+
+      void OnObjectDeleted (Object *object);
+  };
+}
 
 #endif
