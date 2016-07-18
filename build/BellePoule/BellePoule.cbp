@@ -252,16 +252,16 @@
 		<Unit filename="../../sources/BellePoule/marshaller/referee_pool.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/slot.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/slot.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/timeline.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/timeline.hpp">
-			<Option target="Marshaller_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/marshaller/timeslot.cpp">
-			<Option target="Marshaller_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/marshaller/timeslot.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/attendees.cpp">

@@ -15,18 +15,12 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <sys/types.h>
-#ifdef WIN32
-  #include <winsock2.h>
-  #include <ws2tcpip.h>
-  #include <iphlpapi.h>
-#else
-  #include <ifaddrs.h>
-  #include <sys/socket.h>
-  #include <sys/ioctl.h>
-  #include <net/if.h>
-  #include <netdb.h>
-#endif
 #include <qrencode.h>
+#ifndef WIN32
+  #include <ifaddrs.h>
+#endif
+
+#include <gio/gnetworking.h>
 
 #ifndef LIVE_POOL
 #include "util/player.hpp"

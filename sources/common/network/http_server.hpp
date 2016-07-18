@@ -17,22 +17,12 @@
 #ifndef http_server_hpp
 #define http_server_hpp
 
-#ifdef WIN32
-  #include <winsock2.h>
-  #include <ws2tcpip.h>
-  #include <iphlpapi.h>
-#else
+#ifndef WIN32
   #include <ifaddrs.h>
-  #include <sys/socket.h>
-  #include <sys/ioctl.h>
-  #include <net/if.h>
-  #include <netdb.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
 #endif
 
-
 #include <glib.h>
+#include <gio/gnetworking.h>
 #include <microhttpd.h>
 
 #include "util/object.hpp"
