@@ -18,7 +18,7 @@
 #include "actors/player_factory.hpp"
 #include "enlisted_referee.hpp"
 #include "job.hpp"
-#include "timeslot.hpp"
+#include "slot.hpp"
 #include "batch.hpp"
 #include "referee_pool.hpp"
 
@@ -99,8 +99,8 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  EnlistedReferee *RefereePool::GetRefereeFor (Job      *job,
-                                               TimeSlot *slot)
+  EnlistedReferee *RefereePool::GetRefereeFor (Job  *job,
+                                               Slot *slot)
   {
     GList *current_weapon = _list_by_weapon;
     Batch *batch   = job->GetBatch ();

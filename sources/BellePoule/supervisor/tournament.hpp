@@ -99,6 +99,9 @@ class Tournament : public Module
 
     void SetBackupLocation (gchar *location);
 
+    static gboolean RecentFileExists (const GtkRecentFilterInfo *filter_info,
+                                      Tournament                *tournament);
+
     Player *UpdateConnectionStatus (GSList      *player_list,
                                     guint        ref,
                                     const gchar *ip_address,

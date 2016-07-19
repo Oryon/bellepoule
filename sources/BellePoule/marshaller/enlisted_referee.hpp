@@ -22,19 +22,19 @@
 
 namespace Marshaller
 {
-  class TimeSlot;
+  class Slot;
 
   class EnlistedReferee : public Referee
   {
     public:
       EnlistedReferee ();
 
-      void AddSlot (TimeSlot *slot);
+      void AddSlot (Slot *slot);
 
-      gboolean IsAvailableFor (TimeSlot *slot);
+      gboolean IsAvailableFor (Slot *slot);
 
       static void OnRemovedFromSlot (EnlistedReferee *referee,
-                                     TimeSlot        *slot);
+                                     Slot            *slot);
 
     private:
       GList *_slots;

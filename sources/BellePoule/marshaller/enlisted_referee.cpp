@@ -14,7 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "timeslot.hpp"
+#include "slot.hpp"
 
 #include "enlisted_referee.hpp"
 
@@ -34,16 +34,16 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void EnlistedReferee::AddSlot (TimeSlot *slot)
+  void EnlistedReferee::AddSlot (Slot *slot)
   {
     _slots = g_list_insert_sorted (_slots,
                                    slot,
-                                   (GCompareFunc) TimeSlot::CompareAvailbility);
+                                   (GCompareFunc) Slot::CompareAvailbility);
   }
 
   // --------------------------------------------------------------------------------
   void EnlistedReferee::OnRemovedFromSlot (EnlistedReferee *referee,
-                                           TimeSlot        *slot)
+                                           Slot            *slot)
   {
     GList *node = g_list_find (referee->_slots,
                                slot);
@@ -56,13 +56,13 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean EnlistedReferee::IsAvailableFor (TimeSlot *slot)
+  gboolean EnlistedReferee::IsAvailableFor (Slot *slot)
   {
     GList *current = _slots;
 
     while (current)
     {
-      TimeSlot *current_slot = (TimeSlot *) current->data;
+      Slot *current_slot = (Slot *) current->data;
 
       if (slot->Overlaps (current_slot))
       {

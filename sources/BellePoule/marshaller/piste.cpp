@@ -39,7 +39,7 @@ namespace Marshaller
   {
     _horizontal = TRUE;
     _listener   = NULL;
-    _timeslots  = NULL;
+    _slots      = NULL;
 
     _display_time = g_date_time_new_now_local ();
 
@@ -149,7 +149,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Piste::~Piste ()
   {
-    g_list_free_full (_timeslots,
+    g_list_free_full (_slots,
                       (GDestroyNotify) TryToRelease);
 
     goo_canvas_item_remove (_root_item);
@@ -169,18 +169,18 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  TimeSlot *Piste::GetTimeslotAt (GDateTime *start_time)
+  Slot *Piste::GetSlotAt (GDateTime *start_time)
   {
-    GList *current = _timeslots;
+    GList *current = _slots;
 
     while (current)
     {
-      TimeSlot *timeslot = (TimeSlot *) current->data;
+      Slot *slot = (Slot *) current->data;
 
-      if (TimeIsInTimeslot (start_time,
-                            timeslot))
+      if (TimeIsInSlot (start_time,
+                        slot))
       {
-        return timeslot;
+        return slot;
       }
 
       current = g_list_next (current);
@@ -198,18 +198,18 @@ namespace Marshaller
     }
     _display_time = g_date_time_add (time, 0);
 
-    CleanDisplay      ();
-    OnSlotUpdated (GetTimeslotAt (time));
+    CleanDisplay  ();
+    OnSlotUpdated (GetSlotAt (time));
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Piste::TimeIsInTimeslot (GDateTime *time,
-                                    TimeSlot  *timeslot)
+  gboolean Piste::TimeIsInSlot (GDateTime *time,
+                                Slot      *slot)
   {
-    if (timeslot && (g_date_time_compare (timeslot->GetStartTime (), time) <= 0))
+    if (slot && (g_date_time_compare (slot->GetStartTime (), time) <= 0))
     {
-      GDateTime *end_time = g_date_time_add (timeslot->GetStartTime (),
-                                             timeslot->GetDuration  ());
+      GDateTime *end_time = g_date_time_add (slot->GetStartTime (),
+                                             slot->GetDuration  ());
 
       if (g_date_time_compare (time,
                                end_time) <= 0)
@@ -227,21 +227,21 @@ namespace Marshaller
   GList *Piste::GetFreeSlots (GDateTime *from,
                               GTimeSpan  duration)
   {
-    GList    *slots        = NULL;
-    GList    *next         = NULL;
-    TimeSlot *current_slot = NULL;
+    GList *slots        = NULL;
+    GList *next         = NULL;
+    Slot  *current_slot = NULL;
 
     {
-      GList *current = _timeslots;
+      GList *current = _slots;
 
       while (current)
       {
-        current_slot = (TimeSlot *) current->data;
+        current_slot = (Slot *) current->data;
         next         = g_list_next (current);
 
         if (next)
         {
-          TimeSlot  *next_slot = (TimeSlot *) next->data;
+          Slot      *next_slot = (Slot *) next->data;
           GTimeSpan  interval  = current_slot->GetInterval (next_slot);
 
           if (interval > duration)
@@ -304,14 +304,14 @@ namespace Marshaller
       }
 
       {
-        TimeSlot *free_timeslot;
+        Slot *free_slot;
 
-        free_timeslot = new TimeSlot (this,
-                                      start_time,
-                                      duration);
+        free_slot = new Slot (this,
+                              start_time,
+                              duration);
 
         slots = g_list_append (slots,
-                               free_timeslot);
+                               free_slot);
       }
     }
 
@@ -335,13 +335,13 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Piste::OnSlotUpdated (TimeSlot *timeslot)
+  void Piste::OnSlotUpdated (Slot *slot)
   {
-    if (TimeIsInTimeslot (_display_time, timeslot))
+    if (TimeIsInSlot (_display_time, slot))
     {
       GString     *match_name   = g_string_new ("");
       const gchar *last_name    = NULL;
-      GList       *referee_list = timeslot->GetRefereeList ();
+      GList       *referee_list = slot->GetRefereeList ();
 
       CleanDisplay ();
 
@@ -367,7 +367,7 @@ namespace Marshaller
       }
 
       {
-        GList *current = timeslot->GetJobList ();
+        GList *current = slot->GetJobList ();
 
         for (guint i = 0; current != NULL; i++)
         {
@@ -418,49 +418,49 @@ namespace Marshaller
       g_string_free (match_name, TRUE);
     }
 
-    if (timeslot && (timeslot->GetJobList () == NULL))
+    if (slot && (slot->GetJobList () == NULL))
     {
-      GList *node = g_list_find (_timeslots,
-                                 timeslot);
+      GList *node = g_list_find (_slots,
+                                 slot);
 
       if (node)
       {
-        _timeslots = g_list_delete_link (_timeslots,
-                                         node);
+        _slots = g_list_delete_link (_slots,
+                                     node);
       }
-      timeslot->Release ();
+      slot->Release ();
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Piste::OnSlotLocked (TimeSlot *timeslot)
+  void Piste::OnSlotLocked (Slot *slot)
   {
-    _timeslots = g_list_insert_sorted (_timeslots,
-                                       timeslot,
-                                       (GCompareFunc) TimeSlot::CompareAvailbility);
+    _slots = g_list_insert_sorted (_slots,
+                                   slot,
+                                   (GCompareFunc) Slot::CompareAvailbility);
   }
 
   // --------------------------------------------------------------------------------
   void Piste::AddReferee (EnlistedReferee *referee)
   {
-    TimeSlot *timeslot = GetTimeslotAt (_display_time);
+    Slot *slot = GetSlotAt (_display_time);
 
-    if (timeslot)
+    if (slot)
     {
-      timeslot->AddReferee (referee);
+      slot->AddReferee (referee);
     }
   }
 
   // --------------------------------------------------------------------------------
   void Piste::RemoveBatch (Batch *batch)
   {
-    GList *timeslot_list    = g_list_copy (_timeslots);
-    GList *current_timeslot = timeslot_list;
+    GList *slot_list    = g_list_copy (_slots);
+    GList *current_slot = slot_list;
 
-    while (current_timeslot)
+    while (current_slot)
     {
-      TimeSlot *timeslot = (TimeSlot *) current_timeslot->data;
-      GList    *job_list = g_list_copy (timeslot->GetJobList ());
+      Slot  *slot     = (Slot *) current_slot->data;
+      GList *job_list = g_list_copy (slot->GetJobList ());
 
       {
         GList *current_job = job_list;
@@ -471,7 +471,7 @@ namespace Marshaller
 
           if (job->GetBatch () == batch)
           {
-            timeslot->RemoveJob (job);
+            slot->RemoveJob (job);
           }
 
           current_job = g_list_next (current_job);
@@ -480,10 +480,10 @@ namespace Marshaller
         g_list_free (job_list);
       }
 
-      current_timeslot = g_list_next (current_timeslot);
+      current_slot = g_list_next (current_slot);
     }
 
-    g_list_free (timeslot_list);
+    g_list_free (slot_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -618,13 +618,13 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Piste::Disable ()
   {
-    GList *current = _timeslots;
+    GList *current = _slots;
 
     while (current)
     {
-      TimeSlot *timeslot = (TimeSlot *) current->data;
+      Slot *slot = (Slot *) current->data;
 
-      timeslot->Cancel ();
+      slot->Cancel ();
 
       current = g_list_next (current);
     }

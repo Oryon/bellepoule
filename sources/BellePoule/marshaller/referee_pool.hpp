@@ -23,7 +23,7 @@
 namespace Marshaller
 {
   class Job;
-  class TimeSlot;
+  class Slot;
   class EnlistedReferee;
 
   class RefereePool : public Object
@@ -37,8 +37,8 @@ namespace Marshaller
 
       EnlistedReferee *GetReferee (guint ref);
 
-      EnlistedReferee *GetRefereeFor (Job      *job,
-                                      TimeSlot *slot);
+      EnlistedReferee *GetRefereeFor (Job  *job,
+                                      Slot *slot);
 
       void Spread ();
 

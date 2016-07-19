@@ -466,15 +466,7 @@ void Contest::LoadXml (const gchar *filename)
     {
       LoadXmlDoc (doc);
 
-      {
-        gchar *uri = g_filename_to_uri (filename,
-                                        NULL,
-                                        NULL);
-
-        gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
-                                     uri);
-        g_free (uri);
-      }
+      AddFileToRecentManager (filename);
 
       if (g_str_has_suffix (_filename,
                             ".cotcot") == FALSE)
@@ -1897,15 +1889,7 @@ gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
         g_free (dirname);
       }
 
-      {
-        gchar *uri = g_filename_to_uri (_filename,
-                                        NULL,
-                                        NULL);
-
-        gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
-                                     uri);
-        g_free (uri);
-      }
+      AddFileToRecentManager (_filename);
     }
   }
 
@@ -1915,6 +1899,18 @@ gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
   }
 
   return _filename;
+}
+
+// --------------------------------------------------------------------------------
+void Contest::AddFileToRecentManager (const gchar *filename)
+{
+  gchar *uri = g_filename_to_uri (filename,
+                                  NULL,
+                                  NULL);
+
+  gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
+                               uri);
+  g_free (uri);
 }
 
 // --------------------------------------------------------------------------------

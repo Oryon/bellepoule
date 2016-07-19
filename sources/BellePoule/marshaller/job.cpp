@@ -15,7 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/message.hpp"
-#include "timeslot.hpp"
+#include "slot.hpp"
 
 #include "job.hpp"
 
@@ -31,7 +31,7 @@ namespace Marshaller
     _name      = NULL;
     _batch     = batch;
     _uuid      = uuid;
-    _timeslot  = NULL;
+    _slot      = NULL;
 
     Disclose ("Roadmap");
     _parcel->Set ("listener", uuid);
@@ -40,9 +40,9 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Job::~Job ()
   {
-    if (_timeslot)
+    if (_slot)
     {
-      _timeslot->RemoveJob (this);
+      _slot->RemoveJob (this);
     }
 
     g_free         (_name);
@@ -56,15 +56,15 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Job::SetTimeSlot (TimeSlot *timeslot)
+  void Job::SetSlot (Slot *slot)
   {
-    _timeslot = timeslot;
+    _slot = slot;
   }
 
   // --------------------------------------------------------------------------------
-  TimeSlot *Job::GetTimslot ()
+  Slot *Job::GetSlot ()
   {
-    return _timeslot;
+    return _slot;
   }
 
   // --------------------------------------------------------------------------------
@@ -101,10 +101,10 @@ namespace Marshaller
   gint Job::CompareStartTime (Job *a,
                               Job *b)
   {
-    TimeSlot *timeslot_a = a->GetTimslot ();
-    TimeSlot *timeslot_b = b->GetTimslot ();
+    Slot *slot_a = a->GetSlot ();
+    Slot *slot_b = b->GetSlot ();
 
-    return g_date_time_compare (timeslot_a->GetStartTime (),
-                                timeslot_b->GetStartTime ());
+    return g_date_time_compare (slot_a->GetStartTime (),
+                                slot_b->GetStartTime ());
   }
 }

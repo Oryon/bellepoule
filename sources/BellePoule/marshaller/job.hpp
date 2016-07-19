@@ -22,7 +22,7 @@
 namespace Marshaller
 {
   class Batch;
-  class TimeSlot;
+  class Slot;
 
   class Job : public Object
   {
@@ -33,9 +33,9 @@ namespace Marshaller
 
       void SetName (const gchar *name);
 
-      void SetTimeSlot (TimeSlot *timeslot);
+      void SetSlot (Slot *slot);
 
-      TimeSlot *GetTimslot ();
+      Slot *GetSlot ();
 
       const gchar *GetName ();
 
@@ -55,7 +55,7 @@ namespace Marshaller
       guint     _uuid;
       GdkColor *_gdk_color;
       Batch    *_batch;
-      TimeSlot *_timeslot;
+      Slot     *_slot;
 
       ~Job ();
   };
