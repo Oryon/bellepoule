@@ -1079,6 +1079,31 @@ void Tournament::OnOpenExample ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Tournament::RecentFileExists (const GtkRecentFilterInfo *filter_info,
+                                       Tournament                *tournament)
+{
+  gboolean exists = FALSE;
+
+  if (filter_info->contains & GTK_RECENT_FILTER_URI)
+  {
+    gchar *filename = g_filename_from_uri (filter_info->uri,
+                                           NULL,
+                                           NULL);
+
+    if (filename && g_str_has_suffix (filename, ".cotcot"))
+    {
+      if (g_file_test (filename, G_FILE_TEST_EXISTS))
+      {
+        exists = TRUE;
+      }
+    }
+    g_free (filename);
+  }
+
+  return exists;
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnRecent ()
 {
   GtkWidget *dialog = gtk_recent_chooser_dialog_new (gettext ("Recently opened files"),
@@ -1089,14 +1114,18 @@ void Tournament::OnRecent ()
 
   gtk_recent_chooser_set_show_tips (GTK_RECENT_CHOOSER (dialog),
                                     TRUE);
-  gtk_recent_chooser_set_show_not_found (GTK_RECENT_CHOOSER (dialog),
-                                         FALSE);
 
+  // gtk_recent_chooser_set_show_not_found (...) doesn't work well on windows.
+  // with utf8 encoded filename. For this reason we implement our own filter
   {
     GtkRecentFilter *filter = gtk_recent_filter_new ();
 
-    gtk_recent_filter_add_pattern (filter,
-                                   "*.cotcot");
+    gtk_recent_filter_add_custom (filter,
+                                  (GtkRecentFilterFlags) (GTK_RECENT_FILTER_URI|GTK_RECENT_FILTER_DISPLAY_NAME),
+                                  (GtkRecentFilterFunc) RecentFileExists,
+                                  this,
+                                  NULL);
+
     gtk_recent_filter_set_name (filter,
                                 gettext ("BellePoule files"));
 

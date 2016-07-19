@@ -211,6 +211,8 @@ class Contest : public Module
 
     void FeedParcel (Net::Message *parcel);
 
+    void AddFileToRecentManager (const gchar *filename);
+
   private:
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
