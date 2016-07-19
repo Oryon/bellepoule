@@ -383,14 +383,6 @@ Score *Match::GetScore (guint fencer)
 // --------------------------------------------------------------------------------
 void Match::Save (xmlTextWriter *xml_writer)
 {
-  for (guint i = 0; i < 2; i++)
-  {
-    if (_opponents[i]._fencer == NULL)
-    {
-      return;
-    }
-  }
-
   if (_number)
   {
     xmlTextWriterStartElement (xml_writer,
