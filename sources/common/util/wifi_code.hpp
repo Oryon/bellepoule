@@ -47,8 +47,6 @@ class WifiCode : public FlashCode
 
     gchar *GetNetwork ();
 
-    gchar *GetIpAddress ();
-
     virtual ~WifiCode ();
 
     gchar *GetText ();

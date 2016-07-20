@@ -17,8 +17,6 @@
 #ifndef message_hpp
 #define message_hpp
 
-#include <gio/gnetworking.h>
-
 #include "util/object.hpp"
 
 namespace Net

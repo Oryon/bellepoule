@@ -16,11 +16,8 @@
 
 #include <sys/types.h>
 #include <qrencode.h>
-#ifndef WIN32
-  #include <ifaddrs.h>
-#endif
 
-#include <gio/gnetworking.h>
+#include "network/ring.hpp"
 
 #ifndef LIVE_POOL
 #include "util/player.hpp"
@@ -81,82 +78,6 @@ gchar *WifiCode::GetNetwork ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *WifiCode::GetIpAddress ()
-{
-  gchar *ip_address = NULL;
-
-#ifdef WIN32
-  ULONG            info_length  = sizeof (IP_ADAPTER_INFO);
-  PIP_ADAPTER_INFO adapter_info = (IP_ADAPTER_INFO *) malloc (sizeof (IP_ADAPTER_INFO));
-
-  if (adapter_info)
-  {
-    if (GetAdaptersInfo (adapter_info, &info_length) == ERROR_BUFFER_OVERFLOW)
-    {
-      free (adapter_info);
-
-      adapter_info = (IP_ADAPTER_INFO *) malloc (info_length);
-    }
-
-    if (GetAdaptersInfo (adapter_info, &info_length) == NO_ERROR)
-    {
-      PIP_ADAPTER_INFO adapter = adapter_info;
-
-      while (adapter)
-      {
-        if (g_strcmp0 (adapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
-        {
-          ip_address = g_strdup (adapter->IpAddressList.IpAddress.String);
-          break;
-        }
-
-        adapter = adapter->Next;
-      }
-    }
-
-    free (adapter_info);
-  }
-#else
-    struct ifaddrs *ifa_list;
-
-    if (getifaddrs (&ifa_list) == -1)
-    {
-      g_error ("getifaddrs");
-    }
-    else
-    {
-      for (struct ifaddrs *ifa = ifa_list; ifa != NULL; ifa = ifa->ifa_next)
-      {
-        if (   ifa->ifa_addr
-            && (ifa->ifa_flags & IFF_UP)
-            && ((ifa->ifa_flags & IFF_LOOPBACK) == 0))
-        {
-          int family = ifa->ifa_addr->sa_family;
-
-          if (family == AF_INET)
-          {
-            char host[NI_MAXHOST];
-
-            if (getnameinfo (ifa->ifa_addr,
-                             sizeof (struct sockaddr_in),
-                             host,
-                             NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0)
-            {
-              ip_address = g_strdup (host);
-              break;
-            }
-          }
-        }
-      }
-
-      freeifaddrs (ifa_list);
-    }
-#endif
-
-  return ip_address;
-}
-
-// --------------------------------------------------------------------------------
 void WifiCode::ResetKey ()
 {
   g_free (_key);
@@ -206,10 +127,10 @@ gchar *WifiCode::GetKey ()
 // --------------------------------------------------------------------------------
 gchar *WifiCode::GetText ()
 {
-  gchar *network = GetNetwork ();
-  gchar *ip      = GetIpAddress ();
-  gchar *key     = GetKey ();
-  gchar *text;
+  gchar       *network = GetNetwork ();
+  const gchar *ip      = Net::Ring::GetIpV4Address ();
+  gchar       *key     = GetKey ();
+  gchar       *text;
 
 #ifndef LIVE_POOL
   if (_player)
@@ -234,7 +155,6 @@ gchar *WifiCode::GetText ()
   }
 
   g_free (key);
-  g_free (ip);
   g_free (network);
 
   return text;

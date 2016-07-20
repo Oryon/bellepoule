@@ -55,6 +55,8 @@ namespace Net
 
       static void PostToListener (Net::Message *message);
 
+      static const gchar *GetIpV4Address ();
+
     private:
       Ring ();
       virtual ~Ring ();
@@ -89,6 +91,8 @@ namespace Net
                                    gpointer      user_data);
 
       static void Send (Message *message);
+
+      static gchar *GuessIpV4Address ();
   };
 }
 #endif

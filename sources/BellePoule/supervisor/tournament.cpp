@@ -27,6 +27,7 @@
 
 #include "util/global.hpp"
 #include "util/canvas.hpp"
+#include "network/ring.hpp"
 #include "application/version.h"
 #include "application/weapon.hpp"
 #include "actors/form.hpp"
@@ -102,16 +103,13 @@ void Tournament::Start (gchar *filename)
 
   // URL QrCode
   {
-    gchar *ip_addr;
     gchar *html_url;
 
-    ip_addr = Net::HttpServer::GetIpV4 ();
-    html_url = g_strdup_printf ("http://%s/index.php", ip_addr);
+    html_url = g_strdup_printf ("http://%s/index.php", Net::Ring::GetIpV4Address ());
 
     SetFlashRef (html_url);
 
     g_free (html_url);
-    g_free (ip_addr);
   }
 
   if (filename)

@@ -40,10 +40,11 @@
 #  define CYAN    "\033[1;36m"
 #  define WHITE   "\033[0;37m"
 #  define ESC     "\033[0m"
-#  if PANGO_VERSION_MAJOR == 1 && PANGO_VERSION_MINOR > 30 && PANGO_VERSION_MINOR < 38
-#    undef  BP_FONT                  // workaround for Pango bug #700592
-#    define BP_FONT "Nimbus Sans L " // https://bugzilla.gnome.org/show_bug.cgi?id=700592
-#  endif
+#endif
+
+#if PANGO_VERSION_MAJOR == 1 && PANGO_VERSION_MINOR > 30 && PANGO_VERSION_MINOR < 38
+#  undef  BP_FONT                  // workaround for Pango bug #700592
+#  define BP_FONT "Nimbus Sans L " // https://bugzilla.gnome.org/show_bug.cgi?id=700592
 #endif
 
 #if GTK_MAJOR_VERSION >= 3

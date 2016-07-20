@@ -134,65 +134,6 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gchar *HttpServer::GetIpV4 ()
-  {
-    gchar *address = NULL;
-
-#ifdef WIN32
-    {
-      struct hostent *hostinfo;
-      gchar           hostname[50];
-
-      if (gethostname (hostname, sizeof (hostname)) == 0)
-      {
-        hostinfo = gethostbyname (hostname);
-        if (hostinfo)
-        {
-          address = g_strdup (inet_ntoa (*(struct in_addr*) (hostinfo->h_addr)));
-        }
-      }
-    }
-#else
-    {
-      struct ifaddrs *ifaddr;
-
-      if (getifaddrs (&ifaddr) == -1)
-      {
-        g_warning ("getifaddrs");
-        return NULL;
-      }
-
-      for (struct ifaddrs *ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
-      {
-        if ((ifa->ifa_addr) && ((ifa->ifa_flags & IFF_LOOPBACK) == 0))
-        {
-          int family = ifa->ifa_addr->sa_family;
-
-          if (family == AF_INET)
-          {
-            char host[NI_MAXHOST];
-
-            if (getnameinfo (ifa->ifa_addr,
-                             (family == AF_INET) ? sizeof(struct sockaddr_in) :
-                             sizeof (struct sockaddr_in6),
-                             host, NI_MAXHOST,
-                             NULL, 0, NI_NUMERICHOST) == 0)
-            {
-              address = g_strdup (host);
-              break;
-            }
-          }
-        }
-      }
-
-      freeifaddrs (ifaddr);
-    }
-#endif
-
-    return address;
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean HttpServer::DeferedPost (DeferedData *defered_data)
   {
     defered_data->_server->_http_POST_cbk (defered_data->_server->_client,
