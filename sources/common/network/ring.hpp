@@ -82,8 +82,7 @@ namespace Net
 
       static void Multicast (Message *message);
 
-      static gboolean JoinMulticast (GSocket      *socket,
-                                     GInetAddress *group);
+      static gboolean JoinMulticast (GSocket *socket);
 
       static gboolean OnMulticast (GSocket      *socket,
                                    GIOCondition  condition,
