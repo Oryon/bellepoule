@@ -36,8 +36,12 @@ namespace Marshaller
       static void OnRemovedFromSlot (EnlistedReferee *referee,
                                      Slot            *slot);
 
+      static gint CompareLoad (EnlistedReferee *a,
+                               EnlistedReferee *b);
+
     private:
-      GList *_slots;
+      GList       *_slots;
+      AttributeId *_load_attr_id;
 
       virtual ~EnlistedReferee ();
   };

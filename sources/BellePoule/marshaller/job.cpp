@@ -24,14 +24,16 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Job::Job (Batch    *batch,
             guint     uuid,
+            guint     sibling_order,
             GdkColor *gdk_color)
     : Object ("Job")
   {
-    _gdk_color = gdk_color_copy (gdk_color);
-    _name      = NULL;
-    _batch     = batch;
-    _uuid      = uuid;
-    _slot      = NULL;
+     _gdk_color     = gdk_color_copy (gdk_color);
+     _name          = NULL;
+     _batch         = batch;
+     _uuid          = uuid;
+     _sibling_order = sibling_order;
+     _slot          = NULL;
 
     Disclose ("Roadmap");
     _parcel->Set ("listener", uuid);
@@ -106,5 +108,12 @@ namespace Marshaller
 
     return g_date_time_compare (slot_a->GetStartTime (),
                                 slot_b->GetStartTime ());
+  }
+
+  // --------------------------------------------------------------------------------
+  gint Job::CompareSiblingOrder (Job *a,
+                                 Job *b)
+  {
+    return a->_sibling_order - b->_sibling_order;
   }
 }

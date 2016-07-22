@@ -64,6 +64,8 @@ namespace Marshaller
 
       gboolean Overlaps (Slot *what);
 
+      static void Dump (Slot *what);
+
       static gint CompareAvailbility (Slot *a,
                                       Slot *b);
 

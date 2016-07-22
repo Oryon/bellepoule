@@ -55,6 +55,8 @@ namespace Net
 
       static void PostToListener (Net::Message *message);
 
+      static const gchar *GetIpV4Address ();
+
     private:
       Ring ();
       virtual ~Ring ();
@@ -82,14 +84,15 @@ namespace Net
 
       static void Multicast (Message *message);
 
-      static gboolean JoinMulticast (GSocket      *socket,
-                                     GInetAddress *group);
+      static gboolean JoinMulticast (GSocket *socket);
 
       static gboolean OnMulticast (GSocket      *socket,
                                    GIOCondition  condition,
                                    gpointer      user_data);
 
       static void Send (Message *message);
+
+      static gchar *GuessIpV4Address ();
   };
 }
 #endif

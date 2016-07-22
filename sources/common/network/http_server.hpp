@@ -17,12 +17,7 @@
 #ifndef http_server_hpp
 #define http_server_hpp
 
-#ifndef WIN32
-  #include <ifaddrs.h>
-#endif
-
 #include <glib.h>
-#include <gio/gnetworking.h>
 #include <microhttpd.h>
 
 #include "util/object.hpp"
@@ -57,8 +52,6 @@ namespace Net
                   guint     port);
 
       guint GetPort ();
-
-      static gchar *GetIpV4 ();
 
     private:
       struct RequestBody

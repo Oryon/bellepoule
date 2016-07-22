@@ -6,7 +6,7 @@ PRODUCT = bellepoulebeta
 OUTPUT  = Release
 PACKAGE = $(HOME)/Project/PPA/$(PRODUCT)
 VERSION = 5.0
-STEP    = ubuntu5
+STEP    = ubuntu6
 RELEASE = $(PRODUCT)_$(VERSION)
 UBUNTU  = trusty
 V       = 1
@@ -73,7 +73,7 @@ else
 CFLAGS += -fPIC
 endif
 
-CFLAGS += $(shell $(PKG_CONFIG) --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libzmq)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
 
 CFLAGS += -Isources/common
 CFLAGS += -Isources/BellePoule
@@ -93,7 +93,7 @@ ifeq ($(OUTPUT), Release)
 LDFLAGS += -mwindows
 endif
 endif
-LDFLAGS += $(shell $(PKG_CONFIG) --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libzmq)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
 
 ifeq ($(OUTPUT), Release)
 LDFLAGS += -s

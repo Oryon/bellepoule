@@ -24,21 +24,36 @@ namespace Marshaller
   EnlistedReferee::EnlistedReferee ()
     : Referee ()
   {
-    _slots = NULL;
+     _slots = NULL;
+
+     {
+       _load_attr_id = new AttributeId ("participation_rate");
+       SetAttributeValue (_load_attr_id, 0u);
+     }
   }
 
   // --------------------------------------------------------------------------------
   EnlistedReferee::~EnlistedReferee ()
   {
     g_list_free (_slots);
+    _load_attr_id->Release ();
   }
 
   // --------------------------------------------------------------------------------
   void EnlistedReferee::AddSlot (Slot *slot)
   {
+    {
+      Attribute *load_attr = GetAttribute (_load_attr_id);
+      gint       load      = load_attr->GetIntValue ();
+
+      load += slot->GetDuration () / G_TIME_SPAN_MINUTE;
+      SetAttributeValue (_load_attr_id, load);
+    }
+
     _slots = g_list_insert_sorted (_slots,
                                    slot,
                                    (GCompareFunc) Slot::CompareAvailbility);
+
   }
 
   // --------------------------------------------------------------------------------
@@ -53,25 +68,51 @@ namespace Marshaller
       referee->_slots = g_list_delete_link (referee->_slots,
                                             node);
     }
+
+    {
+      Attribute *load_attr = referee->GetAttribute (referee->_load_attr_id);
+      gint       load      = load_attr->GetIntValue ();
+
+      load -= slot->GetDuration () / G_TIME_SPAN_MINUTE;
+      referee->SetAttributeValue (referee->_load_attr_id, load);
+    }
   }
 
   // --------------------------------------------------------------------------------
   gboolean EnlistedReferee::IsAvailableFor (Slot *slot)
   {
-    GList *current = _slots;
+    Player::AttributeId  attr_id ("attending");
+    Attribute           *attr = GetAttribute (&attr_id);
 
-    while (current)
+    if (attr && (attr->GetUIntValue () == TRUE))
     {
-      Slot *current_slot = (Slot *) current->data;
+      GList *current = _slots;
 
-      if (slot->Overlaps (current_slot))
+      while (current)
       {
-        return FALSE;
+        Slot *current_slot = (Slot *) current->data;
+
+        if (slot->Overlaps (current_slot))
+        {
+          return FALSE;
+        }
+
+        current = g_list_next (current);
       }
 
-      current = g_list_next (current);
+      return TRUE;
     }
 
-    return TRUE;
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gint EnlistedReferee::CompareLoad (EnlistedReferee *a,
+                                     EnlistedReferee *b)
+  {
+    Attribute *attr_a = a->GetAttribute (a->_load_attr_id);
+    Attribute *attr_b = b->GetAttribute (a->_load_attr_id);
+
+    return attr_a->GetIntValue () - attr_b->GetIntValue ();
   }
 }

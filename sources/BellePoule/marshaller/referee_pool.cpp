@@ -111,19 +111,27 @@ namespace Marshaller
 
       if (g_strcmp0 (referee_list->GetWeaponCode (), batch->GetWeaponCode ()) == 0)
       {
-        GSList *current_referee  = referee_list->GetList ();
+        GSList          *current_referee;
+        GSList          *sorted_list;
+        EnlistedReferee *available_referee = NULL;
 
+        sorted_list = g_slist_sort (g_slist_copy (referee_list->GetList ()),
+                                    (GCompareFunc) EnlistedReferee::CompareLoad);
+
+        current_referee = sorted_list;
         while (current_referee)
         {
           EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
 
           if (referee->IsAvailableFor (slot))
           {
-            return referee;
+            available_referee = referee;
+            break;
           }
 
           current_referee = g_slist_next (current_referee);
         }
+        return available_referee;
       }
 
       current_weapon = g_list_next (current_weapon);

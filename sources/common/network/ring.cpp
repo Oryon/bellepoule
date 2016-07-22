@@ -16,8 +16,12 @@
 
 #include <errno.h>
 
+#include <gio/gnetworking.h>
+#ifndef WIN32
+  #include <ifaddrs.h>
+#endif
+
 #include "util/object.hpp"
-#include "http_server.hpp" // !!
 #include "partner.hpp"
 #include "message.hpp"
 #include "ring.hpp"
@@ -60,7 +64,6 @@ namespace Net
     {
       _role = g_strdup (role);
 
-      _ip_address   = HttpServer::GetIpV4 ();
       _unicast_port = unicast_port;
 
       _partner_indicator = partner_indicator;
@@ -72,9 +75,8 @@ namespace Net
 
       // Multicast listener
       {
-        GInetAddress *multicast_group = g_inet_address_new_from_string (ANNOUNCE_GROUP);
-        GError       *error           = NULL;
-        GSocket      *socket;
+        GError  *error  = NULL;
+        GSocket *socket;
 
         socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
                                G_SOCKET_TYPE_DATAGRAM,
@@ -99,8 +101,7 @@ namespace Net
           g_warning ("g_socket_bind: %s\n", error->message);
           g_clear_error (&error);
         }
-        else if (JoinMulticast (socket,
-                                multicast_group))
+        else if (JoinMulticast (socket))
         {
           GSource *source = g_socket_create_source (socket,
                                                     (GIOCondition) (G_IO_IN|G_IO_ERR|G_IO_HUP),
@@ -113,10 +114,6 @@ namespace Net
           g_source_unref (source);
         }
 
-        _multicast_address = g_inet_socket_address_new (multicast_group,
-                                                        ANNOUNCE_PORT);
-
-        g_object_unref (multicast_group);
         g_object_unref (socket);
       }
 
@@ -125,22 +122,33 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Ring::JoinMulticast (GSocket      *socket,
-                                GInetAddress *group)
+  gboolean Ring::JoinMulticast (GSocket *socket)
   {
-    GError *error = NULL;
+    GInetAddress *address = g_inet_address_new_from_string (ANNOUNCE_GROUP);
+    GError       *error   = NULL;
 
     g_socket_join_multicast_group (socket,
-                                   group,
+                                   address,
                                    FALSE,
                                    NULL,
                                    &error);
-    if (error)
+    if (error == NULL)
     {
-      g_warning ("g_socket_join_multicast_group: %s\n", error->message);
-      g_clear_error (&error);
-      return FALSE;
+      _ip_address = GuessIpV4Address ();
     }
+    else
+    {
+      g_clear_error (&error);
+
+      g_object_unref (address);
+      address = g_inet_address_new_loopback (G_SOCKET_FAMILY_IPV4);
+      _ip_address = g_inet_address_to_string (address);
+    }
+
+    _multicast_address = g_inet_socket_address_new (address,
+                                                    ANNOUNCE_PORT);
+    g_object_unref (address);
+
     return TRUE;
   }
 
@@ -434,5 +442,105 @@ namespace Net
       listener->OnMessage (message);
       current = g_list_next (current);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Ring::GetIpV4Address ()
+  {
+    return _ip_address;
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Ring::GuessIpV4Address ()
+  {
+    gchar *ip_address = NULL;
+
+#ifdef WIN32
+#if 1
+    {
+      struct hostent *hostinfo;
+      gchar           hostname[50];
+
+      if (gethostname (hostname, sizeof (hostname)) == 0)
+      {
+        hostinfo = gethostbyname (hostname);
+        if (hostinfo)
+        {
+          ip_address = g_strdup (inet_ntoa (*(struct in_addr*) (hostinfo->h_addr)));
+        }
+      }
+    }
+#else
+    {
+      ULONG            info_length  = sizeof (IP_ADAPTER_INFO);
+      PIP_ADAPTER_INFO adapter_info = (IP_ADAPTER_INFO *) malloc (sizeof (IP_ADAPTER_INFO));
+
+      if (adapter_info)
+      {
+        if (GetAdaptersInfo (adapter_info, &info_length) == ERROR_BUFFER_OVERFLOW)
+        {
+          free (adapter_info);
+
+          adapter_info = (IP_ADAPTER_INFO *) malloc (info_length);
+        }
+
+        if (GetAdaptersInfo (adapter_info, &info_length) == NO_ERROR)
+        {
+          PIP_ADAPTER_INFO adapter = adapter_info;
+
+          while (adapter)
+          {
+            if (g_strcmp0 (adapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
+            {
+              ip_address = g_strdup (adapter->IpAddressList.IpAddress.String);
+              break;
+            }
+
+            adapter = adapter->Next;
+          }
+        }
+
+        free (adapter_info);
+      }
+    }
+#endif
+#else
+    struct ifaddrs *ifa_list;
+
+    if (getifaddrs (&ifa_list) == -1)
+    {
+      g_error ("getifaddrs");
+    }
+    else
+    {
+      for (struct ifaddrs *ifa = ifa_list; ifa != NULL; ifa = ifa->ifa_next)
+      {
+        if (   ifa->ifa_addr
+            && (ifa->ifa_flags & IFF_UP)
+            && ((ifa->ifa_flags & IFF_LOOPBACK) == 0))
+        {
+          int family = ifa->ifa_addr->sa_family;
+
+          if (family == AF_INET)
+          {
+            char host[NI_MAXHOST];
+
+            if (getnameinfo (ifa->ifa_addr,
+                             sizeof (struct sockaddr_in),
+                             host,
+                             NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0)
+            {
+              ip_address = g_strdup (host);
+              break;
+            }
+          }
+        }
+      }
+
+      freeifaddrs (ifa_list);
+    }
+#endif
+
+    return ip_address;
   }
 }

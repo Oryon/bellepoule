@@ -689,7 +689,8 @@ namespace Marshaller
       while (current_job)
       {
         Job   *job          = (Job *) current_job->data;
-        GList *current_slot = GetFreeSlots (NULL, 30*G_TIME_SPAN_MINUTE);
+        GList *free_slots   = GetFreeSlots (NULL, 30*G_TIME_SPAN_MINUTE);
+        GList *current_slot = free_slots;
 
         while (current_slot)
         {
@@ -700,6 +701,7 @@ namespace Marshaller
                                                   slot);
           if (referee)
           {
+            slot->Retain ();
             slot->AddJob     (job);
             slot->AddReferee (referee);
             break;
@@ -707,6 +709,11 @@ namespace Marshaller
 
           current_slot = g_list_next (current_slot);
         }
+        g_list_foreach (free_slots,
+                        (GFunc) Object::TryToRelease,
+                        NULL);
+        g_list_free (free_slots);
+
         current_job = g_list_next (current_job);
       }
 
