@@ -29,6 +29,7 @@ namespace Marshaller
     public:
       Job (Batch    *batch,
            guint     uuid,
+           guint     sibling_order,
            GdkColor *gdk_color);
 
       void SetName (const gchar *name);
@@ -50,7 +51,11 @@ namespace Marshaller
       static gint CompareStartTime (Job *a,
                                     Job *b);
 
+      static gint CompareSiblingOrder (Job *a,
+                                       Job *b);
+
     private:
+      guint     _sibling_order;
       gchar    *_name;
       guint     _uuid;
       GdkColor *_gdk_color;

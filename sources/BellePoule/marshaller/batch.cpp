@@ -281,8 +281,9 @@ namespace Marshaller
           _scheduled_list = g_list_delete_link (_scheduled_list,
                                                 node);
 
-          _pending_list = g_list_prepend (_pending_list,
-                                          job);
+          _pending_list = g_list_insert_sorted (_pending_list,
+                                                job,
+                                                (GCompareFunc) Job::CompareSiblingOrder);
         }
         break;
       }
@@ -440,7 +441,8 @@ namespace Marshaller
           GtkTreeIter  iter;
           gchar       *attr;
           gchar       *name;
-          Job         *job = new Job (this, uuid, _gdk_color);
+          guint        sibling_order = g_list_length (_pending_list);
+          Job         *job = new Job (this, uuid, sibling_order, _gdk_color);
 
           attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
           if (attr)
