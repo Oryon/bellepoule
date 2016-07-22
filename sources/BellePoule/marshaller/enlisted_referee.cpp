@@ -24,21 +24,36 @@ namespace Marshaller
   EnlistedReferee::EnlistedReferee ()
     : Referee ()
   {
-    _slots = NULL;
+     _slots = NULL;
+
+     {
+       _load_attr_id = new AttributeId ("participation_rate");
+       SetAttributeValue (_load_attr_id, 0u);
+     }
   }
 
   // --------------------------------------------------------------------------------
   EnlistedReferee::~EnlistedReferee ()
   {
     g_list_free (_slots);
+    _load_attr_id->Release ();
   }
 
   // --------------------------------------------------------------------------------
   void EnlistedReferee::AddSlot (Slot *slot)
   {
+    {
+      Attribute *load_attr = GetAttribute (_load_attr_id);
+      guint      load      = load_attr->GetUIntValue ();
+
+      load += slot->GetDuration () / G_TIME_SPAN_MINUTE;
+      SetAttributeValue (_load_attr_id, load);
+    }
+
     _slots = g_list_insert_sorted (_slots,
                                    slot,
                                    (GCompareFunc) Slot::CompareAvailbility);
+
   }
 
   // --------------------------------------------------------------------------------
@@ -52,6 +67,14 @@ namespace Marshaller
     {
       referee->_slots = g_list_delete_link (referee->_slots,
                                             node);
+    }
+
+    {
+      Attribute *load_attr = referee->GetAttribute (referee->_load_attr_id);
+      guint      load      = load_attr->GetUIntValue ();
+
+      load -= slot->GetDuration () / G_TIME_SPAN_MINUTE;
+      referee->SetAttributeValue (referee->_load_attr_id, load);
     }
   }
 
@@ -81,5 +104,15 @@ namespace Marshaller
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gint EnlistedReferee::CompareLoad (EnlistedReferee *a,
+                                     EnlistedReferee *b)
+  {
+    Attribute *attr_a = a->GetAttribute (a->_load_attr_id);
+    Attribute *attr_b = b->GetAttribute (a->_load_attr_id);
+
+    return (gint) (attr_a->GetUIntValue ()) - (gint) (attr_b->GetUIntValue ());
   }
 }
