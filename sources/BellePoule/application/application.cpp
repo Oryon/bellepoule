@@ -234,7 +234,7 @@ void Application::Prepare ()
     desc = AttributeDesc::Declare (G_TYPE_STRING, "IP", "IP", gettext ("IP address"));
     desc->_rights = AttributeDesc::PRIVATE;
 
-    desc = AttributeDesc::Declare (G_TYPE_UINT, "participation_rate", "Activite", gettext ("rate"));
+    desc = AttributeDesc::Declare (G_TYPE_INT, "participation_rate", "Activite", gettext ("rate"));
     desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
     desc->_favorite_look  = AttributeDesc::GRAPHICAL;
     desc->_rights         = AttributeDesc::PRIVATE;

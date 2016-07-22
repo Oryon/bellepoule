@@ -20,8 +20,6 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include <zmq.h>
-
 #include "util/global.hpp"
 
 #include "neo_swapper/neo_swapper.hpp"
@@ -1977,21 +1975,6 @@ namespace Pool
   {
     gtk_widget_show (_glade->GetWidget ("marshaller_spinner"));
     gtk_widget_hide (_glade->GetWidget ("marshaller_image"));
-
-
-    {
-      static void *context = NULL;
-      static void *sender  = NULL;
-
-      if (context == NULL)
-      {
-        context = zmq_ctx_new ();
-        sender  = zmq_socket (context, ZMQ_PUSH);
-        zmq_connect (sender, "tcp://192.168.1.22:8080");
-      }
-
-      zmq_send (sender, "coucou", strlen ("coucou"), 0);
-    }
 
     Spread ();
   }

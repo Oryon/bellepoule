@@ -44,7 +44,7 @@ namespace Marshaller
   {
     {
       Attribute *load_attr = GetAttribute (_load_attr_id);
-      guint      load      = load_attr->GetUIntValue ();
+      gint       load      = load_attr->GetIntValue ();
 
       load += slot->GetDuration () / G_TIME_SPAN_MINUTE;
       SetAttributeValue (_load_attr_id, load);
@@ -71,7 +71,7 @@ namespace Marshaller
 
     {
       Attribute *load_attr = referee->GetAttribute (referee->_load_attr_id);
-      guint      load      = load_attr->GetUIntValue ();
+      gint       load      = load_attr->GetIntValue ();
 
       load -= slot->GetDuration () / G_TIME_SPAN_MINUTE;
       referee->SetAttributeValue (referee->_load_attr_id, load);
@@ -113,6 +113,6 @@ namespace Marshaller
     Attribute *attr_a = a->GetAttribute (a->_load_attr_id);
     Attribute *attr_b = b->GetAttribute (a->_load_attr_id);
 
-    return (gint) (attr_a->GetUIntValue ()) - (gint) (attr_b->GetUIntValue ());
+    return attr_a->GetIntValue () - attr_b->GetIntValue ();
   }
 }

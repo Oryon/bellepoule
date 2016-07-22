@@ -410,7 +410,10 @@ namespace Marshaller
         g_string_append (match_name, last_name);
       }
 
-      g_string_append (match_name, "</b>");
+      if (match_name->str[0] != '\0')
+      {
+        g_string_append (match_name, "</b>");
+      }
 
       g_object_set (G_OBJECT (_title_item),
                     "text", match_name->str,
