@@ -94,11 +94,11 @@ namespace Marshaller
   {
     if (g_date_time_compare (_start, what->_start) >= 0)
     {
-      return (g_date_time_compare (_start, what->_end) <= 0);
+      return (g_date_time_compare (_start, what->_end) < 0);
     }
     else
     {
-      return (g_date_time_compare (what->_start, _end) <= 0);
+      return (g_date_time_compare (what->_start, _end) < 0);
     }
   }
 
@@ -270,5 +270,11 @@ namespace Marshaller
     gint delta = g_date_time_compare (a->_end, b->_end);
 
     return delta;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Slot::Dump (Slot *what)
+  {
+    printf ("%p ==> %s\n", (void *) what->_owner, g_date_time_format (what->_start, "%T"));
   }
 }

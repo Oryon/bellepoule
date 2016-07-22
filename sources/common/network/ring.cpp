@@ -456,36 +456,54 @@ namespace Net
     gchar *ip_address = NULL;
 
 #ifdef WIN32
-    ULONG            info_length  = sizeof (IP_ADAPTER_INFO);
-    PIP_ADAPTER_INFO adapter_info = (IP_ADAPTER_INFO *) malloc (sizeof (IP_ADAPTER_INFO));
-
-    if (adapter_info)
+#if 1
     {
-      if (GetAdaptersInfo (adapter_info, &info_length) == ERROR_BUFFER_OVERFLOW)
+      struct hostent *hostinfo;
+      gchar           hostname[50];
+
+      if (gethostname (hostname, sizeof (hostname)) == 0)
       {
-        free (adapter_info);
-
-        adapter_info = (IP_ADAPTER_INFO *) malloc (info_length);
-      }
-
-      if (GetAdaptersInfo (adapter_info, &info_length) == NO_ERROR)
-      {
-        PIP_ADAPTER_INFO adapter = adapter_info;
-
-        while (adapter)
+        hostinfo = gethostbyname (hostname);
+        if (hostinfo)
         {
-          if (g_strcmp0 (adapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
-          {
-            ip_address = g_strdup (adapter->IpAddressList.IpAddress.String);
-            break;
-          }
-
-          adapter = adapter->Next;
+          ip_address = g_strdup (inet_ntoa (*(struct in_addr*) (hostinfo->h_addr)));
         }
       }
-
-      free (adapter_info);
     }
+#else
+    {
+      ULONG            info_length  = sizeof (IP_ADAPTER_INFO);
+      PIP_ADAPTER_INFO adapter_info = (IP_ADAPTER_INFO *) malloc (sizeof (IP_ADAPTER_INFO));
+
+      if (adapter_info)
+      {
+        if (GetAdaptersInfo (adapter_info, &info_length) == ERROR_BUFFER_OVERFLOW)
+        {
+          free (adapter_info);
+
+          adapter_info = (IP_ADAPTER_INFO *) malloc (info_length);
+        }
+
+        if (GetAdaptersInfo (adapter_info, &info_length) == NO_ERROR)
+        {
+          PIP_ADAPTER_INFO adapter = adapter_info;
+
+          while (adapter)
+          {
+            if (g_strcmp0 (adapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
+            {
+              ip_address = g_strdup (adapter->IpAddressList.IpAddress.String);
+              break;
+            }
+
+            adapter = adapter->Next;
+          }
+        }
+
+        free (adapter_info);
+      }
+    }
+#endif
 #else
     struct ifaddrs *ifa_list;
 

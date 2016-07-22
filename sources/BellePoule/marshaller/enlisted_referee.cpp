@@ -58,20 +58,28 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   gboolean EnlistedReferee::IsAvailableFor (Slot *slot)
   {
-    GList *current = _slots;
+    Player::AttributeId  attr_id ("attending");
+    Attribute           *attr = GetAttribute (&attr_id);
 
-    while (current)
+    if (attr && (attr->GetUIntValue () == TRUE))
     {
-      Slot *current_slot = (Slot *) current->data;
+      GList *current = _slots;
 
-      if (slot->Overlaps (current_slot))
+      while (current)
       {
-        return FALSE;
+        Slot *current_slot = (Slot *) current->data;
+
+        if (slot->Overlaps (current_slot))
+        {
+          return FALSE;
+        }
+
+        current = g_list_next (current);
       }
 
-      current = g_list_next (current);
+      return TRUE;
     }
 
-    return TRUE;
+    return FALSE;
   }
 }
