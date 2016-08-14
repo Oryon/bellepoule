@@ -6,16 +6,136 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2016-03-26 21:57+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-08-14 22:37+0200\n"
 "PO-Revision-Date: 2016-04-16 07:11+0000\n"
 "Last-Translator: Dominik <nitride@tlen.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-07-27 06:00+0000\n"
-"X-Generator: Launchpad (build 18153)\n"
+"X-Launchpad-Export-Date: 2016-04-17 05:39+0000\n"
+"X-Generator: Launchpad (build 17995)\n"
+
+msgid "Long text"
+msgstr "Długi tekst"
+
+msgid "Short text"
+msgstr "Krótki tekst"
+
+msgid "Graphic"
+msgstr "Tryb graficzny"
+
+msgid "Data to display"
+msgstr "Dane do wyświetlenia"
+
+msgid "Visibility"
+msgstr "Widoczność"
+
+msgid "Data"
+msgstr "Dane"
+
+msgid "Look"
+msgstr "Wygląd"
+
+msgid "Split"
+msgstr "Podziel"
+
+msgid "List of fencers to extract"
+msgstr "Lista szermierzy do wydorębnienia"
+
+msgid "Choose a rank file to apply..."
+msgstr "Wybież zakres plików do zastosowania..."
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr "Zakres plików: cotcot, xml, txt (Francja)"
+
+msgid "All files"
+msgstr "Wszytkie pliki"
+
+msgid "<b>Smartpoule</b> configuration code"
+msgstr "Kod konfiguracji <b>Smartpoule</b>"
+
+msgid ""
+"Uncheck this box to quicken the data input. The corresponding field will be "
+"ignored on TAB key pressed."
+msgstr ""
+"W celu przyspieszenia wprowadzania danych odznacz to pole. Poszczególne pola "
+"zostaną zignorowane po naciśnięciu klawisza TAB."
+
+msgid "Choose a fencer file to import..."
+msgstr "Wskaż plik z danymi szermirzy do zaimporotwania..."
+
+msgid "Fencer files"
+msgstr "Plik z danymi szermierzy"
+
+msgid "Referee files"
+msgstr "Plik z danymi sędziów"
+
+msgid "List of registered"
+msgstr "Lista osób zarejestrowanych"
+
+msgid "List of presents"
+msgstr "Lista osób obecnych"
+
+msgid "List of absents"
+msgstr "Lista nieobecności"
+
+msgid "Fencer list"
+msgstr "Lista szermierzy"
+
+msgid "Barrage"
+msgstr "Baraż"
+
+msgid "Copy"
+msgstr "Kopiuj"
+
+msgid "Paste"
+msgstr "Wklej"
+
+msgid "Page"
+msgstr "Strona"
+
+msgid "Check-in"
+msgstr "Odprawa"
+
+msgid "** Without team **"
+msgstr "** Bez drużyny **"
+
+msgid "Expected fencers"
+msgstr "Oczekiwani szermierze"
+
+msgid "Expected teams"
+msgstr "Oczekiwane drużyny"
+
+msgid "Team size"
+msgstr "Wilkość drużyny"
+
+#, c-format
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
+msgstr "Skonfigurowano minimalną wielkość drużyny na <b>%d</b> szermierzy."
+
+msgid "Tick the present players of the team."
+msgstr "Zaznacz obecność członków drużyny"
+
+msgid "Untick the absent players of the team."
+msgstr "Odznacz nieobecność członków drużyny"
+
+msgid "General classification"
+msgstr "Klasyfikacja generalna"
+
+msgid "Choose a target file..."
+msgstr "Wskaż plik docelowy..."
+
+msgid "All FFF files (.FFF)"
+msgstr "Wszystkie pliki FFF (.FFF)"
+
+msgid "All PDF files (.PDF)"
+msgstr "Wszystkie pliki PDF (.PDF)"
+
+msgid "All HTML files (.HTML)"
+msgstr "Wszystkie pliki HTML (.HTML)"
 
 msgid "Classification"
 msgstr "Klasyfikacja"
@@ -41,23 +161,56 @@ msgstr "Kobiet"
 msgid "Mixed"
 msgstr "Mieszana"
 
+msgid "U5"
+msgstr "U5"
+
+msgid "U6"
+msgstr "U6"
+
+msgid "U7"
+msgstr "U7"
+
 msgid "U8"
 msgstr "U8"
+
+msgid "U9"
+msgstr "U9"
 
 msgid "U10"
 msgstr "U10"
 
+msgid "U11"
+msgstr "U11"
+
 msgid "U12"
 msgstr "U12"
+
+msgid "U13"
+msgstr "U13"
 
 msgid "U14"
 msgstr "U14"
 
+msgid "U15"
+msgstr "U15"
+
 msgid "U16"
 msgstr "U16"
 
+msgid "U17"
+msgstr "U17"
+
 msgid "U18"
 msgstr "U18"
+
+msgid "U19"
+msgstr "U19"
+
+msgid "U20"
+msgstr "U20"
+
+msgid "U23"
+msgstr "U23"
 
 msgid "Senior"
 msgstr "Senior"
@@ -76,6 +229,9 @@ msgstr "Weteran 3"
 
 msgid "Veteran 4"
 msgstr "Weteran 4"
+
+msgid "Veteran 3+4"
+msgstr "Weteran 3+4"
 
 msgid "League"
 msgstr "Liga"
@@ -104,11 +260,79 @@ msgstr "Wybierz plik..."
 msgid "BellePoule files (.cotcot)"
 msgstr "Pliki BellePoule"
 
-msgid "All files"
-msgstr "Wszytkie pliki"
-
 msgid "Close without saving"
 msgstr "Zamknij bez zapisywania"
+
+msgid "Meal"
+msgstr "Posiłek"
+
+msgid "Drink"
+msgstr "Napój"
+
+msgid "Dessert"
+msgstr "Deser"
+
+msgid "Coffee"
+msgstr "Kawa"
+
+msgid "Payment book"
+msgstr "Lista wpłat"
+
+msgid "Signature"
+msgstr "Podpis"
+
+msgid "Restart BellePoule for this change to take effect"
+msgstr "W celu wprowadzenia zmian zrestartuj BellePoule"
+
+msgid "Choose a competion file to open... "
+msgstr "Wskaż plik turnieju do otwarcia... "
+
+msgid "Competition files (.cotcot / .xml)"
+msgstr "Plik turnieju (.cotcot / .xml)"
+
+msgid "Recently opened files"
+msgstr "Ostatnio otwierane pliki"
+
+msgid "BellePoule files"
+msgstr "Pliki BellePoule"
+
+msgid "Meal tickets"
+msgstr "Talony na posiłek"
+
+msgid "Choose a backup files location..."
+msgstr "Wskaż lokalizację pliku kopii zapasowej..."
+
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr "<b><big>Czy na pewno chcesz zamknąć BellePoule?</big></b>"
+
+msgid "Quit BellePoule?"
+msgstr "Czy zamknąć BellePoule?"
+
+msgid "All the unsaved competions will be lost."
+msgstr "Wszystkie niezapisane turnieje zostana utracone."
+
+#, c-format
+msgid "Round #%d"
+msgstr "Runda %d"
+
+msgid "Formula"
+msgstr "Formuła"
+
+msgid "<b><big>Do you really want to cancel the current round?</big></b>"
+msgstr "<b><big>Czy faktycznie chcesz anulować aktualną rundę?</big></b>"
+
+msgid "Go back to the previous round?"
+msgstr "Czy chcesz przywrócić poprzednią rundę?"
+
+msgid "All the inputs of this round will be cancelled."
+msgstr "Wszystkie wpisy aktualnej rundy zostaną anulowane?"
+
+msgid ""
+"<b><big>Because of ties, the quota is exceeded.\n"
+"Do you wish to add a barrage round?</big></b>"
+msgstr ""
+"<b><big>Ilość została przekroczona ze względu na wprowadzone ograniczenia.\n"
+"Czy chcesz dodać rundę barażową?</big></b>"
 
 msgid "ref"
 msgstr "ref"
@@ -233,172 +457,6 @@ msgstr "OK"
 msgid "Manual"
 msgstr "Podręcznik"
 
-#, c-format
-msgid "Round #%d"
-msgstr "Runda %d"
-
-msgid "Formula"
-msgstr "Formuła"
-
-msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>Czy faktycznie chcesz anulować aktualną rundę?</big></b>"
-
-msgid "Go back to the previous round?"
-msgstr "Czy chcesz przywrócić poprzednią rundę?"
-
-msgid "All the inputs of this round will be cancelled."
-msgstr "Wszystkie wpisy aktualnej rundy zostaną anulowane?"
-
-msgid ""
-"<b><big>Because of ties, the quota is exceeded.\n"
-"Do you wish to add a barrage round?</big></b>"
-msgstr ""
-"<b><big>Ilość została przekroczona ze względu na wprowadzone ograniczenia.\n"
-"Czy chcesz dodać rundę barażową?</big></b>"
-
-msgid "Barrage"
-msgstr "Baraż"
-
-msgid "Meal"
-msgstr "Posiłek"
-
-msgid "Drink"
-msgstr "Napój"
-
-msgid "Dessert"
-msgstr "Deser"
-
-msgid "Coffee"
-msgstr "Kawa"
-
-msgid "Payment book"
-msgstr "Lista wpłat"
-
-msgid "Page"
-msgstr "Strona"
-
-msgid "Signature"
-msgstr "Podpis"
-
-msgid "Restart BellePoule for this change to take effect"
-msgstr "W celu wprowadzenia zmian zrestartuj BellePoule"
-
-msgid "Choose a competion file to open... "
-msgstr "Wskaż plik turnieju do otwarcia... "
-
-msgid "Competition files (.cotcot / .xml)"
-msgstr "Plik turnieju (.cotcot / .xml)"
-
-msgid "Recently opened files"
-msgstr "Ostatnio otwierane pliki"
-
-msgid "BellePoule files"
-msgstr "Pliki BellePoule"
-
-msgid "Meal tickets"
-msgstr "Talony na posiłek"
-
-msgid "Choose a backup files location..."
-msgstr "Wskaż lokalizację pliku kopii zapasowej..."
-
-msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>Czy na pewno chcesz zamknąć BellePoule?</big></b>"
-
-msgid "Quit BellePoule?"
-msgstr "Czy zamknąć BellePoule?"
-
-msgid "All the unsaved competions will be lost."
-msgstr "Wszystkie niezapisane turnieje zostana utracone."
-
-msgid "Choose a fencer file to import..."
-msgstr "Wskaż plik z danymi szermirzy do zaimporotwania..."
-
-msgid "Fencer files"
-msgstr "Plik z danymi szermierzy"
-
-msgid "Referee files"
-msgstr "Plik z danymi sędziów"
-
-msgid "List of registered"
-msgstr "Lista osób zarejestrowanych"
-
-msgid "List of presents"
-msgstr "Lista osób obecnych"
-
-msgid "List of absents"
-msgstr "Lista nieobecności"
-
-msgid "Fencer list"
-msgstr "Lista szermierzy"
-
-msgid "Check-in"
-msgstr "Odprawa"
-
-msgid "** Without team **"
-msgstr "** Bez drużyny **"
-
-msgid "Expected fencers"
-msgstr "Oczekiwani szermierze"
-
-msgid "Expected teams"
-msgstr "Oczekiwane drużyny"
-
-msgid "Team size"
-msgstr "Wilkość drużyny"
-
-#, c-format
-msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr "Skonfigurowano minimalną wielkość drużyny na <b>%d</b> szermierzy."
-
-msgid "Tick the present players of the team."
-msgstr "Zaznacz obecność członków drużyny"
-
-msgid "Untick the absent players of the team."
-msgstr "Odznacz nieobecność członków drużyny"
-
-msgid "<b>Smartpoule</b> configuration code"
-msgstr "Kod konfiguracji <b>Smartpoule</b>"
-
-msgid ""
-"Uncheck this box to quicken the data input. The corresponding field will be "
-"ignored on TAB key pressed."
-msgstr ""
-"W celu przyspieszenia wprowadzania danych odznacz to pole. Poszczególne pola "
-"zostaną zignorowane po naciśnięciu klawisza TAB."
-
-msgid "General classification"
-msgstr "Klasyfikacja generalna"
-
-msgid "Choose a target file..."
-msgstr "Wskaż plik docelowy..."
-
-msgid "All FFF files (.FFF)"
-msgstr "Wszystkie pliki FFF (.FFF)"
-
-msgid "All PDF files (.PDF)"
-msgstr "Wszystkie pliki PDF (.PDF)"
-
-msgid "All HTML files (.HTML)"
-msgstr "Wszystkie pliki HTML (.HTML)"
-
-msgid "Copy"
-msgstr "Kopiuj"
-
-msgid "Paste"
-msgstr "Wklej"
-
-msgid "Choose a rank file to apply..."
-msgstr "Wybież zakres plików do zastosowania..."
-
-msgid "Rank files: cotcot, xml, txt (France)"
-msgstr "Zakres plików: cotcot, xml, txt (Francja)"
-
-msgid "Split"
-msgstr "Podziel"
-
-msgid "List of fencers to extract"
-msgstr "Lista szermierzy do wydorębnienia"
-
 msgid "Pools arrangement"
 msgstr "Porządek grup"
 
@@ -457,19 +515,6 @@ msgstr "Grupy"
 msgid "Bout without winner!"
 msgstr "Pojedynek bez zwycięzcy!"
 
-msgid "Winner"
-msgstr "Zwycięzca"
-
-msgid "Final"
-msgstr "Finał"
-
-msgid "Semi-final"
-msgstr "Półfinał"
-
-#, c-format
-msgid "Table of %d"
-msgstr "Tabela %d"
-
 msgid "Place #"
 msgstr "Miejsce #"
 
@@ -482,6 +527,19 @@ msgstr "Tabela"
 #, c-format
 msgid "%s: score sheets printing"
 msgstr "%s: wydruk arkuszy wyników"
+
+msgid "Winner"
+msgstr "Zwycięzca"
+
+msgid "Final"
+msgstr "Finał"
+
+msgid "Semi-final"
+msgstr "Półfinał"
+
+#, c-format
+msgid "Table of %d"
+msgstr "Tabela %d"
 
 #, c-format
 msgid "Match %s"
@@ -505,418 +563,398 @@ msgstr "Miejsce trzecie"
 msgid "None"
 msgstr "Żaden"
 
-msgid "Long text"
-msgstr "Długi tekst"
+#~ msgid "For arbitration"
+#~ msgstr "Arkusz sędziowski"
 
-msgid "Short text"
-msgstr "Krótki tekst"
+#~ msgid "Content designed for the referees."
+#~ msgstr "Treści przeznaczone dla sędziów."
 
-msgid "Graphic"
-msgstr "Tryb graficzny"
+#~ msgid "For the bulletin board"
+#~ msgstr "Na tabilce ogłoszeń"
 
-msgid "Data to display"
-msgstr "Dane do wyświetlenia"
+#~ msgid "<b>For what?</b>"
+#~ msgstr "<b>Do czego?</b>"
 
-msgid "Visibility"
-msgstr "Widoczność"
+#~ msgid "Promoted"
+#~ msgstr "Awansowano"
 
-msgid "Data"
-msgstr "Dane"
+#~ msgid "Eliminated"
+#~ msgstr "Wyeliminowany"
 
-msgid "Look"
-msgstr "Wygląd"
+#~ msgid "Fencer list printing"
+#~ msgstr "Wydruk listy szablitów"
 
-msgid "For arbitration"
-msgstr "Arkusz sędziowski"
+#~ msgid "<b><big>What do you want to print?</big></b>"
+#~ msgstr "<b><big>Co chcesz wydrukować?</big></b>"
 
-msgid "Content designed for the referees."
-msgstr "Treści przeznaczone dla sędziów."
+#~ msgid "All the presents"
+#~ msgstr "Wszyscy dostępni"
 
-msgid "For the bulletin board"
-msgstr "Na tabilce ogłoszeń"
+#~ msgid "All the absents"
+#~ msgstr "Wszyscy nieobecni"
 
-msgid "<b>For what?</b>"
-msgstr "<b>Do czego?</b>"
+#~ msgid "Presents"
+#~ msgstr "Obecni"
 
-msgid "Promoted"
-msgstr "Awansowano"
+#~ msgid "Absents"
+#~ msgstr "Nieobecni"
 
-msgid "Eliminated"
-msgstr "Wyeliminowany"
+#~ msgid "all"
+#~ msgstr "wszyscy"
 
-msgid "Fencer list printing"
-msgstr "Wydruk listy szablitów"
+#~ msgid "Import fencers"
+#~ msgstr "Import listy szablistów"
 
-msgid "<b><big>What do you want to print?</big></b>"
-msgstr "<b><big>Co chcesz wydrukować?</big></b>"
+#~ msgid "Import ranking"
+#~ msgstr "Import rankingu"
 
-msgid "All the presents"
-msgstr "Wszyscy dostępni"
+#~ msgid "Minimum team size"
+#~ msgstr "Minimalna wielkość drużyny"
 
-msgid "All the absents"
-msgstr "Wszyscy nieobecni"
+#~ msgid "Team classification"
+#~ msgstr "Klasyfikacja drużynowa"
 
-msgid "Presents"
-msgstr "Obecni"
+#~ msgid "Manually assigned"
+#~ msgstr "Przypisany ręcznie"
 
-msgid "Absents"
-msgstr "Nieobecni"
+#~ msgid "Derived from fencer classification"
+#~ msgstr "Szermierz wyłoniony z klasyfikacji"
 
-msgid "all"
-msgstr "wszyscy"
+#~ msgid "when unknown"
+#~ msgstr "gdy nie wiadomo"
 
-msgid "Import fencers"
-msgstr "Import listy szablistów"
+#~ msgid "Date of competition"
+#~ msgstr "Termin konkursu"
 
-msgid "Import ranking"
-msgstr "Import rankingu"
+#~ msgid "Competition properties"
+#~ msgstr "Właściwości konkursu"
 
-msgid "Minimum team size"
-msgstr "Minimalna wielkość drużyny"
+#~ msgid "Weapon"
+#~ msgstr "Oręż"
 
-msgid "Team classification"
-msgstr "Klasyfikacja drużynowa"
+#~ msgid "Gender"
+#~ msgstr "Płeć"
 
-msgid "Manually assigned"
-msgstr "Przypisany ręcznie"
+#~ msgid "Category"
+#~ msgstr "Katogoria"
 
-msgid "Derived from fencer classification"
-msgstr "Szermierz wyłoniony z klasyfikacji"
+#~ msgid "Level"
+#~ msgstr "Poziom"
 
-msgid "when unknown"
-msgstr "gdy nie wiadomo"
+#~ msgid "Individual"
+#~ msgstr "Indywidualne"
 
-msgid "Date of competition"
-msgstr "Termin konkursu"
+#~ msgid "Team"
+#~ msgstr "Drużyna"
 
-msgid "Competition properties"
-msgstr "Właściwości konkursu"
+#~ msgid "<b>Type</b>"
+#~ msgstr "<b>Typ</b>"
 
-msgid "Weapon"
-msgstr "Oręż"
+#~ msgid "Title"
+#~ msgstr "Tytuł"
 
-msgid "Gender"
-msgstr "Płeć"
+#~ msgid "Organizer"
+#~ msgstr "Organizator"
 
-msgid "Category"
-msgstr "Katogoria"
+#~ msgid "Web site"
+#~ msgstr "witryna sieci Web"
 
-msgid "Level"
-msgstr "Poziom"
+#~ msgid "Location"
+#~ msgstr "Lokalizacja"
 
-msgid "Individual"
-msgstr "Indywidualne"
+#~ msgid "<b>Overviews</b>"
+#~ msgstr "<b>Przegląd</b>"
 
-msgid "Team"
-msgstr "Drużyna"
+#~ msgid "Date"
+#~ msgstr "Data"
 
-msgid "<b>Type</b>"
-msgstr "<b>Typ</b>"
+#~ msgid "Scratch"
+#~ msgstr "Scratch"
 
-msgid "Title"
-msgstr "Tytuł"
+#~ msgid "Start"
+#~ msgstr "Start"
 
-msgid "Organizer"
-msgstr "Organizator"
+#~ msgid "<b>Date / Time</b>"
+#~ msgstr "<b>Data / Czas</b>"
 
-msgid "Web site"
-msgstr "witryna sieci Web"
+#~ msgid "Allow"
+#~ msgstr "Zezwalaj"
 
-msgid "Location"
-msgstr "Lokalizacja"
+#~ msgid "Forbid"
+#~ msgstr "Zabroń"
 
-msgid "<b>Overviews</b>"
-msgstr "<b>Przegląd</b>"
+#~ msgid ""
+#~ "Automatic\n"
+#~ "score\n"
+#~ "stuffing"
+#~ msgstr ""
+#~ "Automatyczne\n"
+#~ "wypełnianie\n"
+#~ "punktami"
 
-msgid "Date"
-msgstr "Data"
+#~ msgid "<b>Scores</b>"
+#~ msgstr "<b>Punktacja</b>"
 
-msgid "Scratch"
-msgstr "Scratch"
+#~ msgid "Event"
+#~ msgstr "Wydarzenie"
 
-msgid "Start"
-msgstr "Start"
+#~ msgid "Save the current state of the competition."
+#~ msgstr "Zapisz aktualny stan turnieju."
 
-msgid "<b>Date / Time</b>"
-msgstr "<b>Data / Czas</b>"
+#~ msgid "To specify the features of the competition."
+#~ msgstr "Definiowanie parametrów turnieju."
 
-msgid "Allow"
-msgstr "Zezwalaj"
+#~ msgid "Referees"
+#~ msgstr "Sędziowie"
 
-msgid "Forbid"
-msgstr "Zabroń"
+#~ msgid "Man"
+#~ msgstr "Mężczyzna"
 
-msgid ""
-"Automatic\n"
-"score\n"
-"stuffing"
-msgstr ""
-"Automatyczne\n"
-"wypełnianie\n"
-"punktami"
+#~ msgid "Form"
+#~ msgstr "Formularz"
 
-msgid "<b>Scores</b>"
-msgstr "<b>Punktacja</b>"
+#~ msgid "Export to <b>HTML</b>"
+#~ msgstr "Export do  <b>HTML</b>"
 
-msgid "Event"
-msgstr "Wydarzenie"
+#~ msgid "Export to <b>FFF</b>"
+#~ msgstr "Exportdo <b>FFF</b>"
 
-msgid "Save the current state of the competition."
-msgstr "Zapisz aktualny stan turnieju."
+#~ msgid "Export to <b>PDF</b>"
+#~ msgstr "Export do <b>PDF</b>"
 
-msgid "To specify the features of the competition."
-msgstr "Definiowanie parametrów turnieju."
+#~ msgid "Mask or unmask some data type as well as define their display order."
+#~ msgstr "Ukryj lub pokaż wybrane dane. Zdefiniuj porządek wyświetlania"
 
-msgid "Referees"
-msgstr "Sędziowie"
+#~ msgid "Print"
+#~ msgstr "Drukuj"
 
-msgid "Man"
-msgstr "Mężczyzna"
+#~ msgid "Number of pools"
+#~ msgstr "Ilość grup"
 
-msgid "Form"
-msgstr "Formularz"
+#~ msgid "Fencers / pools"
+#~ msgstr "Szermierze / grupy"
 
-msgid "Export to <b>HTML</b>"
-msgstr "Export do  <b>HTML</b>"
+#~ msgid "Swapping"
+#~ msgstr "Usuń duble"
 
-msgid "Export to <b>FFF</b>"
-msgstr "Exportdo <b>FFF</b>"
+#~ msgid "Name"
+#~ msgstr "Nazwa"
 
-msgid "Export to <b>PDF</b>"
-msgstr "Export do <b>PDF</b>"
+#~ msgid "Number"
+#~ msgstr "Liczebność"
 
-msgid "Mask or unmask some data type as well as define their display order."
-msgstr "Ukryj lub pokaż wybrane dane. Zdefiniuj porządek wyświetlania"
+#~ msgid "Pool sheets printing"
+#~ msgstr "Drukuj arkusz grupy"
 
-msgid "Print"
-msgstr "Drukuj"
+#~ msgid "<b><big>Print...</big></b>"
+#~ msgstr "<b><big>Drukuj...</big></b>"
 
-msgid "Number of pools"
-msgstr "Ilość grup"
+#~ msgid "All the pools"
+#~ msgstr "Wszystkie grupy"
 
-msgid "Fencers / pools"
-msgstr "Szermierze / grupy"
+#~ msgid "Only the selected pool"
+#~ msgstr "Tylko wskazane grupy"
 
-msgid "Swapping"
-msgstr "Usuń duble"
+#~ msgid "<b>What?</b>"
+#~ msgstr "<b>Co?</b>"
 
-msgid "Name"
-msgstr "Nazwa"
+#~ msgid "Matches watermarked"
+#~ msgstr "Oznacz znakiem wodnym"
 
-msgid "Number"
-msgstr "Liczebność"
+#~ msgid "Automatic stuffing"
+#~ msgstr "Automatyczne wypełnianie"
 
-msgid "Pool sheets printing"
-msgstr "Drukuj arkusz grupy"
+#~ msgid "Combined classification"
+#~ msgstr "Klasyfikacja kombinowana"
 
-msgid "<b><big>Print...</big></b>"
-msgstr "<b><big>Drukuj...</big></b>"
+#~ msgid "Single classification"
+#~ msgstr "Klasyfikacja indywidualna"
 
-msgid "All the pools"
-msgstr "Wszystkie grupy"
+#~ msgid "Import referee file"
+#~ msgstr "Importuj plik z danymi arbitrów"
 
-msgid "Only the selected pool"
-msgstr "Tylko wskazane grupy"
+#~ msgid "Add"
+#~ msgstr "Dodaj"
 
-msgid "<b>What?</b>"
-msgstr "<b>Co?</b>"
+#~ msgid "Remove"
+#~ msgstr "Usuń"
 
-msgid "Matches watermarked"
-msgstr "Oznacz znakiem wodnym"
+#~ msgid "<b>Schedule</b>"
+#~ msgstr "<b>Harmonogram</b>"
 
-msgid "Automatic stuffing"
-msgstr "Automatyczne wypełnianie"
+#~ msgid "<b>Parameters</b>"
+#~ msgstr "<b>Parametry</b>"
 
-msgid "Combined classification"
-msgstr "Klasyfikacja kombinowana"
+#~ msgid "Previous round"
+#~ msgstr "Poprzednia runda"
 
-msgid "Single classification"
-msgstr "Klasyfikacja indywidualna"
+#~ msgid "Next round"
+#~ msgstr "Następna runda"
 
-msgid "Import referee file"
-msgstr "Importuj plik z danymi arbitrów"
+#~ msgid "Table printing"
+#~ msgstr "Drukowanie tabeli"
 
-msgid "Add"
-msgstr "Dodaj"
+#~ msgid "<b><big>How to print?</big></b>"
+#~ msgstr "<b><big>Jak wydrukować?</big></b>"
 
-msgid "Remove"
-msgstr "Usuń"
+#~ msgid "The table"
+#~ msgstr "Tabela"
 
-msgid "<b>Schedule</b>"
-msgstr "<b>Harmonogram</b>"
+#~ msgid "Score sheets"
+#~ msgstr "Arkusz wyników"
 
-msgid "<b>Parameters</b>"
-msgstr "<b>Parametry</b>"
+#~ msgid "Pending"
+#~ msgstr "Wcześniej niedrukowane"
 
-msgid "Previous round"
-msgstr "Poprzednia runda"
+#~ msgid ""
+#~ "<b><big>Which score sheets of the selected table do you want to print?</"
+#~ "big></b>"
+#~ msgstr ""
+#~ "<b><big>Które arkusze wyników z zaznaczonej tabeli chcesz wydrukować?</"
+#~ "big></b>"
 
-msgid "Next round"
-msgstr "Następna runda"
+#~ msgid "All the score sheets"
+#~ msgstr "Wszystkie arkusze wyników"
 
-msgid "Table printing"
-msgstr "Drukowanie tabeli"
+#~ msgid "The pending score sheets"
+#~ msgstr "Wcześniej niedrukowane"
 
-msgid "<b><big>How to print?</big></b>"
-msgstr "<b><big>Jak wydrukować?</big></b>"
+#~ msgid "<b>Match</b>"
+#~ msgstr "<b>Dopasowanie</b>"
 
-msgid "The table"
-msgstr "Tabela"
+#~ msgid "A fencer"
+#~ msgstr "Szermierz A"
 
-msgid "Score sheets"
-msgstr "Arkusz wyników"
+#~ msgid "B fencer"
+#~ msgstr "Szermierz B"
 
-msgid "Pending"
-msgstr "Wcześniej niedrukowane"
+#~ msgid "<b>Score</b>"
+#~ msgstr "<b>Wynik</b>"
 
-msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-msgstr ""
-"<b><big>Które arkusze wyników z zaznaczonej tabeli chcesz "
-"wydrukować?</big></b>"
+#~ msgid "Fill in a match"
+#~ msgstr "Wypełnij podczas meczu"
 
-msgid "All the score sheets"
-msgstr "Wszystkie arkusze wyników"
+#~ msgid ""
+#~ "Fill in all the scores randomly.\n"
+#~ "To activate/deactivate this button, go to the properties of the "
+#~ "competition."
+#~ msgstr ""
+#~ "Wypełnij wszystkie wyniki losowo.\n"
+#~ "Aby włączyć/wyłączyć ten przycisk, przejdź do właściwej konkurencji."
 
-msgid "The pending score sheets"
-msgstr "Wcześniej niedrukowane"
+#~ msgid "From"
+#~ msgstr "Od"
 
-msgid "<b>Match</b>"
-msgstr "<b>Dopasowanie</b>"
+#~ msgid "To"
+#~ msgstr "Do"
 
-msgid "A fencer"
-msgstr "Szermierz A"
+#~ msgid "For place"
+#~ msgstr "Na miejscu"
 
-msgid "B fencer"
-msgstr "Szermierz B"
+#~ msgid "Zoom"
+#~ msgstr "Powiększenie"
 
-msgid "<b>Score</b>"
-msgstr "<b>Wynik</b>"
+#~ msgid ""
+#~ "Fencing tournament management software.\n"
+#~ "\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Oprogramowanie do zarządzania turniejami szermierczymi.\n"
+#~ "\n"
+#~ "\n"
 
-msgid "Fill in a match"
-msgstr "Wypełnij podczas meczu"
+#~ msgid "WPA"
+#~ msgstr "WPA"
 
-msgid ""
-"Fill in all the scores randomly.\n"
-"To activate/deactivate this button, go to the properties of the competition."
-msgstr ""
-"Wypełnij wszystkie wyniki losowo.\n"
-"Aby włączyć/wyłączyć ten przycisk, przejdź do właściwej konkurencji."
+#~ msgid "Security"
+#~ msgstr "Bezpieczeństwo"
 
-msgid "From"
-msgstr "Od"
+#~ msgid "Passphrase"
+#~ msgstr "Hasło"
 
-msgid "To"
-msgstr "Do"
+#~ msgid ""
+#~ "Enter your WIFI network settings here.\n"
+#~ "They will be used to automatically configure\n"
+#~ "the smarthphones running <b>SmartPoule</b>"
+#~ msgstr ""
+#~ "Wprowadź ustawienia sieci bezprzewodowej.\n"
+#~ "Zostaną one użyte do automatycznego skonfigurowania\n"
+#~ "smartfona z uruchomionym <b>SmartPoule</b>"
 
-msgid "For place"
-msgstr "Na miejscu"
+#~ msgid "User"
+#~ msgstr "Użytkownik"
 
-msgid "Zoom"
-msgstr "Powiększenie"
+#~ msgid "Password"
+#~ msgstr "Hasło"
 
-msgid ""
-"Fencing tournament management software.\n"
-"\n"
-"\n"
-msgstr ""
-"Oprogramowanie do zarządzania turniejami szermierczymi.\n"
-"\n"
-"\n"
+#~ msgid "FTP server"
+#~ msgstr "Serwer FTP"
 
-msgid "WPA"
-msgstr "WPA"
+#~ msgid "<b>Web site</b>"
+#~ msgstr "<b>Strona</b>"
 
-msgid "Security"
-msgstr "Bezpieczeństwo"
+#~ msgid "<b>Video server</b>"
+#~ msgstr "<b>Serwer wideo</b>"
 
-msgid "Passphrase"
-msgstr "Hasło"
+#~ msgid "BellePoule - Fencing tournament"
+#~ msgstr "BellePoule - Turniej szermierczy"
 
-msgid ""
-"Enter your WIFI network settings here.\n"
-"They will be used to automatically configure\n"
-"the smarthphones running <b>SmartPoule</b>"
-msgstr ""
-"Wprowadź ustawienia sieci bezprzewodowej.\n"
-"Zostaną one użyte do automatycznego skonfigurowania\n"
-"smartfona z uruchomionym <b>SmartPoule</b>"
+#~ msgid "File"
+#~ msgstr "Plik"
 
-msgid "User"
-msgstr "Użytkownik"
+#~ msgid "Recently opened"
+#~ msgstr "Ostatnio otwarte"
 
-msgid "Password"
-msgstr "Hasło"
+#~ msgid "Backup"
+#~ msgstr "Kopia zapasowa"
 
-msgid "FTP server"
-msgstr "Serwer FTP"
+#~ msgid "Backup files location..."
+#~ msgstr "Lokalizacja pliku kopii bezpieczeństawa..."
 
-msgid "<b>Web site</b>"
-msgstr "<b>Strona</b>"
+#~ msgid "Activate"
+#~ msgstr "Aktywuj"
 
-msgid "<b>Video server</b>"
-msgstr "<b>Serwer wideo</b>"
+#~ msgid "Deactivate"
+#~ msgstr "Deaktywuj"
 
-msgid "BellePoule - Fencing tournament"
-msgstr "BellePoule - Turniej szermierczy"
+#~ msgid "Print meal tickets"
+#~ msgstr "Drukuj karnet na posiłek"
 
-msgid "File"
-msgstr "Plik"
+#~ msgid "Print payment book"
+#~ msgstr "Drukuj listę wypłat"
 
-msgid "Recently opened"
-msgstr "Ostatnio otwarte"
+#~ msgid "Ecosystem"
+#~ msgstr "System"
 
-msgid "Backup"
-msgstr "Kopia zapasowa"
+#~ msgid "WIFI"
+#~ msgstr "WIFI"
 
-msgid "Backup files location..."
-msgstr "Lokalizacja pliku kopii bezpieczeństawa..."
+#~ msgid "Score sheet scanner"
+#~ msgstr "Skaner arkuszy punktowych"
 
-msgid "Activate"
-msgstr "Aktywuj"
+#~ msgid "Publication"
+#~ msgstr "Publikacja"
 
-msgid "Deactivate"
-msgstr "Deaktywuj"
+#~ msgid "New version!"
+#~ msgstr "Nowa wersja!"
 
-msgid "Print meal tickets"
-msgstr "Drukuj karnet na posiłek"
+#~ msgid "Open an example..."
+#~ msgstr "Otwórz przykład..."
 
-msgid "Print payment book"
-msgstr "Drukuj listę wypłat"
+#~ msgid "User manual"
+#~ msgstr "Instrukcja użytkownika"
 
-msgid "Ecosystem"
-msgstr "System"
+#~ msgid "Fencer file template (.csv)"
+#~ msgstr "Plik szablonu danych  szermirzy (.csv)"
 
-msgid "WIFI"
-msgstr "WIFI"
+#~ msgid ""
+#~ "Scan this code with <b>SmartPoule</b>\n"
+#~ "to make your smarphone\n"
+#~ "a score sheet scanner."
+#~ msgstr ""
+#~ "Zeskanuj ten kod programem <b>SmartPoule</b>,\n"
+#~ "aby wykorzystać twój smartfon\n"
+#~ "jako skaner arkusza wyników."
 
-msgid "Score sheet scanner"
-msgstr "Skaner arkuszy punktowych"
-
-msgid "Publication"
-msgstr "Publikacja"
-
-msgid "New version!"
-msgstr "Nowa wersja!"
-
-msgid "Open an example..."
-msgstr "Otwórz przykład..."
-
-msgid "User manual"
-msgstr "Instrukcja użytkownika"
-
-msgid "Fencer file template (.csv)"
-msgstr "Plik szablonu danych  szermirzy (.csv)"
-
-msgid ""
-"Scan this code with <b>SmartPoule</b>\n"
-"to make your smarphone\n"
-"a score sheet scanner."
-msgstr ""
-"Zeskanuj ten kod programem <b>SmartPoule</b>,\n"
-"aby wykorzystać twój smartfon\n"
-"jako skaner arkusza wyników."
-
-msgid "<b>Score sheet scanner</b>"
-msgstr "<b>Skaner arkusza wyników</b>"
+#~ msgid "<b>Score sheet scanner</b>"
+#~ msgstr "<b>Skaner arkusza wyników</b>"

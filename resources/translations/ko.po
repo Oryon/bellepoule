@@ -7,16 +7,135 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-26 21:57+0100\n"
+"POT-Creation-Date: 2016-08-14 22:37+0200\n"
 "PO-Revision-Date: 2013-04-11 00:53+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Korean <ko@li.org>\n"
+"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-07-27 06:00+0000\n"
-"X-Generator: Launchpad (build 18153)\n"
-"Language: ko\n"
+"X-Launchpad-Export-Date: 2016-03-27 05:20+0000\n"
+"X-Generator: Launchpad (build 17967)\n"
+
+msgid "Long text"
+msgstr ""
+
+msgid "Short text"
+msgstr ""
+
+msgid "Graphic"
+msgstr ""
+
+msgid "Data to display"
+msgstr "표시 데이터"
+
+msgid "Visibility"
+msgstr ""
+
+msgid "Data"
+msgstr "데이터"
+
+msgid "Look"
+msgstr "보기"
+
+msgid "Split"
+msgstr "분할"
+
+msgid "List of fencers to extract"
+msgstr "제외할 선수 리스트"
+
+msgid "Choose a rank file to apply..."
+msgstr ""
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr ""
+
+msgid "All files"
+msgstr "모든 파일들"
+
+msgid "<b>Smartpoule</b> configuration code"
+msgstr ""
+
+msgid ""
+"Uncheck this box to quicken the data input. The corresponding field will be "
+"ignored on TAB key pressed."
+msgstr ""
+"데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르"
+"면 관련 필드가 무시됩니다."
+
+msgid "Choose a fencer file to import..."
+msgstr "가져올 선수 파일을 선택하세요."
+
+msgid "Fencer files"
+msgstr "선수 파일"
+
+msgid "Referee files"
+msgstr "심판 파일"
+
+msgid "List of registered"
+msgstr "등록된 리스트"
+
+msgid "List of presents"
+msgstr "현재 리스트"
+
+msgid "List of absents"
+msgstr "불참 리스트"
+
+msgid "Fencer list"
+msgstr "선수 리스트"
+
+msgid "Barrage"
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "Paste"
+msgstr ""
+
+msgid "Page"
+msgstr "페이지"
+
+msgid "Check-in"
+msgstr "체크인"
+
+msgid "** Without team **"
+msgstr ""
+
+msgid "Expected fencers"
+msgstr ""
+
+msgid "Expected teams"
+msgstr ""
+
+msgid "Team size"
+msgstr ""
+
+#, c-format
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
+msgstr ""
+
+msgid "Tick the present players of the team."
+msgstr ""
+
+msgid "Untick the absent players of the team."
+msgstr ""
+
+msgid "General classification"
+msgstr "전체 순위"
+
+msgid "Choose a target file..."
+msgstr "원하는 파일을 선택하세요..."
+
+msgid "All FFF files (.FFF)"
+msgstr "모든 FFF 파일(.FFF)"
+
+msgid "All PDF files (.PDF)"
+msgstr "모든 PDF 파일(.PDF)"
+
+msgid "All HTML files (.HTML)"
+msgstr ""
 
 msgid "Classification"
 msgstr "순위"
@@ -42,23 +161,56 @@ msgstr "여성"
 msgid "Mixed"
 msgstr "혼성"
 
+msgid "U5"
+msgstr "5세 이하"
+
+msgid "U6"
+msgstr "6세 이하"
+
+msgid "U7"
+msgstr "7세 이하"
+
 msgid "U8"
 msgstr "8세 이하"
+
+msgid "U9"
+msgstr "9세 이하"
 
 msgid "U10"
 msgstr "10세 이하"
 
+msgid "U11"
+msgstr "11세 이하"
+
 msgid "U12"
 msgstr "12세 이하"
+
+msgid "U13"
+msgstr "13세 이하"
 
 msgid "U14"
 msgstr "14세 이하"
 
+msgid "U15"
+msgstr "15세 이하"
+
 msgid "U16"
 msgstr "16세 이하"
 
+msgid "U17"
+msgstr "17세 이하"
+
 msgid "U18"
 msgstr "18세 이하"
+
+msgid "U19"
+msgstr "19세 이하"
+
+msgid "U20"
+msgstr "20세 이하"
+
+msgid "U23"
+msgstr "23세 이하"
 
 msgid "Senior"
 msgstr "일반부"
@@ -76,6 +228,9 @@ msgid "Veteran 3"
 msgstr ""
 
 msgid "Veteran 4"
+msgstr ""
+
+msgid "Veteran 3+4"
 msgstr ""
 
 msgid "League"
@@ -105,10 +260,76 @@ msgstr "파일을 선택하세요..."
 msgid "BellePoule files (.cotcot)"
 msgstr "BellePoule 파일 (.cotcot)"
 
-msgid "All files"
-msgstr "모든 파일들"
-
 msgid "Close without saving"
+msgstr ""
+
+msgid "Meal"
+msgstr ""
+
+msgid "Drink"
+msgstr ""
+
+msgid "Dessert"
+msgstr ""
+
+msgid "Coffee"
+msgstr ""
+
+msgid "Payment book"
+msgstr "지불 장부"
+
+msgid "Signature"
+msgstr "서명"
+
+msgid "Restart BellePoule for this change to take effect"
+msgstr "변경 사항을 적용하기 위해 다시 시작"
+
+msgid "Choose a competion file to open... "
+msgstr "열어볼 대회 파일을 선택하세요. "
+
+msgid "Competition files (.cotcot / .xml)"
+msgstr "대회 파일(.cotcot/ .xml)"
+
+msgid "Recently opened files"
+msgstr "최근에 열어본 파일"
+
+msgid "BellePoule files"
+msgstr "BellePoule 파일들"
+
+msgid "Meal tickets"
+msgstr "식권"
+
+msgid "Choose a backup files location..."
+msgstr "백업 파일 위치를 선택하세요."
+
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr "<b><big>BellePoule을 종료할까요?</big></b>"
+
+msgid "Quit BellePoule?"
+msgstr "BellePoule을 종료할까요?"
+
+msgid "All the unsaved competions will be lost."
+msgstr "저장되지 않은 모든 경기가 사라집니다."
+
+#, c-format
+msgid "Round #%d"
+msgstr ""
+
+msgid "Formula"
+msgstr "방식"
+
+msgid "<b><big>Do you really want to cancel the current round?</big></b>"
+msgstr "<b><big>정말로 진행 중인 경기를 취소할까요?</big></b>"
+
+msgid "Go back to the previous round?"
+msgstr "이전 경기로 돌아갈까요?"
+
+msgid "All the inputs of this round will be cancelled."
+msgstr "이번 경기의 모든 입력이 취소됩니다."
+
+msgid ""
+"<b><big>Because of ties, the quota is exceeded.\n"
+"Do you wish to add a barrage round?</big></b>"
 msgstr ""
 
 msgid "ref"
@@ -234,168 +455,6 @@ msgstr ""
 msgid "Manual"
 msgstr ""
 
-#, c-format
-msgid "Round #%d"
-msgstr ""
-
-msgid "Formula"
-msgstr "방식"
-
-msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>정말로 진행 중인 경기를 취소할까요?</big></b>"
-
-msgid "Go back to the previous round?"
-msgstr "이전 경기로 돌아갈까요?"
-
-msgid "All the inputs of this round will be cancelled."
-msgstr "이번 경기의 모든 입력이 취소됩니다."
-
-msgid ""
-"<b><big>Because of ties, the quota is exceeded.\n"
-"Do you wish to add a barrage round?</big></b>"
-msgstr ""
-
-msgid "Barrage"
-msgstr ""
-
-msgid "Meal"
-msgstr ""
-
-msgid "Drink"
-msgstr ""
-
-msgid "Dessert"
-msgstr ""
-
-msgid "Coffee"
-msgstr ""
-
-msgid "Payment book"
-msgstr "지불 장부"
-
-msgid "Page"
-msgstr "페이지"
-
-msgid "Signature"
-msgstr "서명"
-
-msgid "Restart BellePoule for this change to take effect"
-msgstr "변경 사항을 적용하기 위해 다시 시작"
-
-msgid "Choose a competion file to open... "
-msgstr "열어볼 대회 파일을 선택하세요. "
-
-msgid "Competition files (.cotcot / .xml)"
-msgstr "대회 파일(.cotcot/ .xml)"
-
-msgid "Recently opened files"
-msgstr "최근에 열어본 파일"
-
-msgid "BellePoule files"
-msgstr "BellePoule 파일들"
-
-msgid "Meal tickets"
-msgstr "식권"
-
-msgid "Choose a backup files location..."
-msgstr "백업 파일 위치를 선택하세요."
-
-msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>BellePoule을 종료할까요?</big></b>"
-
-msgid "Quit BellePoule?"
-msgstr "BellePoule을 종료할까요?"
-
-msgid "All the unsaved competions will be lost."
-msgstr "저장되지 않은 모든 경기가 사라집니다."
-
-msgid "Choose a fencer file to import..."
-msgstr "가져올 선수 파일을 선택하세요."
-
-msgid "Fencer files"
-msgstr "선수 파일"
-
-msgid "Referee files"
-msgstr "심판 파일"
-
-msgid "List of registered"
-msgstr "등록된 리스트"
-
-msgid "List of presents"
-msgstr "현재 리스트"
-
-msgid "List of absents"
-msgstr "불참 리스트"
-
-msgid "Fencer list"
-msgstr "선수 리스트"
-
-msgid "Check-in"
-msgstr "체크인"
-
-msgid "** Without team **"
-msgstr ""
-
-msgid "Expected fencers"
-msgstr ""
-
-msgid "Expected teams"
-msgstr ""
-
-msgid "Team size"
-msgstr ""
-
-#, c-format
-msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr ""
-
-msgid "Tick the present players of the team."
-msgstr ""
-
-msgid "Untick the absent players of the team."
-msgstr ""
-
-msgid "<b>Smartpoule</b> configuration code"
-msgstr ""
-
-msgid ""
-"Uncheck this box to quicken the data input. The corresponding field will be "
-"ignored on TAB key pressed."
-msgstr "데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르면 관련 필드가 무시됩니다."
-
-msgid "General classification"
-msgstr "전체 순위"
-
-msgid "Choose a target file..."
-msgstr "원하는 파일을 선택하세요..."
-
-msgid "All FFF files (.FFF)"
-msgstr "모든 FFF 파일(.FFF)"
-
-msgid "All PDF files (.PDF)"
-msgstr "모든 PDF 파일(.PDF)"
-
-msgid "All HTML files (.HTML)"
-msgstr ""
-
-msgid "Copy"
-msgstr ""
-
-msgid "Paste"
-msgstr ""
-
-msgid "Choose a rank file to apply..."
-msgstr ""
-
-msgid "Rank files: cotcot, xml, txt (France)"
-msgstr ""
-
-msgid "Split"
-msgstr "분할"
-
-msgid "List of fencers to extract"
-msgstr "제외할 선수 리스트"
-
 msgid "Pools arrangement"
 msgstr "풀 배치"
 
@@ -454,19 +513,6 @@ msgstr "풀"
 msgid "Bout without winner!"
 msgstr ""
 
-msgid "Winner"
-msgstr "승자"
-
-msgid "Final"
-msgstr "결승"
-
-msgid "Semi-final"
-msgstr "준결승"
-
-#, c-format
-msgid "Table of %d"
-msgstr "%d 강"
-
 msgid "Place #"
 msgstr "등수 #"
 
@@ -479,6 +525,19 @@ msgstr "대진표"
 #, c-format
 msgid "%s: score sheets printing"
 msgstr "%s: 점수표 인쇄"
+
+msgid "Winner"
+msgstr "승자"
+
+msgid "Final"
+msgstr "결승"
+
+msgid "Semi-final"
+msgstr "준결승"
+
+#, c-format
+msgid "Table of %d"
+msgstr "%d 강"
 
 #, c-format
 msgid "Match %s"
@@ -502,413 +561,297 @@ msgstr "3위"
 msgid "None"
 msgstr "없음"
 
-msgid "Long text"
-msgstr ""
+#~ msgid "For arbitration"
+#~ msgstr "중재용"
 
-msgid "Short text"
-msgstr ""
+#~ msgid "Content designed for the referees."
+#~ msgstr "심판을 위해 설계된 컨텐츠"
 
-msgid "Graphic"
-msgstr ""
+#~ msgid "For the bulletin board"
+#~ msgstr "게시판용"
 
-msgid "Data to display"
-msgstr "표시 데이터"
+#~ msgid "<b>For what?</b>"
+#~ msgstr "<b>무엇을 위해서?</b>"
 
-msgid "Visibility"
-msgstr ""
+#~ msgid "Fencer list printing"
+#~ msgstr "선수 리스트 인쇄"
 
-msgid "Data"
-msgstr "데이터"
+#~ msgid "<b><big>What do you want to print?</big></b>"
+#~ msgstr "<b><big>무엇을 인쇄할까요?</big></b>"
 
-msgid "Look"
-msgstr "보기"
+#~ msgid "All the presents"
+#~ msgstr "참가자 전원"
 
-msgid "For arbitration"
-msgstr "중재용"
+#~ msgid "All the absents"
+#~ msgstr "결석자 전원"
 
-msgid "Content designed for the referees."
-msgstr "심판을 위해 설계된 컨텐츠"
+#~ msgid "Presents"
+#~ msgstr "참석"
 
-msgid "For the bulletin board"
-msgstr "게시판용"
+#~ msgid "Absents"
+#~ msgstr "결석"
 
-msgid "<b>For what?</b>"
-msgstr "<b>무엇을 위해서?</b>"
+#~ msgid "all"
+#~ msgstr "모든"
 
-msgid "Promoted"
-msgstr ""
+#~ msgid "Date of competition"
+#~ msgstr "경기 일자"
 
-msgid "Eliminated"
-msgstr ""
+#~ msgid "Competition properties"
+#~ msgstr "경기 속성"
 
-msgid "Fencer list printing"
-msgstr "선수 리스트 인쇄"
+#~ msgid "Weapon"
+#~ msgstr "종목"
 
-msgid "<b><big>What do you want to print?</big></b>"
-msgstr "<b><big>무엇을 인쇄할까요?</big></b>"
+#~ msgid "Gender"
+#~ msgstr "성별"
 
-msgid "All the presents"
-msgstr "참가자 전원"
+#~ msgid "Category"
+#~ msgstr "카테고리"
 
-msgid "All the absents"
-msgstr "결석자 전원"
+#~ msgid "<b>Type</b>"
+#~ msgstr "<b>타입</b>"
 
-msgid "Presents"
-msgstr "참석"
+#~ msgid "Title"
+#~ msgstr "타이틀"
 
-msgid "Absents"
-msgstr "결석"
+#~ msgid "Organizer"
+#~ msgstr "운영자"
 
-msgid "all"
-msgstr "모든"
+#~ msgid "Web site"
+#~ msgstr "웹사이트"
 
-msgid "Import fencers"
-msgstr ""
+#~ msgid "Location"
+#~ msgstr "위치"
 
-msgid "Import ranking"
-msgstr ""
+#~ msgid "<b>Overviews</b>"
+#~ msgstr "<b>개요</b>"
 
-msgid "Minimum team size"
-msgstr ""
+#~ msgid "Date"
+#~ msgstr "일자"
 
-msgid "Team classification"
-msgstr ""
+#~ msgid "Scratch"
+#~ msgstr "핸디캡 없음"
 
-msgid "Manually assigned"
-msgstr ""
+#~ msgid "Start"
+#~ msgstr "시작"
 
-msgid "Derived from fencer classification"
-msgstr ""
+#~ msgid "<b>Date / Time</b>"
+#~ msgstr "<b>일자 / 시간</b>"
 
-msgid "when unknown"
-msgstr ""
+#~ msgid "Allow"
+#~ msgstr "허용"
 
-msgid "Date of competition"
-msgstr "경기 일자"
+#~ msgid "Forbid"
+#~ msgstr "금지"
 
-msgid "Competition properties"
-msgstr "경기 속성"
+#~ msgid ""
+#~ "Automatic\n"
+#~ "score\n"
+#~ "stuffing"
+#~ msgstr ""
+#~ "자동\n"
+#~ "점수\n"
+#~ "생성"
 
-msgid "Weapon"
-msgstr "종목"
+#~ msgid "<b>Scores</b>"
+#~ msgstr "<b>점수</b>"
 
-msgid "Gender"
-msgstr "성별"
+#~ msgid "Event"
+#~ msgstr "대회"
 
-msgid "Category"
-msgstr "카테고리"
+#~ msgid "Save the current state of the competition."
+#~ msgstr "경기를 현재 상태로 저장합니다."
 
-msgid "Level"
-msgstr ""
+#~ msgid "To specify the features of the competition."
+#~ msgstr "대회 특징을 명시합니다."
 
-msgid "Individual"
-msgstr ""
+#~ msgid "Referees"
+#~ msgstr "심판"
 
-msgid "Team"
-msgstr ""
+#~ msgid "Man"
+#~ msgstr "남자"
 
-msgid "<b>Type</b>"
-msgstr "<b>타입</b>"
+#~ msgid "Mask or unmask some data type as well as define their display order."
+#~ msgstr "표시 순서를 정의할 뿐 아니라 데이터 타입을 지우거나 표시합니다."
 
-msgid "Title"
-msgstr "타이틀"
+#~ msgid "Print"
+#~ msgstr "인쇄"
 
-msgid "Organizer"
-msgstr "운영자"
+#~ msgid "Number of pools"
+#~ msgstr "풀 갯수"
 
-msgid "Web site"
-msgstr "웹사이트"
+#~ msgid "Fencers / pools"
+#~ msgstr "선수 / 풀"
 
-msgid "Location"
-msgstr "위치"
+#~ msgid "Swapping"
+#~ msgstr "교체"
 
-msgid "<b>Overviews</b>"
-msgstr "<b>개요</b>"
+#~ msgid "Name"
+#~ msgstr "이름"
 
-msgid "Date"
-msgstr "일자"
+#~ msgid "Number"
+#~ msgstr "숫자"
 
-msgid "Scratch"
-msgstr "핸디캡 없음"
+#~ msgid "Pool sheets printing"
+#~ msgstr "풀 시트 인쇄"
 
-msgid "Start"
-msgstr "시작"
+#~ msgid "<b><big>Print...</big></b>"
+#~ msgstr "<b><big>인쇄...</big></b>"
 
-msgid "<b>Date / Time</b>"
-msgstr "<b>일자 / 시간</b>"
+#~ msgid "All the pools"
+#~ msgstr "모든 풀"
 
-msgid "Allow"
-msgstr "허용"
+#~ msgid "Only the selected pool"
+#~ msgstr "선택한 풀"
 
-msgid "Forbid"
-msgstr "금지"
+#~ msgid "<b>What?</b>"
+#~ msgstr "<b>무엇?</b>"
 
-msgid ""
-"Automatic\n"
-"score\n"
-"stuffing"
-msgstr ""
-"자동\n"
-"점수\n"
-"생성"
+#~ msgid "Automatic stuffing"
+#~ msgstr "자동 생성"
 
-msgid "<b>Scores</b>"
-msgstr "<b>점수</b>"
+#~ msgid "Combined classification"
+#~ msgstr "연동 순위"
 
-msgid "Event"
-msgstr "대회"
+#~ msgid "Single classification"
+#~ msgstr "개별 순위"
 
-msgid "Save the current state of the competition."
-msgstr "경기를 현재 상태로 저장합니다."
+#~ msgid "Import referee file"
+#~ msgstr "중요 심판 파일"
 
-msgid "To specify the features of the competition."
-msgstr "대회 특징을 명시합니다."
+#~ msgid "Add"
+#~ msgstr "추가"
 
-msgid "Referees"
-msgstr "심판"
+#~ msgid "Remove"
+#~ msgstr "제거"
 
-msgid "Man"
-msgstr "남자"
+#~ msgid "<b>Schedule</b>"
+#~ msgstr "<b>스케츌</b>"
 
-msgid "Form"
-msgstr ""
+#~ msgid "<b>Parameters</b>"
+#~ msgstr "<b>변수</b>"
 
-msgid "Export to <b>HTML</b>"
-msgstr ""
+#~ msgid "Previous round"
+#~ msgstr "이전 라운드"
 
-msgid "Export to <b>FFF</b>"
-msgstr ""
+#~ msgid "Next round"
+#~ msgstr "다음 라운드"
 
-msgid "Export to <b>PDF</b>"
-msgstr ""
+#~ msgid "Table printing"
+#~ msgstr "대진표 인쇄"
 
-msgid "Mask or unmask some data type as well as define their display order."
-msgstr "표시 순서를 정의할 뿐 아니라 데이터 타입을 지우거나 표시합니다."
+#~ msgid "The table"
+#~ msgstr "대진표"
 
-msgid "Print"
-msgstr "인쇄"
+#~ msgid "Score sheets"
+#~ msgstr "점수표"
 
-msgid "Number of pools"
-msgstr "풀 갯수"
+#~ msgid "Pending"
+#~ msgstr "지연된는 중"
 
-msgid "Fencers / pools"
-msgstr "선수 / 풀"
+#~ msgid ""
+#~ "<b><big>Which score sheets of the selected table do you want to print?</"
+#~ "big></b>"
+#~ msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big></b>"
 
-msgid "Swapping"
-msgstr "교체"
+#~ msgid "All the score sheets"
+#~ msgstr "모든 점수 기록지"
 
-msgid "Name"
-msgstr "이름"
+#~ msgid "The pending score sheets"
+#~ msgstr "지연 중인 점수 기록지"
 
-msgid "Number"
-msgstr "숫자"
+#~ msgid "<b>Match</b>"
+#~ msgstr "<b>경기</b>"
 
-msgid "Pool sheets printing"
-msgstr "풀 시트 인쇄"
+#~ msgid "A fencer"
+#~ msgstr "A 선수"
 
-msgid "<b><big>Print...</big></b>"
-msgstr "<b><big>인쇄...</big></b>"
+#~ msgid "B fencer"
+#~ msgstr "B 선수"
 
-msgid "All the pools"
-msgstr "모든 풀"
+#~ msgid "<b>Score</b>"
+#~ msgstr "<b>점수</b>"
 
-msgid "Only the selected pool"
-msgstr "선택한 풀"
+#~ msgid "Fill in a match"
+#~ msgstr "경기에 입력"
 
-msgid "<b>What?</b>"
-msgstr "<b>무엇?</b>"
+#~ msgid ""
+#~ "Fill in all the scores randomly.\n"
+#~ "To activate/deactivate this button, go to the properties of the "
+#~ "competition."
+#~ msgstr ""
+#~ "모든 점수를 무작위로 입력합니다.\n"
+#~ "이 버튼을 활성 또는 비활성화하기 위해서는 경기 속성으로 갑니다."
 
-msgid "Matches watermarked"
-msgstr ""
+#~ msgid "From"
+#~ msgstr "부터"
 
-msgid "Automatic stuffing"
-msgstr "자동 생성"
+#~ msgid "To"
+#~ msgstr "로"
 
-msgid "Combined classification"
-msgstr "연동 순위"
+#~ msgid "For place"
+#~ msgstr "순위에 대해"
 
-msgid "Single classification"
-msgstr "개별 순위"
+#~ msgid "Zoom"
+#~ msgstr "확대"
 
-msgid "Import referee file"
-msgstr "중요 심판 파일"
+#~ msgid ""
+#~ "Fencing tournament management software.\n"
+#~ "\n"
+#~ "\n"
+#~ msgstr ""
+#~ "펜싱 토너먼트 관리 소프트웨어.\n"
+#~ "\n"
+#~ "\n"
 
-msgid "Add"
-msgstr "추가"
+#~ msgid "User"
+#~ msgstr "사용자"
 
-msgid "Remove"
-msgstr "제거"
+#~ msgid "Password"
+#~ msgstr "패스워드"
 
-msgid "<b>Schedule</b>"
-msgstr "<b>스케츌</b>"
+#~ msgid "FTP server"
+#~ msgstr "FTP 서버"
 
-msgid "<b>Parameters</b>"
-msgstr "<b>변수</b>"
+#~ msgid "BellePoule - Fencing tournament"
+#~ msgstr "BellePoule - 펜싱 토너먼트"
 
-msgid "Previous round"
-msgstr "이전 라운드"
+#~ msgid "File"
+#~ msgstr "파일"
 
-msgid "Next round"
-msgstr "다음 라운드"
+#~ msgid "Recently opened"
+#~ msgstr "최근 파일"
 
-msgid "Table printing"
-msgstr "대진표 인쇄"
+#~ msgid "Backup"
+#~ msgstr "백업"
 
-msgid "<b><big>How to print?</big></b>"
-msgstr ""
+#~ msgid "Backup files location..."
+#~ msgstr "백업 파일 위치"
 
-msgid "The table"
-msgstr "대진표"
+#~ msgid "Activate"
+#~ msgstr "활성화"
 
-msgid "Score sheets"
-msgstr "점수표"
+#~ msgid "Deactivate"
+#~ msgstr "비활성화"
 
-msgid "Pending"
-msgstr "지연된는 중"
+#~ msgid "Print meal tickets"
+#~ msgstr "식권 인쇄"
 
-msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big></b>"
+#~ msgid "Print payment book"
+#~ msgstr "지출 장부 인쇄"
 
-msgid "All the score sheets"
-msgstr "모든 점수 기록지"
+#~ msgid "New version!"
+#~ msgstr "신규 버전!"
 
-msgid "The pending score sheets"
-msgstr "지연 중인 점수 기록지"
+#~ msgid "Open an example..."
+#~ msgstr "예제 열기..."
 
-msgid "<b>Match</b>"
-msgstr "<b>경기</b>"
+#~ msgid "User manual"
+#~ msgstr "사용자 메뉴얼"
 
-msgid "A fencer"
-msgstr "A 선수"
-
-msgid "B fencer"
-msgstr "B 선수"
-
-msgid "<b>Score</b>"
-msgstr "<b>점수</b>"
-
-msgid "Fill in a match"
-msgstr "경기에 입력"
-
-msgid ""
-"Fill in all the scores randomly.\n"
-"To activate/deactivate this button, go to the properties of the competition."
-msgstr ""
-"모든 점수를 무작위로 입력합니다.\n"
-"이 버튼을 활성 또는 비활성화하기 위해서는 경기 속성으로 갑니다."
-
-msgid "From"
-msgstr "부터"
-
-msgid "To"
-msgstr "로"
-
-msgid "For place"
-msgstr "순위에 대해"
-
-msgid "Zoom"
-msgstr "확대"
-
-msgid ""
-"Fencing tournament management software.\n"
-"\n"
-"\n"
-msgstr ""
-"펜싱 토너먼트 관리 소프트웨어.\n"
-"\n"
-"\n"
-
-msgid "WPA"
-msgstr ""
-
-msgid "Security"
-msgstr ""
-
-msgid "Passphrase"
-msgstr ""
-
-msgid ""
-"Enter your WIFI network settings here.\n"
-"They will be used to automatically configure\n"
-"the smarthphones running <b>SmartPoule</b>"
-msgstr ""
-
-msgid "User"
-msgstr "사용자"
-
-msgid "Password"
-msgstr "패스워드"
-
-msgid "FTP server"
-msgstr "FTP 서버"
-
-msgid "<b>Web site</b>"
-msgstr ""
-
-msgid "<b>Video server</b>"
-msgstr ""
-
-msgid "BellePoule - Fencing tournament"
-msgstr "BellePoule - 펜싱 토너먼트"
-
-msgid "File"
-msgstr "파일"
-
-msgid "Recently opened"
-msgstr "최근 파일"
-
-msgid "Backup"
-msgstr "백업"
-
-msgid "Backup files location..."
-msgstr "백업 파일 위치"
-
-msgid "Activate"
-msgstr "활성화"
-
-msgid "Deactivate"
-msgstr "비활성화"
-
-msgid "Print meal tickets"
-msgstr "식권 인쇄"
-
-msgid "Print payment book"
-msgstr "지출 장부 인쇄"
-
-msgid "Ecosystem"
-msgstr ""
-
-msgid "WIFI"
-msgstr ""
-
-msgid "Score sheet scanner"
-msgstr ""
-
-msgid "Publication"
-msgstr ""
-
-msgid "New version!"
-msgstr "신규 버전!"
-
-msgid "Open an example..."
-msgstr "예제 열기..."
-
-msgid "User manual"
-msgstr "사용자 메뉴얼"
-
-msgid "Fencer file template (.csv)"
-msgstr "펜서 파일 템플릿 (.csv)"
-
-msgid ""
-"Scan this code with <b>SmartPoule</b>\n"
-"to make your smarphone\n"
-"a score sheet scanner."
-msgstr ""
-
-msgid "<b>Score sheet scanner</b>"
-msgstr ""
+#~ msgid "Fencer file template (.csv)"
+#~ msgstr "펜서 파일 템플릿 (.csv)"
 
 #~ msgid "9999"
 #~ msgstr "9999"
