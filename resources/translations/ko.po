@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2013-04-11 00:53+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Korean <ko@li.org>\n"
-"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-03-27 05:20+0000\n"
-"X-Generator: Launchpad (build 17967)\n"
+"X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
+"X-Generator: Launchpad (build 18169)\n"
+"Language: ko\n"
 
 msgid "Long text"
 msgstr ""
@@ -60,9 +60,7 @@ msgstr ""
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
-msgstr ""
-"데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르"
-"면 관련 필드가 무시됩니다."
+msgstr "데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르면 관련 필드가 무시됩니다."
 
 msgid "Choose a fencer file to import..."
 msgstr "가져올 선수 파일을 선택하세요."
@@ -162,55 +160,55 @@ msgid "Mixed"
 msgstr "혼성"
 
 msgid "U5"
-msgstr "5세 이하"
+msgstr ""
 
 msgid "U6"
-msgstr "6세 이하"
+msgstr ""
 
 msgid "U7"
-msgstr "7세 이하"
+msgstr ""
 
 msgid "U8"
 msgstr "8세 이하"
 
 msgid "U9"
-msgstr "9세 이하"
+msgstr ""
 
 msgid "U10"
 msgstr "10세 이하"
 
 msgid "U11"
-msgstr "11세 이하"
+msgstr ""
 
 msgid "U12"
 msgstr "12세 이하"
 
 msgid "U13"
-msgstr "13세 이하"
+msgstr ""
 
 msgid "U14"
 msgstr "14세 이하"
 
 msgid "U15"
-msgstr "15세 이하"
+msgstr ""
 
 msgid "U16"
 msgstr "16세 이하"
 
 msgid "U17"
-msgstr "17세 이하"
+msgstr ""
 
 msgid "U18"
 msgstr "18세 이하"
 
 msgid "U19"
-msgstr "19세 이하"
+msgstr ""
 
 msgid "U20"
-msgstr "20세 이하"
+msgstr ""
 
 msgid "U23"
-msgstr "23세 이하"
+msgstr ""
 
 msgid "Senior"
 msgstr "일반부"
@@ -561,297 +559,8 @@ msgstr "3위"
 msgid "None"
 msgstr "없음"
 
-#~ msgid "For arbitration"
-#~ msgstr "중재용"
-
-#~ msgid "Content designed for the referees."
-#~ msgstr "심판을 위해 설계된 컨텐츠"
-
-#~ msgid "For the bulletin board"
-#~ msgstr "게시판용"
-
-#~ msgid "<b>For what?</b>"
-#~ msgstr "<b>무엇을 위해서?</b>"
-
-#~ msgid "Fencer list printing"
-#~ msgstr "선수 리스트 인쇄"
-
-#~ msgid "<b><big>What do you want to print?</big></b>"
-#~ msgstr "<b><big>무엇을 인쇄할까요?</big></b>"
-
-#~ msgid "All the presents"
-#~ msgstr "참가자 전원"
-
-#~ msgid "All the absents"
-#~ msgstr "결석자 전원"
-
-#~ msgid "Presents"
-#~ msgstr "참석"
-
-#~ msgid "Absents"
-#~ msgstr "결석"
-
-#~ msgid "all"
-#~ msgstr "모든"
-
-#~ msgid "Date of competition"
-#~ msgstr "경기 일자"
-
-#~ msgid "Competition properties"
-#~ msgstr "경기 속성"
-
-#~ msgid "Weapon"
-#~ msgstr "종목"
-
-#~ msgid "Gender"
-#~ msgstr "성별"
-
-#~ msgid "Category"
-#~ msgstr "카테고리"
-
 #~ msgid "<b>Type</b>"
 #~ msgstr "<b>타입</b>"
-
-#~ msgid "Title"
-#~ msgstr "타이틀"
-
-#~ msgid "Organizer"
-#~ msgstr "운영자"
-
-#~ msgid "Web site"
-#~ msgstr "웹사이트"
-
-#~ msgid "Location"
-#~ msgstr "위치"
-
-#~ msgid "<b>Overviews</b>"
-#~ msgstr "<b>개요</b>"
-
-#~ msgid "Date"
-#~ msgstr "일자"
-
-#~ msgid "Scratch"
-#~ msgstr "핸디캡 없음"
-
-#~ msgid "Start"
-#~ msgstr "시작"
-
-#~ msgid "<b>Date / Time</b>"
-#~ msgstr "<b>일자 / 시간</b>"
-
-#~ msgid "Allow"
-#~ msgstr "허용"
-
-#~ msgid "Forbid"
-#~ msgstr "금지"
-
-#~ msgid ""
-#~ "Automatic\n"
-#~ "score\n"
-#~ "stuffing"
-#~ msgstr ""
-#~ "자동\n"
-#~ "점수\n"
-#~ "생성"
-
-#~ msgid "<b>Scores</b>"
-#~ msgstr "<b>점수</b>"
-
-#~ msgid "Event"
-#~ msgstr "대회"
-
-#~ msgid "Save the current state of the competition."
-#~ msgstr "경기를 현재 상태로 저장합니다."
-
-#~ msgid "To specify the features of the competition."
-#~ msgstr "대회 특징을 명시합니다."
-
-#~ msgid "Referees"
-#~ msgstr "심판"
-
-#~ msgid "Man"
-#~ msgstr "남자"
-
-#~ msgid "Mask or unmask some data type as well as define their display order."
-#~ msgstr "표시 순서를 정의할 뿐 아니라 데이터 타입을 지우거나 표시합니다."
-
-#~ msgid "Print"
-#~ msgstr "인쇄"
-
-#~ msgid "Number of pools"
-#~ msgstr "풀 갯수"
-
-#~ msgid "Fencers / pools"
-#~ msgstr "선수 / 풀"
-
-#~ msgid "Swapping"
-#~ msgstr "교체"
-
-#~ msgid "Name"
-#~ msgstr "이름"
-
-#~ msgid "Number"
-#~ msgstr "숫자"
-
-#~ msgid "Pool sheets printing"
-#~ msgstr "풀 시트 인쇄"
-
-#~ msgid "<b><big>Print...</big></b>"
-#~ msgstr "<b><big>인쇄...</big></b>"
-
-#~ msgid "All the pools"
-#~ msgstr "모든 풀"
-
-#~ msgid "Only the selected pool"
-#~ msgstr "선택한 풀"
-
-#~ msgid "<b>What?</b>"
-#~ msgstr "<b>무엇?</b>"
-
-#~ msgid "Automatic stuffing"
-#~ msgstr "자동 생성"
-
-#~ msgid "Combined classification"
-#~ msgstr "연동 순위"
-
-#~ msgid "Single classification"
-#~ msgstr "개별 순위"
-
-#~ msgid "Import referee file"
-#~ msgstr "중요 심판 파일"
-
-#~ msgid "Add"
-#~ msgstr "추가"
-
-#~ msgid "Remove"
-#~ msgstr "제거"
-
-#~ msgid "<b>Schedule</b>"
-#~ msgstr "<b>스케츌</b>"
-
-#~ msgid "<b>Parameters</b>"
-#~ msgstr "<b>변수</b>"
-
-#~ msgid "Previous round"
-#~ msgstr "이전 라운드"
-
-#~ msgid "Next round"
-#~ msgstr "다음 라운드"
-
-#~ msgid "Table printing"
-#~ msgstr "대진표 인쇄"
-
-#~ msgid "The table"
-#~ msgstr "대진표"
-
-#~ msgid "Score sheets"
-#~ msgstr "점수표"
-
-#~ msgid "Pending"
-#~ msgstr "지연된는 중"
-
-#~ msgid ""
-#~ "<b><big>Which score sheets of the selected table do you want to print?</"
-#~ "big></b>"
-#~ msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big></b>"
-
-#~ msgid "All the score sheets"
-#~ msgstr "모든 점수 기록지"
-
-#~ msgid "The pending score sheets"
-#~ msgstr "지연 중인 점수 기록지"
-
-#~ msgid "<b>Match</b>"
-#~ msgstr "<b>경기</b>"
-
-#~ msgid "A fencer"
-#~ msgstr "A 선수"
-
-#~ msgid "B fencer"
-#~ msgstr "B 선수"
-
-#~ msgid "<b>Score</b>"
-#~ msgstr "<b>점수</b>"
-
-#~ msgid "Fill in a match"
-#~ msgstr "경기에 입력"
-
-#~ msgid ""
-#~ "Fill in all the scores randomly.\n"
-#~ "To activate/deactivate this button, go to the properties of the "
-#~ "competition."
-#~ msgstr ""
-#~ "모든 점수를 무작위로 입력합니다.\n"
-#~ "이 버튼을 활성 또는 비활성화하기 위해서는 경기 속성으로 갑니다."
-
-#~ msgid "From"
-#~ msgstr "부터"
-
-#~ msgid "To"
-#~ msgstr "로"
-
-#~ msgid "For place"
-#~ msgstr "순위에 대해"
-
-#~ msgid "Zoom"
-#~ msgstr "확대"
-
-#~ msgid ""
-#~ "Fencing tournament management software.\n"
-#~ "\n"
-#~ "\n"
-#~ msgstr ""
-#~ "펜싱 토너먼트 관리 소프트웨어.\n"
-#~ "\n"
-#~ "\n"
-
-#~ msgid "User"
-#~ msgstr "사용자"
-
-#~ msgid "Password"
-#~ msgstr "패스워드"
-
-#~ msgid "FTP server"
-#~ msgstr "FTP 서버"
-
-#~ msgid "BellePoule - Fencing tournament"
-#~ msgstr "BellePoule - 펜싱 토너먼트"
-
-#~ msgid "File"
-#~ msgstr "파일"
-
-#~ msgid "Recently opened"
-#~ msgstr "최근 파일"
-
-#~ msgid "Backup"
-#~ msgstr "백업"
-
-#~ msgid "Backup files location..."
-#~ msgstr "백업 파일 위치"
-
-#~ msgid "Activate"
-#~ msgstr "활성화"
-
-#~ msgid "Deactivate"
-#~ msgstr "비활성화"
-
-#~ msgid "Print meal tickets"
-#~ msgstr "식권 인쇄"
-
-#~ msgid "Print payment book"
-#~ msgstr "지출 장부 인쇄"
-
-#~ msgid "New version!"
-#~ msgstr "신규 버전!"
-
-#~ msgid "Open an example..."
-#~ msgstr "예제 열기..."
-
-#~ msgid "User manual"
-#~ msgstr "사용자 메뉴얼"
-
-#~ msgid "Fencer file template (.csv)"
-#~ msgstr "펜서 파일 템플릿 (.csv)"
 
 #~ msgid "9999"
 #~ msgstr "9999"
@@ -859,5 +568,35 @@ msgstr "없음"
 #~ msgid "31/03/2009"
 #~ msgstr "31/03/2009"
 
+#~ msgid "Date"
+#~ msgstr "일자"
+
+#~ msgid "Scratch"
+#~ msgstr "핸디캡 없음"
+
+#~ msgid "<b>Scores</b>"
+#~ msgstr "<b>점수</b>"
+
+#~ msgid "Print"
+#~ msgstr "인쇄"
+
+#~ msgid "Name"
+#~ msgstr "이름"
+
 #~ msgid ":"
 #~ msgstr ":"
+
+#~ msgid "Add"
+#~ msgstr "추가"
+
+#~ msgid "Remove"
+#~ msgstr "제거"
+
+#~ msgid "<b>Score</b>"
+#~ msgstr "<b>점수</b>"
+
+#~ msgid "<b>Match</b>"
+#~ msgstr "<b>경기</b>"
+
+#~ msgid "Absents"
+#~ msgstr "결석"

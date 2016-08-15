@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-14 22:37+0200\n"
-"PO-Revision-Date: 2016-03-27 11:22+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2016-06-15 08:10+0000\n"
+"Last-Translator: Jean-Marc <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-03-28 05:22+0000\n"
-"X-Generator: Launchpad (build 17967)\n"
+"X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
+"X-Generator: Launchpad (build 18169)\n"
+"Language: \n"
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -164,55 +164,55 @@ msgid "Mixed"
 msgstr "Mixte"
 
 msgid "U5"
-msgstr "M5"
+msgstr ""
 
 msgid "U6"
-msgstr "M6"
+msgstr ""
 
 msgid "U7"
-msgstr "M7"
+msgstr ""
 
 msgid "U8"
-msgstr "M8"
+msgstr "Poussin"
 
 msgid "U9"
-msgstr "M9"
+msgstr ""
 
 msgid "U10"
-msgstr "M10"
+msgstr "Pupille"
 
 msgid "U11"
-msgstr "M11"
+msgstr ""
 
 msgid "U12"
-msgstr "M12"
+msgstr "Benjamin"
 
 msgid "U13"
-msgstr "M13"
+msgstr ""
 
 msgid "U14"
-msgstr "M14"
+msgstr "Minime"
 
 msgid "U15"
-msgstr "M15"
+msgstr ""
 
 msgid "U16"
-msgstr "M16"
+msgstr "Cadet"
 
 msgid "U17"
-msgstr "M17"
+msgstr ""
 
 msgid "U18"
-msgstr "M18"
+msgstr "Junior"
 
 msgid "U19"
-msgstr "M19"
+msgstr ""
 
 msgid "U20"
-msgstr "M20"
+msgstr ""
 
 msgid "U23"
-msgstr "M23"
+msgstr ""
 
 msgid "Senior"
 msgstr "Senior"
@@ -233,7 +233,7 @@ msgid "Veteran 4"
 msgstr "Vétéran 4"
 
 msgid "Veteran 3+4"
-msgstr "Vétéran 3+4"
+msgstr ""
 
 msgid "League"
 msgstr "Ligue"
@@ -248,16 +248,16 @@ msgid "World cup"
 msgstr "Coupe du monde"
 
 msgid "National championships"
-msgstr "Chanpionnats de France"
+msgstr "Championnats de France"
 
 msgid "World championships"
-msgstr "Chanpionnats du monde"
+msgstr "Championnats du monde"
 
 msgid "Other"
 msgstr "Autre"
 
 msgid "Choose a file..."
-msgstr "Choisissez un fichier de sauvegarde..."
+msgstr "Choisir un fichier..."
 
 msgid "BellePoule files (.cotcot)"
 msgstr "Les fichiers BellePoule (.cotcot)"
@@ -337,7 +337,7 @@ msgstr ""
 "Voulez-vous ajouter un tour de barrage ?</big></b>"
 
 msgid "ref"
-msgstr "ref"
+msgstr "réf"
 
 msgid "place"
 msgstr "place"
@@ -460,7 +460,7 @@ msgid "Manual"
 msgstr "Manuelle"
 
 msgid "Pools arrangement"
-msgstr "Composition poules"
+msgstr "Composition des poules"
 
 msgid "or"
 msgstr "ou"
@@ -565,405 +565,6 @@ msgstr "3e place"
 msgid "None"
 msgstr "Aucune"
 
-#~ msgid "For arbitration"
-#~ msgstr "Pour arbitrage"
-
-#~ msgid "Content designed for the referees."
-#~ msgstr "Contenu spécialement conçu pour les arbitres."
-
-#~ msgid "For the bulletin board"
-#~ msgstr "Pour affichage"
-
-#~ msgid "<b>For what?</b>"
-#~ msgstr "<b>Pour quoi ?</b>"
-
-#~ msgid "Promoted"
-#~ msgstr "Promus"
-
-#~ msgid "Eliminated"
-#~ msgstr "Éliminés"
-
-#~ msgid "Fencer list printing"
-#~ msgstr "Impression de la liste des tireurs"
-
-#~ msgid "<b><big>What do you want to print?</big></b>"
-#~ msgstr "<b><big>Que voulez-vous imprimer ?</big></b>"
-
-#~ msgid "All the presents"
-#~ msgstr "Tous les présents"
-
-#~ msgid "All the absents"
-#~ msgstr "Tous les absents"
-
-#~ msgid "Presents"
-#~ msgstr "Présents"
-
-#~ msgid "Absents"
-#~ msgstr "Absents"
-
-#~ msgid "all"
-#~ msgstr "tous"
-
-#~ msgid "Import fencers"
-#~ msgstr "Importer des tireurs"
-
-#~ msgid "Import ranking"
-#~ msgstr "Inporter des classements"
-
-#~ msgid "Minimum team size"
-#~ msgstr "Taille minimale des équipes"
-
-#~ msgid "Team classification"
-#~ msgstr "Classement des équipes"
-
-#~ msgid "Manually assigned"
-#~ msgstr "Assigné manuellement"
-
-#~ msgid "Derived from fencer classification"
-#~ msgstr "Dérivé des classements individuels"
-
-#~ msgid "when unknown"
-#~ msgstr "si inconnu"
-
-#~ msgid "Date of competition"
-#~ msgstr "Date de la compétition"
-
-#~ msgid "Competition properties"
-#~ msgstr "Propriétés de la compétition"
-
-#~ msgid "Weapon"
-#~ msgstr "Arme"
-
-#~ msgid "Gender"
-#~ msgstr "Sexe"
-
-#~ msgid "Category"
-#~ msgstr "Categorie"
-
-#~ msgid "Level"
-#~ msgstr "Niveau"
-
-#~ msgid "Individual"
-#~ msgstr "Individuelle"
-
-#~ msgid "Team"
-#~ msgstr "Par équipe"
-
-#~ msgid "<b>Type</b>"
-#~ msgstr "<b>Type</b>"
-
-#~ msgid "Title"
-#~ msgstr "Titre"
-
-#~ msgid "Organizer"
-#~ msgstr "Organisateur"
-
-#~ msgid "Web site"
-#~ msgstr "Site web"
-
-#~ msgid "Location"
-#~ msgstr "Lieu"
-
-#~ msgid "<b>Overviews</b>"
-#~ msgstr "<b>Généralités</b>"
-
-#~ msgid "Date"
-#~ msgstr "Date"
-
-#~ msgid "Scratch"
-#~ msgstr "Scratch"
-
-#~ msgid "Start"
-#~ msgstr "Début"
-
-#~ msgid "<b>Date / Time</b>"
-#~ msgstr "<b>Date / Horaires</b>"
-
-#~ msgid "Allow"
-#~ msgstr "Autoriser"
-
-#~ msgid "Forbid"
-#~ msgstr "Interdire"
-
-#~ msgid ""
-#~ "Automatic\n"
-#~ "score\n"
-#~ "stuffing"
-#~ msgstr ""
-#~ "Remplissage\n"
-#~ "automatique\n"
-#~ "des scores"
-
-#~ msgid "<b>Scores</b>"
-#~ msgstr "<b>Scores</b>"
-
-#~ msgid "Event"
-#~ msgstr "Événement"
-
-#~ msgid "Save the current state of the competition."
-#~ msgstr "Sauvegarde l'état actuel de la compétition."
-
-#~ msgid "To specify the features of the competition."
-#~ msgstr "Permet de renseigner les caractéristiques de la compétition."
-
-#~ msgid "Referees"
-#~ msgstr "Arbitres"
-
-#~ msgid "Man"
-#~ msgstr "Homme"
-
-#~ msgid "Form"
-#~ msgstr "Formulaire"
-
-#~ msgid "Export to <b>HTML</b>"
-#~ msgstr "Exporter en <b>HTML</b>"
-
-#~ msgid "Export to <b>FFF</b>"
-#~ msgstr "Exporter en <b>FFF</b>"
-
-#~ msgid "Export to <b>PDF</b>"
-#~ msgstr "Exporter en <b>PDF</b>"
-
-#~ msgid "Mask or unmask some data type as well as define their display order."
-#~ msgstr ""
-#~ "Permet d'afficher et de masquer certaines données ainsi que de redéfinir "
-#~ "leur ordre d'affichage."
-
-#~ msgid "Print"
-#~ msgstr "Imprimer"
-
-#~ msgid "Number of pools"
-#~ msgstr "Nombre de poules"
-
-#~ msgid "Fencers / pools"
-#~ msgstr "Tireurs / poules"
-
-#~ msgid "Swapping"
-#~ msgstr "Décalage"
-
-#~ msgid "Name"
-#~ msgstr "Nom"
-
-#~ msgid "Number"
-#~ msgstr "Nombre"
-
-#~ msgid "Pool sheets printing"
-#~ msgstr "Impression des feuilles de poule"
-
-#~ msgid "<b><big>Print...</big></b>"
-#~ msgstr "<b><big>Imprimer...</big></b>"
-
-#~ msgid "All the pools"
-#~ msgstr "Toutes les poules"
-
-#~ msgid "Only the selected pool"
-#~ msgstr "Uniquement la poule sélectionnée"
-
-#~ msgid "<b>What?</b>"
-#~ msgstr "<b>Quoi ?</b>"
-
-#~ msgid "Matches watermarked"
-#~ msgstr "Matchs en filigrane"
-
-#~ msgid "Automatic stuffing"
-#~ msgstr "Remplissage auto"
-
-#~ msgid "Combined classification"
-#~ msgstr "Classement combiné"
-
-#~ msgid "Single classification"
-#~ msgstr "Classement simple"
-
-#~ msgid "Import referee file"
-#~ msgstr "Importer le fichier d'arbitres"
-
-#~ msgid "Add"
-#~ msgstr "Ajouter"
-
-#~ msgid "Remove"
-#~ msgstr "Supprimer"
-
-#~ msgid "<b>Schedule</b>"
-#~ msgstr "<b>Déroulement</b>"
-
-#~ msgid "<b>Parameters</b>"
-#~ msgstr "<b>Paramètres</b>"
-
-#~ msgid "Previous round"
-#~ msgstr "Tour précédent"
-
-#~ msgid "Next round"
-#~ msgstr "Tour suivant"
-
-#~ msgid "Table printing"
-#~ msgstr "Impression du tableau"
-
-#~ msgid "<b><big>How to print?</big></b>"
-#~ msgstr "<b><big>Comment imprimer ?</big></b>"
-
-#~ msgid "The table"
-#~ msgstr "Le tableau"
-
-#~ msgid "Score sheets"
-#~ msgstr "Les feuilles de match"
-
-#~ msgid "Pending"
-#~ msgstr "En attente"
-
-#~ msgid ""
-#~ "<b><big>Which score sheets of the selected table do you want to print?</"
-#~ "big></b>"
-#~ msgstr ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></"
-#~ "b>"
-
-#~ msgid "All the score sheets"
-#~ msgstr "Toutes les feuilles de match"
-
-#~ msgid "The pending score sheets"
-#~ msgstr "Les feuilles de match en attente"
-
-#~ msgid "<b>Match</b>"
-#~ msgstr "<b>Match</b>"
-
-#~ msgid "A fencer"
-#~ msgstr "Tireur A"
-
-#~ msgid "B fencer"
-#~ msgstr "Tireur B"
-
-#~ msgid "<b>Score</b>"
-#~ msgstr "<b>Score</b>"
-
-#~ msgid "Fill in a match"
-#~ msgstr "Saisir un match..."
-
-#~ msgid ""
-#~ "Fill in all the scores randomly.\n"
-#~ "To activate/deactivate this button, go to the properties of the "
-#~ "competition."
-#~ msgstr ""
-#~ "Remplir tous les matchs du tableau par des scores aléatoires.\n"
-#~ "Pour activer/désactiver ce bouton, allez dans les propriétés de la "
-#~ "compétition."
-
-#~ msgid "From"
-#~ msgstr "À partir de"
-
-#~ msgid "To"
-#~ msgstr "Jusqu'à"
-
-#~ msgid "For place"
-#~ msgstr "Pour la place"
-
-#~ msgid "Zoom"
-#~ msgstr "Zoom :"
-
-#~ msgid ""
-#~ "Fencing tournament management software.\n"
-#~ "\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Logiciel de gestion de tournois d'escrime.\n"
-#~ "\n"
-#~ "\n"
-
-#~ msgid "WPA"
-#~ msgstr "WPA"
-
-#~ msgid "Security"
-#~ msgstr "Sécurité"
-
-#~ msgid "Passphrase"
-#~ msgstr "Mot de passe"
-
-#~ msgid ""
-#~ "Enter your WIFI network settings here.\n"
-#~ "They will be used to automatically configure\n"
-#~ "the smarthphones running <b>SmartPoule</b>"
-#~ msgstr ""
-#~ "Copiez ici les paramètres du réseau WIFI.\n"
-#~ "Ils seront automatiquement utilisés pour configurer\n"
-#~ "les smartphones avec <b>SmartPoule</b>."
-
-#~ msgid "User"
-#~ msgstr "Utilisateur"
-
-#~ msgid "Password"
-#~ msgstr "Mot de passe"
-
-#~ msgid "FTP server"
-#~ msgstr "Serveur FTP"
-
-#~ msgid "<b>Web site</b>"
-#~ msgstr "<b>Site web</b>"
-
-#~ msgid "<b>Video server</b>"
-#~ msgstr "<b>Serveur vidéo</b>"
-
-#~ msgid "BellePoule - Fencing tournament"
-#~ msgstr "BellePoule - Tournoi d'escrime"
-
-#~ msgid "File"
-#~ msgstr "Fichier"
-
-#~ msgid "Recently opened"
-#~ msgstr "Récemment ouvert"
-
-#~ msgid "Backup"
-#~ msgstr "Sauvegarde de secours"
-
-#~ msgid "Backup files location..."
-#~ msgstr "Dossier des sauvegardes de secours..."
-
-#~ msgid "Activate"
-#~ msgstr "Activer"
-
-#~ msgid "Deactivate"
-#~ msgstr "Désactiver"
-
-#~ msgid "Print meal tickets"
-#~ msgstr "Imprimer les tickets repas"
-
-#~ msgid "Print payment book"
-#~ msgstr "Imprimer le registre des paiements"
-
-#~ msgid "Ecosystem"
-#~ msgstr "Écosystème"
-
-#~ msgid "WIFI"
-#~ msgstr "WIFI"
-
-#~ msgid "Score sheet scanner"
-#~ msgstr "Scanner de feuilles de match"
-
-#~ msgid "Publication"
-#~ msgstr "Publication"
-
-#~ msgid "New version!"
-#~ msgstr "Nouvelle version !"
-
-#~ msgid "Open an example..."
-#~ msgstr "Ouvrir un exemple..."
-
-#~ msgid "User manual"
-#~ msgstr "Manuel de l'utilisateur"
-
-#~ msgid "Fencer file template (.csv)"
-#~ msgstr "Modèle de fichier de tireurs (.csv)"
-
-#~ msgid ""
-#~ "Scan this code with <b>SmartPoule</b>\n"
-#~ "to make your smarphone\n"
-#~ "a score sheet scanner."
-#~ msgstr ""
-#~ "Scannez ce code avec <b>SmartPoule</b>\n"
-#~ "pour transformer votre smartphone en\n"
-#~ "scanner de feuilles de match."
-
-#~ msgid "<b>Score sheet scanner</b>"
-#~ msgstr "<b>Scanner de feuilles de match</b>"
-
 #~ msgid "Décallage"
 #~ msgstr "Décalage"
 
@@ -977,11 +578,35 @@ msgstr "Aucune"
 #~ msgid "9999"
 #~ msgstr "9999"
 
+#~ msgid "<b>Type</b>"
+#~ msgstr "<b>Type</b>"
+
+#~ msgid "Date"
+#~ msgstr "Date"
+
 #~ msgid "31/03/2009"
 #~ msgstr "31/03/2009"
 
 #~ msgid ":"
 #~ msgstr ":"
+
+#~ msgid "<b>Scores</b>"
+#~ msgstr "<b>Scores</b>"
+
+#~ msgid "Print"
+#~ msgstr "Imprimer"
+
+#~ msgid "Add"
+#~ msgstr "Ajouter"
+
+#~ msgid "Remove"
+#~ msgstr "Supprimer"
+
+#~ msgid "<b>Match</b>"
+#~ msgstr "<b>Match</b>"
+
+#~ msgid "<b>Score</b>"
+#~ msgstr "<b>Score</b>"
 
 #~ msgid "points"
 #~ msgstr "points"
@@ -995,9 +620,18 @@ msgstr "Aucune"
 #~ msgid "Toutes les compétitions non sauvegardées seront perdues."
 #~ msgstr "Toutes les compétitions non sauvegardées seront perdues."
 
+#~ msgid "Scratch"
+#~ msgstr "Scratch"
+
+#~ msgid "Absents"
+#~ msgstr "Absents"
+
 #~ msgid ""
 #~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
 #~ "tableaux et autres phases."
 #~ msgstr ""
-#~ "To configure the schedule of the competition in terms of pools, tables "
-#~ "and other rounds."
+#~ "To configure the schedule of the competition in terms of pools, tables and "
+#~ "other rounds."
+
+#~ msgid "Name"
+#~ msgstr "Nom"

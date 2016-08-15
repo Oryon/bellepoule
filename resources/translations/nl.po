@@ -10,12 +10,12 @@ msgstr ""
 "PO-Revision-Date: 2013-04-11 00:53+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-03-27 05:20+0000\n"
-"X-Generator: Launchpad (build 17967)\n"
+"X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
+"X-Generator: Launchpad (build 18169)\n"
+"Language: \n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 msgid "Long text"
@@ -561,303 +561,6 @@ msgstr "Derde plaats"
 msgid "None"
 msgstr "Geen"
 
-#~ msgid "For arbitration"
-#~ msgstr "Voor de scheidsrechter"
-
-#~ msgid "Content designed for the referees."
-#~ msgstr "Speciale inhoud voor scheidsrechters"
-
-#~ msgid "For the bulletin board"
-#~ msgstr "Om te tonen"
-
-#~ msgid "<b>For what?</b>"
-#~ msgstr "<b>Waarom ?</b>"
-
-#~ msgid "Fencer list printing"
-#~ msgstr "Afdruk van de schermerslijst"
-
-#~ msgid "<b><big>What do you want to print?</big></b>"
-#~ msgstr "<b><big>Wat wilt u printen ?</big></b>"
-
-#~ msgid "All the presents"
-#~ msgstr "Iedereen is aanwezig"
-
-#~ msgid "All the absents"
-#~ msgstr "Iedereen is afwezig"
-
-#~ msgid "Presents"
-#~ msgstr "Aanwezig"
-
-#~ msgid "Absents"
-#~ msgstr "Afwezig"
-
-#~ msgid "all"
-#~ msgstr "alle"
-
-#~ msgid "Date of competition"
-#~ msgstr "Competitiedatum"
-
-#~ msgid "Competition properties"
-#~ msgstr "Competitie eigenschappen"
-
-#~ msgid "Weapon"
-#~ msgstr "Wapen"
-
-#~ msgid "Gender"
-#~ msgstr "Sex"
-
-#~ msgid "Category"
-#~ msgstr "Categorie"
-
-#~ msgid "<b>Type</b>"
-#~ msgstr "<b>Type</b>"
-
-#~ msgid "Title"
-#~ msgstr "Titel"
-
-#~ msgid "Organizer"
-#~ msgstr "Organisator"
-
-#~ msgid "Web site"
-#~ msgstr "Website"
-
-#~ msgid "Location"
-#~ msgstr "Plaats"
-
-#~ msgid "<b>Overviews</b>"
-#~ msgstr "<b>Overzicht</b>"
-
-#~ msgid "Date"
-#~ msgstr "Datum"
-
-#~ msgid "Scratch"
-#~ msgstr "Scratch"
-
-#~ msgid "Start"
-#~ msgstr "Start"
-
-#~ msgid "<b>Date / Time</b>"
-#~ msgstr "<b>Datum / Uurregeling</b>"
-
-#~ msgid "Allow"
-#~ msgstr "Toestaan"
-
-#~ msgid "Forbid"
-#~ msgstr "Verbieden"
-
-#~ msgid ""
-#~ "Automatic\n"
-#~ "score\n"
-#~ "stuffing"
-#~ msgstr ""
-#~ "Automatisch\n"
-#~ "vullen\n"
-#~ "van scores"
-
-#~ msgid "<b>Scores</b>"
-#~ msgstr "<b>Uitslagen</b>"
-
-#~ msgid "Event"
-#~ msgstr "Gebeurtenis"
-
-#~ msgid "Save the current state of the competition."
-#~ msgstr "Huidige staat van de competitie opslaan"
-
-#~ msgid "To specify the features of the competition."
-#~ msgstr "De kenmerken van de competitie specificeren"
-
-#~ msgid "Referees"
-#~ msgstr "scheidsrechters"
-
-#~ msgid "Man"
-#~ msgstr "Man"
-
-#~ msgid "Mask or unmask some data type as well as define their display order."
-#~ msgstr ""
-#~ "Toestaan om bepaalde velden te tonen of te verbergen om de sortering te "
-#~ "definieren"
-
-#~ msgid "Print"
-#~ msgstr "Printen"
-
-#~ msgid "Number of pools"
-#~ msgstr "Aantal poules"
-
-#~ msgid "Fencers / pools"
-#~ msgstr "Schermers / Poules"
-
-#~ msgid "Swapping"
-#~ msgstr "Spreiding"
-
-#~ msgid "Name"
-#~ msgstr "Naam:"
-
-#~ msgid "Number"
-#~ msgstr "Aantal"
-
-#~ msgid "Pool sheets printing"
-#~ msgstr "Afdrukken Poule bladen"
-
-#~ msgid "<b><big>Print...</big></b>"
-#~ msgstr "<b><big>Printen...</big></b>"
-
-#~ msgid "All the pools"
-#~ msgstr "Alle poules"
-
-#~ msgid "Only the selected pool"
-#~ msgstr "Enkel de geselecteerde poule"
-
-#~ msgid "<b>What?</b>"
-#~ msgstr "<b>Wat ?</b>"
-
-#~ msgid "Automatic stuffing"
-#~ msgstr "Automatisch aanvullen"
-
-#~ msgid "Combined classification"
-#~ msgstr "Gecombineerde classificatie"
-
-#~ msgid "Single classification"
-#~ msgstr "Enkele classificatie"
-
-#~ msgid "Import referee file"
-#~ msgstr "importeer scheidsrechtersfiche"
-
-#~ msgid "Add"
-#~ msgstr "Toevoegen"
-
-#~ msgid "Remove"
-#~ msgstr "Verwijderen"
-
-#~ msgid "<b>Schedule</b>"
-#~ msgstr "<b>Planning</b>"
-
-#~ msgid "<b>Parameters</b>"
-#~ msgstr "<b>Parameters</b>"
-
-#~ msgid "Previous round"
-#~ msgstr "vorige ronde"
-
-#~ msgid "Next round"
-#~ msgstr "volgende ronde"
-
-#~ msgid "Table printing"
-#~ msgstr "tableau printen"
-
-#~ msgid "The table"
-#~ msgstr "De tableau"
-
-#~ msgid "Score sheets"
-#~ msgstr "Wedstrijdformulieren"
-
-#~ msgid "Pending"
-#~ msgstr "In afwachting"
-
-#~ msgid ""
-#~ "<b><big>Which score sheets of the selected table do you want to print?</"
-#~ "big></b>"
-#~ msgstr ""
-#~ "<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen ?</"
-#~ "big></b>"
-
-#~ msgid "All the score sheets"
-#~ msgstr "Alle wedstrijdformulieren"
-
-#~ msgid "The pending score sheets"
-#~ msgstr "Wedstrijdformulieren in wacht"
-
-#~ msgid "<b>Match</b>"
-#~ msgstr "<b>Westrijd</b>"
-
-#~ msgid "A fencer"
-#~ msgstr "Schermer A"
-
-#~ msgid "B fencer"
-#~ msgstr "Schermer B"
-
-#~ msgid "<b>Score</b>"
-#~ msgstr "<b>Score</b>"
-
-#~ msgid "Fill in a match"
-#~ msgstr "match invoeren"
-
-#~ msgid ""
-#~ "Fill in all the scores randomly.\n"
-#~ "To activate/deactivate this button, go to the properties of the "
-#~ "competition."
-#~ msgstr ""
-#~ "Alle wedstrijden van de tableau vervangen door willekeurige scores.\n"
-#~ "Om deze knop te activeren/desactiveren, ga naar de competitie "
-#~ "eigenschappen"
-
-#~ msgid "From"
-#~ msgstr "Vanaf"
-
-#~ msgid "To"
-#~ msgstr "Tot"
-
-#~ msgid "For place"
-#~ msgstr "Voor plaats"
-
-#~ msgid "Zoom"
-#~ msgstr "Zoom"
-
-#~ msgid ""
-#~ "Fencing tournament management software.\n"
-#~ "\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Schermtornooi management software\n"
-#~ "\n"
-#~ "\n"
-
-#~ msgid "User"
-#~ msgstr "Gebruiker"
-
-#~ msgid "Password"
-#~ msgstr "Paswoord"
-
-#~ msgid "FTP server"
-#~ msgstr "FTP server"
-
-#~ msgid "BellePoule - Fencing tournament"
-#~ msgstr "BellePoule - Schermtornooi"
-
-#~ msgid "File"
-#~ msgstr "Bestand"
-
-#~ msgid "Recently opened"
-#~ msgstr "Recent geopend"
-
-#~ msgid "Backup"
-#~ msgstr "Backup"
-
-#~ msgid "Backup files location..."
-#~ msgstr "Locatie backup bestanden"
-
-#~ msgid "Activate"
-#~ msgstr "Activeer"
-
-#~ msgid "Deactivate"
-#~ msgstr "Deaktiveren"
-
-#~ msgid "Print meal tickets"
-#~ msgstr "print maaltijdbonnen"
-
-#~ msgid "Print payment book"
-#~ msgstr "print betalingsbewijs"
-
-#~ msgid "New version!"
-#~ msgstr "Nieuwe versie"
-
-#~ msgid "Open an example..."
-#~ msgstr "Open een voorbeeld"
-
-#~ msgid "User manual"
-#~ msgstr "Gebruikershandleiding"
-
-#~ msgid "Fencer file template (.csv)"
-#~ msgstr "Schermers Fiche template(.csv)"
-
 #~ msgid "Tous les fichiers"
 #~ msgstr "Alle bestanden"
 
@@ -939,6 +642,7 @@ msgstr "Geen"
 #~ msgid "prénom"
 #~ msgstr "Voornaam"
 
+#, c-format
 #~ msgid ""
 #~ "<b><big>Voulez-vous vraiment fermer\n"
 #~ "<big>%s</big> ?</big></b>"
@@ -976,6 +680,7 @@ msgstr "Geen"
 #~ msgid "Victoires"
 #~ msgstr "Overwinningen"
 
+#, c-format
 #~ msgid "Poule No %02d"
 #~ msgstr "Poule nr  %02d"
 
@@ -1000,6 +705,7 @@ msgstr "Geen"
 #~ msgid "<b><big>Imprimer ...</big></b>"
 #~ msgstr "<b><big>Pinten...</big></b>"
 
+#, c-format
 #~ msgid "Tableau de %d"
 #~ msgstr "Tableau van %d"
 
@@ -1022,15 +728,15 @@ msgstr "Geen"
 #~ msgstr "Tableau"
 
 #~ msgid ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></"
-#~ "b>"
+#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
 #~ msgstr ""
-#~ "<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen ?</"
-#~ "big></b>"
+#~ "<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen "
+#~ "?</big></b>"
 
 #~ msgid "Toutes les saisies de cette phase seront annulées."
 #~ msgstr "Alle sessies van deze fase zijn geanulleerd"
 
+#, c-format
 #~ msgid "%s : Impression des matchs"
 #~ msgstr "%s : wedstrijdoverzicht"
 
@@ -1067,6 +773,9 @@ msgstr "Geen"
 #~ msgid "Présents"
 #~ msgstr "Aanwezig"
 
+#~ msgid "Absents"
+#~ msgstr "Afwezig"
+
 #~ msgid "Tous les présents"
 #~ msgstr "Iedereen is aanwezig"
 
@@ -1075,6 +784,9 @@ msgstr "Geen"
 
 #~ msgid "Ajouter un tireur"
 #~ msgstr "Schermer toevoegen"
+
+#~ msgid "<b>Type</b>"
+#~ msgstr "<b>Type</b>"
 
 #~ msgid "Arme"
 #~ msgstr "Wapen"
@@ -1097,6 +809,9 @@ msgstr "Geen"
 #~ msgid "31/03/2009"
 #~ msgstr "31/03/2009"
 
+#~ msgid "Date"
+#~ msgstr "Datum"
+
 #~ msgid "Site web"
 #~ msgstr "website"
 
@@ -1116,11 +831,14 @@ msgstr "Geen"
 #~ msgstr ":"
 
 #~ msgid ""
-#~ "Exporte le classement dans un fichier au format \".csv\" pour des "
-#~ "tableurs du type Excel ou OpenOffice"
+#~ "Exporte le classement dans un fichier au format \".csv\" pour des tableurs "
+#~ "du type Excel ou OpenOffice"
 #~ msgstr ""
 #~ "Exporteer het klassement in een `.csv` bestandsformaat voor Excel of "
 #~ "OpenOffice"
+
+#~ msgid "<b>Scores</b>"
+#~ msgstr "<b>Uitslagen</b>"
 
 #~ msgid "Autoriser"
 #~ msgstr "Toestaan"
@@ -1136,6 +854,9 @@ msgstr "Geen"
 
 #~ msgid "Tireurs / poules"
 #~ msgstr "Schermers / Poules"
+
+#~ msgid "Name"
+#~ msgstr "Naam:"
 
 #~ msgid "Classement"
 #~ msgstr "Klassement"
@@ -1167,6 +888,9 @@ msgstr "Geen"
 #~ msgid "Pour affichage"
 #~ msgstr "Om te tonen"
 
+#~ msgid "Add"
+#~ msgstr "Toevoegen"
+
 #~ msgid ""
 #~ "Select the fencers to move to a new competition.\n"
 #~ "          Not yet implemented :-("
@@ -1174,6 +898,12 @@ msgstr "Geen"
 
 #~ msgid "A partir de"
 #~ msgstr "Vanaf"
+
+#~ msgid "Remove"
+#~ msgstr "Verwijderen"
+
+#~ msgid "<b>Match</b>"
+#~ msgstr "<b>Westrijd</b>"
 
 #~ msgid "Tireur A"
 #~ msgstr "Schermer A"
@@ -1186,6 +916,9 @@ msgstr "Geen"
 
 #~ msgid "Tireur B"
 #~ msgstr "Schermer B"
+
+#~ msgid "<b>Score</b>"
+#~ msgstr "<b>Score</b>"
 
 #~ msgid "Toutes"
 #~ msgstr "Alles"
@@ -1267,12 +1000,12 @@ msgstr "Geen"
 #~ msgstr "Onlangs geopende bestanden"
 
 #~ msgid ""
-#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit "
-#~ "les listes de tireurs inscrits aux compétitions par l'intermédiaire de "
-#~ "son site internet. "
+#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit les "
+#~ "listes de tireurs inscrits aux compétitions par l'intermédiaire de son site "
+#~ "internet. "
 #~ msgstr ""
-#~ "FFF is het formaat waarin de Franse Schermfederatie een overzicht geeft "
-#~ "van de geregistreerde schermers via haar website. "
+#~ "FFF is het formaat waarin de Franse Schermfederatie een overzicht geeft van "
+#~ "de geregistreerde schermers via haar website. "
 
 #~ msgid "Sauvegarde l'état courant de la compétition."
 #~ msgstr "Huidige staat van de competitie opslaan"
@@ -1284,8 +1017,8 @@ msgstr "Geen"
 #~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
 #~ "tableaux et autres phases."
 #~ msgstr ""
-#~ "Toestaan de formule te configureren om de volgorde van poules, tableaus "
-#~ "en andere fases te wijzigen"
+#~ "Toestaan de formule te configureren om de volgorde van poules, tableaus en "
+#~ "andere fases te wijzigen"
 
 #~ msgid "Permet de renseigner les caractéristiques de la compétition."
 #~ msgstr "Toelaten te leren van de competitie eigenschappen"
@@ -1297,8 +1030,8 @@ msgstr "Geen"
 #~ "Les informations de date et heures sont exploitées pour avertir par une "
 #~ "alarme les organisateurs de l'éminence de de certains évènements."
 #~ msgstr ""
-#~ "De informatie van datum en tijd worden gebruikt om een alarm te luiden "
-#~ "voor de organisatoren van bepaalde evenementen"
+#~ "De informatie van datum en tijd worden gebruikt om een alarm te luiden voor "
+#~ "de organisatoren van bepaalde evenementen"
 
 #~ msgid ""
 #~ "Remplissage\n"
@@ -1316,9 +1049,9 @@ msgstr "Geen"
 #~ msgstr "Verbieden"
 
 #~ msgid ""
-#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut "
-#~ "éviter des saisies longues et laborieuses lors des séances de prise en "
-#~ "main de BellePoule."
+#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
+#~ "des saisies longues et laborieuses lors des séances de prise en main de "
+#~ "BellePoule."
 #~ msgstr ""
 #~ "Knop \"automatisch vullen van scores\" actief maken. Dit kan lange "
 #~ "wachttijden van BellePoule voorkomen"
@@ -1357,8 +1090,7 @@ msgstr "Geen"
 #~ "compétition."
 #~ msgstr ""
 #~ "Alle wedstrijden van de tableau vervangen door willekeurige scores.\n"
-#~ "Om deze knop te activeren/desactiveren, ga naar de competitie "
-#~ "eigenschappen"
+#~ "Om deze knop te activeren/desactiveren, ga naar de competitie eigenschappen"
 
 #~ msgid ""
 #~ "Logiciel de gestion de tournois d'escrime.\n"
@@ -1371,3 +1103,9 @@ msgstr "Geen"
 
 #~ msgid "Récemment ouvert"
 #~ msgstr "Recent geopend"
+
+#~ msgid "Print"
+#~ msgstr "Printen"
+
+#~ msgid "Scratch"
+#~ msgstr "Scratch"

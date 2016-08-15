@@ -10,12 +10,12 @@ msgstr ""
 "PO-Revision-Date: 2010-12-30 00:22+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-03-27 05:20+0000\n"
-"X-Generator: Launchpad (build 17967)\n"
+"X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
+"X-Generator: Launchpad (build 18169)\n"
+"Language: \n"
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -562,77 +562,6 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#~ msgid "Fencer list printing"
-#~ msgstr "طباعة قائمة اللاعبين"
-
-#~ msgid "<b><big>What do you want to print?</big></b>"
-#~ msgstr "<b><big>ماذا تريد طباعة?</big></b>"
-
-#~ msgid "Date of competition"
-#~ msgstr "تاريخ البطولة"
-
-#~ msgid "Competition properties"
-#~ msgstr "خاصية البطولة"
-
-#~ msgid "Weapon"
-#~ msgstr "السلاح"
-
-#~ msgid "Gender"
-#~ msgstr "الجنس"
-
-#~ msgid "Category"
-#~ msgstr "فئة"
-
-#~ msgid "<b>Type</b>"
-#~ msgstr "<b>نوع</b>"
-
-#~ msgid "<b>Overviews</b>"
-#~ msgstr "<b>Généralités</b>"
-
-#~ msgid "<b>Date / Time</b>"
-#~ msgstr "<b>تاريخ / توقيت</b>"
-
-#~ msgid "Allow"
-#~ msgstr "السماح"
-
-#~ msgid "Forbid"
-#~ msgstr "ممنوع"
-
-#~ msgid ""
-#~ "Automatic\n"
-#~ "score\n"
-#~ "stuffing"
-#~ msgstr ""
-#~ "تعبئة\n"
-#~ "أوتوماتيكية\n"
-#~ "للنتائج"
-
-#~ msgid "<b>Scores</b>"
-#~ msgstr "<b>النتائج</b>"
-
-#~ msgid "Save the current state of the competition."
-#~ msgstr "تخزين البطولة في الوضع الحالي."
-
-#~ msgid "To specify the features of the competition."
-#~ msgstr "يمكنك من إدخال معلومات البطولة."
-
-#~ msgid "Man"
-#~ msgstr "ذكور"
-
-#~ msgid "Pool sheets printing"
-#~ msgstr "طباعة أوراق المجموعات"
-
-#~ msgid "<b><big>Print...</big></b>"
-#~ msgstr "<b><big>طباعة...</big></b>"
-
-#~ msgid "Table printing"
-#~ msgstr "طباعة الجدول"
-
-#~ msgid ""
-#~ "<b><big>Which score sheets of the selected table do you want to print?</"
-#~ "big></b>"
-#~ msgstr "<b><big>أي مباريات من الجدول المختار تريد طباعتها?</big></b>"
-
 #~ msgid "Tous les fichiers"
 #~ msgstr "جميع الملفات"
 
@@ -718,6 +647,7 @@ msgstr ""
 #~ msgid "Choisissez un fichier de sauvegarde ..."
 #~ msgstr "اختر ملف للتخزين"
 
+#, c-format
 #~ msgid ""
 #~ "<b><big>Voulez-vous vraiment fermer\n"
 #~ "<big>%s</big> ?</big></b>"
@@ -816,8 +746,7 @@ msgstr ""
 #~ msgstr "جدول"
 
 #~ msgid ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></"
-#~ "b>"
+#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
 #~ msgstr "<b><big>أي مباريات من الجدول المختار تريد طباعتها?</big></b>"
 
 #~ msgid "Toutes les saisies de cette phase seront annulées."
@@ -853,6 +782,9 @@ msgstr ""
 #~ msgid "Sauvegarde l'état courant de la compétition."
 #~ msgstr "تخزين البطولة في الوضع الحالي."
 
+#~ msgid "<b>Type</b>"
+#~ msgstr "<b>نوع</b>"
+
 #~ msgid "Arme"
 #~ msgstr "السلاح"
 
@@ -871,6 +803,9 @@ msgstr ""
 #~ msgid ":"
 #~ msgstr ":"
 
+#~ msgid "<b>Scores</b>"
+#~ msgstr "<b>النتائج</b>"
+
 #~ msgid "Rend inactif le bouton de remplissage automatique des scores."
 #~ msgstr "يعطّل زر التعبئة الأوتوماتيكية للنتائج."
 
@@ -878,9 +813,9 @@ msgstr ""
 #~ msgstr "ممنوع"
 
 #~ msgid ""
-#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut "
-#~ "éviter des saisies longues et laborieuses lors des séances de prise en "
-#~ "main de BellePoule."
+#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
+#~ "des saisies longues et laborieuses lors des séances de prise en main de "
+#~ "BellePoule."
 #~ msgstr "يفعّل زر التعبئة الأوتوماتيكية للنتائج."
 
 #~ msgid "Autoriser"
@@ -919,6 +854,7 @@ msgstr ""
 #~ msgid "Filtre"
 #~ msgstr "مصفاة"
 
+#, c-format
 #~ msgid "%s : Impression des matchs"
 #~ msgstr "%s : طباعة المباريات"
 
@@ -928,6 +864,7 @@ msgstr ""
 #~ msgid "Permet de renseigner les caractéristiques de la compétition."
 #~ msgstr "يمكنك من إدخال معلومات البطولة."
 
+#, c-format
 #~ msgid "Tableau de %d"
 #~ msgstr "جدول %d"
 
@@ -935,5 +872,5 @@ msgstr ""
 #~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
 #~ "tableaux et autres phases."
 #~ msgstr ""
-#~ "To configure the schedule of the competition in terms of pools, tables "
-#~ "and other rounds."
+#~ "To configure the schedule of the competition in terms of pools, tables and "
+#~ "other rounds."
