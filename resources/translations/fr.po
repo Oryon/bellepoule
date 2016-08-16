@@ -7,13 +7,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-14 22:37+0200\n"
-"PO-Revision-Date: 2016-06-15 08:10+0000\n"
-"Last-Translator: Jean-Marc <Unknown>\n"
+"PO-Revision-Date: 2016-08-15 13:49+0000\n"
+"Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
+"X-Launchpad-Export-Date: 2016-08-16 05:23+0000\n"
 "X-Generator: Launchpad (build 18169)\n"
 "Language: \n"
 "X-Poedit-Language: French\n"
@@ -164,55 +164,55 @@ msgid "Mixed"
 msgstr "Mixte"
 
 msgid "U5"
-msgstr ""
+msgstr "M5"
 
 msgid "U6"
-msgstr ""
+msgstr "M6"
 
 msgid "U7"
-msgstr ""
+msgstr "M7"
 
 msgid "U8"
 msgstr "Poussin"
 
 msgid "U9"
-msgstr ""
+msgstr "M9"
 
 msgid "U10"
 msgstr "Pupille"
 
 msgid "U11"
-msgstr ""
+msgstr "M11"
 
 msgid "U12"
 msgstr "Benjamin"
 
 msgid "U13"
-msgstr ""
+msgstr "M13"
 
 msgid "U14"
 msgstr "Minime"
 
 msgid "U15"
-msgstr ""
+msgstr "M15"
 
 msgid "U16"
 msgstr "Cadet"
 
 msgid "U17"
-msgstr ""
+msgstr "M17"
 
 msgid "U18"
 msgstr "Junior"
 
 msgid "U19"
-msgstr ""
+msgstr "M19"
 
 msgid "U20"
-msgstr ""
+msgstr "M20"
 
 msgid "U23"
-msgstr ""
+msgstr "M23"
 
 msgid "Senior"
 msgstr "Senior"
@@ -233,7 +233,7 @@ msgid "Veteran 4"
 msgstr "Vétéran 4"
 
 msgid "Veteran 3+4"
-msgstr ""
+msgstr "Vétéran 3+4"
 
 msgid "League"
 msgstr "Ligue"

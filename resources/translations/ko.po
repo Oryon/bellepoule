@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-14 22:37+0200\n"
-"PO-Revision-Date: 2013-04-11 00:53+0000\n"
+"PO-Revision-Date: 2016-08-15 21:57+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Korean <ko@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
+"X-Launchpad-Export-Date: 2016-08-16 05:23+0000\n"
 "X-Generator: Launchpad (build 18169)\n"
 "Language: ko\n"
 
@@ -160,55 +160,55 @@ msgid "Mixed"
 msgstr "혼성"
 
 msgid "U5"
-msgstr ""
+msgstr "5세 이하"
 
 msgid "U6"
-msgstr ""
+msgstr "6세 이하"
 
 msgid "U7"
-msgstr ""
+msgstr "7세 이하"
 
 msgid "U8"
 msgstr "8세 이하"
 
 msgid "U9"
-msgstr ""
+msgstr "9세 이하"
 
 msgid "U10"
 msgstr "10세 이하"
 
 msgid "U11"
-msgstr ""
+msgstr "11세 이하"
 
 msgid "U12"
 msgstr "12세 이하"
 
 msgid "U13"
-msgstr ""
+msgstr "13세 이하"
 
 msgid "U14"
 msgstr "14세 이하"
 
 msgid "U15"
-msgstr ""
+msgstr "15세 이하"
 
 msgid "U16"
 msgstr "16세 이하"
 
 msgid "U17"
-msgstr ""
+msgstr "17세 이하"
 
 msgid "U18"
 msgstr "18세 이하"
 
 msgid "U19"
-msgstr ""
+msgstr "19세 이하"
 
 msgid "U20"
-msgstr ""
+msgstr "20세 이하"
 
 msgid "U23"
-msgstr ""
+msgstr "23세 이하"
 
 msgid "Senior"
 msgstr "일반부"

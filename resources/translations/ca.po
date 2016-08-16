@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2016-08-14 22:37+0200\n"
-"PO-Revision-Date: 2016-01-31 20:44+0000\n"
+"PO-Revision-Date: 2016-08-15 21:15+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Catalan (Valencian) <ca@valencia@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
+"X-Launchpad-Export-Date: 2016-08-16 05:23+0000\n"
 "X-Generator: Launchpad (build 18169)\n"
 
 msgid "Long text"
@@ -161,55 +161,55 @@ msgid "Mixed"
 msgstr "Mixt"
 
 msgid "U5"
-msgstr ""
+msgstr "U5"
 
 msgid "U6"
-msgstr ""
+msgstr "U6"
 
 msgid "U7"
-msgstr ""
+msgstr "U7"
 
 msgid "U8"
 msgstr "M8"
 
 msgid "U9"
-msgstr ""
+msgstr "U9"
 
 msgid "U10"
-msgstr "M10"
+msgstr "U10"
 
 msgid "U11"
-msgstr ""
+msgstr "U11"
 
 msgid "U12"
-msgstr "M12"
+msgstr "U12"
 
 msgid "U13"
-msgstr ""
+msgstr "U13"
 
 msgid "U14"
-msgstr "M14"
+msgstr "U14"
 
 msgid "U15"
-msgstr ""
+msgstr "U15"
 
 msgid "U16"
-msgstr "M16"
+msgstr "U16"
 
 msgid "U17"
-msgstr ""
+msgstr "U17"
 
 msgid "U18"
-msgstr "M18"
+msgstr "U18"
 
 msgid "U19"
-msgstr ""
+msgstr "U19"
 
 msgid "U20"
-msgstr ""
+msgstr "U20"
 
 msgid "U23"
-msgstr ""
+msgstr "U23"
 
 msgid "Senior"
 msgstr "Sènior"
@@ -230,7 +230,7 @@ msgid "Veteran 4"
 msgstr "Veterà 4"
 
 msgid "Veteran 3+4"
-msgstr ""
+msgstr "Veterà 3+4"
 
 msgid "League"
 msgstr ""
