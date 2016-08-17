@@ -7,37 +7,37 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-14 22:37+0200\n"
-"PO-Revision-Date: 2013-04-11 00:53+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2016-08-16 07:48+0000\n"
+"Last-Translator: huysmans <werner.huysmans1@telenet.be>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
+"X-Launchpad-Export-Date: 2016-08-17 05:25+0000\n"
 "X-Generator: Launchpad (build 18169)\n"
 "Language: \n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 msgid "Long text"
-msgstr ""
+msgstr "Lange tekst"
 
 msgid "Short text"
-msgstr ""
+msgstr "korte tekst"
 
 msgid "Graphic"
-msgstr ""
+msgstr "Grafisch"
 
 msgid "Data to display"
-msgstr "Gegevens om te tonen"
+msgstr "Gegevens om weer te geven"
 
 msgid "Visibility"
-msgstr ""
+msgstr "Zichtbaarheid"
 
 msgid "Data"
 msgstr "Data"
 
 msgid "Look"
-msgstr ""
+msgstr "Kijken"
 
 msgid "Split"
 msgstr "Splitsen"
@@ -46,10 +46,10 @@ msgid "List of fencers to extract"
 msgstr "lijst van de af te scheiden schermers"
 
 msgid "Choose a rank file to apply..."
-msgstr ""
+msgstr "kies een ranking bestand om toe te passen...."
 
 msgid "Rank files: cotcot, xml, txt (France)"
-msgstr ""
+msgstr "ranking bestanden: cotcot, xml, txt (Frankrijk)"
 
 msgid "All files"
 msgstr "Alle bestanden"
@@ -62,7 +62,7 @@ msgid ""
 "ignored on TAB key pressed."
 msgstr ""
 "Verwijder het vinkje voor snellere navigatie. Het bijbehorende veld wordt "
-"genegeerd tijdens de TAB-toets te ondersteunen."
+"genegeerd tijdens het indrukken van de TAB-toets"
 
 msgid "Choose a fencer file to import..."
 msgstr "Kies een schermersfiche om te importeren"
@@ -86,13 +86,13 @@ msgid "Fencer list"
 msgstr "Lijst van schermers"
 
 msgid "Barrage"
-msgstr ""
+msgstr "Barrage"
 
 msgid "Copy"
-msgstr ""
+msgstr "Kopieer"
 
 msgid "Paste"
-msgstr ""
+msgstr "Plakken"
 
 msgid "Page"
 msgstr "Pagina"
@@ -101,26 +101,26 @@ msgid "Check-in"
 msgstr "Appel"
 
 msgid "** Without team **"
-msgstr ""
+msgstr "**zonder team**"
 
 msgid "Expected fencers"
-msgstr ""
+msgstr "Verwachte schermers"
 
 msgid "Expected teams"
-msgstr ""
+msgstr "Verwachte teams"
 
 msgid "Team size"
-msgstr ""
+msgstr "Grootte van het team"
 
 #, c-format
 msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr ""
+msgstr "U heeft de minimum team groote geplaatst op <b>%d</b> fencers"
 
 msgid "Tick the present players of the team."
-msgstr ""
+msgstr "Vink de aanwezige schermers van het team aan"
 
 msgid "Untick the absent players of the team."
-msgstr ""
+msgstr "Verwijder de vink bij de afwezige teamschermers"
 
 msgid "General classification"
 msgstr "Algemeen klassement"
@@ -135,7 +135,7 @@ msgid "All PDF files (.PDF)"
 msgstr "Alle PDF files(.PDF)"
 
 msgid "All HTML files (.HTML)"
-msgstr ""
+msgstr "alle HTML files (.HTML"
 
 msgid "Classification"
 msgstr "Klassement"
@@ -162,55 +162,55 @@ msgid "Mixed"
 msgstr "Gemengd"
 
 msgid "U5"
-msgstr ""
+msgstr "U5"
 
 msgid "U6"
-msgstr ""
+msgstr "U6"
 
 msgid "U7"
-msgstr ""
+msgstr "U7"
 
 msgid "U8"
 msgstr "Poussin"
 
 msgid "U9"
-msgstr ""
+msgstr "U9"
 
 msgid "U10"
 msgstr "Pupil"
 
 msgid "U11"
-msgstr ""
+msgstr "U11"
 
 msgid "U12"
 msgstr "Benjamin"
 
 msgid "U13"
-msgstr ""
+msgstr "U13"
 
 msgid "U14"
 msgstr "Miniem"
 
 msgid "U15"
-msgstr ""
+msgstr "U15"
 
 msgid "U16"
 msgstr "Kadet"
 
 msgid "U17"
-msgstr ""
+msgstr "U17"
 
 msgid "U18"
 msgstr "Junior"
 
 msgid "U19"
-msgstr ""
+msgstr "u19"
 
 msgid "U20"
-msgstr ""
+msgstr "u20"
 
 msgid "U23"
-msgstr ""
+msgstr "U23"
 
 msgid "Senior"
 msgstr "Senior"
@@ -219,61 +219,61 @@ msgid "Veteran"
 msgstr "Veteraan"
 
 msgid "Veteran 1"
-msgstr ""
+msgstr "Veteraan 1"
 
 msgid "Veteran 2"
-msgstr ""
+msgstr "Veteraan 2"
 
 msgid "Veteran 3"
-msgstr ""
+msgstr "Veteraan 3"
 
 msgid "Veteran 4"
-msgstr ""
+msgstr "Vetaraan 4"
 
 msgid "Veteran 3+4"
-msgstr ""
+msgstr "Veteraan 3+4"
 
 msgid "League"
-msgstr ""
+msgstr "Bond"
 
 msgid "Regional"
-msgstr ""
+msgstr "Regionaal"
 
 msgid "Open"
-msgstr ""
+msgstr "Open"
 
 msgid "World cup"
-msgstr ""
+msgstr "Wereld Beker"
 
 msgid "National championships"
-msgstr ""
+msgstr "Nationaal kampioenschap"
 
 msgid "World championships"
-msgstr ""
+msgstr "Wereld kampioenschap"
 
 msgid "Other"
-msgstr ""
+msgstr "Overige"
 
 msgid "Choose a file..."
-msgstr "Kies een bestand om op te slaan"
+msgstr "Kies een bestand…"
 
 msgid "BellePoule files (.cotcot)"
 msgstr "BellePoule bestanden (.cocot)"
 
 msgid "Close without saving"
-msgstr ""
+msgstr "Sluiten zonder opslaan"
 
 msgid "Meal"
-msgstr ""
+msgstr "maaltijd"
 
 msgid "Drink"
-msgstr ""
+msgstr "drank"
 
 msgid "Dessert"
-msgstr ""
+msgstr "dessert"
 
 msgid "Coffee"
-msgstr ""
+msgstr "Koffie"
 
 msgid "Payment book"
 msgstr "Betaling registreren"
@@ -285,7 +285,7 @@ msgid "Restart BellePoule for this change to take effect"
 msgstr "BellePoule heropstarten om deze verandering te aanvaarden"
 
 msgid "Choose a competion file to open... "
-msgstr "Kies een competitiebestand dat u wil openen "
+msgstr "Kies het competitiebestand dat u wil openen "
 
 msgid "Competition files (.cotcot / .xml)"
 msgstr "competitiebestand"
@@ -331,6 +331,8 @@ msgid ""
 "<b><big>Because of ties, the quota is exceeded.\n"
 "Do you wish to add a barrage round?</big></b>"
 msgstr ""
+"<b><big>Door gelijke scores id de quota overschreden, wilt u een barrage "
+"ronde invoegen?</big></b"
 
 msgid "ref"
 msgstr "scheidsrechter"
@@ -339,7 +341,7 @@ msgid "place"
 msgstr "plaats"
 
 msgid "team"
-msgstr ""
+msgstr "team"
 
 msgid "last name"
 msgstr "famillienaam"
@@ -366,7 +368,7 @@ msgid "licence"
 msgstr "licentie"
 
 msgid "IP address"
-msgstr ""
+msgstr "IP-adres"
 
 msgid "rate"
 msgstr "ranking"
@@ -411,7 +413,7 @@ msgid "Victories"
 msgstr "Overwinningen"
 
 msgid "Bouts"
-msgstr ""
+msgstr "treffens"
 
 msgid "Vict./Bouts (‰)"
 msgstr "Vict./Matches (‰)"
@@ -426,7 +428,7 @@ msgid "Round start rank"
 msgstr "start ranking"
 
 msgid "promoted"
-msgstr ""
+msgstr "gepromoveerd"
 
 msgid "availability"
 msgstr "beschikbaarheid"
@@ -441,28 +443,28 @@ msgid "Free"
 msgstr "Vrij"
 
 msgid "connection"
-msgstr ""
+msgstr "verbinding"
 
 msgid "Broken"
-msgstr ""
+msgstr "Stuk"
 
 msgid "Waiting"
-msgstr ""
+msgstr "In wachtrij"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "Manual"
-msgstr ""
+msgstr "Handmatig"
 
 msgid "Pools arrangement"
 msgstr "Samenstelling poules"
 
 msgid "or"
-msgstr ""
+msgstr "of"
 
 msgid "Wrong fencers count!"
-msgstr ""
+msgstr "Verkeerd aantal schermers"
 
 msgid "Allocation"
 msgstr "Toewijzing"
@@ -511,7 +513,7 @@ msgid "Pools"
 msgstr "Poules"
 
 msgid "Bout without winner!"
-msgstr ""
+msgstr "treffen zonder winnaar"
 
 msgid "Place #"
 msgstr "Plaats #"
@@ -544,7 +546,7 @@ msgid "Match %s"
 msgstr "Westrijd %s"
 
 msgid "No winner!"
-msgstr ""
+msgstr "Geen winnaar"
 
 msgid "Table classification"
 msgstr "Tableau rangschikking"
