@@ -34,6 +34,7 @@ namespace People
 
 class Tournament;
 class Weapon;
+class Category;
 
 class Contest : public Module
 {
@@ -91,7 +92,7 @@ class Contest : public Module
     gchar    *GetDefaultFileName ();
     gchar    *GetGender          ();
     gchar    *GetGenderCode      ();
-    gchar    *GetCategory        ();
+    const gchar *GetCategory ();
     gboolean  IsTeamEvent        ();
 
   public:
@@ -129,12 +130,6 @@ class Contest : public Module
     static const gchar *gender_xml_alias[_nb_gender];
     static const gchar *gender_greg[_nb_gender];
 
-    static const guint _nb_category = 12;
-    static const gchar *category_image[_nb_category];
-    static const gchar *category_xml_image[_nb_category];
-    static const gchar *category_xml_alias[_nb_category];
-    static const gchar *category_greg[_nb_category];
-
     static const guint _nb_level = 7;
     static const gchar *level_image[_nb_level];
     static const gchar *level_xml_image[_nb_level];
@@ -148,7 +143,7 @@ class Contest : public Module
     gchar                *_organizer;
     gchar                *_location;
     gchar                *_web_site;
-    guint                 _category;
+    Category             *_category;
     guint                 _level;
     gchar                *_filename;
     Weapon               *_weapon;
@@ -175,7 +170,6 @@ class Contest : public Module
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;
-    GtkWidget   *_category_combo;
     GtkWidget   *_level_combo;
 
     void   ReadProperties       ();
