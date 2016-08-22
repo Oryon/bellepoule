@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-14 22:37+0200\n"
+"POT-Creation-Date: 2016-08-22 22:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -158,78 +158,6 @@ msgstr ""
 msgid "Mixed"
 msgstr ""
 
-msgid "U5"
-msgstr ""
-
-msgid "U6"
-msgstr ""
-
-msgid "U7"
-msgstr ""
-
-msgid "U8"
-msgstr ""
-
-msgid "U9"
-msgstr ""
-
-msgid "U10"
-msgstr ""
-
-msgid "U11"
-msgstr ""
-
-msgid "U12"
-msgstr ""
-
-msgid "U13"
-msgstr ""
-
-msgid "U14"
-msgstr ""
-
-msgid "U15"
-msgstr ""
-
-msgid "U16"
-msgstr ""
-
-msgid "U17"
-msgstr ""
-
-msgid "U18"
-msgstr ""
-
-msgid "U19"
-msgstr ""
-
-msgid "U20"
-msgstr ""
-
-msgid "U23"
-msgstr ""
-
-msgid "Senior"
-msgstr ""
-
-msgid "Veteran"
-msgstr ""
-
-msgid "Veteran 1"
-msgstr ""
-
-msgid "Veteran 2"
-msgstr ""
-
-msgid "Veteran 3"
-msgstr ""
-
-msgid "Veteran 4"
-msgstr ""
-
-msgid "Veteran 3+4"
-msgstr ""
-
 msgid "League"
 msgstr ""
 
@@ -258,6 +186,51 @@ msgid "BellePoule files (.cotcot)"
 msgstr ""
 
 msgid "Close without saving"
+msgstr ""
+
+msgid "U5"
+msgstr ""
+
+msgid "U7"
+msgstr ""
+
+msgid "U9"
+msgstr ""
+
+msgid "U11"
+msgstr ""
+
+msgid "U14"
+msgstr ""
+
+msgid "U17"
+msgstr ""
+
+msgid "U20"
+msgstr ""
+
+msgid "U23"
+msgstr ""
+
+msgid "Senior"
+msgstr ""
+
+msgid "Veteran"
+msgstr ""
+
+msgid "Veteran 1"
+msgstr ""
+
+msgid "Veteran 2"
+msgstr ""
+
+msgid "Veteran 3"
+msgstr ""
+
+msgid "Veteran 4"
+msgstr ""
+
+msgid "Veteran 3+4"
 msgstr ""
 
 msgid "Meal"

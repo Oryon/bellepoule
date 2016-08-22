@@ -6,11 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2016-08-14 22:37+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-08-22 22:04+0200\n"
 "PO-Revision-Date: 2015-12-01 01:38+0000\n"
 "Last-Translator: Ricardo Catanho <ricardocatanho@gmail.com>\n"
 "Language-Team: Portuguese <pt@li.org>\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -113,8 +114,7 @@ msgstr "Constituição da equipa"
 
 #, c-format
 msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr ""
-"Configurou a constituição mínima da equipa para <b>%d</b> atiradores."
+msgstr "Configurou a constituição mínima da equipa para <b>%d</b> atiradores."
 
 msgid "Tick the present players of the team."
 msgstr "Selecione os atiradores presentes da equipa."
@@ -161,78 +161,6 @@ msgstr "Femininos"
 msgid "Mixed"
 msgstr "Mistos"
 
-msgid "U5"
-msgstr ""
-
-msgid "U6"
-msgstr ""
-
-msgid "U7"
-msgstr ""
-
-msgid "U8"
-msgstr "Benjamins B"
-
-msgid "U9"
-msgstr ""
-
-msgid "U10"
-msgstr "Benjamins A"
-
-msgid "U11"
-msgstr ""
-
-msgid "U12"
-msgstr "Infantis"
-
-msgid "U13"
-msgstr ""
-
-msgid "U14"
-msgstr "Iniciados"
-
-msgid "U15"
-msgstr ""
-
-msgid "U16"
-msgstr "Cadetes"
-
-msgid "U17"
-msgstr ""
-
-msgid "U18"
-msgstr "Júniores"
-
-msgid "U19"
-msgstr ""
-
-msgid "U20"
-msgstr ""
-
-msgid "U23"
-msgstr ""
-
-msgid "Senior"
-msgstr "Séniores"
-
-msgid "Veteran"
-msgstr "Veteranos"
-
-msgid "Veteran 1"
-msgstr "Veteranos 1"
-
-msgid "Veteran 2"
-msgstr "Veteranos 2"
-
-msgid "Veteran 3"
-msgstr "Veteranos 3"
-
-msgid "Veteran 4"
-msgstr "Veteranos 4"
-
-msgid "Veteran 3+4"
-msgstr ""
-
 msgid "League"
 msgstr ""
 
@@ -262,6 +190,51 @@ msgstr "Ficheiros BellePoule"
 
 msgid "Close without saving"
 msgstr "Fechar sem guardar"
+
+msgid "U5"
+msgstr ""
+
+msgid "U7"
+msgstr ""
+
+msgid "U9"
+msgstr ""
+
+msgid "U11"
+msgstr ""
+
+msgid "U14"
+msgstr "Iniciados"
+
+msgid "U17"
+msgstr ""
+
+msgid "U20"
+msgstr ""
+
+msgid "U23"
+msgstr ""
+
+msgid "Senior"
+msgstr "Séniores"
+
+msgid "Veteran"
+msgstr "Veteranos"
+
+msgid "Veteran 1"
+msgstr "Veteranos 1"
+
+msgid "Veteran 2"
+msgstr "Veteranos 2"
+
+msgid "Veteran 3"
+msgstr "Veteranos 3"
+
+msgid "Veteran 4"
+msgstr "Veteranos 4"
+
+msgid "Veteran 3+4"
+msgstr ""
 
 msgid "Meal"
 msgstr "Refeição"
@@ -562,6 +535,21 @@ msgstr "Terceiro lugar"
 
 msgid "None"
 msgstr "Nenhum"
+
+#~ msgid "U8"
+#~ msgstr "Benjamins B"
+
+#~ msgid "U10"
+#~ msgstr "Benjamins A"
+
+#~ msgid "U12"
+#~ msgstr "Infantis"
+
+#~ msgid "U16"
+#~ msgstr "Cadetes"
+
+#~ msgid "U18"
+#~ msgstr "Júniores"
 
 #~ msgid "Absents"
 #~ msgstr "Ausentes"

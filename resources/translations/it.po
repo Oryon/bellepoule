@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-14 22:37+0200\n"
+"POT-Creation-Date: 2016-08-22 22:04+0200\n"
 "PO-Revision-Date: 2016-03-30 07:27+0000\n"
 "Last-Translator: Aureliano Martini <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
 "X-Generator: Launchpad (build 18169)\n"
-"Language: \n"
 
 msgid "Long text"
 msgstr "Testo lungo"
@@ -161,78 +161,6 @@ msgstr "Femminile"
 msgid "Mixed"
 msgstr "Misto"
 
-msgid "U5"
-msgstr ""
-
-msgid "U6"
-msgstr ""
-
-msgid "U7"
-msgstr ""
-
-msgid "U8"
-msgstr "Prime lame"
-
-msgid "U9"
-msgstr ""
-
-msgid "U10"
-msgstr "Maschietti-bambine"
-
-msgid "U11"
-msgstr ""
-
-msgid "U12"
-msgstr "Giovanissimi"
-
-msgid "U13"
-msgstr ""
-
-msgid "U14"
-msgstr "Allievi"
-
-msgid "U15"
-msgstr ""
-
-msgid "U16"
-msgstr "Cadetti"
-
-msgid "U17"
-msgstr ""
-
-msgid "U18"
-msgstr "Giovani"
-
-msgid "U19"
-msgstr ""
-
-msgid "U20"
-msgstr ""
-
-msgid "U23"
-msgstr ""
-
-msgid "Senior"
-msgstr "Assoluti"
-
-msgid "Veteran"
-msgstr "Master"
-
-msgid "Veteran 1"
-msgstr "Over 30"
-
-msgid "Veteran 2"
-msgstr "Over 40"
-
-msgid "Veteran 3"
-msgstr "Over 50"
-
-msgid "Veteran 4"
-msgstr "Over 60"
-
-msgid "Veteran 3+4"
-msgstr ""
-
 msgid "League"
 msgstr "Zona"
 
@@ -262,6 +190,51 @@ msgstr "Documento BellePoule (.cotcot)"
 
 msgid "Close without saving"
 msgstr "Chiudi senza salvare"
+
+msgid "U5"
+msgstr ""
+
+msgid "U7"
+msgstr ""
+
+msgid "U9"
+msgstr ""
+
+msgid "U11"
+msgstr ""
+
+msgid "U14"
+msgstr "Allievi"
+
+msgid "U17"
+msgstr ""
+
+msgid "U20"
+msgstr ""
+
+msgid "U23"
+msgstr ""
+
+msgid "Senior"
+msgstr "Assoluti"
+
+msgid "Veteran"
+msgstr "Master"
+
+msgid "Veteran 1"
+msgstr "Over 30"
+
+msgid "Veteran 2"
+msgstr "Over 40"
+
+msgid "Veteran 3"
+msgstr "Over 50"
+
+msgid "Veteran 4"
+msgstr "Over 60"
+
+msgid "Veteran 3+4"
+msgstr ""
 
 msgid "Meal"
 msgstr "Pasto"
@@ -562,6 +535,21 @@ msgstr "Terzo rango"
 
 msgid "None"
 msgstr "Nessuno"
+
+#~ msgid "U8"
+#~ msgstr "Prime lame"
+
+#~ msgid "U10"
+#~ msgstr "Maschietti-bambine"
+
+#~ msgid "U12"
+#~ msgstr "Giovanissimi"
+
+#~ msgid "U16"
+#~ msgstr "Cadetti"
+
+#~ msgid "U18"
+#~ msgstr "Giovani"
 
 #~ msgid "9999"
 #~ msgstr "9999"
