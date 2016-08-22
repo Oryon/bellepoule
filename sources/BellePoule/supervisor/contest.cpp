@@ -43,6 +43,7 @@
 
 #include "application/version.h"
 #include "application/weapon.hpp"
+#include "category.hpp"
 
 #include "tournament.hpp"
 #include "contest.hpp"
@@ -75,79 +76,16 @@ const gchar *Contest::gender_greg[_nb_gender] =
   "H"
 };
 
-const gchar *Contest::category_image[_nb_category] =
-{
-  N_ ("U8"),
-  N_ ("U10"),
-  N_ ("U12"),
-  N_ ("U14"),
-  N_ ("U16"),
-  N_ ("U18"),
-  N_ ("Senior"),
-  N_ ("Veteran"),
-  N_ ("Veteran 1"),
-  N_ ("Veteran 2"),
-  N_ ("Veteran 3"),
-  N_ ("Veteran 4")
-};
-
-const gchar *Contest::category_xml_image[_nb_category] =
-{
-  "PO",
-  "PUP",
-  "BEN",
-  "M",
-  "C",
-  "J",
-  "S",
-  "VET",
-  "V1",
-  "V2",
-  "V3",
-  "V4"
-};
-
-const gchar *Contest::category_xml_alias[_nb_category] =
-{
-  "O",
-  "P",
-  "B",
-  "M",
-  "C",
-  "J",
-  "S",
-  "V",
-  "V",
-  "V",
-  "V",
-  "V"
-};
-
-const gchar *Contest::category_greg[_nb_category] =
-{
-  "Po",
-  "Pu",
-  "B",
-  "M",
-  "C",
-  "J",
-  "S",
-  "V",
-  "V",
-  "V",
-  "V",
-  "V"
-};
 
 const gchar *Contest::level_image[_nb_level] =
 {
-  N_ ("Ligue"),
-  N_ ("Zone"),
-  N_ ("Circuit national"),
-  N_ ("Coupe du monde"),
-  N_ ("Championnats de France"),
-  N_ ("Championnats du monde"),
-  N_ ("Autre")
+  N_ ("League"),
+  N_ ("Regional"),
+  N_ ("Open"),
+  N_ ("World cup"),
+  N_ ("National championships"),
+  N_ ("World championships"),
+  N_ ("Other")
 };
 
 const gchar *Contest::level_xml_image[_nb_level] =
@@ -279,7 +217,7 @@ Contest::Contest (gboolean for_duplication )
   _filename   = NULL;
   _tournament = NULL;
   _weapon     = Weapon::GetDefault ();
-  _category   = 0;
+  _category   = new Category (_glade->GetWidget ("category_combobox"));
   _level      = 0;
   _gender     = 0;
   _team_event = FALSE;
@@ -378,18 +316,6 @@ Contest::Contest (gboolean for_duplication )
     }
     gtk_container_add (GTK_CONTAINER (box), _gender_combo);
     gtk_widget_show (_gender_combo);
-  }
-
-  {
-    GtkWidget *box = _glade->GetWidget ("category_box");
-
-    _category_combo = gtk_combo_box_text_new ();
-    for (guint i = 0; i < _nb_category; i ++)
-    {
-      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_category_combo), gettext (category_image[i]));
-    }
-    gtk_container_add (GTK_CONTAINER (box), _category_combo);
-    gtk_widget_show (_category_combo);
   }
 
   {
@@ -743,27 +669,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Categorie");
         if (attr)
         {
-          guint i;
-
-          for (i = 0; i < _nb_category; i++)
-          {
-            if (g_strcmp0 (attr, category_xml_alias[i]) == 0)
-            {
-              _category = i;
-              break;
-            }
-          }
-          if (i == _nb_category)
-          {
-            for (i = 0; i < _nb_category; i++)
-            {
-              if (g_strcmp0 (attr, category_xml_image[i]) == 0)
-              {
-                _category = i;
-                break;
-              }
-            }
-          }
+          _category->ParseXml (attr);
           xmlFree (attr);
         }
 
@@ -915,7 +821,7 @@ void Contest::FeedParcel (Net::Message *parcel)
   parcel->Set ("color",    color);
   parcel->Set ("weapon",   _weapon->GetXmlImage ());
   parcel->Set ("gender",   gender_xml_image[_gender]);
-  parcel->Set ("category", category_xml_image[_category]);
+  parcel->Set ("category", _category->GetXmlImage ());
 
   g_free (color);
 }
@@ -1019,7 +925,7 @@ Contest *Contest::Duplicate ()
   contest->_organizer  = g_strdup (_organizer);
   contest->_web_site   = g_strdup (_web_site);
   contest->_location   = g_strdup (_location);
-  contest->_category   = _category;
+  contest->_category->Replicate (_category);
   contest->_level      = _level;
   contest->_weapon     = _weapon;
   contest->_gender     = _gender;
@@ -1279,9 +1185,6 @@ void Contest::FillInProperties ()
   gtk_combo_box_set_active (GTK_COMBO_BOX (_gender_combo),
                             _gender);
 
-  gtk_combo_box_set_active (GTK_COMBO_BOX (_category_combo),
-                            _category);
-
   gtk_combo_box_set_active (GTK_COMBO_BOX (_level_combo),
                             _level);
 
@@ -1328,8 +1231,9 @@ void Contest::ReadProperties ()
 
   _weapon   = Weapon::GetFromIndex (gtk_combo_box_get_active (GTK_COMBO_BOX (_weapon_combo)));
   _gender   = gtk_combo_box_get_active (GTK_COMBO_BOX (_gender_combo));
-  _category = gtk_combo_box_get_active (GTK_COMBO_BOX (_category_combo));
   _level    = gtk_combo_box_get_active (GTK_COMBO_BOX (_level_combo));
+  
+  _category->ReadUserChoice ();
 
   _day   = GetUIntData (this, "day");
   _month = GetUIntData (this, "month");
@@ -1431,7 +1335,7 @@ void Contest::DisplayProperties ()
   if (w)
   {
     gtk_label_set_text (GTK_LABEL (w),
-                        gettext (category_image[_category]));
+                        _category->GetDisplayImage ());
   }
 
   w = _glade->GetWidget ("contest_level_label");
@@ -1519,7 +1423,7 @@ void Contest::Publish ()
         gchar *remote_dir  = g_strdup_printf ("%s%s%s/%s",
                                               _weapon->GetGregImage (),
                                               gender_greg[_gender],
-                                              category_greg[_category],
+                                              _category->GetXmlImage (),
                                               level_xml_image[_level]);
 
 
@@ -1687,7 +1591,7 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
                                  BAD_CAST _organizer);
     xmlTextWriterWriteAttribute (xml_writer,
                                  BAD_CAST "Categorie",
-                                 BAD_CAST category_xml_image[_category]);
+                                 BAD_CAST _category->GetXmlImage ());
     xmlTextWriterWriteAttribute (xml_writer,
                                  BAD_CAST "Niveau",
                                  BAD_CAST level_xml_image[_level]);
@@ -2004,7 +1908,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
   {
     char *text = g_strdup_printf ("%s - %s - %s", _weapon->GetImage (),
                                   gettext (gender_image[_gender]),
-                                  gettext (category_image[_category]));
+                                  _category->GetDisplayImage ());
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                          text,
                          50.5, 3.5,
@@ -2231,7 +2135,7 @@ gchar *Contest::GetDefaultFileName ()
   return g_strdup_printf ("%s-%s-%s-%s.cotcot", _name,
                           _weapon->GetImage (),
                           gettext (gender_image[_gender]),
-                          gettext (category_image[_category]));
+                          _category->GetDisplayImage ());
 }
 
 // --------------------------------------------------------------------------------
@@ -2247,9 +2151,9 @@ gchar *Contest::GetGender ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *Contest::GetCategory ()
+const gchar *Contest::GetCategory ()
 {
-  return gettext (category_image[_category]);
+  return _category->GetDisplayImage ();
 }
 
 // --------------------------------------------------------------------------------
