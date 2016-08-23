@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2016-08-15 21:57+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Korean <ko@li.org>\n"
-"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-16 05:23+0000\n"
-"X-Generator: Launchpad (build 18169)\n"
+"X-Launchpad-Export-Date: 2016-08-23 05:44+0000\n"
+"X-Generator: Launchpad (build 18176)\n"
+"Language: ko\n"
 
 msgid "Long text"
 msgstr ""
@@ -60,9 +60,7 @@ msgstr ""
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
-msgstr ""
-"데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르"
-"면 관련 필드가 무시됩니다."
+msgstr "데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르면 관련 필드가 무시됩니다."
 
 msgid "Choose a fencer file to import..."
 msgstr "가져올 선수 파일을 선택하세요."
@@ -533,33 +531,6 @@ msgstr "3위"
 
 msgid "None"
 msgstr "없음"
-
-#~ msgid "U6"
-#~ msgstr "6세 이하"
-
-#~ msgid "U8"
-#~ msgstr "8세 이하"
-
-#~ msgid "U10"
-#~ msgstr "10세 이하"
-
-#~ msgid "U12"
-#~ msgstr "12세 이하"
-
-#~ msgid "U13"
-#~ msgstr "13세 이하"
-
-#~ msgid "U15"
-#~ msgstr "15세 이하"
-
-#~ msgid "U16"
-#~ msgstr "16세 이하"
-
-#~ msgid "U18"
-#~ msgstr "18세 이하"
-
-#~ msgid "U19"
-#~ msgstr "19세 이하"
 
 #~ msgid "<b>Type</b>"
 #~ msgstr "<b>타입</b>"

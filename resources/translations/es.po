@@ -10,12 +10,15 @@ msgstr ""
 "PO-Revision-Date: 2016-08-15 21:33+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-16 05:23+0000\n"
-"X-Generator: Launchpad (build 18169)\n"
+"X-Launchpad-Export-Date: 2016-08-23 05:44+0000\n"
+"X-Generator: Launchpad (build 18176)\n"
+"Language: \n"
+
+msgid "Fenced places"
+msgstr "Puestos que se tiran"
 
 msgid "Long text"
 msgstr "Texto extendido"
@@ -523,9 +526,6 @@ msgstr "¡No hay un vencedor!"
 msgid "Table classification"
 msgstr "Tabla de resultados"
 
-msgid "Fenced places"
-msgstr "Puestos que se tiran"
-
 msgid "All"
 msgstr "Todo"
 
@@ -534,33 +534,6 @@ msgstr "Tercer lugar"
 
 msgid "None"
 msgstr "Ninguno"
-
-#~ msgid "U6"
-#~ msgstr "M6"
-
-#~ msgid "U8"
-#~ msgstr "M8"
-
-#~ msgid "U10"
-#~ msgstr "M10"
-
-#~ msgid "U12"
-#~ msgstr "M12"
-
-#~ msgid "U13"
-#~ msgstr "M13"
-
-#~ msgid "U15"
-#~ msgstr "M15"
-
-#~ msgid "U16"
-#~ msgstr "M16"
-
-#~ msgid "U18"
-#~ msgstr "M18"
-
-#~ msgid "U19"
-#~ msgstr "M19"
 
 #~ msgid "9999"
 #~ msgstr "9999"

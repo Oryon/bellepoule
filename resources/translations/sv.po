@@ -11,12 +11,12 @@ msgstr ""
 "PO-Revision-Date: 2016-08-15 21:42+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Swedish <sv@li.org>\n"
-"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-16 05:23+0000\n"
-"X-Generator: Launchpad (build 18169)\n"
+"X-Launchpad-Export-Date: 2016-08-23 05:44+0000\n"
+"X-Generator: Launchpad (build 18176)\n"
+"Language: sv\n"
 
 msgid "Long text"
 msgstr "Lång text"
@@ -535,33 +535,6 @@ msgstr "Tredje plats"
 
 msgid "None"
 msgstr "Ingen"
-
-#~ msgid "U6"
-#~ msgstr "U6"
-
-#~ msgid "U8"
-#~ msgstr "U8"
-
-#~ msgid "U10"
-#~ msgstr "U10"
-
-#~ msgid "U12"
-#~ msgstr "U12"
-
-#~ msgid "U13"
-#~ msgstr "Yngre ungdom (U13)"
-
-#~ msgid "U15"
-#~ msgstr "Äldre ungdom (U15)"
-
-#~ msgid "U16"
-#~ msgstr "U16"
-
-#~ msgid "U18"
-#~ msgstr "U18"
-
-#~ msgid "U19"
-#~ msgstr "U19"
 
 #~ msgid "Absents"
 #~ msgstr "Frånvarande"

@@ -10,12 +10,12 @@ msgstr ""
 "PO-Revision-Date: 2013-01-28 16:18+0000\n"
 "Last-Translator: Rui Pedro Vieira <rpn.vieira@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
-"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
-"X-Generator: Launchpad (build 18169)\n"
+"X-Launchpad-Export-Date: 2016-08-23 05:44+0000\n"
+"X-Generator: Launchpad (build 18176)\n"
+"Language: pt_BR\n"
 
 msgid "Long text"
 msgstr ""
@@ -532,21 +532,6 @@ msgstr ""
 
 msgid "None"
 msgstr ""
-
-#~ msgid "U8"
-#~ msgstr "U8"
-
-#~ msgid "U10"
-#~ msgstr "U10"
-
-#~ msgid "U12"
-#~ msgstr "U12"
-
-#~ msgid "U16"
-#~ msgstr "U16"
-
-#~ msgid "U18"
-#~ msgstr "U18"
 
 #~ msgid "9999"
 #~ msgstr "9999"

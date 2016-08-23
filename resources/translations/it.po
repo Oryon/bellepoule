@@ -10,12 +10,12 @@ msgstr ""
 "PO-Revision-Date: 2016-03-30 07:27+0000\n"
 "Last-Translator: Aureliano Martini <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-15 05:22+0000\n"
-"X-Generator: Launchpad (build 18169)\n"
+"X-Launchpad-Export-Date: 2016-08-23 05:44+0000\n"
+"X-Generator: Launchpad (build 18176)\n"
+"Language: \n"
 
 msgid "Long text"
 msgstr "Testo lungo"
@@ -535,21 +535,6 @@ msgstr "Terzo rango"
 
 msgid "None"
 msgstr "Nessuno"
-
-#~ msgid "U8"
-#~ msgstr "Prime lame"
-
-#~ msgid "U10"
-#~ msgstr "Maschietti-bambine"
-
-#~ msgid "U12"
-#~ msgstr "Giovanissimi"
-
-#~ msgid "U16"
-#~ msgstr "Cadetti"
-
-#~ msgid "U18"
-#~ msgstr "Giovani"
 
 #~ msgid "9999"
 #~ msgstr "9999"
