@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-22 22:04+0200\n"
-"PO-Revision-Date: 2016-03-30 07:27+0000\n"
+"POT-Creation-Date: 2016-08-23 16:15+0200\n"
+"PO-Revision-Date: 2016-08-23 16:30+0000\n"
 "Last-Translator: Aureliano Martini <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-23 05:44+0000\n"
-"X-Generator: Launchpad (build 18176)\n"
-"Language: \n"
+"X-Launchpad-Export-Date: 2016-07-27 06:00+0000\n"
+"X-Generator: Launchpad (build 18153)\n"
 
 msgid "Long text"
 msgstr "Testo lungo"
@@ -536,44 +536,421 @@ msgstr "Terzo rango"
 msgid "None"
 msgstr "Nessuno"
 
+msgid "Fencer list printing"
+msgstr "Stampa dell'elenco degli atleti"
+
+msgid "<b><big>What do you want to print?</big></b>"
+msgstr "<b><big>Cosa stampare?</big></b>"
+
+msgid "All the presents"
+msgstr "Tutti i presenti"
+
+msgid "All the absents"
+msgstr "Tutti gli assenti"
+
+msgid "Presents"
+msgstr "Presenti"
+
+msgid "Absents"
+msgstr "Assenti"
+
+msgid "all"
+msgstr "tutti"
+
+msgid "Import fencers"
+msgstr "Importa atleti"
+
+msgid "Import ranking"
+msgstr "Importa ranking"
+
+msgid "Minimum team size"
+msgstr "Grandezza minima delle squadre"
+
+msgid "Team classification"
+msgstr "Classifica delle squadre"
+
+msgid "Manually assigned"
+msgstr "Assegnazione manuale"
+
+msgid "Derived from fencer classification"
+msgstr "Riporta dalla classifica degli atleti"
+
+msgid "when unknown"
+msgstr "quando sconosciuto"
+
+msgid "Table printing"
+msgstr "Stampa del tabellone"
+
+msgid "<b><big>How to print?</big></b>"
+msgstr "<b><big>Come stampare?</big></b>"
+
+msgid "The table"
+msgstr "Il tabellone"
+
+msgid "Score sheets"
+msgstr "Gli assalti"
+
+msgid "Pending"
+msgstr "In attesa"
+
+msgid ""
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
+msgstr "<b><big>Quali assalti stampare?</big></b>"
+
+msgid "All the score sheets"
+msgstr "Tutti gli assalti"
+
+msgid "The pending score sheets"
+msgstr "Gli assalti in attesa"
+
+msgid "<b>Match</b>"
+msgstr "<b>Match</b>"
+
+msgid "A fencer"
+msgstr "Atleta A"
+
+msgid "B fencer"
+msgstr "Atleta B"
+
+msgid "<b>Score</b>"
+msgstr "<b>Risultato</b>"
+
+msgid "Add"
+msgstr "Aggiungi"
+
+msgid "Remove"
+msgstr "Rimuovi"
+
+msgid "<b>Schedule</b>"
+msgstr "<b>Pianifica</b>"
+
+msgid "<b>Parameters</b>"
+msgstr "<b>Parametri</b>"
+
+msgid "Previous round"
+msgstr "Turno precedente"
+
+msgid "Next round"
+msgstr "Turno successivo"
+
+msgid "Export to <b>HTML</b>"
+msgstr "Esporta in <b>HTML</b>"
+
+msgid "Export to <b>FFF</b>"
+msgstr "Esporta in <b>FFF</b>"
+
+msgid "Export to <b>PDF</b>"
+msgstr "Esporta in <b>PDF</b>"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Number"
+msgstr "Numero"
+
+msgid "Pool sheets printing"
+msgstr "Stampa fogli di girone"
+
+msgid "<b><big>Print...</big></b>"
+msgstr "<b><big>Stampa...</big></b>"
+
+msgid "All the pools"
+msgstr "Tutti i gironi"
+
+msgid "Only the selected pool"
+msgstr "Solo questo girone"
+
+msgid "<b>What?</b>"
+msgstr "<b>Cosa?</b>"
+
+msgid "For arbitration"
+msgstr "Per l'arbitraggio"
+
+msgid "Matches watermarked"
+msgstr "Numero degli incontri in filigrana"
+
+msgid "For the bulletin board"
+msgstr "Per la pubblicazione"
+
+msgid "<b>For what?</b>"
+msgstr "<b>Per cosa?</b>"
+
+msgid "Automatic stuffing"
+msgstr "Inserimento automatico"
+
+msgid "Combined classification"
+msgstr "Classifica combinata"
+
+msgid "Single classification"
+msgstr "Classifica singola"
+
+msgid "Content designed for the referees."
+msgstr "Contenuto specifico per l'arbitraggio"
+
+msgid "Promoted"
+msgstr "Promosso"
+
+msgid "Eliminated"
+msgstr "Eliminato"
+
+msgid "Fill in a match"
+msgstr "Inserire un match"
+
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+"Inserisci risultati casuali.\n"
+"Attivare o disattivare questa opzione nelle impostazioni della gara."
+
+msgid "From"
+msgstr "Da"
+
+msgid "To"
+msgstr "A"
+
+msgid "For place"
+msgstr "Per il rango"
+
+msgid "Zoom"
+msgstr "Ridimensiona"
+
+msgid "Mask or unmask some data type as well as define their display order."
+msgstr ""
+"Visualizza o nascondi alcune dati e modifica il loro ordine di "
+"visualizzazione."
+
+msgid "Print"
+msgstr "Stampa"
+
+msgid "Number of pools"
+msgstr "Numero dei gironi"
+
+msgid "Fencers / pools"
+msgstr "Atleti / gironi"
+
+msgid "Swapping"
+msgstr "Scalamento"
+
+msgid ""
+"Fencing tournament management software.\n"
+"\n"
+"\n"
+msgstr ""
+"Programma per la gestione di competizioni schermistiche.\n"
+"\n"
+"\n"
+
+msgid "WPA"
+msgstr "WPA"
+
+msgid "Security"
+msgstr "Sicurezza"
+
+msgid "Passphrase"
+msgstr "Codice di accesso"
+
+msgid ""
+"Enter your WIFI network settings here.\n"
+"They will be used to automatically configure\n"
+"the smarthphones running <b>SmartPoule</b>"
+msgstr ""
+"Inserisci la configurazione del sistema WIFI.\n"
+"Saranno usati per configurare automaticamente\n"
+"lo smartphone con <b>SmartPoule</b>."
+
+msgid "User"
+msgstr "Nome utente"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "FTP server"
+msgstr "Server FTP"
+
+msgid "<b>Web site</b>"
+msgstr "<b>Sito web</b>"
+
+msgid "<b>Video server</b>"
+msgstr "<b>Server video</b>"
+
+msgid "BellePoule - Fencing tournament"
+msgstr "BellePoule - torneo schermistico"
+
+msgid "File"
+msgstr "File"
+
+msgid "Recently opened"
+msgstr "Aperti di recente"
+
+msgid "Backup"
+msgstr "Backup"
+
+msgid "Backup files location..."
+msgstr "Destinazione del backup..."
+
+msgid "Activate"
+msgstr "Attiva"
+
+msgid "Deactivate"
+msgstr "Disattiva"
+
+msgid "Referees"
+msgstr "Arbitri"
+
+msgid "Print meal tickets"
+msgstr "Stampa buoni pasto"
+
+msgid "Print payment book"
+msgstr "Stampa elenco pagamenti"
+
+msgid "Ecosystem"
+msgstr "Ecosystem"
+
+msgid "WIFI"
+msgstr "WIFI"
+
+msgid "Score sheet scanner"
+msgstr "Scanner codici QR"
+
+msgid "Publication"
+msgstr "Pubblicazione"
+
+msgid "New version!"
+msgstr "Nuova versione!"
+
+msgid "Open an example..."
+msgstr "Apri un esempio"
+
+msgid "User manual"
+msgstr "Manuale dell'utente"
+
+msgid "Fencer file template (.csv)"
+msgstr "Modello lista atleti (.csv)"
+
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
+msgstr ""
+"Scansiona questo codice con <b>SmartPoule</b>\n"
+"per impostare il tuo smarphone\n"
+"come scanner codici QR."
+
+msgid "<b>Score sheet scanner</b>"
+msgstr "<b>Scanner codici QR</b>"
+
+msgid "Form"
+msgstr "Modulo"
+
+msgid "Date of competition"
+msgstr "Data della gara"
+
+msgid "Competition properties"
+msgstr "Proprietà della gara"
+
+msgid "Weapon"
+msgstr "Arma"
+
+msgid "Gender"
+msgstr "Genere"
+
+msgid "Category"
+msgstr "Categoria"
+
+msgid "Level"
+msgstr "Livello"
+
+msgid "Individual"
+msgstr "Individuale"
+
+msgid "Team"
+msgstr "Squadra"
+
+msgid "<b>Type</b>"
+msgstr "<b>Tipo</b>"
+
+msgid "Title"
+msgstr "Titolo"
+
+msgid "Organizer"
+msgstr "Organizzatore"
+
+msgid "Web site"
+msgstr "Sito web"
+
+msgid "Location"
+msgstr "Luogo"
+
+msgid "<b>Overviews</b>"
+msgstr "<b>Informazioni</b>"
+
+msgid "Date"
+msgstr "Data"
+
+msgid "Scratch"
+msgstr "Scratch"
+
+msgid "Start"
+msgstr "Inizio"
+
+msgid "<b>Date / Time</b>"
+msgstr "<b>Data / Orario</b>"
+
+msgid "Allow"
+msgstr "Consenti"
+
+msgid "Forbid"
+msgstr "Impedisci"
+
+msgid ""
+"Automatic\n"
+"score\n"
+"stuffing"
+msgstr ""
+"Inserimento\n"
+"automatico\n"
+"dei risultati"
+
+msgid "<b>Scores</b>"
+msgstr "<b>Risultati</b>"
+
+msgid "Event"
+msgstr "Evento"
+
+msgid "Save the current state of the competition."
+msgstr "Salva lo stato della gara"
+
+msgid "To specify the features of the competition."
+msgstr "Configura le impostazioni della gara"
+
+msgid "Man"
+msgstr "Uomo"
+
+msgid "U16"
+msgstr "Cadetti"
+
+msgid "Import referee file"
+msgstr "Importa elenco di arbitri"
+
+#~ msgid "U8"
+#~ msgstr "Prime lame"
+
+#~ msgid "U10"
+#~ msgstr "Maschietti-bambine"
+
+#~ msgid "U12"
+#~ msgstr "Giovanissimi"
+
+#~ msgid "U18"
+#~ msgstr "Giovani"
+
 #~ msgid "9999"
 #~ msgstr "9999"
-
-#~ msgid "Absents"
-#~ msgstr "Assenti"
-
-#~ msgid "<b>Type</b>"
-#~ msgstr "<b>Tipo</b>"
-
-#~ msgid "Date"
-#~ msgstr "Data"
 
 #~ msgid ":"
 #~ msgstr ":"
 
 #~ msgid "31/03/2009"
 #~ msgstr "31/03/2009"
-
-#~ msgid "Print"
-#~ msgstr "Stampa"
-
-#~ msgid "Name"
-#~ msgstr "Nome"
-
-#~ msgid "Add"
-#~ msgstr "Aggiungi"
-
-#~ msgid "Remove"
-#~ msgstr "Rimuovi"
-
-#~ msgid "<b>Scores</b>"
-#~ msgstr "<b>Risultati</b>"
-
-#~ msgid "<b>Score</b>"
-#~ msgstr "<b>Risultato</b>"
-
-#~ msgid "Scratch"
-#~ msgstr "Scratch"
-
-#~ msgid "<b>Match</b>"
-#~ msgstr "<b>Match</b>"

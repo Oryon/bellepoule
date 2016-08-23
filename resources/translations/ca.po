@@ -6,16 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2016-08-22 22:04+0200\n"
-"PO-Revision-Date: 2016-08-15 21:15+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-08-23 17:12+0200\n"
+"PO-Revision-Date: 2016-01-31 20:44+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Catalan (Valencian) <ca@valencia@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-08-23 05:44+0000\n"
-"X-Generator: Launchpad (build 18176)\n"
+"X-Launchpad-Export-Date: 2016-07-27 06:00+0000\n"
+"X-Generator: Launchpad (build 18153)\n"
 
 msgid "Long text"
 msgstr "Text estès"
@@ -191,28 +192,28 @@ msgid "Close without saving"
 msgstr "Tancar sense guardar canvis"
 
 msgid "U5"
-msgstr "U5"
+msgstr "M5"
 
 msgid "U7"
-msgstr "U7"
+msgstr "M7"
 
 msgid "U9"
-msgstr "U9"
+msgstr "M9"
 
 msgid "U11"
-msgstr "U11"
+msgstr "M11"
 
 msgid "U14"
-msgstr "U14"
+msgstr "M14"
 
 msgid "U17"
-msgstr "U17"
+msgstr "M17"
 
 msgid "U20"
-msgstr "U20"
+msgstr "M20"
 
 msgid "U23"
-msgstr "U23"
+msgstr "M23"
 
 msgid "Senior"
 msgstr "Sènior"
@@ -535,35 +536,412 @@ msgstr "Tercer lloc"
 msgid "None"
 msgstr "Cap"
 
-#~ msgid "Absents"
-#~ msgstr "Absents"
+msgid "Fencer list printing"
+msgstr "Imprimint la llista de tiradors"
 
-#~ msgid "<b>Type</b>"
-#~ msgstr "<b>Tipus</b>"
+msgid "<b><big>What do you want to print?</big></b>"
+msgstr "<b><big>Què vol imprimir?</big></b>"
 
-#~ msgid "Date"
-#~ msgstr "Data"
+msgid "All the presents"
+msgstr "Tots els presents"
 
-#~ msgid "Scratch"
-#~ msgstr "Scratch"
+msgid "All the absents"
+msgstr "Tots els absents"
 
-#~ msgid "<b>Scores</b>"
-#~ msgstr "<b>Resultats</b>"
+msgid "Presents"
+msgstr "Presents"
 
-#~ msgid "Print"
-#~ msgstr "Imprimir"
+msgid "Absents"
+msgstr "Absents"
 
-#~ msgid "Name"
-#~ msgstr "Nom"
+msgid "all"
+msgstr "tots"
 
-#~ msgid "Add"
-#~ msgstr "Afegir"
+msgid "Import fencers"
+msgstr "Importar tiradors"
 
-#~ msgid "Remove"
-#~ msgstr "Eliminar"
+msgid "Import ranking"
+msgstr "Importar rànquing"
 
-#~ msgid "<b>Match</b>"
-#~ msgstr "<b>Assalt</b>"
+msgid "Minimum team size"
+msgstr "Grandària mínima de l'equip"
 
-#~ msgid "<b>Score</b>"
-#~ msgstr "<b>Resultat</b>"
+msgid "Team classification"
+msgstr "Classificació d'equip"
+
+msgid "Manually assigned"
+msgstr "Designat a mà"
+
+msgid "Derived from fencer classification"
+msgstr "Deduït de la classificació del tirador"
+
+msgid "when unknown"
+msgstr "Quan no estiga determinat"
+
+msgid "Table printing"
+msgstr "Impressió de la taula"
+
+msgid "<b><big>How to print?</big></b>"
+msgstr "<b><big>Com imprimir?</big></b>"
+
+msgid "The table"
+msgstr "Taula"
+
+msgid "Score sheets"
+msgstr "Marcadors"
+
+msgid "Pending"
+msgstr "Pendent"
+
+msgid ""
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
+msgstr "<b><big>Quin resultat de la taula seleccionada vol imprimir?</big></b>"
+
+msgid "All the score sheets"
+msgstr "Tots els resultats"
+
+msgid "The pending score sheets"
+msgstr "Resultats pendents"
+
+msgid "<b>Match</b>"
+msgstr "<b>Assalt</b>"
+
+msgid "A fencer"
+msgstr "Tirador A"
+
+msgid "B fencer"
+msgstr "Tirador B"
+
+msgid "<b>Score</b>"
+msgstr "<b>Resultat</b>"
+
+msgid "Add"
+msgstr "Afegir"
+
+msgid "Remove"
+msgstr "Eliminar"
+
+msgid "<b>Schedule</b>"
+msgstr "<b>Programació</b>"
+
+msgid "<b>Parameters</b>"
+msgstr "<b>Paràmetres</b>"
+
+msgid "Previous round"
+msgstr "Ronda anterior"
+
+msgid "Next round"
+msgstr "Pròxima ronda"
+
+msgid "Export to <b>HTML</b>"
+msgstr "Exportar a <b>HTML</b>"
+
+msgid "Export to <b>FFF</b>"
+msgstr "Exportar a <b>FFF</b>"
+
+msgid "Export to <b>PDF</b>"
+msgstr "Exportar a <b>PDF</b>"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Number"
+msgstr "Nombre"
+
+msgid "Pool sheets printing"
+msgstr "Impressió de les fulles de poules"
+
+msgid "<b><big>Print...</big></b>"
+msgstr "<b><big>Imprimir...</big></b>"
+
+msgid "All the pools"
+msgstr "Totes les poules"
+
+msgid "Only the selected pool"
+msgstr "Només la poule seleccionada"
+
+msgid "<b>What?</b>"
+msgstr "<b>Què?</b>"
+
+msgid "For arbitration"
+msgstr "Pendents d'arbitrar"
+
+msgid "Matches watermarked"
+msgstr "Fulla de encontre amb marca d'aigua"
+
+msgid "For the bulletin board"
+msgstr "Per al Fòrum de *discuciones"
+
+msgid "<b>For what?</b>"
+msgstr "<b>Per a què?</b>"
+
+msgid "Automatic stuffing"
+msgstr "Emplenat automàtic"
+
+msgid "Combined classification"
+msgstr "Classificació combinada"
+
+msgid "Single classification"
+msgstr "Classificació simple"
+
+msgid "Content designed for the referees."
+msgstr "Contingut dissenyat per als arbitres"
+
+msgid "Promoted"
+msgstr "Exempt"
+
+msgid "Eliminated"
+msgstr "Eliminat"
+
+msgid "Fill in a match"
+msgstr "Emplenar un assalt"
+
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+"Emplenar tots els marcadors de forma aleatòria.\n"
+"Per a activar/desactivar aquest botó, anar a les propietats de la competició."
+
+msgid "From"
+msgstr "Des de"
+
+msgid "To"
+msgstr "Fins a"
+
+msgid "For place"
+msgstr "Per posició"
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Mask or unmask some data type as well as define their display order."
+msgstr ""
+"Mostrar o ocultar certes dades, així com definir l'ordre en el qual "
+"apareixen."
+
+msgid "Print"
+msgstr "Imprimir"
+
+msgid "Number of pools"
+msgstr "Nombre de Poules"
+
+msgid "Fencers / pools"
+msgstr "Tiradors / Poules"
+
+msgid "Swapping"
+msgstr "Intercanvi"
+
+msgid ""
+"Fencing tournament management software.\n"
+"\n"
+"\n"
+msgstr ""
+"Aplicació per a la gestió de competicions d'esgrima\n"
+"\n"
+"\n"
+
+msgid "WPA"
+msgstr "WPA"
+
+msgid "Security"
+msgstr "Seguretat"
+
+msgid "Passphrase"
+msgstr "Contrasenya"
+
+msgid ""
+"Enter your WIFI network settings here.\n"
+"They will be used to automatically configure\n"
+"the smarthphones running <b>SmartPoule</b>"
+msgstr ""
+"Introduïsca la configuració de la seua xarxa *WiFi ací.\n"
+"S'utilitzarà per a configurar automàticament\n"
+"els «smartphones» que executen l'aplicació <b>SmartPoule</b>"
+
+msgid "User"
+msgstr "Usuari"
+
+msgid "Password"
+msgstr "Contrasenya"
+
+msgid "FTP server"
+msgstr "Servidor FTP"
+
+msgid "<b>Web site</b>"
+msgstr "<b>Lloc web</b>"
+
+msgid "<b>Video server</b>"
+msgstr "<b>Servidor de vídeo</b>"
+
+msgid "BellePoule - Fencing tournament"
+msgstr "BellePoule - Competició d'esgrima"
+
+msgid "File"
+msgstr "Arxiu"
+
+msgid "Recently opened"
+msgstr "Obert recentment"
+
+msgid "Backup"
+msgstr "Còpia de seguretat"
+
+msgid "Backup files location..."
+msgstr "Ubicació de les còpies de seguretat"
+
+msgid "Activate"
+msgstr "Activar"
+
+msgid "Deactivate"
+msgstr "Desactivar"
+
+msgid "Referees"
+msgstr "Àrbitres"
+
+msgid "Print meal tickets"
+msgstr "Imprimir vals de menjar"
+
+msgid "Print payment book"
+msgstr "Imprimir llibre de pagaments"
+
+msgid "Ecosystem"
+msgstr "Entorn"
+
+msgid "WIFI"
+msgstr "WIFI"
+
+msgid "Score sheet scanner"
+msgstr "Escàner de fulles de resultats"
+
+msgid "Publication"
+msgstr "Publicació"
+
+msgid "New version!"
+msgstr "Versió nova!"
+
+msgid "Open an example..."
+msgstr "Obrir un exemple..."
+
+msgid "User manual"
+msgstr "Manual d'usuari"
+
+msgid "Fencer file template (.csv)"
+msgstr "Plantilla de tirador (.csv)"
+
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
+msgstr ""
+"Escanege aquest codi amb <b>SmartPoule</b>\n"
+"per a fer de la seua «smartphone» un escàner\n"
+"de fulles de resultat."
+
+msgid "<b>Score sheet scanner</b>"
+msgstr "<b>Escàner de fulles de resultat</b>"
+
+msgid "Form"
+msgstr "Formulari"
+
+msgid "Date of competition"
+msgstr "Data de la competició"
+
+msgid "Competition properties"
+msgstr "Propietats de la competició"
+
+msgid "Weapon"
+msgstr "Modalitat"
+
+msgid "Gender"
+msgstr "Gènere"
+
+msgid "Category"
+msgstr "Categoria"
+
+msgid "Level"
+msgstr ""
+
+msgid "Individual"
+msgstr "Individual"
+
+msgid "Team"
+msgstr "Equip"
+
+msgid "<b>Type</b>"
+msgstr "<b>Tipus</b>"
+
+msgid "Title"
+msgstr "Títol"
+
+msgid "Organizer"
+msgstr "Organitzador"
+
+msgid "Web site"
+msgstr "Lloc web"
+
+msgid "Location"
+msgstr "Ubicació"
+
+msgid "<b>Overviews</b>"
+msgstr "<b>Vista general</b>"
+
+msgid "Date"
+msgstr "Data"
+
+msgid "Scratch"
+msgstr "Scratch"
+
+msgid "Start"
+msgstr "Inici"
+
+msgid "<b>Date / Time</b>"
+msgstr "<b>Data / Hora</b>"
+
+msgid "Allow"
+msgstr "Permetre"
+
+msgid "Forbid"
+msgstr "Prohibir"
+
+msgid ""
+"Automatic\n"
+"score\n"
+"stuffing"
+msgstr ""
+"Emplenar\n"
+"resultats\n"
+"automàticament"
+
+msgid "<b>Scores</b>"
+msgstr "<b>Resultats</b>"
+
+msgid "Event"
+msgstr "Esdeveniment"
+
+msgid "Save the current state of the competition."
+msgstr "Guardar l'estat actual de la competició"
+
+msgid "To specify the features of the competition."
+msgstr "Especificar les característiques de la competició."
+
+msgid "Man"
+msgstr "Home"
+
+msgid "U16"
+msgstr "M16"
+
+msgid "Import referee file"
+msgstr "Importar arxiu d'àrbitre"
+
+#~ msgid "U8"
+#~ msgstr "M8"
+
+#~ msgid "U10"
+#~ msgstr "M10"
+
+#~ msgid "U12"
+#~ msgstr "M12"
+
+#~ msgid "U18"
+#~ msgstr "M18"
