@@ -290,10 +290,9 @@ Contest::Contest (gboolean for_duplication )
   }
 
   {
-    GtkWidget *box     = _glade->GetWidget ("weapon_box");
-    GSList    *current = Weapon::GetList ();
+    GSList *current = Weapon::GetList ();
 
-    _weapon_combo = gtk_combo_box_text_new ();
+    _weapon_combo = _glade->GetWidget ("weapon_combo");
     while (current)
     {
       Weapon *weapon = (Weapon *) current->data;
@@ -302,32 +301,22 @@ Contest::Contest (gboolean for_duplication )
                                       weapon->GetImage ());
       current = g_slist_next (current);
     }
-    gtk_container_add (GTK_CONTAINER (box), _weapon_combo);
-    gtk_widget_show (_weapon_combo);
   }
 
   {
-    GtkWidget *box = _glade->GetWidget ("gender_box");
-
-    _gender_combo = gtk_combo_box_text_new ();
+    _gender_combo = _glade->GetWidget ("gender_combo");
     for (guint i = 0; i < _nb_gender; i ++)
     {
       gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_gender_combo), gettext (gender_image[i]));
     }
-    gtk_container_add (GTK_CONTAINER (box), _gender_combo);
-    gtk_widget_show (_gender_combo);
   }
 
   {
-    GtkWidget *box = _glade->GetWidget ("level_box");
-
-    _level_combo = gtk_combo_box_text_new ();
+    _level_combo = _glade->GetWidget ("level_combo");
     for (guint i = 0; i < _nb_level; i ++)
     {
       gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_level_combo), gettext (level_image[i]));
     }
-    gtk_container_add (GTK_CONTAINER (box), _level_combo);
-    gtk_widget_show (_level_combo);
   }
 }
 
