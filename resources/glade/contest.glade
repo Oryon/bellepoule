@@ -26,7 +26,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -41,7 +40,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -101,6 +99,30 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-dialog-warning</property>
   </object>
+  <object class="GtkAdjustment" id="scratch_hour_adjustment">
+    <property name="upper">24</property>
+    <property name="value">12</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
+  <object class="GtkAdjustment" id="scratch_minute_adjustment">
+    <property name="upper">59</property>
+    <property name="value">15</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
+  <object class="GtkAdjustment" id="start_hour_adjustment">
+    <property name="upper">24</property>
+    <property name="value">12</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
+  <object class="GtkAdjustment" id="start_minute_adjustment">
+    <property name="upper">59</property>
+    <property name="value">30</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
   <object class="GtkDialog" id="properties_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -126,7 +148,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -255,7 +276,15 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkComboBoxText" id="weapon_combo">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
                                         </child>
                                       </object>
                                       <packing>
@@ -268,7 +297,15 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkComboBoxText" id="gender_combo">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
                                         </child>
                                       </object>
                                       <packing>
@@ -283,7 +320,15 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkComboBoxText" id="level_combo">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
                                         </child>
                                       </object>
                                       <packing>
@@ -328,7 +373,6 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="use_action_appearance">False</property>
                                             <property name="yalign">0.44999998807907104</property>
                                             <property name="draw_indicator">True</property>
                                             <property name="group">team_radiobutton</property>
@@ -345,7 +389,6 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="use_action_appearance">False</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="toggled" handler="on_team_radiobutton_toggled" swapped="no"/>
@@ -490,7 +533,6 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="relief">none</property>
                                     <property name="xalign">0</property>
                                     <signal name="clicked" handler="on_web_site_button_clicked" swapped="no"/>
@@ -627,7 +669,6 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="use_action_appearance">False</property>
                                     <signal name="clicked" handler="on_calendar_button_clicked" swapped="no"/>
                                   </object>
                                   <packing>
@@ -893,7 +934,6 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="image">image4</property>
                                         <property name="image_position">right</property>
                                         <property name="draw_indicator">True</property>
@@ -911,7 +951,6 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -939,7 +978,7 @@ score
 stuffing</property>
                                   </object>
                                   <packing>
-                                    <property name="y_options"></property>
+                                    <property name="y_options"/>
                                   </packing>
                                 </child>
                               </object>
@@ -1013,30 +1052,6 @@ stuffing</property>
       <action-widget response="1">Close_button</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkAdjustment" id="scratch_hour_adjustment">
-    <property name="upper">24</property>
-    <property name="value">12</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">5</property>
-  </object>
-  <object class="GtkAdjustment" id="scratch_minute_adjustment">
-    <property name="upper">59</property>
-    <property name="value">15</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">5</property>
-  </object>
-  <object class="GtkAdjustment" id="start_hour_adjustment">
-    <property name="upper">24</property>
-    <property name="value">12</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">5</property>
-  </object>
-  <object class="GtkAdjustment" id="start_minute_adjustment">
-    <property name="upper">59</property>
-    <property name="value">30</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">5</property>
-  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <child>
@@ -1057,7 +1072,6 @@ stuffing</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Save the current state of the competition.</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="stock_id">gtk-save</property>
                     <signal name="clicked" handler="on_save_toolbutton_clicked" swapped="no"/>
                   </object>
@@ -1080,7 +1094,6 @@ stuffing</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">To specify the features of the competition.</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="stock_id">gtk-preferences</property>
                     <signal name="clicked" handler="on_properties_toolbutton_clicked" swapped="no"/>
                   </object>
@@ -1217,7 +1230,6 @@ stuffing</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="relief">none</property>
                 <property name="focus_on_click">False</property>
                 <property name="yalign">0</property>
