@@ -57,9 +57,9 @@ const gchar *Category::_xml_image[_nb_category] =
 const gchar *Category::_xml_alias[_nb_category] =
 {
   "M5",
+  "M7",
   "PO",
   "PUP",
-  "BEN",
   "M",
   "C",
   "J",
