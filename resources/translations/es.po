@@ -6,16 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-23 16:15+0200\n"
-"PO-Revision-Date: 2016-08-23 16:30+0000\n"
+"POT-Creation-Date: 2016-08-23 17:21+0200\n"
+"PO-Revision-Date: 2016-08-23 16:31+0000\n"
 "Last-Translator: Angel Oliver <axel.tomcat@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-07-27 06:00+0000\n"
-"X-Generator: Launchpad (build 18153)\n"
+"X-Launchpad-Export-Date: 2016-08-24 05:20+0000\n"
+"X-Generator: Launchpad (build 18179)\n"
+"Language: \n"
+
+msgid "Fenced places"
+msgstr "Puestos que se tiran"
 
 msgid "Long text"
 msgstr "Texto extendido"
@@ -523,9 +526,6 @@ msgstr "¡No hay un vencedor!"
 msgid "Table classification"
 msgstr "Tabla de resultados"
 
-msgid "Fenced places"
-msgstr "Puestos que se tiran"
-
 msgid "All"
 msgstr "Todo"
 
@@ -593,8 +593,8 @@ msgid "Pending"
 msgstr "Pendiente"
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to print?</"
-"big></b>"
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
 msgstr ""
 "<b><big>¿Que resultado de la tabla seleccionada quiere imprimir?</big></b>"
 
@@ -933,18 +933,6 @@ msgstr "M16"
 
 msgid "Import referee file"
 msgstr "Importar archivo árbitro"
-
-#~ msgid "U8"
-#~ msgstr "M8"
-
-#~ msgid "U10"
-#~ msgstr "M10"
-
-#~ msgid "U12"
-#~ msgstr "M12"
-
-#~ msgid "U18"
-#~ msgstr "M18"
 
 #~ msgid "9999"
 #~ msgstr "9999"
