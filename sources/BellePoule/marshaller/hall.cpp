@@ -167,11 +167,15 @@ namespace Marshaller
     }
 
     {
-      EnlistedReferee *refere = dynamic_cast <EnlistedReferee *> (object);
+      EnlistedReferee *referee = dynamic_cast <EnlistedReferee *> (object);
 
-      if (refere)
+      if (referee)
       {
-        piste->AddReferee (refere);
+        Player::AttributeId  weapon_attr_id ("weapon");
+        Attribute           *weapon_attr = referee->GetAttribute (&weapon_attr_id);
+
+        piste->AddReferee (referee);
+        _referee_pool->RefreshWorkload (weapon_attr->GetStrValue ());
       }
     }
   }
