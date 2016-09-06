@@ -32,9 +32,9 @@ namespace People
 {
   // --------------------------------------------------------------------------------
   RefereesList::RefereesList ()
-    : Checkin ("referees.glade",
-               "Referee",
-               NULL)
+    : People::Checkin ("referees.glade",
+                       "Referee",
+                       NULL)
   {
     _weapon = NULL;
 
@@ -67,7 +67,7 @@ namespace People
         _collapsed_filter = new Filter (attr_list,
                                         this);
         _collapsed_filter->ShowAttribute ("name");
-        _collapsed_filter->ShowAttribute ("participation_rate");
+        _collapsed_filter->ShowAttribute ("workload_rate");
 
         SetFilter (_collapsed_filter);
       }
@@ -79,7 +79,7 @@ namespace People
         _expanded_filter->ShowAttribute ("attending");
         _expanded_filter->ShowAttribute ("availability");
         _expanded_filter->ShowAttribute ("name");
-        _expanded_filter->ShowAttribute ("participation_rate");
+        _expanded_filter->ShowAttribute ("workload_rate");
         _expanded_filter->ShowAttribute ("club");
         _expanded_filter->ShowAttribute ("league");
         _expanded_filter->ShowAttribute ("country");
@@ -138,8 +138,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void RefereesList::OnPlayerEventFromForm (Player            *referee,
-                                            Form::PlayerEvent  event)
+  void RefereesList::OnPlayerEventFromForm (Player                    *referee,
+                                            People::Form::PlayerEvent  event)
   {
     {
       Player::AttributeId  attending_attr_id ("attending");
@@ -237,7 +237,7 @@ namespace People
     referee->SetChangeCbk ("availability",
                            (Player::OnChange) OnAvailabilityChanged,
                            this);
-    referee->SetChangeCbk ("participation_rate",
+    referee->SetChangeCbk ("workload_rate",
                            (Player::OnChange) OnParticipationRateChanged,
                            this);
 

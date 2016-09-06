@@ -18,6 +18,7 @@
 #define referee_pool_hpp
 
 #include <gtk/gtk.h>
+
 #include "actors/referees_list.hpp"
 
 namespace Marshaller
@@ -40,6 +41,8 @@ namespace Marshaller
       EnlistedReferee *GetRefereeFor (Job  *job,
                                       Slot *slot);
 
+      void RefreshWorkload (const gchar *);
+
       void Spread ();
 
       GList *GetList ();
@@ -50,7 +53,7 @@ namespace Marshaller
       ~RefereePool ();
 
       static void SpreadWeapon (People::RefereesList *list,
-                                RefereePool          *rp);
+                                RefereePool  *rp);
   };
 }
 

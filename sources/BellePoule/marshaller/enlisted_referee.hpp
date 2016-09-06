@@ -33,15 +33,20 @@ namespace Marshaller
 
       gboolean IsAvailableFor (Slot *slot);
 
+      gint GetWorkload ();
+
+      void SetAllRefereWorkload (gint all_referee_workload);
+
       static void OnRemovedFromSlot (EnlistedReferee *referee,
                                      Slot            *slot);
 
-      static gint CompareLoad (EnlistedReferee *a,
-                               EnlistedReferee *b);
+      static gint CompareWorkload (EnlistedReferee *a,
+                                   EnlistedReferee *b);
 
     private:
       GList       *_slots;
-      AttributeId *_load_attr_id;
+      AttributeId *_workload_rate_attr_id;
+      gint         _work_load;
 
       virtual ~EnlistedReferee ();
   };

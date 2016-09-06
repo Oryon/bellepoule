@@ -52,6 +52,47 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void RefereePool::RefreshWorkload (const gchar *weapon_code)
+  {
+    GList *current_weapon = _list_by_weapon;
+
+    while (current_weapon)
+    {
+      People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
+
+      if (g_strcmp0 (referee_list->GetWeaponCode (), weapon_code) == 0)
+      {
+        gint    all_referee_workload = 0;
+        GSList *current_referee;
+
+        current_referee = referee_list->GetList ();
+        while (current_referee)
+        {
+          EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+
+          all_referee_workload += referee->GetWorkload ();
+
+          current_referee = g_slist_next (current_referee);
+        }
+
+        current_referee = referee_list->GetList ();
+        while (current_referee)
+        {
+          EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+
+          referee->SetAllRefereWorkload (all_referee_workload);
+
+          current_referee = g_slist_next (current_referee);
+        }
+
+        break;
+      }
+
+      current_weapon = g_list_next (current_weapon);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void RefereePool::Spread ()
   {
     g_list_foreach (_list_by_weapon,
@@ -116,7 +157,7 @@ namespace Marshaller
         EnlistedReferee *available_referee = NULL;
 
         sorted_list = g_slist_sort (g_slist_copy (referee_list->GetList ()),
-                                    (GCompareFunc) EnlistedReferee::CompareLoad);
+                                    (GCompareFunc) EnlistedReferee::CompareWorkload);
 
         current_referee = sorted_list;
         while (current_referee)
@@ -131,6 +172,8 @@ namespace Marshaller
 
           current_referee = g_slist_next (current_referee);
         }
+
+        g_slist_free (sorted_list);
         return available_referee;
       }
 
