@@ -21,13 +21,13 @@
 #include <libxml/xpath.h>
 #include <libxml/xmlwriter.h>
 
-#include "checkin.hpp"
+#include "actors/checkin.hpp"
 
 class Weapon;
 
 namespace People
 {
-  class RefereesList : public Checkin
+  class RefereesList : public People::Checkin
   {
     public:
       RefereesList ();
@@ -56,8 +56,8 @@ namespace People
       void OnPlayerLoaded (Player *referee,
                            Player *owner);
 
-      void OnPlayerEventFromForm (Player            *referee,
-                                  Form::PlayerEvent  event);
+      void OnPlayerEventFromForm (Player                    *referee,
+                                  People::Form::PlayerEvent  event);
 
       static gboolean RefereeIsVisible (GtkTreeModel *model,
                                         GtkTreeIter  *iter,

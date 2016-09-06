@@ -61,7 +61,7 @@ namespace People
                                           "global_status",
                                           "indice",
                                           "level",
-                                          "participation_rate",
+                                          "workload_rate",
                                           "pool_nr",
                                           "promoted",
                                           "rank",

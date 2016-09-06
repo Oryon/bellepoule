@@ -18,6 +18,8 @@
 #include "network/ring.hpp"
 #include "application/weapon.hpp"
 
+#include "actors/referees_list.hpp"
+
 #include "marshaller.hpp"
 
 namespace Marshaller

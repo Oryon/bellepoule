@@ -78,7 +78,7 @@ namespace Pool
                                           "global_status",
                                           "indice",
                                           "level",
-                                          "participation_rate",
+                                          "workload_rate",
                                           "pool_nr",
                                           "promoted",
                                           "rank",
@@ -115,7 +115,7 @@ namespace Pool
                                             "final_rank",
                                             "global_status",
                                             "level",
-                                            "participation_rate",
+                                            "workload_rate",
                                             "promoted",
                                             "team",
                                             NULL);

@@ -719,6 +719,7 @@ namespace Marshaller
 
       g_list_free (pending_jobs);
 
+      _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
       _timeline->Redraw ();
       OnTimelineCursorMoved ();
     }
@@ -798,6 +799,7 @@ namespace Marshaller
       current_piste = g_list_next (current_piste);
     }
 
+    _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
     _timeline->Redraw ();
 
     _listener->OnExposeWeapon (batch->GetWeaponCode ());

@@ -24,11 +24,12 @@ namespace Marshaller
   EnlistedReferee::EnlistedReferee ()
     : Referee ()
   {
-     _slots = NULL;
+    _slots     = NULL;
+    _work_load = 0;
 
      {
-       _load_attr_id = new AttributeId ("participation_rate");
-       SetAttributeValue (_load_attr_id, 0u);
+       _workload_rate_attr_id = new AttributeId ("workload_rate");
+       SetAttributeValue (_workload_rate_attr_id, 0u);
      }
   }
 
@@ -36,19 +37,13 @@ namespace Marshaller
   EnlistedReferee::~EnlistedReferee ()
   {
     g_list_free (_slots);
-    _load_attr_id->Release ();
+    _workload_rate_attr_id->Release ();
   }
 
   // --------------------------------------------------------------------------------
   void EnlistedReferee::AddSlot (Slot *slot)
   {
-    {
-      Attribute *load_attr = GetAttribute (_load_attr_id);
-      gint       load      = load_attr->GetIntValue ();
-
-      load += slot->GetDuration () / G_TIME_SPAN_MINUTE;
-      SetAttributeValue (_load_attr_id, load);
-    }
+    _work_load += slot->GetDuration () / G_TIME_SPAN_MINUTE;
 
     _slots = g_list_insert_sorted (_slots,
                                    slot,
@@ -69,13 +64,7 @@ namespace Marshaller
                                             node);
     }
 
-    {
-      Attribute *load_attr = referee->GetAttribute (referee->_load_attr_id);
-      gint       load      = load_attr->GetIntValue ();
-
-      load -= slot->GetDuration () / G_TIME_SPAN_MINUTE;
-      referee->SetAttributeValue (referee->_load_attr_id, load);
-    }
+    referee->_work_load -= slot->GetDuration () / G_TIME_SPAN_MINUTE;
   }
 
   // --------------------------------------------------------------------------------
@@ -107,12 +96,28 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gint EnlistedReferee::CompareLoad (EnlistedReferee *a,
-                                     EnlistedReferee *b)
+  gint EnlistedReferee::CompareWorkload (EnlistedReferee *a,
+                                         EnlistedReferee *b)
   {
-    Attribute *attr_a = a->GetAttribute (a->_load_attr_id);
-    Attribute *attr_b = b->GetAttribute (a->_load_attr_id);
+    return a->_work_load - b->_work_load;
+  }
 
-    return attr_a->GetIntValue () - attr_b->GetIntValue ();
+  // --------------------------------------------------------------------------------
+  gint EnlistedReferee::GetWorkload ()
+  {
+    return _work_load;
+  }
+
+  // --------------------------------------------------------------------------------
+  void EnlistedReferee::SetAllRefereWorkload (gint all_referee_workload)
+  {
+    gint rate = 0;
+
+    if (all_referee_workload)
+    {
+      rate = (_work_load * 100) / all_referee_workload;
+    }
+
+    SetAttributeValue (_workload_rate_attr_id, rate);
   }
 }
