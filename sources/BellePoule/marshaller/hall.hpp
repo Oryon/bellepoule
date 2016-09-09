@@ -62,15 +62,15 @@ namespace Marshaller
       void ManageContest (Net::Message *message,
                           GtkNotebook  *notebook);
 
-      void DropContest (Net::Message *message);
+      void DeleteContest (Net::Message *message);
 
       void ManageJob (Net::Message *message);
 
       void ManageFencer (Net::Message *message);
 
-      void DropJob (Net::Message *message);
+      void DeleteJob (Net::Message *message);
 
-      void DropFencer (Net::Message *message);
+      void DeleteFencer (Net::Message *message);
 
     private:
       GList       *_piste_list;

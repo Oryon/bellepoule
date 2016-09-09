@@ -108,9 +108,13 @@ namespace Net
   // --------------------------------------------------------------------------------
   void MessageUploader::PushMessage (Message *message)
   {
-    message->Retain ();
-    g_async_queue_push (_message_queue,
-                        message);
+    if (message->IsWaitingToBeSent () == FALSE)
+    {
+      message->MarkAsWaitingToBeSent ();
+      message->Retain ();
+      g_async_queue_push (_message_queue,
+                          message);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -153,6 +157,8 @@ namespace Net
     {
       {
         Message *message = (Message *) g_async_queue_pop (uploader->_message_queue);
+
+        message->MarkAsSent ();
 
         if (message->Is ("MessageUploader::stop_sending"))
         {

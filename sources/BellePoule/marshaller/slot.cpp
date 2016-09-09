@@ -176,11 +176,7 @@ namespace Marshaller
                                       node);
     }
 
-    {
-      Net::Message *roadmap = job->GetRoadMap ();
-
-      roadmap->Recall ();
-    }
+    job->ResetRoadMap ();
 
     {
       Batch *batch = job->GetBatch ();

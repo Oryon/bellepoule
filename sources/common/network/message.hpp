@@ -26,6 +26,8 @@ namespace Net
     public:
       Message (const gchar *name);
 
+      Message (Message *from);
+
       Message (const guint8 *data);
 
       gboolean Is (const gchar *name);
@@ -35,8 +37,6 @@ namespace Net
       gchar *GetSender ();
 
       guint GetUUID ();
-
-      void Spread ();
 
       void Recall ();
 
@@ -62,13 +62,23 @@ namespace Net
 
       void Dump ();
 
-    private:
-      virtual ~Message ();
+      void Spread ();
+
+      void MarkAsSent ();
+
+      void MarkAsWaitingToBeSent ();
+
+      gboolean IsWaitingToBeSent ();
 
     private:
+      gboolean  _waiting_to_be_sent;
       gboolean  _is_valid;
       GKeyFile *_key_file;
       gchar    *_passphrase;
+
+      Message ();
+
+      virtual ~Message ();
   };
 }
 #endif

@@ -70,7 +70,7 @@ namespace Marshaller
 
       void ManageFencer (Net::Message *message);
 
-      void DropFencer (Net::Message *message);
+      void DeleteFencer (Net::Message *message);
 
     private:
       guint32       _id;

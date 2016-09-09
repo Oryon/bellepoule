@@ -20,13 +20,19 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  Message::Message (const gchar *name)
+  Message::Message ()
     : Object ("Message")
   {
-    _passphrase = NULL;
+    _passphrase         = NULL;
+    _is_valid           = TRUE;
+    _waiting_to_be_sent = FALSE;
+    _key_file           = g_key_file_new ();
+  }
 
-    _key_file = g_key_file_new ();
-
+  // --------------------------------------------------------------------------------
+  Message::Message (const gchar *name)
+    : Message ()
+  {
     g_key_file_set_string (_key_file,
                            "Header",
                            "name",
@@ -41,18 +47,43 @@ namespace Net
                             "Header",
                             "uuid",
                             g_random_int ());
+  }
 
-    _is_valid = TRUE;
+  // --------------------------------------------------------------------------------
+  Message::Message (Message *from)
+    : Message ()
+  {
+    GError *error  = NULL;
+    gchar  *parcel = from->GetParcel ();
+
+    _passphrase = g_strdup (from->_passphrase);
+    _is_valid   = from->_is_valid;
+
+    if (g_key_file_load_from_data (_key_file,
+                                   (const gchar *) parcel,
+                                   -1,
+                                   G_KEY_FILE_NONE,
+                                   &error) == FALSE)
+    {
+      g_warning ("Message::Message: %s", error->message);
+      _is_valid = FALSE;
+      g_clear_error (&error);
+    }
+    else
+    {
+      g_key_file_remove_group (_key_file,
+                               "Body",
+                               &error);
+    }
+
+    g_free (parcel);
   }
 
   // --------------------------------------------------------------------------------
   Message::Message (const guint8 *data)
+    : Message ()
   {
     GError *error = NULL;
-
-    _passphrase = NULL;
-    _is_valid   = TRUE;
-    _key_file   = g_key_file_new ();
 
     if (g_key_file_load_from_data (_key_file,
                                    (const gchar *) data,
@@ -113,15 +144,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Message::Spread ()
-  {
-    Ring::SpreadMessage (this);
-  }
-
-  // --------------------------------------------------------------------------------
   void Message::Recall ()
   {
     Ring::RecallMessage (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Message::IsWaitingToBeSent ()
+  {
+    return _waiting_to_be_sent;
   }
 
   // --------------------------------------------------------------------------------
@@ -154,6 +185,24 @@ namespace Net
                                    "Header",
                                    "fitness",
                                    NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Message::Spread ()
+  {
+    Ring::SpreadMessage (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Message::MarkAsSent ()
+  {
+    _waiting_to_be_sent = FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Message::MarkAsWaitingToBeSent ()
+  {
+    _waiting_to_be_sent = TRUE;
   }
 
   // --------------------------------------------------------------------------------

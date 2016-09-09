@@ -546,7 +546,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::DropFencer (Net::Message *message)
+  void Batch::DeleteFencer (Net::Message *message)
   {
     guint  id      = message->GetUUID ();
     GList *current = _fencer_list;
@@ -558,7 +558,6 @@ namespace Marshaller
 
       if (current_id == id)
       {
-        printf ("===> %s\n", fencer->GetName ());
         break;
       }
 

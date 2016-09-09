@@ -214,7 +214,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::DropContest (Net::Message *message)
+  void Hall::DeleteContest (Net::Message *message)
   {
     gchar *id = message->GetString ("uuid");
 
@@ -267,7 +267,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::DropJob (Net::Message *message)
+  void Hall::DeleteJob (Net::Message *message)
   {
     guint32 contest_id;
 
@@ -300,14 +300,14 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::DropFencer (Net::Message *message)
+  void Hall::DeleteFencer (Net::Message *message)
   {
     gchar *id    = message->GetString ("contest");
     Batch *batch = GetBatch (id);
 
     if (batch)
     {
-      batch->DropFencer (message);
+      batch->DeleteFencer (message);
     }
 
     g_free (id);

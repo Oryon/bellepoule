@@ -82,6 +82,18 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Job::ResetRoadMap ()
+  {
+    Net::Message *new_parcel = new Net::Message (_parcel);
+
+    new_parcel->Set ("listener", _parcel->GetInteger ("listener"));
+
+    _parcel->Recall ();
+    _parcel->Release ();
+    _parcel = new_parcel;
+  }
+
+  // --------------------------------------------------------------------------------
   guint Job::GetUUID ()
   {
     return _uuid;

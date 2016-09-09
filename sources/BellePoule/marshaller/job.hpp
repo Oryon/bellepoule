@@ -48,6 +48,8 @@ namespace Marshaller
 
       Net::Message *GetRoadMap ();
 
+      void ResetRoadMap ();
+
       static gint CompareStartTime (Job *a,
                                     Job *b);
 

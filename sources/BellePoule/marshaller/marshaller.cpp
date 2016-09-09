@@ -106,17 +106,17 @@ namespace Marshaller
     {
       if (message->Is ("Competition"))
       {
-        _hall->DropContest (message);
+        _hall->DeleteContest (message);
         return TRUE;
       }
       else if (message->Is ("Job"))
       {
-        _hall->DropJob (message);
+        _hall->DeleteJob (message);
         return TRUE;
       }
       else if (message->Is ("Fencer"))
       {
-        _hall->DropFencer (message);
+        _hall->DeleteFencer (message);
         return TRUE;
       }
     }
