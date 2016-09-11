@@ -26,8 +26,6 @@ namespace Net
     public:
       Message (const gchar *name);
 
-      Message (Message *from);
-
       Message (const guint8 *data);
 
       gboolean Is (const gchar *name);
@@ -53,6 +51,8 @@ namespace Net
 
       void Set (const gchar *field,
                 const guint  value);
+
+      void Remove (const gchar *field);
 
       gchar *GetString (const gchar *field);
 

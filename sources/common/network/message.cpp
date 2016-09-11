@@ -50,36 +50,6 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  Message::Message (Message *from)
-    : Message ()
-  {
-    GError *error  = NULL;
-    gchar  *parcel = from->GetParcel ();
-
-    _passphrase = g_strdup (from->_passphrase);
-    _is_valid   = from->_is_valid;
-
-    if (g_key_file_load_from_data (_key_file,
-                                   (const gchar *) parcel,
-                                   -1,
-                                   G_KEY_FILE_NONE,
-                                   &error) == FALSE)
-    {
-      g_warning ("Message::Message: %s", error->message);
-      _is_valid = FALSE;
-      g_clear_error (&error);
-    }
-    else
-    {
-      g_key_file_remove_group (_key_file,
-                               "Body",
-                               &error);
-    }
-
-    g_free (parcel);
-  }
-
-  // --------------------------------------------------------------------------------
   Message::Message (const guint8 *data)
     : Message ()
   {
@@ -225,6 +195,21 @@ namespace Net
                             field,
                             value);
     _is_valid = TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Message::Remove (const gchar *field)
+  {
+    GError *error = NULL;
+
+    if (g_key_file_remove_key (_key_file,
+                               "Body",
+                               field,
+                               &error) == FALSE)
+    {
+      g_warning ("Message::Remove: %s", error->message);
+      g_clear_error (&error);
+    }
   }
 
   // --------------------------------------------------------------------------------

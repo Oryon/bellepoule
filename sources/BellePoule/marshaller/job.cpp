@@ -76,21 +76,30 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Net::Message *Job::GetRoadMap ()
+  void Job::SetReferee (guint referee_ref)
   {
-    return _parcel;
+    _parcel->Set ("referee", referee_ref);
+
+    Spread ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Job::SetPiste (guint        piste_id,
+                      const gchar *start_time)
+  {
+    _parcel->Set ("piste",      piste_id);
+    _parcel->Set ("start_time", start_time);
+
+    Spread ();
   }
 
   // --------------------------------------------------------------------------------
   void Job::ResetRoadMap ()
   {
-    Net::Message *new_parcel = new Net::Message (_parcel);
-
-    new_parcel->Set ("listener", _parcel->GetInteger ("listener"));
-
     _parcel->Recall ();
-    _parcel->Release ();
-    _parcel = new_parcel;
+
+    _parcel->Remove ("piste");
+    _parcel->Remove ("start_time");
   }
 
   // --------------------------------------------------------------------------------

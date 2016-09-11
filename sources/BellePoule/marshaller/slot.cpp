@@ -136,22 +136,15 @@ namespace Marshaller
     job->SetSlot           (this);
 
     {
-      Net::Message *roadmap = job->GetRoadMap ();
-
-      roadmap->Set ("piste",
-                    _owner->GetId ());
-
-      roadmap->Set ("start_time",
+      job->SetPiste (_owner->GetId (),
                     _fie_time->GetXmlImage ());
 
       if (_referee_list)
       {
         EnlistedReferee *referee = (EnlistedReferee *) _referee_list->data;
 
-        roadmap->Set ("referee", referee->GetRef ());
+        job->SetReferee (referee->GetRef ());
       }
-
-      job->Spread ();
     }
 
     {
@@ -214,11 +207,9 @@ namespace Marshaller
 
       while (current)
       {
-        Job          *job     = (Job *) current->data;
-        Net::Message *roadmap = job->GetRoadMap ();
+        Job *job = (Job *) current->data;
 
-        roadmap->Set ("referee", referee->GetRef ());
-        job->Spread ();
+        job->SetReferee (referee->GetRef ());
 
         current = g_list_next (current);
       }
