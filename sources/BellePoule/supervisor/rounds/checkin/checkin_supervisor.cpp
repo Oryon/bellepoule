@@ -28,6 +28,7 @@
 
 #include "actors/fencer.hpp"
 #include "actors/player_factory.hpp"
+#include "actors/tally_counter.hpp"
 #include "checkin_supervisor.hpp"
 #include "rank_importer.hpp"
 

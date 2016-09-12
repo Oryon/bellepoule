@@ -23,13 +23,15 @@
 #include "util/data.hpp"
 #include "util/module.hpp"
 #include "util/attribute.hpp"
-
-#include "tally_counter.hpp"
-#include "players_list.hpp"
 #include "form.hpp"
+
+#include "players_list.hpp"
 
 namespace People
 {
+  class Form;
+  class TallyCounter;
+
   class Checkin : public PlayersList
   {
     public:
@@ -58,6 +60,8 @@ namespace People
       void ImportFFF (gchar *filename);
 
       virtual void ConvertFromBaseToResult ();
+
+      TallyCounter *GetTallyCounter ();
 
     public:
       void on_add_player_button_clicked ();

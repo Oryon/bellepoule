@@ -16,6 +16,7 @@
 
 #include "network/message.hpp"
 #include "actors/player_factory.hpp"
+#include "actors/tally_counter.hpp"
 #include "enlisted_referee.hpp"
 #include "job.hpp"
 #include "slot.hpp"
@@ -140,11 +141,33 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  gboolean RefereePool::WeaponHasReferees (const gchar *weapon)
+  {
+    GList *current_weapon = _list_by_weapon;
+
+    while (current_weapon)
+    {
+      People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
+
+      if (g_strcmp0 (referee_list->GetWeaponCode (), weapon) == 0)
+      {
+        People::TallyCounter *tally_counter = referee_list->GetTallyCounter ();
+
+        return (tally_counter->GetPresentsCount () > 0);
+      }
+
+      current_weapon = g_list_next (current_weapon);
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   EnlistedReferee *RefereePool::GetRefereeFor (Job  *job,
                                                Slot *slot)
   {
     GList *current_weapon = _list_by_weapon;
-    Batch *batch   = job->GetBatch ();
+    Batch *batch          = job->GetBatch ();
 
     while (current_weapon)
     {

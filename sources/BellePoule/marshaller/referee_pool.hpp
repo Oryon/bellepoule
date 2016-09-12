@@ -41,6 +41,8 @@ namespace Marshaller
       EnlistedReferee *GetRefereeFor (Job  *job,
                                       Slot *slot);
 
+      gboolean WeaponHasReferees (const gchar *weapon);
+
       void RefreshWorkload (const gchar *);
 
       void Spread ();
@@ -53,7 +55,7 @@ namespace Marshaller
       ~RefereePool ();
 
       static void SpreadWeapon (People::RefereesList *list,
-                                RefereePool  *rp);
+                                RefereePool          *rp);
   };
 }
 

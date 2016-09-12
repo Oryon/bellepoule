@@ -24,6 +24,8 @@
 #include "util/player.hpp"
 #include "actors/player_factory.hpp"
 #include "actors/tally_counter.hpp"
+#include "tally_counter.hpp"
+
 #include "checkin.hpp"
 
 namespace People
@@ -893,6 +895,12 @@ namespace People
     RefreshAttendingDisplay ();
 
     PlayersList::SelectFlatMode ();
+  }
+
+  // --------------------------------------------------------------------------------
+  TallyCounter *Checkin::GetTallyCounter ()
+  {
+    return _tally_counter;
   }
 
   // --------------------------------------------------------------------------------

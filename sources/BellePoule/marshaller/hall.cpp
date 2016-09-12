@@ -681,54 +681,64 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::OnBatchAssignmentRequest (Batch *batch)
   {
-    GtkWidget *dialog = _glade->GetWidget ("job_dialog");
-
     _listener->OnExposeWeapon (batch->GetWeaponCode ());
 
-    if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
+    if (_referee_pool->WeaponHasReferees (batch->GetWeaponCode ()) == FALSE)
     {
-      GList *pending_jobs = g_list_copy (batch->GetPendingJobs ());
-      GList *current_job  = pending_jobs;
+      GtkWidget *error_dialog = _glade->GetWidget ("referee_error_dialog");
 
-      while (current_job)
+      gtk_dialog_run (GTK_DIALOG (error_dialog));
+      gtk_widget_hide (error_dialog);
+    }
+    else
+    {
+      GtkWidget *dialog = _glade->GetWidget ("job_dialog");
+
+      if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
       {
-        Job   *job          = (Job *) current_job->data;
-        GList *free_slots   = GetFreeSlots (NULL, 30*G_TIME_SPAN_MINUTE);
-        GList *current_slot = free_slots;
+        GList *pending_jobs = g_list_copy (batch->GetPendingJobs ());
+        GList *current_job  = pending_jobs;
 
-        while (current_slot)
+        while (current_job)
         {
-          Slot            *slot    = (Slot *) current_slot->data;
-          EnlistedReferee *referee;
+          Job   *job          = (Job *) current_job->data;
+          GList *free_slots   = GetFreeSlots (NULL, 30*G_TIME_SPAN_MINUTE);
+          GList *current_slot = free_slots;
 
-          referee = _referee_pool->GetRefereeFor (job,
-                                                  slot);
-          if (referee)
+          while (current_slot)
           {
-            slot->Retain ();
-            slot->AddJob     (job);
-            slot->AddReferee (referee);
-            break;
+            Slot            *slot    = (Slot *) current_slot->data;
+            EnlistedReferee *referee;
+
+            referee = _referee_pool->GetRefereeFor (job,
+                                                    slot);
+            if (referee)
+            {
+              slot->Retain ();
+              slot->AddJob     (job);
+              slot->AddReferee (referee);
+              break;
+            }
+
+            current_slot = g_list_next (current_slot);
           }
+          g_list_foreach (free_slots,
+                          (GFunc) Object::TryToRelease,
+                          NULL);
+          g_list_free (free_slots);
 
-          current_slot = g_list_next (current_slot);
+          current_job = g_list_next (current_job);
         }
-        g_list_foreach (free_slots,
-                        (GFunc) Object::TryToRelease,
-                        NULL);
-        g_list_free (free_slots);
 
-        current_job = g_list_next (current_job);
+        g_list_free (pending_jobs);
+
+        _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
+        _timeline->Redraw ();
+        OnTimelineCursorMoved ();
       }
 
-      g_list_free (pending_jobs);
-
-      _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
-      _timeline->Redraw ();
-      OnTimelineCursorMoved ();
+      gtk_widget_hide (dialog);
     }
-
-    gtk_widget_hide (dialog);
   }
 
   // --------------------------------------------------------------------------------
