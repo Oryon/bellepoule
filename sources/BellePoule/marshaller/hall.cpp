@@ -745,8 +745,14 @@ namespace Marshaller
   GList *Hall::GetFreeSlots (GDateTime *from,
                              GTimeSpan  duration)
   {
-    GList *free_slots = NULL;
-    GList *current    = _piste_list;
+    GList           *free_slots = NULL;
+    GList           *current    = _piste_list;
+    GtkToggleButton *all_pistes = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_pistes"));
+
+    if (gtk_toggle_button_get_active (all_pistes) == FALSE)
+    {
+      current = _selected_list;
+    }
 
     while (current)
     {
