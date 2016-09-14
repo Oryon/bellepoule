@@ -42,6 +42,7 @@ namespace Marshaller
     public:
       Slot (Owner     *owner,
             GDateTime *start_time,
+            GDateTime *end_time,
             GTimeSpan  duration);
 
       void AddJob (Job *job);
@@ -58,16 +59,21 @@ namespace Marshaller
 
       GDateTime *GetStartTime ();
 
+      GDateTime *GetEndTime ();
+
       GTimeSpan GetDuration ();
 
-      GTimeSpan GetInterval (Slot *with);
-
-      gboolean Overlaps (Slot *what);
+      gboolean FitWith (Slot *what);
 
       static void Dump (Slot *what);
 
       static gint CompareAvailbility (Slot *a,
                                       Slot *b);
+
+      static GList *GetFreeSlots (Owner     *owner,
+                                  GList     *busy_slots,
+                                  GDateTime *from,
+                                  GTimeSpan  duration);
 
     private:
       Owner     *_owner;
@@ -81,6 +87,11 @@ namespace Marshaller
       virtual ~Slot ();
 
       void OnObjectDeleted (Object *object);
+
+      static GDateTime *GetLatestDate (GDateTime *a,
+                                       GDateTime *b);
+
+      static GDateTime *GetRoundedDate (GDateTime *of);
   };
 }
 

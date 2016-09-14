@@ -146,19 +146,23 @@ namespace Marshaller
 
       if (batch)
       {
-        GSList *selection = batch->GetCurrentSelection ();
-        GSList *current   = selection;
+        GSList    *selection = batch->GetCurrentSelection ();
+        GSList    *current   = selection;
+        GDateTime *now       = g_date_time_new_now_local ();
+
+        g_date_time_unref (now);
 
         while (current)
         {
           Job   *job   = (Job *) current->data;
-          GList *slots = piste->GetFreeSlots (NULL, 30 *G_TIME_SPAN_MINUTE);
+          GList *slots = piste->GetFreeSlots (now, 30 *G_TIME_SPAN_MINUTE);
           Slot  *slot  = (Slot *) slots->data;
 
           slot->AddJob (job);
 
           current = g_slist_next (current);
         }
+        g_date_time_unref (now);
 
         g_slist_free (selection);
         _timeline->Redraw ();
@@ -702,7 +706,7 @@ namespace Marshaller
         while (current_job)
         {
           Job   *job          = (Job *) current_job->data;
-          GList *free_slots   = GetFreeSlots (NULL, 30*G_TIME_SPAN_MINUTE);
+          GList *free_slots   = GetFreeSlots (30*G_TIME_SPAN_MINUTE);
           GList *current_slot = free_slots;
 
           while (current_slot)
@@ -722,10 +726,8 @@ namespace Marshaller
 
             current_slot = g_list_next (current_slot);
           }
-          g_list_foreach (free_slots,
-                          (GFunc) Object::TryToRelease,
-                          NULL);
-          g_list_free (free_slots);
+          g_list_free_full (free_slots,
+                            (GDestroyNotify) Object::TryToRelease);
 
           current_job = g_list_next (current_job);
         }
@@ -742,28 +744,45 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *Hall::GetFreeSlots (GDateTime *from,
-                             GTimeSpan  duration)
+  GList *Hall::GetFreeSlots (GTimeSpan duration)
   {
-    GList           *free_slots = NULL;
-    GList           *current    = _piste_list;
-    GtkToggleButton *all_pistes = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_pistes"));
+    GDateTime *when;
+    GList     *free_slots   = NULL;
+    GList     *current      = _piste_list;
 
-    if (gtk_toggle_button_get_active (all_pistes) == FALSE)
+    // All pistes?
     {
-      current = _selected_list;
+      GtkToggleButton *all_pistes = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_pistes"));
+
+      if (gtk_toggle_button_get_active (all_pistes) == FALSE)
+      {
+        current = _selected_list;
+      }
     }
 
-    while (current)
+    // When?
     {
-      Piste *piste = (Piste *) current->data;
-
-      free_slots = g_list_concat (free_slots,
-                                  piste->GetFreeSlots (from, 30*G_TIME_SPAN_MINUTE));
-
-      current = g_list_next (current);
+      when = g_date_time_new_now_local ();
     }
 
+
+    // Loop over the pistes
+    {
+      while (current)
+      {
+        Piste *piste = (Piste *) current->data;
+
+        free_slots = g_list_concat (free_slots,
+                                    piste->GetFreeSlots (when,
+                                                         30*G_TIME_SPAN_MINUTE));
+
+        current = g_list_next (current);
+      }
+
+      g_date_time_unref (when);
+    }
+
+    // Sort the result
     free_slots = g_list_sort (free_slots,
                               (GCompareFunc) Slot::CompareAvailbility);
 
