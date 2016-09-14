@@ -762,7 +762,16 @@ namespace Marshaller
 
     // When?
     {
-      when = g_date_time_new_now_local ();
+      GtkToggleButton *now = GTK_TOGGLE_BUTTON (_glade->GetWidget ("now"));
+
+      if (gtk_toggle_button_get_active (now))
+      {
+        when = g_date_time_new_now_local ();
+      }
+      else
+      {
+        when = _timeline->RetreiveCursorTime ();
+      }
     }
 
 
@@ -799,7 +808,7 @@ namespace Marshaller
       gchar    *text;
 
       text = g_strdup_printf ("<span weight=\"bold\" background=\"black\" foreground=\"white\"> %02d:%02d </span>",
-                              g_date_time_get_hour (cursor),
+                              g_date_time_get_hour   (cursor),
                               g_date_time_get_minute (cursor));
 
       gtk_label_set_markup (popup_clock,
