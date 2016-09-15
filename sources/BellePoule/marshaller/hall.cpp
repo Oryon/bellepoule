@@ -698,6 +698,19 @@ namespace Marshaller
     {
       GtkWidget *dialog = _glade->GetWidget ("job_dialog");
 
+      {
+        GtkToggleButton *toggle;
+
+        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_jobs"));
+        gtk_toggle_button_set_active (toggle, TRUE);
+        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_referees"));
+        gtk_toggle_button_set_active (toggle, TRUE);
+        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_pistes"));
+        gtk_toggle_button_set_active (toggle, TRUE);
+        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("now"));
+        gtk_toggle_button_set_active (toggle, TRUE);
+      }
+
       if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
       {
         GList *pending_jobs = g_list_copy (batch->GetPendingJobs ());
