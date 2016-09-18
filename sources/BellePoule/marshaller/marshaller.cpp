@@ -106,17 +106,17 @@ namespace Marshaller
     {
       if (message->Is ("Competition"))
       {
-        _hall->DropContest (message);
+        _hall->DeleteContest (message);
         return TRUE;
       }
       else if (message->Is ("Job"))
       {
-        _hall->DropJob (message);
+        _hall->DeleteJob (message);
         return TRUE;
       }
       else if (message->Is ("Fencer"))
       {
-        _hall->DropFencer (message);
+        _hall->DeleteFencer (message);
         return TRUE;
       }
     }
@@ -137,18 +137,7 @@ namespace Marshaller
       gtk_paned_set_position (paned, allocation.width);
     }
 
-    {
-      GList *current = _referee_pool->GetList ();
-
-      while (current)
-      {
-        People::RefereesList *list = (People::RefereesList *) current->data;
-
-        list->Expand ();
-
-        current = g_list_next (current);
-      }
-    }
+    _referee_pool->ExpandAll ();
   }
 
   // --------------------------------------------------------------------------------
@@ -160,18 +149,7 @@ namespace Marshaller
       gtk_paned_set_position (paned, 0);
     }
 
-    {
-      GList *current = _referee_pool->GetList ();
-
-      while (current)
-      {
-        People::RefereesList *list = (People::RefereesList *) current->data;
-
-        list->Collapse ();
-
-        current = g_list_next (current);
-      }
-    }
+    _referee_pool->CollapseAll ();
   }
 
   // --------------------------------------------------------------------------------

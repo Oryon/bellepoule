@@ -146,32 +146,40 @@ namespace Marshaller
 
       if (batch)
       {
-        GSList *selection = batch->GetCurrentSelection ();
-        GSList *current   = selection;
+        GList     *selection = batch->GetCurrentSelection ();
+        GList     *current   = selection;
+        GDateTime *now       = g_date_time_new_now_local ();
+
+        g_date_time_unref (now);
 
         while (current)
         {
           Job   *job   = (Job *) current->data;
-          GList *slots = piste->GetFreeSlots (NULL, 30 *G_TIME_SPAN_MINUTE);
+          GList *slots = piste->GetFreeSlots (now, 30 *G_TIME_SPAN_MINUTE);
           Slot  *slot  = (Slot *) slots->data;
 
           slot->AddJob (job);
 
-          current = g_slist_next (current);
+          current = g_list_next (current);
         }
+        g_date_time_unref (now);
 
-        g_slist_free (selection);
+        g_list_free (selection);
         _timeline->Redraw ();
         return;
       }
     }
 
     {
-      EnlistedReferee *refere = dynamic_cast <EnlistedReferee *> (object);
+      EnlistedReferee *referee = dynamic_cast <EnlistedReferee *> (object);
 
-      if (refere)
+      if (referee)
       {
-        piste->AddReferee (refere);
+        Player::AttributeId  weapon_attr_id ("weapon");
+        Attribute           *weapon_attr = referee->GetAttribute (&weapon_attr_id);
+
+        piste->AddReferee (referee);
+        _referee_pool->RefreshWorkload (weapon_attr->GetStrValue ());
       }
     }
   }
@@ -210,7 +218,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::DropContest (Net::Message *message)
+  void Hall::DeleteContest (Net::Message *message)
   {
     gchar *id = message->GetString ("uuid");
 
@@ -263,7 +271,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::DropJob (Net::Message *message)
+  void Hall::DeleteJob (Net::Message *message)
   {
     guint32 contest_id;
 
@@ -296,14 +304,14 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::DropFencer (Net::Message *message)
+  void Hall::DeleteFencer (Net::Message *message)
   {
     gchar *id    = message->GetString ("contest");
     Batch *batch = GetBatch (id);
 
     if (batch)
     {
-      batch->DropFencer (message);
+      batch->DeleteFencer (message);
     }
 
     g_free (id);
@@ -677,73 +685,141 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::OnBatchAssignmentRequest (Batch *batch)
   {
-    GtkWidget *dialog = _glade->GetWidget ("job_dialog");
-
     _listener->OnExposeWeapon (batch->GetWeaponCode ());
 
-    if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
+    if (_referee_pool->WeaponHasReferees (batch->GetWeaponCode ()) == FALSE)
     {
-      GList *pending_jobs = g_list_copy (batch->GetPendingJobs ());
-      GList *current_job  = pending_jobs;
+      GtkWidget *error_dialog = _glade->GetWidget ("referee_error_dialog");
 
-      while (current_job)
+      gtk_dialog_run (GTK_DIALOG (error_dialog));
+      gtk_widget_hide (error_dialog);
+    }
+    else
+    {
+      GtkWidget *dialog = _glade->GetWidget ("job_dialog");
+
       {
-        Job   *job          = (Job *) current_job->data;
-        GList *free_slots   = GetFreeSlots (NULL, 30*G_TIME_SPAN_MINUTE);
-        GList *current_slot = free_slots;
+        GtkToggleButton *toggle;
 
-        while (current_slot)
-        {
-          Slot            *slot    = (Slot *) current_slot->data;
-          EnlistedReferee *referee;
-
-          referee = _referee_pool->GetRefereeFor (job,
-                                                  slot);
-          if (referee)
-          {
-            slot->Retain ();
-            slot->AddJob     (job);
-            slot->AddReferee (referee);
-            break;
-          }
-
-          current_slot = g_list_next (current_slot);
-        }
-        g_list_foreach (free_slots,
-                        (GFunc) Object::TryToRelease,
-                        NULL);
-        g_list_free (free_slots);
-
-        current_job = g_list_next (current_job);
+        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_jobs"));
+        gtk_toggle_button_set_active (toggle, TRUE);
+        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_referees"));
+        gtk_toggle_button_set_active (toggle, TRUE);
+        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_pistes"));
+        gtk_toggle_button_set_active (toggle, TRUE);
+        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("now"));
+        gtk_toggle_button_set_active (toggle, TRUE);
       }
 
-      g_list_free (pending_jobs);
+      if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
+      {
+        GList *job_list;
+        GList *current_job;
 
-      _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
-      _timeline->Redraw ();
-      OnTimelineCursorMoved ();
+        // All the jobs?
+        {
+          GtkToggleButton *all_jobs = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_jobs"));
+
+          if (gtk_toggle_button_get_active (all_jobs))
+          {
+            job_list = g_list_copy (batch->GetPendingJobs ());
+          }
+          else
+          {
+            job_list = g_list_copy (batch->GetCurrentSelection ());
+          }
+        }
+
+        current_job = job_list;
+        while (current_job)
+        {
+          Job   *job          = (Job *) current_job->data;
+          GList *free_slots   = GetFreePisteSlots (30*G_TIME_SPAN_MINUTE);
+          GList *current_slot = free_slots;
+
+          while (current_slot)
+          {
+            Slot            *slot    = (Slot *) current_slot->data;
+            EnlistedReferee *referee;
+
+            referee = _referee_pool->GetRefereeFor (job,
+                                                    slot);
+            if (referee)
+            {
+              slot->Retain ();
+              slot->AddJob     (job);
+              slot->AddReferee (referee);
+              break;
+            }
+
+            current_slot = g_list_next (current_slot);
+          }
+          g_list_free_full (free_slots,
+                            (GDestroyNotify) Object::TryToRelease);
+
+          current_job = g_list_next (current_job);
+        }
+
+        g_list_free (job_list);
+
+        _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
+        _timeline->Redraw ();
+        OnTimelineCursorMoved ();
+      }
+
+      gtk_widget_hide (dialog);
     }
-
-    gtk_widget_hide (dialog);
   }
 
   // --------------------------------------------------------------------------------
-  GList *Hall::GetFreeSlots (GDateTime *from,
-                             GTimeSpan  duration)
+  GList *Hall::GetFreePisteSlots (GTimeSpan duration)
   {
-    GList *free_slots = NULL;
-    GList *current    = _piste_list;
+    GDateTime *when;
+    GList     *free_slots   = NULL;
+    GList     *current      = _piste_list;
 
-    while (current)
+    // All the pistes?
     {
-      Piste *piste = (Piste *) current->data;
+      GtkToggleButton *all_pistes = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_pistes"));
 
-      free_slots = g_list_concat (free_slots,
-                                  piste->GetFreeSlots (from, 30*G_TIME_SPAN_MINUTE));
-
-      current = g_list_next (current);
+      if (gtk_toggle_button_get_active (all_pistes) == FALSE)
+      {
+        current = _selected_list;
+      }
     }
 
+    // When?
+    {
+      GtkToggleButton *now = GTK_TOGGLE_BUTTON (_glade->GetWidget ("now"));
+
+      if (gtk_toggle_button_get_active (now))
+      {
+        when = g_date_time_new_now_local ();
+      }
+      else
+      {
+        when = _timeline->RetreiveCursorTime ();
+      }
+    }
+
+
+    // Loop over the pistes
+    {
+      while (current)
+      {
+        Piste *piste = (Piste *) current->data;
+
+        free_slots = g_list_concat (free_slots,
+                                    piste->GetFreeSlots (when,
+                                                         30*G_TIME_SPAN_MINUTE));
+
+        current = g_list_next (current);
+      }
+
+      g_date_time_unref (when);
+    }
+
+    // Sort the result
     free_slots = g_list_sort (free_slots,
                               (GCompareFunc) Slot::CompareAvailbility);
 
@@ -760,7 +836,7 @@ namespace Marshaller
       gchar    *text;
 
       text = g_strdup_printf ("<span weight=\"bold\" background=\"black\" foreground=\"white\"> %02d:%02d </span>",
-                              g_date_time_get_hour (cursor),
+                              g_date_time_get_hour   (cursor),
                               g_date_time_get_minute (cursor));
 
       gtk_label_set_markup (popup_clock,

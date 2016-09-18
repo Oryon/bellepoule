@@ -36,8 +36,6 @@ namespace Net
 
       guint GetUUID ();
 
-      void Spread ();
-
       void Recall ();
 
       void SetPassPhrase (const gchar *passphrase);
@@ -54,6 +52,8 @@ namespace Net
       void Set (const gchar *field,
                 const guint  value);
 
+      void Remove (const gchar *field);
+
       gchar *GetString (const gchar *field);
 
       guint GetInteger (const gchar *field);
@@ -62,13 +62,23 @@ namespace Net
 
       void Dump ();
 
-    private:
-      virtual ~Message ();
+      void Spread ();
+
+      void MarkAsSent ();
+
+      void MarkAsWaitingToBeSent ();
+
+      gboolean IsWaitingToBeSent ();
 
     private:
+      gboolean  _waiting_to_be_sent;
       gboolean  _is_valid;
       GKeyFile *_key_file;
       gchar    *_passphrase;
+
+      Message ();
+
+      virtual ~Message ();
   };
 }
 #endif

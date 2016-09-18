@@ -6,11 +6,14 @@ PRODUCT = bellepoulebeta
 OUTPUT  = Release
 PACKAGE = $(HOME)/Project/PPA/$(PRODUCT)
 VERSION = 5.0
-STEP    = ubuntu6
 RELEASE = $(PRODUCT)_$(VERSION)
 UBUNTU  = trusty
 V       = 1
 DATE    = $(shell date -R)
+
+#STEP    = ubuntu8
+VERSION_FILE = "../../sources/BellePoule/application/version.h"
+STEP := $(shell grep VERSION_MATURITY $(VERSION_FILE) | sed 's/.*alpha0/ubuntu/' | sed 's/.*alpha/ubuntu/' | sed 's/"//')
 
 #----------------------------------------------------
 #-- Compilers ---------------------------------------
@@ -41,6 +44,7 @@ endif
 #----------------------------------------------------
 CFLAGS  =
 CFLAGS += -pedantic
+CFLAGS += -std=c++11
 CFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGSEAL_ENABLE
@@ -170,7 +174,6 @@ $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHAL
 	@$(WINDRES) --output=$@ --input=$<
 
 #--
-
 flags:
 	@echo $(CFLAGS)
 	@echo "---------------"

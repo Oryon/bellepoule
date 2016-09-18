@@ -58,7 +58,7 @@ namespace Marshaller
 
       void SetProperties (Net::Message *message);
 
-      GSList *GetCurrentSelection ();
+      GList *GetCurrentSelection ();
 
       void OnAssign ();
 
@@ -70,7 +70,7 @@ namespace Marshaller
 
       void ManageFencer (Net::Message *message);
 
-      void DropFencer (Net::Message *message);
+      void DeleteFencer (Net::Message *message);
 
     private:
       guint32       _id;

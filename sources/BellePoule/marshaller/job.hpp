@@ -46,7 +46,12 @@ namespace Marshaller
 
       guint GetUUID ();
 
-      Net::Message *GetRoadMap ();
+      void SetReferee (guint referee_ref);
+
+      void SetPiste (guint        piste_id,
+                     const gchar *start_time);
+
+      void ResetRoadMap ();
 
       static gint CompareStartTime (Job *a,
                                     Job *b);

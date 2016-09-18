@@ -20,13 +20,19 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  Message::Message (const gchar *name)
+  Message::Message ()
     : Object ("Message")
   {
-    _passphrase = NULL;
+    _passphrase         = NULL;
+    _is_valid           = TRUE;
+    _waiting_to_be_sent = FALSE;
+    _key_file           = g_key_file_new ();
+  }
 
-    _key_file = g_key_file_new ();
-
+  // --------------------------------------------------------------------------------
+  Message::Message (const gchar *name)
+    : Message ()
+  {
     g_key_file_set_string (_key_file,
                            "Header",
                            "name",
@@ -41,18 +47,13 @@ namespace Net
                             "Header",
                             "uuid",
                             g_random_int ());
-
-    _is_valid = TRUE;
   }
 
   // --------------------------------------------------------------------------------
   Message::Message (const guint8 *data)
+    : Message ()
   {
     GError *error = NULL;
-
-    _passphrase = NULL;
-    _is_valid   = TRUE;
-    _key_file   = g_key_file_new ();
 
     if (g_key_file_load_from_data (_key_file,
                                    (const gchar *) data,
@@ -113,15 +114,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Message::Spread ()
-  {
-    Ring::SpreadMessage (this);
-  }
-
-  // --------------------------------------------------------------------------------
   void Message::Recall ()
   {
     Ring::RecallMessage (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Message::IsWaitingToBeSent ()
+  {
+    return _waiting_to_be_sent;
   }
 
   // --------------------------------------------------------------------------------
@@ -157,6 +158,24 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void Message::Spread ()
+  {
+    Ring::SpreadMessage (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Message::MarkAsSent ()
+  {
+    _waiting_to_be_sent = FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Message::MarkAsWaitingToBeSent ()
+  {
+    _waiting_to_be_sent = TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
   void Message::Set (const gchar *field,
                      const gchar *value)
   {
@@ -176,6 +195,21 @@ namespace Net
                             field,
                             value);
     _is_valid = TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Message::Remove (const gchar *field)
+  {
+    GError *error = NULL;
+
+    if (g_key_file_remove_key (_key_file,
+                               "Body",
+                               field,
+                               &error) == FALSE)
+    {
+      g_warning ("Message::Remove: %s", error->message);
+      g_clear_error (&error);
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -25,6 +25,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Slot::Slot (Owner     *owner,
               GDateTime *start_time,
+              GDateTime *end_time,
               GTimeSpan  duration)
     : Object ("Slot")
   {
@@ -37,8 +38,16 @@ namespace Marshaller
 
     _start = start_time;
     g_date_time_ref (_start);
+    if (_start)
+    {
+      g_date_time_ref (_start);
+    }
 
-    _end = g_date_time_add (start_time, duration);
+    _end = end_time;
+    if (_end)
+    {
+      g_date_time_ref (_end);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -66,8 +75,15 @@ namespace Marshaller
 
     _fie_time->Release ();
 
-    g_date_time_unref (_start);
-    g_date_time_unref (_end);
+    if (_start)
+    {
+      g_date_time_unref (_start);
+    }
+
+    if (_end)
+    {
+      g_date_time_unref (_end);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -77,29 +93,49 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GTimeSpan Slot::GetInterval (Slot *with)
+  GDateTime *Slot::GetEndTime ()
   {
-    GTimeSpan  interval;
-    GDateTime *end_time = g_date_time_add (_start, _duration);
-
-    interval = g_date_time_difference (end_time,
-                                       with->GetStartTime ());
-    g_date_time_unref (end_time);
-
-    return interval;
+    return _end;
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Slot::Overlaps (Slot *what)
+  gboolean Slot::FitWith (Slot *with)
   {
-    if (g_date_time_compare (_start, what->_start) >= 0)
+    GDateTime *fixed_end;
+    GTimeSpan  delta = g_date_time_difference (with->_start,
+                                               _start);
+
+    if (delta <= 0)
     {
-      return (g_date_time_compare (_start, what->_end) < 0);
+      delta = 0;
+    }
+    fixed_end = g_date_time_add (_start, _duration + delta);
+
+    if (_end && (g_date_time_compare (fixed_end, _end) > 0))
+    {
+      g_date_time_unref (fixed_end);
+      return FALSE;
+    }
+    else if (with->_end && (g_date_time_compare (fixed_end, with->_end) > 0))
+    {
+      g_date_time_unref (fixed_end);
+      return FALSE;
     }
     else
     {
-      return (g_date_time_compare (what->_start, _end) < 0);
+      GDateTime *fixed_start = g_date_time_add (_start, delta);
+
+      g_date_time_unref (_start);
+      _start = fixed_start;
+
+      if (_end)
+      {
+        g_date_time_unref (_end);
+      }
+      _end = fixed_end;
     }
+
+    return TRUE;
   }
 
   // --------------------------------------------------------------------------------
@@ -136,22 +172,15 @@ namespace Marshaller
     job->SetSlot           (this);
 
     {
-      Net::Message *roadmap = job->GetRoadMap ();
-
-      roadmap->Set ("piste",
-                    _owner->GetId ());
-
-      roadmap->Set ("start_time",
-                    _fie_time->GetXmlImage ());
+      job->SetPiste (_owner->GetId (),
+                     _fie_time->GetXmlImage ());
 
       if (_referee_list)
       {
         EnlistedReferee *referee = (EnlistedReferee *) _referee_list->data;
 
-        roadmap->Set ("referee", referee->GetRef ());
+        job->SetReferee (referee->GetRef ());
       }
-
-      job->Spread ();
     }
 
     {
@@ -176,11 +205,7 @@ namespace Marshaller
                                       node);
     }
 
-    {
-      Net::Message *roadmap = job->GetRoadMap ();
-
-      roadmap->Recall ();
-    }
+    job->ResetRoadMap ();
 
     {
       Batch *batch = job->GetBatch ();
@@ -218,11 +243,9 @@ namespace Marshaller
 
       while (current)
       {
-        Job          *job     = (Job *) current->data;
-        Net::Message *roadmap = job->GetRoadMap ();
+        Job *job = (Job *) current->data;
 
-        roadmap->Set ("referee", referee->GetRef ());
-        job->Spread ();
+        job->SetReferee (referee->GetRef ());
 
         current = g_list_next (current);
       }
@@ -267,9 +290,156 @@ namespace Marshaller
   gint Slot::CompareAvailbility (Slot *a,
                                  Slot *b)
   {
-    gint delta = g_date_time_compare (a->_end, b->_end);
+    return g_date_time_compare (a->_start, b->_start);
+  }
 
-    return delta;
+  // --------------------------------------------------------------------------------
+  GDateTime *Slot::GetLatestDate (GDateTime *a,
+                                  GDateTime *b)
+  {
+    if (g_date_time_compare (a, b) >= 0)
+    {
+      return a;
+    }
+
+    return b;
+  }
+
+  // --------------------------------------------------------------------------------
+  GList *Slot::GetFreeSlots (Owner     *owner,
+                             GList     *booked_slots,
+                             GDateTime *from,
+                             GTimeSpan  duration)
+  {
+    GList     *slots        = NULL;
+    GList     *current      = booked_slots;
+    GDateTime *rounded_from = GetRoundedDate (from);
+
+    while (current)
+    {
+      GList *next         = g_list_next (current);
+      Slot  *current_slot = (Slot *) current->data;
+      Slot  *free_slot    = NULL;
+
+      if (current == booked_slots)
+      {
+        // Before the booked slots
+        GDateTime *end_time    = g_date_time_add (rounded_from, duration);
+        gboolean   enough_time = (g_date_time_compare (current_slot->_start, end_time) >= 0);
+
+        g_date_time_unref (end_time);
+        if (enough_time)
+        {
+          break;
+        }
+      }
+      if (next == NULL)
+      {
+        // After the booked slots
+        free_slot = new Slot (owner,
+                              GetLatestDate (rounded_from, current_slot->_end),
+                              NULL,
+                              duration);
+      }
+      else
+      {
+        // Between the booked slots
+        Slot      *next_slot      = (Slot *) next->data;
+        GDateTime *max_start_time;
+
+        if (duration == 0)
+        {
+          duration = g_date_time_difference (next_slot->_end,
+                                             current_slot->_start);
+        }
+
+        max_start_time = g_date_time_add (next_slot->_start, -duration);
+
+        if (   (g_date_time_compare (max_start_time, current_slot->_end) > 0)
+            && (g_date_time_compare (max_start_time, rounded_from) >= 0))
+        {
+          free_slot = new Slot (owner,
+                                GetLatestDate (rounded_from, current_slot->_end),
+                                next_slot->_start,
+                                duration);
+        }
+        g_date_time_unref (max_start_time);
+      }
+
+      if (free_slot)
+      {
+        slots = g_list_append (slots,
+                               free_slot);
+      }
+
+      current = g_list_next (current);
+    }
+
+    if (slots == NULL)
+    {
+      GDateTime *now = g_date_time_new_now_local ();
+
+      {
+        GDateTime *rounded_date = Slot::GetRoundedDate (now);
+
+        g_date_time_unref (now);
+        now = rounded_date;
+      }
+
+      {
+        Slot *free_slot = new Slot (owner,
+                                    GetLatestDate (rounded_from, now),
+                                    NULL,
+                                    duration);
+        slots = g_list_append (slots,
+                               free_slot);
+      }
+
+      g_date_time_unref (now);
+    }
+
+    g_date_time_unref (rounded_from);
+
+    return slots;
+  }
+
+  // --------------------------------------------------------------------------------
+  GDateTime *Slot::GetRoundedDate (GDateTime *of)
+  {
+    GDateTime *tmp;
+    GDateTime *new_time;
+
+    new_time = g_date_time_add_minutes (of, 15);
+
+    // Round minutes
+    {
+      gint minutes = g_date_time_get_minute (new_time);
+      gint crumbs  = minutes % 15;
+
+      if (crumbs > 15/2)
+      {
+        tmp = g_date_time_add_minutes (new_time, 15 - crumbs);
+        g_date_time_unref (new_time);
+        new_time = tmp;
+      }
+      else
+      {
+        tmp = g_date_time_add_minutes (new_time, -crumbs);
+        g_date_time_unref (new_time);
+        new_time = tmp;
+      }
+    }
+
+    tmp = g_date_time_new_local (g_date_time_get_year         (new_time),
+                                 g_date_time_get_month        (new_time),
+                                 g_date_time_get_day_of_month (new_time),
+                                 g_date_time_get_hour         (new_time),
+                                 g_date_time_get_minute       (new_time),
+                                 0);
+    g_date_time_unref (new_time);
+    new_time = tmp;
+
+    return new_time;
   }
 
   // --------------------------------------------------------------------------------

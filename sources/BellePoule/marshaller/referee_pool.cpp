@@ -16,6 +16,7 @@
 
 #include "network/message.hpp"
 #include "actors/player_factory.hpp"
+#include "actors/tally_counter.hpp"
 #include "enlisted_referee.hpp"
 #include "job.hpp"
 #include "slot.hpp"
@@ -46,13 +47,37 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *RefereePool::GetList ()
+  void RefereePool::ExpandAll ()
   {
-    return _list_by_weapon;
+    GList *current = _list_by_weapon;
+
+    while (current)
+    {
+      People::RefereesList *list = (People::RefereesList *) current->data;
+
+      list->Expand ();
+
+      current = g_list_next (current);
+    }
   }
 
   // --------------------------------------------------------------------------------
-  void RefereePool::RefreshWorkload (const gchar *weapon_code)
+  void RefereePool::CollapseAll ()
+  {
+    GList *current = _list_by_weapon;
+
+    while (current)
+    {
+      People::RefereesList *list = (People::RefereesList *) current->data;
+
+      list->Collapse ();
+
+      current = g_list_next (current);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  People::RefereesList *RefereePool::GetListOf (const gchar *weapon)
   {
     GList *current_weapon = _list_by_weapon;
 
@@ -60,35 +85,42 @@ namespace Marshaller
     {
       People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
 
-      if (g_strcmp0 (referee_list->GetWeaponCode (), weapon_code) == 0)
+      if (g_strcmp0 (referee_list->GetWeaponCode (), weapon) == 0)
       {
-        gint    all_referee_workload = 0;
-        GSList *current_referee;
-
-        current_referee = referee_list->GetList ();
-        while (current_referee)
-        {
-          EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
-
-          all_referee_workload += referee->GetWorkload ();
-
-          current_referee = g_slist_next (current_referee);
-        }
-
-        current_referee = referee_list->GetList ();
-        while (current_referee)
-        {
-          EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
-
-          referee->SetAllRefereWorkload (all_referee_workload);
-
-          current_referee = g_slist_next (current_referee);
-        }
-
-        break;
+        return referee_list;
       }
 
       current_weapon = g_list_next (current_weapon);
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereePool::RefreshWorkload (const gchar *weapon_code)
+  {
+    People::RefereesList *referee_list         = GetListOf (weapon_code);
+    gint                  all_referee_workload = 0;
+    GSList               *current_referee;
+
+    current_referee = referee_list->GetList ();
+    while (current_referee)
+    {
+      EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+
+      all_referee_workload += referee->GetWorkload ();
+
+      current_referee = g_slist_next (current_referee);
+    }
+
+    current_referee = referee_list->GetList ();
+    while (current_referee)
+    {
+      EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+
+      referee->SetAllRefereWorkload (all_referee_workload);
+
+      current_referee = g_slist_next (current_referee);
     }
   }
 
@@ -140,47 +172,46 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  gboolean RefereePool::WeaponHasReferees (const gchar *weapon)
+  {
+    People::RefereesList *referee_list  = GetListOf (weapon);
+    People::TallyCounter *tally_counter = referee_list->GetTallyCounter ();
+
+    return (tally_counter->GetPresentsCount () > 0);
+  }
+
+  // --------------------------------------------------------------------------------
   EnlistedReferee *RefereePool::GetRefereeFor (Job  *job,
                                                Slot *slot)
   {
-    GList *current_weapon = _list_by_weapon;
-    Batch *batch   = job->GetBatch ();
+    Batch                *batch        = job->GetBatch ();
+    People::RefereesList *referee_list = GetListOf (batch->GetWeaponCode ());
 
-    while (current_weapon)
     {
-      People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
+      GSList          *current_referee;
+      GSList          *sorted_list;
+      EnlistedReferee *available_referee = NULL;
 
-      if (g_strcmp0 (referee_list->GetWeaponCode (), batch->GetWeaponCode ()) == 0)
+      sorted_list = g_slist_sort (g_slist_copy (referee_list->GetList ()),
+                                  (GCompareFunc) EnlistedReferee::CompareWorkload);
+
+      current_referee = sorted_list;
+      while (current_referee)
       {
-        GSList          *current_referee;
-        GSList          *sorted_list;
-        EnlistedReferee *available_referee = NULL;
+        EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
 
-        sorted_list = g_slist_sort (g_slist_copy (referee_list->GetList ()),
-                                    (GCompareFunc) EnlistedReferee::CompareWorkload);
-
-        current_referee = sorted_list;
-        while (current_referee)
+        if (referee->IsAvailableFor (slot))
         {
-          EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
-
-          if (referee->IsAvailableFor (slot))
-          {
-            available_referee = referee;
-            break;
-          }
-
-          current_referee = g_slist_next (current_referee);
+          available_referee = referee;
+          break;
         }
 
-        g_slist_free (sorted_list);
-        return available_referee;
+        current_referee = g_slist_next (current_referee);
       }
 
-      current_weapon = g_list_next (current_weapon);
+      g_slist_free (sorted_list);
+      return available_referee;
     }
-
-    return NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -209,29 +240,18 @@ namespace Marshaller
           referee->Load (xml_nodeset->nodeTab[0]);
 
           {
-            Attribute *weapon_attr    = referee->GetAttribute (&weapon_attr_id);
-            GList     *current_weapon = _list_by_weapon;
+            Attribute            *weapon_attr  = referee->GetAttribute ( &weapon_attr_id);
+            People::RefereesList *referee_list = GetListOf (weapon_attr->GetStrValue ());
 
-            while (current_weapon)
+            if (referee_list->GetPlayerFromRef (referee->GetRef ()) == NULL)
             {
-              People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
-
-              if (g_strcmp0 (referee_list->GetWeaponCode (), weapon_attr->GetStrValue ()) == 0)
-              {
-                if (referee_list->GetPlayerFromRef (referee->GetRef ()) == NULL)
-                {
-                  referee_list->RegisterPlayer (referee,
-                                                NULL);
-                  referee_list->OnListChanged ();
-                }
-                else
-                {
-                  referee->Release ();
-                }
-                break;
-              }
-
-              current_weapon = g_list_next (current_weapon);
+              referee_list->RegisterPlayer (referee,
+                                            NULL);
+              referee_list->OnListChanged ();
+            }
+            else
+            {
+              referee->Release ();
             }
           }
         }

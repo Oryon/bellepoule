@@ -487,7 +487,7 @@ void Player::SetRef (guint ref)
 }
 
 // --------------------------------------------------------------------------------
-Weapon  *Player::GetWeapon ()
+Weapon *Player::GetWeapon ()
 {
   return _weapon;
 }
