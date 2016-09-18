@@ -307,12 +307,12 @@ namespace Marshaller
 
   // --------------------------------------------------------------------------------
   GList *Slot::GetFreeSlots (Owner     *owner,
-                             GList     *busy_slots,
+                             GList     *booked_slots,
                              GDateTime *from,
                              GTimeSpan  duration)
   {
     GList     *slots        = NULL;
-    GList     *current      = busy_slots;
+    GList     *current      = booked_slots;
     GDateTime *rounded_from = GetRoundedDate (from);
 
     while (current)
@@ -321,8 +321,21 @@ namespace Marshaller
       Slot  *current_slot = (Slot *) current->data;
       Slot  *free_slot    = NULL;
 
+      if (current == booked_slots)
+      {
+        // Before the booked slots
+        GDateTime *end_time    = g_date_time_add (rounded_from, duration);
+        gboolean   enough_time = (g_date_time_compare (current_slot->_start, end_time) >= 0);
+
+        g_date_time_unref (end_time);
+        if (enough_time)
+        {
+          break;
+        }
+      }
       if (next == NULL)
       {
+        // After the booked slots
         free_slot = new Slot (owner,
                               GetLatestDate (rounded_from, current_slot->_end),
                               NULL,
@@ -330,6 +343,7 @@ namespace Marshaller
       }
       else
       {
+        // Between the booked slots
         Slot      *next_slot      = (Slot *) next->data;
         GDateTime *max_start_time;
 

@@ -201,9 +201,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GSList *Batch::GetCurrentSelection ()
+  GList *Batch::GetCurrentSelection ()
   {
-    GSList           *result    = NULL;
+    GList            *result    = NULL;
     GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("treeview"));
     GtkTreeSelection *selection = gtk_tree_view_get_selection (tree_view);
 
@@ -227,8 +227,8 @@ namespace Marshaller
                             JOB_ptr,
                             &job, -1);
 
-        result = g_slist_append (result,
-                                 job);
+        result = g_list_append (result,
+                                job);
 
         current = g_list_next (current);
       }

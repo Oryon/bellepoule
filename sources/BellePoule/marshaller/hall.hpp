@@ -99,7 +99,7 @@ namespace Marshaller
 
       Batch *GetBatch (guint id);
 
-      GList *GetFreeSlots (GTimeSpan duration);
+      GList *GetFreePisteSlots (GTimeSpan duration);
 
       Object *GetDropObjectFromRef (guint32 ref,
                                     guint   key);

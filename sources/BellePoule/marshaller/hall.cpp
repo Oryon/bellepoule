@@ -146,8 +146,8 @@ namespace Marshaller
 
       if (batch)
       {
-        GSList    *selection = batch->GetCurrentSelection ();
-        GSList    *current   = selection;
+        GList     *selection = batch->GetCurrentSelection ();
+        GList     *current   = selection;
         GDateTime *now       = g_date_time_new_now_local ();
 
         g_date_time_unref (now);
@@ -160,11 +160,11 @@ namespace Marshaller
 
           slot->AddJob (job);
 
-          current = g_slist_next (current);
+          current = g_list_next (current);
         }
         g_date_time_unref (now);
 
-        g_slist_free (selection);
+        g_list_free (selection);
         _timeline->Redraw ();
         return;
       }
@@ -713,13 +713,28 @@ namespace Marshaller
 
       if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
       {
-        GList *pending_jobs = g_list_copy (batch->GetPendingJobs ());
-        GList *current_job  = pending_jobs;
+        GList *job_list;
+        GList *current_job;
 
+        // All jobs?
+        {
+          GtkToggleButton *all_jobs = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_jobs"));
+
+          if (gtk_toggle_button_get_active (all_jobs))
+          {
+            job_list = g_list_copy (batch->GetPendingJobs ());
+          }
+          else
+          {
+            job_list = g_list_copy (batch->GetCurrentSelection ());
+          }
+        }
+
+        current_job = job_list;
         while (current_job)
         {
           Job   *job          = (Job *) current_job->data;
-          GList *free_slots   = GetFreeSlots (30*G_TIME_SPAN_MINUTE);
+          GList *free_slots   = GetFreePisteSlots (30*G_TIME_SPAN_MINUTE);
           GList *current_slot = free_slots;
 
           while (current_slot)
@@ -745,7 +760,7 @@ namespace Marshaller
           current_job = g_list_next (current_job);
         }
 
-        g_list_free (pending_jobs);
+        g_list_free (job_list);
 
         _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
         _timeline->Redraw ();
@@ -757,7 +772,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *Hall::GetFreeSlots (GTimeSpan duration)
+  GList *Hall::GetFreePisteSlots (GTimeSpan duration)
   {
     GDateTime *when;
     GList     *free_slots   = NULL;

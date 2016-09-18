@@ -58,7 +58,7 @@ namespace Marshaller
 
       void SetProperties (Net::Message *message);
 
-      GSList *GetCurrentSelection ();
+      GList *GetCurrentSelection ();
 
       void OnAssign ();
 
