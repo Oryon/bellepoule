@@ -47,7 +47,11 @@ namespace Marshaller
 
       void Spread ();
 
-      GList *GetList ();
+      void ExpandAll ();
+
+      void CollapseAll ();
+
+      People::RefereesList *GetListOf (const gchar *weapon);
 
     private:
       GList *_list_by_weapon;

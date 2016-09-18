@@ -716,7 +716,7 @@ namespace Marshaller
         GList *job_list;
         GList *current_job;
 
-        // All jobs?
+        // All the jobs?
         {
           GtkToggleButton *all_jobs = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_jobs"));
 
@@ -778,7 +778,7 @@ namespace Marshaller
     GList     *free_slots   = NULL;
     GList     *current      = _piste_list;
 
-    // All pistes?
+    // All the pistes?
     {
       GtkToggleButton *all_pistes = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_pistes"));
 

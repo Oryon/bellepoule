@@ -137,18 +137,7 @@ namespace Marshaller
       gtk_paned_set_position (paned, allocation.width);
     }
 
-    {
-      GList *current = _referee_pool->GetList ();
-
-      while (current)
-      {
-        People::RefereesList *list = (People::RefereesList *) current->data;
-
-        list->Expand ();
-
-        current = g_list_next (current);
-      }
-    }
+    _referee_pool->ExpandAll ();
   }
 
   // --------------------------------------------------------------------------------
@@ -160,18 +149,7 @@ namespace Marshaller
       gtk_paned_set_position (paned, 0);
     }
 
-    {
-      GList *current = _referee_pool->GetList ();
-
-      while (current)
-      {
-        People::RefereesList *list = (People::RefereesList *) current->data;
-
-        list->Collapse ();
-
-        current = g_list_next (current);
-      }
-    }
+    _referee_pool->CollapseAll ();
   }
 
   // --------------------------------------------------------------------------------
