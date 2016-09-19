@@ -101,7 +101,7 @@ namespace Marshaller
   {
     People::RefereesList *referee_list         = GetListOf (weapon_code);
     gint                  all_referee_workload = 0;
-    GSList               *current_referee;
+    GList                *current_referee;
 
     current_referee = referee_list->GetList ();
     while (current_referee)
@@ -110,7 +110,7 @@ namespace Marshaller
 
       all_referee_workload += referee->GetWorkload ();
 
-      current_referee = g_slist_next (current_referee);
+      current_referee = g_list_next (current_referee);
     }
 
     current_referee = referee_list->GetList ();
@@ -120,7 +120,7 @@ namespace Marshaller
 
       referee->SetAllRefereWorkload (all_referee_workload);
 
-      current_referee = g_slist_next (current_referee);
+      current_referee = g_list_next (current_referee);
     }
   }
 
@@ -151,7 +151,7 @@ namespace Marshaller
     while (current_weapon)
     {
       People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
-      GSList               *current      = referee_list->GetList ();
+      GList                *current      = referee_list->GetList ();
 
       while (current)
       {
@@ -162,7 +162,7 @@ namespace Marshaller
           return referee;
         }
 
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
 
       current_weapon = g_list_next (current_weapon);
@@ -178,40 +178,6 @@ namespace Marshaller
     People::TallyCounter *tally_counter = referee_list->GetTallyCounter ();
 
     return (tally_counter->GetPresentsCount () > 0);
-  }
-
-  // --------------------------------------------------------------------------------
-  EnlistedReferee *RefereePool::GetRefereeFor (Job  *job,
-                                               Slot *slot)
-  {
-    Batch                *batch        = job->GetBatch ();
-    People::RefereesList *referee_list = GetListOf (batch->GetWeaponCode ());
-
-    {
-      GSList          *current_referee;
-      GSList          *sorted_list;
-      EnlistedReferee *available_referee = NULL;
-
-      sorted_list = g_slist_sort (g_slist_copy (referee_list->GetList ()),
-                                  (GCompareFunc) EnlistedReferee::CompareWorkload);
-
-      current_referee = sorted_list;
-      while (current_referee)
-      {
-        EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
-
-        if (referee->IsAvailableFor (slot))
-        {
-          available_referee = referee;
-          break;
-        }
-
-        current_referee = g_slist_next (current_referee);
-      }
-
-      g_slist_free (sorted_list);
-      return available_referee;
-    }
   }
 
   // --------------------------------------------------------------------------------

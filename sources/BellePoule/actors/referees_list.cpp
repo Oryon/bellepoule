@@ -169,7 +169,7 @@ namespace People
     Player::AttributeId firstname_attr_id ("first_name");
     Player::AttributeId weapon_attr_id    ("weapon");
     GChecksum *checksum = g_checksum_new (G_CHECKSUM_SHA1);
-    GSList    *current  = GetList ();
+    GList     *current  = GetList ();
 
     while (current)
     {
@@ -199,7 +199,7 @@ namespace People
       g_free (digest);
       g_checksum_reset (checksum);
 
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
 
     g_checksum_free (checksum);
@@ -363,7 +363,7 @@ namespace People
   {
     if (key == _dnd_key)
     {
-      GSList  *selected    = GetSelectedPlayers ();
+      GList   *selected    = GetSelectedPlayers ();
       Player  *referee     = (Player *) selected->data;
       guint32  referee_ref = referee->GetRef ();
 

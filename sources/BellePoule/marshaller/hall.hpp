@@ -101,6 +101,9 @@ namespace Marshaller
 
       GList *GetFreePisteSlots (GTimeSpan duration);
 
+      EnlistedReferee *GetFreeRefereeFor (GList *referee_list,
+                                          Slot  *slot);
+
       Object *GetDropObjectFromRef (guint32 ref,
                                     guint   key);
 

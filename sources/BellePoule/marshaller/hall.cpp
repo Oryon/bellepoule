@@ -714,6 +714,7 @@ namespace Marshaller
       if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
       {
         GList *job_list;
+        GList *referee_list;
         GList *current_job;
 
         // All the jobs?
@@ -730,6 +731,21 @@ namespace Marshaller
           }
         }
 
+        // All the referees?
+        {
+          People::RefereesList *checkin_list = _referee_pool->GetListOf (batch->GetWeaponCode ());
+          GtkToggleButton      *all_referees = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_referees"));
+
+          if (gtk_toggle_button_get_active (all_referees))
+          {
+            referee_list = g_list_copy (checkin_list->GetList ());
+          }
+          else
+          {
+            referee_list = checkin_list->GetSelectedPlayers ();
+          }
+        }
+
         current_job = job_list;
         while (current_job)
         {
@@ -742,8 +758,8 @@ namespace Marshaller
             Slot            *slot    = (Slot *) current_slot->data;
             EnlistedReferee *referee;
 
-            referee = _referee_pool->GetRefereeFor (job,
-                                                    slot);
+            referee = GetFreeRefereeFor (referee_list,
+                                         slot);
             if (referee)
             {
               slot->Retain ();
@@ -761,6 +777,7 @@ namespace Marshaller
         }
 
         g_list_free (job_list);
+        g_list_free (referee_list);
 
         _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
         _timeline->Redraw ();
@@ -824,6 +841,35 @@ namespace Marshaller
                               (GCompareFunc) Slot::CompareAvailbility);
 
     return free_slots;
+  }
+
+  // --------------------------------------------------------------------------------
+  EnlistedReferee *Hall::GetFreeRefereeFor (GList *referee_list,
+                                            Slot  *slot)
+  {
+    GList           *current_referee;
+    GList           *sorted_list;
+    EnlistedReferee *available_referee = NULL;
+
+    sorted_list = g_list_sort (g_list_copy (referee_list),
+                               (GCompareFunc) EnlistedReferee::CompareWorkload);
+
+    current_referee = sorted_list;
+    while (current_referee)
+    {
+      EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+
+      if (referee->IsAvailableFor (slot))
+      {
+        available_referee = referee;
+        break;
+      }
+
+      current_referee = g_list_next (current_referee);
+    }
+
+    g_list_free (sorted_list);
+    return available_referee;
   }
 
   // --------------------------------------------------------------------------------

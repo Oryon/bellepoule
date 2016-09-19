@@ -283,7 +283,7 @@ namespace People
                                  BAD_CAST players_class_xml_tag);
 
       {
-        GSList *current = _player_list;
+        GList *current = _player_list;
 
         while (current)
         {
@@ -293,7 +293,7 @@ namespace People
                       player_class,
                       p);
 
-          current = g_slist_next (current);
+          current = g_list_next (current);
         }
       }
 
@@ -1056,7 +1056,7 @@ namespace People
   void Checkin::OnToggleAllPlayers (gboolean present)
   {
     Player::AttributeId  attr_id ("attending");
-    GSList              *current_player = _player_list;
+    GList               *current_player = _player_list;
 
     while (current_player)
     {
@@ -1065,7 +1065,7 @@ namespace People
       TogglePlayerAttr (p,
                         &attr_id,
                         present);
-      current_player = g_slist_next (current_player);
+      current_player = g_list_next (current_player);
     }
     OnListChanged ();
   }

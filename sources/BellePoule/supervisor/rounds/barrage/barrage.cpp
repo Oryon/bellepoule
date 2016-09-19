@@ -186,14 +186,14 @@ namespace People
     {
       promoted_attr_id.MakeRandomReady (_rand_seed);
 
-      _player_list = g_slist_sort_with_data (_player_list,
-                                             (GCompareDataFunc) Player::Compare,
-                                             &promoted_attr_id);
-      _player_list = g_slist_reverse (_player_list);
+      _player_list = g_list_sort_with_data (_player_list,
+                                            (GCompareDataFunc) Player::Compare,
+                                            &promoted_attr_id);
+      _player_list = g_list_reverse (_player_list);
     }
 
     {
-      GSList *current = _player_list;
+      GList *current = _player_list;
 
       while (current != NULL)
       {
@@ -214,7 +214,7 @@ namespace People
         result = g_slist_append (result,
                                  player);
 
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
 

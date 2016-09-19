@@ -365,7 +365,7 @@ namespace People
     // Both are almost similar except that they use a same keyword ("classement")
     // for a different meanning.
     {
-      GSList *current = _player_list;
+      GList *current = _player_list;
 
       while (current)
       {
@@ -386,14 +386,14 @@ namespace People
             Update (p);
           }
         }
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
 
     // FFE xml files may have teams with attending attribute set!
     // By default everybody is absent.
     {
-      GSList *current = _player_list;
+      GList *current = _player_list;
 
       while (current)
       {
@@ -406,7 +406,7 @@ namespace People
           team->SetAttendingFromMembers  ();
           Update (team);
         }
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
   }
@@ -423,9 +423,9 @@ namespace People
       attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
       attr_list = g_slist_prepend (attr_list, &name_attr_id);
 
-      _player_list = g_slist_sort_with_data (_player_list,
-                                             (GCompareDataFunc) Player::MultiCompare,
-                                             attr_list);
+      _player_list = g_list_sort_with_data (_player_list,
+                                            (GCompareDataFunc) Player::MultiCompare,
+                                            attr_list);
       g_slist_free (attr_list);
     }
 
@@ -435,7 +435,7 @@ namespace People
     {
       Player::AttributeId  attr_id ("attending");
       GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
-      GSList              *current_player = _player_list;
+      GList               *current_player = _player_list;
       guint                ref            = 1;
       guint                absent_ref     = 10000;
 
@@ -475,7 +475,7 @@ namespace People
             absent_ref++;
           }
         }
-        current_player = g_slist_next (current_player);
+        current_player = g_list_next (current_player);
       }
 
       _checksum_list = g_slist_reverse (_checksum_list);
@@ -498,7 +498,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::UpdateRanking ()
   {
-    guint                nb_player = g_slist_length (_player_list);
+    guint                nb_player = g_list_length (_player_list);
     Player::AttributeId *rank_criteria_id;
 
     {
@@ -507,13 +507,13 @@ namespace People
       rank_criteria_id->MakeRandomReady (_rand_seed);
     }
 
-    _player_list = g_slist_sort_with_data (_player_list,
-                                           (GCompareDataFunc) Player::Compare,
-                                           rank_criteria_id);
+    _player_list = g_list_sort_with_data (_player_list,
+                                          (GCompareDataFunc) Player::Compare,
+                                          rank_criteria_id);
 
     {
       Player *previous_player  = NULL;
-      GSList *current_player   = _player_list;
+      GList  *current_player   = _player_list;
       gint    stage_start_rank = 0;
       guint   nb_present       = 1;
 
@@ -565,7 +565,7 @@ namespace People
         }
         Update (p);
 
-        current_player = g_slist_next (current_player);
+        current_player = g_list_next (current_player);
       }
     }
     rank_criteria_id->Release ();
@@ -667,7 +667,7 @@ namespace People
       }
       else
       {
-        GSList *current = _player_list;
+        GList *current = _player_list;
 
         while (current)
         {
@@ -679,7 +679,7 @@ namespace People
 
             ApplyConfig (current_team);
           }
-          current = g_slist_next (current);
+          current = g_list_next (current);
         }
       }
     }
@@ -1148,7 +1148,7 @@ namespace People
     RankImporter *importer = new RankImporter (Global::_user_config->_key_file);
 
     {
-      GSList *current = _player_list;
+      GList *current = _player_list;
 
       while (current)
       {
@@ -1157,7 +1157,7 @@ namespace People
         importer->ModifyRank (fencer);
         Update (fencer);
 
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
 
@@ -1175,7 +1175,7 @@ namespace People
   {
     if (key == _dnd_key)
     {
-      GSList  *selected   = GetSelectedPlayers ();
+      GList   *selected   = GetSelectedPlayers ();
       Player  *fencer     = (Player *) selected->data;
       guint32  fencer_ref = fencer->GetRef ();
 

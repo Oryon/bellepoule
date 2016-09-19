@@ -38,9 +38,6 @@ namespace Marshaller
 
       EnlistedReferee *GetReferee (guint ref);
 
-      EnlistedReferee *GetRefereeFor (Job  *job,
-                                      Slot *slot);
-
       gboolean WeaponHasReferees (const gchar *weapon);
 
       void RefreshWorkload (const gchar *);
