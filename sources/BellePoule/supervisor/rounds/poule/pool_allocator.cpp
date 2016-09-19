@@ -2002,11 +2002,8 @@ namespace Pool
                       zone);
           return;
         }
-        else
-        {
-          pool->RemoveReferee ((Player *) referee);
-        }
       }
+      pool->RemoveAllReferee ();
     }
 
     FillPoolTable (zone);

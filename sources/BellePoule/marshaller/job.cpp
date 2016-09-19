@@ -100,6 +100,7 @@ namespace Marshaller
 
     _parcel->Remove ("piste");
     _parcel->Remove ("start_time");
+    _parcel->Remove ("referee");
   }
 
   // --------------------------------------------------------------------------------

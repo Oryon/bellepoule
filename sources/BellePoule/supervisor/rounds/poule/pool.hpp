@@ -63,28 +63,30 @@ namespace Pool
             const gchar *xml_player_tag,
             guint32      rand_seed);
 
-      void         SetIdChain    (const gchar *contest, const gchar *stage_name, guint stage_id);
-      void         SetPiste      (guint piste);
-      guint        GetPiste      ();
-      const gchar *GetStartTime ();
-      void         AddFencer     (Player *player, Object *rank_owner);
-      void         AddReferee    (Player *player);
-      void         CreateMatchs  (GSList *affinity_criteria_list);
-      void         RemoveFencer  (Player *player, Object *rank_owner);
-      void         RemoveReferee (Player *player);
-      guint        GetNbPlayers  ();
-      guint        GetNbMatchs   ();
-      guint        GetNumber     ();
-      guint        GetStrength   ();
-      void         DropPlayer    (Player *player, gchar *reason);
-      void         RestorePlayer (Player *player);
-      void         CleanScores   ();
-      void         DeleteMatchs  ();
-      void         Lock          ();
-      void         UnLock        ();
-      void         SetDataOwner  (Object *current_round_owner,
-                                  Object *combined_owner,
-                                  Object *combined_source_owner);
+      void         SetIdChain       (const gchar *contest, const gchar *stage_name, guint stage_id);
+      void         SetPiste         (guint piste);
+      guint        GetPiste         ();
+      const gchar *GetStartTime     ();
+      void         AddFencer        (Player *player, Object *rank_owner);
+      void         AddReferee       (Player *player);
+      void         CreateMatchs     (GSList *affinity_criteria_list);
+      void         RemoveFencer     (Player *player, Object *rank_owner);
+      void         RemoveReferee    (Player *player);
+      void         RemoveAllReferee ();
+      guint        GetNbPlayers     ();
+      guint        GetNbMatchs      ();
+      guint        GetNumber        ();
+      guint        GetStrength      ();
+      void         DropPlayer       (Player *player, gchar *reason);
+      void         RestorePlayer    (Player *player);
+      void         CleanScores      ();
+      void         DeleteMatchs     ();
+      void         Lock             ();
+      void         UnLock           ();
+      void         SetDataOwner     (Object *current_round_owner,
+                                     Object *combined_owner,
+                                     Object *combined_source_owner);
+
       void OnStatusChanged   (GtkComboBox *combo_box);
       void CopyPlayersStatus (Object *from);
 
