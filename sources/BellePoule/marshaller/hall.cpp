@@ -578,17 +578,44 @@ namespace Marshaller
 
     if (slot)
     {
-      GtkWidget  *dialog      = _glade->GetWidget ("job_list_dialog");
-      GtkWidget  *viewport    = _glade->GetWidget ("job_details_viewport");
-      JobDetails *job_details = new JobDetails (slot->GetJobList ());
+      GtkWidget  *dialog          = _glade->GetWidget ("job_list_dialog");
+      JobDetails *referee_details;
+      JobDetails *fencer_details;
 
-      Plug (job_details,
-            viewport);
+      {
+        referee_details = new JobDetails (slot->GetRefereeList ());
+
+        Plug (referee_details,
+              _glade->GetWidget ("referee_detail_hook"));
+      }
+
+      {
+        GList *current_job = slot->GetJobList ();
+        GList *fencer_list = NULL;
+
+        while (current_job)
+        {
+          Job   *job  = (Job *) current_job->data;
+          GList *list = job->GetFencerList ();
+
+          fencer_list = g_list_concat (fencer_list,
+                                       g_list_copy (list));
+
+          current_job = g_list_next (current_job);
+        }
+
+        fencer_details = new JobDetails (fencer_list);
+        g_list_free (fencer_list);
+
+        Plug (fencer_details,
+              _glade->GetWidget ("fencer_detail_hook"));
+      }
 
       gtk_dialog_run (GTK_DIALOG (dialog));
-
       gtk_widget_hide (dialog);
-      job_details->Release ();
+
+      referee_details->Release ();
+      fencer_details->Release  ();
     }
     g_date_time_unref (cursor);
   }

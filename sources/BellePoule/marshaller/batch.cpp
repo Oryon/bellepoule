@@ -387,7 +387,6 @@ namespace Marshaller
       gchar     *xml = message->GetString ("xml");
       xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
 
-      printf ("%s\n", xml);
       if (doc)
       {
         xmlXPathInit ();
