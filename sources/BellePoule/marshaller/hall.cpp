@@ -20,6 +20,7 @@
 #include "batch.hpp"
 #include "referee_pool.hpp"
 #include "timeline.hpp"
+#include "job_details.hpp"
 #include "lasso.hpp"
 
 #include "hall.hpp"
@@ -577,21 +578,17 @@ namespace Marshaller
 
     if (slot)
     {
-      GtkWidget *dialog = _glade->GetWidget ("job_list_dialog");
+      GtkWidget  *dialog      = _glade->GetWidget ("job_list_dialog");
+      GtkWidget  *viewport    = _glade->GetWidget ("job_details_viewport");
+      JobDetails *job_details = new JobDetails (slot->GetJobList ());
 
-      if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
-      {
-        GList *current = slot->GetJobList ();
+      Plug (job_details,
+            viewport);
 
-        while (current)
-        {
-          Job *job = (Job *) current->data;
-
-          current = g_list_next (current);
-        }
-      }
+      gtk_dialog_run (GTK_DIALOG (dialog));
 
       gtk_widget_hide (dialog);
+      job_details->Release ();
     }
     g_date_time_unref (cursor);
   }

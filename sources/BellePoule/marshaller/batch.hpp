@@ -22,6 +22,8 @@
 #include "network/message.hpp"
 #include "util/module.hpp"
 
+class Player;
+
 namespace Marshaller
 {
   class Job;
@@ -87,9 +89,12 @@ namespace Marshaller
       virtual ~Batch ();
 
       void LoadJob (xmlNode *xml_node,
-                    guint    uuid);
+                    guint    uuid,
+                    Job     *job = NULL);
 
       Job *GetJob (guint uuid);
+
+      Player *GetFencer (guint ref);
 
       void SetProperty (Net::Message *message,
                         const gchar  *property);

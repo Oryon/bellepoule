@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/player.hpp"
 #include "network/message.hpp"
 #include "slot.hpp"
 
@@ -28,12 +29,13 @@ namespace Marshaller
             GdkColor *gdk_color)
     : Object ("Job")
   {
-     _gdk_color     = gdk_color_copy (gdk_color);
-     _name          = NULL;
-     _batch         = batch;
-     _uuid          = uuid;
-     _sibling_order = sibling_order;
-     _slot          = NULL;
+    _fencer_list   = NULL;
+    _gdk_color     = gdk_color_copy (gdk_color);
+    _name          = NULL;
+    _batch         = batch;
+    _uuid          = uuid;
+    _sibling_order = sibling_order;
+    _slot          = NULL;
 
     Disclose ("Roadmap");
     _parcel->Set ("listener", uuid);
@@ -49,6 +51,9 @@ namespace Marshaller
 
     g_free         (_name);
     gdk_color_free (_gdk_color);
+
+    g_list_free_full (_fencer_list,
+                      (GDestroyNotify) Object::TryToRelease);
   }
 
   // --------------------------------------------------------------------------------
@@ -73,6 +78,20 @@ namespace Marshaller
   const gchar *Job::GetName ()
   {
     return _name;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Job::AddFencer (Player *fencer)
+  {
+    fencer->Retain ();
+    _fencer_list = g_list_append (_fencer_list,
+                                  fencer);
+  }
+
+  // --------------------------------------------------------------------------------
+  GList *Job::GetFencerList ()
+  {
+    return _fencer_list;
   }
 
   // --------------------------------------------------------------------------------

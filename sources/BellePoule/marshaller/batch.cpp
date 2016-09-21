@@ -17,6 +17,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include "util/player.hpp"
 #include "actors/player_factory.hpp"
 
 #include "job.hpp"
@@ -386,6 +387,7 @@ namespace Marshaller
       gchar     *xml = message->GetString ("xml");
       xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
 
+      printf ("%s\n", xml);
       if (doc)
       {
         xmlXPathInit ();
@@ -419,7 +421,8 @@ namespace Marshaller
 
   // --------------------------------------------------------------------------------
   void Batch::LoadJob (xmlNode *xml_node,
-                       guint    uuid)
+                       guint    uuid,
+                       Job     *job)
   {
     for (xmlNode *n = xml_node; n != NULL; n = n->next)
     {
@@ -442,7 +445,8 @@ namespace Marshaller
           gchar       *attr;
           gchar       *name;
           guint        sibling_order = g_list_length (_pending_list);
-          Job         *job = new Job (this, uuid, sibling_order, _gdk_color);
+
+          job = new Job (this, uuid, sibling_order, _gdk_color);
 
           attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
           if (attr)
@@ -468,9 +472,14 @@ namespace Marshaller
           _pending_list = g_list_append (_pending_list,
                                          job);
         }
+        else if (g_strcmp0 ((char *) n->name, "Tireur") == 0)
+        {
+          job->AddFencer (GetFencer (atoi ((gchar *) xmlGetProp (n, BAD_CAST "REF"))));
+        }
 
         LoadJob (n->children,
-                 uuid);
+                 uuid,
+                 job);
       }
     }
   }
@@ -563,6 +572,26 @@ namespace Marshaller
 
       current = g_list_next (current);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  Player *Batch::GetFencer (guint ref)
+  {
+    GList *current = _fencer_list;
+
+    while (current)
+    {
+      Player *fencer = (Player *) current->data;
+
+      if (fencer->GetRef () == ref)
+      {
+        return fencer;
+      }
+
+      current = g_list_next (current);
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
