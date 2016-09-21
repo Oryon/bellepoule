@@ -88,10 +88,7 @@ namespace Pool
     g_free (_name);
     Object::TryToRelease (_start_time);
 
-    while (_referee_list)
-    {
-      RemoveReferee ((Player *) _referee_list->data);
-    }
+    RemoveAllReferee ();
 
     g_slist_free (_fencer_list);
     g_slist_free (_sorted_fencer_list);
@@ -405,6 +402,15 @@ namespace Pool
       _referee_list = g_slist_remove (_referee_list,
                                       referee);
       referee->RemoveCbkOwner (this);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::RemoveAllReferee ()
+  {
+    while (_referee_list)
+    {
+      RemoveReferee ((Player *) _referee_list->data);
     }
   }
 

@@ -224,7 +224,7 @@ namespace People
   {
     Player::AttributeId rank_attr_id          ("rank", this);
     Player::AttributeId previous_rank_attr_id ("rank", GetPreviousStage ());
-    GSList *current = _player_list;
+    GList  *current = _player_list;
 
     while (current)
     {
@@ -233,7 +233,7 @@ namespace People
 
       fencer->SetAttributeValue (&rank_attr_id,
                                  previous_rank->GetIntValue ());
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
 
     return GetRemainingList ();

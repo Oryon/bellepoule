@@ -51,7 +51,9 @@ namespace People
 
       Player *GetPlayerFromRef (guint ref);
 
-      GSList *GetList ();
+      GList *GetList ();
+
+      GList *GetSelectedPlayers ();
 
       virtual guint PreparePrint (GtkPrintOperation *operation,
                                   GtkPrintContext   *context);
@@ -82,8 +84,9 @@ namespace People
       static const guint MODIFIABLE = 0x00000002;
 
     protected:
-      GtkTreeView *_tree_view;
-      GSList      *_player_list;
+      GtkTreeView  *_tree_view;
+      GList        *_player_list;
+      GtkUIManager *_ui_manager;
 
       typedef gboolean (*CustomFilter) (Player *player, PlayersList *owner);
 
@@ -97,8 +100,6 @@ namespace People
 
       GSList *CreateCustomList (CustomFilter  filter,
                                 PlayersList  *owner);
-
-      GSList *GetSelectedPlayers ();
 
       void SetAttributeRight (const gchar *name,
                               gboolean     modifiable);
@@ -125,7 +126,7 @@ namespace People
                             gpointer                      data);
 
     private:
-      static GSList *_clipboard;
+      static GList *_clipboard;
 
       guint         _rights;
       guint         _nb_player_per_page;
@@ -135,7 +136,6 @@ namespace People
       gdouble      *_column_width;
       gboolean      _flat_print;
       PlayersStore *_store;
-      GtkUIManager *_ui_manager;
 
       void RefreshDisplay ();
 

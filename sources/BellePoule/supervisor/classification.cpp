@@ -75,7 +75,7 @@ void Classification::DumpToFFF (gchar   *filename,
   if (file)
   {
     Player::AttributeId  attr_id ("global_status");
-    GSList              *current_player = _player_list;
+    GList               *current_player = _player_list;
     Weapon              *weapon = contest->GetWeapon ();
 
     fprintf (file, "FFF;WIN;competition;%s;individuel\n", contest->GetOrganizer ());
@@ -176,7 +176,7 @@ void Classification::DumpToFFF (gchar   *filename,
 
         fprintf (file, "\n");
       }
-      current_player = g_slist_next (current_player);
+      current_player = g_list_next (current_player);
     }
     fclose (file);
   }

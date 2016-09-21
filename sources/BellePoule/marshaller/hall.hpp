@@ -101,6 +101,9 @@ namespace Marshaller
 
       GList *GetFreePisteSlots (GTimeSpan duration);
 
+      EnlistedReferee *GetFreeRefereeFor (GList *referee_list,
+                                          Slot  *slot);
+
       Object *GetDropObjectFromRef (guint32 ref,
                                     guint   key);
 
@@ -128,6 +131,9 @@ namespace Marshaller
       gboolean OnCursorMotion (GdkEventMotion *event);
 
       void OnPisteButtonEvent (Piste          *piste,
+                               GdkEventButton *event);
+
+      void OnPisteDoubleClick (Piste          *piste,
                                GdkEventButton *event);
 
       void OnPisteMotionEvent (Piste          *piste,

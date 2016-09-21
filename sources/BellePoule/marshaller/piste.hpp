@@ -39,6 +39,8 @@ namespace Marshaller
       {
         virtual void OnPisteButtonEvent (Piste          *piste,
                                          GdkEventButton *event) = 0;
+        virtual void OnPisteDoubleClick (Piste          *piste,
+                                         GdkEventButton *event) = 0;
         virtual void OnPisteMotionEvent (Piste          *piste,
                                          GdkEventMotion *event) = 0;
       };
@@ -147,6 +149,9 @@ namespace Marshaller
 
       static gint CompareJob (Job *a,
                               Job *b);
+
+    private:
+      guint32 _button_press_time;
   };
 }
 
