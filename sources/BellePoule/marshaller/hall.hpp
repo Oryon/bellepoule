@@ -133,6 +133,9 @@ namespace Marshaller
       void OnPisteButtonEvent (Piste          *piste,
                                GdkEventButton *event);
 
+      void OnPisteDoubleClick (Piste          *piste,
+                               GdkEventButton *event);
+
       void OnPisteMotionEvent (Piste          *piste,
                                GdkEventMotion *event);
 

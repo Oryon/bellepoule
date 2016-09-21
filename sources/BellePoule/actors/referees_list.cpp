@@ -104,7 +104,50 @@ namespace People
                                      "preferences-desktop-theme");
     }
 
-    SetPasteVisibility (TRUE);
+    // Popup menu
+    {
+      SetPasteVisibility (TRUE);
+
+      {
+        GError *error = NULL;
+        static const gchar xml[] =
+          "<ui>\n"
+          "  <popup name='PopupMenu'>\n"
+          "    <separator/>\n"
+          "    <menuitem action='JobListAction'/>\n"
+          "  </popup>\n"
+          "</ui>";
+
+        if (gtk_ui_manager_add_ui_from_string (_ui_manager,
+                                               xml,
+                                               -1,
+                                               &error) == FALSE)
+        {
+          g_message ("building menus failed: %s", error->message);
+          g_error_free (error);
+          error = NULL;
+        }
+      }
+
+      // Actions
+      {
+        GtkActionGroup *action_group = gtk_action_group_new ("RefereesListActionGroup");
+        static GtkActionEntry entries[] =
+        {
+          {"JobListAction", GTK_STOCK_JUSTIFY_FILL, gettext ("View job list"), NULL, NULL, NULL}
+        };
+
+        gtk_action_group_add_actions (action_group,
+                                      entries,
+                                      G_N_ELEMENTS (entries),
+                                      this);
+        gtk_ui_manager_insert_action_group (_ui_manager,
+                                            action_group,
+                                            0);
+
+        g_object_unref (G_OBJECT (action_group));
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -84,8 +84,9 @@ namespace People
       static const guint MODIFIABLE = 0x00000002;
 
     protected:
-      GtkTreeView *_tree_view;
-      GList       *_player_list;
+      GtkTreeView  *_tree_view;
+      GList        *_player_list;
+      GtkUIManager *_ui_manager;
 
       typedef gboolean (*CustomFilter) (Player *player, PlayersList *owner);
 
@@ -135,7 +136,6 @@ namespace People
       gdouble      *_column_width;
       gboolean      _flat_print;
       PlayersStore *_store;
-      GtkUIManager *_ui_manager;
 
       void RefreshDisplay ();
 

@@ -569,6 +569,34 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::OnPisteDoubleClick (Piste          *piste,
+                                 GdkEventButton *event)
+  {
+    GDateTime *cursor = _timeline->RetreiveCursorTime ();
+    Slot      *slot   = piste->GetSlotAt (cursor);
+
+    if (slot)
+    {
+      GtkWidget *dialog = _glade->GetWidget ("job_list_dialog");
+
+      if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
+      {
+        GList *current = slot->GetJobList ();
+
+        while (current)
+        {
+          Job *job = (Job *) current->data;
+
+          current = g_list_next (current);
+        }
+      }
+
+      gtk_widget_hide (dialog);
+    }
+    g_date_time_unref (cursor);
+  }
+
+  // --------------------------------------------------------------------------------
   void Hall::OnPisteButtonEvent (Piste          *piste,
                                  GdkEventButton *event)
   {
@@ -579,6 +607,10 @@ namespace Marshaller
         if (event->state & GDK_CONTROL_MASK)
         {
           UnSelectPiste (piste);
+        }
+        else
+        {
+          SetCursor (GDK_FLEUR);
         }
       }
       else
