@@ -143,6 +143,8 @@ namespace Marshaller
 
       void OnBatchAssignmentCancel (Batch *batch);
 
+      void OnJobDetailsDisplayRequest (Job *job);
+
       void OnTimelineCursorMoved ();
   };
 }

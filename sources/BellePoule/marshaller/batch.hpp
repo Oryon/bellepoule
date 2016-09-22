@@ -33,8 +33,9 @@ namespace Marshaller
     public:
       struct Listener
       {
-        virtual void OnBatchAssignmentRequest (Batch *batch) = 0;
-        virtual void OnBatchAssignmentCancel  (Batch *batch) = 0;
+        virtual void OnBatchAssignmentRequest   (Batch *batch) = 0;
+        virtual void OnBatchAssignmentCancel    (Batch *batch) = 0;
+        virtual void OnJobDetailsDisplayRequest (Job   *job)   = 0;
       };
 
     public:
@@ -73,6 +74,8 @@ namespace Marshaller
       void ManageFencer (Net::Message *message);
 
       void DeleteFencer (Net::Message *message);
+
+      void on_batch_treeview_row_activated (GtkTreePath *path);
 
     private:
       guint32       _id;

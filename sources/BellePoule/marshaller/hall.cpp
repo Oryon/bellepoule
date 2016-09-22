@@ -149,21 +149,19 @@ namespace Marshaller
       {
         GList     *selection = batch->GetCurrentSelection ();
         GList     *current   = selection;
-        GDateTime *now       = g_date_time_new_now_local ();
-
-        g_date_time_unref (now);
+        GDateTime *from      = _timeline->RetreiveCursorTime ();
 
         while (current)
         {
           Job   *job   = (Job *) current->data;
-          GList *slots = piste->GetFreeSlots (now, 30 *G_TIME_SPAN_MINUTE);
+          GList *slots = piste->GetFreeSlots (from, 30 *G_TIME_SPAN_MINUTE);
           Slot  *slot  = (Slot *) slots->data;
 
           slot->AddJob (job);
 
           current = g_list_next (current);
         }
-        g_date_time_unref (now);
+        g_date_time_unref (from);
 
         g_list_free (selection);
         _timeline->Redraw ();
@@ -618,6 +616,20 @@ namespace Marshaller
       fencer_details->Release  ();
     }
     g_date_time_unref (cursor);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::OnJobDetailsDisplayRequest (Job *job)
+  {
+    GtkWidget  *dialog  = _glade->GetWidget ("job_list_dialog");
+    JobDetails *details = new JobDetails (job->GetFencerList ());
+
+    Plug (details,
+          _glade->GetWidget ("fencer_detail_hook"));
+
+    gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_hide (dialog);
+    details->Release  ();
   }
 
   // --------------------------------------------------------------------------------

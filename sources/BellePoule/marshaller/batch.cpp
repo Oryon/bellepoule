@@ -60,14 +60,14 @@ namespace Marshaller
     _gdk_color = NULL;
 
     {
-      GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("treeview"));
+      GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("batch_treeview"));
 
       gtk_tree_selection_set_mode (gtk_tree_view_get_selection (treeview),
                                    GTK_SELECTION_MULTIPLE);
     }
 
     {
-      GtkWidget *source = _glade->GetWidget ("treeview");
+      GtkWidget *source = _glade->GetWidget ("batch_treeview");
 
       _dnd_key = _dnd_config->AddTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
@@ -205,7 +205,7 @@ namespace Marshaller
   GList *Batch::GetCurrentSelection ()
   {
     GList            *result    = NULL;
-    GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("treeview"));
+    GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("batch_treeview"));
     GtkTreeSelection *selection = gtk_tree_view_get_selection (tree_view);
 
     if (selection)
@@ -591,6 +591,34 @@ namespace Marshaller
     }
 
     return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_batch_treeview_row_activated  (GtkTreeView       *tree_view,
+                                                                    GtkTreePath       *path,
+                                                                    GtkTreeViewColumn *column,
+                                                                    Object            *owner)
+  {
+    Batch *b = dynamic_cast <Batch *> (owner);
+
+    b->on_batch_treeview_row_activated (path);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Batch::on_batch_treeview_row_activated (GtkTreePath *path)
+  {
+    GtkTreeModel *model = GTK_TREE_MODEL (_job_store);
+    Job          *job;
+    GtkTreeIter   iter;
+
+    gtk_tree_model_get_iter (model,
+                             &iter,
+                             path);
+    gtk_tree_model_get (model, &iter,
+                        JOB_ptr,
+                        &job, -1);
+
+    _listener->OnJobDetailsDisplayRequest (job);
   }
 
   // --------------------------------------------------------------------------------
