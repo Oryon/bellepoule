@@ -11,9 +11,11 @@ UBUNTU  = trusty
 V       = 1
 DATE    = $(shell date -R)
 
+ifneq ($(UBUNTU), windows)
 #STEP    = ubuntu8
 VERSION_FILE = "../../sources/BellePoule/application/version.h"
 STEP := $(shell grep VERSION_MATURITY $(VERSION_FILE) | sed 's/.*alpha0/ubuntu/' | sed 's/.*alpha/ubuntu/' | sed 's/"//')
+endif
 
 #----------------------------------------------------
 #-- Compilers ---------------------------------------

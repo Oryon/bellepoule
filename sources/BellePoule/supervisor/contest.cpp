@@ -729,13 +729,14 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
     _schedule->SetTeamEvent (_team_event);
 
+    _referees_list->SetWeapon (_weapon);
+    _referees_list->ConvertFromBaseToResult ();
+
     if (need_post_processing)
     {
       People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
 
       checkin->ConvertFromBaseToResult ();
-      _referees_list->SetWeapon (_weapon);
-      _referees_list->ConvertFromBaseToResult ();
     }
   }
 

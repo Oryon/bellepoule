@@ -217,8 +217,8 @@ namespace People
     while (current)
     {
       Player    *referee        = (Player *) current->data;
-      Attribute *name_attr      = referee->GetAttribute ( &name_attr_id);
-      Attribute *firstname_attr = referee->GetAttribute ( &firstname_attr_id);
+      Attribute *name_attr      = referee->GetAttribute (&name_attr_id);
+      Attribute *firstname_attr = referee->GetAttribute (&firstname_attr_id);
       gchar     *digest;
 
       if (_weapon)
