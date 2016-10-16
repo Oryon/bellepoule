@@ -37,6 +37,8 @@ namespace Marshaller
                 Module        *container)
     : DropZone (container)
   {
+    _button_press_time = 0;
+
     _horizontal = TRUE;
     _listener   = NULL;
     _slots      = NULL;
@@ -507,8 +509,17 @@ namespace Marshaller
   {
     if (event->button == 1)
     {
-      piste->_listener->OnPisteButtonEvent (piste,
-                                            event);
+      if (event->time == piste->_button_press_time)
+      {
+        piste->_listener->OnPisteDoubleClick (piste,
+                                              event);
+      }
+      else
+      {
+        piste->_listener->OnPisteButtonEvent (piste,
+                                              event);
+      }
+      piste->_button_press_time = event->time;
 
       return TRUE;
     }

@@ -26,7 +26,7 @@
 
 namespace People
 {
-  GSList *PlayersList::_clipboard = NULL;
+  GList *PlayersList::_clipboard = NULL;
 
   // --------------------------------------------------------------------------------
   PlayersList::PlayersList (const gchar *glade_file,
@@ -244,14 +244,14 @@ namespace People
     OnAttrListUpdated ();
 
     {
-      GSList *current = _player_list;
+      GList *current = _player_list;
 
       while (current)
       {
         Player *player = (Player *) current->data;
 
         Update (player);
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
 
@@ -278,7 +278,7 @@ namespace People
   {
     if (ref)
     {
-      GSList *current = _player_list;
+      GList *current = _player_list;
 
       while (current)
       {
@@ -288,7 +288,7 @@ namespace People
         {
           return player;
         }
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
 
@@ -353,7 +353,7 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  GSList *PlayersList::GetList ()
+  GList *PlayersList::GetList ()
   {
     return _player_list;
   }
@@ -363,7 +363,7 @@ namespace People
                                          PlayersList *owner)
   {
     GSList *custom_list = NULL;
-    GSList *current     = _player_list;
+    GList *current     = _player_list;
 
     while (current)
     {
@@ -374,7 +374,7 @@ namespace People
         custom_list = g_slist_append (custom_list,
                                       p);
       }
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
 
     return custom_list;
@@ -395,9 +395,9 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  GSList *PlayersList::GetSelectedPlayers ()
+  GList *PlayersList::GetSelectedPlayers ()
   {
-    GSList           *result         = NULL;
+    GList            *result         = NULL;
     GtkTreeSelection *selection      = gtk_tree_view_get_selection (_tree_view);
     GList            *selection_list = gtk_tree_selection_get_selected_rows (selection,
                                                                              NULL);
@@ -414,8 +414,8 @@ namespace People
 
       if (p)
       {
-        result = g_slist_append (result,
-                                 p);
+        result = g_list_append (result,
+                                p);
       }
     }
 
@@ -452,11 +452,11 @@ namespace People
     if (gtk_tree_selection_path_is_selected (gtk_tree_view_get_selection (_tree_view),
                                              toggeled_path))
     {
-      GSList *selected_players = GetSelectedPlayers ();
+      GList *selected_players = GetSelectedPlayers ();
 
       if (selected_players)
       {
-        GSList *current_player = selected_players;
+        GList *current_player = selected_players;
 
         while (current_player)
         {
@@ -465,10 +465,10 @@ namespace People
           TogglePlayerAttr (p,
                             attr_id,
                             !is_active);
-          current_player = g_slist_next (current_player);
+          current_player = g_list_next (current_player);
         }
 
-        g_slist_free (selected_players);
+        g_list_free (selected_players);
       }
     }
     else
@@ -560,7 +560,7 @@ namespace People
   Player *PlayersList::GetPlayerWithAttribute (Player::AttributeId *attr_id,
                                                Attribute           *attr)
   {
-    GSList *current = _player_list;
+    GList *current = _player_list;
 
     while (current)
     {
@@ -571,7 +571,7 @@ namespace People
       {
         return player;
       }
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
 
     return NULL;
@@ -769,8 +769,8 @@ namespace People
 
     _store->Append (player);
 
-    _player_list = g_slist_append (_player_list,
-                                   player);
+    _player_list = g_list_append (_player_list,
+                                  player);
 
     Update (player);
   }
@@ -779,7 +779,7 @@ namespace People
   void PlayersList::Wipe ()
   {
     {
-      GSList *current = _player_list;
+      GList *current = _player_list;
 
       while (current)
       {
@@ -787,11 +787,11 @@ namespace People
 
         p->RemoveCbkOwner (this);
         p->Release ();
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
 
-    g_slist_free (_player_list);
+    g_list_free (_player_list);
     _player_list = NULL;
 
     if (_store)
@@ -885,7 +885,7 @@ namespace People
       {
         GtkTreeRowReference *ref            = (GtkTreeRowReference *) current_ref->data; ;
         GtkTreePath         *selected_path  = gtk_tree_row_reference_get_path (ref);
-        GSList              *current_player = _player_list;
+        GList               *current_player = _player_list;
 
         gtk_tree_row_reference_free (ref);
 
@@ -910,7 +910,7 @@ namespace People
             gtk_tree_path_free (current_path);
           }
 
-          current_player = g_slist_next (current_player);
+          current_player = g_list_next (current_player);
         }
 
         gtk_tree_path_free (selected_path);
@@ -932,8 +932,8 @@ namespace People
 
       _store->Remove (player);
 
-      _player_list = g_slist_remove (_player_list,
-                                     player);
+      _player_list = g_list_remove (_player_list,
+                                    player);
 
       player->Release ();
     }
@@ -962,7 +962,7 @@ namespace People
   {
     Player      *result  = NULL;
     GtkTreePath *path;
-    GSList      *current = _player_list;
+    GList       *current = _player_list;
 
     {
       GtkTreePath *view_path = gtk_tree_path_new_from_string (path_string);
@@ -993,7 +993,7 @@ namespace People
         gtk_tree_path_free (current_path);
       }
 
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
     gtk_tree_path_free (path);
 
@@ -1531,20 +1531,20 @@ namespace People
   void PlayersList::OnCopySelection (GtkWidget   *w,
                                      PlayersList *players_list)
   {
-    g_slist_free_full (_clipboard,
-                       (GDestroyNotify) Object::TryToRelease);
+    g_list_free_full (_clipboard,
+                      (GDestroyNotify) Object::TryToRelease);
 
     _clipboard = players_list->GetSelectedPlayers ();
 
     {
-      GSList *current = _clipboard;
+      GList *current = _clipboard;
 
       while (current)
       {
         Player *player = (Player *) current->data;
 
         player->Retain ();
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
   }
@@ -1555,9 +1555,9 @@ namespace People
   {
     if (_clipboard)
     {
-      GSList *current = _clipboard;
+      GList *current = _clipboard;
 
-      if (g_slist_find (players_list->_player_list, current->data))
+      if (g_list_find (players_list->_player_list, current->data))
       {
         return;
       }
@@ -1570,10 +1570,10 @@ namespace People
         players_list->Add (duplicated);
         duplicated->Release ();
         player->Release     ();
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
 
-      g_slist_free (_clipboard);
+      g_list_free (_clipboard);
       _clipboard = NULL;
     }
   }
@@ -1607,7 +1607,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::Spread ()
   {
-    GSList *current = _player_list;
+    GList *current = _player_list;
 
     while (current)
     {
@@ -1615,14 +1615,14 @@ namespace People
 
       p->Spread ();
 
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
   }
 
   // --------------------------------------------------------------------------------
   void PlayersList::Recall ()
   {
-    GSList *current = _player_list;
+    GList *current = _player_list;
 
     while (current)
     {
@@ -1630,7 +1630,7 @@ namespace People
 
       p->Recall ();
 
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
   }
 
@@ -1638,7 +1638,7 @@ namespace People
   void PlayersList::Disclose (const gchar *as,
                               Object      *extra_feeder)
   {
-    GSList *current = _player_list;
+    GList *current = _player_list;
 
     while (current)
     {
@@ -1650,7 +1650,7 @@ namespace People
         extra_feeder->FeedParcel (parcel);
       }
 
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
   }
 
@@ -1683,7 +1683,7 @@ namespace People
 
       // Fencers
       {
-        GSList *current_player = _player_list;
+        GList *current_player = _player_list;
 
         for (guint i = 0; current_player; i++)
         {
@@ -1741,7 +1741,7 @@ namespace People
             }
           }
           fprintf (file, "          </tr>\n");
-          current_player = g_slist_next (current_player);
+          current_player = g_list_next (current_player);
         }
       }
 

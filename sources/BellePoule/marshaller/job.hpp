@@ -19,6 +19,8 @@
 
 #include "util/object.hpp"
 
+class Player;
+
 namespace Marshaller
 {
   class Batch;
@@ -33,6 +35,10 @@ namespace Marshaller
            GdkColor *gdk_color);
 
       void SetName (const gchar *name);
+
+      void AddFencer (Player *fencer);
+
+      GList *GetFencerList ();
 
       void SetSlot (Slot *slot);
 
@@ -66,6 +72,7 @@ namespace Marshaller
       GdkColor *_gdk_color;
       Batch    *_batch;
       Slot     *_slot;
+      GList    *_fencer_list;
 
       ~Job ();
   };

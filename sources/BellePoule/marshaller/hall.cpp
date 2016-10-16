@@ -20,6 +20,7 @@
 #include "batch.hpp"
 #include "referee_pool.hpp"
 #include "timeline.hpp"
+#include "job_details.hpp"
 #include "lasso.hpp"
 
 #include "hall.hpp"
@@ -148,21 +149,19 @@ namespace Marshaller
       {
         GList     *selection = batch->GetCurrentSelection ();
         GList     *current   = selection;
-        GDateTime *now       = g_date_time_new_now_local ();
-
-        g_date_time_unref (now);
+        GDateTime *from      = _timeline->RetreiveCursorTime ();
 
         while (current)
         {
           Job   *job   = (Job *) current->data;
-          GList *slots = piste->GetFreeSlots (now, 30 *G_TIME_SPAN_MINUTE);
+          GList *slots = piste->GetFreeSlots (from, 30 *G_TIME_SPAN_MINUTE);
           Slot  *slot  = (Slot *) slots->data;
 
           slot->AddJob (job);
 
           current = g_list_next (current);
         }
-        g_date_time_unref (now);
+        g_date_time_unref (from);
 
         g_list_free (selection);
         _timeline->Redraw ();
@@ -569,6 +568,71 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::OnPisteDoubleClick (Piste          *piste,
+                                 GdkEventButton *event)
+  {
+    GDateTime *cursor = _timeline->RetreiveCursorTime ();
+    Slot      *slot   = piste->GetSlotAt (cursor);
+
+    if (slot)
+    {
+      GtkWidget  *dialog          = _glade->GetWidget ("job_list_dialog");
+      JobDetails *referee_details;
+      JobDetails *fencer_details;
+
+      {
+        referee_details = new JobDetails (slot->GetRefereeList ());
+
+        Plug (referee_details,
+              _glade->GetWidget ("referee_detail_hook"));
+      }
+
+      {
+        GList *current_job = slot->GetJobList ();
+        GList *fencer_list = NULL;
+
+        while (current_job)
+        {
+          Job   *job  = (Job *) current_job->data;
+          GList *list = job->GetFencerList ();
+
+          fencer_list = g_list_concat (fencer_list,
+                                       g_list_copy (list));
+
+          current_job = g_list_next (current_job);
+        }
+
+        fencer_details = new JobDetails (fencer_list);
+        g_list_free (fencer_list);
+
+        Plug (fencer_details,
+              _glade->GetWidget ("fencer_detail_hook"));
+      }
+
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_hide (dialog);
+
+      referee_details->Release ();
+      fencer_details->Release  ();
+    }
+    g_date_time_unref (cursor);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::OnJobDetailsDisplayRequest (Job *job)
+  {
+    GtkWidget  *dialog  = _glade->GetWidget ("job_list_dialog");
+    JobDetails *details = new JobDetails (job->GetFencerList ());
+
+    Plug (details,
+          _glade->GetWidget ("fencer_detail_hook"));
+
+    gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_hide (dialog);
+    details->Release  ();
+  }
+
+  // --------------------------------------------------------------------------------
   void Hall::OnPisteButtonEvent (Piste          *piste,
                                  GdkEventButton *event)
   {
@@ -579,6 +643,10 @@ namespace Marshaller
         if (event->state & GDK_CONTROL_MASK)
         {
           UnSelectPiste (piste);
+        }
+        else
+        {
+          SetCursor (GDK_FLEUR);
         }
       }
       else
@@ -714,6 +782,7 @@ namespace Marshaller
       if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
       {
         GList *job_list;
+        GList *referee_list;
         GList *current_job;
 
         // All the jobs?
@@ -730,6 +799,21 @@ namespace Marshaller
           }
         }
 
+        // All the referees?
+        {
+          People::RefereesList *checkin_list = _referee_pool->GetListOf (batch->GetWeaponCode ());
+          GtkToggleButton      *all_referees = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_referees"));
+
+          if (gtk_toggle_button_get_active (all_referees))
+          {
+            referee_list = g_list_copy (checkin_list->GetList ());
+          }
+          else
+          {
+            referee_list = checkin_list->GetSelectedPlayers ();
+          }
+        }
+
         current_job = job_list;
         while (current_job)
         {
@@ -742,8 +826,8 @@ namespace Marshaller
             Slot            *slot    = (Slot *) current_slot->data;
             EnlistedReferee *referee;
 
-            referee = _referee_pool->GetRefereeFor (job,
-                                                    slot);
+            referee = GetFreeRefereeFor (referee_list,
+                                         slot);
             if (referee)
             {
               slot->Retain ();
@@ -761,6 +845,7 @@ namespace Marshaller
         }
 
         g_list_free (job_list);
+        g_list_free (referee_list);
 
         _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
         _timeline->Redraw ();
@@ -824,6 +909,35 @@ namespace Marshaller
                               (GCompareFunc) Slot::CompareAvailbility);
 
     return free_slots;
+  }
+
+  // --------------------------------------------------------------------------------
+  EnlistedReferee *Hall::GetFreeRefereeFor (GList *referee_list,
+                                            Slot  *slot)
+  {
+    GList           *current_referee;
+    GList           *sorted_list;
+    EnlistedReferee *available_referee = NULL;
+
+    sorted_list = g_list_sort (g_list_copy (referee_list),
+                               (GCompareFunc) EnlistedReferee::CompareWorkload);
+
+    current_referee = sorted_list;
+    while (current_referee)
+    {
+      EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+
+      if (referee->IsAvailableFor (slot))
+      {
+        available_referee = referee;
+        break;
+      }
+
+      current_referee = g_list_next (current_referee);
+    }
+
+    g_list_free (sorted_list);
+    return available_referee;
   }
 
   // --------------------------------------------------------------------------------

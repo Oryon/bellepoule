@@ -17,6 +17,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include "util/player.hpp"
 #include "actors/player_factory.hpp"
 
 #include "job.hpp"
@@ -59,14 +60,14 @@ namespace Marshaller
     _gdk_color = NULL;
 
     {
-      GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("treeview"));
+      GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("batch_treeview"));
 
       gtk_tree_selection_set_mode (gtk_tree_view_get_selection (treeview),
                                    GTK_SELECTION_MULTIPLE);
     }
 
     {
-      GtkWidget *source = _glade->GetWidget ("treeview");
+      GtkWidget *source = _glade->GetWidget ("batch_treeview");
 
       _dnd_key = _dnd_config->AddTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
@@ -204,7 +205,7 @@ namespace Marshaller
   GList *Batch::GetCurrentSelection ()
   {
     GList            *result    = NULL;
-    GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("treeview"));
+    GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("batch_treeview"));
     GtkTreeSelection *selection = gtk_tree_view_get_selection (tree_view);
 
     if (selection)
@@ -419,7 +420,8 @@ namespace Marshaller
 
   // --------------------------------------------------------------------------------
   void Batch::LoadJob (xmlNode *xml_node,
-                       guint    uuid)
+                       guint    uuid,
+                       Job     *job)
   {
     for (xmlNode *n = xml_node; n != NULL; n = n->next)
     {
@@ -442,7 +444,8 @@ namespace Marshaller
           gchar       *attr;
           gchar       *name;
           guint        sibling_order = g_list_length (_pending_list);
-          Job         *job = new Job (this, uuid, sibling_order, _gdk_color);
+
+          job = new Job (this, uuid, sibling_order, _gdk_color);
 
           attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
           if (attr)
@@ -468,9 +471,14 @@ namespace Marshaller
           _pending_list = g_list_append (_pending_list,
                                          job);
         }
+        else if (g_strcmp0 ((char *) n->name, "Tireur") == 0)
+        {
+          job->AddFencer (GetFencer (atoi ((gchar *) xmlGetProp (n, BAD_CAST "REF"))));
+        }
 
         LoadJob (n->children,
-                 uuid);
+                 uuid,
+                 job);
       }
     }
   }
@@ -563,6 +571,54 @@ namespace Marshaller
 
       current = g_list_next (current);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  Player *Batch::GetFencer (guint ref)
+  {
+    GList *current = _fencer_list;
+
+    while (current)
+    {
+      Player *fencer = (Player *) current->data;
+
+      if (fencer->GetRef () == ref)
+      {
+        return fencer;
+      }
+
+      current = g_list_next (current);
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_batch_treeview_row_activated  (GtkTreeView       *tree_view,
+                                                                    GtkTreePath       *path,
+                                                                    GtkTreeViewColumn *column,
+                                                                    Object            *owner)
+  {
+    Batch *b = dynamic_cast <Batch *> (owner);
+
+    b->on_batch_treeview_row_activated (path);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Batch::on_batch_treeview_row_activated (GtkTreePath *path)
+  {
+    GtkTreeModel *model = GTK_TREE_MODEL (_job_store);
+    Job          *job;
+    GtkTreeIter   iter;
+
+    gtk_tree_model_get_iter (model,
+                             &iter,
+                             path);
+    gtk_tree_model_get (model, &iter,
+                        JOB_ptr,
+                        &job, -1);
+
+    _listener->OnJobDetailsDisplayRequest (job);
   }
 
   // --------------------------------------------------------------------------------

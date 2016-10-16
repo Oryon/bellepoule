@@ -11,9 +11,16 @@ UBUNTU  = trusty
 V       = 1
 DATE    = $(shell date -R)
 
+ifneq ($(UBUNTU), windows)
 #STEP    = ubuntu8
 VERSION_FILE = "../../sources/BellePoule/application/version.h"
 STEP := $(shell grep VERSION_MATURITY $(VERSION_FILE) | sed 's/.*alpha0/ubuntu/' | sed 's/.*alpha/ubuntu/' | sed 's/"//')
+endif
+
+GTK = gtk+-2.0
+GOO = goocanvas
+#GTK = gtk+-3.0
+#GOO = goocanvas-2.0
 
 #----------------------------------------------------
 #-- Compilers ---------------------------------------
@@ -48,6 +55,8 @@ CFLAGS += -std=c++11
 CFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGSEAL_ENABLE
+#CFLAGS += -DGDK_DISABLE_DEPRECATED
+#CFLAGS += -DGTK_DISABLE_DEPRECATED
 
 CFLAGS += -Wall
 CFLAGS += -Wcast-align
@@ -77,7 +86,7 @@ else
 CFLAGS += -fPIC
 endif
 
-CFLAGS += $(shell $(PKG_CONFIG) --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode)
 
 CFLAGS += -Isources/common
 CFLAGS += -Isources/BellePoule
@@ -97,7 +106,7 @@ ifeq ($(OUTPUT), Release)
 LDFLAGS += -mwindows
 endif
 endif
-LDFLAGS += $(shell $(PKG_CONFIG) --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode)
 
 ifeq ($(OUTPUT), Release)
 LDFLAGS += -s

@@ -14,49 +14,22 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef referee_pool_hpp
-#define referee_pool_hpp
+#ifndef job_details_hpp
+#define job_details_hpp
 
-#include <gtk/gtk.h>
-
-#include "actors/referees_list.hpp"
+#include "actors/players_list.hpp"
 
 namespace Marshaller
 {
-  class Job;
-  class Slot;
-  class EnlistedReferee;
-
-  class RefereePool : public Object
+  class JobDetails : public People::PlayersList
   {
     public:
-      RefereePool ();
-
-      void ManageList (People::RefereesList *list);
-
-      void ManageReferee (Net::Message *message);
-
-      EnlistedReferee *GetReferee (guint ref);
-
-      gboolean WeaponHasReferees (const gchar *weapon);
-
-      void RefreshWorkload (const gchar *);
-
-      void Spread ();
-
-      void ExpandAll ();
-
-      void CollapseAll ();
-
-      People::RefereesList *GetListOf (const gchar *weapon);
+      JobDetails (GList *player_list);
 
     private:
-      GList *_list_by_weapon;
+      void OnPlugged ();
 
-      ~RefereePool ();
-
-      static void SpreadWeapon (People::RefereesList *list,
-                                RefereePool          *rp);
+      virtual ~JobDetails ();
   };
 }
 

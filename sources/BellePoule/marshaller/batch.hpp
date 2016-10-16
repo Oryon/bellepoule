@@ -22,6 +22,8 @@
 #include "network/message.hpp"
 #include "util/module.hpp"
 
+class Player;
+
 namespace Marshaller
 {
   class Job;
@@ -31,8 +33,9 @@ namespace Marshaller
     public:
       struct Listener
       {
-        virtual void OnBatchAssignmentRequest (Batch *batch) = 0;
-        virtual void OnBatchAssignmentCancel  (Batch *batch) = 0;
+        virtual void OnBatchAssignmentRequest   (Batch *batch) = 0;
+        virtual void OnBatchAssignmentCancel    (Batch *batch) = 0;
+        virtual void OnJobDetailsDisplayRequest (Job   *job)   = 0;
       };
 
     public:
@@ -72,6 +75,8 @@ namespace Marshaller
 
       void DeleteFencer (Net::Message *message);
 
+      void on_batch_treeview_row_activated (GtkTreePath *path);
+
     private:
       guint32       _id;
       GtkListStore *_job_store;
@@ -87,9 +92,12 @@ namespace Marshaller
       virtual ~Batch ();
 
       void LoadJob (xmlNode *xml_node,
-                    guint    uuid);
+                    guint    uuid,
+                    Job     *job = NULL);
 
       Job *GetJob (guint uuid);
+
+      Player *GetFencer (guint ref);
 
       void SetProperty (Net::Message *message,
                         const gchar  *property);
