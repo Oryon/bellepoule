@@ -53,6 +53,7 @@
 			<Add option="-Wno-long-long" />
 			<Add option="-Wno-unused-parameter" />
 			<Add option="-Wno-variadic-macros" />
+			<Add option="-Wno-deprecated-declarations" />
 			<Add option="-Wno-vla" />
 			<Add option="-fPIC" />
 			<Add option="-pthread" />
