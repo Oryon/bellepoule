@@ -51,13 +51,14 @@ namespace Net
       virtual ~MessageUploader ();
 
     private:
-      gchar       *_url;
-      gchar       *_iv;
-      Listener    *_listener;
-      PeerStatus   _peer_status;
-      GThread     *_sender_thread;
-      GAsyncQueue *_message_queue;
-      Cryptor     *_cryptor;
+      gchar             *_url;
+      gchar             *_iv;
+      Listener          *_listener;
+      PeerStatus         _peer_status;
+      GThread           *_sender_thread;
+      GAsyncQueue       *_message_queue;
+      Cryptor           *_cryptor;
+      struct curl_slist *_http_header;
 
       static gpointer Loop (MessageUploader *uploader);
 
@@ -67,7 +68,7 @@ namespace Net
       static gboolean DeferedStatus (MessageUploader *uploader);
 
     private:
-      struct curl_slist *SetHeader (struct curl_slist *list);
+      void SetCurlOptions (CURL *curl);
 
       const gchar *GetUrl ();
   };

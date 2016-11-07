@@ -37,6 +37,8 @@ namespace Net
     _iv      = NULL;
     _cryptor = new Net::Cryptor ();
 
+    _http_header = NULL;
+
     _message_queue = g_async_queue_new_full ((GDestroyNotify) Object::TryToRelease);
 
     {
@@ -78,6 +80,11 @@ namespace Net
     {
       _listener->Drop ();
     }
+
+    if (_http_header)
+    {
+      curl_slist_free_all (_http_header);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -118,17 +125,20 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  struct curl_slist *MessageUploader::SetHeader (struct curl_slist *list)
+  void MessageUploader::SetCurlOptions (CURL *curl)
   {
-    if (_iv)
+    Uploader::SetCurlOptions (curl);
     {
-      gchar *iv_header = g_strdup_printf ("IV: %s", _iv);
+      if (_iv)
+      {
+        gchar *iv_header = g_strdup_printf ("IV: %s", _iv);
 
-      list = curl_slist_append (list, iv_header);
-      g_free (iv_header);
+        _http_header = curl_slist_append (_http_header, iv_header);
+        g_free (iv_header);
+      }
+
+      curl_easy_setopt (curl, CURLOPT_HTTPHEADER, _http_header);
     }
-
-    return list;
   }
 
   // --------------------------------------------------------------------------------
@@ -149,8 +159,6 @@ namespace Net
   // --------------------------------------------------------------------------------
   gpointer MessageUploader::Loop (MessageUploader *uploader)
   {
-    uploader->Init ();
-
     g_async_queue_ref (uploader->_message_queue);
 
     while (1)
@@ -194,6 +202,12 @@ namespace Net
 #ifdef UPLOADER_DEBUG
           g_print (YELLOW "[Uploader] " ESC "Done\n");
 #endif
+        }
+
+        if (uploader->_http_header)
+        {
+          curl_slist_free_all (uploader->_http_header);
+          uploader->_http_header = NULL;
         }
 
         if (uploader->_listener)

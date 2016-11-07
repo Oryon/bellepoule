@@ -35,6 +35,7 @@
 
 #include "util/global.hpp"
 #include "util/canvas.hpp"
+#include "network/greg_uploader.hpp"
 #include "actors/checkin.hpp"
 #include "actors/referees_list.hpp"
 #include "actors/player_factory.hpp"
@@ -68,14 +69,6 @@ const gchar *Contest::gender_xml_alias[_nb_gender] =
   "D",
   "FM"
 };
-
-const gchar *Contest::gender_greg[_nb_gender] =
-{
-  "H",
-  "D",
-  "H"
-};
-
 
 const gchar *Contest::level_image[_nb_level] =
 {
@@ -1222,7 +1215,7 @@ void Contest::ReadProperties ()
   _weapon   = Weapon::GetFromIndex (gtk_combo_box_get_active (GTK_COMBO_BOX (_weapon_combo)));
   _gender   = gtk_combo_box_get_active (GTK_COMBO_BOX (_gender_combo));
   _level    = gtk_combo_box_get_active (GTK_COMBO_BOX (_level_combo));
-  
+
   _category->ReadUserChoice ();
 
   _day   = GetUIntData (this, "day");
@@ -1373,65 +1366,28 @@ void Contest::Publish ()
 {
   if (_tournament && (_schedule->ScoreStuffingIsAllowed () == FALSE))
   {
-    EcoSystem   *ecosystem = _tournament->GetEcosystem ();
-    const gchar *url       = ecosystem->GetRemoteSiteUrl ();
+    EcoSystem         *ecosystem = _tournament->GetEcosystem ();
+    Net::FileUploader *uploader  = ecosystem->GetUpLoader ();
 
-    if (url[0] == 0)
+    if (uploader)
     {
-      return;
-    }
+      Net::GregUploader *greg_uploader = dynamic_cast <Net::GregUploader *> (uploader);
 
-    if (strstr (url, "www.escrime-info.com"))
-    {
-      gchar        time_stamp[] = "20001231";
-      const gchar *type;
-
-      if (_team_event)
+      if (greg_uploader)
       {
-        type = "equipes";
-      }
-      else
-      {
-        type = "indiv";
+        greg_uploader->SetTeamEvent    (_team_event);
+        greg_uploader->SetDate         (_day, _month, _year);
+        greg_uploader->SetLocation     (_location);
+        greg_uploader->SetLevel        (level_xml_image[_level]);
+        greg_uploader->SetDivision     ("");
+        greg_uploader->SetRunningState (_schedule->IsOver ());
+        greg_uploader->SetWeapon       (_weapon->GetGregImage ());
+        greg_uploader->SetGender       (_gender);
+        greg_uploader->SetCategory     (_category->GetXmlImage ());
       }
 
-
-      {
-        GDate *date = g_date_new_dmy (_day,
-                                      (GDateMonth) _month,
-                                      _year);
-
-        g_date_strftime (time_stamp,
-                         strlen (time_stamp)+1,
-                         "%Y%m%d",
-                         date);
-        g_date_free (date);
-      }
-
-      {
-        gchar *remote_file = g_strdup_printf ("%s%s-%s %s.xml", time_stamp, _location, _name, type);
-        gchar *remote_dir  = g_strdup_printf ("%s%s%s/%s",
-                                              _weapon->GetGregImage (),
-                                              gender_greg[_gender],
-                                              _category->GetXmlImage (),
-                                              level_xml_image[_level]);
-
-
-        ecosystem->UploadFile (_filename,
-                               remote_dir,
-                               remote_file);
-        g_free (remote_file);
-        g_free (remote_dir);
-      }
-    }
-    else
-    {
-      gchar *base_name = g_path_get_basename (_filename);
-
-      ecosystem->UploadFile (_filename,
-                             NULL,
-                             base_name);
-      g_free (base_name);
+      uploader->UploadFile (_filename);
+      uploader->Release ();
     }
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))

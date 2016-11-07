@@ -42,24 +42,16 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void FileUploader::UploadFile (const gchar *file_path,
-                                 const gchar *remote_dir,
-                                 const gchar *remote_file)
+  void FileUploader::UploadFile (const gchar *file_path)
   {
     _file_path = g_strdup (file_path);
-
     if (_file_path)
     {
-      if (remote_dir == NULL)
-      {
-        _full_url = g_strdup_printf ("%s/%s", _url, remote_file);
-      }
-      else
-      {
-        _full_url = g_strdup_printf ("%s/%s/%s", _url, remote_dir, remote_file);
-      }
-    }
+      gchar *base_name = g_path_get_basename (file_path);
 
+      _full_url = g_strdup_printf ("%s/%s", _url, base_name);
+      g_free (base_name);
+    }
 
     {
       GError *error = NULL;
@@ -71,7 +63,7 @@ namespace Net
 
       if (sender_thread == NULL)
       {
-        g_printerr ("Failed to create Uploader thread: %s\n", error->message);
+        g_printerr ("Failed to create FileUploader thread: %s\n", error->message);
         g_error_free (error);
       }
       else
@@ -102,16 +94,14 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gpointer FileUploader::SenderThread (FileUploader *uploader)
+  void FileUploader::Looper ()
   {
-    uploader->Init ();
-
-    if (uploader->_file_path)
+    if (_file_path)
     {
       GError *error = NULL;
       gchar  *data_copy;
 
-      if (g_file_get_contents (uploader->_file_path,
+      if (g_file_get_contents (_file_path,
                                &data_copy,
                                NULL,
                                &error) == FALSE)
@@ -121,12 +111,18 @@ namespace Net
       }
       else
       {
-        uploader->SetDataCopy (data_copy);
-        uploader->Upload ();
+        SetDataCopy (data_copy);
+        Upload ();
       }
     }
+  }
 
+  // --------------------------------------------------------------------------------
+  gpointer FileUploader::SenderThread (FileUploader *uploader)
+  {
+    uploader->Looper  ();
     uploader->Release ();
+
     return NULL;
   }
 }

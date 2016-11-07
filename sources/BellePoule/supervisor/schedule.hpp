@@ -46,6 +46,8 @@ class Schedule : public Module
 
     People::CheckinSupervisor *GetCheckinSupervisor ();
 
+    gboolean IsOver ();
+
     void Freeze ();
 
     void CreateDefault (gboolean without_pools = FALSE);

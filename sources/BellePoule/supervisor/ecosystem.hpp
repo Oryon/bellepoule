@@ -21,17 +21,14 @@
 #include "util/glade.hpp"
 #include "util/wifi_code.hpp"
 #include "network/wifi_network.hpp"
+#include "network/file_uploader.hpp"
 
 class EcoSystem : public Object
 {
   public:
     EcoSystem (Glade *glade);
 
-    void UploadFile (const gchar *filename,
-                     const gchar *remote_dir,
-                     const gchar *remote_file);
-
-    const gchar *GetRemoteSiteUrl ();
+    Net::FileUploader *GetUpLoader ();
 
     WifiCode *GetAdminCode ();
 
