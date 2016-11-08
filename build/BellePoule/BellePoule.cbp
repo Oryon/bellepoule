@@ -533,6 +533,12 @@
 		<Unit filename="../../sources/common/network/file_uploader.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/greg_uploader.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/greg_uploader.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/http_server.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
