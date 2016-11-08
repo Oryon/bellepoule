@@ -146,6 +146,17 @@ Stage *Schedule::CreateStage (const gchar *class_name)
 }
 
 // --------------------------------------------------------------------------------
+gboolean Schedule::IsOver ()
+{
+  if (_current_stage < g_list_length (_stage_list)-1)
+  {
+    return FALSE;
+  }
+
+  return dynamic_cast <People::GeneralClassification *> (GetStage (_current_stage)) != NULL;
+}
+
+// --------------------------------------------------------------------------------
 void Schedule::Freeze ()
 {
   {

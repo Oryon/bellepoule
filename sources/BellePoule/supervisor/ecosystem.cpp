@@ -15,7 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/global.hpp"
-#include "network/file_uploader.hpp"
+#include "network/greg_uploader.hpp"
 
 #include "ecosystem.hpp"
 
@@ -60,9 +60,9 @@ EcoSystem::EcoSystem (Glade *glade)
     gtk_list_store_set (model, &iter,
                         FTP_NAME_str,   "<b><big>Escrime Info  </big></b>",
                         FTP_PIXBUF_pix, pixbuf,
-                        FTP_URL_str,    "ftp://www.escrime-info.com/web/Greg/resultats",
-                        FTP_USER_str,   "resultxml",
-                        FTP_PASSWD_str, "xmlpower",
+                        FTP_URL_str,    "www.escrime-info.com",
+                        FTP_USER_str,   "GREG",
+                        FTP_PASSWD_str, "cul qui gratte au couché doigt qui sent au levé",
                         -1);
     g_object_unref (pixbuf);
   }
@@ -115,26 +115,24 @@ WifiCode *EcoSystem::GetAdminCode ()
 }
 
 // --------------------------------------------------------------------------------
-void EcoSystem::UploadFile (const gchar *filename,
-                            const gchar *remote_dir,
-                            const gchar *remote_file)
+Net::FileUploader *EcoSystem::GetUpLoader ()
 {
-  Net::FileUploader *uploader;
+  const gchar *url = gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry")))));
 
-  uploader = new Net::FileUploader (GetRemoteSiteUrl (),
-                                    gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
-                                    gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
-
-  uploader->UploadFile (filename,
-                        remote_dir,
-                        remote_file);
-  uploader->Release ();
-}
-
-// --------------------------------------------------------------------------------
-const gchar *EcoSystem::GetRemoteSiteUrl ()
-{
-  return gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry")))));
+  if (url[0] == '\0')
+  {
+    return NULL;
+  }
+  else if (strstr (url, "www.escrime-info.com"))
+  {
+    return new Net::GregUploader (url);
+  }
+  else
+  {
+    return new Net::FileUploader (url,
+                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
+                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+  }
 }
 
 // --------------------------------------------------------------------------------

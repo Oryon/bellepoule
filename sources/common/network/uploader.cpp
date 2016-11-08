@@ -106,9 +106,16 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Uploader::SetCurlOptions (CURL *curl)
   {
-    curl_easy_setopt (curl, CURLOPT_READFUNCTION,  ReadCallback);
-    curl_easy_setopt (curl, CURLOPT_READDATA,      this);
-    curl_easy_setopt (curl, CURLOPT_UPLOAD,        1L);
+    curl_easy_setopt (_curl, CURLOPT_URL, GetUrl ());
+
+    if (_data)
+    {
+      curl_easy_setopt (curl, CURLOPT_READFUNCTION,     ReadCallback);
+      curl_easy_setopt (curl, CURLOPT_READDATA,         this);
+      curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
+      curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) _data_length);
+    }
+
 #ifdef UPLOADER_DEBUG
     curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION, OnUpLoadTrace);
     curl_easy_setopt (curl, CURLOPT_DEBUGDATA,     this);
@@ -117,22 +124,9 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  struct curl_slist *Uploader::SetHeader (struct curl_slist *list)
-  {
-    return list;
-  }
-
-  // --------------------------------------------------------------------------------
   const gchar *Uploader::GetUrl ()
   {
     return NULL;
-  }
-
-  // --------------------------------------------------------------------------------
-  void Uploader::Init ()
-  {
-    _curl = curl_easy_init ();
-    SetCurlOptions (_curl);
   }
 
   // --------------------------------------------------------------------------------
@@ -145,26 +139,19 @@ namespace Net
   // --------------------------------------------------------------------------------
   CURLcode Uploader::Upload ()
   {
-    CURLcode     curl_code = CURLE_FAILED_INIT;
-    const gchar *url       = GetUrl ();
+    CURLcode curl_code = CURLE_FAILED_INIT;
 
-    if (_curl && _data && url)
+    _curl = curl_easy_init ();
+    SetCurlOptions (_curl);
+
+    if (_curl)
     {
-      struct curl_slist *header = SetHeader (NULL);
-
-      curl_easy_setopt (_curl, CURLOPT_INFILESIZE_LARGE,        (curl_off_t) _data_length);
-      curl_easy_setopt (_curl, CURLOPT_URL,                     url);
-      curl_easy_setopt (_curl, CURLOPT_HTTPHEADER,              header);
-      curl_easy_setopt (_curl, CURLOPT_FTP_CREATE_MISSING_DIRS, CURLFTP_CREATE_DIR_RETRY);
-
       _bytes_uploaded = 0;
 
       curl_code = curl_easy_perform (_curl);
 
       g_free (_data);
       _data = NULL;
-
-      curl_slist_free_all (header);
     }
 
     return curl_code;

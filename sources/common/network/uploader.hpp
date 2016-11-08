@@ -31,8 +31,6 @@ namespace Net
     protected:
       virtual ~Uploader ();
 
-      void Init ();
-
       CURLcode Upload ();
 
       void SetDataCopy (gchar *data);
@@ -41,8 +39,6 @@ namespace Net
       virtual void SetCurlOptions (CURL *curl);
 
       virtual const gchar *GetUrl ();
-
-      virtual struct curl_slist *SetHeader (struct curl_slist *list);
 
     private:
       CURL  *_curl;

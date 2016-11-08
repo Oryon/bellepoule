@@ -28,24 +28,26 @@ namespace Net
                     const gchar  *user,
                     const gchar  *passwd);
 
-      void UploadFile (const gchar *file_path,
-                       const gchar *remote_dir,
-                       const gchar *remote_file);
+      virtual void UploadFile (const gchar *file_path);
+
+      virtual ~FileUploader ();
+
+      virtual void SetCurlOptions (CURL *curl);
+
+    protected:
+      gchar *_file_path;
+
+      virtual void Looper ();
 
     private:
       gchar *_user;
       gchar *_passwd;
       gchar *_full_url;
       gchar *_url;
-      gchar *_file_path;
-
-      virtual ~FileUploader ();
 
       void PushMessage (Message *message);
 
-      void SetCurlOptions (CURL *curl);
-
-      const gchar *GetUrl ();
+      virtual const gchar *GetUrl ();
 
       static gpointer SenderThread (FileUploader *uploader);
   };
