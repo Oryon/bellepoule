@@ -206,7 +206,7 @@ namespace Marshaller
           referee->Load (xml_nodeset->nodeTab[0]);
 
           {
-            Attribute            *weapon_attr  = referee->GetAttribute ( &weapon_attr_id);
+            Attribute            *weapon_attr  = referee->GetAttribute (&weapon_attr_id);
             People::RefereesList *referee_list = GetListOf (weapon_attr->GetStrValue ());
 
             if (referee_list->GetPlayerFromRef (referee->GetRef ()) == NULL)

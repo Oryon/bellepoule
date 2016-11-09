@@ -36,12 +36,9 @@
       <column type="gchararray"/>
       <!-- column-name job -->
       <column type="gpointer"/>
-      <!-- column-name visibility -->
-      <column type="gboolean"/>
+      <!-- column-name color -->
+      <column type="gchararray"/>
     </columns>
-  </object>
-  <object class="GtkTreeModelFilter" id="treemodelfilter">
-    <property name="child_model">liststore</property>
   </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
@@ -160,7 +157,7 @@
                   <object class="GtkTreeView" id="batch_treeview">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="model">treemodelfilter</property>
+                    <property name="model">liststore</property>
                     <property name="headers_visible">False</property>
                     <property name="headers_clickable">False</property>
                     <property name="search_column">0</property>
@@ -169,8 +166,9 @@
                       <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                         <property name="title" translatable="yes">Matchs</property>
                         <child>
-                          <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                          <object class="GtkCellRendererText" id="batch_renderer"/>
                           <attributes>
+                            <attribute name="foreground">2</attribute>
                             <attribute name="text">0</attribute>
                           </attributes>
                         </child>

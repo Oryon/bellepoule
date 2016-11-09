@@ -109,7 +109,8 @@ namespace People
       Player *GetPlayerWithAttribute (Player::AttributeId *attr_id,
                                       Attribute           *attr);
 
-      GtkAction *GetAction (const gchar *name);
+      GtkAction *GetAction (const gchar *group_name,
+                            const gchar *name);
 
       virtual void SelectTreeMode ();
 

@@ -118,7 +118,8 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::SetPasteVisibility (gboolean visibility)
   {
-    GtkAction *paste_action = GetAction ("PasteAction");
+    GtkAction *paste_action = GetAction ("PlayersListActionGroup",
+                                         "PasteAction");
 
     if (paste_action)
     {
@@ -187,7 +188,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  GtkAction *PlayersList::GetAction (const gchar *name)
+  GtkAction *PlayersList::GetAction (const gchar *group_name,
+                                     const gchar *name)
   {
     GList *groups = gtk_ui_manager_get_action_groups (_ui_manager);
 
@@ -195,7 +197,7 @@ namespace People
     {
       GtkActionGroup *group = (GtkActionGroup *) groups->data;
 
-      if (g_strcmp0 (gtk_action_group_get_name (group), "PlayersListActionGroup") == 0)
+      if (g_strcmp0 (gtk_action_group_get_name (group), group_name) == 0)
       {
         GList *actions = gtk_action_group_list_actions (group);
 

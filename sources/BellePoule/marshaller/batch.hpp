@@ -33,9 +33,9 @@ namespace Marshaller
     public:
       struct Listener
       {
-        virtual void OnBatchAssignmentRequest   (Batch *batch) = 0;
-        virtual void OnBatchAssignmentCancel    (Batch *batch) = 0;
-        virtual void OnJobDetailsDisplayRequest (Job   *job)   = 0;
+        virtual void OnBatchAssignmentRequest   (Batch *batch)    = 0;
+        virtual void OnBatchAssignmentCancel    (Batch *batch)    = 0;
+        virtual void OnJobDetailsDisplayRequest (GList *job_list) = 0;
       };
 
     public:

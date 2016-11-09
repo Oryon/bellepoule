@@ -66,7 +66,7 @@ namespace People
     public:
       void on_add_player_button_clicked ();
 
-      void on_players_list_row_activated (GtkTreePath *path);
+      virtual void on_players_list_row_activated (GtkTreePath *path);
 
       void on_remove_player_button_clicked ();
 

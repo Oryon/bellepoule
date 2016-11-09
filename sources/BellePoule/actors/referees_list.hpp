@@ -59,6 +59,8 @@ namespace People
       void OnPlayerEventFromForm (Player                    *referee,
                                   People::Form::PlayerEvent  event);
 
+      void on_players_list_row_activated (GtkTreePath *path);
+
       static gboolean RefereeIsVisible (GtkTreeModel *model,
                                         GtkTreeIter  *iter,
                                         RefereesList *referee_list);
@@ -88,6 +90,9 @@ namespace People
                           GtkSelectionData *data,
                           guint             key,
                           guint             time);
+
+      static void OnDisplayJobs (GtkWidget    *w,
+                                 RefereesList *referee_list);
   };
 }
 

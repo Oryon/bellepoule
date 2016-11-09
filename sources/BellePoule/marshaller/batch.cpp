@@ -29,7 +29,7 @@ namespace Marshaller
   {
     NAME_str,
     JOB_ptr,
-    JOB_visibility
+    JOB_color
   } ColumnId;
 
   // --------------------------------------------------------------------------------
@@ -50,14 +50,7 @@ namespace Marshaller
 
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
-    {
-      GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("treemodelfilter"));
-
-      gtk_tree_model_filter_set_visible_column (filter,
-                                                JOB_visibility);
-    }
-
-    _gdk_color = NULL;
+    _gdk_color = g_new (GdkColor, 1);
 
     {
       GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("batch_treeview"));
@@ -166,8 +159,6 @@ namespace Marshaller
       GtkWidget *tab   = _glade->GetWidget ("notebook_title");
       gchar     *color = message->GetString ("color");
 
-      _gdk_color = g_new (GdkColor, 1);
-
       gdk_color_parse (color,
                        _gdk_color);
 
@@ -260,10 +251,6 @@ namespace Marshaller
 
       if (current_job == job)
       {
-        gtk_list_store_set (_job_store, &iter,
-                            JOB_visibility, visibility,
-                            -1);
-
         if (visibility == FALSE)
         {
           GList *node = g_list_find (_pending_list,
@@ -274,6 +261,10 @@ namespace Marshaller
           _scheduled_list = g_list_insert_sorted (_scheduled_list,
                                                   job,
                                                   (GCompareFunc) Job::CompareStartTime);
+
+          gtk_list_store_set (_job_store, &iter,
+                              JOB_color,  "Grey",
+                              -1);
         }
         else
         {
@@ -285,6 +276,10 @@ namespace Marshaller
           _pending_list = g_list_insert_sorted (_pending_list,
                                                 job,
                                                 (GCompareFunc) Job::CompareSiblingOrder);
+
+          gtk_list_store_set (_job_store, &iter,
+                              JOB_color,  "Black",
+                              -1);
         }
         break;
       }
@@ -462,9 +457,9 @@ namespace Marshaller
 
           job->SetName (name);
           gtk_list_store_set (_job_store, &iter,
-                              NAME_str,       name,
-                              JOB_ptr,        job,
-                              JOB_visibility, 1,
+                              NAME_str,   name,
+                              JOB_ptr,    job,
+                              JOB_color,  "Black",
                               -1);
           g_free (name);
 
@@ -618,7 +613,14 @@ namespace Marshaller
                         JOB_ptr,
                         &job, -1);
 
-    _listener->OnJobDetailsDisplayRequest (job);
+    {
+      GList *list = NULL;
+
+      list = g_list_append (list,
+                            job);
+      _listener->OnJobDetailsDisplayRequest (list);
+      g_list_free (list);
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -134,7 +134,7 @@ namespace People
         GtkActionGroup *action_group = gtk_action_group_new ("RefereesListActionGroup");
         static GtkActionEntry entries[] =
         {
-          {"JobListAction", GTK_STOCK_JUSTIFY_FILL, gettext ("View job list"), NULL, NULL, NULL}
+          {"JobListAction", GTK_STOCK_JUSTIFY_FILL, gettext ("Display jobs"), NULL, NULL, G_CALLBACK (OnDisplayJobs)}
         };
 
         gtk_action_group_add_actions (action_group,
@@ -421,11 +421,24 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::Expand ()
   {
-    GtkWidget *panel = _glade->GetWidget ("edit_panel");
+    {
+      GtkWidget *panel = _glade->GetWidget ("edit_panel");
 
-    gtk_widget_show (panel);
+      gtk_widget_show (panel);
+    }
 
     SetFilter (_expanded_filter);
+
+    {
+      GtkAction *action = GetAction ("RefereesListActionGroup",
+                                     "JobListAction");
+
+      if (action)
+      {
+        gtk_action_set_visible (action,
+                                FALSE);
+      }
+    }
 
     OnAttrListUpdated ();
   }
@@ -433,12 +446,46 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::Collapse ()
   {
-    GtkWidget *panel = _glade->GetWidget ("edit_panel");
+    {
+      GtkWidget *panel = _glade->GetWidget ("edit_panel");
 
-    gtk_widget_hide (panel);
+      gtk_widget_hide (panel);
+    }
 
     SetFilter (_collapsed_filter);
 
+    {
+      GtkAction *action = GetAction ("RefereesListActionGroup",
+                                     "JobListAction");
+
+      if (action)
+      {
+        gtk_action_set_visible (action,
+                                TRUE);
+      }
+    }
+
     OnAttrListUpdated ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::on_players_list_row_activated (GtkTreePath *path)
+  {
+    if (GetFilter () == _collapsed_filter)
+    {
+      OnDisplayJobs (NULL,
+                     this);
+    }
+    else
+    {
+      Checkin::on_players_list_row_activated (path);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::OnDisplayJobs (GtkWidget    *w,
+                                    RefereesList *referee_list)
+  {
+    printf ("====>>> coucou\n");
   }
 }

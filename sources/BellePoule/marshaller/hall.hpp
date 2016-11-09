@@ -28,6 +28,7 @@ namespace Marshaller
 {
   class RefereePool;
   class Lasso;
+  class JobBoard;
 
   class Hall :
     public CanvasModule,
@@ -83,6 +84,7 @@ namespace Marshaller
       Timeline    *_timeline;
       Lasso       *_lasso;
       Clock       *_clock;
+      JobBoard    *_job_board;
       Listener    *_listener;
 
       ~Hall ();
@@ -143,7 +145,7 @@ namespace Marshaller
 
       void OnBatchAssignmentCancel (Batch *batch);
 
-      void OnJobDetailsDisplayRequest (Job *job);
+      void OnJobDetailsDisplayRequest (GList *job_list);
 
       void OnTimelineCursorMoved ();
   };
