@@ -935,6 +935,12 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void Checkin::AddListener (Listener *listener)
+  {
+    _listener = listener;
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_players_list_row_activated  (GtkTreeView       *tree_view,
                                                                   GtkTreePath       *path,
                                                                   GtkTreeViewColumn *column,
@@ -948,20 +954,27 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::on_players_list_row_activated (GtkTreePath *path)
   {
-    GtkTreeModel *model = gtk_tree_view_get_model (_tree_view);
-    Player       *player;
-    GtkTreeIter   iter;
-
-    gtk_tree_model_get_iter (model,
-                             &iter,
-                             path);
-    gtk_tree_model_get (model, &iter,
-                        gtk_tree_model_get_n_columns (model) - 1,
-                        &player, -1);
-
-    if (player && (player->IsSticky () == FALSE))
+    if (_listener && _listener->OnPlayerListRowActivated (this))
     {
-      _form->Show (player);
+      return;
+    }
+    else
+    {
+      GtkTreeModel *model = gtk_tree_view_get_model (_tree_view);
+      Player       *player;
+      GtkTreeIter   iter;
+
+      gtk_tree_model_get_iter (model,
+                               &iter,
+                               path);
+      gtk_tree_model_get (model, &iter,
+                          gtk_tree_model_get_n_columns (model) - 1,
+                          &player, -1);
+
+      if (player && (player->IsSticky () == FALSE))
+      {
+        _form->Show (player);
+      }
     }
   }
 

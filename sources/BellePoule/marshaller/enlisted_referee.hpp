@@ -22,6 +22,7 @@
 
 namespace Marshaller
 {
+  class JobBoard;
   class Slot;
 
   class EnlistedReferee : public Referee
@@ -43,10 +44,13 @@ namespace Marshaller
       static gint CompareWorkload (EnlistedReferee *a,
                                    EnlistedReferee *b);
 
+      void DisplayJobs ();
+
     private:
       GList       *_slots;
       AttributeId *_workload_rate_attr_id;
       gint         _work_load;
+      JobBoard    *_job_board;
 
       virtual ~EnlistedReferee ();
   };

@@ -188,6 +188,12 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  GtkUIManager *PlayersList::GetUiManager ()
+  {
+    return _ui_manager;
+  }
+
+  // --------------------------------------------------------------------------------
   GtkAction *PlayersList::GetAction (const gchar *group_name,
                                      const gchar *name)
   {

@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "slot.hpp"
+#include "job_board.hpp"
 
 #include "enlisted_referee.hpp"
 
@@ -24,8 +25,9 @@ namespace Marshaller
   EnlistedReferee::EnlistedReferee ()
     : Referee ()
   {
-    _slots     = NULL;
-    _work_load = 0;
+     _slots     = NULL;
+     _work_load = 0;
+     _job_board = new JobBoard ();
 
      {
        _workload_rate_attr_id = new AttributeId ("workload_rate");
@@ -37,6 +39,7 @@ namespace Marshaller
   EnlistedReferee::~EnlistedReferee ()
   {
     g_list_free (_slots);
+    _job_board->Release ();
     _workload_rate_attr_id->Release ();
   }
 
@@ -133,5 +136,29 @@ namespace Marshaller
     }
 
     SetAttributeValue (_workload_rate_attr_id, rate);
+  }
+
+  // --------------------------------------------------------------------------------
+  void EnlistedReferee::DisplayJobs ()
+  {
+    GList *current_slot    = _slots;
+    GList *jobs_to_display = NULL;
+
+    while (current_slot)
+    {
+      Slot  *slot = (Slot *) current_slot->data;
+      GList *jobs = slot->GetJobList ();
+
+      jobs_to_display = g_list_concat (jobs_to_display,
+                                       g_list_copy (jobs));
+
+      current_slot = g_list_next (current_slot);
+    }
+
+    if (jobs_to_display)
+    {
+      _job_board->Display (jobs_to_display);
+      g_list_free (jobs_to_display);
+    }
   }
 }
