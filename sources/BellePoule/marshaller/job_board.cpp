@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "network/message.hpp"
 #include "slot.hpp"
 #include "job.hpp"
 #include "job_details.hpp"
@@ -26,48 +27,132 @@ namespace Marshaller
   JobBoard::JobBoard ()
     : Module ("job_board.glade")
   {
-    _dialog = _glade->GetWidget ("dialog");
+    _dialog          = _glade->GetWidget ("dialog");
+    _job_list        = NULL;
+    _referee_details = NULL;
+    _fencer_details  = NULL;
   }
 
   // --------------------------------------------------------------------------------
   JobBoard::~JobBoard ()
   {
+    Object::TryToRelease (_referee_details);
+    Object::TryToRelease (_fencer_details);
   }
 
   // --------------------------------------------------------------------------------
   void JobBoard::Display (GList *job_list)
   {
-    Job *job = (Job *) job_list->data;
+    _job_list = job_list;
 
-    Display (job);
-  }
+    _current_job = _job_list;
 
-  // --------------------------------------------------------------------------------
-  void JobBoard::Display (Job *job)
-  {
-    JobDetails *referee_details = NULL;
-    JobDetails *fencer_details  = NULL;
-    Slot       *slot            = job->GetSlot ();
-
-    if (slot)
-    {
-      referee_details = new JobDetails (slot->GetRefereeList ());
-
-      Plug (referee_details,
-            _glade->GetWidget ("referee_detail_hook"));
-    }
-
-    {
-      fencer_details  = new JobDetails (job->GetFencerList ());
-
-      Plug (fencer_details,
-            _glade->GetWidget ("fencer_detail_hook"));
-    }
+    DisplayCurrent ();
 
     gtk_dialog_run (GTK_DIALOG (_dialog));
     gtk_widget_hide (_dialog);
+  }
 
-    Object::TryToRelease (referee_details);
-    Object::TryToRelease (fencer_details);
+  // --------------------------------------------------------------------------------
+  void JobBoard::DisplayCurrent ()
+  {
+    if (_current_job)
+    {
+      Job  *job  = (Job *) _current_job->data;
+      Slot *slot = job->GetSlot ();
+
+      Object::TryToRelease (_referee_details);
+      Object::TryToRelease (_fencer_details);
+
+      {
+        GtkLabel *title = GTK_LABEL (_glade->GetWidget ("current_job_label"));
+
+        gtk_label_set_text (title, job->GetName ());
+      }
+
+      if (slot)
+      {
+        _referee_details = new JobDetails (slot->GetRefereeList ());
+
+        Plug (_referee_details,
+              _glade->GetWidget ("referee_detail_hook"));
+      }
+
+      {
+        _fencer_details  = new JobDetails (job->GetFencerList ());
+
+        Plug (_fencer_details,
+              _glade->GetWidget ("fencer_detail_hook"));
+      }
+    }
+
+    SetArrowSensitivity ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::SetProperty (const gchar *property,
+                              const gchar *image)
+  {
+    gchar    *property_widget = g_strdup_printf ("%s_label", property);
+    GtkLabel *label           = GTK_LABEL (_glade->GetGObject (property_widget));
+
+    gtk_label_set_text (label,
+                        gettext (image));
+
+    g_free (property_widget);
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::SetColor (GdkColor *color)
+  {
+    GtkWidget *header_box = _glade->GetWidget ("header_box");
+
+    gtk_widget_modify_bg (header_box,
+                          GTK_STATE_NORMAL,
+                          color);
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::SetArrowSensitivity ()
+  {
+    GtkWidget *arrow;
+
+    arrow = _glade->GetWidget ("previous_job");
+    gtk_widget_set_sensitive (arrow, g_list_previous (_current_job) != NULL);
+
+    arrow = _glade->GetWidget ("next_job");
+    gtk_widget_set_sensitive (arrow, g_list_next (_current_job) != NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::OnPreviousClicked ()
+  {
+    _current_job = g_list_previous (_current_job);
+    DisplayCurrent ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::OnNextClicked ()
+  {
+    _current_job = g_list_next (_current_job);
+    DisplayCurrent ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_previous_job_clicked (GtkWidget *widget,
+                                                           Object    *owner)
+  {
+    JobBoard *jb = dynamic_cast <JobBoard *> (owner);
+
+    jb->OnPreviousClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_next_job_clicked (GtkWidget *widget,
+                                                       Object    *owner)
+  {
+    JobBoard *jb = dynamic_cast <JobBoard *> (owner);
+
+    jb->OnNextClicked ();
   }
 }

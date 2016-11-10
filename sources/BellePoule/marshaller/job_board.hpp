@@ -21,7 +21,9 @@
 
 namespace Marshaller
 {
+  class Message;
   class Job;
+  class JobDetails;
 
   class JobBoard : public Module
   {
@@ -30,12 +32,27 @@ namespace Marshaller
 
       void Display (GList *job_list);
 
+      void SetProperty (const gchar *property,
+                        const gchar *image);
+
+      void SetColor (GdkColor *color);
+
+      void OnPreviousClicked ();
+
+      void OnNextClicked ();
+
     private:
-      GtkWidget *_dialog;
+      GtkWidget  *_dialog;
+      GList      *_job_list;
+      GList      *_current_job;
+      JobDetails *_referee_details;
+      JobDetails *_fencer_details;
 
       ~JobBoard ();
 
-      void Display (Job *job);
+      void SetArrowSensitivity ();
+
+      void DisplayCurrent ();
   };
 }
 

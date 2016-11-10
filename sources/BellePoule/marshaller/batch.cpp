@@ -21,6 +21,7 @@
 #include "actors/player_factory.hpp"
 
 #include "job.hpp"
+#include "job_board.hpp"
 #include "batch.hpp"
 
 namespace Marshaller
@@ -41,6 +42,7 @@ namespace Marshaller
     _listener       = listener;
     _scheduled_list = NULL;
     _pending_list   = NULL;
+    _job_list       = NULL;
     _fencer_list    = NULL;
     _weapon         = NULL;
 
@@ -51,6 +53,8 @@ namespace Marshaller
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
     _gdk_color = g_new (GdkColor, 1);
+
+    _job_board = new JobBoard ();
 
     {
       GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("batch_treeview"));
@@ -80,6 +84,7 @@ namespace Marshaller
 
     g_list_free (_scheduled_list);
     g_list_free (_pending_list);
+    g_list_free (_job_list);
 
     g_list_free_full (_fencer_list,
                       (GDestroyNotify) Object::TryToRelease);
@@ -108,6 +113,8 @@ namespace Marshaller
     }
 
     g_free (_weapon);
+
+    _job_board->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -141,6 +148,9 @@ namespace Marshaller
     gtk_label_set_text (label,
                         gettext (image));
 
+    _job_board->SetProperty (property,
+                             image);
+
     g_free (image);
     g_free (property_widget);
     g_free (xml);
@@ -171,6 +181,8 @@ namespace Marshaller
 
       g_free (color);
     }
+
+    _job_board->SetColor (_gdk_color);
   }
 
   // --------------------------------------------------------------------------------
@@ -411,6 +423,8 @@ namespace Marshaller
       g_free (_name);
       _name = message->GetString ("round");
     }
+
+    _job_list = g_list_copy (_pending_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -498,7 +512,10 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Batch::OnAssign ()
   {
-    _listener->OnBatchAssignmentRequest (this);
+    if (_listener->OnBatchAssignmentRequest (this))
+    {
+      _job_board->Display (_job_list);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -616,10 +633,9 @@ namespace Marshaller
     {
       GList *list = NULL;
 
-      list = g_list_append (list,
-                            job);
-      _listener->OnJobDetailsDisplayRequest (list);
-      g_list_free (list);
+      list = g_list_find (_job_list,
+                          job);
+      _job_board->Display (list);
     }
   }
 

@@ -585,12 +585,6 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::OnJobDetailsDisplayRequest (GList *job_list)
-  {
-    _job_board->Display (job_list);
-  }
-
-  // --------------------------------------------------------------------------------
   void Hall::OnPisteButtonEvent (Piste          *piste,
                                  GdkEventButton *event)
   {
@@ -709,8 +703,10 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::OnBatchAssignmentRequest (Batch *batch)
+  gboolean Hall::OnBatchAssignmentRequest (Batch *batch)
   {
+    gboolean done = FALSE;
+
     _listener->OnExposeWeapon (batch->GetWeaponCode ());
 
     if (_referee_pool->WeaponHasReferees (batch->GetWeaponCode ()) == FALSE)
@@ -737,7 +733,8 @@ namespace Marshaller
         gtk_toggle_button_set_active (toggle, TRUE);
       }
 
-      if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
+      done = gtk_dialog_run (GTK_DIALOG (dialog)) == 0;
+      if (done)
       {
         GList *job_list;
         GList *referee_list;
@@ -812,6 +809,8 @@ namespace Marshaller
 
       gtk_widget_hide (dialog);
     }
+
+    return done;
   }
 
   // --------------------------------------------------------------------------------

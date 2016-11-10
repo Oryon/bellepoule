@@ -141,11 +141,9 @@ namespace Marshaller
       void OnPisteMotionEvent (Piste          *piste,
                                GdkEventMotion *event);
 
-      void OnBatchAssignmentRequest (Batch *batch);
+      gboolean OnBatchAssignmentRequest (Batch *batch);
 
       void OnBatchAssignmentCancel (Batch *batch);
-
-      void OnJobDetailsDisplayRequest (GList *job_list);
 
       void OnTimelineCursorMoved ();
   };

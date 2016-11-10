@@ -27,15 +27,15 @@ class Player;
 namespace Marshaller
 {
   class Job;
+  class JobBoard;
 
   class Batch : public Module
   {
     public:
       struct Listener
       {
-        virtual void OnBatchAssignmentRequest   (Batch *batch)    = 0;
-        virtual void OnBatchAssignmentCancel    (Batch *batch)    = 0;
-        virtual void OnJobDetailsDisplayRequest (GList *job_list) = 0;
+        virtual gboolean OnBatchAssignmentRequest (Batch *batch) = 0;
+        virtual void     OnBatchAssignmentCancel  (Batch *batch) = 0;
       };
 
     public:
@@ -86,8 +86,10 @@ namespace Marshaller
       Listener     *_listener;
       GList        *_scheduled_list;
       GList        *_pending_list;
+      GList        *_job_list;
       GList        *_fencer_list;
       gchar        *_weapon;
+      JobBoard     *_job_board;
 
       virtual ~Batch ();
 
