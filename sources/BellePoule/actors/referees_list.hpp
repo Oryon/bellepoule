@@ -42,6 +42,8 @@ namespace People
 
       void Collapse ();
 
+      gboolean IsCollapsed ();
+
     protected:
       virtual ~RefereesList ();
 

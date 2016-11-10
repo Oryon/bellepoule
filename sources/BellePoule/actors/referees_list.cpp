@@ -105,49 +105,7 @@ namespace People
     }
 
     // Popup menu
-    {
-      SetPasteVisibility (TRUE);
-
-      {
-        GError *error = NULL;
-        static const gchar xml[] =
-          "<ui>\n"
-          "  <popup name='PopupMenu'>\n"
-          "    <separator/>\n"
-          "    <menuitem action='JobListAction'/>\n"
-          "  </popup>\n"
-          "</ui>";
-
-        if (gtk_ui_manager_add_ui_from_string (_ui_manager,
-                                               xml,
-                                               -1,
-                                               &error) == FALSE)
-        {
-          g_message ("building menus failed: %s", error->message);
-          g_error_free (error);
-          error = NULL;
-        }
-      }
-
-      // Actions
-      {
-        GtkActionGroup *action_group = gtk_action_group_new ("RefereesListActionGroup");
-        static GtkActionEntry entries[] =
-        {
-          {"JobListAction", GTK_STOCK_JUSTIFY_FILL, gettext ("View job list"), NULL, NULL, NULL}
-        };
-
-        gtk_action_group_add_actions (action_group,
-                                      entries,
-                                      G_N_ELEMENTS (entries),
-                                      this);
-        gtk_ui_manager_insert_action_group (_ui_manager,
-                                            action_group,
-                                            0);
-
-        g_object_unref (G_OBJECT (action_group));
-      }
-    }
+    SetPasteVisibility (TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -421,23 +379,55 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::Expand ()
   {
-    GtkWidget *panel = _glade->GetWidget ("edit_panel");
+    {
+      GtkWidget *panel = _glade->GetWidget ("edit_panel");
 
-    gtk_widget_show (panel);
+      gtk_widget_show (panel);
+    }
 
     SetFilter (_expanded_filter);
+
+    {
+      GtkAction *action = GetAction ("RefereesListActionGroup",
+                                     "JobListAction");
+
+      if (action)
+      {
+        gtk_action_set_visible (action,
+                                FALSE);
+      }
+    }
 
     OnAttrListUpdated ();
   }
 
   // --------------------------------------------------------------------------------
+  gboolean RefereesList::IsCollapsed ()
+  {
+    return (GetFilter () == _collapsed_filter);
+  }
+
+  // --------------------------------------------------------------------------------
   void RefereesList::Collapse ()
   {
-    GtkWidget *panel = _glade->GetWidget ("edit_panel");
+    {
+      GtkWidget *panel = _glade->GetWidget ("edit_panel");
 
-    gtk_widget_hide (panel);
+      gtk_widget_hide (panel);
+    }
 
     SetFilter (_collapsed_filter);
+
+    {
+      GtkAction *action = GetAction ("RefereesListActionGroup",
+                                     "JobListAction");
+
+      if (action)
+      {
+        gtk_action_set_visible (action,
+                                TRUE);
+      }
+    }
 
     OnAttrListUpdated ();
   }

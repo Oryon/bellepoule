@@ -14,13 +14,15 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "actors/referees_list.hpp"
+
 #include "enlisted_referee.hpp"
 #include "piste.hpp"
 #include "job.hpp"
 #include "batch.hpp"
 #include "referee_pool.hpp"
 #include "timeline.hpp"
-#include "job_details.hpp"
+#include "job_board.hpp"
 #include "lasso.hpp"
 
 #include "hall.hpp"
@@ -52,8 +54,9 @@ namespace Marshaller
             _glade->GetWidget ("timeline_viewport"));
     }
 
-    _lasso = new Lasso ();
-    _clock = new Clock (this);
+    _lasso     = new Lasso ();
+    _clock     = new Clock (this);
+    _job_board = new JobBoard ();
 
     OnTimelineCursorMoved ();
   }
@@ -67,9 +70,10 @@ namespace Marshaller
     g_list_free_full (_batch_list,
                       (GDestroyNotify) Object::TryToRelease);
 
-    _timeline->Release ();
-    _lasso->Release    ();
-    _clock->Release    ();
+    _timeline->Release  ();
+    _lasso->Release     ();
+    _clock->Release     ();
+    _job_board->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -576,60 +580,10 @@ namespace Marshaller
 
     if (slot)
     {
-      GtkWidget  *dialog          = _glade->GetWidget ("job_list_dialog");
-      JobDetails *referee_details;
-      JobDetails *fencer_details;
-
-      {
-        referee_details = new JobDetails (slot->GetRefereeList ());
-
-        Plug (referee_details,
-              _glade->GetWidget ("referee_detail_hook"));
-      }
-
-      {
-        GList *current_job = slot->GetJobList ();
-        GList *fencer_list = NULL;
-
-        while (current_job)
-        {
-          Job   *job  = (Job *) current_job->data;
-          GList *list = job->GetFencerList ();
-
-          fencer_list = g_list_concat (fencer_list,
-                                       g_list_copy (list));
-
-          current_job = g_list_next (current_job);
-        }
-
-        fencer_details = new JobDetails (fencer_list);
-        g_list_free (fencer_list);
-
-        Plug (fencer_details,
-              _glade->GetWidget ("fencer_detail_hook"));
-      }
-
-      gtk_dialog_run (GTK_DIALOG (dialog));
-      gtk_widget_hide (dialog);
-
-      referee_details->Release ();
-      fencer_details->Release  ();
+      _job_board->Display (slot->GetJobList ());
     }
+
     g_date_time_unref (cursor);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Hall::OnJobDetailsDisplayRequest (Job *job)
-  {
-    GtkWidget  *dialog  = _glade->GetWidget ("job_list_dialog");
-    JobDetails *details = new JobDetails (job->GetFencerList ());
-
-    Plug (details,
-          _glade->GetWidget ("fencer_detail_hook"));
-
-    gtk_dialog_run (GTK_DIALOG (dialog));
-    gtk_widget_hide (dialog);
-    details->Release  ();
   }
 
   // --------------------------------------------------------------------------------
@@ -751,8 +705,10 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::OnBatchAssignmentRequest (Batch *batch)
+  gboolean Hall::OnBatchAssignmentRequest (Batch *batch)
   {
+    gboolean done = FALSE;
+
     _listener->OnExposeWeapon (batch->GetWeaponCode ());
 
     if (_referee_pool->WeaponHasReferees (batch->GetWeaponCode ()) == FALSE)
@@ -779,7 +735,8 @@ namespace Marshaller
         gtk_toggle_button_set_active (toggle, TRUE);
       }
 
-      if (gtk_dialog_run (GTK_DIALOG (dialog)) == 0)
+      done = gtk_dialog_run (GTK_DIALOG (dialog)) == 0;
+      if (done)
       {
         GList *job_list;
         GList *referee_list;
@@ -854,6 +811,8 @@ namespace Marshaller
 
       gtk_widget_hide (dialog);
     }
+
+    return done;
   }
 
   // --------------------------------------------------------------------------------

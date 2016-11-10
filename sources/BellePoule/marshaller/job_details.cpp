@@ -87,5 +87,6 @@ namespace Marshaller
   void JobDetails::OnPlugged ()
   {
     OnAttrListUpdated ();
+    gtk_widget_show_all (GetRootWidget ());
   }
 }

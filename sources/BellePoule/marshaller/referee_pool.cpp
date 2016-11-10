@@ -15,8 +15,10 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/message.hpp"
+#include "actors/checkin.hpp"
 #include "actors/player_factory.hpp"
 #include "actors/tally_counter.hpp"
+#include "actors/referees_list.hpp"
 #include "enlisted_referee.hpp"
 #include "job.hpp"
 #include "slot.hpp"
@@ -44,6 +46,53 @@ namespace Marshaller
   {
     _list_by_weapon = g_list_prepend (_list_by_weapon,
                                       list);
+
+    // Popup menu
+    {
+      GtkUIManager *ui_manager = list->GetUiManager ();
+
+      {
+        GError *error = NULL;
+        static const gchar xml[] =
+          "<ui>\n"
+          "  <popup name='PopupMenu'>\n"
+          "    <separator/>\n"
+          "    <menuitem action='JobListAction'/>\n"
+          "  </popup>\n"
+          "</ui>";
+
+        if (gtk_ui_manager_add_ui_from_string (ui_manager,
+                                               xml,
+                                               -1,
+                                               &error) == FALSE)
+        {
+          g_message ("building menus failed: %s", error->message);
+          g_error_free (error);
+          error = NULL;
+        }
+      }
+
+      // Actions
+      {
+        GtkActionGroup *action_group = gtk_action_group_new ("RefereesListActionGroup");
+        static GtkActionEntry entries[] =
+        {
+          {"JobListAction", GTK_STOCK_JUSTIFY_FILL, gettext ("Display jobs"), NULL, NULL, G_CALLBACK (OnDisplayJobs)}
+        };
+
+        gtk_action_group_add_actions (action_group,
+                                      entries,
+                                      G_N_ELEMENTS (entries),
+                                      list);
+        gtk_ui_manager_insert_action_group (ui_manager,
+                                            action_group,
+                                            0);
+
+        g_object_unref (G_OBJECT (action_group));
+      }
+
+      list->AddListener (this);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -206,7 +255,7 @@ namespace Marshaller
           referee->Load (xml_nodeset->nodeTab[0]);
 
           {
-            Attribute            *weapon_attr  = referee->GetAttribute ( &weapon_attr_id);
+            Attribute            *weapon_attr  = referee->GetAttribute (&weapon_attr_id);
             People::RefereesList *referee_list = GetListOf (weapon_attr->GetStrValue ());
 
             if (referee_list->GetPlayerFromRef (referee->GetRef ()) == NULL)
@@ -229,5 +278,39 @@ namespace Marshaller
     }
 
     g_free (xml);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean RefereePool::OnPlayerListRowActivated (People::Checkin *checkin)
+  {
+    People::RefereesList *rl = dynamic_cast <People::RefereesList *> (checkin);
+
+    if (rl)
+    {
+      if (rl->IsCollapsed ())
+      {
+        OnDisplayJobs (NULL,
+                       rl);
+        return TRUE;
+      }
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereePool::OnDisplayJobs (GtkWidget            *w,
+                                   People::RefereesList *referee_list)
+  {
+    GList *selection = referee_list->GetSelectedPlayers ();
+
+    if (selection)
+    {
+      EnlistedReferee *referee = (EnlistedReferee *) selection->data;
+
+      referee->DisplayJobs ();
+
+      g_list_free (selection);
+    }
   }
 }

@@ -35,11 +35,19 @@ namespace People
   class Checkin : public PlayersList
   {
     public:
+      struct Listener
+      {
+        virtual gboolean OnPlayerListRowActivated (Checkin *checkin) = 0;
+      };
+
+    public:
       Checkin (const gchar *glade,
                const gchar *base_class,
                const gchar *gathering_class);
 
       virtual void Add (Player *player);
+
+      void AddListener (Listener *listener);
 
       void LoadList (xmlXPathContext *xml_context,
                      const gchar     *from_node,
@@ -108,6 +116,7 @@ namespace People
       virtual gboolean PlayerIsPrintable (Player *player);
 
     private:
+      Listener     *_listener;
       gboolean      _print_attending;
       gboolean      _print_missing;
       const gchar  *_base_class;

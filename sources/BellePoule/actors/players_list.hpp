@@ -79,6 +79,11 @@ namespace People
 
       void DumpToHTML (FILE *file);
 
+      GtkUIManager *GetUiManager ();
+
+      GtkAction *GetAction (const gchar *group_name,
+                            const gchar *name);
+
       static const guint NO_RIGHT   = 0x00000000;
       static const guint SORTABLE   = 0x00000001;
       static const guint MODIFIABLE = 0x00000002;
@@ -108,8 +113,6 @@ namespace People
 
       Player *GetPlayerWithAttribute (Player::AttributeId *attr_id,
                                       Attribute           *attr);
-
-      GtkAction *GetAction (const gchar *name);
 
       virtual void SelectTreeMode ();
 

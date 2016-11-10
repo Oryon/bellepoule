@@ -21,6 +21,7 @@
 #include "actors/player_factory.hpp"
 
 #include "job.hpp"
+#include "job_board.hpp"
 #include "batch.hpp"
 
 namespace Marshaller
@@ -29,7 +30,7 @@ namespace Marshaller
   {
     NAME_str,
     JOB_ptr,
-    JOB_visibility
+    JOB_color
   } ColumnId;
 
   // --------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ namespace Marshaller
     _listener       = listener;
     _scheduled_list = NULL;
     _pending_list   = NULL;
+    _job_list       = NULL;
     _fencer_list    = NULL;
     _weapon         = NULL;
 
@@ -50,14 +52,9 @@ namespace Marshaller
 
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
-    {
-      GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("treemodelfilter"));
+    _gdk_color = g_new (GdkColor, 1);
 
-      gtk_tree_model_filter_set_visible_column (filter,
-                                                JOB_visibility);
-    }
-
-    _gdk_color = NULL;
+    _job_board = new JobBoard ();
 
     {
       GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("batch_treeview"));
@@ -77,6 +74,8 @@ namespace Marshaller
 
       ConnectDndSource (source);
     }
+
+    g_datalist_init (&_properties);
   }
 
   // --------------------------------------------------------------------------------
@@ -87,6 +86,9 @@ namespace Marshaller
 
     g_list_free (_scheduled_list);
     g_list_free (_pending_list);
+    g_list_free (_job_list);
+
+    g_datalist_clear (&_properties);
 
     g_list_free_full (_fencer_list,
                       (GDestroyNotify) Object::TryToRelease);
@@ -115,12 +117,20 @@ namespace Marshaller
     }
 
     g_free (_weapon);
+
+    _job_board->Release ();
   }
 
   // --------------------------------------------------------------------------------
   guint32 Batch::GetId ()
   {
     return _id;
+  }
+
+  // --------------------------------------------------------------------------------
+  GData *Batch::GetProperties ()
+  {
+    return _properties;
   }
 
   // --------------------------------------------------------------------------------
@@ -145,10 +155,13 @@ namespace Marshaller
     gchar         *xml             = message->GetString (property);
     gchar         *image           = desc->GetUserImage (xml, AttributeDesc::LONG_TEXT);
 
+    g_datalist_set_data_full (&_properties,
+                              property,
+                              image,
+                              g_free);
     gtk_label_set_text (label,
                         gettext (image));
 
-    g_free (image);
     g_free (property_widget);
     g_free (xml);
   }
@@ -165,8 +178,6 @@ namespace Marshaller
     {
       GtkWidget *tab   = _glade->GetWidget ("notebook_title");
       gchar     *color = message->GetString ("color");
-
-      _gdk_color = g_new (GdkColor, 1);
 
       gdk_color_parse (color,
                        _gdk_color);
@@ -260,10 +271,6 @@ namespace Marshaller
 
       if (current_job == job)
       {
-        gtk_list_store_set (_job_store, &iter,
-                            JOB_visibility, visibility,
-                            -1);
-
         if (visibility == FALSE)
         {
           GList *node = g_list_find (_pending_list,
@@ -274,6 +281,10 @@ namespace Marshaller
           _scheduled_list = g_list_insert_sorted (_scheduled_list,
                                                   job,
                                                   (GCompareFunc) Job::CompareStartTime);
+
+          gtk_list_store_set (_job_store, &iter,
+                              JOB_color,  "Grey",
+                              -1);
         }
         else
         {
@@ -285,6 +296,10 @@ namespace Marshaller
           _pending_list = g_list_insert_sorted (_pending_list,
                                                 job,
                                                 (GCompareFunc) Job::CompareSiblingOrder);
+
+          gtk_list_store_set (_job_store, &iter,
+                              JOB_color,  "Black",
+                              -1);
         }
         break;
       }
@@ -416,6 +431,8 @@ namespace Marshaller
       g_free (_name);
       _name = message->GetString ("round");
     }
+
+    _job_list = g_list_copy (_pending_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -462,9 +479,9 @@ namespace Marshaller
 
           job->SetName (name);
           gtk_list_store_set (_job_store, &iter,
-                              NAME_str,       name,
-                              JOB_ptr,        job,
-                              JOB_visibility, 1,
+                              NAME_str,   name,
+                              JOB_ptr,    job,
+                              JOB_color,  "Black",
                               -1);
           g_free (name);
 
@@ -503,7 +520,10 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Batch::OnAssign ()
   {
-    _listener->OnBatchAssignmentRequest (this);
+    if (_listener->OnBatchAssignmentRequest (this))
+    {
+      _job_board->Display (_job_list);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -618,7 +638,13 @@ namespace Marshaller
                         JOB_ptr,
                         &job, -1);
 
-    _listener->OnJobDetailsDisplayRequest (job);
+    {
+      GList *list = NULL;
+
+      list = g_list_find (_job_list,
+                          job);
+      _job_board->Display (list);
+    }
   }
 
   // --------------------------------------------------------------------------------

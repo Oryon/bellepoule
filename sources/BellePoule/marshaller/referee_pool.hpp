@@ -19,7 +19,12 @@
 
 #include <gtk/gtk.h>
 
-#include "actors/referees_list.hpp"
+#include "actors/checkin.hpp"
+
+namespace People
+{
+  class RefereesList;
+}
 
 namespace Marshaller
 {
@@ -27,7 +32,8 @@ namespace Marshaller
   class Slot;
   class EnlistedReferee;
 
-  class RefereePool : public Object
+  class RefereePool : public Object,
+                      public People::Checkin::Listener
   {
     public:
       RefereePool ();
@@ -54,6 +60,11 @@ namespace Marshaller
       GList *_list_by_weapon;
 
       ~RefereePool ();
+
+      gboolean OnPlayerListRowActivated (People::Checkin *checkin);
+
+      static void OnDisplayJobs (GtkWidget            *w,
+                                 People::RefereesList *referee_list);
 
       static void SpreadWeapon (People::RefereesList *list,
                                 RefereePool          *rp);
