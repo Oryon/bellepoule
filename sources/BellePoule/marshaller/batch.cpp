@@ -74,6 +74,8 @@ namespace Marshaller
 
       ConnectDndSource (source);
     }
+
+    g_datalist_init (&_properties);
   }
 
   // --------------------------------------------------------------------------------
@@ -85,6 +87,8 @@ namespace Marshaller
     g_list_free (_scheduled_list);
     g_list_free (_pending_list);
     g_list_free (_job_list);
+
+    g_datalist_clear (&_properties);
 
     g_list_free_full (_fencer_list,
                       (GDestroyNotify) Object::TryToRelease);
@@ -124,6 +128,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  GData *Batch::GetProperties ()
+  {
+    return _properties;
+  }
+
+  // --------------------------------------------------------------------------------
   GdkColor *Batch::GetColor ()
   {
     return _gdk_color;
@@ -145,13 +155,13 @@ namespace Marshaller
     gchar         *xml             = message->GetString (property);
     gchar         *image           = desc->GetUserImage (xml, AttributeDesc::LONG_TEXT);
 
+    g_datalist_set_data_full (&_properties,
+                              property,
+                              image,
+                              g_free);
     gtk_label_set_text (label,
                         gettext (image));
 
-    _job_board->SetProperty (property,
-                             image);
-
-    g_free (image);
     g_free (property_widget);
     g_free (xml);
   }
@@ -181,8 +191,6 @@ namespace Marshaller
 
       g_free (color);
     }
-
-    _job_board->SetColor (_gdk_color);
   }
 
   // --------------------------------------------------------------------------------

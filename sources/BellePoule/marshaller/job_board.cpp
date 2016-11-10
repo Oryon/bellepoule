@@ -16,6 +16,7 @@
 
 #include "network/message.hpp"
 #include "slot.hpp"
+#include "batch.hpp"
 #include "job.hpp"
 #include "job_details.hpp"
 
@@ -86,42 +87,55 @@ namespace Marshaller
       }
     }
 
-    SetArrowSensitivity ();
+    SetProperties ();
   }
 
   // --------------------------------------------------------------------------------
-  void JobBoard::SetProperty (const gchar *property,
-                              const gchar *image)
+  void JobBoard::SetProperty (GQuark    key_id,
+                              gchar    *data,
+                              JobBoard *job_board)
   {
-    gchar    *property_widget = g_strdup_printf ("%s_label", property);
-    GtkLabel *label           = GTK_LABEL (_glade->GetGObject (property_widget));
+    const gchar *property        = g_quark_to_string (key_id);
+    gchar       *property_widget = g_strdup_printf ("%s_label", property);
+    GtkLabel    *label           = GTK_LABEL (job_board->_glade->GetGObject (property_widget));
 
     gtk_label_set_text (label,
-                        gettext (image));
+                        gettext (data));
 
     g_free (property_widget);
   }
 
   // --------------------------------------------------------------------------------
-  void JobBoard::SetColor (GdkColor *color)
+  void JobBoard::SetProperties ()
   {
-    GtkWidget *header_box = _glade->GetWidget ("header_box");
+    Job   *job        = (Job *) _current_job->data;
+    Batch *batch      = job->GetBatch ();
+    GData *properties = batch->GetProperties ();
 
-    gtk_widget_modify_bg (header_box,
-                          GTK_STATE_NORMAL,
-                          color);
-  }
+    // Title
+    g_datalist_foreach (&properties,
+                        (GDataForeachFunc) SetProperty,
+                        this);
 
-  // --------------------------------------------------------------------------------
-  void JobBoard::SetArrowSensitivity ()
-  {
-    GtkWidget *arrow;
+    // Color
+    {
+      GtkWidget *header_box = _glade->GetWidget ("header_box");
 
-    arrow = _glade->GetWidget ("previous_job");
-    gtk_widget_set_sensitive (arrow, g_list_previous (_current_job) != NULL);
+      gtk_widget_modify_bg (header_box,
+                            GTK_STATE_NORMAL,
+                            batch->GetColor ());
+    }
 
-    arrow = _glade->GetWidget ("next_job");
-    gtk_widget_set_sensitive (arrow, g_list_next (_current_job) != NULL);
+    // Arrows
+    {
+      GtkWidget *arrow;
+
+      arrow = _glade->GetWidget ("previous_job");
+      gtk_widget_set_sensitive (arrow, g_list_previous (_current_job) != NULL);
+
+      arrow = _glade->GetWidget ("next_job");
+      gtk_widget_set_sensitive (arrow, g_list_next (_current_job) != NULL);
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -69,6 +69,8 @@ namespace Marshaller
 
       GdkColor *GetColor ();
 
+      GData *GetProperties ();
+
       const gchar *GetWeaponCode ();
 
       void ManageFencer (Net::Message *message);
@@ -90,6 +92,7 @@ namespace Marshaller
       GList        *_fencer_list;
       gchar        *_weapon;
       JobBoard     *_job_board;
+      GData        *_properties;
 
       virtual ~Batch ();
 

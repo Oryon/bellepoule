@@ -32,11 +32,6 @@ namespace Marshaller
 
       void Display (GList *job_list);
 
-      void SetProperty (const gchar *property,
-                        const gchar *image);
-
-      void SetColor (GdkColor *color);
-
       void OnPreviousClicked ();
 
       void OnNextClicked ();
@@ -50,7 +45,11 @@ namespace Marshaller
 
       ~JobBoard ();
 
-      void SetArrowSensitivity ();
+      void SetProperties ();
+
+      static void SetProperty (GQuark    key_id,
+                               gchar    *data,
+                               JobBoard *job_board);
 
       void DisplayCurrent ();
   };
