@@ -483,7 +483,34 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::ImportFFF (gchar *filename)
   {
-    gchar *utf8_content = GetFileContent (filename);
+    gchar  *file_content = GetFileContent (filename);
+    gchar  *utf8_content;
+
+    {
+      GError *error         = NULL;
+      gsize   bytes_written;
+
+      utf8_content = g_convert (file_content,
+                                -1,
+                                "UTF-8",
+                                "ISO-8859-1",
+                                NULL,
+                                &bytes_written,
+                                &error);
+      g_free (file_content);
+
+      if (error)
+      {
+        GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_CLOSE,
+                                                    gettext ("The imported FFF file is not ISO-8859 encoded."));
+        gtk_dialog_run (GTK_DIALOG (dialog));
+        gtk_widget_destroy (dialog);
+        g_error_free (error);
+      }
+    }
 
     if (utf8_content)
     {

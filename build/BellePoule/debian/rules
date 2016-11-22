@@ -9,9 +9,16 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+PHP_XML := $(shell apt-cache show php-xml)
+ifneq "$(PHP_XML)" ""
+	SUBSTVARS = -Vdist:Depends=", php-xml"
+endif
 %:
 	dh $@ 
 
 override_dh_fixperms:
 	dh_fixperms
 	chmod 1777 debian/__PRODUCT__/usr/share/__PRODUCT__/webserver/LightTPD/www/cotcot
+
+override_dh_gencontrol:
+	dh_gencontrol -- $(SUBSTVARS)

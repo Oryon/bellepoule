@@ -79,13 +79,37 @@ void Classification::DumpToFFF (gchar   *filename,
     Weapon              *weapon = contest->GetWeapon ();
 
     fprintf (file, "FFF;WIN;competition;%s;individuel\n", contest->GetOrganizer ());
-    fprintf (file, "%s;%s;%s;%s;%s;%s\n",
-             contest->GetDate (),
-             weapon->GetImage (),
-             contest->GetGenderCode (),
-             contest->GetCategory (),
-             contest->GetName (),
-             contest->GetName ());
+    {
+      gsize  bytes_written;
+      gchar *iso8858;
+      gchar *utf8 = g_strdup_printf ("%s;%s;%s;%s;%s;%s\n",
+                                     contest->GetDate (),
+                                     weapon->GetImage (),
+                                     contest->GetGenderCode (),
+                                     contest->GetCategory (),
+                                     contest->GetName (),
+                                     contest->GetName ());
+
+      if (utf8)
+      {
+        iso8858 = g_convert (utf8,
+                             -1,
+                             "ISO-8859-1",
+                             "UTF-8",
+                             NULL,
+                             &bytes_written,
+                             NULL);
+
+        if (iso8858)
+        {
+          fprintf (file, "%s",
+                   iso8858);
+          g_free (iso8858);
+        }
+
+        g_free (utf8);
+      }
+    }
 
     while (current_player)
     {

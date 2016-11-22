@@ -42,6 +42,8 @@ namespace Net
       GData                *_form_fields;
       struct curl_httppost *_form_head;
       struct curl_httppost *_form_tail;
+      gchar                *_local_file;
+      gchar                *_remote_file;
 
       virtual ~GregUploader ();
 
