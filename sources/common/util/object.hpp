@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef object_hpp
-#define object_hpp
+#pragma once
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
@@ -152,5 +151,3 @@ class Object
     static const gchar *_klass_to_track;
 #endif
 };
-
-#endif

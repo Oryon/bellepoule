@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef clock_hpp
-#define clock_hpp
+#pragma once
 
 #include "util/object.hpp"
 
@@ -43,5 +42,3 @@ namespace Marshaller
       static gboolean OnTimeout (Clock *clock);
   };
 }
-
-#endif

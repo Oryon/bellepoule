@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef application_hpp
-#define application_hpp
+#pragma once
 
 #include "util/object.hpp"
 #include "network/downloader.hpp"
@@ -87,5 +86,3 @@ class Application :
     static gchar *HttpGetCbk (Net::HttpServer::Client *client,
                               const gchar             *url);
 };
-
-#endif

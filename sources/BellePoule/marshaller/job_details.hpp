@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef job_details_hpp
-#define job_details_hpp
+#pragma once
 
 #include "actors/players_list.hpp"
 
@@ -32,5 +31,3 @@ namespace Marshaller
       virtual ~JobDetails ();
   };
 }
-
-#endif

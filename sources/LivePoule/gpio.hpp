@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef gpio_hpp
-#define gpio_hpp
+#pragma once
 
 #include "util/object.hpp"
 
@@ -42,5 +41,3 @@ class Gpio : public Object
 
     void SetPinMode (const gchar *mode);
 };
-
-#endif

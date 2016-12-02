@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef module_hpp
-#define module_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -259,5 +258,3 @@ class Module : public virtual Object
                                      guint             info,
                                      guint             time);
 };
-
-#endif

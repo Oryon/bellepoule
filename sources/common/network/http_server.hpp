@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef http_server_hpp
-#define http_server_hpp
+#pragma once
 
 #include <glib.h>
 #include <microhttpd.h>
@@ -117,5 +116,3 @@ namespace Net
                                                enum MHD_RequestTerminationCode   code);
   };
 }
-
-#endif

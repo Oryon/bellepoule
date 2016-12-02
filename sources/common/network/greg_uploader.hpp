@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef greg_upload_hpp
-#define greg_upload_hpp
+#pragma once
 
 #include "file_uploader.hpp"
 
@@ -42,6 +41,8 @@ namespace Net
       GData                *_form_fields;
       struct curl_httppost *_form_head;
       struct curl_httppost *_form_tail;
+      gchar                *_local_file;
+      gchar                *_remote_file;
 
       virtual ~GregUploader ();
 
@@ -58,5 +59,3 @@ namespace Net
                                  GregUploader *uploader);
   };
 }
-#endif
-

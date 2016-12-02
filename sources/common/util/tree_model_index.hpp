@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef tree_model_index_hpp
-#define tree_model_index_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -40,5 +39,3 @@ class TreeModelIndex : public Object
 
     virtual ~TreeModelIndex ();
 };
-
-#endif

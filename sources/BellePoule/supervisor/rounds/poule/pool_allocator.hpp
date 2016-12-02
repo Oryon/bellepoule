@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef pools_allocator_hpp
-#define pools_allocator_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -179,5 +178,3 @@ namespace Pool
       virtual ~Allocator ();
   };
 }
-
-#endif

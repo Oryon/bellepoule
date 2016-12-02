@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef player_hpp
-#define player_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
@@ -196,5 +195,3 @@ class Player : public Object, Net::MessageUploader::Listener
 
     void Drop ();
 };
-
-#endif

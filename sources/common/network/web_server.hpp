@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef web_server_linux_hpp
-#define web_server_linux_hpp
+#pragma once
 
 #include <glib.h>
 
@@ -58,5 +57,3 @@ namespace Net
       static guint OnProgress (WebServer *owner);
   };
 }
-
-#endif

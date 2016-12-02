@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef glade_hpp
-#define glade_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -40,5 +39,3 @@ class Glade : public Object
 
     void StampAllWidgets ();
 };
-
-#endif

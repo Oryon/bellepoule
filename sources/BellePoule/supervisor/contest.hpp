@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef contest_hpp
-#define contest_hpp
+#pragma once
 
 #include <libxml/xmlwriter.h>
 #include <gtk/gtk.h>
@@ -212,5 +211,3 @@ class Contest : public Module
     void OnEndPrint (GtkPrintOperation *operation,
                      GtkPrintContext   *context);
 };
-
-#endif

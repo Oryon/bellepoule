@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef wpa_hpp
-#define wpa_hpp
+#pragma once
 
 #include "util/object.hpp"
 
@@ -48,5 +47,3 @@ class Wpa : public Object
 
     static gpointer ConfigurationThread (Wpa *wpa);
 };
-
-#endif

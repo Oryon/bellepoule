@@ -28,7 +28,7 @@ function renderCompetitionTabControl()
 	</div>';
 	
 	$tab .= '
-	<div class="defileButton" id="defileButton" onClick="switchDisplay( \'competitionTabControl\' );switchDisplay( \'stepTabControl\' );switchPause()">Lancer défillement</div>
+	<div class="defileButton" id="defileButton" onClick="switchDisplay( \'competitionTabControl\' );switchDisplay( \'stepTabControl\' );switchPause()">Lancer dÃ©fillement</div>
 	<div class="settingButton" id="settingButton" onClick="switchDisplay( \'settingForm\' );">Settings</div>';
 	
 	return $tab;
@@ -103,7 +103,7 @@ function renderSettingForm( $selectedPhaseXml )
 				</form>';
 			}
 			else
-				$form .= 'Aucune option disponible pour cette phase de la compétition';
+				$form .= 'Aucune option disponible pour cette phase de la compÃ©tition';
 				
 		$form .= '
 		</div>
@@ -119,14 +119,14 @@ function renderCompetitionCartouche( $docXml )
 	$cartouche .= '
 	<div class="cartouche" id="cartouche">
 		' . getAttribut( $docXml->documentElement, 'TitreLong' ) . '<br/>
-		Compétition ' . getCategorieLibelle( getAttribut( $docXml->documentElement, 'Categorie' ) ) . ' ' . getSexeLabel( getAttribut( $docXml->documentElement, 'Sexe' ) ) . '
+		CompÃ©tition ' . getCategorieLibelle( getAttribut( $docXml->documentElement, 'Categorie' ) ) . ' ' . getSexeLabel( getAttribut( $docXml->documentElement, 'Sexe' ) ) . '
 	</div>';
 	
 	return $cartouche;
 }
 
 
-/// En dur, à faire avec l'xml
+/// En dur, Ã  faire avec l'xml
 function renderStepTabControl( $docXml )
 {
 	$tab = '';
@@ -186,7 +186,7 @@ function renderTireurListPage( $domXml )
 			$list .= '
 			<table class="listeTireur">
 				<tr class="pair">
-					<td colspan="2">' . $equipeCount . ' équipes présentes</td>
+					<td colspan="2">' . $equipeCount . ' Ã©quipes prÃ©sentes</td>
 				</tr>
 				<tr>
 					<th>Equipe</th>
@@ -234,9 +234,9 @@ function renderTireurListPage( $domXml )
 		$tireurCount = getTireurCount( $tireurs );
 		if( $tireurCount > 0 )
 		{
-			$tireurLabel = ' tireurs présents';
+			$tireurLabel = ' tireurs prÃ©sents';
 			if( $equipeCount > 0 )
-				$tireurLabel = ' tireurs sans équipe';
+				$tireurLabel = ' tireurs sans Ã©quipe';
 				
 			$list .= '
 			<table class="listeTireur">
@@ -246,7 +246,7 @@ function renderTireurListPage( $domXml )
 				<tr>
 					<th>Rang</th>
 					<th>Nom</th>
-					<th>Prénom</th>
+					<th>PrÃ©nom</th>
 					<th>Sexe</th>
 					<th>Club</th>
 					<th>Ligue</th>
@@ -297,13 +297,13 @@ function renderFormule( $domXml, $tireurCount, $equipeCount )
 		if( $equipeCount > 0 )
 		{
 			$list .= '
-			<p>' . $equipeCount . ' équipes présentes</p>';
+			<p>' . $equipeCount . ' Ã©quipes prÃ©sentes</p>';
 		}
 		else
 		{
-			$presentLabel = ' tireurs présents';
+			$presentLabel = ' tireurs prÃ©sents';
 			if( getAttribut( $domXml->documentElement, 'Sexe' ) == SEXE_FEMALE )
-				$presentLabel = ' tireuses présentes';
+				$presentLabel = ' tireuses prÃ©sentes';
 			
 			$list .= '
 			<p>' . $tireurCount . $presentLabel . '</p>';
@@ -321,9 +321,9 @@ function renderFormule( $domXml, $tireurCount, $equipeCount )
 						case 'TourDePoules' :
 							$nbQualifie = getAttribut( $phase, 'NbQualifiesParIndice' );
 							if( $nbQualifie == '' )
-								$nbQualifie = 'Pas d\'éliminé' . $femMark;
+								$nbQualifie = 'Pas d\'Ã©liminÃ©' . $femMark;
 							else
-								$nbQualifie .= ' qualifié' . $femMark . 's';
+								$nbQualifie .= ' qualifiÃ©' . $femMark . 's';
 							
 							$list .= '
 							<p>' . getAttribut( $phase, 'ID' ) . '<br/>' . 
@@ -332,16 +332,16 @@ function renderFormule( $domXml, $tireurCount, $equipeCount )
 						
 						case 'PhaseDeTableaux' :
 							$list .= '
-							<p>Tableau d\'élimination directe';
+							<p>Tableau d\'Ã©limination directe';
 							
 							switch( getAttribut( $phase, 'PlacesTirees' ) )
 							{
 								case 3:
-									$list .= '<br/>3ème place tirée';
+									$list .= '<br/>3Ã¨me place tirÃ©e';
 									break;
 								
 								case 99:
-									$list .= '<br/>Toutes les places sont tirées';
+									$list .= '<br/>Toutes les places sont tirÃ©es';
 									break;
 								
 								default:
@@ -575,7 +575,7 @@ function renderPouleList( $domXml, $phase )
 			</table>';
 	}
 	
-	// tableau supplémentaire pour gérer le parent de tous les table float
+	// tableau supplÃ©mentaire pour gÃ©rer le parent de tous les table float
 	$poules .= '
 	<table style="clear: both"></table>';
 	
@@ -590,12 +590,12 @@ function renderPouleClassement( $domXml, $phase )
 	$class = '
 	<table class="listeTireur">
 		<tr>
-			<td colspan="4">Classement à l\'issue du ' . getAttribut( $phase, 'ID' ) . '</td>
+			<td colspan="4">Classement Ã  l\'issue du ' . getAttribut( $phase, 'ID' ) . '</td>
 		</tr>
 		<tr>
 			<th>Rang</th>
 			<th>Nom</th>
-			<th>Prénom</th>
+			<th>PrÃ©nom</th>
 			<th>Club</th>
 			<th>V / M</th>
 			<th>Ind</th>
@@ -616,10 +616,10 @@ function renderPouleClassement( $domXml, $phase )
 					switch( $tireur[ STATUT ] )
 					{
 						case STATUT_PRESENT :
-							$statut = 'Qualifié';
+							$statut = 'QualifiÃ©';
 							break;
 						case STATUT_ELIMINE: 
-							$statut = 'Eliminé';
+							$statut = 'EliminÃ©';
 							break;
 						case POULE_STATUT_ABANDON: 
 							$statut = 'Abandon';
@@ -1175,7 +1175,7 @@ function getTireurTab( $domXml, $phaseXml, $suiteXml, $startPowCount, $minInd, $
 }
 
 /* 
-* @param tab : numéro du tableau (16, 8...)
+* @param tab : numÃ©ro du tableau (16, 8...)
 * @param rank : classement du tireur
 * @param minInd : classement minimum de ce tableau (en cas de tableau des perdants)
 */
@@ -1318,7 +1318,7 @@ function renderClassement( $domXml )
 			if( $searchLabelChildren == 'Tireur' )
 			{
 				$list .= '
-				<th>Prénom</th>';
+				<th>PrÃ©nom</th>';
 			}
 			
 			$list .= '

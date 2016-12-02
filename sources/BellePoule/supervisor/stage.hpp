@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef stage_hpp
-#define stage_hpp
+#pragma once
 
 #include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
@@ -257,5 +256,3 @@ class Stage : public virtual Object
 
     void InitQualifiedForm ();
 };
-
-#endif

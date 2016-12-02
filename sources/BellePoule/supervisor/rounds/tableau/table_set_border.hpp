@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef table_set_border_hpp
-#define table_set_border_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -60,5 +59,3 @@ namespace Table
       virtual ~TableSetBorder ();
   };
 }
-
-#endif

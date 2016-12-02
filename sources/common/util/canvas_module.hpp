@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef canvas_module_hpp
-#define canvas_module_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 #include <goocanvas.h>
@@ -175,5 +174,3 @@ class CanvasModule : public Module
     static void on_zoom_changed (GtkRange     *range,
                                  CanvasModule *canvas_module);
 };
-
-#endif

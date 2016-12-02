@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef checkin_hpp
-#define checkin_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -48,5 +47,3 @@ class Classification : public People::PlayersList
 
     gboolean IsTableBorder (guint place);
 };
-
-#endif

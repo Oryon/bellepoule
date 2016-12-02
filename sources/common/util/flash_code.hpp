@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef flash_code_hpp
-#define flash_code_hpp
+#pragma once
 
 #include "util/object.hpp"
 
@@ -37,5 +36,3 @@ class FlashCode : public Object
     static void DestroyPixbuf (guchar   *pixels,
                                gpointer  data);
 };
-
-#endif

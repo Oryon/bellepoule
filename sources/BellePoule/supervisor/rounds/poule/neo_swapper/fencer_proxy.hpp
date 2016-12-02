@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef fencer_proxy_hpp
-#define fencer_proxy_hpp
+#pragma once
 
 #include "util/object.hpp"
 #include "util/player.hpp"
@@ -55,5 +54,3 @@ namespace NeoSwapper
       ~FencerProxy ();
   };
 }
-
-#endif

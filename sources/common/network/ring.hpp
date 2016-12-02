@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ring_hpp
-#define ring_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -95,4 +94,3 @@ namespace Net
       static gchar *GuessIpV4Address ();
   };
 }
-#endif

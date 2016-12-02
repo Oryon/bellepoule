@@ -32,6 +32,8 @@ namespace Net
     : FileUploader (url, NULL, NULL)
   {
     _current_job = 0;
+    _local_file  = NULL;
+    _remote_file = NULL;
     _job_url     = g_new0 (gchar *, JOB_COUNT);
 
     g_datalist_init (&_form_fields);
@@ -41,15 +43,27 @@ namespace Net
   GregUploader::~GregUploader ()
   {
     g_datalist_clear (&_form_fields);
+
+    for (guint i = 0; i < JOB_COUNT; i++)
+    {
+      g_free (_job_url[i]);
+    }
     g_free (_job_url);
+
+    g_free (_local_file);
+    g_free (_remote_file);
   }
 
   // --------------------------------------------------------------------------------
   void GregUploader::UploadFile (const gchar *file_path)
   {
+    if (_remote_file == NULL)
     {
-      gchar *basename = g_path_get_basename (file_path);
-      gchar *escaped  = g_uri_escape_string (basename,
+      _remote_file = g_path_get_basename (file_path);
+    }
+
+    {
+      gchar *escaped  = g_uri_escape_string (_remote_file,
                                              NULL,
                                              FALSE);
 
@@ -58,7 +72,6 @@ namespace Net
       _job_url[1] = g_strdup_printf ("http://www.escrime-info.com/~resultxml/Greg/envoyer.php?fichier=./temp/%s&valide=1",
                                      escaped);
 
-      g_free (basename);
       g_free (escaped);
     }
 
@@ -86,10 +99,16 @@ namespace Net
 
     if (_current_job == 0)
     {
+#ifdef WIN32
+      _local_file = g_win32_locale_filename_from_utf8 (_file_path);
+#else
+      _local_file = g_strdup (_file_path);
+#endif
       curl_formadd (&_form_head,
                     &_form_tail,
-                    CURLFORM_PTRNAME, "ficXML",
-                    CURLFORM_FILE,    _file_path,
+                    CURLFORM_PTRNAME,  "ficXML",
+                    CURLFORM_FILE,     _local_file,
+                    CURLFORM_FILENAME, _remote_file,
                     CURLFORM_END);
     }
     else if (_current_job == 1)
@@ -106,7 +125,7 @@ namespace Net
                   CURLFORM_END);
 
     curl_easy_setopt (curl, CURLOPT_HTTPPOST,  _form_head);
-    curl_easy_setopt (curl, CURLOPT_USERAGENT, "BellePoule/4.0");
+    curl_easy_setopt (curl, CURLOPT_USERAGENT, "BellePoule/5.0");
   }
 
   // --------------------------------------------------------------------------------

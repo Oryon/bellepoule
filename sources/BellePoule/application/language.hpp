@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef language_hpp
-#define language_hpp
+#pragma once
 
 #include "util/object.hpp"
 
@@ -33,5 +32,3 @@ class Language : public Object
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);
 };
-
-#endif

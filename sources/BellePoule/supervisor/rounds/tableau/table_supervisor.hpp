@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef table_supervisor_hpp
-#define table_supervisor_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -182,5 +181,3 @@ namespace Table
       virtual ~Supervisor ();
   };
 }
-
-#endif

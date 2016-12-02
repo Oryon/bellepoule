@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef schedule_hpp
-#define schedule_hpp
+#pragma once
 
 #include <libxml/xmlwriter.h>
 
@@ -167,5 +166,3 @@ class Schedule : public Module
     void RemoveFromNotebook (Stage *stage);
     Stage *CreateStage (const gchar *class_name);
 };
-
-#endif

@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef pair_hpp
-#define pair_hpp
+#pragma once
 
 #include <glib.h>
 
@@ -59,5 +58,3 @@ namespace Pool
       virtual ~Pair ();
   };
 }
-
-#endif

@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef job_board_hpp
-#define job_board_hpp
+#pragma once
 
 #include "util/module.hpp"
 
@@ -54,5 +53,3 @@ namespace Marshaller
       void DisplayCurrent ();
   };
 }
-
-#endif

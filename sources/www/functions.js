@@ -52,12 +52,12 @@ function switchPause()
 	if( pause == 0 )
 	{
 		pause = 1
-		div.innerHTML = "Lancer défillement"
+		div.innerHTML = "Lancer dÃ©fillement"
 	}
 	else
 	{
 		pause = 0
-		div.innerHTML = "Stoper défillement"
+		div.innerHTML = "Stoper dÃ©fillement"
 	}
 }
 

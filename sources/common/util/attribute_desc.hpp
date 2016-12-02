@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef attribute_desc_hpp
-#define attribute_desc_hpp
+#pragma once
 
 #include <stdarg.h>
 #include <gtk/gtk.h>
@@ -206,4 +205,3 @@ class AttributeDesc : public Object
                                    GtkTreeIter  *b,
                                    gpointer      user_data);
 };
-#endif

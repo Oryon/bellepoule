@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef rank_importer_hpp
-#define rank_importer_hpp
+#pragma once
 
 #include "util/object.hpp"
 #include "util/player.hpp"
@@ -46,5 +45,3 @@ namespace People
       void UpdateWorstRank (guint rank_candidate);
   };
 }
-
-#endif

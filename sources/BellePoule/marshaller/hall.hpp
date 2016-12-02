@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef hall_hpp
-#define hall_hpp
+#pragma once
 
 #include "util/canvas_module.hpp"
 #include "network/message.hpp"
@@ -148,5 +147,3 @@ namespace Marshaller
       void OnTimelineCursorMoved ();
   };
 }
-
-#endif

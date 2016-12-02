@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef table_set_hpp
-#define table_set_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -351,5 +350,3 @@ namespace Table
       void DumpNode (GNode *node);
   };
 }
-
-#endif

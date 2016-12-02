@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef partner_hpp
-#define partner_hpp
+#pragma once
 
 #include "util/object.hpp"
 
@@ -45,5 +44,3 @@ namespace Net
       ~Partner ();
   };
 }
-
-#endif

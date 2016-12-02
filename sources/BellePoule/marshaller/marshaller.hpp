@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef marshaller_hpp
-#define marshaller_hpp
+#pragma once
 
 #include "util/module.hpp"
 #include "referee_pool.hpp"
@@ -49,5 +48,3 @@ namespace Marshaller
       void OnEvent (const gchar *event);
   };
 }
-
-#endif

@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef attendees_hpp
-#define attendees_hpp
+#pragma once
 
 #include "util/object.hpp"
 
@@ -41,5 +40,3 @@ class Attendees : public Object
 
     virtual ~Attendees ();
 };
-
-#endif
