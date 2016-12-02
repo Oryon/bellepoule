@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef screen_hpp
-#define screen_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -100,5 +99,3 @@ class Screen : public Module, Net::HttpServer::Client
 
     static gboolean OnNetworkConfigured (Object *client);
 };
-
-#endif

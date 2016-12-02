@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef message_upload_hpp
-#define message_upload_hpp
+#pragma once
 
 #include "uploader.hpp"
 
@@ -74,5 +73,3 @@ namespace Net
   };
 
 }
-#endif
-

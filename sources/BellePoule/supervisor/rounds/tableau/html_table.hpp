@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef html_table_hpp
-#define html_table_hpp
+#pragma once
 
 #include "util/object.hpp"
 #include "util/player.hpp"
@@ -56,5 +55,3 @@ namespace Table
                        AttributeDesc::Look  look);
   };
 }
-
-#endif

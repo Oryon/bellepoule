@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef fencer_hpp
-#define fencer_hpp
+#pragma once
 
 #include "util/player.hpp"
 #include "team.hpp"
@@ -44,5 +43,3 @@ class Fencer : public Player
 
     Player *Clone ();
 };
-
-#endif

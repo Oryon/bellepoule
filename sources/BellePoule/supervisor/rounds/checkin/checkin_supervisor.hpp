@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef checkin_supervisor_hpp
-#define checkin_supervisor_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
@@ -176,5 +175,3 @@ namespace People
       virtual ~CheckinSupervisor ();
   };
 }
-
-#endif

@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef book_hpp
-#define book_hpp
+#pragma once
 
 #include "util/object.hpp"
 
@@ -41,5 +40,3 @@ class Book : public Object
 
     virtual ~Book ();
 };
-
-#endif

@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef chapter_hpp
-#define chapter_hpp
+#pragma once
 
 #include "util/object.hpp"
 #include "util/module.hpp"
@@ -50,5 +49,3 @@ class Chapter : public Object
 
     virtual ~Chapter ();
 };
-
-#endif

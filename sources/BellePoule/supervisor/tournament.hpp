@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef tournament_hpp
-#define tournament_hpp
+#pragma once
 
 #include "util/module.hpp"
 #include "util/glade.hpp"
@@ -118,5 +117,3 @@ class Tournament : public Module
                    GtkPrintContext   *context,
                    gint               page_nr);
 };
-
-#endif

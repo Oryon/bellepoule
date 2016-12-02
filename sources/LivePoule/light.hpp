@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef light_hpp
-#define light_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -49,5 +48,3 @@ class Light : public Object
     void SwitchOff ();
 
 };
-
-#endif

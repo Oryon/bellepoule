@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef lasso_hpp
-#define lasso_hpp
+#pragma once
 
 #include "goocanvas.h"
 #include "util/object.hpp"
@@ -45,5 +44,3 @@ namespace Marshaller
       virtual ~Lasso ();
   };
 }
-
-#endif

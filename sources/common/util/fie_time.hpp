@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef fie_time_hpp
-#define fie_time_hpp
+#pragma once
 
 #include "object.hpp"
 
@@ -38,5 +37,3 @@ class FieTime : public Object
 
     void MakeImages (GDateTime *date_time);
 };
-
-#endif

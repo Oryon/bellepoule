@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef enlisted_refree_hpp
-#define enlisted_refree_hpp
+#pragma once
 
 #include "util/player.hpp"
 #include "actors/referee.hpp"
@@ -55,5 +54,3 @@ namespace Marshaller
       virtual ~EnlistedReferee ();
   };
 }
-
-#endif

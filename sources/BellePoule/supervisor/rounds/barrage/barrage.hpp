@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef barrage_hpp
-#define barrage_hpp
+#pragma once
 
 #include "util/module.hpp"
 #include "actors/players_list.hpp"
@@ -65,5 +64,3 @@ namespace People
       virtual ~Barrage ();
   };
 }
-
-#endif

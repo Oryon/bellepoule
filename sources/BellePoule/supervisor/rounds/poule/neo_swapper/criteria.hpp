@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef criteria_hpp
-#define criteria_hpp
+#pragma once
 
 #include "util/object.hpp"
 #include "util/attribute.hpp"
@@ -76,5 +75,3 @@ namespace NeoSwapper
       void UpdateProfile ();
   };
 }
-
-#endif

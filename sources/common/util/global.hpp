@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef global_hpp
-#define global_hpp
+#pragma once
 
 #include "util/user_config.hpp"
 
@@ -28,5 +27,3 @@ class Global
   private:
     Global ();
 };
-
-#endif

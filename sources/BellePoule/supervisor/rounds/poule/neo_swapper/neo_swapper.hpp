@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef neo_swapper_hpp
-#define neo_swapper_hpp
+#pragma once
 
 #include "util/object.hpp"
 #include "util/player.hpp"
@@ -101,5 +100,3 @@ namespace NeoSwapper
       guint        _criteria_count;
   };
 }
-
-#endif

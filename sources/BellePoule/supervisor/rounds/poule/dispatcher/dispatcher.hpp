@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef dispatcher_hpp
-#define dispatcher_hpp
+#pragma once
 
 #include <glib.h>
 
@@ -69,5 +68,3 @@ namespace Pool
                           guint  teammate_count);
   };
 }
-
-#endif

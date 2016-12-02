@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef referee_pool_hpp
-#define referee_pool_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -70,5 +69,3 @@ namespace Marshaller
                                 RefereePool          *rp);
   };
 }
-
-#endif

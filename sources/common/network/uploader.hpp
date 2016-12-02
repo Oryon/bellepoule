@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef upload_hpp
-#define upload_hpp
+#pragma once
 
 #include <curl/curl.h>
 #include <glib.h>
@@ -62,5 +61,3 @@ namespace Net
   };
 
 }
-#endif
-

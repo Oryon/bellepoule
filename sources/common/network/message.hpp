@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef message_hpp
-#define message_hpp
+#pragma once
 
 #include "util/object.hpp"
 
@@ -81,4 +80,3 @@ namespace Net
       virtual ~Message ();
   };
 }
-#endif

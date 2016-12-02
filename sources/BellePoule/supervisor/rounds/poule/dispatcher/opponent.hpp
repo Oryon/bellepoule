@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef opponent_hpp
-#define opponent_hpp
+#pragma once
 
 #include <glib.h>
 
@@ -76,5 +75,3 @@ namespace Pool
       virtual ~Opponent ();
   };
 }
-
-#endif

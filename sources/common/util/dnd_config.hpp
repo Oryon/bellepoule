@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef dnd_config_hpp
-#define dnd_config_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -55,5 +54,3 @@ class DndConfig : public virtual Object
 
     ~DndConfig ();
 };
-
-#endif

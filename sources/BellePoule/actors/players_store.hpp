@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef players_store_hpp
-#define players_store_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -97,5 +96,3 @@ namespace People
       gint         _search_column;
   };
 }
-
-#endif

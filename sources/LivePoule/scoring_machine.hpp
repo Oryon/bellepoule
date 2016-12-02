@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef scoring_machine_hpp
-#define scoring_machine_hpp
+#pragma once
 
 #include "util/object.hpp"
 #include "light.hpp"
@@ -38,5 +37,3 @@ class ScoringMachine : public Object
                                 Light          *light,
                                 ScoringMachine *machine);
 };
-
-#endif

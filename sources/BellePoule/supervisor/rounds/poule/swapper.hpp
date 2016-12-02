@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef swapper_hpp
-#define swapper_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 #include "pool_zone.hpp"
@@ -50,5 +49,3 @@ namespace Pool
       virtual ~Swapper () {};
   };
 }
-
-#endif

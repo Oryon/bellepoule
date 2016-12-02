@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef player_factory_hpp
-#define player_factory_hpp
+#pragma once
 
 #include "util/player.hpp"
 
@@ -49,5 +48,3 @@ class PlayerFactory
 
     static PlayerClass *GetPlayerClass (const gchar *class_name);
 };
-
-#endif

@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ecosystem_hpp
-#define ecosystem_hpp
+#pragma once
 
 #include "util/object.hpp"
 #include "util/glade.hpp"
@@ -45,5 +44,3 @@ class EcoSystem : public Object
     static void OnRemoteHostChanged (GtkEditable *widget,
                                      EcoSystem   *ecosystem);
 };
-
-#endif

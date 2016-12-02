@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef wifi_code_hpp
-#define wifi_code_hpp
+#pragma once
 
 #include "util/object.hpp"
 #include "network/wifi_network.hpp"
@@ -51,5 +50,3 @@ class WifiCode : public FlashCode
 
     gchar *GetText ();
 };
-
-#endif

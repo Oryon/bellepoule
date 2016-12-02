@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef category_hpp
-#define category_hpp
+#pragma once
 
 #include "util/object.hpp"
 
@@ -49,5 +48,3 @@ class Category : public Object
 
     void RefreshComboBox ();
 };
-
-#endif

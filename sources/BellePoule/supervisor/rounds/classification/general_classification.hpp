@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef general_classification_hpp
-#define general_classification_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
@@ -80,5 +79,3 @@ namespace People
       virtual ~GeneralClassification ();
   };
 }
-
-#endif

@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef pool_supervisor_hpp
-#define pool_supervisor_hpp
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -123,5 +122,3 @@ namespace Pool
                                                        Supervisor *pool_supervisor);
   };
 }
-
-#endif

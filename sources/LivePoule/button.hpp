@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef button_hpp
-#define button_hpp
+#pragma once
 
 #include "gpio.hpp"
 
@@ -39,5 +38,3 @@ class Button : public Gpio
 
     static gpointer MainLoop (Button *button);
 };
-
-#endif
