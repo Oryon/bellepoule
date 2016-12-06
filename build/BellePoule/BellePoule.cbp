@@ -581,34 +581,40 @@
 		<Unit filename="../../sources/common/network/ring.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter/oauth_access_token.cpp">
+		<Unit filename="../../sources/common/network/twitter.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter/oauth_access_token.hpp">
+		<Unit filename="../../sources/common/network/twitter.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter/oauth_field.cpp">
+		<Unit filename="../../sources/common/network/oauth/access_token.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter/oauth_field.hpp">
+		<Unit filename="../../sources/common/network/oauth/access_token.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter/oauth_http_request.cpp">
+		<Unit filename="../../sources/common/network/oauth/field.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter/oauth_http_request.hpp">
+		<Unit filename="../../sources/common/network/oauth/field.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter/oauth_request_token.cpp">
+		<Unit filename="../../sources/common/network/oauth/http_request.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter/oauth_request_token.hpp">
+		<Unit filename="../../sources/common/network/oauth/http_request.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter/oauth_session.cpp">
+		<Unit filename="../../sources/common/network/oauth/request_token.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter/oauth_session.hpp">
+		<Unit filename="../../sources/common/network/oauth/request_token.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/session.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/session.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/uploader.cpp">

@@ -24,6 +24,11 @@
 
 class Contest;
 
+namespace Net
+{
+  class Twitter;
+}
+
 class Tournament : public Module
 {
   public:
@@ -63,6 +68,8 @@ class Tournament : public Module
 
     void OnActivateBackup ();
 
+    void OnTwitterToggled (gboolean on);
+
     void OnVideoReleased ();
 
     void OpenUriContest (const gchar *uri);
@@ -93,6 +100,7 @@ class Tournament : public Module
     Net::WebServer *_web_server;
     gboolean        _print_meal_tickets;
     EcoSystem      *_ecosystem;
+    Net::Twitter   *_twitter;
 
     virtual ~Tournament ();
 

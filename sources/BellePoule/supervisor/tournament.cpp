@@ -28,6 +28,7 @@
 #include "util/global.hpp"
 #include "util/canvas.hpp"
 #include "network/ring.hpp"
+#include "network/twitter.hpp"
 #include "application/version.h"
 #include "application/weapon.hpp"
 #include "actors/form.hpp"
@@ -44,6 +45,8 @@ Tournament::Tournament ()
   _contest_list = NULL;
   _referee_list = NULL;
   _referee_ref  = 1;
+
+  _twitter = new Net::Twitter ();
 }
 
 // --------------------------------------------------------------------------------
@@ -93,6 +96,8 @@ Tournament::~Tournament ()
   _web_server->Release  ();
   _ecosystem->Release   ();
   Contest::Cleanup ();
+
+  _twitter->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1300,6 +1305,19 @@ void Tournament::OnActivateBackup ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnTwitterToggled (gboolean on)
+{
+  if (on)
+  {
+    _twitter->Open ();
+  }
+  else
+  {
+    _twitter->Close ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnVideoReleased ()
 {
   GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (_glade->GetWidget ("video_off"));
@@ -1445,6 +1463,15 @@ extern "C" G_MODULE_EXPORT void on_activate_radiomenuitem_toggled (GtkCheckMenuI
   {
     t->OnActivateBackup ();
   }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_twitter_checkbutton_toggled (GtkToggleButton *button,
+                                                                Object          *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnTwitterToggled (gtk_toggle_button_get_active (button));
 }
 
 // --------------------------------------------------------------------------------
