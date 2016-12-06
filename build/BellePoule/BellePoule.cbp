@@ -281,6 +281,12 @@
 		<Unit filename="../../sources/BellePoule/marshaller/timeline.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/ask_fred.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/ask_fred.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/attendees.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
@@ -574,6 +580,36 @@
 		</Unit>
 		<Unit filename="../../sources/common/network/ring.hpp">
 			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/oauth_access_token.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/oauth_access_token.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/oauth_field.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/oauth_field.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/oauth_http_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/oauth_http_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/oauth_request_token.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/oauth_request_token.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/oauth_session.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/oauth_session.hpp">
+			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/uploader.cpp">
 			<Option target="Lib_Debug" />

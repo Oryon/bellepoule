@@ -245,6 +245,8 @@ void Application::Prepare ()
     desc = AttributeDesc::Declare (G_TYPE_INT, "ranking", "Ranking", gettext ("ranking"));
     desc->_compare_func = (GCompareFunc) CompareRanking;
 
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "rating", "Rating", gettext ("rating"));
+
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
     desc->_uniqueness    = AttributeDesc::NOT_SINGULAR;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
@@ -648,9 +650,16 @@ gint Application::CompareDate (Attribute *attr_a,
                       attr_b->GetStrValue ());
   }
 
-  return g_date_compare (&date_a,
-                         &date_b);
+  if (   g_date_valid (&date_a)
+      && g_date_valid (&date_b))
+  {
+    return g_date_compare (&date_a,
+                           &date_b);
+  }
+
+  return attr_a->CompareWith (attr_b);
 }
+
 // --------------------------------------------------------------------------------
 #ifdef DEBUG
 void Application::LogHandler (const gchar    *log_domain,

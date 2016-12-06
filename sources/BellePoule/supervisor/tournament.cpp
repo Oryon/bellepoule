@@ -33,6 +33,7 @@
 #include "actors/form.hpp"
 #include "network/http_server.hpp"
 #include "contest.hpp"
+#include "ask_fred.hpp"
 
 #include "tournament.hpp"
 
@@ -855,13 +856,15 @@ void Tournament::OnOpen (gchar *current_folder)
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              gettext ("Competition files (.cotcot / .xml)"));
+                              gettext ("Competition files (.cotcot / .xml / .frd)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.cotcot");
     gtk_file_filter_add_pattern (filter,
                                  "*.xml");
     gtk_file_filter_add_pattern (filter,
                                  "*.XML");
+    gtk_file_filter_add_pattern (filter,
+                                 "*.frd");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                  filter);
   }
@@ -1014,6 +1017,48 @@ void Tournament::OpenUriContest (const gchar *uri)
       g_free (dirname);
     }
 
+    if (g_str_has_suffix (uri,
+                          ".frd"))
+    {
+      AskFred::Parser *askfred = new AskFred::Parser (uri);
+      GList           *events  = askfred->GetEvents ();
+      gchar           *dirname = g_path_get_dirname (uri);
+
+      while (events)
+      {
+        AskFred::Event *event   = (AskFred::Event *) events->data;
+        Contest        *contest = new Contest ();
+
+        Plug (contest,
+              NULL);
+
+        contest->LoadAskFred (event,
+                              dirname);
+        Manage (contest);
+
+        events = g_list_next (events);
+      }
+
+      g_free (dirname);
+      askfred->Release ();
+
+      {
+        GtkWidget *dialog;
+
+        dialog = gtk_message_dialog_new (NULL,
+                                         GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         GTK_MESSAGE_INFO,
+                                         GTK_BUTTONS_OK,
+                                         "AskFred import done");
+
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+                                                  "Adjust the imported data if needed and \ndon't forget to save all the created events!");
+
+        gtk_dialog_run (GTK_DIALOG(dialog));
+        gtk_widget_destroy (dialog);
+      }
+    }
+    else
     {
       static const gchar *contest_suffix_table[] = {".cotcot", ".COTCOT", ".xml", ".XML", NULL};
       static const gchar *people_suffix_table[]  = {".fff", ".FFF", ".csv", ".CSV", ".txt", ".TXT", NULL};
