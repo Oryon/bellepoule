@@ -1111,8 +1111,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::OnPlayerEventFromForm (Player            *player,
-                                                 Form::PlayerEvent  event)
+  void CheckinSupervisor::OnFormEvent (Player          *player,
+                                       Form::FormEvent  event)
   {
     if (event == Form::NEW_PLAYER)
     {
@@ -1138,8 +1138,8 @@ namespace People
       }
     }
 
-    Checkin::OnPlayerEventFromForm (player,
-                                    event);
+    Checkin::OnFormEvent (player,
+                          event);
   }
 
   // --------------------------------------------------------------------------------

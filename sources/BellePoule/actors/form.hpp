@@ -32,15 +32,19 @@ namespace People
       {
         UPDATE_PLAYER,
         NEW_PLAYER
-      } PlayerEvent;
+      } FormEvent;
 
-      typedef void (Module::*PlayerCbk) (Player      *player,
-                                         PlayerEvent  event);
+      class Listener
+      {
+        public:
+          virtual void OnFormEvent (Player    *player,
+                                    FormEvent  event) = 0;
+      };
 
+    public:
       Form (Module      *client,
             Filter      *filter,
-            const gchar *player_class,
-            PlayerCbk    player_cbk);
+            const gchar *player_class);
 
       void AddPage (Filter      *filter,
                     const gchar *player_class);
@@ -76,7 +80,6 @@ namespace People
       };
 
       Module    *_client;
-      PlayerCbk  _cbk;
       Player    *_player_to_update;
       gboolean   _locked;
       guint      _page_count;

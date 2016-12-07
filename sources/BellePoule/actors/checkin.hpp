@@ -28,10 +28,9 @@
 
 namespace People
 {
-  class Form;
   class TallyCounter;
 
-  class Checkin : public PlayersList
+  class Checkin : public PlayersList, public Form::Listener
   {
     public:
       struct Listener
@@ -103,8 +102,8 @@ namespace People
                                const gchar   *player_class,
                                Player        *player);
 
-      virtual void OnPlayerEventFromForm (Player            *player,
-                                          Form::PlayerEvent  event);
+      virtual void OnFormEvent (Player          *player,
+                                Form::FormEvent  event);
 
       void SelectTreeMode ();
 

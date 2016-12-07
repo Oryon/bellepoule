@@ -139,8 +139,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void RefereesList::OnPlayerEventFromForm (Player                    *referee,
-                                            People::Form::PlayerEvent  event)
+  void RefereesList::OnFormEvent (Player                  *referee,
+                                  People::Form::FormEvent  event)
   {
     {
       Player::AttributeId  attending_attr_id ("attending");
@@ -159,8 +159,8 @@ namespace People
       }
     }
 
-    Checkin::OnPlayerEventFromForm (referee,
-                                    event);
+    Checkin::OnFormEvent (referee,
+                          event);
   }
 
   // --------------------------------------------------------------------------------
