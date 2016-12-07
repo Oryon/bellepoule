@@ -23,10 +23,32 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  TwitterUploader::TwitterUploader ()
+  TwitterUploader::TwitterUploader (Listener *listener)
   {
     _request     = NULL;
     _http_header = NULL;
+
+    _listener = listener;
+    if (_listener)
+    {
+      _listener->Use ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  TwitterUploader::~TwitterUploader ()
+  {
+    Object::TryToRelease (_request);
+
+    if (_http_header)
+    {
+      curl_slist_free_all (_http_header);
+    }
+
+    if (_listener)
+    {
+      _listener->Drop ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -60,17 +82,6 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  TwitterUploader::~TwitterUploader ()
-  {
-    Object::TryToRelease (_request);
-
-    if (_http_header)
-    {
-      curl_slist_free_all (_http_header);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void TwitterUploader::SetCurlOptions (CURL *curl)
   {
     Uploader::SetCurlOptions (curl);
@@ -100,8 +111,10 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TwitterUploader::DeferedStatus (TwitterUploader *uploader)
+  gboolean TwitterUploader::DeferedResponse (TwitterUploader *uploader)
   {
+    uploader->_listener->OnTwitterResponse (uploader->_request,
+                                            uploader->_body_in->GetContent ());
     uploader->Release ();
 
     return G_SOURCE_REMOVE;
@@ -129,7 +142,7 @@ namespace Net
 #endif
     }
 
-    g_idle_add ((GSourceFunc) DeferedStatus,
+    g_idle_add ((GSourceFunc) DeferedResponse,
                 uploader);
 
     return NULL;

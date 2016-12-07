@@ -28,7 +28,17 @@ namespace Net
   class TwitterUploader : public Uploader
   {
     public:
-      TwitterUploader ();
+      class Listener
+      {
+        public:
+          virtual void OnTwitterResponse (Oauth::HttpRequest *request,
+                                          const gchar        *response) = 0;
+          virtual void Use  () = 0;
+          virtual void Drop () = 0;
+      };
+
+    public:
+      TwitterUploader (Listener *listener);
 
       void UpLoadRequest (Oauth::HttpRequest *request);
 
@@ -36,12 +46,13 @@ namespace Net
       virtual ~TwitterUploader ();
 
     private:
+      Listener           *_listener;
       Oauth::HttpRequest *_request;
       struct curl_slist  *_http_header;
 
       static gpointer Loop (TwitterUploader *uploader);
 
-      static gboolean DeferedStatus (TwitterUploader *uploader);
+      static gboolean DeferedResponse (TwitterUploader *uploader);
 
     private:
       void SetCurlOptions (CURL *curl);

@@ -39,7 +39,8 @@ namespace Oauth
       virtual const gchar *GetURL () = 0;
 
     protected:
-      Session *_session;
+      static const gchar *GET;
+      Session            *_session;
 
       ~HttpRequest ();
 

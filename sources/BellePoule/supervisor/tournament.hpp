@@ -20,16 +20,12 @@
 #include "util/glade.hpp"
 #include "network/downloader.hpp"
 #include "network/web_server.hpp"
+#include "network/twitter.hpp"
 #include "ecosystem.hpp"
 
 class Contest;
 
-namespace Net
-{
-  class Twitter;
-}
-
-class Tournament : public Module
+class Tournament : public Module, public Net::Twitter::Listener
 {
   public:
     Tournament ();
@@ -103,6 +99,8 @@ class Tournament : public Module
     Net::Twitter   *_twitter;
 
     virtual ~Tournament ();
+
+    void OnTwitterID (const gchar *id);
 
     void SetBackupLocation (gchar *location);
 

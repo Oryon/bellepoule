@@ -569,24 +569,6 @@
 		<Unit filename="../../sources/common/network/message_uploader.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/partner.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/network/partner.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/network/ring.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/network/ring.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/network/twitter.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/network/twitter.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
 		<Unit filename="../../sources/common/network/oauth/access_token.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
@@ -615,6 +597,30 @@
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/oauth/session.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/partner.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/partner.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/ring.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/ring.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter_uploader.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter_uploader.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/uploader.cpp">

@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "util/object.hpp"
+#include "util/module.hpp"
+
+#include "twitter_uploader.hpp"
 
 namespace Oauth
 {
@@ -25,18 +27,43 @@ namespace Oauth
 
 namespace Net
 {
-  class Twitter : public Object
+  class Twitter : public Module, public TwitterUploader::Listener
   {
     public:
-      Twitter ();
+      class Listener
+      {
+        public:
+          virtual void OnTwitterID (const gchar *id) = 0;
+      };
 
-      void Open ();
+    public:
+      Twitter (Listener *listener);
 
-      void Close ();
+      void SwitchOn ();
+
+      void SwitchOff ();
 
     private:
+      enum State
+      {
+        OFF,
+        STARTUP,
+        ON
+      };
+
+      Listener       *_listener;
       Oauth::Session *_session;
+      State           _state;
 
       ~Twitter ();
+
+      void SendRequest (Oauth::HttpRequest *request);
+
+      void OnTwitterResponse (Oauth::HttpRequest *request,
+                              const gchar        *response);
+
+      void Use ();
+
+      void Drop ();
   };
 }

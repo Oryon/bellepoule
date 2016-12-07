@@ -28,7 +28,6 @@
 #include "util/global.hpp"
 #include "util/canvas.hpp"
 #include "network/ring.hpp"
-#include "network/twitter.hpp"
 #include "application/version.h"
 #include "application/weapon.hpp"
 #include "actors/form.hpp"
@@ -46,7 +45,7 @@ Tournament::Tournament ()
   _referee_list = NULL;
   _referee_ref  = 1;
 
-  _twitter = new Net::Twitter ();
+  _twitter = new Net::Twitter (this);
 }
 
 // --------------------------------------------------------------------------------
@@ -1309,11 +1308,31 @@ void Tournament::OnTwitterToggled (gboolean on)
 {
   if (on)
   {
-    _twitter->Open ();
+    _twitter->SwitchOn ();
   }
   else
   {
-    _twitter->Close ();
+    _twitter->SwitchOff ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnTwitterID (const gchar *id)
+{
+  GtkWidget *spinner = _glade->GetWidget ("twitter_spinner");
+  GtkLabel  *label   = GTK_LABEL (_glade->GetWidget ("twitter_id"));
+
+  gtk_widget_hide (spinner);
+
+  if (id)
+  {
+    gtk_label_set_text (label,
+                        id);
+  }
+  else
+  {
+    gtk_label_set_text (label,
+                        id);
   }
 }
 

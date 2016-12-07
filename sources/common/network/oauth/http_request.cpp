@@ -23,6 +23,8 @@
 
 namespace Oauth
 {
+  const gchar *HttpRequest::GET = "GET";
+
   const gchar HttpRequest::_nonce_range[] =
   {
     "0123456789"
