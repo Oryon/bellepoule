@@ -128,7 +128,14 @@ namespace Net
   void MessageUploader::SetCurlOptions (CURL *curl)
   {
     Uploader::SetCurlOptions (curl);
+
     {
+      if (_http_header)
+      {
+        curl_slist_free_all (_http_header);
+        _http_header = NULL;
+      }
+
       if (_iv)
       {
         gchar *iv_header = g_strdup_printf ("IV: %s", _iv);
@@ -202,12 +209,6 @@ namespace Net
 #ifdef UPLOADER_DEBUG
           g_print (YELLOW "[Uploader] " ESC "Done\n");
 #endif
-        }
-
-        if (uploader->_http_header)
-        {
-          curl_slist_free_all (uploader->_http_header);
-          uploader->_http_header = NULL;
         }
 
         if (uploader->_listener)

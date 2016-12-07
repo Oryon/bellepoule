@@ -24,7 +24,7 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   AccessToken::AccessToken (Session     *session,
                             const gchar *pin)
-    : HttpRequest (session, "Oauth::AccessToken")
+    : HttpRequest (session, "GET", "Oauth::AccessToken")
   {
     AddHeaderField ("oauth_verifier", pin);
   }
@@ -32,12 +32,6 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   AccessToken::~AccessToken ()
   {
-  }
-
-  // --------------------------------------------------------------------------------
-  const gchar *AccessToken::GetHttpMethod ()
-  {
-    return "GET";
   }
 
   // --------------------------------------------------------------------------------

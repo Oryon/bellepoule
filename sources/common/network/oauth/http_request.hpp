@@ -26,9 +26,10 @@ namespace Oauth
   {
     public:
       HttpRequest (Session     *session,
-                                const gchar *class_name);
+                   const gchar *http_method,
+                   const gchar *class_name);
 
-      void ParseResponse (const gchar *response);
+      virtual void ParseResponse (const gchar *response);
 
       void AddHeaderField (const gchar *key,
                                         const gchar *value);
@@ -42,12 +43,14 @@ namespace Oauth
 
       ~HttpRequest ();
 
+      gchar *ExtractParsedField (const gchar *field_desc,
+                                 const gchar *field_name);
+
     private:
       static const gchar  _nonce_range[];
       GRand              *_rand;
       GList              *_header_list;
-
-      virtual const gchar *GetHttpMethod () = 0;
+      const gchar        *_http_method;
 
       void Stamp ();
 

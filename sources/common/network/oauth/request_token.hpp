@@ -28,8 +28,6 @@ namespace Oauth
       gchar *GetPinCodeUrl ();
 
     private:
-      const gchar *GetHttpMethod ();
-
       const gchar *GetURL ();
 
       virtual ~RequestToken ();

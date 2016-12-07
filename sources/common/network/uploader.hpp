@@ -22,6 +22,35 @@
 
 namespace Net
 {
+  class Body : public Object
+  {
+    public:
+      Body ();
+
+      void Clear ();
+
+      void SetContent (const gchar *content);
+
+      const gchar *GetContent ();
+
+      size_t CopyTo (void   *to,
+                     size_t  size,
+                     size_t  nmemb);
+
+      size_t CopyFrom (void   *from,
+                       size_t  size,
+                       size_t  nmemb);
+
+      size_t GetSize ();
+
+    private:
+      gchar  *_content;
+      size_t  _size;
+      size_t  _size_processed;
+
+      ~Body ();
+  };
+
   class Uploader : public Object
   {
     public:
@@ -39,11 +68,13 @@ namespace Net
 
       virtual const gchar *GetUrl ();
 
+      virtual void OnUploadDone (const gchar *response);
+
     private:
       CURL  *_curl;
-      guint  _bytes_uploaded;
-      gchar *_data;
-      gsize  _data_length;
+
+      Body *_body_out;
+      Body *_body_in;
 
       void PrepareData (gchar       *data_copy,
                         const gchar *passphrase);
@@ -58,6 +89,10 @@ namespace Net
                                   size_t    size,
                                   size_t    nmemb,
                                   Uploader *uploader);
-  };
 
+      static size_t WriteCallback (void     *ptr,
+                                   size_t    size,
+                                   size_t    nmemb,
+                                   Uploader *uploader);
+  };
 }

@@ -24,7 +24,7 @@ namespace Oauth
 {
   // --------------------------------------------------------------------------------
   RequestToken::RequestToken (Session *session)
-    : HttpRequest (session, "Oauth::RequestToken")
+    : HttpRequest (session, "GET", "Oauth::RequestToken")
   {
     AddHeaderField ("oauth_callback", "oob");
   }
@@ -32,12 +32,6 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   RequestToken::~RequestToken ()
   {
-  }
-
-  // --------------------------------------------------------------------------------
-  const gchar *RequestToken::GetHttpMethod ()
-  {
-    return "GET";
   }
 
   // --------------------------------------------------------------------------------

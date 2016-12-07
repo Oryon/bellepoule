@@ -29,8 +29,6 @@ namespace Oauth
     private:
       virtual ~AccessToken ();
 
-      const gchar *GetHttpMethod ();
-
       const gchar *GetURL ();
   };
 }

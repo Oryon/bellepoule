@@ -21,18 +21,104 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
+  Body::Body ()
+    : Object ("Upload::Body")
+  {
+    _content        = g_new (gchar, 1);
+    _size           = 0;
+    _size_processed = 0;
+  }
+
+  // --------------------------------------------------------------------------------
+  Body::~Body ()
+  {
+    Clear ();
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Body::GetContent ()
+  {
+    return _content;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Body::Clear ()
+  {
+    g_free (_content);
+    _content        = NULL;
+    _size           = 0;
+    _size_processed = 0;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Body::SetContent (const gchar *content)
+  {
+    Clear ();
+
+    _content = g_strdup (content);
+    _size    = strlen (content);
+  }
+
+  // --------------------------------------------------------------------------------
+  size_t Body::GetSize ()
+  {
+    return _size;
+  }
+
+  // --------------------------------------------------------------------------------
+  size_t Body::CopyTo (void   *to,
+                       size_t  size,
+                       size_t  nmemb)
+  {
+    guint remaining_bytes = _size - _size_processed;
+    guint bytes_to_copy   = MIN ((size*nmemb), remaining_bytes);
+
+    memcpy (to,
+            _content + _size_processed,
+            bytes_to_copy);
+
+    _size_processed += bytes_to_copy;
+
+    return bytes_to_copy;
+  }
+
+  // --------------------------------------------------------------------------------
+  size_t Body::CopyFrom (void   *from,
+                         size_t  size,
+                         size_t  nmemb)
+  {
+    size_t realsize = size * nmemb;
+
+    _content = (gchar *) g_realloc (_content,
+                                    _size + realsize + 1);
+
+    memcpy (&(_content[_size]),
+            from,
+            realsize);
+
+    _size += realsize;
+    _content[_size] = 0;
+
+    return realsize;
+  }
+}
+
+namespace Net
+{
+  // --------------------------------------------------------------------------------
   Uploader::Uploader ()
     : Object ("Uploader")
   {
-    _data        = NULL;
-    _data_length = 0;
+    _body_out = new Body ();
+    _body_in  = new Body ();
     _curl        = NULL;
   }
 
   // --------------------------------------------------------------------------------
   Uploader::~Uploader ()
   {
-    g_free (_data);
+    _body_in->Release ();
+    _body_out->Release ();
 
     if (_curl)
     {
@@ -91,16 +177,20 @@ namespace Net
                                  size_t    nmemb,
                                  Uploader *uploader)
   {
-    guint remaining_bytes = uploader->_data_length - uploader->_bytes_uploaded;
-    guint bytes_to_copy   = MIN ((size*nmemb), remaining_bytes);
+    return uploader->_body_out->CopyTo (ptr,
+                                        size,
+                                        nmemb);
+  }
 
-    memcpy (ptr,
-            uploader->_data + uploader->_bytes_uploaded,
-            bytes_to_copy);
-
-    uploader->_bytes_uploaded += bytes_to_copy;
-
-    return bytes_to_copy;
+  // --------------------------------------------------------------------------------
+  size_t Uploader::WriteCallback (void     *ptr,
+                                  size_t    size,
+                                  size_t    nmemb,
+                                  Uploader *uploader)
+  {
+    return uploader->_body_in->CopyFrom (ptr,
+                                         size,
+                                         nmemb);
   }
 
   // --------------------------------------------------------------------------------
@@ -108,13 +198,16 @@ namespace Net
   {
     curl_easy_setopt (_curl, CURLOPT_URL, GetUrl ());
 
-    if (_data)
+    if (_body_out->GetSize () > 0)
     {
       curl_easy_setopt (curl, CURLOPT_READFUNCTION,     ReadCallback);
       curl_easy_setopt (curl, CURLOPT_READDATA,         this);
       curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
-      curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) _data_length);
+      curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) _body_out->GetSize ());
     }
+
+    curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt (curl, CURLOPT_WRITEDATA,     this);
 
 #ifdef UPLOADER_DEBUG
     curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION, OnUpLoadTrace);
@@ -130,10 +223,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void Uploader::OnUploadDone (const gchar *response)
+  {
+  }
+
+  // --------------------------------------------------------------------------------
   void Uploader::SetDataCopy (gchar *data)
   {
-    _data        = data;
-    _data_length = strlen (_data);
+    _body_out->SetContent (data);
+    g_free (data);
   }
 
   // --------------------------------------------------------------------------------
@@ -146,12 +244,11 @@ namespace Net
 
     if (_curl)
     {
-      _bytes_uploaded = 0;
+      _body_in->Clear ();
 
       curl_code = curl_easy_perform (_curl);
 
-      g_free (_data);
-      _data = NULL;
+      OnUploadDone (_body_in->GetContent ());
     }
 
     return curl_code;

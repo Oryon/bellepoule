@@ -32,13 +32,15 @@ namespace Oauth
 
   // --------------------------------------------------------------------------------
   HttpRequest::HttpRequest (Session     *session,
+                            const gchar *http_method,
                             const gchar *class_name)
     : Object (class_name)
   {
     _rand        = g_rand_new ();
     _header_list = NULL;
 
-    _session = session;
+    _http_method = http_method;
+    _session     = session;
 
     {
       gchar *nonce = GetNonce ();
@@ -65,6 +67,20 @@ namespace Oauth
   }
 
   // --------------------------------------------------------------------------------
+  gchar *HttpRequest::ExtractParsedField (const gchar *field_desc,
+                                          const gchar *field_name)
+  {
+    if (g_strstr_len (field_desc,
+                      -1,
+                      field_name))
+    {
+      return g_strdup (&field_desc[strlen (field_name)]);
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   void HttpRequest::ParseResponse (const gchar *response)
   {
     printf ("%s\n\n\n", response);
@@ -79,17 +95,20 @@ namespace Oauth
 
       while (current[0])
       {
-        if (g_strstr_len (current[0],
-                          -1,
-                          "oauth_token="))
+        gchar *field;
+
+        field = ExtractParsedField (current[0],
+                                    "oauth_token=");
+        if (field)
         {
-          _session->SetToken (g_strdup (&current[0][strlen ("oauth_token=")]));
+          _session->SetToken (field);
         }
-        else if (g_strstr_len (current[0],
-                               -1,
-                               "oauth_token_secret="))
+
+        field = ExtractParsedField (current[0],
+                                    "oauth_token_secret=");
+        if (field)
         {
-          _session->SetTokenSecret (&current[0][strlen ("oauth_token_secret=")]);
+          _session->SetTokenSecret (field);
         }
 
         current++;
@@ -187,7 +206,7 @@ namespace Oauth
     {
       // Method
       base_string = g_string_append (base_string,
-                                     GetHttpMethod ());
+                                     _http_method);
       base_string = g_string_append_c (base_string,
                                        '&');
 
