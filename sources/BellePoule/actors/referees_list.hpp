@@ -57,8 +57,8 @@ namespace People
       void OnPlayerLoaded (Player *referee,
                            Player *owner);
 
-      void OnPlayerEventFromForm (Player                    *referee,
-                                  People::Form::PlayerEvent  event);
+      void OnFormEvent (Player                  *referee,
+                        People::Form::FormEvent  event);
 
       static gboolean RefereeIsVisible (GtkTreeModel *model,
                                         GtkTreeIter  *iter,

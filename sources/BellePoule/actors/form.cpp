@@ -26,8 +26,7 @@ namespace People
   // --------------------------------------------------------------------------------
   Form::Form (Module      *client,
               Filter      *filter,
-              const gchar *player_class,
-              PlayerCbk    player_cbk)
+              const gchar *player_class)
     : Module ("form.glade",
               "FillInForm")
   {
@@ -35,7 +34,6 @@ namespace People
     _page_count = 0;
 
     _client = client;
-    _cbk    = player_cbk;
     _locked = FALSE;
 
     AddPage (filter,
@@ -362,16 +360,23 @@ namespace People
     gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
                                                           0));
 
-    if (_player_to_update)
     {
-      (_client->*_cbk) (player,
-                        UPDATE_PLAYER);
-      OnCloseButtonClicked ();
-    }
-    else
-    {
-      (_client->*_cbk) (player,
-                        NEW_PLAYER);
+      Listener *listener = dynamic_cast <Listener *> (_client);
+
+      if (listener)
+      {
+        if (_player_to_update)
+        {
+          listener->OnFormEvent (player,
+                                 UPDATE_PLAYER);
+          OnCloseButtonClicked ();
+        }
+        else
+        {
+          listener->OnFormEvent (player,
+                                 NEW_PLAYER);
+        }
+      }
     }
 
     player->NotifyChangesToPartners ();

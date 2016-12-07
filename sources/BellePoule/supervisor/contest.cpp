@@ -35,6 +35,7 @@
 
 #include "util/global.hpp"
 #include "util/canvas.hpp"
+#include "actors/player_factory.hpp"
 #include "network/greg_uploader.hpp"
 #include "actors/checkin.hpp"
 #include "actors/referees_list.hpp"
@@ -42,10 +43,12 @@
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "ecosystem.hpp"
 
+
 #include "application/version.h"
 #include "application/weapon.hpp"
 #include "category.hpp"
 
+#include "ask_fred.hpp"
 #include "tournament.hpp"
 #include "contest.hpp"
 
@@ -215,6 +218,7 @@ Contest::Contest (gboolean for_duplication )
   _gender     = 0;
   _team_event = FALSE;
   _derived    = FALSE;
+  _source     = NULL;
 
   Disclose ("Competition");
 
@@ -337,7 +341,7 @@ void Contest::GetUnknownAttributes (const gchar     *contest_keyword,
           AttributeDesc::Declare (G_TYPE_STRING,
                                   (const gchar *) current_attr->name,
                                   (const gchar *) current_attr->name,
-                                  (gchar *) current_attr->name);
+                                  (gchar *)       current_attr->name);
         }
 
         current_attr = current_attr->next;
@@ -349,6 +353,133 @@ void Contest::GetUnknownAttributes (const gchar     *contest_keyword,
 }
 
 // --------------------------------------------------------------------------------
+void Contest::LoadAskFred (AskFred::Event *askfred,
+                           const gchar    *dirname)
+{
+  g_free (_name);
+  _name = g_strdup (askfred->_name);
+
+  g_free (_location);
+  _location = g_strdup (askfred->_location);
+
+  g_free (_location);
+  _location = g_strdup (askfred->_location);
+
+  g_free (_organizer);
+  _organizer = g_strdup (askfred->_organizer);
+
+  g_free (_source);
+  _source = g_strdup ("AskFred");
+
+  for (guint i = 0; i < _nb_gender; i++)
+  {
+    if (g_strcmp0 (askfred->_gender, gender_xml_image[i]) == 0)
+    {
+      _gender = i;
+      break;
+    }
+  }
+
+  _weapon = Weapon::GetFromXml (askfred->_weapon);
+
+  _category->ParseXml (askfred->_category);
+
+  _year   = askfred->_year;
+  _month  = askfred->_month;
+  _day    = askfred->_day;
+
+  _checkin_time->_hour   = askfred->_hour;
+  _checkin_time->_minute = askfred->_minute;
+
+  {
+    GDateTime *date;
+    GDateTime *scratch;
+    GDateTime *start;
+
+    date = g_date_time_new_local (_year,
+                                  _month,
+                                  _day,
+                                  _checkin_time->_hour,
+                                  _checkin_time->_minute,
+                                  0);
+
+    scratch = g_date_time_add_minutes (date,    15);
+    start   = g_date_time_add_minutes (scratch, 15);
+
+    _scratch_time->_hour   = g_date_time_get_hour   (scratch);
+    _scratch_time->_minute = g_date_time_get_minute (scratch);
+
+    _start_time->_hour   = g_date_time_get_hour   (start);
+    _start_time->_minute = g_date_time_get_minute (start);
+
+    g_date_time_unref (start);
+    g_date_time_unref (scratch);
+    g_date_time_unref (date);
+  }
+
+  if (_schedule)
+  {
+    AttributeDesc             *league_desc = AttributeDesc::GetDescFromCodeName ("league");
+    People::CheckinSupervisor *checkin;
+    GList                     *current  = askfred->_fencers;
+
+    league_desc->_favorite_look = AttributeDesc::SHORT_TEXT;
+    _schedule->CreateDefault ();
+    _schedule->SetTeamEvent (FALSE);
+    league_desc->_favorite_look = AttributeDesc::GRAPHICAL;
+
+    checkin = _schedule->GetCheckinSupervisor ();
+
+    {
+      Filter *filter = checkin->GetFilter ();
+
+      filter->ShowAttribute ("rating");
+      filter->UpdateAttrList ();
+      filter->Release ();
+    }
+
+    while (current)
+    {
+      AskFred::Fencer     *fencer = (AskFred::Fencer *) current->data;
+      Player              *player = PlayerFactory::CreatePlayer ("Fencer");
+      Player::AttributeId  attr_id ("");
+
+      attr_id._name = (gchar *) "name";
+      player->SetAttributeValue (&attr_id, fencer->_last_name);
+
+      attr_id._name = (gchar *) "first_name";
+      player->SetAttributeValue (&attr_id, fencer->_first_name);
+
+      attr_id._name = (gchar *) "birth_date";
+      player->SetAttributeValue (&attr_id, fencer->_birth);
+
+      attr_id._name = (gchar *) "gender";
+      player->SetAttributeValue (&attr_id, fencer->_gender);
+
+      attr_id._name = (gchar *) "club";
+      player->SetAttributeValue (&attr_id, fencer->_club->_name);
+
+      attr_id._name = (gchar *) "league";
+      player->SetAttributeValue (&attr_id, fencer->_club->_division);
+
+      attr_id._name = (gchar *) "licence";
+      player->SetAttributeValue (&attr_id, fencer->_licence);
+
+      attr_id._name = (gchar *) "ranking";
+      player->SetAttributeValue (&attr_id, fencer->GetRanking (_weapon->GetXmlImage ()));
+
+      attr_id._name = (gchar *) "rating";
+      player->SetAttributeValue (&attr_id, fencer->GetRating (_weapon->GetXmlImage ()));
+
+      checkin->Add (player);
+      player->Release ();
+
+      current = g_list_next (current);
+    }
+  }
+
+  FillInProperties ();
+}
 void Contest::LoadXml (const gchar *filename)
 {
   if (g_path_is_absolute (filename) == FALSE)
@@ -677,6 +808,14 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
           xmlFree (attr);
         }
 
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Source");
+        if (attr)
+        {
+          g_free (_source);
+          _source = g_strdup (attr);
+          xmlFree (attr);
+        }
+
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "URLorganisateur");
         if (attr)
         {
@@ -711,9 +850,20 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       xmlXPathFreeContext (xml_context);
     }
 
-    _schedule->Load (doc,
-                     contest_keyword,
-                     _referees_list);
+    {
+      AttributeDesc *league_desc = AttributeDesc::GetDescFromCodeName ("league");
+
+      if (_source && (g_strcmp0 (_source, "AskFred") == 0))
+      {
+        league_desc->_favorite_look = AttributeDesc::SHORT_TEXT;
+      }
+
+      _schedule->Load (doc,
+                       contest_keyword,
+                       _referees_list);
+
+      league_desc->_favorite_look = AttributeDesc::GRAPHICAL;
+    }
 
     if (score_stuffing_policy)
     {
@@ -730,6 +880,16 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
 
       checkin->ConvertFromBaseToResult ();
+    }
+
+    if (_source && (g_strcmp0 (_source, "AskFred") == 0))
+    {
+      People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
+      Filter                    *filter  = checkin->GetFilter ();
+
+      filter->ShowAttribute ("rating");
+      filter->UpdateAttrList ();
+      filter->Release ();
     }
   }
 
@@ -767,6 +927,7 @@ Contest::~Contest ()
   g_free (_name);
   g_free (_filename);
   g_free (_organizer);
+  g_free (_source);
   g_free (_web_site);
   g_free (_location);
 
@@ -906,6 +1067,7 @@ Contest *Contest::Duplicate ()
   }
   contest->_name       = g_strdup (_name);
   contest->_organizer  = g_strdup (_organizer);
+  contest->_source     = g_strdup (_source);
   contest->_web_site   = g_strdup (_web_site);
   contest->_location   = g_strdup (_location);
   contest->_category->Replicate (_category);
@@ -1535,6 +1697,12 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
     xmlTextWriterWriteAttribute (xml_writer,
                                  BAD_CAST "Organisateur",
                                  BAD_CAST _organizer);
+    if (_source)
+    {
+      xmlTextWriterWriteAttribute (xml_writer,
+                                   BAD_CAST "Source",
+                                   BAD_CAST _source);
+    }
     xmlTextWriterWriteAttribute (xml_writer,
                                  BAD_CAST "Categorie",
                                  BAD_CAST _category->GetXmlImage ());

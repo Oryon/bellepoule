@@ -105,8 +105,8 @@ namespace People
 
       void RegisterNewTeam (Team *team);
 
-      void OnPlayerEventFromForm (Player            *player,
-                                  Form::PlayerEvent  event);
+      void OnFormEvent (Player          *player,
+                        Form::FormEvent  event);
 
       Team *GetTeam (const gchar *name);
 

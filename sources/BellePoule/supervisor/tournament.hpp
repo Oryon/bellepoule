@@ -20,11 +20,12 @@
 #include "util/glade.hpp"
 #include "network/downloader.hpp"
 #include "network/web_server.hpp"
+#include "network/twitter.hpp"
 #include "ecosystem.hpp"
 
 class Contest;
 
-class Tournament : public Module
+class Tournament : public Module, public Net::Twitter::Listener
 {
   public:
     Tournament ();
@@ -63,6 +64,8 @@ class Tournament : public Module
 
     void OnActivateBackup ();
 
+    void OnTwitterToggled (gboolean on);
+
     void OnVideoReleased ();
 
     void OpenUriContest (const gchar *uri);
@@ -93,8 +96,11 @@ class Tournament : public Module
     Net::WebServer *_web_server;
     gboolean        _print_meal_tickets;
     EcoSystem      *_ecosystem;
+    Net::Twitter   *_twitter;
 
     virtual ~Tournament ();
+
+    void OnTwitterID (const gchar *id);
 
     void SetBackupLocation (gchar *location);
 

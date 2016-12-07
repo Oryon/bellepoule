@@ -59,8 +59,7 @@ namespace People
     {
       _form = new Form (this,
                         filter,
-                        player_class,
-                        (Form::PlayerCbk) &Checkin::OnPlayerEventFromForm);
+                        player_class);
     }
   }
 
@@ -825,8 +824,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::OnPlayerEventFromForm (Player            *player,
-                                       Form::PlayerEvent  event)
+  void Checkin::OnFormEvent (Player          *player,
+                             Form::FormEvent  event)
   {
     if (event == Form::NEW_PLAYER)
     {

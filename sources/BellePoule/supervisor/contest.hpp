@@ -31,6 +31,11 @@ namespace People
   class RefereesList;
 }
 
+namespace AskFred
+{
+  class Event;
+}
+
 class Tournament;
 class Weapon;
 class Category;
@@ -49,6 +54,9 @@ class Contest : public Module
     void AskForSettings ();
 
     Contest *Duplicate ();
+
+    void LoadAskFred (AskFred::Event *askfred,
+                      const gchar    *dirname);
 
     void LoadXml (const gchar *filename);
 
@@ -139,6 +147,7 @@ class Contest : public Module
     gchar                *_uuid;
     gchar                *_name;
     gchar                *_organizer;
+    gchar                *_source;
     gchar                *_location;
     gchar                *_web_site;
     Category             *_category;
