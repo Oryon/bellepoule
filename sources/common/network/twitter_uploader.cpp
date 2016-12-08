@@ -113,8 +113,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   gboolean TwitterUploader::DeferedResponse (TwitterUploader *uploader)
   {
-    uploader->_listener->OnTwitterResponse (uploader->_request,
-                                            uploader->_body_in->GetContent ());
+    uploader->_listener->OnTwitterResponse (uploader->_request);
     uploader->Release ();
 
     return G_SOURCE_REMOVE;

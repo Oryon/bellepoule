@@ -32,6 +32,8 @@ namespace Oauth
 
       void SetTokenSecret (const gchar *token_secret);
 
+      void Reset ();
+
       const gchar *GetConsumerKey ();
 
       const guchar *GetSigningKey ();

@@ -31,8 +31,7 @@ namespace Net
       class Listener
       {
         public:
-          virtual void OnTwitterResponse (Oauth::HttpRequest *request,
-                                          const gchar        *response) = 0;
+          virtual void OnTwitterResponse (Oauth::HttpRequest *request) = 0;
           virtual void Use  () = 0;
           virtual void Drop () = 0;
       };

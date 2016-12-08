@@ -25,6 +25,15 @@ namespace Oauth
   class HttpRequest : public Object
   {
     public:
+      enum Status
+      {
+        READY,
+        NETWORK_ERROR,
+        REJECTED,
+        ACCEPTED
+      };
+
+    public:
       HttpRequest (Session     *session,
                    const gchar *http_method,
                    const gchar *class_name);
@@ -33,6 +42,8 @@ namespace Oauth
 
       void AddHeaderField (const gchar *key,
                                         const gchar *value);
+
+      Status GetStatus ();
 
       gchar *GetHeader ();
 
@@ -52,6 +63,7 @@ namespace Oauth
       GRand              *_rand;
       GList              *_header_list;
       const gchar        *_http_method;
+      Status              _status;
 
       void Stamp ();
 

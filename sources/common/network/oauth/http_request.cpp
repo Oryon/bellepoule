@@ -38,6 +38,8 @@ namespace Oauth
                             const gchar *class_name)
     : Object (class_name)
   {
+    _status = READY;
+
     _rand        = g_rand_new ();
     _header_list = NULL;
 
@@ -83,40 +85,60 @@ namespace Oauth
   }
 
   // --------------------------------------------------------------------------------
+  HttpRequest::Status HttpRequest::GetStatus ()
+  {
+    return _status;
+  }
+
+  // --------------------------------------------------------------------------------
   void HttpRequest::ParseResponse (const gchar *response)
   {
     printf ("%s\n\n\n", response);
 
-    gchar **fields = g_strsplit (response,
-                                 "&",
-                                 -1);
-
-    if (fields)
+    if (response == NULL)
     {
-      gchar **current = fields;
+      _status = NETWORK_ERROR;
+    }
+    else if (g_strstr_len (response,
+                           -1,
+                           "errors"))
+    {
+      _status = REJECTED;
+    }
+    else
+    {
+      gchar **fields = g_strsplit (response,
+                                   "&",
+                                   -1);
 
-      while (current[0])
+      if (fields)
       {
-        gchar *field;
+        gchar **current = fields;
 
-        field = ExtractParsedField (current[0],
-                                    "oauth_token=");
-        if (field)
+        while (current[0])
         {
-          _session->SetToken (field);
+          gchar *field;
+
+          field = ExtractParsedField (current[0],
+                                      "oauth_token=");
+          if (field)
+          {
+            _session->SetToken (field);
+          }
+
+          field = ExtractParsedField (current[0],
+                                      "oauth_token_secret=");
+          if (field)
+          {
+            _session->SetTokenSecret (field);
+          }
+
+          current++;
         }
 
-        field = ExtractParsedField (current[0],
-                                    "oauth_token_secret=");
-        if (field)
-        {
-          _session->SetTokenSecret (field);
-        }
-
-        current++;
+        g_strfreev (fields);
       }
-
-      g_strfreev (fields);
+      _status = ACCEPTED;
     }
   }
 

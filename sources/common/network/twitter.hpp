@@ -43,11 +43,13 @@ namespace Net
 
       void SwitchOff ();
 
+      void Reset ();
+
     private:
       enum State
       {
         OFF,
-        STARTUP,
+        WAITING_FOR_TOKEN,
         ON
       };
 
@@ -59,8 +61,7 @@ namespace Net
 
       void SendRequest (Oauth::HttpRequest *request);
 
-      void OnTwitterResponse (Oauth::HttpRequest *request,
-                              const gchar        *response);
+      void OnTwitterResponse (Oauth::HttpRequest *request);
 
       void Use ();
 

@@ -24,6 +24,11 @@ namespace Net
       {
         return "https://api.twitter.com/1.1/account/verify_credentials.json";
       }
+
+      void ParseResponse (const gchar *response)
+      {
+        HttpRequest::ParseResponse (response);
+      }
   };
 }
 
@@ -53,21 +58,19 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Twitter::OnTwitterResponse (Oauth::HttpRequest *request,
-                                   const gchar        *response)
+  void Twitter::OnTwitterResponse (Oauth::HttpRequest *request)
   {
-    if (response == NULL)
+    if (request->GetStatus () == Oauth::HttpRequest::NETWORK_ERROR)
     {
       _state = OFF;
       _listener->OnTwitterID ("Network error!");
     }
-    else if (g_strstr_len (response,
-                           -1,
-                           "errors"))
+    else if (request->GetStatus () == Oauth::HttpRequest::REJECTED)
     {
       if ((_state == OFF) && (dynamic_cast <VerifyCredentials *> (request)))
       {
-        _state = STARTUP;
+        _state = WAITING_FOR_TOKEN;
+        _session->Reset ();
         SendRequest (new Oauth::RequestToken (_session));
       }
       else
@@ -94,14 +97,19 @@ namespace Net
         }
 
         {
-          GtkWidget *w = _glade->GetWidget ("request_token_dialog");
+          GtkWidget *dialog = _glade->GetWidget ("request_token_dialog");
+          GtkEntry  *entry  = GTK_ENTRY (_glade->GetWidget ("pin_entry"));
 
-          switch (gtk_dialog_run (GTK_DIALOG (w)))
+          if (entry)
+          {
+            gtk_entry_set_text (entry,
+                                "");
+          }
+
+          switch (gtk_dialog_run (GTK_DIALOG (dialog)))
           {
             case GTK_RESPONSE_OK:
             {
-              GtkEntry *entry = GTK_ENTRY (_glade->GetWidget ("pin_entry"));
-
               SendRequest (new Oauth::AccessToken (_session,
                                                    gtk_entry_get_text (entry)));
 
@@ -115,7 +123,7 @@ namespace Net
             break;
           }
 
-          gtk_widget_hide (w);
+          gtk_widget_hide (dialog);
         }
       }
       else if (dynamic_cast <Oauth::AccessToken *> (request))
@@ -125,7 +133,7 @@ namespace Net
       else
       {
         _state = ON;
-        _listener->OnTwitterID ("(tagada@soinsoin)");
+        _listener->OnTwitterID ("tagada@soinsoin");
       }
     }
   }
@@ -162,6 +170,12 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Twitter::SwitchOff ()
   {
-    gtk_widget_hide (_glade->GetWidget ("twitter_dialog"));
+    _state = OFF;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Twitter::Reset ()
+  {
+    _session->Reset ();
   }
 }
