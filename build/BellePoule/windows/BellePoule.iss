@@ -246,6 +246,7 @@ Source: "{#MINGW}\bin\nss3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\nssutil3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\ssl3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libjson-glib-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
 #endif
 

@@ -252,7 +252,7 @@ namespace Oauth
   void HttpRequest::Stamp ()
   {
     gint64  real_time = g_get_real_time () / G_USEC_PER_SEC;
-    gchar  *stamp     = g_strdup_printf ("%ld", real_time);
+    gchar  *stamp     = g_strdup_printf ("%" G_GINT64_FORMAT, real_time);
 
     AddHeaderField ("oauth_timestamp", stamp);
   }
