@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include <json-glib/json-glib.h>
+
 #include "util/object.hpp"
 
 namespace Oauth
@@ -52,11 +54,16 @@ namespace Oauth
     protected:
       static const gchar *GET;
       Session            *_session;
+      JsonParser         *_parser;
 
       ~HttpRequest ();
 
       gchar *ExtractParsedField (const gchar *field_desc,
                                  const gchar *field_name);
+
+      gboolean LoadJson (const gchar *json);
+
+      gchar *GetJsonAtPath (const gchar *path);
 
     private:
       static const gchar  _nonce_range[];

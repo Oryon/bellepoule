@@ -42,6 +42,7 @@ namespace Oauth
 
     _rand        = g_rand_new ();
     _header_list = NULL;
+    _parser      = NULL;
 
     _http_method = http_method;
     _session     = session;
@@ -68,6 +69,81 @@ namespace Oauth
   {
     g_list_free_full (_header_list,
                       (GDestroyNotify) Object::TryToRelease);
+
+    if (_parser)
+    {
+      g_object_unref (_parser);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean HttpRequest::LoadJson (const gchar *json)
+  {
+    if (_parser == NULL)
+    {
+      _parser = json_parser_new ();
+    }
+
+    return json_parser_load_from_data (_parser,
+                                       json,
+                                       -1,
+                                       NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *HttpRequest::GetJsonAtPath (const gchar *path)
+  {
+    gchar *result = NULL;
+
+    if (_parser)
+    {
+      JsonNode *node;
+      JsonPath *jpath = json_path_new ();
+
+      json_path_compile (jpath,
+                         path,
+                         NULL);
+
+      node = json_path_match (jpath,
+                              json_parser_get_root (_parser));
+
+      if (node)
+      {
+        JsonGenerator *generator = json_generator_new ();
+        gchar         *quoted_str;
+
+        json_generator_set_root (generator,
+                                 node);
+
+        quoted_str = json_generator_to_data (generator, NULL);
+
+        if (quoted_str)
+        {
+          gchar **segments = g_strsplit_set (quoted_str, "\"[]", -1);
+
+          if (segments)
+          {
+            for (guint i = 0; segments[i] != NULL; i++)
+            {
+              if (i == 2)
+              {
+                result = g_strdup (segments[i]);
+                break;
+              }
+            }
+          }
+
+          g_strfreev (segments);
+          g_free     (quoted_str);
+        }
+
+        g_object_unref (generator);
+      }
+
+      g_object_unref (jpath);
+    }
+
+    return result;
   }
 
   // --------------------------------------------------------------------------------

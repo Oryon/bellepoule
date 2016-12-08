@@ -1305,8 +1305,8 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                                     <signal name="icon-press" handler="on_twitter_id_icon_press" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">False</property>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
