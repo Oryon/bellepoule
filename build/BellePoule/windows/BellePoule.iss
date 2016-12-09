@@ -3,9 +3,9 @@
 
 #include "..\..\..\sources\BellePoule\application\version.h"
 
-#define MINGW     "C:\Packaging\mingw32"
-#define WEBSERVER "C:\Packaging\webserver"
-#define ICONS     "C:\Packaging\icons"
+#define MINGW     ".\crossroad"
+#define WEBSERVER "..\..\..\..\webserver"
+#define ICONS     ".\icons"
 #define PRODUCT   "bellepoulebeta"
 ;#define PUBLIC_VERSION
 
@@ -126,7 +126,7 @@ Source: "..\..\..\resources\translations\ja\*"; DestDir: "{app}\share\{#PRODUCT}
 #ifdef MINGW
 ;WebServer
 [Dirs]
-Name: "{app}\share\{#PRODUCT}\webserver\LightTPD\www\cotcot"
+Name: "{app}\share\{#PRODUCT}\webserver\LightTPD\www\cotcot"; Permissions:everyone-modify
 
 [Files]
 Source: "{#WEBSERVER}\*"; DestDir: "{app}\share\{#PRODUCT}\webserver"; Flags: ignoreversion recursesubdirs
@@ -332,4 +332,3 @@ begin
 
   SaveStringsToFile(file, lines, False);
 end;
-
