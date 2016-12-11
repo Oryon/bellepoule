@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-23 17:21+0200\n"
-"PO-Revision-Date: 2016-08-23 16:30+0000\n"
+"PO-Revision-Date: 2016-12-11 00:24+0000\n"
 "Last-Translator: Ricardo Catanho <ricardocatanho@gmail.com>\n"
 "Language-Team: Portuguese <pt@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-12-10 05:04+0000\n"
+"X-Launchpad-Export-Date: 2016-12-11 05:02+0000\n"
 "X-Generator: Launchpad (build 18292)\n"
 "Language: pt\n"
 
@@ -28,7 +28,7 @@ msgid "Graphic"
 msgstr "Gráfico"
 
 msgid "Data to display"
-msgstr "Dados para mostrar"
+msgstr "Dados a visualizar"
 
 msgid "Visibility"
 msgstr "Visibilidade"
@@ -40,10 +40,10 @@ msgid "Look"
 msgstr "Aspeto"
 
 msgid "Split"
-msgstr "Secção"
+msgstr "Separar"
 
 msgid "List of fencers to extract"
-msgstr "Lista de atiradores para extrair"
+msgstr "Lista de atiradores a extrair"
 
 msgid "Choose a rank file to apply..."
 msgstr "Escolha um ficheiro de ranking para aplicar..."
@@ -124,7 +124,7 @@ msgid "Untick the absent players of the team."
 msgstr "Desmarque os atiradores ausentes da equipa."
 
 msgid "General classification"
-msgstr "Classificação geral"
+msgstr "Classificação geral final"
 
 msgid "Choose a target file..."
 msgstr "Escolha o arquivo de destino..."
@@ -163,25 +163,25 @@ msgid "Mixed"
 msgstr "Mistos"
 
 msgid "League"
-msgstr ""
+msgstr "Liga"
 
 msgid "Regional"
-msgstr ""
+msgstr "Regional"
 
 msgid "Open"
-msgstr ""
+msgstr "Open"
 
 msgid "World cup"
-msgstr ""
+msgstr "Taça do Mundo"
 
 msgid "National championships"
-msgstr ""
+msgstr "Campeonato Nacional"
 
 msgid "World championships"
-msgstr ""
+msgstr "Campeonato Mundial"
 
 msgid "Other"
-msgstr ""
+msgstr "Outro"
 
 msgid "Choose a file..."
 msgstr "Selecione um ficheiro..."
@@ -193,25 +193,25 @@ msgid "Close without saving"
 msgstr "Fechar sem guardar"
 
 msgid "U5"
-msgstr ""
+msgstr "Sub-5"
 
 msgid "U7"
-msgstr ""
+msgstr "Benjamins B"
 
 msgid "U9"
-msgstr ""
+msgstr "Benjamins A"
 
 msgid "U11"
-msgstr ""
+msgstr "Infantis"
 
 msgid "U14"
 msgstr "Iniciados"
 
 msgid "U17"
-msgstr ""
+msgstr "Cadetes"
 
 msgid "U20"
-msgstr ""
+msgstr "Júniores"
 
 msgid "U23"
 msgstr ""
@@ -235,7 +235,7 @@ msgid "Veteran 4"
 msgstr "Veteranos 4"
 
 msgid "Veteran 3+4"
-msgstr ""
+msgstr "Veteranos 3+4"
 
 msgid "Meal"
 msgstr "Refeição"
@@ -287,26 +287,26 @@ msgstr "Todas as competições não guardadas serão perdidas."
 
 #, c-format
 msgid "Round #%d"
-msgstr "Round Nº %d"
+msgstr "Volta Nº %d"
 
 msgid "Formula"
 msgstr "Fórmula"
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>Pretende mesmo cancelar o atual round?</big></b>"
+msgstr "<b><big>Pretende mesmo cancelar a etapa atual?</big></b>"
 
 msgid "Go back to the previous round?"
-msgstr "Voltar ao round anterior?"
+msgstr "Voltar à etapa anterior?"
 
 msgid "All the inputs of this round will be cancelled."
-msgstr "Todas as alterações deste round serão canceladas."
+msgstr "Todas as alterações desta etapa serão canceladas."
 
 msgid ""
 "<b><big>Because of ties, the quota is exceeded.\n"
 "Do you wish to add a barrage round?</big></b>"
 msgstr ""
 "<b><big>Devido ao empate, a quota foi excedida.\n"
-"Pretende adicionar um round de desempate?</big></b>"
+"Pretende adicionar uma volta de desempate?</big></b>"
 
 msgid "ref"
 msgstr "Árbitro"
@@ -363,7 +363,7 @@ msgid "global status"
 msgstr "estado geral"
 
 msgid "Qualified"
-msgstr "Qualificação"
+msgstr "Qualificado"
 
 msgid "Not qualified"
 msgstr "Não qualificado"
@@ -420,7 +420,7 @@ msgid "connection"
 msgstr "ligação"
 
 msgid "Broken"
-msgstr "Danificado"
+msgstr "Quebrada"
 
 msgid "Waiting"
 msgstr "Em espera"
@@ -438,7 +438,7 @@ msgid "or"
 msgstr "ou"
 
 msgid "Wrong fencers count!"
-msgstr "Contagem de atiradores errada!"
+msgstr "Número de atiradores errado!"
 
 msgid "Allocation"
 msgstr "Colocações"
@@ -453,7 +453,7 @@ msgid "Grouped by strength"
 msgstr "Agrupada por nível"
 
 msgid "Max score"
-msgstr "Nº de toques"
+msgstr "Resultado máximo"
 
 #, c-format
 msgid "Pool #%02d"
@@ -484,7 +484,7 @@ msgid "Place"
 msgstr "Classificação"
 
 msgid "Pools"
-msgstr "Eliminação Direta"
+msgstr "Poules"
 
 msgid "Bout without winner!"
 msgstr "Assalto sem vencedor!"
@@ -496,7 +496,7 @@ msgid "cutting"
 msgstr "corte"
 
 msgid "Table"
-msgstr "Tabela"
+msgstr "Quadros de Eliminação Direta"
 
 #, c-format
 msgid "%s: score sheets printing"
@@ -513,17 +513,17 @@ msgstr "Meia-final"
 
 #, c-format
 msgid "Table of %d"
-msgstr "Tabela de %d"
+msgstr "Quadro de %d"
 
 #, c-format
 msgid "Match %s"
-msgstr "Assaltos %s"
+msgstr "Assalto %s"
 
 msgid "No winner!"
 msgstr "Sem vencedor!"
 
 msgid "Table classification"
-msgstr "Classificação na tabela"
+msgstr "Quadro de Eliminação Direta"
 
 msgid "Fenced places"
 msgstr "Lugares premiados"
@@ -632,10 +632,10 @@ msgid "<b>Parameters</b>"
 msgstr "<b>Parâmetros</b>"
 
 msgid "Previous round"
-msgstr "Round anterior"
+msgstr "Etapa anterior"
 
 msgid "Next round"
-msgstr "Próximo round"
+msgstr "Etapa seguinte"
 
 msgid "Export to <b>HTML</b>"
 msgstr "Exportar para <b>HTML</b>"
@@ -708,13 +708,13 @@ msgstr ""
 "Para ativar/desativar este botão, vá às propriedades da competição."
 
 msgid "From"
-msgstr "A partir de:"
+msgstr "Desde:"
 
 msgid "To"
 msgstr "Até"
 
 msgid "For place"
-msgstr "Para o lugar"
+msgstr "Para a classificação"
 
 msgid "Zoom"
 msgstr "Ampliar"
@@ -733,7 +733,7 @@ msgid "Fencers / pools"
 msgstr "Atiradores / poule"
 
 msgid "Swapping"
-msgstr "Permutar"
+msgstr "Trocar"
 
 msgid ""
 "Fencing tournament management software.\n"
@@ -862,10 +862,10 @@ msgid "Category"
 msgstr "Categoria"
 
 msgid "Level"
-msgstr ""
+msgstr "Nível"
 
 msgid "Individual"
-msgstr "Individuais"
+msgstr "Individual"
 
 msgid "Team"
 msgstr "Equipas"
@@ -904,7 +904,7 @@ msgid "Allow"
 msgstr "Permitir"
 
 msgid "Forbid"
-msgstr "Proibir"
+msgstr "Não permitir"
 
 msgid ""
 "Automatic\n"
