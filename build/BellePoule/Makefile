@@ -229,9 +229,10 @@ prepare_examples:
 	find $(PACKAGE)/$(RELEASE)/Exemples -type f -exec chmod a-x {} \;
 
 prepare_www:
-	cp -rf ../../webserver/LightTPD/www $(PACKAGE)/$(RELEASE)
+	mkdir $(PACKAGE)/$(RELEASE)/www
+	cp -rf ../../sources/www/*\.* $(PACKAGE)/$(RELEASE)/www
 	rm -rf $(PACKAGE)/$(RELEASE)/www/cotcot
-	cp -f  debian/99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
+	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
 	sed -i 's/bellepoule/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
 	mkdir -p $(PACKAGE)/$(RELEASE)/scripts
 	cp -f  ../../scripts/www*sh $(PACKAGE)/$(RELEASE)/scripts
