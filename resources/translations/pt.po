@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-23 17:21+0200\n"
-"PO-Revision-Date: 2016-12-11 00:24+0000\n"
+"PO-Revision-Date: 2016-12-11 18:02+0000\n"
 "Last-Translator: Ricardo Catanho <ricardocatanho@gmail.com>\n"
 "Language-Team: Portuguese <pt@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-12-11 05:02+0000\n"
+"X-Launchpad-Export-Date: 2016-12-12 05:03+0000\n"
 "X-Generator: Launchpad (build 18292)\n"
 "Language: pt\n"
 
@@ -124,7 +124,7 @@ msgid "Untick the absent players of the team."
 msgstr "Desmarque os atiradores ausentes da equipa."
 
 msgid "General classification"
-msgstr "Classificação geral final"
+msgstr "Classificação Geral Final"
 
 msgid "Choose a target file..."
 msgstr "Escolha o arquivo de destino..."
@@ -277,7 +277,7 @@ msgid "Choose a backup files location..."
 msgstr "Escolha o lugar para as cópias de segurança..."
 
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>Pretende mesmo sair de BellePoule</big></b>"
+msgstr "<b><big>Pretende mesmo sair de BellePoule?</big></b>"
 
 msgid "Quit BellePoule?"
 msgstr "Sair de BellePoule?"
@@ -312,49 +312,49 @@ msgid "ref"
 msgstr "Árbitro"
 
 msgid "place"
-msgstr "lugar"
+msgstr "Class."
 
 msgid "team"
-msgstr "equipa"
+msgstr "Equipa"
 
 msgid "last name"
-msgstr "último nome"
+msgstr "Apelido"
 
 msgid "first name"
-msgstr "primeiro nome"
+msgstr "Nome"
 
 msgid "date of birth"
-msgstr "data de nascimento"
+msgstr "Data de Nascimento"
 
 msgid "gender"
-msgstr "sexo"
+msgstr "Sexo"
 
 msgid "country"
-msgstr "país"
+msgstr "País"
 
 msgid "league"
-msgstr "liga"
+msgstr "Liga"
 
 msgid "club"
-msgstr "clube"
+msgstr "Clube"
 
 msgid "licence"
-msgstr "licença"
+msgstr "Licença"
 
 msgid "IP address"
 msgstr "endereço IP"
 
 msgid "rate"
-msgstr "percentagem"
+msgstr "Percentagem"
 
 msgid "level"
-msgstr "nível"
+msgstr "Nível"
 
 msgid "ranking"
-msgstr "ranking"
+msgstr "Ranking"
 
 msgid "presence"
-msgstr "presença"
+msgstr "Presença"
 
 msgid "exported"
 msgstr "exportado"
@@ -381,7 +381,7 @@ msgid "status"
 msgstr "estado"
 
 msgid "pool #"
-msgstr "poule nº"
+msgstr "Poule Nº"
 
 msgid "Victories"
 msgstr "Vitórias"
@@ -405,7 +405,7 @@ msgid "promoted"
 msgstr "promovido"
 
 msgid "availability"
-msgstr "disponibilidade"
+msgstr "Disponibilidade"
 
 msgid "Busy"
 msgstr "Ocupado"
@@ -417,7 +417,7 @@ msgid "Free"
 msgstr "Livre"
 
 msgid "connection"
-msgstr "ligação"
+msgstr "Ligação"
 
 msgid "Broken"
 msgstr "Quebrada"
@@ -432,7 +432,7 @@ msgid "Manual"
 msgstr "Manual"
 
 msgid "Pools arrangement"
-msgstr "Disposição das poules"
+msgstr "Composição das Poules"
 
 msgid "or"
 msgstr "ou"
@@ -808,7 +808,7 @@ msgid "Print payment book"
 msgstr "Imprimir livro de pagamentos"
 
 msgid "Ecosystem"
-msgstr "Ecosistema"
+msgstr "Ambiente"
 
 msgid "WIFI"
 msgstr "WIFI"
