@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include <json-glib/json-glib.h>
+
 #include "util/object.hpp"
 
 namespace Oauth
@@ -24,6 +26,15 @@ namespace Oauth
 
   class HttpRequest : public Object
   {
+    public:
+      enum Status
+      {
+        READY,
+        NETWORK_ERROR,
+        REJECTED,
+        ACCEPTED
+      };
+
     public:
       HttpRequest (Session     *session,
                    const gchar *http_method,
@@ -34,6 +45,8 @@ namespace Oauth
       void AddHeaderField (const gchar *key,
                                         const gchar *value);
 
+      Status GetStatus ();
+
       gchar *GetHeader ();
 
       virtual const gchar *GetURL () = 0;
@@ -41,17 +54,23 @@ namespace Oauth
     protected:
       static const gchar *GET;
       Session            *_session;
+      JsonParser         *_parser;
 
       ~HttpRequest ();
 
       gchar *ExtractParsedField (const gchar *field_desc,
                                  const gchar *field_name);
 
+      gboolean LoadJson (const gchar *json);
+
+      gchar *GetJsonAtPath (const gchar *path);
+
     private:
       static const gchar  _nonce_range[];
       GRand              *_rand;
       GList              *_header_list;
       const gchar        *_http_method;
+      Status              _status;
 
       void Stamp ();
 

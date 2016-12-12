@@ -1308,6 +1308,17 @@ void Tournament::OnTwitterToggled (gboolean on)
 {
   if (on)
   {
+    GtkWidget *togglebutton = _glade->GetWidget ("twitter_checkbutton");
+    GtkWidget *spinner      = _glade->GetWidget ("twitter_spinner");
+    GtkEntry  *entry        = GTK_ENTRY (_glade->GetWidget ("twitter_id"));
+
+    gtk_widget_show (spinner);
+    gtk_widget_set_sensitive (togglebutton,
+                              FALSE);
+
+    gtk_entry_set_text (entry,
+                        "");
+
     _twitter->SwitchOn ();
   }
   else
@@ -1319,21 +1330,40 @@ void Tournament::OnTwitterToggled (gboolean on)
 // --------------------------------------------------------------------------------
 void Tournament::OnTwitterID (const gchar *id)
 {
-  GtkWidget *spinner = _glade->GetWidget ("twitter_spinner");
-  GtkLabel  *label   = GTK_LABEL (_glade->GetWidget ("twitter_id"));
+  GtkWidget *togglebutton = _glade->GetWidget ("twitter_checkbutton");
+  GtkWidget *spinner      = _glade->GetWidget ("twitter_spinner");
+  GtkEntry  *entry        = GTK_ENTRY (_glade->GetWidget ("twitter_id"));
 
   gtk_widget_hide (spinner);
+  gtk_widget_set_sensitive (togglebutton,
+                            TRUE);
 
-  if (id)
+  gtk_entry_set_text (entry,
+                      id);
+
+  if (g_strstr_len (id,
+                    -1,
+                    "@") == NULL)
   {
-    gtk_label_set_text (label,
-                        id);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton),
+                                  FALSE);
   }
-  else
-  {
-    gtk_label_set_text (label,
-                        id);
-  }
+
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnResetTwitterAccount ()
+{
+  GtkEntry        *entry        = GTK_ENTRY         (_glade->GetWidget ("twitter_id"));
+  GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (_glade->GetWidget ("twitter_checkbutton"));
+
+  gtk_toggle_button_set_active (togglebutton,
+                                FALSE);
+
+  gtk_entry_set_text (entry,
+                      "");
+
+  _twitter->Reset ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1566,4 +1596,15 @@ extern "C" G_MODULE_EXPORT void on_video_released (GtkWidget *widget,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnVideoReleased ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_twitter_id_icon_press (GtkEntry             *entry,
+                                                          GtkEntryIconPosition  icon_pos,
+                                                          GdkEvent             *event,
+                                                          Object               *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnResetTwitterAccount ();
 }

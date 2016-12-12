@@ -1261,6 +1261,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                               <object class="GtkHBox" id="hbox5">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="spacing">5</property>
                                 <child>
                                   <object class="GtkCheckButton" id="twitter_checkbutton">
                                     <property name="label" translatable="yes">Twitter</property>
@@ -1278,10 +1279,10 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="twitter_id">
+                                  <object class="GtkSpinner" id="twitter_spinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">(label)</property>
+                                    <property name="active">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -1290,13 +1291,21 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinner" id="twitter_spinner">
+                                  <object class="GtkEntry" id="twitter_id">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="active">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="editable">False</property>
+                                    <property name="invisible_char">•</property>
+                                    <property name="secondary_icon_stock">gtk-clear</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">True</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_tooltip_text" translatable="yes">Change Twitter account</property>
+                                    <signal name="icon-press" handler="on_twitter_id_icon_press" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="expand">False</property>
+                                    <property name="expand">True</property>
                                     <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>

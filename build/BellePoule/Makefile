@@ -86,7 +86,7 @@ else
 CFLAGS += -fPIC
 endif
 
-CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0)
 
 CFLAGS += -Isources/common
 CFLAGS += -Isources/BellePoule
@@ -106,7 +106,7 @@ ifeq ($(OUTPUT), Release)
 LDFLAGS += -mwindows
 endif
 endif
-LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0)
 
 ifeq ($(OUTPUT), Release)
 LDFLAGS += -s
@@ -116,6 +116,7 @@ endif
 #-- Sources -----------------------------------------
 #----------------------------------------------------
 SRC  = $(wildcard sources/common/network/*.cpp)
+SRC += $(wildcard sources/common/network/oauth/*.cpp)
 SRC += $(wildcard sources/common/util/*.cpp)
 SRC += $(wildcard sources/BellePoule/actors/*.cpp)
 SRC += $(wildcard sources/BellePoule/application/*.cpp)
@@ -228,9 +229,10 @@ prepare_examples:
 	find $(PACKAGE)/$(RELEASE)/Exemples -type f -exec chmod a-x {} \;
 
 prepare_www:
-	cp -rf ../../webserver/LightTPD/www $(PACKAGE)/$(RELEASE)
+	mkdir $(PACKAGE)/$(RELEASE)/www
+	cp -rf ../../sources/www/*\.* $(PACKAGE)/$(RELEASE)/www
 	rm -rf $(PACKAGE)/$(RELEASE)/www/cotcot
-	cp -f  debian/99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
+	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
 	sed -i 's/bellepoule/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
 	mkdir -p $(PACKAGE)/$(RELEASE)/scripts
 	cp -f  ../../scripts/www*sh $(PACKAGE)/$(RELEASE)/scripts

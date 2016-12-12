@@ -38,8 +38,11 @@ namespace Oauth
                             const gchar *class_name)
     : Object (class_name)
   {
+    _status = READY;
+
     _rand        = g_rand_new ();
     _header_list = NULL;
+    _parser      = NULL;
 
     _http_method = http_method;
     _session     = session;
@@ -66,6 +69,81 @@ namespace Oauth
   {
     g_list_free_full (_header_list,
                       (GDestroyNotify) Object::TryToRelease);
+
+    if (_parser)
+    {
+      g_object_unref (_parser);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean HttpRequest::LoadJson (const gchar *json)
+  {
+    if (_parser == NULL)
+    {
+      _parser = json_parser_new ();
+    }
+
+    return json_parser_load_from_data (_parser,
+                                       json,
+                                       -1,
+                                       NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *HttpRequest::GetJsonAtPath (const gchar *path)
+  {
+    gchar *result = NULL;
+
+    if (_parser)
+    {
+      JsonNode *node;
+      JsonPath *jpath = json_path_new ();
+
+      json_path_compile (jpath,
+                         path,
+                         NULL);
+
+      node = json_path_match (jpath,
+                              json_parser_get_root (_parser));
+
+      if (node)
+      {
+        JsonGenerator *generator = json_generator_new ();
+        gchar         *quoted_str;
+
+        json_generator_set_root (generator,
+                                 node);
+
+        quoted_str = json_generator_to_data (generator, NULL);
+
+        if (quoted_str)
+        {
+          gchar **segments = g_strsplit_set (quoted_str, "\"[]", -1);
+
+          if (segments)
+          {
+            for (guint i = 0; segments[i] != NULL; i++)
+            {
+              if (i == 2)
+              {
+                result = g_strdup (segments[i]);
+                break;
+              }
+            }
+          }
+
+          g_strfreev (segments);
+          g_free     (quoted_str);
+        }
+
+        g_object_unref (generator);
+      }
+
+      g_object_unref (jpath);
+    }
+
+    return result;
   }
 
   // --------------------------------------------------------------------------------
@@ -83,40 +161,60 @@ namespace Oauth
   }
 
   // --------------------------------------------------------------------------------
+  HttpRequest::Status HttpRequest::GetStatus ()
+  {
+    return _status;
+  }
+
+  // --------------------------------------------------------------------------------
   void HttpRequest::ParseResponse (const gchar *response)
   {
     printf ("%s\n\n\n", response);
 
-    gchar **fields = g_strsplit (response,
-                                 "&",
-                                 -1);
-
-    if (fields)
+    if (response == NULL)
     {
-      gchar **current = fields;
+      _status = NETWORK_ERROR;
+    }
+    else if (g_strstr_len (response,
+                           -1,
+                           "errors"))
+    {
+      _status = REJECTED;
+    }
+    else
+    {
+      gchar **fields = g_strsplit (response,
+                                   "&",
+                                   -1);
 
-      while (current[0])
+      if (fields)
       {
-        gchar *field;
+        gchar **current = fields;
 
-        field = ExtractParsedField (current[0],
-                                    "oauth_token=");
-        if (field)
+        while (current[0])
         {
-          _session->SetToken (field);
+          gchar *field;
+
+          field = ExtractParsedField (current[0],
+                                      "oauth_token=");
+          if (field)
+          {
+            _session->SetToken (field);
+          }
+
+          field = ExtractParsedField (current[0],
+                                      "oauth_token_secret=");
+          if (field)
+          {
+            _session->SetTokenSecret (field);
+          }
+
+          current++;
         }
 
-        field = ExtractParsedField (current[0],
-                                    "oauth_token_secret=");
-        if (field)
-        {
-          _session->SetTokenSecret (field);
-        }
-
-        current++;
+        g_strfreev (fields);
       }
-
-      g_strfreev (fields);
+      _status = ACCEPTED;
     }
   }
 
@@ -154,7 +252,7 @@ namespace Oauth
   void HttpRequest::Stamp ()
   {
     gint64  real_time = g_get_real_time () / G_USEC_PER_SEC;
-    gchar  *stamp     = g_strdup_printf ("%ld", real_time);
+    gchar  *stamp     = g_strdup_printf ("%" G_GINT64_FORMAT, real_time);
 
     AddHeaderField ("oauth_timestamp", stamp);
   }

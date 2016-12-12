@@ -37,5 +37,6 @@
 -I/usr/include/harfbuzz
 -I/usr/include/libxml2
 -I/usr/include/goocanvas-1.0
+-I/usr/include/json-glib-1.0
 -Icommon
 -IBellePoule

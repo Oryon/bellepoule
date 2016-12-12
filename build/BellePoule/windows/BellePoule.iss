@@ -3,9 +3,9 @@
 
 #include "..\..\..\sources\BellePoule\application\version.h"
 
-#define MINGW     "C:\Packaging\mingw32"
-#define WEBSERVER "C:\Packaging\webserver"
-#define ICONS     "C:\Packaging\icons"
+#define MINGW     ".\crossroad"
+#define WEBSERVER "..\..\..\..\webserver"
+#define ICONS     ".\icons"
 #define PRODUCT   "bellepoulebeta"
 ;#define PUBLIC_VERSION
 
@@ -126,7 +126,7 @@ Source: "..\..\..\resources\translations\ja\*"; DestDir: "{app}\share\{#PRODUCT}
 #ifdef MINGW
 ;WebServer
 [Dirs]
-Name: "{app}\share\{#PRODUCT}\webserver\LightTPD\www\cotcot"
+Name: "{app}\share\{#PRODUCT}\webserver\LightTPD\www\cotcot"; Permissions:everyone-modify
 
 [Files]
 Source: "{#WEBSERVER}\*"; DestDir: "{app}\share\{#PRODUCT}\webserver"; Flags: ignoreversion recursesubdirs
@@ -246,6 +246,7 @@ Source: "{#MINGW}\bin\nss3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\nssutil3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\ssl3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libjson-glib-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
 #endif
 
@@ -331,4 +332,3 @@ begin
 
   SaveStringsToFile(file, lines, False);
 end;
-

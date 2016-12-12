@@ -48,6 +48,8 @@ class Tournament : public Module, public Net::Twitter::Listener
 
     void OnSave ();
 
+    void OnResetTwitterAccount ();
+
     void PrintMealTickets ();
 
     void PrintPaymentBook ();

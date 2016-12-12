@@ -44,6 +44,15 @@ namespace Oauth
   }
 
   // --------------------------------------------------------------------------------
+  void Session::Reset ()
+  {
+    g_free (_token);
+    _token = NULL;
+
+    SetTokenSecret ("");
+  }
+
+  // --------------------------------------------------------------------------------
   const gchar *Session::GetConsumerKey ()
   {
     return _consumer_key;

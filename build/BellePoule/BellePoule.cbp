@@ -85,6 +85,7 @@
 			<Add directory="/usr/include/p11-kit-1" />
 			<Add directory="../../sources/BellePoule" />
 			<Add directory="../../sources/common" />
+			<Add directory="/usr/include/json-glib-1.0" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--export-dynamic" />
@@ -112,6 +113,7 @@
 			<Add library="curl" />
 			<Add library="microhttpd" />
 			<Add library="qrencode" />
+			<Add library="json-glib-1.0" />
 		</Linker>
 		<Unit filename="../../sources/BellePoule/actors/checkin.cpp">
 			<Option target="Lib_Debug" />
