@@ -53,7 +53,7 @@ Object::Object (const gchar *class_name)
     _class_name = class_name;
   }
 
-  if (_klass_to_track && g_strcmp0 (_klass_to_track, _class_name) == 0)
+  if (g_strcmp0 (_klass_to_track, _class_name) == 0)
   {
     printf ("%s creation\n    ", _class_name);
     Dump ();

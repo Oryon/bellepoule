@@ -28,7 +28,7 @@ function renderCompetitionTabControl()
 	</div>';
 	
 	$tab .= '
-	<div class="defileButton" id="defileButton" onClick="switchDisplay( \'competitionTabControl\' );switchDisplay( \'stepTabControl\' );switchPause()">Lancer défillement</div>
+	<div class="defileButton" id="defileButton" onClick="switchDisplay( \'competitionTabControl\' );switchDisplay( \'stepTabControl\' );switchPause()">Lancer défilement</div>
 	<div class="settingButton" id="settingButton" onClick="switchDisplay( \'settingForm\' );">Settings</div>';
 	
 	return $tab;

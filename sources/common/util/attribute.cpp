@@ -101,8 +101,12 @@ gint Attribute::Compare (Attribute *a, Attribute *b)
       return a->CompareWith (b);
     }
   }
+  else if (b)
+  {
+    return G_MAXINT;
+  }
 
-  return G_MAXINT;
+  return 0;
 }
 
 // --------------------------------------------------------------------------------
