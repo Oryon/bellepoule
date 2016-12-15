@@ -499,17 +499,17 @@ namespace People
   void CheckinSupervisor::UpdateRanking ()
   {
     guint                nb_player = g_list_length (_player_list);
-    Player::AttributeId *rank_criteria_id;
+    Player::AttributeId *ranking_id;
 
     {
-      rank_criteria_id = new Player::AttributeId ("ranking");
+      ranking_id = new Player::AttributeId ("ranking");
 
-      rank_criteria_id->MakeRandomReady (_rand_seed);
+      ranking_id->MakeRandomReady (_rand_seed);
     }
 
     _player_list = g_list_sort_with_data (_player_list,
                                           (GCompareDataFunc) Player::Compare,
-                                          rank_criteria_id);
+                                          ranking_id);
 
     {
       Player *previous_player  = NULL;
@@ -519,56 +519,44 @@ namespace People
 
       while (current_player)
       {
-        Player    *p;
-        Attribute *attending;
+        Player::AttributeId  stage_start_rank_id ("stage_start_rank", this);
+        Player::AttributeId  rank_id             ("rank", this);
+        Player              *p = (Player *) current_player->data;
 
-        p = (Player *) current_player->data;
-
+        if (PresentPlayerFilter (p, this))
         {
-          Player::AttributeId attr_id ("attending");
-
-          attending = p->GetAttribute (&attr_id);
-        }
-
-        {
-          Player::AttributeId stage_start_rank_id ("stage_start_rank", this);
-          Player::AttributeId rank_id             ("rank", this);
-
-          if (attending && attending->GetUIntValue ())
+          if (   previous_player
+              && (Player::Compare (previous_player, p, ranking_id) == 0))
           {
-            if (   previous_player
-                && (Player::Compare (previous_player, p, rank_criteria_id) == 0))
-            {
-              p->SetAttributeValue (&stage_start_rank_id,
-                                    stage_start_rank);
-              p->SetAttributeValue (&rank_id,
-                                    stage_start_rank);
-            }
-            else
-            {
-              p->SetAttributeValue (&stage_start_rank_id,
-                                    nb_present);
-              p->SetAttributeValue (&rank_id,
-                                    nb_present);
-              stage_start_rank = nb_present;
-            }
-            previous_player = p;
-            nb_present++;
+            p->SetAttributeValue (&stage_start_rank_id,
+                                  stage_start_rank);
+            p->SetAttributeValue (&rank_id,
+                                  stage_start_rank);
           }
           else
           {
             p->SetAttributeValue (&stage_start_rank_id,
-                                  nb_player);
+                                  nb_present);
             p->SetAttributeValue (&rank_id,
-                                  nb_player);
+                                  nb_present);
+            stage_start_rank = nb_present;
           }
+          previous_player = p;
+          nb_present++;
+        }
+        else
+        {
+          p->SetAttributeValue (&stage_start_rank_id,
+                                nb_player);
+          p->SetAttributeValue (&rank_id,
+                                nb_player);
         }
         Update (p);
 
         current_player = g_list_next (current_player);
       }
     }
-    rank_criteria_id->Release ();
+    ranking_id->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -809,14 +797,12 @@ namespace People
 
     if (result)
     {
-      Player::AttributeId attr_id ("rank");
+      Player::AttributeId attr_id ("rank", this);
 
       attr_id.MakeRandomReady (_rand_seed);
       result = g_slist_sort_with_data (result,
                                        (GCompareDataFunc) Player::Compare,
                                        &attr_id);
-
-      result = g_slist_reverse (result);
 
       _attendees->SetGlobalList (result);
     }
