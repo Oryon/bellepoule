@@ -81,7 +81,7 @@ void Team::SetAttendingFromMembers ()
           guint      value = _default_classification->_value;
           Attribute *rank  = player->GetAttribute (&ranking_attr_id);
 
-          if (rank)
+          if (rank && rank->GetUIntValue ())
           {
             value = rank->GetUIntValue ();
           }

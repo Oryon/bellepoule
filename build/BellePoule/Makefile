@@ -375,7 +375,6 @@ help:
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
 	@echo "make -s UBUNTU=vivid   V=$(V) package"
-	@echo "make -s UBUNTU=wily    V=$(V) package"
 	@echo "make -s UBUNTU=xenial  V=$(V) package"
 	@echo ""
 	@echo "cd $(PACKAGE)/$(RELEASE)"
