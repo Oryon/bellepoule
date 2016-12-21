@@ -106,7 +106,7 @@ namespace Net
     _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
                                 port,
                                 NULL, NULL,
-                                (MHD_AccessHandlerCallback) OnMicroHttpRequest, this,
+                                (MHD_AccessHandlerCallback)  OnMicroHttpRequest,          this,
                                 MHD_OPTION_NOTIFY_COMPLETED, OnMicroHttpRequestCompleted, this,
                                 MHD_OPTION_END);
     _cryptor = new Cryptor ();

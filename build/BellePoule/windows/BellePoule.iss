@@ -237,6 +237,7 @@ Source: "{#MINGW}\bin\libpixman-1-0.dll"; DestDir: "{app}\bin"; Flags: ignorever
 Source: "{#MINGW}\bin\libplc4.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libplds4.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libpng16-16.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libwinpthread-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libssh2-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libstdc++-6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libtiff-5.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
