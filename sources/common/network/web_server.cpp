@@ -60,7 +60,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void WebServer::Start ()
   {
-    if (g_mutex_trylock (&_mutex) == FALSE)
+    if (g_mutex_trylock (&_mutex))
     {
       g_thread_try_new ("WebServer::Start",
                         (GThreadFunc) StartUp,
@@ -72,7 +72,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void WebServer::Stop ()
   {
-    if (g_mutex_trylock (&_mutex) == FALSE)
+    if (g_mutex_trylock (&_mutex))
     {
       g_thread_try_new ("WebServer::Stop",
                         (GThreadFunc) ShutDown,
@@ -109,7 +109,7 @@ namespace Net
       }
 #else
       {
-        cmd_line   = g_strdup_printf ("gksudo --preserve-env --description VideoServer %s.sh", path);
+        cmd_line     = g_strdup_printf ("sudo -A --preserve-env %s.sh", path);
         spawn_status = g_spawn_command_line_sync (cmd_line,
                                                   NULL,
                                                   NULL,
@@ -122,7 +122,7 @@ namespace Net
       {
         _failed = TRUE;
       }
-      if (exit_status != 0)
+      if (exit_status == -1)
       {
         g_warning ("%s status: %d", cmd_line, exit_status);
         _failed = TRUE;

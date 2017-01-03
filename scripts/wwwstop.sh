@@ -1,5 +1,5 @@
 #!/bin/bash
-lighty-disable-mod bellepouledebug;
+lighty-disable-mod bellepoulebeta;
 if test ${?} -ne 0 ; then
   exit -1;
 fi

@@ -9,7 +9,7 @@ lighty-enable-mod fastcgi-php;
   #exit -1;
 #fi
 
-lighty-enable-mod bellepouledebug;
+lighty-enable-mod bellepoulebeta;
 #if test ${?} -ne 0 ; then
   #exit -1;
 #fi
