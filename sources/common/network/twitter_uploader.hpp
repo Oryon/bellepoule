@@ -49,9 +49,9 @@ namespace Net
       Oauth::HttpRequest *_request;
       struct curl_slist  *_http_header;
 
-      static gpointer Loop (TwitterUploader *uploader);
+      static gpointer ThreadFunction (TwitterUploader *uploader);
 
-      static gboolean DeferedResponse (TwitterUploader *uploader);
+      static gboolean OnThreadDone (TwitterUploader *uploader);
 
     private:
       void SetCurlOptions (CURL *curl);

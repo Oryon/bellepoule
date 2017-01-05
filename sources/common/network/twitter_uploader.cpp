@@ -66,7 +66,7 @@ namespace Net
         GThread *sender_thread;
 
         sender_thread = g_thread_try_new ("TwitterUploader",
-                                          (GThreadFunc) Loop,
+                                          (GThreadFunc) ThreadFunction,
                                           this,
                                           &error);
         if (sender_thread == NULL)
@@ -111,7 +111,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TwitterUploader::DeferedResponse (TwitterUploader *uploader)
+  gboolean TwitterUploader::OnThreadDone (TwitterUploader *uploader)
   {
     uploader->_listener->OnTwitterResponse (uploader->_request);
     uploader->Release ();
@@ -126,7 +126,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gpointer TwitterUploader::Loop (TwitterUploader *uploader)
+  gpointer TwitterUploader::ThreadFunction (TwitterUploader *uploader)
   {
     CURLcode curl_code = uploader->Upload ();
 
@@ -141,7 +141,7 @@ namespace Net
 #endif
     }
 
-    g_idle_add ((GSourceFunc) DeferedResponse,
+    g_idle_add ((GSourceFunc) OnThreadDone,
                 uploader);
 
     return NULL;

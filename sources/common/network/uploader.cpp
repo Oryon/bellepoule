@@ -111,7 +111,7 @@ namespace Net
   {
     _body_out = new Body ();
     _body_in  = new Body ();
-    _curl        = NULL;
+    _curl     = curl_easy_init ();
   }
 
   // --------------------------------------------------------------------------------
@@ -239,7 +239,6 @@ namespace Net
   {
     CURLcode curl_code = CURLE_FAILED_INIT;
 
-    _curl = curl_easy_init ();
     SetCurlOptions (_curl);
 
     if (_curl)

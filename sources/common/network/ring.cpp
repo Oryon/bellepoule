@@ -179,7 +179,10 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Ring::Handshake (Message *message)
   {
-    Add (new Partner (message));
+    Partner *partner = new Partner (message);
+
+    Add (partner);
+    partner->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -270,7 +273,13 @@ namespace Net
           if (message->Is ("Announcement"))
           {
             Remove (role);
-            Add (new Partner (message));
+
+            {
+              Partner *partner = new Partner (message);
+
+              Add (partner);
+              partner->Release ();
+            }
           }
           else if (message->Is ("Farewell"))
           {
@@ -320,6 +329,7 @@ namespace Net
       message->Release ();
     }
 
+    partner->Retain ();
     _partner_list = g_list_prepend (_partner_list,
                                     partner);
     Synchronize (partner);

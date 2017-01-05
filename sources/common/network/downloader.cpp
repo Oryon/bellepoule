@@ -122,22 +122,23 @@ namespace Net
       curl_easy_cleanup (curl_handle);
     }
 
-    g_idle_add ((GSourceFunc) FeedbackFunction,
+    g_idle_add ((GSourceFunc) OnThreadDone,
                 downloader);
-
-    downloader->Release ();
 
     return NULL;
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Downloader::FeedbackFunction (Downloader *downloader)
+  gboolean Downloader::OnThreadDone (Downloader *downloader)
   {
     if (downloader->_killed == FALSE)
     {
       downloader->_listener->OnDownloaderData (downloader,
                                                downloader->_data);
     }
+
+    downloader->Release ();
+
     return G_SOURCE_REMOVE;
   }
 }

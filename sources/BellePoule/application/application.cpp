@@ -50,6 +50,10 @@ Application::Application (const gchar   *config_file,
   _language    = NULL;
   _main_module = NULL;
 
+  g_setenv ("SUDO_ASKPASS",
+            "/usr/bin/ssh-askpass",
+            FALSE);
+
   g_setenv ("UBUNTU_MENUPROXY",
             "0",
             TRUE);

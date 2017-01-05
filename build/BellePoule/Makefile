@@ -1,21 +1,27 @@
 #----------------------------------------------------
 #-- Variables ---------------------------------------
 #----------------------------------------------------
+ifeq (,$(wildcard ../../sources/BellePoule/application/version.h))
+	VERSION_FILE = "sources/BellePoule/application/version.h"
+else
+	VERSION_FILE = "../../sources/BellePoule/application/version.h"
+endif
+VERSION_MAJOR:=$(shell grep "VERSION " $(VERSION_FILE) | sed 's/.* //')
+VERSION_MINOR:=$(shell grep VERSION_REVISION $(VERSION_FILE) | sed 's/.* //')
+VERSION_MATURITY:=$(shell grep VERSION_MATURITY $(VERSION_FILE) | sed 's/.* //')
+ifneq ($(UBUNTU), windows)
+STEP := $(shell echo $(VERSION_MATURITY) | sed 's/alpha0/ubuntu/' | sed 's/alpha/ubuntu/')
+endif
+
 PRODUCT = bellepoulebeta
 #PRODUCT = bellepoule
 OUTPUT  = Release
 PACKAGE = $(HOME)/Project/PPA/$(PRODUCT)
-VERSION = 5.0
+VERSION = $(VERSION_MAJOR).$(VERSION_MINOR)
 RELEASE = $(PRODUCT)_$(VERSION)
 UBUNTU  = trusty
 V       = 1
 DATE    = $(shell date -R)
-
-ifneq ($(UBUNTU), windows)
-#STEP    = ubuntu8
-VERSION_FILE = "../../sources/BellePoule/application/version.h"
-STEP := $(shell grep VERSION_MATURITY $(VERSION_FILE) | sed 's/.*alpha0/ubuntu/' | sed 's/.*alpha/ubuntu/' | sed 's/"//')
-endif
 
 GTK = gtk+-2.0
 GOO = goocanvas
@@ -184,10 +190,16 @@ $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHAL
 	@$(WINDRES) --output=$@ --input=$<
 
 #--
-flags:
+vars:
+	@echo "\033[1;41m**** Variables ****\033[0m"
+	@echo "$(VERSION)"
+	@echo "$(VERSION_MATURITY)"
+	@echo "$(STEP)"
+	@echo "---------------"
 	@echo $(CFLAGS)
 	@echo "---------------"
 	@echo $(LDFLAGS)
+	@echo ""
 
 valgrind:
 	G_SLICE=always-malloc G_DEBUG=gc-friendly valgrind --log-file=memory_leak.log --tool=memcheck --leak-check=full --leak-resolution=high --num-callers=20 $(OUTPUT)/$(PRODUCT)
@@ -198,11 +210,15 @@ valgrind:
 #----------------------------------------------------
 ifeq ($(UBUNTU), windows)
 prepare_resources = prepare_windows_resources
+build_staging     = build_windows
+publish_staging   = publish_windows
 else
 prepare_ubuntu    = prepare_ubuntu
 prepare_www       = prepare_www
 prepare_examples  = prepare_examples
 prepare_resources = prepare_resources
+build_staging     = build_ubuntu
+publish_staging   = publish_ubuntu
 endif
 
 package: prepare_staging $(prepare_ubuntu) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www)
@@ -312,6 +328,25 @@ prepare_desktop:
 	sed -i 's/__EXE__/supervisor/g'     $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
 	rm -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template
 
+build:   $(build_staging)
+publish: $(publish_staging)
+
+build_windows: all
+	cp Release/$(PRODUCT)-*.exe ~/Project/Gtk/trunk/build/BellePoule/windows/exe/
+	#echo "cp Debug/$(PRODUCT)-*.exe ~/Project/Gtk/trunk/build/BellePoule/windows/exe/"
+	#cp ~/Project/Gtk/trunk/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/$(PRODUCT)/bin
+	env WINEPREFIX="$(HOME)/.wine" wine C:\\windows\\command\\start.exe /Unix $(HOME)/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Inno\ Setup\ 5/Inno\ Setup\ Compiler.lnk
+
+publish_windows:
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule ~/Project/Gtk/trunk/build/BellePoule/windows/Output/setup$(VERSION_MAJOR)_$(VERSION_MINOR)$(VERSION_MATURITY).exe; quit"
+
+build_ubuntu:
+	debuild -us -uc --lintian-opts --color always
+
+publish_ubuntu:
+	debuild -S -sa -k`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
+	dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes
+
 #----------------------------------------------------
 #-- debuild -----------------------------------------
 #----------------------------------------------------
@@ -361,16 +396,13 @@ clean_sources:
 #----------------------------------------------------
 #-- Help --------------------------------------------
 #----------------------------------------------------
-help:
+help: vars
 	@echo "\033[1;42m**** Windows ****\033[0m"
 	@echo "make -s UBUNTU=windows V=$(V) package"
+	@echo ""
 	@echo "cd $(PACKAGE)/$(RELEASE)"
-	@echo "make -s UBUNTU=windows V=$(V)"
-	@echo ""
-	@echo "cp Release/$(PRODUCT)-*.exe ~/Project/Gtk/trunk/build/BellePoule/windows/exe/"
-	@echo "cp Debug/$(PRODUCT)-*.exe ~/Project/Gtk/trunk/build/BellePoule/windows/exe/"
-	@echo ""
-	@echo "cp ~/Project/Gtk/trunk/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/$(PRODUCT)/bin"
+	@echo "make -s UBUNTU=windows build"
+	@echo "make -s UBUNTU=windows publish"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
@@ -378,9 +410,6 @@ help:
 	@echo "make -s UBUNTU=xenial  V=$(V) package"
 	@echo ""
 	@echo "cd $(PACKAGE)/$(RELEASE)"
-	@echo ""
-	@echo "debuild -us -uc --lintian-opts --color always"
-	@echo "debuild -S -sa -k"`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
+	@echo "make build"
+	@echo "make publish"
 	@#echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"
-	@echo "dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes"
-	@echo ""

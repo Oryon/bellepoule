@@ -44,10 +44,12 @@ namespace Net
       MessageUploader (const gchar *url,
                        Listener    *listener = NULL);
 
-      virtual void PushMessage (Message *message);
+      void Stop ();
+
+      void PushMessage (Message *message);
 
     protected:
-      virtual ~MessageUploader ();
+      ~MessageUploader ();
 
     private:
       gchar             *_url;
@@ -59,12 +61,16 @@ namespace Net
       Cryptor           *_cryptor;
       struct curl_slist *_http_header;
 
-      static gpointer Loop (MessageUploader *uploader);
+      static gpointer ThreadFunction (MessageUploader *uploader);
+
+      static gboolean DeferedStatus (MessageUploader *uploader);
+
+      static gboolean OnMessageUsed (Message *message);
+
+      static gboolean OnThreadDone (MessageUploader *uploader);
 
       void PrepareData (gchar       *data_copy,
                         const gchar *passphrase);
-
-      static gboolean DeferedStatus (MessageUploader *uploader);
 
     private:
       void SetCurlOptions (CURL *curl);

@@ -41,17 +41,21 @@ namespace Net
 
     _message_queue = g_async_queue_new_full ((GDestroyNotify) Object::TryToRelease);
 
+    Retain ();
+
     {
       GError *error = NULL;
 
       _sender_thread = g_thread_try_new ("MessageUploader",
-                                         (GThreadFunc) Loop,
+                                         (GThreadFunc) ThreadFunction,
                                          this,
                                          &error);
       if (_sender_thread == NULL)
       {
         g_printerr ("Failed to create Uploader thread: %s\n", error->message);
         g_error_free (error);
+
+        Release ();
       }
     }
   }
@@ -60,16 +64,6 @@ namespace Net
   MessageUploader::~MessageUploader ()
   {
     g_async_queue_unref (_message_queue);
-
-    if (_sender_thread)
-    {
-      Message *stop_sending = new Message ("MessageUploader::stop_sending");
-
-      PushMessage (stop_sending);
-      stop_sending->Release ();
-
-      g_thread_join (_sender_thread);
-    }
 
     g_free (_url);
 
@@ -84,6 +78,18 @@ namespace Net
     if (_http_header)
     {
       curl_slist_free_all (_http_header);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void MessageUploader::Stop ()
+  {
+    if (_sender_thread)
+    {
+      Message *stop_sending = new Message ("MessageUploader::stop_sending");
+
+      PushMessage (stop_sending);
+      stop_sending->Release ();
     }
   }
 
@@ -158,13 +164,29 @@ namespace Net
   gboolean MessageUploader::DeferedStatus (MessageUploader *uploader)
   {
     uploader->_listener->OnUploadStatus (uploader->_peer_status);
+
+    return G_SOURCE_REMOVE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean MessageUploader::OnMessageUsed (Message *message)
+  {
+    message->Release ();
+
+    return G_SOURCE_REMOVE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean MessageUploader::OnThreadDone (MessageUploader *uploader)
+  {
+    g_async_queue_unref (uploader->_message_queue);
     uploader->Release ();
 
     return G_SOURCE_REMOVE;
   }
 
   // --------------------------------------------------------------------------------
-  gpointer MessageUploader::Loop (MessageUploader *uploader)
+  gpointer MessageUploader::ThreadFunction (MessageUploader *uploader)
   {
     g_async_queue_ref (uploader->_message_queue);
 
@@ -177,7 +199,8 @@ namespace Net
 
         if (message->Is ("MessageUploader::stop_sending"))
         {
-          message->Release ();
+          g_idle_add ((GSourceFunc) OnMessageUsed,
+                      message);
           break;
         }
         else if (message->Is ("MessageUploader::raw_content"))
@@ -191,7 +214,8 @@ namespace Net
                                  message->GetPassPhrase ());
         }
 
-        message->Release ();
+        g_idle_add ((GSourceFunc) OnMessageUsed,
+                    message);
       }
 
 
@@ -222,7 +246,8 @@ namespace Net
       uploader->_iv = NULL;
     }
 
-    g_async_queue_unref (uploader->_message_queue);
+    g_idle_add ((GSourceFunc) OnThreadDone,
+                uploader);
 
     return NULL;
   }
