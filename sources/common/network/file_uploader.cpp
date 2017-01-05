@@ -53,11 +53,13 @@ namespace Net
       g_free (base_name);
     }
 
+    Retain ();
+
     {
       GError *error = NULL;
 
       GThread *sender_thread = g_thread_try_new ("FileUploader",
-                                                 (GThreadFunc) SenderThread,
+                                                 (GThreadFunc) ThreadFunction,
                                                  this,
                                                  &error);
 
@@ -65,10 +67,8 @@ namespace Net
       {
         g_printerr ("Failed to create FileUploader thread: %s\n", error->message);
         g_error_free (error);
-      }
-      else
-      {
-        Retain ();
+
+        Release ();
       }
     }
   }
@@ -118,11 +118,20 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gpointer FileUploader::SenderThread (FileUploader *uploader)
+  gpointer FileUploader::ThreadFunction (FileUploader *uploader)
   {
     uploader->Looper  ();
-    uploader->Release ();
+
+    g_idle_add ((GSourceFunc) OnThreadDone,
+                uploader);
 
     return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean FileUploader::OnThreadDone (FileUploader *uploader)
+  {
+    uploader->Release ();
+    return G_SOURCE_REMOVE;
   }
 }

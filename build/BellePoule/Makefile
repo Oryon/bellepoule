@@ -190,16 +190,16 @@ $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHAL
 	@$(WINDRES) --output=$@ --input=$<
 
 #--
-flags:
+vars:
+	@echo "\033[1;41m**** Variables ****\033[0m"
 	@echo "$(VERSION)"
-	@echo "$(VERSION_MAJOR)"
-	@echo "$(VERSION_MINOR)"
 	@echo "$(VERSION_MATURITY)"
 	@echo "$(STEP)"
 	@echo "---------------"
 	@echo $(CFLAGS)
 	@echo "---------------"
 	@echo $(LDFLAGS)
+	@echo ""
 
 valgrind:
 	G_SLICE=always-malloc G_DEBUG=gc-friendly valgrind --log-file=memory_leak.log --tool=memcheck --leak-check=full --leak-resolution=high --num-callers=20 $(OUTPUT)/$(PRODUCT)
@@ -396,7 +396,7 @@ clean_sources:
 #----------------------------------------------------
 #-- Help --------------------------------------------
 #----------------------------------------------------
-help:
+help: vars
 	@echo "\033[1;42m**** Windows ****\033[0m"
 	@echo "make -s UBUNTU=windows V=$(V) package"
 	@echo ""

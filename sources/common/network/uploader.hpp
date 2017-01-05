@@ -57,7 +57,6 @@ namespace Net
       Uploader ();
 
     protected:
-      Body *_body_in;
 
       virtual ~Uploader ();
 
@@ -76,6 +75,7 @@ namespace Net
       CURL  *_curl;
 
       Body *_body_out;
+      Body *_body_in;
 
       void PrepareData (gchar       *data_copy,
                         const gchar *passphrase);

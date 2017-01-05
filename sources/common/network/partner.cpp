@@ -51,6 +51,7 @@ namespace Net
     g_free (_role);
     g_free (_address);
 
+    _uploader->Stop ();
     _uploader->Release ();
   }
 

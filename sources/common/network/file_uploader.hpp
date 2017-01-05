@@ -48,7 +48,9 @@ namespace Net
 
       virtual const gchar *GetUrl ();
 
-      static gpointer SenderThread (FileUploader *uploader);
+      static gpointer ThreadFunction (FileUploader *uploader);
+
+      static gboolean OnThreadDone (FileUploader *uploader);
   };
 
 }

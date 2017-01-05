@@ -56,7 +56,7 @@ namespace Net
 
       static gpointer ThreadFunction (Downloader *downloader);
 
-      static gboolean FeedbackFunction (Downloader *downloader);
+      static gboolean OnThreadDone (Downloader *downloader);
 
       virtual ~Downloader ();
   };
