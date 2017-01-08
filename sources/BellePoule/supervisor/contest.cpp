@@ -850,6 +850,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       xmlXPathFreeContext (xml_context);
     }
 
+    Spread ();
+
     {
       AttributeDesc *league_desc = AttributeDesc::GetDescFromCodeName ("league");
 
@@ -900,8 +902,6 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
   _referees_list->Disclose ("Referee");
   _referees_list->Spread ();
-
-  Spread ();
 }
 
 // --------------------------------------------------------------------------------

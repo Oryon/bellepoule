@@ -468,6 +468,7 @@ namespace Marshaller
           if (attr)
           {
             name = g_strdup_printf ("%s%s", gettext ("Pool #"), attr);
+            xmlFree (attr);
           }
           else
           {
@@ -490,7 +491,18 @@ namespace Marshaller
         }
         else if (g_strcmp0 ((char *) n->name, "Tireur") == 0)
         {
-          job->AddFencer (GetFencer (atoi ((gchar *) xmlGetProp (n, BAD_CAST "REF"))));
+          gchar  *attr   = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+          Player *fencer = GetFencer (atoi (attr));
+
+          if (fencer == NULL)
+          {
+            g_error ("Fencer %s not found!\n", attr);
+          }
+          else
+          {
+            job->AddFencer (fencer);
+          }
+          xmlFree (attr);
         }
 
         LoadJob (n->children,

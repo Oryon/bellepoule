@@ -22,8 +22,9 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  HttpServer::RequestBody::RequestBody ()
+  HttpServer::RequestBody::RequestBody (HttpServer *server)
   {
+    _server = server;
     _data   = NULL;
     _length = 0;
   }
@@ -61,40 +62,6 @@ namespace Net
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  HttpServer::DeferedData::DeferedData (HttpServer     *server,
-                                        MHD_Connection *connection,
-                                        RequestBody    *request_body)
-  {
-    _server = server;
-    _server->Retain ();
-
-    {
-      gchar *content = g_strndup (request_body->_data,
-                                  request_body->_length);
-
-      _message = new Net::Message ((const guint8 *) content);
-
-      if (_message->IsValid () == FALSE)
-      {
-        _message->Set ("content",
-                       content);
-      }
-
-      g_free (content);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  HttpServer::DeferedData::~DeferedData ()
-  {
-    _message->Release ();
-    _server->Release  ();
-  }
-}
-
-namespace Net
-{
-  // --------------------------------------------------------------------------------
   HttpServer::HttpServer (Client   *client,
                           HttpPost  http_post,
                           HttpGet   http_get,
@@ -123,8 +90,8 @@ namespace Net
   HttpServer::~HttpServer ()
   {
     MHD_stop_daemon (_daemon);
-    _cryptor->Release ();
 
+    _cryptor->Release ();
     g_free (_iv);
   }
 
@@ -135,12 +102,30 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean HttpServer::DeferedPost (DeferedData *defered_data)
+  gboolean HttpServer::DeferedPost (RequestBody *request_body)
   {
-    defered_data->_server->_http_POST_cbk (defered_data->_server->_client,
-                                           defered_data->_message);
+    Message *message;
 
-    delete (defered_data);
+    {
+      gchar *content = g_strndup (request_body->_data,
+                                  request_body->_length);
+
+      message = new Message ((const guint8 *) content);
+
+      if (message->IsValid () == FALSE)
+      {
+        message->Set ("content",
+                      content);
+      }
+
+      g_free (content);
+    }
+
+    request_body->_server->_http_POST_cbk (request_body->_server->_client,
+                                           message);
+
+    message->Release ();
+    delete (request_body);
 
     return G_SOURCE_REMOVE;
   }
@@ -232,36 +217,16 @@ namespace Net
         }
 
         {
-          DeferedData *defered_data = new DeferedData (this,
-                                                       connection,
-                                                       request_body);
+          struct MHD_Response *response;
 
-          g_idle_add ((GSourceFunc) DeferedPost,
-                      defered_data);
+          response = MHD_create_response_from_buffer (0,
+                                                      NULL,
+                                                      MHD_RESPMEM_PERSISTENT);
+          ret = MHD_queue_response (connection,
+                                    MHD_HTTP_OK,
+                                    response);
 
-          {
-            struct MHD_Response *response;
-#if 0
-            {
-              gchar *message = g_strdup_printf ("uuid %d received\n" ESC,
-                                                defered_data->_message->GetUUID ());
-
-              response = MHD_create_response_from_buffer (strlen (message) + 1,
-                                                          (void *) message,
-                                                          MHD_RESPMEM_MUST_COPY);
-              g_free (message);
-            }
-#else
-            response = MHD_create_response_from_buffer (0,
-                                                        NULL,
-                                                        MHD_RESPMEM_PERSISTENT);
-#endif
-            ret = MHD_queue_response (connection,
-                                      MHD_HTTP_OK,
-                                      response);
-
-            MHD_destroy_response (response);
-          }
+          MHD_destroy_response (response);
         }
       }
     }
@@ -280,9 +245,10 @@ namespace Net
 
     if (*request_body)
     {
-      delete (*request_body);
+      g_idle_add ((GSourceFunc) DeferedPost,
+                  *request_body);
+      *request_body = NULL;
     }
-    *request_body = NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -297,7 +263,7 @@ namespace Net
   {
     if (*request_body == NULL)
     {
-      *request_body = new RequestBody ();
+      *request_body = new RequestBody (server);
       return MHD_YES;
     }
 
