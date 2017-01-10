@@ -580,7 +580,9 @@ namespace Marshaller
 
     if (slot)
     {
-      _job_board->Display (slot->GetJobList ());
+      _job_board->AddJobs (slot->GetJobList ());
+      _job_board->Display ();
+      _job_board->Clean   ();
     }
 
     g_date_time_unref (cursor);

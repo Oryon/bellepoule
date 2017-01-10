@@ -24,12 +24,18 @@ namespace Marshaller
   class Job;
   class JobDetails;
 
-  class JobBoard : public Module
+  class JobBoard : public Module, Object::Listener
   {
     public:
       JobBoard ();
 
-      void Display (GList *job_list);
+      void AddJob (Job *job);
+
+      void AddJobs (GList *jobs);
+
+      void Display (Job *job = NULL);
+
+      void Clean ();
 
       void OnPreviousClicked ();
 
@@ -44,7 +50,12 @@ namespace Marshaller
 
       ~JobBoard ();
 
+      void OnObjectDeleted (Object *object);
+
       void SetProperties ();
+
+      static void ForgetJob (Job      *job,
+                             JobBoard *job_board);
 
       static void SetProperty (GQuark    key_id,
                                gchar    *data,

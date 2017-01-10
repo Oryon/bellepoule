@@ -87,7 +87,6 @@ namespace Marshaller
       Listener     *_listener;
       GList        *_scheduled_list;
       GList        *_pending_list;
-      GList        *_job_list;
       GList        *_fencer_list;
       gchar        *_weapon;
       JobBoard     *_job_board;
