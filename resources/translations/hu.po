@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2016-08-23 17:21+0200\n"
-"PO-Revision-Date: 2017-01-18 07:32+0000\n"
+"PO-Revision-Date: 2017-01-21 04:46+0000\n"
 "Last-Translator: Alcedo Attis <Unknown>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-01-19 05:41+0000\n"
+"X-Launchpad-Export-Date: 2017-01-21 06:04+0000\n"
 "X-Generator: Launchpad (build 18302)\n"
 
 msgid "Long text"
@@ -27,16 +27,16 @@ msgid "Graphic"
 msgstr "Kép"
 
 msgid "Data to display"
-msgstr "Megjeleníthető adat"
+msgstr "Megjelenítendő adatok"
 
 msgid "Visibility"
-msgstr "Láthatóság"
+msgstr "Látható"
 
 msgid "Data"
 msgstr "Adatok"
 
 msgid "Look"
-msgstr ""
+msgstr "Adattípus"
 
 msgid "Split"
 msgstr "Szétválasztás"
@@ -45,10 +45,10 @@ msgid "List of fencers to extract"
 msgstr ""
 
 msgid "Choose a rank file to apply..."
-msgstr ""
+msgstr "Válasszon ranglista fájlt"
 
 msgid "Rank files: cotcot, xml, txt (France)"
-msgstr ""
+msgstr "ranglista fájlok: cotcot, xml, txt (France)"
 
 msgid "All files"
 msgstr "Minden fájl"
@@ -62,13 +62,13 @@ msgid ""
 msgstr ""
 
 msgid "Choose a fencer file to import..."
-msgstr ""
+msgstr "Válasszon egy vívó adatfájlt importálásra"
 
 msgid "Fencer files"
-msgstr ""
+msgstr "Vívó adatfájlok"
 
 msgid "Referee files"
-msgstr ""
+msgstr "Zsűri adatfájlok"
 
 msgid "List of registered"
 msgstr "Regisztrált vívók listája"
@@ -98,7 +98,7 @@ msgid "Check-in"
 msgstr "Bejelentkezés"
 
 msgid "** Without team **"
-msgstr "**Klub nélkül**"
+msgstr "** Csapat nélkül **"
 
 msgid "Expected fencers"
 msgstr ""
@@ -114,79 +114,79 @@ msgid "You have configured the minimum team size to <b>%d</b> fencers."
 msgstr ""
 
 msgid "Tick the present players of the team."
-msgstr ""
+msgstr "Jelölje  a csapat jelenlévő vívóit"
 
 msgid "Untick the absent players of the team."
-msgstr ""
+msgstr "Szüntesse meg a kijelölést a csapat hiányzó vívóinál"
 
 msgid "General classification"
-msgstr ""
+msgstr "Végeredmény"
 
 msgid "Choose a target file..."
-msgstr ""
+msgstr "Válasszon célfájlt"
 
 msgid "All FFF files (.FFF)"
-msgstr ""
+msgstr "Minden FFF fájl (.FFF)"
 
 msgid "All PDF files (.PDF)"
-msgstr ""
+msgstr "Minden PDF fájl (.PDF)"
 
 msgid "All HTML files (.HTML)"
-msgstr ""
+msgstr "minden PDF fájl (.PDF)"
 
 msgid "Classification"
-msgstr ""
+msgstr "Eredmény"
 
 msgid "Sabre"
-msgstr ""
+msgstr "Kard"
 
 msgid "Epée"
-msgstr ""
+msgstr "Párbajtőr"
 
 msgid "Foil"
-msgstr ""
+msgstr "Tőr"
 
 msgid "Educ"
 msgstr ""
 
 msgid "Male"
-msgstr ""
+msgstr "Férfi"
 
 msgid "Female"
-msgstr ""
+msgstr "Női"
 
 msgid "Mixed"
-msgstr ""
+msgstr "Vegyes"
 
 msgid "League"
-msgstr ""
+msgstr "Liga"
 
 msgid "Regional"
-msgstr ""
+msgstr "Helyi"
 
 msgid "Open"
-msgstr ""
+msgstr "Nyílt"
 
 msgid "World cup"
-msgstr ""
+msgstr "Világkupa"
 
 msgid "National championships"
-msgstr ""
+msgstr "Nemzeti bajnokság"
 
 msgid "World championships"
-msgstr ""
+msgstr "Világbajnokság"
 
 msgid "Other"
-msgstr ""
+msgstr "Egyéb"
 
 msgid "Choose a file..."
-msgstr ""
+msgstr "Válasszon fájlt…"
 
 msgid "BellePoule files (.cotcot)"
-msgstr ""
+msgstr "BellePoule fájlok (.cotcot)"
 
 msgid "Close without saving"
-msgstr ""
+msgstr "Bezárás mentés nélkül"
 
 msgid "U5"
 msgstr ""
@@ -204,98 +204,98 @@ msgid "U14"
 msgstr ""
 
 msgid "U17"
-msgstr ""
+msgstr "Kadet (U17)"
 
 msgid "U20"
-msgstr ""
+msgstr "Junior (U20)"
 
 msgid "U23"
 msgstr ""
 
 msgid "Senior"
-msgstr ""
+msgstr "Felnőtt"
 
 msgid "Veteran"
-msgstr ""
+msgstr "Veterán"
 
 msgid "Veteran 1"
-msgstr ""
+msgstr "Veterán 1"
 
 msgid "Veteran 2"
-msgstr ""
+msgstr "Veterán 2"
 
 msgid "Veteran 3"
-msgstr ""
+msgstr "Veterán 3"
 
 msgid "Veteran 4"
-msgstr ""
+msgstr "Veterán 4"
 
 msgid "Veteran 3+4"
-msgstr ""
+msgstr "Veterán 3+4"
 
 msgid "Meal"
-msgstr ""
+msgstr "Étel"
 
 msgid "Drink"
-msgstr ""
+msgstr "Ital"
 
 msgid "Dessert"
-msgstr ""
+msgstr "Desszert"
 
 msgid "Coffee"
-msgstr ""
+msgstr "Kávé"
 
 msgid "Payment book"
-msgstr ""
+msgstr "Átvételi elismervény"
 
 msgid "Signature"
-msgstr ""
+msgstr "Aláírás"
 
 msgid "Restart BellePoule for this change to take effect"
-msgstr ""
+msgstr "Újra kell indítani a programot a változások érvényesítéséhez"
 
 msgid "Choose a competion file to open... "
-msgstr ""
+msgstr "Válasszon egy verseny fájlt megnyitáshoz... "
 
 msgid "Competition files (.cotcot / .xml)"
-msgstr ""
+msgstr "Verseny fájlok (.cotcot / .xml)"
 
 msgid "Recently opened files"
-msgstr ""
+msgstr "Előzmények"
 
 msgid "BellePoule files"
-msgstr ""
+msgstr "BellePoule fájlok"
 
 msgid "Meal tickets"
-msgstr ""
+msgstr "Ételjegy"
 
 msgid "Choose a backup files location..."
-msgstr ""
+msgstr "Válassza ki a biztonsági mentés helyét..."
 
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr ""
+msgstr "<b><big>Biztos ki akar lépni a programból</big></b>"
 
 msgid "Quit BellePoule?"
-msgstr ""
+msgstr "Kilép a programból?"
 
 msgid "All the unsaved competions will be lost."
-msgstr ""
+msgstr "Minden nem mentett adat elveszik."
 
 #, c-format
 msgid "Round #%d"
-msgstr ""
+msgstr "Forduló #%d"
 
 msgid "Formula"
 msgstr ""
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr ""
+msgstr "<b><big>Biztos törölni szeretné a jelenlegi fordulót?</big></b>"
 
 msgid "Go back to the previous round?"
-msgstr ""
+msgstr "Vissza az előző fordulóhoz?"
 
 msgid "All the inputs of this round will be cancelled."
-msgstr ""
+msgstr "A forduló minden adata törlődik"
 
 msgid ""
 "<b><big>Because of ties, the quota is exceeded.\n"
@@ -306,61 +306,61 @@ msgid "ref"
 msgstr ""
 
 msgid "place"
-msgstr ""
+msgstr "Hely"
 
 msgid "team"
-msgstr ""
+msgstr "Csapat"
 
 msgid "last name"
-msgstr ""
+msgstr "Vezetéknév"
 
 msgid "first name"
-msgstr ""
+msgstr "Keresztnév"
 
 msgid "date of birth"
-msgstr ""
+msgstr "Születési dátum"
 
 msgid "gender"
-msgstr ""
+msgstr "Nem"
 
 msgid "country"
-msgstr ""
+msgstr "Ország"
 
 msgid "league"
-msgstr ""
+msgstr "Liga"
 
 msgid "club"
-msgstr ""
+msgstr "Klub"
 
 msgid "licence"
-msgstr ""
+msgstr "Engedélyszám"
 
 msgid "IP address"
-msgstr ""
+msgstr "IP cím"
 
 msgid "rate"
 msgstr ""
 
 msgid "level"
-msgstr ""
+msgstr "Szint"
 
 msgid "ranking"
-msgstr ""
+msgstr "Rang"
 
 msgid "presence"
-msgstr ""
+msgstr "Jelenlét"
 
 msgid "exported"
-msgstr ""
+msgstr "Exportálva"
 
 msgid "global status"
 msgstr ""
 
 msgid "Qualified"
-msgstr ""
+msgstr "Továbbjutó"
 
 msgid "Not qualified"
-msgstr ""
+msgstr "Kieső"
 
 msgid "Withdrawal"
 msgstr ""
@@ -372,64 +372,64 @@ msgid "Forfeit"
 msgstr ""
 
 msgid "status"
-msgstr ""
+msgstr "Állapot:"
 
 msgid "pool #"
-msgstr ""
+msgstr "Csoport #"
 
 msgid "Victories"
-msgstr ""
+msgstr "Győzelem"
 
 msgid "Bouts"
-msgstr ""
+msgstr "Vereség"
 
 msgid "Vict./Bouts (‰)"
-msgstr ""
+msgstr "Gy/V (%)"
 
 msgid "index"
-msgstr ""
+msgstr "AT-KT"
 
 msgid "Hits scored"
-msgstr ""
+msgstr "AT"
 
 msgid "Round start rank"
-msgstr ""
+msgstr "Kezdeti rang"
 
 msgid "promoted"
 msgstr ""
 
 msgid "availability"
-msgstr ""
+msgstr "Elfoglaltság"
 
 msgid "Busy"
-msgstr ""
+msgstr "Elfoglalt"
 
 msgid "Absent"
-msgstr ""
+msgstr "Hiányzó"
 
 msgid "Free"
-msgstr ""
+msgstr "Szabad"
 
 msgid "connection"
-msgstr ""
+msgstr "Kitöltés módja"
 
 msgid "Broken"
 msgstr ""
 
 msgid "Waiting"
-msgstr ""
+msgstr "Várakozás"
 
 msgid "OK"
 msgstr ""
 
 msgid "Manual"
-msgstr ""
+msgstr "Kézi"
 
 msgid "Pools arrangement"
-msgstr ""
+msgstr "Csoportbeosztás"
 
 msgid "or"
-msgstr ""
+msgstr "vagy"
 
 msgid "Wrong fencers count!"
 msgstr ""
@@ -441,125 +441,125 @@ msgid "Seeding"
 msgstr ""
 
 msgid "Balanced"
-msgstr ""
+msgstr "Kiegyensúlyozott"
 
 msgid "Grouped by strength"
-msgstr ""
+msgstr "Rang szerint"
 
 msgid "Max score"
-msgstr ""
+msgstr "Max. tus"
 
 #, c-format
 msgid "Pool #%02d"
-msgstr ""
+msgstr "Csoport #%02d"
 
 msgid "Referee"
-msgstr ""
+msgstr "Zsűri"
 
 msgid "Piste"
-msgstr ""
+msgstr "Pást"
 
 msgid "Status"
-msgstr ""
+msgstr "Állapot"
 
 msgid "Vict./Matchs"
-msgstr ""
+msgstr "GY/M"
 
 msgid "H. scored"
-msgstr ""
+msgstr "AT"
 
 msgid "H. received"
-msgstr ""
+msgstr "KT"
 
 msgid "Index"
-msgstr ""
+msgstr "AT-KT"
 
 msgid "Place"
-msgstr ""
+msgstr "Hely"
 
 msgid "Pools"
-msgstr ""
+msgstr "Csoport"
 
 msgid "Bout without winner!"
 msgstr ""
 
 msgid "Place #"
-msgstr ""
+msgstr "Hely #"
 
 msgid "cutting"
-msgstr ""
+msgstr "oldal"
 
 msgid "Table"
-msgstr ""
+msgstr "Tábla"
 
 #, c-format
 msgid "%s: score sheets printing"
 msgstr ""
 
 msgid "Winner"
-msgstr ""
+msgstr "Győztes"
 
 msgid "Final"
-msgstr ""
+msgstr "Döntő"
 
 msgid "Semi-final"
-msgstr ""
+msgstr "Elődöntő"
 
 #, c-format
 msgid "Table of %d"
-msgstr ""
+msgstr "Tábla %d"
 
 #, c-format
 msgid "Match %s"
-msgstr ""
+msgstr "Asszó %s"
 
 msgid "No winner!"
-msgstr ""
+msgstr "Nincs győztes!"
 
 msgid "Table classification"
 msgstr ""
 
 msgid "Fenced places"
-msgstr ""
+msgstr "Vívott helyek"
 
 msgid "All"
-msgstr ""
+msgstr "Összes"
 
 msgid "Third place"
-msgstr ""
+msgstr "Harmadik hely"
 
 msgid "None"
-msgstr ""
+msgstr "Egyik sem"
 
 msgid "Fencer list printing"
-msgstr ""
+msgstr "Vívók nyomtatása"
 
 msgid "<b><big>What do you want to print?</big></b>"
-msgstr ""
+msgstr "<b><big>Mit szeretne nyomtatni?</big></b>"
 
 msgid "All the presents"
-msgstr ""
+msgstr "Összes jelenlevő"
 
 msgid "All the absents"
-msgstr ""
+msgstr "Összes hiányzó"
 
 msgid "Presents"
-msgstr ""
+msgstr "Jelenlevők"
 
 msgid "Absents"
-msgstr ""
+msgstr "Hiányzók"
 
 msgid "all"
-msgstr ""
+msgstr "Mind"
 
 msgid "Import fencers"
-msgstr ""
+msgstr "Vívók importálása"
 
 msgid "Import ranking"
-msgstr ""
+msgstr "Rang importálása"
 
 msgid "Minimum team size"
-msgstr ""
+msgstr "Legkisebb csapatméret"
 
 msgid "Team classification"
 msgstr ""
@@ -568,93 +568,95 @@ msgid "Manually assigned"
 msgstr ""
 
 msgid "Derived from fencer classification"
-msgstr ""
+msgstr "Rang alapján"
 
 msgid "when unknown"
-msgstr ""
+msgstr "ha ismeretlen"
 
 msgid "Table printing"
-msgstr ""
+msgstr "Tábla nyomtatása"
 
 msgid "<b><big>How to print?</big></b>"
-msgstr ""
+msgstr "<b><big>Hogy szeretne nyomtatni?</big></b>"
 
 msgid "The table"
-msgstr ""
+msgstr "A tábla"
 
 msgid "Score sheets"
-msgstr ""
+msgstr "Pontozó lapok"
 
 msgid "Pending"
-msgstr ""
+msgstr "Függőben"
 
 msgid ""
 "<b><big>Which score sheets of the selected table do you want to "
 "print?</big></b>"
 msgstr ""
+"<b><big>Melyik pontozó lapot szeretné nyomtatni a kiválasztott "
+"táblából?</big></b>"
 
 msgid "All the score sheets"
-msgstr ""
+msgstr "Az összes pontozó lapot"
 
 msgid "The pending score sheets"
-msgstr ""
+msgstr "A függőben lévő pontozó lapokat"
 
 msgid "<b>Match</b>"
-msgstr ""
+msgstr "<b>Asszó</b>"
 
 msgid "A fencer"
-msgstr ""
+msgstr "A vívó"
 
 msgid "B fencer"
-msgstr ""
+msgstr "B vívó"
 
 msgid "<b>Score</b>"
-msgstr ""
+msgstr "<b>Tus</b>"
 
 msgid "Add"
-msgstr ""
+msgstr "Hozzáadás"
 
 msgid "Remove"
-msgstr ""
+msgstr "Eltávolít"
 
 msgid "<b>Schedule</b>"
 msgstr ""
 
 msgid "<b>Parameters</b>"
-msgstr ""
+msgstr "<b>Paraméterek</b>"
 
 msgid "Previous round"
-msgstr ""
+msgstr "Előző forduló"
 
 msgid "Next round"
-msgstr ""
+msgstr "Következő forduló"
 
 msgid "Export to <b>HTML</b>"
-msgstr ""
+msgstr "Exportálás <b>HTML</b>-be"
 
 msgid "Export to <b>FFF</b>"
-msgstr ""
+msgstr "Exportálás <b>FFF</b>-be"
 
 msgid "Export to <b>PDF</b>"
-msgstr ""
+msgstr "Exportálás <b>PDF</b>-be"
 
 msgid "Name"
-msgstr ""
+msgstr "Név"
 
 msgid "Number"
-msgstr ""
+msgstr "Szám"
 
 msgid "Pool sheets printing"
-msgstr ""
+msgstr "Csoportok nyomtatása"
 
 msgid "<b><big>Print...</big></b>"
-msgstr ""
+msgstr "<b><big>Nyomtatás...</big></b>"
 
 msgid "All the pools"
-msgstr ""
+msgstr "Az összes csoportot"
 
 msgid "Only the selected pool"
-msgstr ""
+msgstr "A kiválasztott csoportot"
 
 msgid "<b>What?</b>"
 msgstr ""
@@ -672,13 +674,13 @@ msgid "<b>For what?</b>"
 msgstr ""
 
 msgid "Automatic stuffing"
-msgstr ""
+msgstr "Automatikus kitöltés"
 
 msgid "Combined classification"
-msgstr ""
+msgstr "Kombinált rangsor"
 
 msgid "Single classification"
-msgstr ""
+msgstr "Egyszerű rangsor"
 
 msgid "Content designed for the referees."
 msgstr ""
@@ -690,39 +692,41 @@ msgid "Eliminated"
 msgstr ""
 
 msgid "Fill in a match"
-msgstr ""
+msgstr "Asszó pontozása"
 
 msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
+"Véletlenszerű kitöltés.\n"
+"Használatát a verseny beállításainál szabályozhatja."
 
 msgid "From"
-msgstr ""
+msgstr "Ettől"
 
 msgid "To"
-msgstr ""
+msgstr "Eddig:"
 
 msgid "For place"
-msgstr ""
+msgstr "Melyik helyért?"
 
 msgid "Zoom"
-msgstr ""
+msgstr "Nagyítás"
 
 msgid "Mask or unmask some data type as well as define their display order."
 msgstr ""
 
 msgid "Print"
-msgstr ""
+msgstr "Nyomtatás"
 
 msgid "Number of pools"
-msgstr ""
+msgstr "Csoportok száma"
 
 msgid "Fencers / pools"
-msgstr ""
+msgstr "Vívó / csoport"
 
 msgid "Swapping"
-msgstr ""
+msgstr "Eltolás"
 
 msgid ""
 "Fencing tournament management software.\n"
@@ -734,61 +738,64 @@ msgid "WPA"
 msgstr ""
 
 msgid "Security"
-msgstr ""
+msgstr "Biztonság"
 
 msgid "Passphrase"
-msgstr ""
+msgstr "Jelszó"
 
 msgid ""
 "Enter your WIFI network settings here.\n"
 "They will be used to automatically configure\n"
 "the smarthphones running <b>SmartPoule</b>"
 msgstr ""
+"Írja be a WIFI hálózat adatait.\n"
+"Ezek lesznek használva a \n"
+"<b>SmartPoule</b> programot futtató okostelefonokon."
 
 msgid "User"
-msgstr ""
+msgstr "Felhasználó"
 
 msgid "Password"
-msgstr ""
+msgstr "Jelszó"
 
 msgid "FTP server"
-msgstr ""
+msgstr "FTP szerver"
 
 msgid "<b>Web site</b>"
-msgstr ""
+msgstr "<b>Weblap</b>"
 
 msgid "<b>Video server</b>"
-msgstr ""
+msgstr "<b>Video szerver</b>"
 
 msgid "BellePoule - Fencing tournament"
 msgstr ""
 
 msgid "File"
-msgstr ""
+msgstr "Fájl"
 
 msgid "Recently opened"
-msgstr ""
+msgstr "Legutóbb megnyitott"
 
 msgid "Backup"
-msgstr ""
+msgstr "Biztonsági mentés"
 
 msgid "Backup files location..."
-msgstr ""
+msgstr "Biztonsági mentés helye..."
 
 msgid "Activate"
-msgstr ""
+msgstr "Aktiválás"
 
 msgid "Deactivate"
-msgstr ""
+msgstr "Deaktiválás"
 
 msgid "Referees"
-msgstr ""
+msgstr "Zsűrik"
 
 msgid "Print meal tickets"
-msgstr ""
+msgstr "Étkezési jegyek nyomtatása"
 
 msgid "Print payment book"
-msgstr ""
+msgstr "Átvételi elismervény nyomtatása"
 
 msgid "Ecosystem"
 msgstr ""
@@ -797,109 +804,114 @@ msgid "WIFI"
 msgstr ""
 
 msgid "Score sheet scanner"
-msgstr ""
+msgstr "Pontozó lap szkenner"
 
 msgid "Publication"
-msgstr ""
+msgstr "Publikálás"
 
 msgid "New version!"
-msgstr ""
+msgstr "Új verzió"
 
 msgid "Open an example..."
-msgstr ""
+msgstr "Példa megnyitása"
 
 msgid "User manual"
-msgstr ""
+msgstr "Felhasználói kézikönyv"
 
 msgid "Fencer file template (.csv)"
-msgstr ""
+msgstr "Vívó adatfájl minta (.csv)"
 
 msgid ""
 "Scan this code with <b>SmartPoule</b>\n"
 "to make your smarphone\n"
 "a score sheet scanner."
 msgstr ""
+"Olvassa be ezt a kódot a\n"
+"<b>SmartPoule</b>\n"
+"programmal"
 
 msgid "<b>Score sheet scanner</b>"
-msgstr ""
+msgstr "<b>Pontozó lap szkenner</b>"
 
 msgid "Form"
 msgstr ""
 
 msgid "Date of competition"
-msgstr ""
+msgstr "A verseny időpontja"
 
 msgid "Competition properties"
-msgstr ""
+msgstr "Versenybeállítások"
 
 msgid "Weapon"
-msgstr ""
+msgstr "Fegyver"
 
 msgid "Gender"
-msgstr ""
+msgstr "Nem"
 
 msgid "Category"
-msgstr ""
+msgstr "Kategória"
 
 msgid "Level"
-msgstr ""
+msgstr "Szint"
 
 msgid "Individual"
-msgstr ""
+msgstr "Egyéni"
 
 msgid "Team"
-msgstr ""
+msgstr "Csapat"
 
 msgid "<b>Type</b>"
-msgstr ""
+msgstr "<b>Típus</b>"
 
 msgid "Title"
-msgstr ""
+msgstr "Megnevezés"
 
 msgid "Organizer"
-msgstr ""
+msgstr "Szervező"
 
 msgid "Web site"
-msgstr ""
+msgstr "Weboldal"
 
 msgid "Location"
-msgstr ""
+msgstr "Helyszín"
 
 msgid "<b>Overviews</b>"
 msgstr ""
 
 msgid "Date"
-msgstr ""
+msgstr "Dátum"
 
 msgid "Scratch"
-msgstr ""
+msgstr "Sorsolás"
 
 msgid "Start"
-msgstr ""
+msgstr "Kezdés"
 
 msgid "<b>Date / Time</b>"
-msgstr ""
+msgstr "<b>Dátum / Idő</b>"
 
 msgid "Allow"
-msgstr ""
+msgstr "Engedélyezve"
 
 msgid "Forbid"
-msgstr ""
+msgstr "Letiltva"
 
 msgid ""
 "Automatic\n"
 "score\n"
 "stuffing"
 msgstr ""
+"Autómatikus\n"
+"kitöltés"
 
 msgid "<b>Scores</b>"
 msgstr ""
 
 msgid "Event"
-msgstr ""
+msgstr "Esemény"
 
 msgid "Save the current state of the competition."
-msgstr ""
+msgstr "A verseny pillanatnyi állapotának mentése"
 
 msgid "To specify the features of the competition."
 msgstr ""
@@ -911,4 +923,4 @@ msgid "U16"
 msgstr ""
 
 msgid "Import referee file"
-msgstr ""
+msgstr "Zsűri adatfájl importálása"
