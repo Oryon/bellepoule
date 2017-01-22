@@ -1,20 +1,15 @@
-# Hungarian translation for bellepoule
-# Copyright (c) 2017 Rosetta Contributors and Canonical Ltd 2017
-# This file is distributed under the same license as the bellepoule package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2016-08-23 17:21+0200\n"
-"PO-Revision-Date: 2017-01-21 04:46+0000\n"
+"PO-Revision-Date: 2017-01-21 12:45+0000\n"
 "Last-Translator: Alcedo Attis <Unknown>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-01-21 06:04+0000\n"
+"X-Launchpad-Export-Date: 2017-01-22 05:30+0000\n"
 "X-Generator: Launchpad (build 18302)\n"
 
 msgid "Long text"
@@ -95,7 +90,7 @@ msgid "Page"
 msgstr "Oldal"
 
 msgid "Check-in"
-msgstr "Bejelentkezés"
+msgstr "Regisztráció"
 
 msgid "** Without team **"
 msgstr "** Csapat nélkül **"
@@ -283,7 +278,7 @@ msgstr "Minden nem mentett adat elveszik."
 
 #, c-format
 msgid "Round #%d"
-msgstr "Forduló #%d"
+msgstr "%d forduló"
 
 msgid "Formula"
 msgstr ""
@@ -375,7 +370,7 @@ msgid "status"
 msgstr "Állapot:"
 
 msgid "pool #"
-msgstr "Csoport #"
+msgstr "Csoport"
 
 msgid "Victories"
 msgstr "Győzelem"
@@ -451,7 +446,7 @@ msgstr "Max. tus"
 
 #, c-format
 msgid "Pool #%02d"
-msgstr "Csoport #%02d"
+msgstr "Csoport %02d"
 
 msgid "Referee"
 msgstr "Zsűri"
@@ -484,7 +479,7 @@ msgid "Bout without winner!"
 msgstr ""
 
 msgid "Place #"
-msgstr "Hely #"
+msgstr "Hely"
 
 msgid "cutting"
 msgstr "oldal"
@@ -749,8 +744,8 @@ msgid ""
 "the smarthphones running <b>SmartPoule</b>"
 msgstr ""
 "Írja be a WIFI hálózat adatait.\n"
-"Ezek lesznek használva a \n"
-"<b>SmartPoule</b> programot futtató okostelefonokon."
+"Ezeket használja a <b>SmartPoule</b>\n"
+"programot futtató okostelefonokon."
 
 msgid "User"
 msgstr "Felhasználó"
@@ -789,7 +784,7 @@ msgid "Deactivate"
 msgstr "Deaktiválás"
 
 msgid "Referees"
-msgstr "Zsűrik"
+msgstr "Zsűri"
 
 msgid "Print meal tickets"
 msgstr "Étkezési jegyek nyomtatása"
@@ -901,7 +896,7 @@ msgid ""
 "score\n"
 "stuffing"
 msgstr ""
-"Autómatikus\n"
+"Automatikus\n"
 "kitöltés"
 
 msgid "<b>Scores</b>"
