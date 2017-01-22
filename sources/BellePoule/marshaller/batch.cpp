@@ -42,7 +42,6 @@ namespace Marshaller
     _listener       = listener;
     _scheduled_list = NULL;
     _pending_list   = NULL;
-    _job_list       = NULL;
     _fencer_list    = NULL;
     _weapon         = NULL;
 
@@ -86,7 +85,6 @@ namespace Marshaller
 
     g_list_free (_scheduled_list);
     g_list_free (_pending_list);
-    g_list_free (_job_list);
 
     g_datalist_clear (&_properties);
 
@@ -431,8 +429,6 @@ namespace Marshaller
       g_free (_name);
       _name = message->GetString ("round");
     }
-
-    _job_list = g_list_copy (_pending_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -468,6 +464,7 @@ namespace Marshaller
           if (attr)
           {
             name = g_strdup_printf ("%s%s", gettext ("Pool #"), attr);
+            xmlFree (attr);
           }
           else
           {
@@ -487,10 +484,22 @@ namespace Marshaller
 
           _pending_list = g_list_append (_pending_list,
                                          job);
+          _job_board->AddJob (job);
         }
         else if (g_strcmp0 ((char *) n->name, "Tireur") == 0)
         {
-          job->AddFencer (GetFencer (atoi ((gchar *) xmlGetProp (n, BAD_CAST "REF"))));
+          gchar  *attr   = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+          Player *fencer = GetFencer (atoi (attr));
+
+          if (fencer == NULL)
+          {
+            g_error ("Fencer %s not found!\n", attr);
+          }
+          else
+          {
+            job->AddFencer (fencer);
+          }
+          xmlFree (attr);
         }
 
         LoadJob (n->children,
@@ -522,7 +531,7 @@ namespace Marshaller
   {
     if (_listener->OnBatchAssignmentRequest (this))
     {
-      _job_board->Display (_job_list);
+      _job_board->Display ();
     }
   }
 
@@ -638,13 +647,7 @@ namespace Marshaller
                         JOB_ptr,
                         &job, -1);
 
-    {
-      GList *list = NULL;
-
-      list = g_list_find (_job_list,
-                          job);
-      _job_board->Display (list);
-    }
+    _job_board->Display (job);
   }
 
   // --------------------------------------------------------------------------------

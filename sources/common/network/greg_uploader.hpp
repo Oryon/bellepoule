@@ -38,6 +38,7 @@ namespace Net
     private:
       guint                 _current_job;
       gchar                **_job_url;
+      gboolean              _has_location;
       GData                *_form_fields;
       struct curl_httppost *_form_head;
       struct curl_httppost *_form_tail;

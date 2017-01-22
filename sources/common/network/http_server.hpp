@@ -55,26 +55,16 @@ namespace Net
     private:
       struct RequestBody
       {
-        RequestBody ();
+        RequestBody (HttpServer *server);
         ~RequestBody ();
 
         void Append (const char *buf,
                      size_t      len);
         void Replace (const char *buf);
 
-        gchar *_data;
-        guint  _length;
-      };
-
-      struct DeferedData
-      {
-        DeferedData (HttpServer           *server,
-                     MHD_Connection *connection,
-                     RequestBody          *request_body);
-        ~DeferedData ();
-
+        gchar      *_data;
+        guint       _length;
         HttpServer *_server;
-        Message    *_message;
       };
 
       struct MHD_Daemon *_daemon;
@@ -87,7 +77,7 @@ namespace Net
 
       virtual ~HttpServer ();
 
-      static gboolean DeferedPost (DeferedData *defered_data);
+      static gboolean DeferedPost (RequestBody *request_body);
 
       int OnRequestReceived (struct MHD_Connection *connection,
                              RequestBody           *request_body,

@@ -30,6 +30,7 @@ namespace Marshaller
   {
     _dialog          = _glade->GetWidget ("dialog");
     _job_list        = NULL;
+    _current_job     = NULL;
     _referee_details = NULL;
     _fencer_details  = NULL;
   }
@@ -39,14 +40,89 @@ namespace Marshaller
   {
     Object::TryToRelease (_referee_details);
     Object::TryToRelease (_fencer_details);
+
+    g_list_free (_job_list);
   }
 
   // --------------------------------------------------------------------------------
-  void JobBoard::Display (GList *job_list)
+  void JobBoard::OnObjectDeleted (Object *object)
   {
-    _job_list = job_list;
+    Job   *job  = (Job *) object;
+    GList *node = g_list_find (_job_list,
+                               job);
 
-    _current_job = _job_list;
+    _job_list = g_list_delete_link (_job_list,
+                                    node);
+
+    if (_current_job == node)
+    {
+      _current_job = _job_list;
+      DisplayCurrent ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::ForgetJob (Job      *job,
+                            JobBoard *job_board)
+  {
+    job->RemoveObjectListener (job_board);
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::Clean ()
+  {
+    if (_job_list)
+    {
+      g_list_foreach (_job_list,
+                      (GFunc) ForgetJob,
+                      this);
+      g_list_free (_job_list);
+      _job_list = NULL;
+    }
+
+    _current_job = NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::AddJob (Job *job)
+  {
+    _job_list = g_list_append (_job_list,
+                               job);
+    job->AddObjectListener (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::AddJobs (GList *jobs)
+  {
+    if (_job_list != NULL)
+    {
+      g_error ("JobBoard::AddJobs");
+    }
+
+    GList *current = jobs;
+
+    while (current)
+    {
+      Job *job = (Job *) current->data;
+
+      AddJob (job);
+      current = g_list_next (current);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::Display (Job *job)
+  {
+    if (_job_list && job)
+    {
+      _current_job = g_list_find (_job_list,
+                                  job);
+    }
+
+    if (_current_job == NULL)
+    {
+      _current_job = _job_list;
+    }
 
     DisplayCurrent ();
 
@@ -57,13 +133,31 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void JobBoard::DisplayCurrent ()
   {
+    {
+      {
+        GtkLabel *title = GTK_LABEL (_glade->GetWidget ("current_job_label"));
+
+        gtk_label_set_text (title, "");
+      }
+
+      if (_referee_details)
+      {
+        _referee_details->UnPlug ();
+        _referee_details->Release ();
+        _referee_details = NULL;
+      }
+      if (_fencer_details)
+      {
+        _fencer_details->UnPlug ();
+        _fencer_details->Release ();
+        _fencer_details = NULL;
+      }
+    }
+
     if (_current_job)
     {
       Job  *job  = (Job *) _current_job->data;
       Slot *slot = job->GetSlot ();
-
-      Object::TryToRelease (_referee_details);
-      Object::TryToRelease (_fencer_details);
 
       {
         GtkLabel *title = GTK_LABEL (_glade->GetWidget ("current_job_label"));
@@ -85,9 +179,9 @@ namespace Marshaller
         Plug (_fencer_details,
               _glade->GetWidget ("fencer_detail_hook"));
       }
-    }
 
-    SetProperties ();
+      SetProperties ();
+    }
   }
 
   // --------------------------------------------------------------------------------
