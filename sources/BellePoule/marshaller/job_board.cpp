@@ -79,6 +79,8 @@ namespace Marshaller
       g_list_free (_job_list);
       _job_list = NULL;
     }
+
+    _current_job = NULL;
   }
 
   // --------------------------------------------------------------------------------

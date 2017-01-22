@@ -539,7 +539,6 @@ namespace Marshaller
   void Batch::OnCancelAssign ()
   {
     _listener->OnBatchAssignmentCancel (this);
-    _job_board->Display ();
   }
 
   // --------------------------------------------------------------------------------
