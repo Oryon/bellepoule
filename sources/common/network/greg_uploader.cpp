@@ -31,10 +31,11 @@ namespace Net
   GregUploader::GregUploader (const gchar *url)
     : FileUploader (url, NULL, NULL)
   {
-    _current_job = 0;
-    _local_file  = NULL;
-    _remote_file = NULL;
-    _job_url     = g_new0 (gchar *, JOB_COUNT);
+    _current_job  = 0;
+    _local_file   = NULL;
+    _remote_file  = NULL;
+    _job_url      = g_new0 (gchar *, JOB_COUNT);
+    _has_location = FALSE;
 
     g_datalist_init (&_form_fields);
   }
@@ -57,25 +58,28 @@ namespace Net
   // --------------------------------------------------------------------------------
   void GregUploader::UploadFile (const gchar *file_path)
   {
-    if (_remote_file == NULL)
+    if (_has_location)
     {
-      _remote_file = g_path_get_basename (file_path);
+      if (_remote_file == NULL)
+      {
+        _remote_file = g_path_get_basename (file_path);
+      }
+
+      {
+        gchar *escaped  = g_uri_escape_string (_remote_file,
+                                               NULL,
+                                               FALSE);
+
+        _job_url[0] = g_strdup_printf ("http://www.escrime-info.com/~resultxml/Greg/envoyer.php?fichier=%s",
+                                       escaped);
+        _job_url[1] = g_strdup_printf ("http://www.escrime-info.com/~resultxml/Greg/envoyer.php?fichier=./temp/%s&valide=1",
+                                       escaped);
+
+        g_free (escaped);
+      }
+
+      FileUploader::UploadFile (file_path);
     }
-
-    {
-      gchar *escaped  = g_uri_escape_string (_remote_file,
-                                             NULL,
-                                             FALSE);
-
-      _job_url[0] = g_strdup_printf ("http://www.escrime-info.com/~resultxml/Greg/envoyer.php?fichier=%s",
-                                     escaped);
-      _job_url[1] = g_strdup_printf ("http://www.escrime-info.com/~resultxml/Greg/envoyer.php?fichier=./temp/%s&valide=1",
-                                     escaped);
-
-      g_free (escaped);
-    }
-
-    FileUploader::UploadFile (file_path);
   }
 
   // --------------------------------------------------------------------------------
@@ -204,6 +208,11 @@ namespace Net
   // --------------------------------------------------------------------------------
   void GregUploader::SetLocation (const gchar *location)
   {
+    if (location && (location[0] != '\0'))
+    {
+      _has_location = TRUE;
+    }
+
     g_datalist_set_data_full (&_form_fields,
                               "lieu",
                               g_strdup (location),
