@@ -397,7 +397,7 @@ namespace People
       }
     }
 
-    if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
+    if (RunDialog (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
     {
       gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
 
@@ -505,7 +505,7 @@ namespace People
                                                     GTK_MESSAGE_ERROR,
                                                     GTK_BUTTONS_CLOSE,
                                                     gettext ("The imported FFF file is not ISO-8859 encoded."));
-        gtk_dialog_run (GTK_DIALOG (dialog));
+        RunDialog (GTK_DIALOG (dialog));
         gtk_widget_destroy (dialog);
         g_error_free (error);
       }
@@ -716,7 +716,7 @@ namespace People
                                                     GTK_BUTTONS_CLOSE,
                                                     "The imported CSV file is probably based on template generated from another computer.\n\n"
                                                     "Use a template generated from this computer!");
-        gtk_dialog_run (GTK_DIALOG (dialog));
+        RunDialog (GTK_DIALOG (dialog));
         gtk_widget_destroy (dialog);
         g_error_free (error);
       }
@@ -1042,7 +1042,7 @@ namespace People
   {
     GtkWidget *print_dialog = _glade->GetWidget ("print_dialog");
 
-    if (gtk_dialog_run (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
+    if (RunDialog (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
     {
       gchar *name;
 

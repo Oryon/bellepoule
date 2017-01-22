@@ -23,8 +23,8 @@
 class Glade : public Object
 {
   public:
-     Glade (const gchar *file_name,
-            Object      *owner);
+    Glade (const gchar *file_name,
+           Object      *owner);
     virtual ~Glade ();
 
     GtkWidget *GetRootWidget    ();

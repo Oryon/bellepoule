@@ -502,7 +502,7 @@ namespace Pool
     {
       GtkWidget *print_dialog = _glade->GetWidget ("print_pool_dialog");
 
-      if (gtk_dialog_run (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
+      if (RunDialog (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
       {
         GtkWidget *w = _glade->GetWidget ("all_pool_radiobutton");
 

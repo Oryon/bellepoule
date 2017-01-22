@@ -1420,7 +1420,7 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                             gettext ("All the inputs of this round will be cancelled."));
 
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
+  if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {
     Stage             *stage       = (Stage *) g_list_nth_data (_stage_list, _current_stage);
     Stage::StageClass *stage_class = stage->GetClass ();
@@ -1481,7 +1481,7 @@ void Schedule::on_next_stage_toolbutton_clicked ()
     gtk_window_set_title (GTK_WINDOW (dialog),
                           gettext ("Barrage"));
 
-    if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_YES)
+    if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_YES)
     {
       Stage *barrage = CreateStage ("Barrage");
 

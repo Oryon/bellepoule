@@ -960,7 +960,7 @@ namespace People
       g_free (size_msg);
       g_free (full_msg);
 
-      gtk_dialog_run (GTK_DIALOG (dialog));
+      RunDialog (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);
     }
   }
