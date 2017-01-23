@@ -906,7 +906,7 @@ void Tournament::OnOpen (gchar *current_folder)
     }
   }
 
-  if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
+  if (RunDialog (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
   {
     gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
 
@@ -1058,7 +1058,7 @@ void Tournament::OpenUriContest (const gchar *uri)
         gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                                   "Adjust the imported data if needed and \ndon't forget to save all the created events!");
 
-        gtk_dialog_run (GTK_DIALOG(dialog));
+        RunDialog (GTK_DIALOG(dialog));
         gtk_widget_destroy (dialog);
       }
     }
@@ -1180,7 +1180,7 @@ void Tournament::OnRecent ()
                                    filter);
   }
 
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+  if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
   {
     GtkRecentInfo *info;
 
@@ -1202,7 +1202,7 @@ void Tournament::OnMenuDialog (const gchar *dialog)
 {
   GtkWidget *w = _glade->GetWidget (dialog);
 
-  gtk_dialog_run (GTK_DIALOG (w));
+  RunDialog (GTK_DIALOG (w));
   gtk_widget_hide (w);
 }
 
@@ -1246,7 +1246,7 @@ void Tournament::OnBackupfileLocation ()
     }
   }
 
-  if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
+  if (RunDialog (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
   {
     gchar *foldername = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (chooser));
 

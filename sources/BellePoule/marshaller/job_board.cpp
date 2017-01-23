@@ -126,7 +126,7 @@ namespace Marshaller
 
     DisplayCurrent ();
 
-    gtk_dialog_run (GTK_DIALOG (_dialog));
+    RunDialog (GTK_DIALOG (_dialog));
     gtk_widget_hide (_dialog);
   }
 

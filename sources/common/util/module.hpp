@@ -131,6 +131,8 @@ class Module : public virtual Object
 
     virtual ~Module ();
 
+    gint RunDialog (GtkDialog *dialog);
+
     GtkTreeModel *GetStatusModel ();
 
     virtual void MakeDirty ();
@@ -158,6 +160,7 @@ class Module : public virtual Object
 
   private:
     static GtkTreeModel *_status_model;
+    static GtkWindow    *_main_window;
 
     GtkWidget          *_root;
     GtkToolbar         *_toolbar;

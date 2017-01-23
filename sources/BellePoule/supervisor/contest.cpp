@@ -1026,7 +1026,7 @@ void Contest::AskForSettings ()
   _schedule->SetTeamEvent (FALSE);
 
   {
-    gtk_dialog_run (GTK_DIALOG (_properties_dialog));
+    RunDialog (GTK_DIALOG (_properties_dialog));
     ReadProperties ();
     gtk_widget_hide (_properties_dialog);
   }
@@ -1886,7 +1886,7 @@ gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
     g_free (name);
   }
 
-  response = gtk_dialog_run (GTK_DIALOG (chooser));
+  response = RunDialog (GTK_DIALOG (chooser));
 
   if (response == GTK_RESPONSE_ACCEPT)
   {
@@ -2138,7 +2138,7 @@ extern "C" G_MODULE_EXPORT void on_properties_toolbutton_clicked (GtkWidget *wid
 // --------------------------------------------------------------------------------
 void Contest::on_properties_toolbutton_clicked ()
 {
-  gtk_dialog_run (GTK_DIALOG (_properties_dialog));
+  RunDialog (GTK_DIALOG (_properties_dialog));
   ReadProperties ();
   MakeDirty ();
   gtk_widget_hide (_properties_dialog);
@@ -2158,7 +2158,7 @@ void Contest::on_calendar_button_clicked ()
 {
   GtkWidget *dialog = _glade->GetWidget ("calendar_dialog");
 
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == TRUE)
+  if (RunDialog (GTK_DIALOG (dialog)) == TRUE)
   {
     guint year;
     guint month;

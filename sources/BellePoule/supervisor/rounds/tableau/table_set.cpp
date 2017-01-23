@@ -3039,7 +3039,7 @@ namespace Table
                       G_CALLBACK (on_cutting_count_combobox_changed),
                       (Object *) this);
 
-    dialog_response = gtk_dialog_run (GTK_DIALOG (preview_dialog));
+    dialog_response = RunDialog (GTK_DIALOG (preview_dialog));
 
     {
       GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
@@ -3514,7 +3514,7 @@ namespace Table
   {
     GtkWidget *print_dialog = _glade->GetWidget ("print_dialog");
 
-    if (gtk_dialog_run (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
+    if (RunDialog (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
     {
       GtkWidget *table_w    = _glade->GetWidget ("table_radiobutton");
       gchar     *print_name = GetPrintName ();
@@ -3558,7 +3558,7 @@ namespace Table
       g_free (title);
     }
 
-    if (gtk_dialog_run (GTK_DIALOG (score_sheet_dialog)) == GTK_RESPONSE_OK)
+    if (table_set->RunDialog (GTK_DIALOG (score_sheet_dialog)) == GTK_RESPONSE_OK)
     {
       GtkWidget *w          = table_set->_glade->GetWidget ("table_all_radiobutton");
       gboolean   all_sheet  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));

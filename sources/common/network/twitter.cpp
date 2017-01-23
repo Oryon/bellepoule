@@ -146,7 +146,7 @@ namespace Net
                                 "");
           }
 
-          switch (gtk_dialog_run (GTK_DIALOG (dialog)))
+          switch (RunDialog (GTK_DIALOG (dialog)))
           {
             case GTK_RESPONSE_OK:
             {

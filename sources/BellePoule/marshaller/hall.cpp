@@ -717,7 +717,7 @@ namespace Marshaller
     {
       GtkWidget *error_dialog = _glade->GetWidget ("referee_error_dialog");
 
-      gtk_dialog_run (GTK_DIALOG (error_dialog));
+      RunDialog (GTK_DIALOG (error_dialog));
       gtk_widget_hide (error_dialog);
     }
     else
@@ -737,7 +737,7 @@ namespace Marshaller
         gtk_toggle_button_set_active (toggle, TRUE);
       }
 
-      done = gtk_dialog_run (GTK_DIALOG (dialog)) == 0;
+      done = RunDialog (GTK_DIALOG (dialog)) == 0;
       if (done)
       {
         GList *job_list;

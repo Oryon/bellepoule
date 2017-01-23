@@ -21,6 +21,7 @@
 const gdouble  Module::PRINT_HEADER_HEIGHT = 10.0; // % of paper width
 const gdouble  Module::PRINT_FONT_HEIGHT   = 2.0;  // % of paper width
 GtkTreeModel  *Module::_status_model       = NULL;
+GtkWindow     *Module::_main_window        = NULL;
 
 // --------------------------------------------------------------------------------
 Module::Module (const gchar *glade_file,
@@ -59,6 +60,11 @@ Module::Module (const gchar *glade_file,
     {
       gtk_widget_set_name (_root,
                            glade_file);
+
+      if (_main_window == NULL)
+      {
+        _main_window = GTK_WINDOW (_root);
+      }
     }
 
     _glade->DetachFromParent (_root);
@@ -729,6 +735,14 @@ GdkPixbuf *Module::GetPixbuf (const gchar *icon)
   }
 
   return pixbuf;
+}
+
+// --------------------------------------------------------------------------------
+gint Module::RunDialog (GtkDialog *dialog)
+{
+  gtk_window_set_transient_for (GTK_WINDOW (dialog),
+                                _main_window);
+  return gtk_dialog_run (dialog);
 }
 
 // --------------------------------------------------------------------------------
