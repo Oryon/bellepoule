@@ -3,13 +3,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2016-08-23 17:21+0200\n"
-"PO-Revision-Date: 2017-01-21 12:45+0000\n"
+"PO-Revision-Date: 2017-01-22 09:43+0000\n"
 "Last-Translator: Alcedo Attis <Unknown>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-01-22 05:30+0000\n"
+"X-Launchpad-Export-Date: 2017-01-23 05:54+0000\n"
 "X-Generator: Launchpad (build 18302)\n"
 
 msgid "Long text"
@@ -66,19 +66,19 @@ msgid "Referee files"
 msgstr "Zsűri adatfájlok"
 
 msgid "List of registered"
-msgstr "Regisztrált vívók listája"
+msgstr "Regisztráltak"
 
 msgid "List of presents"
-msgstr "Jelenlévő vívók listája"
+msgstr "Jelenlévők"
 
 msgid "List of absents"
-msgstr "Hiányzó vívók listája"
+msgstr "Hiányzók"
 
 msgid "Fencer list"
 msgstr "Vívók listája"
 
 msgid "Barrage"
-msgstr ""
+msgstr "Kiesési forduló"
 
 msgid "Copy"
 msgstr "Másolás"
@@ -106,10 +106,10 @@ msgstr "Csapat létszám"
 
 #, c-format
 msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr ""
+msgstr "Minimum <b>%d</b> vívót állított be csapatonként."
 
 msgid "Tick the present players of the team."
-msgstr "Jelölje  a csapat jelenlévő vívóit"
+msgstr "Jelölje ki  a csapat jelenlévő vívóit"
 
 msgid "Untick the absent players of the team."
 msgstr "Szüntesse meg a kijelölést a csapat hiányzó vívóinál"
@@ -142,7 +142,7 @@ msgid "Foil"
 msgstr "Tőr"
 
 msgid "Educ"
-msgstr ""
+msgstr "Tanuló"
 
 msgid "Male"
 msgstr "Férfi"
@@ -187,16 +187,16 @@ msgid "U5"
 msgstr ""
 
 msgid "U7"
-msgstr ""
+msgstr "Bambi (U12)"
 
 msgid "U9"
-msgstr ""
+msgstr "Gyermek (U13)"
 
 msgid "U11"
-msgstr ""
+msgstr "Újonc (U14)"
 
 msgid "U14"
-msgstr ""
+msgstr "Serdülő (U15)"
 
 msgid "U17"
 msgstr "Kadet (U17)"
@@ -268,17 +268,17 @@ msgid "Choose a backup files location..."
 msgstr "Válassza ki a biztonsági mentés helyét..."
 
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>Biztos ki akar lépni a programból</big></b>"
+msgstr "<b><big>Biztos ki akar lépni a programból?</big></b>"
 
 msgid "Quit BellePoule?"
 msgstr "Kilép a programból?"
 
 msgid "All the unsaved competions will be lost."
-msgstr "Minden nem mentett adat elveszik."
+msgstr "A nem mentett adatok elvesznek."
 
 #, c-format
 msgid "Round #%d"
-msgstr "%d forduló"
+msgstr "%d. forduló"
 
 msgid "Formula"
 msgstr ""
@@ -296,6 +296,9 @@ msgid ""
 "<b><big>Because of ties, the quota is exceeded.\n"
 "Do you wish to add a barrage round?</big></b>"
 msgstr ""
+"<b><big>Döntetlen eredmény miatt\n"
+"nem lehet meghatározni a kiesőket!\n"
+"Szeretne egy kiesési fordulót?</big></b>"
 
 msgid "ref"
 msgstr ""
@@ -334,7 +337,7 @@ msgid "IP address"
 msgstr "IP cím"
 
 msgid "rate"
-msgstr ""
+msgstr "Arány"
 
 msgid "level"
 msgstr "Szint"
@@ -358,10 +361,10 @@ msgid "Not qualified"
 msgstr "Kieső"
 
 msgid "Withdrawal"
-msgstr ""
+msgstr "Feladás"
 
 msgid "Excluded"
-msgstr ""
+msgstr "Kizárva"
 
 msgid "Forfeit"
 msgstr ""
@@ -415,7 +418,7 @@ msgid "Waiting"
 msgstr "Várakozás"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "Manual"
 msgstr "Kézi"
@@ -427,19 +430,19 @@ msgid "or"
 msgstr "vagy"
 
 msgid "Wrong fencers count!"
-msgstr ""
+msgstr "Hibás a vívók száma"
 
 msgid "Allocation"
-msgstr ""
+msgstr "Beosztás"
 
 msgid "Seeding"
-msgstr ""
+msgstr "Sorsolás"
 
 msgid "Balanced"
-msgstr "Kiegyensúlyozott"
+msgstr "Ranglista alapján"
 
 msgid "Grouped by strength"
-msgstr "Rang szerint"
+msgstr "Képesség szerint"
 
 msgid "Max score"
 msgstr "Max. tus"
@@ -489,7 +492,7 @@ msgstr "Tábla"
 
 #, c-format
 msgid "%s: score sheets printing"
-msgstr ""
+msgstr "%s: pontozó lap nyomtatás"
 
 msgid "Winner"
 msgstr "Győztes"
@@ -512,7 +515,7 @@ msgid "No winner!"
 msgstr "Nincs győztes!"
 
 msgid "Table classification"
-msgstr ""
+msgstr "Tábla eredmény"
 
 msgid "Fenced places"
 msgstr "Vívott helyek"
@@ -557,10 +560,10 @@ msgid "Minimum team size"
 msgstr "Legkisebb csapatméret"
 
 msgid "Team classification"
-msgstr ""
+msgstr "Csapat besorolás"
 
 msgid "Manually assigned"
-msgstr ""
+msgstr "Kézi besorolás"
 
 msgid "Derived from fencer classification"
 msgstr "Rang alapján"
@@ -615,7 +618,7 @@ msgid "Remove"
 msgstr "Eltávolít"
 
 msgid "<b>Schedule</b>"
-msgstr ""
+msgstr "Időbeosztás"
 
 msgid "<b>Parameters</b>"
 msgstr "<b>Paraméterek</b>"
@@ -654,19 +657,19 @@ msgid "Only the selected pool"
 msgstr "A kiválasztott csoportot"
 
 msgid "<b>What?</b>"
-msgstr ""
+msgstr "<b>Mit?</b>"
 
 msgid "For arbitration"
-msgstr ""
+msgstr "A zsűriknek"
 
 msgid "Matches watermarked"
-msgstr ""
+msgstr "Asszók megjelölve"
 
 msgid "For the bulletin board"
-msgstr ""
+msgstr "A hírdetőtáblára"
 
 msgid "<b>For what?</b>"
-msgstr ""
+msgstr "Miért?"
 
 msgid "Automatic stuffing"
 msgstr "Automatikus kitöltés"
