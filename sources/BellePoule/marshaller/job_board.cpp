@@ -94,11 +94,6 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void JobBoard::AddJobs (GList *jobs)
   {
-    if (_job_list != NULL)
-    {
-      g_error ("JobBoard::AddJobs");
-    }
-
     GList *current = jobs;
 
     while (current)
@@ -160,9 +155,19 @@ namespace Marshaller
       Slot *slot = job->GetSlot ();
 
       {
-        GtkLabel *title = GTK_LABEL (_glade->GetWidget ("current_job_label"));
+        GtkLabel *title_label = GTK_LABEL (_glade->GetWidget ("current_job_label"));
+        GtkLabel *piste_label = GTK_LABEL (_glade->GetWidget ("piste_label"));
+        GtkLabel *time_label  = GTK_LABEL (_glade->GetWidget ("time_label"));
+        gchar    *time        = g_date_time_format (slot->GetStartTime (), "%H:%M");
+        gchar    *piste       = g_strdup_printf    (gettext ("Piste %d"),
+                                                    slot->GetOwner()->GetId ());
 
-        gtk_label_set_text (title, job->GetName ());
+        gtk_label_set_text (title_label, job->GetName  ());
+        gtk_label_set_text (piste_label, piste);
+        gtk_label_set_text (time_label,  time);
+
+        g_free (piste);
+        g_free (time);
       }
 
       if (slot)
@@ -180,7 +185,7 @@ namespace Marshaller
               _glade->GetWidget ("fencer_detail_hook"));
       }
 
-      SetProperties ();
+      SetHeader ();
     }
   }
 
@@ -200,7 +205,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void JobBoard::SetProperties ()
+  void JobBoard::SetHeader ()
   {
     Job   *job        = (Job *) _current_job->data;
     Batch *batch      = job->GetBatch ();

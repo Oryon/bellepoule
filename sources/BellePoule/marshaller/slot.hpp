@@ -54,6 +54,8 @@ namespace Marshaller
 
       GList *GetRefereeList ();
 
+      Owner *GetOwner ();
+
       void Cancel ();
 
       GDateTime *GetStartTime ();

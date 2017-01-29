@@ -46,7 +46,7 @@ namespace Marshaller
       Hall (RefereePool *referee_pool,
             Listener    *listener);
 
-      void AddPiste ();
+      Piste *AddPiste (gdouble tx = 0.0, gdouble ty = 0.0);
 
       void RemovePiste (Piste *piste);
 
