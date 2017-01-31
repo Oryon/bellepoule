@@ -104,8 +104,7 @@ namespace Marshaller
         }
       }
 
-      g_list_free_full (free_slots,
-                        (GDestroyNotify) Object::TryToRelease);
+      FreeFullGList (Slot, free_slots);
       g_date_time_unref (now);
     }
 

@@ -65,7 +65,8 @@ namespace Pool
       void         SetIdChain       (const gchar *contest, const gchar *stage_name, guint stage_id);
       void         SetPiste         (guint piste);
       guint        GetPiste         ();
-      const gchar *GetStartTime     ();
+      FieTime     *GetStartTime     ();
+      void         SetStartTime     (FieTime *start_time);
       void         AddFencer        (Player *player, Object *rank_owner);
       void         AddReferee       (Player *player);
       void         CreateMatchs     (GSList *affinity_criteria_list);

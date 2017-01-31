@@ -26,13 +26,15 @@ class Weapon : public Object
             const gchar *greg_image);
 
   public:
-    static GSList *GetList ();
+    static GList *GetList ();
 
     static Weapon *GetDefault ();
 
     static Weapon *GetFromXml (const gchar *xml);
 
     static Weapon *GetFromIndex (guint index);
+
+    static void FreeList ();
 
   public:
     const gchar *GetImage ();
@@ -44,7 +46,7 @@ class Weapon : public Object
     guint GetIndex ();
 
   private:
-    static GSList *_list;
+    static GList *_list;
 
     gchar *_image;
     gchar *_xml_image;

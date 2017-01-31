@@ -64,11 +64,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Hall::~Hall ()
   {
-    g_list_free_full (_piste_list,
-                      (GDestroyNotify) Object::TryToRelease);
-
-    g_list_free_full (_batch_list,
-                      (GDestroyNotify) Object::TryToRelease);
+    FreeFullGList (Batch, _batch_list);
+    FreeFullGList (Piste, _piste_list);
 
     _timeline->Release  ();
     _lasso->Release     ();
@@ -810,8 +807,7 @@ namespace Marshaller
 
             current_slot = g_list_next (current_slot);
           }
-          g_list_free_full (free_slots,
-                            (GDestroyNotify) Object::TryToRelease);
+          FreeFullGList (Slot, free_slots);
 
           current_job = g_list_next (current_job);
         }

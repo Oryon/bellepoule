@@ -16,7 +16,7 @@
 
 #include "weapon.hpp"
 
-GSList *Weapon::_list = NULL;
+GList *Weapon::_list = NULL;
 
 // --------------------------------------------------------------------------------
 Weapon::Weapon (const gchar *image,
@@ -28,19 +28,19 @@ Weapon::Weapon (const gchar *image,
   _xml_image  = g_strdup (xml_image);
   _greg_image = g_strdup (greg_image);
 
-  _list = g_slist_prepend (_list,
-                           this);
+  _list = g_list_prepend (_list,
+                          this);
 }
 
 // --------------------------------------------------------------------------------
 Weapon::~Weapon ()
 {
-  GSList *node = g_slist_find (_list, this);
+  GList *node = g_list_find (_list, this);
 
   if (node)
   {
-    _list = g_slist_delete_link (_list,
-                                 node);
+    _list = g_list_delete_link (_list,
+                                node);
   }
 
   g_free (_image);
@@ -48,7 +48,18 @@ Weapon::~Weapon ()
 }
 
 // --------------------------------------------------------------------------------
-GSList *Weapon::GetList ()
+void Weapon::FreeList ()
+{
+  while (_list)
+  {
+    Weapon *weapon = (Weapon *) _list->data;
+
+    weapon->Release ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+GList *Weapon::GetList ()
 {
   return _list;
 }
@@ -56,7 +67,7 @@ GSList *Weapon::GetList ()
 // --------------------------------------------------------------------------------
 Weapon *Weapon::GetFromXml (const gchar *xml)
 {
-  GSList *current = _list;
+  GList *current = _list;
 
   while (current)
   {
@@ -67,7 +78,7 @@ Weapon *Weapon::GetFromXml (const gchar *xml)
       return weapon;
     }
 
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 
   return NULL;
@@ -76,15 +87,15 @@ Weapon *Weapon::GetFromXml (const gchar *xml)
 // --------------------------------------------------------------------------------
 guint Weapon::GetIndex ()
 {
-  return g_slist_index (_list,
-                        this);
+  return g_list_index (_list,
+                       this);
 }
 
 // --------------------------------------------------------------------------------
 Weapon *Weapon::GetFromIndex (guint index)
 {
-  return (Weapon *) g_slist_nth_data (_list,
-                                      index);
+  return (Weapon *) g_list_nth_data (_list,
+                                     index);
 }
 
 // --------------------------------------------------------------------------------

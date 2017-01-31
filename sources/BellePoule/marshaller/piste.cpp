@@ -151,8 +151,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Piste::~Piste ()
   {
-    g_list_free_full (_slots,
-                      (GDestroyNotify) TryToRelease);
+    FreeFullGList (Slot, _slots);
 
     goo_canvas_item_remove (_root_item);
     g_free (_color);

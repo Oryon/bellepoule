@@ -287,7 +287,7 @@ Contest::Contest (gboolean for_duplication )
   }
 
   {
-    GSList *current = Weapon::GetList ();
+    GList *current = Weapon::GetList ();
 
     _weapon_combo = _glade->GetWidget ("weapon_combo");
     while (current)
@@ -296,7 +296,7 @@ Contest::Contest (gboolean for_duplication )
 
       gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_weapon_combo),
                                       weapon->GetImage ());
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
   }
 

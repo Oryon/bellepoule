@@ -37,8 +37,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   RefereePool::~RefereePool ()
   {
-    g_list_free_full (_list_by_weapon,
-                      (GDestroyNotify) Object::TryToRelease);
+    FreeFullGList (People::RefereesList, _list_by_weapon);
   }
 
   // --------------------------------------------------------------------------------
