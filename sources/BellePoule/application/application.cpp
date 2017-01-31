@@ -156,6 +156,8 @@ Application::~Application ()
     _version_downloader->Release ();
   }
 
+  Weapon::FreeList ();
+
   g_free (Global::_share_dir);
 
   g_free (_role);

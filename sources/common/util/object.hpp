@@ -71,6 +71,17 @@ namespace Net
   class Message;
 }
 
+#define FreeFullGList(data_type, list)\
+{\
+  GList *_current_ = list;\
+  while (_current_)\
+  {\
+    data_type *_node_ = (data_type *) _current_->data;\
+    _node_->Release ();\
+    _current_ = g_list_next (_current_);\
+  }\
+}\
+
 class Object
 {
   public:

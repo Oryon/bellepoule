@@ -52,8 +52,7 @@ namespace Marshaller
     g_free         (_name);
     gdk_color_free (_gdk_color);
 
-    g_list_free_full (_fencer_list,
-                      (GDestroyNotify) Object::TryToRelease);
+    FreeFullGList (Player, _fencer_list);
   }
 
   // --------------------------------------------------------------------------------

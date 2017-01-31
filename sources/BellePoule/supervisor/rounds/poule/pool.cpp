@@ -131,14 +131,18 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  const gchar *Pool::GetStartTime ()
+  FieTime *Pool::GetStartTime ()
   {
-    if (_start_time)
-    {
-      return _start_time->GetImage ();
-    }
+    return _start_time;
+  }
 
-    return "";
+  // --------------------------------------------------------------------------------
+  void Pool::SetStartTime (FieTime *start_time)
+  {
+    Object::TryToRelease (_start_time);
+
+    _start_time = start_time;
+    _start_time->Retain ();
   }
 
   // --------------------------------------------------------------------------------

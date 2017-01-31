@@ -80,17 +80,6 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Batch::~Batch ()
   {
-    gdk_color_free (_gdk_color);
-    g_free (_name);
-
-    g_list_free (_scheduled_list);
-    g_list_free (_pending_list);
-
-    g_datalist_clear (&_properties);
-
-    g_list_free_full (_fencer_list,
-                      (GDestroyNotify) Object::TryToRelease);
-
     {
       GtkTreeIter iter;
       gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
@@ -113,6 +102,16 @@ namespace Marshaller
 
       gtk_list_store_clear (_job_store);
     }
+
+    gdk_color_free (_gdk_color);
+    g_free (_name);
+
+    g_list_free (_scheduled_list);
+    g_list_free (_pending_list);
+
+    g_datalist_clear (&_properties);
+
+    FreeFullGList (Player, _fencer_list);
 
     g_free (_weapon);
 
@@ -273,6 +272,7 @@ namespace Marshaller
         {
           GList *node = g_list_find (_pending_list,
                                      job);
+
           _pending_list = g_list_delete_link (_pending_list,
                                               node);
 
@@ -288,6 +288,7 @@ namespace Marshaller
         {
           GList *node = g_list_find (_scheduled_list,
                                      job);
+
           _scheduled_list = g_list_delete_link (_scheduled_list,
                                                 node);
 

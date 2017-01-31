@@ -21,6 +21,7 @@
 #include <libxml/xpath.h>
 
 #include "util/global.hpp"
+#include "util/fie_time.hpp"
 
 #include "neo_swapper/neo_swapper.hpp"
 #include "dispatcher/dispatcher.hpp"
@@ -760,6 +761,20 @@ namespace Pool
               xmlFree (attr);
             }
           }
+
+          {
+            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "Date");
+
+            if (attr)
+            {
+              FieTime *fie_time = new FieTime (attr);
+
+              current_pool->SetStartTime (fie_time);
+              fie_time->Release ();
+
+              xmlFree (attr);
+            }
+          }
         }
         else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
@@ -1377,13 +1392,18 @@ namespace Pool
 
       // Time
       {
-        item = Canvas::PutTextInTable (header_table,
-                                       pool->GetStartTime (),
-                                       0, column_count++);
-        g_object_set (G_OBJECT (item),
-                      "font", BP_FONT "bold italic 14px",
-                      NULL);
-        Canvas::SetTableItemAttribute (item, "y-align", 1.0);
+        FieTime *start_time = pool->GetStartTime ();
+
+        if (start_time)
+        {
+          item = Canvas::PutTextInTable (header_table,
+                                         start_time->GetImage (),
+                                         0, column_count++);
+          g_object_set (G_OBJECT (item),
+                        "font", BP_FONT "bold italic 14px",
+                        NULL);
+          Canvas::SetTableItemAttribute (item, "y-align", 1.0);
+        }
       }
 
       Canvas::PutInTable (table,

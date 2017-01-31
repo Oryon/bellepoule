@@ -34,7 +34,7 @@ namespace Marshaller
 
     {
       GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("referee_notebook"));
-      GSList      *current  = Weapon::GetList ();
+      GList       *current  = Weapon::GetList ();
 
       while (current)
       {
@@ -51,7 +51,7 @@ namespace Marshaller
         Plug (list,
               viewport);
 
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
 
@@ -67,7 +67,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Marshaller::~Marshaller ()
   {
-    _hall->Release ();
+    _hall->Release         ();
+    _referee_pool->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -155,7 +156,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Marshaller::OnExposeWeapon (const gchar *weapon_code)
   {
-    GSList *current = Weapon::GetList ();
+    GList *current = Weapon::GetList ();
 
     for (guint i = 0; current != NULL; i++)
     {
@@ -168,7 +169,7 @@ namespace Marshaller
         break;
       }
 
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
   }
 

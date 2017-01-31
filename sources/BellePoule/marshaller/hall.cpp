@@ -64,11 +64,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Hall::~Hall ()
   {
-    g_list_free_full (_piste_list,
-                      (GDestroyNotify) Object::TryToRelease);
-
-    g_list_free_full (_batch_list,
-                      (GDestroyNotify) Object::TryToRelease);
+    FreeFullGList (Batch, _batch_list);
+    FreeFullGList (Piste, _piste_list);
 
     _timeline->Release  ();
     _lasso->Release     ();
@@ -106,11 +103,22 @@ namespace Marshaller
       EnableDndOnCanvas ();
     }
 
-    AddPiste ();
-    AddPiste ();
-    AddPiste ();
-    AddPiste ();
-    AddPiste ();
+    {
+      AddPiste ();
+      AddPiste ();
+
+      AddPiste (Piste::_W + Piste::_H, 0.0);
+      AddPiste ();
+
+      AddPiste ((Piste::_W + Piste::_H) / 2, 4 * Piste::_H);
+
+      AddPiste (0.0, 6 * Piste::_H);
+      AddPiste ();
+
+      AddPiste (Piste::_W + Piste::_H, 6 * Piste::_H);
+      AddPiste ();
+    }
+
     RestoreZoomFactor ();
   }
 
@@ -321,7 +329,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::AddPiste ()
+  Piste *Hall::AddPiste (gdouble tx, gdouble ty)
   {
     GList *anchor = g_list_last (_piste_list);
     Piste *piste  = new Piste (GetRootItem (), this);
@@ -360,14 +368,14 @@ namespace Marshaller
       }
     }
 
-    if (anchor)
+    if ((tx != 0.0) || (ty != 0.0))
+    {
+      piste->Translate (tx,
+                        ty);
+    }
+    else if (anchor)
     {
       piste->AnchorTo ((Piste *) anchor->data);
-    }
-    else
-    {
-      piste->Translate (0.5,
-                        0.5);
     }
 
     {
@@ -376,6 +384,8 @@ namespace Marshaller
       piste->DisplayAtTime (cursor);
       g_date_time_unref (cursor);
     }
+
+    return piste;
   }
 
   // --------------------------------------------------------------------------------
@@ -797,8 +807,7 @@ namespace Marshaller
 
             current_slot = g_list_next (current_slot);
           }
-          g_list_free_full (free_slots,
-                            (GDestroyNotify) Object::TryToRelease);
+          FreeFullGList (Slot, free_slots);
 
           current_job = g_list_next (current_job);
         }

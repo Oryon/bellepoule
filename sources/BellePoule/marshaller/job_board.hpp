@@ -52,7 +52,7 @@ namespace Marshaller
 
       void OnObjectDeleted (Object *object);
 
-      void SetProperties ();
+      void SetHeader ();
 
       static void ForgetJob (Job      *job,
                              JobBoard *job_board);

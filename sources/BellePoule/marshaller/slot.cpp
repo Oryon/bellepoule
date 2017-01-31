@@ -443,6 +443,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  Slot::Owner *Slot::GetOwner ()
+  {
+    return _owner;
+  }
+
+  // --------------------------------------------------------------------------------
   void Slot::Dump (Slot *what)
   {
     printf ("%p ==> %s\n", (void *) what->_owner, g_date_time_format (what->_start, "%T"));
