@@ -105,7 +105,7 @@ void Team::SetAttendingFromMembers ()
 // --------------------------------------------------------------------------------
 void Team::SetAttributesFromMembers ()
 {
-  GSList *current_desc = AttributeDesc::GetList ();
+  GList *current_desc = AttributeDesc::GetList ();
 
   while (current_desc)
   {
@@ -142,7 +142,7 @@ void Team::SetAttributesFromMembers ()
       }
     }
 
-    current_desc = g_slist_next (current_desc);
+    current_desc = g_list_next (current_desc);
   }
 }
 

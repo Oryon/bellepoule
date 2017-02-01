@@ -337,8 +337,7 @@ namespace AskFred
   // --------------------------------------------------------------------------------
   Parser::~Parser ()
   {
-    g_list_free_full (_events,
-                      (GDestroyNotify) Object::TryToRelease);
+    FreeFullGList (Event, _events);
 
     g_hash_table_unref (_fencers);
     g_hash_table_unref (_clubs);

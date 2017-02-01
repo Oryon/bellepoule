@@ -21,7 +21,7 @@
 #include "attribute_desc.hpp"
 #include "tree_model_index.hpp"
 
-GSList                      *AttributeDesc::_list           = NULL;
+GList                       *AttributeDesc::_list           = NULL;
 GSList                      *AttributeDesc::_swappable_list = NULL;
 AttributeDesc::CriteriaFunc  AttributeDesc::_criteria_func  = NULL;
 
@@ -114,8 +114,8 @@ AttributeDesc *AttributeDesc::Declare (GType        type,
                                                 xml_name,
                                                 user_name);
 
-  _list = g_slist_append (_list,
-                          attr_desc);
+  _list = g_list_append (_list,
+                         attr_desc);
 
   return attr_desc;
 }
@@ -123,9 +123,7 @@ AttributeDesc *AttributeDesc::Declare (GType        type,
 // --------------------------------------------------------------------------------
 void AttributeDesc::Cleanup ()
 {
-  g_slist_free_full (_list,
-                     (GDestroyNotify) Object::TryToRelease);
-
+  FreeFullGList (AttributeDesc, _list);
   _list = NULL;
 }
 
@@ -866,7 +864,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
 void AttributeDesc::CreateExcludingList (GSList **list, ...)
 {
   GSList *new_list = NULL;
-  GSList *current  = _list;
+  GList  *current  = _list;
 
   while (current)
   {
@@ -890,7 +888,7 @@ void AttributeDesc::CreateExcludingList (GSList **list, ...)
                                  desc);
     }
 
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 
   *list = new_list;
@@ -900,7 +898,7 @@ void AttributeDesc::CreateExcludingList (GSList **list, ...)
 void AttributeDesc::CreateIncludingList (GSList **list, ...)
 {
   GSList *new_list = NULL;
-  GSList *current  = _list;
+  GList  *current  = _list;
 
   while (current)
   {
@@ -920,14 +918,14 @@ void AttributeDesc::CreateIncludingList (GSList **list, ...)
     }
     va_end (ap);
 
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 
   *list = new_list;
 }
 
 // --------------------------------------------------------------------------------
-GSList *AttributeDesc::GetList ()
+GList *AttributeDesc::GetList ()
 {
   return _list;
 }
@@ -935,7 +933,7 @@ GSList *AttributeDesc::GetList ()
 // --------------------------------------------------------------------------------
 AttributeDesc *AttributeDesc::GetDescFromCodeName (const gchar *code_name)
 {
-  GSList *current = _list;
+  GList *current = _list;
 
   while (current)
   {
@@ -945,7 +943,7 @@ AttributeDesc *AttributeDesc::GetDescFromCodeName (const gchar *code_name)
     {
       return attr_desc;
     }
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 
   return NULL;
@@ -954,7 +952,7 @@ AttributeDesc *AttributeDesc::GetDescFromCodeName (const gchar *code_name)
 // --------------------------------------------------------------------------------
 AttributeDesc *AttributeDesc::GetDescFromXmlName (const gchar *xml_name)
 {
-  GSList *current = _list;
+  GList *current = _list;
 
   while (current)
   {
@@ -964,7 +962,7 @@ AttributeDesc *AttributeDesc::GetDescFromXmlName (const gchar *xml_name)
     {
       return attr_desc;
     }
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 
   return NULL;
@@ -974,7 +972,7 @@ AttributeDesc *AttributeDesc::GetDescFromXmlName (const gchar *xml_name)
 AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name,
                                                      const gchar *criteria)
 {
-  GSList *current = _list;
+  GList *current = _list;
 
   while (current)
   {
@@ -996,7 +994,7 @@ AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name,
       }
     }
 
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 
   return NULL;

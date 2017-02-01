@@ -28,7 +28,7 @@ namespace Pool
   class Allocator;
 
   class Supervisor :
-    public virtual Stage,
+    public Stage,
     public Module,
     public Pool::StatusListener
   {

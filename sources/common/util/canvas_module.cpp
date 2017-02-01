@@ -27,8 +27,7 @@
 // --------------------------------------------------------------------------------
 CanvasModule::CanvasModule (const gchar *glade_file,
                             const gchar *root)
-: Module (glade_file,
-          root)
+  : Module (glade_file, root)
 {
   _canvas           = NULL;
   _scrolled_window  = NULL;

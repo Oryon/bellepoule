@@ -26,7 +26,6 @@ GtkWindow     *Module::_main_window        = NULL;
 // --------------------------------------------------------------------------------
 Module::Module (const gchar *glade_file,
                 const gchar *root)
-: Object (glade_file)
 {
    _plugged_list     = NULL;
    _owner            = NULL;

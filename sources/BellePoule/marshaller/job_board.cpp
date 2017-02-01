@@ -26,7 +26,8 @@ namespace Marshaller
 {
   // --------------------------------------------------------------------------------
   JobBoard::JobBoard ()
-    : Module ("job_board.glade")
+    : Object ("JobBoard"),
+      Module ("job_board.glade")
   {
     _dialog          = _glade->GetWidget ("dialog");
     _job_list        = NULL;

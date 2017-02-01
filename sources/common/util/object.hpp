@@ -71,16 +71,17 @@ namespace Net
   class Message;
 }
 
-#define FreeFullGList(data_type, list)\
+#define FreeFullGList(_data_type_, _list_)\
 {\
-  GList *_current_ = list;\
+  GList *_current_ = _list_;\
   while (_current_)\
   {\
-    data_type *_node_ = (data_type *) _current_->data;\
+    _data_type_ *_node_ = (_data_type_ *) _current_->data;\
     _node_->Release ();\
     _current_ = g_list_next (_current_);\
   }\
-}\
+  g_list_free (_list_);\
+}
 
 class Object
 {
@@ -91,7 +92,7 @@ class Object
     };
 
   public:
-    Object (const gchar *class_name = NULL);
+    Object (const gchar *class_name = "???");
 
     void SetData (Object         *owner,
                   const gchar    *key,

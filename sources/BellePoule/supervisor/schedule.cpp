@@ -41,8 +41,8 @@ Schedule::Schedule (Contest *contest,
                     Data    *minimum_team_size,
                     Data    *manual_classification,
                     Data    *default_classification)
-  : Module ("schedule.glade",
-            "schedule_notebook")
+  : Object ("Schedule"),
+    Module ("schedule.glade", "schedule_notebook")
 {
   _stage_list    = NULL;
   _current_stage = 0;

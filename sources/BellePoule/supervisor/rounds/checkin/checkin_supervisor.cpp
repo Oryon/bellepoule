@@ -39,10 +39,9 @@ namespace People
 
   // --------------------------------------------------------------------------------
   CheckinSupervisor::CheckinSupervisor (StageClass *stage_class)
-    : Checkin ("checkin.glade",
-               "Fencer",
-               "Team"),
-    Stage (stage_class)
+    : Object ("CheckinSupervisor"),
+      Checkin ("checkin.glade", "Fencer", "Team"),
+      Stage (stage_class)
   {
     _checksum_list = NULL;
 

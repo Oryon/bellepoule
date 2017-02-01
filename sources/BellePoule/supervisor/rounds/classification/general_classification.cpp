@@ -31,9 +31,9 @@ namespace People
 
   // --------------------------------------------------------------------------------
   GeneralClassification::GeneralClassification (StageClass *stage_class)
-    : Stage (stage_class),
-    PlayersList ("general_classification.glade",
-                 NO_RIGHT)
+    : Object ("GeneralClassification"),
+      Stage (stage_class),
+      PlayersList ("general_classification.glade", NO_RIGHT)
   {
     // Player attributes to display
     {

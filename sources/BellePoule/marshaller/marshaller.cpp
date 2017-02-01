@@ -26,7 +26,8 @@ namespace Marshaller
 {
   // --------------------------------------------------------------------------------
   Marshaller::Marshaller ()
-    : Module ("marshaller.glade")
+    : Object ("Marshaller"),
+      Module ("marshaller.glade")
   {
     _referee_pool = new RefereePool ();
 

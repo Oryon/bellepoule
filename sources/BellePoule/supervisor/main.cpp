@@ -163,5 +163,7 @@ int main (int argc, char **argv)
 
   application->Release ();
 
+  Object::DumpList ();
+
   return 0;
 }

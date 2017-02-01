@@ -20,6 +20,7 @@
 
 // --------------------------------------------------------------------------------
 Attendees::Attendees ()
+  : Object ("Attendees")
 {
   _global_list = NULL;
   _shortlist   = NULL;

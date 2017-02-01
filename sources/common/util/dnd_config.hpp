@@ -20,7 +20,7 @@
 
 #include "object.hpp"
 
-class DndConfig : public virtual Object
+class DndConfig : public Object
 {
   public:
     DndConfig ();

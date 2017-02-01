@@ -49,8 +49,9 @@ namespace Table
 
   // --------------------------------------------------------------------------------
   Supervisor::Supervisor (StageClass *stage_class)
-    : Stage (stage_class),
-    Module ("table_supervisor.glade")
+    : Object ("Table::Supervisor"),
+      Stage (stage_class),
+      Module ("table_supervisor.glade")
   {
     _max_score = new Data ("ScoreMax",
                            10);

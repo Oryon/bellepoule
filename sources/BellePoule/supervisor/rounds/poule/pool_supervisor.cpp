@@ -39,14 +39,15 @@ namespace Pool
 
   // --------------------------------------------------------------------------------
   Supervisor::Supervisor (StageClass *stage_class)
-    : Stage (stage_class),
-    Module ("pool_supervisor.glade")
+    : Object ("Pool::Supervisor"),
+      Stage (stage_class),
+      Module ("pool_supervisor.glade")
   {
     _allocator      = NULL;
     _displayed_pool = NULL;
     _max_score      = NULL;
 
-    _current_round_owner = new Object ();
+    _current_round_owner = new Object ("Pool::Supervisor.owner");
 
     _pool_liststore = GTK_LIST_STORE (_glade->GetGObject ("pool_liststore"));
 

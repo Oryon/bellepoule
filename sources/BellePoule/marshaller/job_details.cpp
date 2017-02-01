@@ -22,8 +22,8 @@ namespace Marshaller
 {
   // --------------------------------------------------------------------------------
   JobDetails::JobDetails (GList *player_list)
-    : PlayersList ("details.glade",
-                   SORTABLE)
+    : Object ("JobDetails"),
+      PlayersList ("details.glade", SORTABLE)
   {
     {
       GSList *attr_list;

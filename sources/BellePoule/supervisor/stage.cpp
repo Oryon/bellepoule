@@ -27,7 +27,6 @@ GSList *Stage::_stage_base = NULL;
 
 // --------------------------------------------------------------------------------
 Stage::Stage (StageClass *stage_class)
-: Object ("Stage")
 {
   _name                  = g_strdup ("");
   _locked                = FALSE;

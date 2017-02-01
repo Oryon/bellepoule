@@ -32,9 +32,8 @@ namespace People
 {
   // --------------------------------------------------------------------------------
   RefereesList::RefereesList ()
-    : People::Checkin ("referees.glade",
-                       "Referee",
-                       NULL)
+    : Object ("RefereesList"),
+      People::Checkin ("referees.glade", "Referee", NULL)
   {
     _weapon = NULL;
 

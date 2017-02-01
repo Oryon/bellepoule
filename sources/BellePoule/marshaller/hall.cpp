@@ -32,7 +32,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Hall::Hall (RefereePool *referee_pool,
               Listener    *listener)
-    : CanvasModule ("hall.glade")
+    : Object ("Hall"),
+      CanvasModule ("hall.glade")
   {
     _listener      = listener;
     _piste_list    = NULL;

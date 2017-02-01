@@ -36,7 +36,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Batch::Batch (const gchar *id,
                 Listener    *listener)
-    : Module ("batch.glade")
+    : Object ("Batch"),
+      Module ("batch.glade")
   {
     _name           = NULL;
     _listener       = listener;

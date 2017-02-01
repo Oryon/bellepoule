@@ -26,8 +26,8 @@
 
 // --------------------------------------------------------------------------------
 Classification::Classification (Filter *filter)
-  : PlayersList ("classification.glade",
-                 NO_RIGHT)
+  : Object ("Classification"),
+    PlayersList ("classification.glade", NO_RIGHT)
 {
   if (filter)
   {

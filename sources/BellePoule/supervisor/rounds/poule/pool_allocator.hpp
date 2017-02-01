@@ -31,7 +31,7 @@
 namespace Pool
 {
   class Allocator :
-    public virtual Stage,
+    public Stage,
     public CanvasModule,
     public Pool::RoadmapListener
   {

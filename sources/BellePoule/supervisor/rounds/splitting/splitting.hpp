@@ -26,7 +26,7 @@ class Contest;
 
 namespace People
 {
-  class Splitting : public virtual Stage, public PlayersList
+  class Splitting : public Stage, public PlayersList
   {
     public:
       static void Declare ();
