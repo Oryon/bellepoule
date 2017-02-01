@@ -22,7 +22,7 @@
 
 namespace People
 {
-  class Barrage : public virtual Stage, public PlayersList
+  class Barrage : public Stage, public PlayersList
   {
     public:
       static void Declare ();

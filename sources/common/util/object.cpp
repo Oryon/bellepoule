@@ -28,6 +28,11 @@ struct ClassStatus
 {
   const gchar *_name;
   guint        _nb_objects;
+
+  static gint Compare (ClassStatus *a, ClassStatus *b)
+  {
+    return g_strcmp0 (a->_name, b->_name);
+  }
 };
 #endif
 
@@ -44,14 +49,12 @@ Object::Object (const gchar *class_name)
 #ifdef DEBUG
   _nb_objects++;
 
-  if (class_name == NULL)
+  if (class_name[0] == '?')
   {
-    _class_name = "anonymous";
+    g_error ("No class name defined!\n");
   }
-  else
-  {
-    _class_name = class_name;
-  }
+
+  _class_name = class_name;
 
   if (g_strcmp0 (_klass_to_track, _class_name) == 0)
   {
@@ -396,6 +399,9 @@ void Object::DumpList ()
 
   g_mem_profile ();
 
+  _list = g_list_sort (_list,
+                       (GCompareFunc) ClassStatus::Compare);
+
   for (guint i = 0; i < g_list_length (_list); i++)
   {
     ClassStatus *status;
@@ -403,8 +409,16 @@ void Object::DumpList ()
     status = (ClassStatus *) g_list_nth_data (_list,
                                               i);
 
-    g_print ("%20s ==> %d\n", status->_name,
-                              status->_nb_objects);
+    if (status->_nb_objects)
+    {
+      g_print (BLUE "%30s" ESC " ==> %d\n", status->_name,
+                                            status->_nb_objects);
+    }
+    else
+    {
+      g_print ("%30s ==>\n", status->_name);
+    }
+
     total += status->_nb_objects;
   }
   g_print ("TOTAL ==> " BLUE "%d\n" ESC, total);

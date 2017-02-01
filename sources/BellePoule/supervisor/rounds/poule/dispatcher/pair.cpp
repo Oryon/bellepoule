@@ -22,6 +22,7 @@ namespace Pool
   Pair::Pair (guint     iteration,
               Opponent *a,
               Opponent *b)
+    : Object ("Pair")
   {
     _a = a;
     _b = b;

@@ -53,8 +53,9 @@ namespace Pool
 
   // --------------------------------------------------------------------------------
   Allocator::Allocator (StageClass *stage_class)
-    : Stage (stage_class),
-    CanvasModule ("pool_allocator.glade")
+    : Object ("Pool::Allocator"),
+      Stage (stage_class),
+      CanvasModule ("pool_allocator.glade")
   {
     _config_list            = NULL;
     _selected_config        = NULL;

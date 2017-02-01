@@ -27,8 +27,8 @@ namespace People
   Form::Form (Module      *client,
               Filter      *filter,
               const gchar *player_class)
-    : Module ("form.glade",
-              "FillInForm")
+    : Object ("Form"),
+      Module ("form.glade", "FillInForm")
   {
     _pages      = NULL;
     _page_count = 0;

@@ -29,7 +29,7 @@ namespace Table
   class TableSet;
   class Table;
 
-  class Supervisor : public virtual Stage, public Module
+  class Supervisor : public Stage, public Module
   {
     public:
       static void Declare ();

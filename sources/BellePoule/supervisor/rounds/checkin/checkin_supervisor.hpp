@@ -27,7 +27,7 @@
 
 namespace People
 {
-  class CheckinSupervisor : public virtual Checkin, public Stage
+  class CheckinSupervisor : public Checkin, public Stage
   {
     public:
       static void Declare ();

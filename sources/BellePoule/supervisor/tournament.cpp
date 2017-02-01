@@ -39,7 +39,8 @@
 
 // --------------------------------------------------------------------------------
 Tournament::Tournament ()
-  : Module ("tournament.glade")
+  : Object ("Tournament"),
+    Module ("tournament.glade")
 {
   _contest_list = NULL;
   _referee_list = NULL;

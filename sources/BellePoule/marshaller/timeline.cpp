@@ -23,8 +23,8 @@ namespace Marshaller
 {
   // --------------------------------------------------------------------------------
   Timeline::Timeline (Listener *listener)
-    : CanvasModule ("timeline.glade",
-                    "canvas_scrolled_window")
+    : Object ("Timeline"),
+      CanvasModule ("timeline.glade", "canvas_scrolled_window")
   {
     _batch_list     = NULL;
     _redraw_timeout = 0;

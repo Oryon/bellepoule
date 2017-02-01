@@ -21,7 +21,7 @@
 
 namespace People
 {
-  class RankImporter : public virtual Object
+  class RankImporter : public Object
   {
     public:
       RankImporter (GKeyFile *config_file);

@@ -26,7 +26,7 @@
 
 namespace People
 {
-  class GeneralClassification : public virtual Stage, public PlayersList
+  class GeneralClassification : public Stage, public PlayersList
   {
     public:
       typedef enum

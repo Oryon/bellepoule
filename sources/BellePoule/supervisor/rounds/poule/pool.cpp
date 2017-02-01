@@ -36,8 +36,8 @@ namespace Pool
               guint        number,
               const gchar *xml_player_tag,
               guint32      rand_seed)
-    : CanvasModule ("pool.glade",
-                    "canvas_scrolled_window")
+    : Object ("Pool"),
+      CanvasModule ("pool.glade", "canvas_scrolled_window")
   {
       _number                = number;
       _fencer_list           = NULL;

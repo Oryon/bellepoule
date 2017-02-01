@@ -74,7 +74,8 @@ namespace Net
 {
   // --------------------------------------------------------------------------------
   Twitter::Twitter (Listener *listener)
-    : Module ("twitter.glade")
+    : Object ("Twitter"),
+      Module ("twitter.glade")
   {
     _listener = listener;
 

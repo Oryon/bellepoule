@@ -201,7 +201,8 @@ gboolean Contest::Time::IsEqualTo (Time *to)
 
 // --------------------------------------------------------------------------------
 Contest::Contest (gboolean for_duplication )
-  : Module ("contest.glade")
+  : Object ("Contest"),
+    Module ("contest.glade")
 {
   _save_timeout_id = 0;
 
@@ -942,8 +943,8 @@ Contest::~Contest ()
   gdk_color_free (_gdk_color);
 
   Object::TryToRelease (_schedule);
-
   Object::TryToRelease (_referees_list);
+  Object::TryToRelease (_category);
 
   if (_save_timeout_id > 0)
   {

@@ -20,7 +20,7 @@
 
 #include "object.hpp"
 
-class SensitivityTrigger : public virtual Object
+class SensitivityTrigger : public Object
 {
   public:
     SensitivityTrigger ();

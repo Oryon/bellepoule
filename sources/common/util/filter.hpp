@@ -23,7 +23,7 @@
 
 class Module;
 
-class Filter : public virtual Object
+class Filter : public Object
 {
   public:
     class Layout : public Object

@@ -40,6 +40,7 @@ namespace People
     _tally_counter   = new TallyCounter ();
     _base_class      = base_class;
     _gathering_class = gathering_class;
+    _listener        = NULL;
 
     RefreshAttendingDisplay ();
   }

@@ -31,7 +31,8 @@ namespace People
   // --------------------------------------------------------------------------------
   PlayersList::PlayersList (const gchar *glade_file,
                             guint        rights)
-    : Module (glade_file)
+    : Object ("PlayersList"),
+      Module (glade_file)
   {
     _rights          = rights;
     _player_list     = NULL;

@@ -62,7 +62,8 @@ namespace Table
                       GtkWidget  *from_container,
                       GtkWidget  *to_container,
                       guint       first_place)
-    : CanvasModule ("table.glade")
+    : Object ("TableSet"),
+      CanvasModule ("table.glade")
   {
     Module *supervisor_module = dynamic_cast <Module *> (supervisor);
 
