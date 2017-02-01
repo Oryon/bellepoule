@@ -170,8 +170,7 @@ namespace Net
     }
 
     {
-      g_list_free_full (_partner_list,
-                        (GDestroyNotify) Object::TryToRelease);
+      FreeFullGList (Partner, _partner_list);
       _partner_list = NULL;
     }
   }

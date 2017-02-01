@@ -151,7 +151,7 @@ namespace Pool
     guint            _piste;
     FieTime         *_start_time;
     ScoreCollector  *_score_collector;
-    GSList          *_match_list;
+    GList           *_match_list;
     gchar           *_name;
     gboolean         _is_over;
     gboolean         _has_error;

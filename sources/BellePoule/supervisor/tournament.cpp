@@ -68,29 +68,8 @@ void Tournament::Init ()
 // --------------------------------------------------------------------------------
 Tournament::~Tournament ()
 {
-  {
-#if 1
-    GSList *list    = _contest_list;
-    GSList *current = _contest_list;
-
-    _contest_list = NULL;
-    while (current)
-    {
-      Contest *contest = (Contest *) current->data;
-
-      contest->Release ();
-      current = g_slist_next (current);
-    }
-    g_slist_free (list);
-#else
-    // Doesn't work! Can't figure out yet why.
-    g_slist_free_full (_contest_list,
-                       (GDestroyNotify) Object::TryToRelease);
-#endif
-  }
-
-  g_slist_free_full (_referee_list,
-                     (GDestroyNotify) Object::TryToRelease);
+  FreeFullGList (Contest, _contest_list);
+  FreeFullGList (Player, _referee_list);
 
   _web_server->Release  ();
   _ecosystem->Release   ();
@@ -185,8 +164,8 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
       else if (   (g_strcmp0 (tokens[1], "HandShake") == 0)
                || (g_strcmp0 (tokens[1], "Score")     == 0))
       {
-        GSList *current = _referee_list;
-        guint   ref     = atoi (tokens[2]);
+        GList *current = _referee_list;
+        guint  ref     = atoi (tokens[2]);
 
         if (ref == 0)
         {
@@ -204,7 +183,7 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
               break;
             }
 
-            current = g_slist_next (current);
+            current = g_list_next (current);
           }
         }
       }
@@ -224,7 +203,7 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
 guint Tournament::PreparePrint (GtkPrintOperation *operation,
                                 GtkPrintContext   *context)
 {
-  guint list_length = g_slist_length (_referee_list);
+  guint list_length = g_list_length (_referee_list);
   guint n;
 
   if (_print_meal_tickets)
@@ -260,7 +239,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
   GooCanvas     *canvas   = Canvas::CreatePrinterCanvas (context);
   GooCanvasItem *main_table;
   GooCanvasItem *item;
-  GSList        *current;
+  GList         *current;
 
   cairo_save (cr);
 
@@ -278,8 +257,8 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
                                        "homogeneous-rows",    TRUE,
                                        NULL);
 
-    current = g_slist_nth (_referee_list,
-                           NB_TICKET_Y_PER_SHEET*NB_TICKET_X_PER_SHEET*page_nr);
+    current = g_list_nth (_referee_list,
+                          NB_TICKET_Y_PER_SHEET*NB_TICKET_X_PER_SHEET*page_nr);
 
     for (guint r = 0; current && (r < NB_TICKET_Y_PER_SHEET); r++)
     {
@@ -406,7 +385,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
                             c);
         Canvas::SetTableItemAttribute (ticket_table, "x-expand", 1U);
         Canvas::SetTableItemAttribute (ticket_table, "x-fill",   1U);
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
   }
@@ -417,8 +396,8 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 
     Canvas::NormalyzeDecimalNotation (main_font);
 
-    current = g_slist_nth (_referee_list,
-                           NB_REFEREE_PER_SHEET*page_nr);
+    current = g_list_nth (_referee_list,
+                          NB_REFEREE_PER_SHEET*page_nr);
 
     main_table = goo_canvas_table_new (goo_canvas_get_root_item (canvas),
                                        "row-spacing",          4.0,
@@ -516,7 +495,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
         }
       }
 
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
 
     Canvas::Anchor (main_table,
@@ -550,12 +529,12 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-Player *Tournament::UpdateConnectionStatus (GSList      *player_list,
+Player *Tournament::UpdateConnectionStatus (GList       *player_list,
                                             guint        ref,
                                             const gchar *ip_address,
                                             const gchar *status)
 {
-  GSList *current = player_list;
+  GList *current = player_list;
 
   while (current)
   {
@@ -576,7 +555,7 @@ Player *Tournament::UpdateConnectionStatus (GSList      *player_list,
       }
       return current_player;
     }
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 
   return NULL;
@@ -589,7 +568,7 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
 
   if (message->Is ("RegisteredReferee"))
   {
-    GSList *current = _contest_list;
+    GList *current = _contest_list;
 
     while (current)
     {
@@ -597,7 +576,7 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
 
       contest->ManageReferee (message);
 
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
 
     result = TRUE;
@@ -653,7 +632,7 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
 
                 if (competition_id)
                 {
-                  GSList *current = _contest_list;
+                  GList *current = _contest_list;
 
                   while (current)
                   {
@@ -677,7 +656,7 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
                                                     body);
                       break;
                     }
-                    current = g_slist_next (current);
+                    current = g_list_next (current);
                   }
                 }
               }
@@ -705,7 +684,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
 
     if (id && id[1])
     {
-      GSList *current = _contest_list;
+      GList *current = _contest_list;
 
       id++;
       while (current)
@@ -721,13 +700,13 @@ gchar *Tournament::OnHttpGet (const gchar *url)
                                NULL);
           break;
         }
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
   }
   else if (g_strcmp0 (url, "/tournament") == 0)
   {
-    GSList  *current  = _contest_list;
+    GList   *current  = _contest_list;
     GString *response = g_string_new ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 
     response = g_string_append (response,
@@ -764,7 +743,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
       response = g_string_append (response,
                                   "\"/>\n");
 
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
     response = g_string_append (response,
                                 "</Competitions>");
@@ -786,10 +765,10 @@ void Tournament::Manage (Contest *contest)
 
     contest->AttachTo (GTK_NOTEBOOK (nb));
 
-    _contest_list = g_slist_prepend (_contest_list,
-                                     contest);
+    _contest_list = g_list_prepend (_contest_list,
+                                    contest);
 
-    if (g_slist_length (_contest_list) == 1)
+    if (g_list_length (_contest_list) == 1)
     {
       gtk_widget_show (_glade->GetWidget ("notebook"));
       gtk_widget_hide (_glade->GetWidget ("logo"));
@@ -802,9 +781,9 @@ void Tournament::OnContestDeleted (Contest *contest)
 {
   if (_contest_list)
   {
-    _contest_list = g_slist_remove (_contest_list,
-                                    contest);
-    if (g_slist_length (_contest_list) == 0)
+    _contest_list = g_list_remove (_contest_list,
+                                   contest);
+    if (g_list_length (_contest_list) == 0)
     {
       gtk_widget_show (_glade->GetWidget ("logo"));
       gtk_widget_hide (_glade->GetWidget ("notebook"));
@@ -815,7 +794,7 @@ void Tournament::OnContestDeleted (Contest *contest)
 // --------------------------------------------------------------------------------
 Contest *Tournament::GetContest (const gchar *filename)
 {
-  GSList *current = _contest_list;
+  GList *current = _contest_list;
 
   while (current)
   {
@@ -826,7 +805,7 @@ Contest *Tournament::GetContest (const gchar *filename)
       return contest;
     }
 
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 
   return NULL;
@@ -920,7 +899,7 @@ void Tournament::OnOpen (gchar *current_folder)
 // --------------------------------------------------------------------------------
 void Tournament::OnSave ()
 {
-  GSList *current = _contest_list;
+  GList *current = _contest_list;
 
   while (current)
   {
@@ -928,7 +907,7 @@ void Tournament::OnSave ()
 
     contest->Save ();
 
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 }
 
@@ -941,7 +920,7 @@ void Tournament::OnOpenTemplate ()
                                         NULL);
 
   {
-    GSList *current_desc = AttributeDesc::GetList ();
+    GList *current_desc = AttributeDesc::GetList ();
 
     while (current_desc)
     {
@@ -962,7 +941,7 @@ void Tournament::OnOpenTemplate ()
         g_free (locale_string);
       }
 
-      current_desc = g_slist_next (current_desc);
+      current_desc = g_list_next (current_desc);
     }
   }
 

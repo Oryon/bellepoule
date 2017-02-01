@@ -66,8 +66,7 @@ Player::~Player ()
 {
   _wifi_code->Release ();
 
-  g_slist_free_full (_clients,
-                     (GDestroyNotify) Object::TryToRelease);
+  FreeFullGList (Client, _clients);
 }
 
 // --------------------------------------------------------------------------------
@@ -95,7 +94,7 @@ Player *Player::Duplicate ()
 // --------------------------------------------------------------------------------
 void Player::UpdateFrom (Player *from)
 {
-  GSList *current_desc = AttributeDesc::GetList ();
+  GList *current_desc = AttributeDesc::GetList ();
 
   while (current_desc)
   {
@@ -118,7 +117,7 @@ void Player::UpdateFrom (Player *from)
       }
     }
 
-    current_desc = g_slist_next (current_desc);
+    current_desc = g_list_next (current_desc);
   }
 }
 
@@ -274,15 +273,15 @@ void Player::SetChangeCbk (const gchar *attr_name,
   client->_owner      = owner;
   client->_steps      = steps;
 
-  _clients = g_slist_prepend (_clients,
-                              client);
+  _clients = g_list_prepend (_clients,
+                             client);
 }
 
 // --------------------------------------------------------------------------------
 void Player::RemoveCbkOwner (Object *owner)
 {
-  GSList *current;
-  GSList *remove_list = NULL;
+  GList *current;
+  GList *remove_list = NULL;
 
   current = _clients;
   while (current)
@@ -291,10 +290,10 @@ void Player::RemoveCbkOwner (Object *owner)
 
     if (client->_owner == owner)
     {
-      remove_list = g_slist_prepend (remove_list,
-                                     client);
+      remove_list = g_list_prepend (remove_list,
+                                    client);
     }
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 
   current = remove_list;
@@ -303,12 +302,12 @@ void Player::RemoveCbkOwner (Object *owner)
     Client *client = (Client *) current->data;
 
     client->Release ();
-    _clients = g_slist_remove (_clients,
-                               current->data);
-    current = g_slist_next (current);
+    _clients = g_list_remove (_clients,
+                              current->data);
+    current = g_list_next (current);
   }
 
-  g_slist_free (remove_list);
+  g_list_free (remove_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -328,7 +327,7 @@ void Player::NotifyChange (const gchar *attr_name)
 void Player::NotifyChange (Attribute *attr,
                            guint      step)
 {
-  GSList *list = _clients;
+  GList *list = _clients;
 
   while (list)
   {
@@ -343,7 +342,7 @@ void Player::NotifyChange (Attribute *attr,
                            client->_owner,
                            step);
     }
-    list = g_slist_next (list);
+    list = g_list_next (list);
   }
 }
 

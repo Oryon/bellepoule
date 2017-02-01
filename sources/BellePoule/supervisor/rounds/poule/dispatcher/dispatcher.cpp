@@ -75,12 +75,10 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Dispatcher::Reset ()
   {
-    g_list_free_full (_pair_list,
-                      (GDestroyNotify) Object::TryToRelease);
+    FreeFullGList (Pair, _pair_list);
     _pair_list = NULL;
 
-    g_list_free_full (_opponent_list,
-                      (GDestroyNotify) Object::TryToRelease);
+    FreeFullGList (Opponent, _opponent_list);
     _opponent_list = NULL;;
   }
 

@@ -97,7 +97,7 @@ class AttributeDesc : public Object
 
     static void CreateIncludingList (GSList **list, ...);
 
-    static GSList *GetList ();
+    static GList *GetList ();
 
     static void Cleanup ();
 
@@ -172,7 +172,7 @@ class AttributeDesc : public Object
     void CreateDiscreteModel ();
 
   private:
-    static GSList       *_list;
+    static GList        *_list;
     static GSList       *_swappable_list;
     static CriteriaFunc  _criteria_func;
 

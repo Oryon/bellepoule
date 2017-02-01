@@ -173,7 +173,7 @@ class Player : public Object, Net::MessageUploader::Listener
       guint     _steps;
     };
 
-    GSList *_clients;
+    GList *_clients;
 
     static guint   _next_ref;
     static GSList *_attributes_model;

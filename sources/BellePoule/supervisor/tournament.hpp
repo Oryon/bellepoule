@@ -93,8 +93,8 @@ class Tournament : public Module, public Net::Twitter::Listener
 
     guint _referee_ref;
 
-    GSList         *_contest_list;
-    GSList         *_referee_list;
+    GList          *_contest_list;
+    GList          *_referee_list;
     Net::WebServer *_web_server;
     gboolean        _print_meal_tickets;
     EcoSystem      *_ecosystem;
@@ -109,7 +109,7 @@ class Tournament : public Module, public Net::Twitter::Listener
     static gboolean RecentFileExists (const GtkRecentFilterInfo *filter_info,
                                       Tournament                *tournament);
 
-    Player *UpdateConnectionStatus (GSList      *player_list,
+    Player *UpdateConnectionStatus (GList       *player_list,
                                     guint        ref,
                                     const gchar *ip_address,
                                     const gchar *status);

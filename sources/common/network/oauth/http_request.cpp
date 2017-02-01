@@ -67,8 +67,7 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   HttpRequest::~HttpRequest ()
   {
-    g_list_free_full (_header_list,
-                      (GDestroyNotify) Object::TryToRelease);
+    FreeFullGList (Field, _header_list);
 
     if (_parser)
     {

@@ -150,14 +150,14 @@ namespace Pool
   {
     if (_score_collector)
     {
-      GSList *current = _match_list;
+      GList *current = _match_list;
 
       while (current)
       {
         Match *match = (Match *) current->data;
 
         _score_collector->RemoveCollectingPoints (match);
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
 
       _score_collector->Release ();
@@ -196,7 +196,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::Stuff ()
   {
-    GSList *current = _match_list;
+    GList *current = _match_list;
 
     while (current)
     {
@@ -221,7 +221,7 @@ namespace Pool
         match->SetScore (A, score, FALSE);
         match->SetScore (B, _max_score->_value, TRUE);
       }
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
 
     RefreshScoreData ();
@@ -460,8 +460,8 @@ namespace Pool
             match->SetNumber (i+1);
             match->SetData (this, "rest_error", (void *) rest_error);
 
-            _match_list = g_slist_append (_match_list,
-                                          match);
+            _match_list = g_list_append (_match_list,
+                                         match);
           }
         }
       }
@@ -1109,7 +1109,7 @@ namespace Pool
                                                  "column-spacing", (gdouble) cell_w/4.0,
                                                  NULL);
 
-        for (guint m = 0; m < g_slist_length (_match_list); m++)
+        for (guint m = 0; m < g_list_length (_match_list); m++)
         {
           Match         *match;
           GooCanvasItem *match_table;
@@ -2040,7 +2040,7 @@ namespace Pool
   Match *Pool::GetMatch (Player *A,
                          Player *B)
   {
-    GSList *current = _match_list;
+    GList *current = _match_list;
 
     while (current)
     {
@@ -2051,7 +2051,7 @@ namespace Pool
       {
         return match;
       }
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
 
     return NULL;
@@ -2295,14 +2295,14 @@ namespace Pool
     }
 
     {
-      GSList *current = _match_list;
+      GList *current = _match_list;
 
       while (current)
       {
         Match *match = (Match *) current->data;
 
         match->Save (xml_writer);
-        current = g_slist_next (current);
+        current = g_list_next (current);
       }
     }
 
@@ -2567,14 +2567,14 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::CleanScores ()
   {
-    GSList *current = _match_list;
+    GList *current = _match_list;
 
     while (current)
     {
       Match *match = (Match *) current->data;
 
       match->CleanScore ();
-      current = g_slist_next (current);
+      current = g_list_next (current);
     }
 
     if (_match_list)
@@ -2615,8 +2615,7 @@ namespace Pool
     CleanScores ();
 
     {
-      g_slist_free_full (_match_list,
-                         (GDestroyNotify) Object::TryToRelease);
+      FreeFullGList (Match, _match_list);
       _match_list = NULL;
     }
 
