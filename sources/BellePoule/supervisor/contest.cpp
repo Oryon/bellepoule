@@ -687,7 +687,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           _parcel->SetNetID (g_ascii_strtoull (attr,
                                                NULL,
-                                               0));
+                                               16));
           xmlFree (attr);
         }
 
@@ -1679,7 +1679,7 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
 
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "NetID",
-                                       "%u", GetNetID ());
+                                       "%x", GetNetID ());
 
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "Annee",

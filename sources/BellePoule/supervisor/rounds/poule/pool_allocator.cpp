@@ -527,6 +527,7 @@ namespace Pool
         _selected_config = _best_config;
 
         CreatePools ();
+        Spread ();
       }
     }
   }
@@ -579,6 +580,10 @@ namespace Pool
               }
             }
           }
+          Recall ();
+          RefreshDisplay ();
+          Spread ();
+          return;
         }
       }
 
@@ -771,30 +776,7 @@ namespace Pool
             }
           }
 
-          {
-            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "Piste");
-
-            if (attr)
-            {
-              current_pool->SetPiste (atoi (attr));
-
-              xmlFree (attr);
-            }
-          }
-
-          {
-            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "Date");
-
-            if (attr)
-            {
-              FieTime *fie_time = new FieTime (attr);
-
-              current_pool->SetStartTime (fie_time);
-              fie_time->Release ();
-
-              xmlFree (attr);
-            }
-          }
+          current_pool->Load (n);
         }
         else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
@@ -849,6 +831,7 @@ namespace Pool
           _swapper->Configure (_drop_zones,
                                _swapping_criteria_list);
           _swapper->CheckCurrentDistribution ();
+          Spread ();
           return;
         }
       }
@@ -2006,7 +1989,9 @@ namespace Pool
 
       _selected_config = config;
 
+      Recall ();
       RefreshDisplay ();
+      Spread ();
     }
   }
 
@@ -2015,8 +2000,6 @@ namespace Pool
   {
     gtk_widget_show (_glade->GetWidget ("marshaller_spinner"));
     gtk_widget_hide (_glade->GetWidget ("marshaller_image"));
-
-    Spread ();
   }
 
   // --------------------------------------------------------------------------------
@@ -2182,7 +2165,9 @@ namespace Pool
       g_string_free (string,
                      TRUE);
 
+      allocator->Recall ();
       allocator->RefreshDisplay ();
+      allocator->Spread ();
     }
   }
 

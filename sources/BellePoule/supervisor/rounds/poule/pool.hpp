@@ -63,10 +63,8 @@ namespace Pool
             guint32      rand_seed);
 
       void         SetIdChain       (guint contest, const gchar *stage_name, guint stage_id);
-      void         SetPiste         (guint piste);
       guint        GetPiste         ();
       FieTime     *GetStartTime     ();
-      void         SetStartTime     (FieTime *start_time);
       void         AddFencer        (Player *player, Object *rank_owner);
       void         AddReferee       (Player *player);
       void         CreateMatchs     (GSList *affinity_criteria_list);
@@ -110,6 +108,8 @@ namespace Pool
       void Wipe ();
 
       void Save (xmlTextWriter *xml_writer);
+
+      void Load (xmlNode *xml_node);
 
       void Load (xmlNode *xml_node,
                  GSList  *player_list);
