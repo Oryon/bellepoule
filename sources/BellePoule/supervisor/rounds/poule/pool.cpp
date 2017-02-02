@@ -100,7 +100,7 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::SetIdChain (const gchar *contest,
+  void Pool::SetIdChain (guint        contest,
                          const gchar *stage_name,
                          guint        stage_id)
   {
@@ -108,7 +108,7 @@ namespace Pool
     _parcel->Set ("round",   stage_name);
 
     {
-      gchar *ref = g_strdup_printf ("#%s/%d/%d",
+      gchar *ref = g_strdup_printf ("#%u/%d/%d",
                                     contest,
                                     stage_id,
                                     _number);
@@ -2169,7 +2169,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::OnMessage (Net::Message *message)
   {
-    if (message->GetInteger ("listener") == _parcel->GetUUID ())
+    if (message->GetInteger ("listener") == _parcel->GetNetID ())
     {
       _piste = 0;
 

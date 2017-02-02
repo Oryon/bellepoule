@@ -1662,8 +1662,8 @@ namespace Table
           gchar *path_string = gtk_tree_path_to_string (path);
 
           Contest *contest = _supervisor->GetContest ();
-          gchar   *ref     = g_strdup_printf ("#%s/%d/%s.%s",
-                                              contest->GetId (),
+          gchar   *ref     = g_strdup_printf ("#%u/%d/%s.%s",
+                                              contest->GetNetID (),
                                               _supervisor->GetId (),
                                               _id,
                                               path_string);

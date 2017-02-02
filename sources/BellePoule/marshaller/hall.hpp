@@ -96,8 +96,6 @@ namespace Marshaller
 
       void UnSelectPiste (Piste *piste);
 
-      Batch *GetBatch (const gchar *id);
-
       Batch *GetBatch (guint id);
 
       GList *GetFreePisteSlots (GTimeSpan duration);

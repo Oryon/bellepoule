@@ -29,7 +29,7 @@ namespace Marshaller
   {
     public:
       Job (Batch    *batch,
-           guint     uuid,
+           guint     netid,
            guint     sibling_order,
            GdkColor *gdk_color);
 
@@ -49,7 +49,7 @@ namespace Marshaller
 
       GdkColor *GetGdkColor ();
 
-      guint GetUUID ();
+      guint GetNetID ();
 
       void SetReferee (guint referee_ref);
 
@@ -67,7 +67,7 @@ namespace Marshaller
     private:
       guint     _sibling_order;
       gchar    *_name;
-      guint     _uuid;
+      guint     _netid;
       GdkColor *_gdk_color;
       Batch    *_batch;
       Slot     *_slot;

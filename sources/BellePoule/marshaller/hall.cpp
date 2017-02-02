@@ -200,133 +200,103 @@ namespace Marshaller
   void Hall::ManageContest (Net::Message *message,
                             GtkNotebook  *notebook)
   {
-    gchar *id = message->GetString ("uuid");
+    guint  id    = message->GetNetID ();
+    Batch *batch = GetBatch (id);
 
-    if (id)
+    if (batch == NULL)
     {
-      Batch *batch = GetBatch (id);
+      batch = new Batch (id,
+                         this);
 
-      if (batch == NULL)
-      {
-        batch = new Batch (id,
-                           this);
+      _batch_list = g_list_prepend (_batch_list,
+                                    batch);
 
-        _batch_list = g_list_prepend (_batch_list,
-                                      batch);
-
-        batch->SetProperties (message);
-        batch->AttachTo (notebook);
-        _timeline->AddBatch (batch);
-      }
-      else
-      {
-        batch->SetProperties (message);
-      }
-
-      g_free (id);
-
-      _referee_pool->Spread ();
+      batch->SetProperties (message);
+      batch->AttachTo (notebook);
+      _timeline->AddBatch (batch);
     }
+    else
+    {
+      batch->SetProperties (message);
+    }
+
+    _referee_pool->Spread ();
   }
 
   // --------------------------------------------------------------------------------
   void Hall::DeleteContest (Net::Message *message)
   {
-    gchar *id = message->GetString ("uuid");
+    guint  id    = message->GetNetID ();
+    Batch *batch = GetBatch (id);
 
-    if (id)
+    if (batch)
     {
-      Batch *batch = GetBatch (id);
+      GList *node = g_list_find (_batch_list,
+                                 batch);
 
-      if (batch)
-      {
-        GList *node = g_list_find (_batch_list,
-                                   batch);
+      _batch_list = g_list_delete_link (_batch_list,
+                                        node);
 
-        _batch_list = g_list_delete_link (_batch_list,
-                                          node);
-
-        _timeline->RemoveBatch (batch);
-        batch->Release ();
-      }
-
-      g_free (id);
+      _timeline->RemoveBatch (batch);
+      batch->Release ();
     }
   }
 
   // --------------------------------------------------------------------------------
   void Hall::ManageJob (Net::Message *message)
   {
-    gchar *id    = message->GetString ("contest");
+    guint  id    = message->GetInteger ("contest");
     Batch *batch = GetBatch (id);
 
     if (batch)
     {
       batch->Load (message);
     }
-
-    g_free (id);
   }
 
   // --------------------------------------------------------------------------------
   void Hall::ManageFencer (Net::Message *message)
   {
-    gchar *id    = message->GetString ("contest");
+    guint  id    = message->GetInteger ("contest");
     Batch *batch = GetBatch (id);
 
     if (batch)
     {
       batch->ManageFencer (message);
     }
-
-    g_free (id);
   }
 
   // --------------------------------------------------------------------------------
   void Hall::DeleteJob (Net::Message *message)
   {
-    guint32 contest_id;
+    guint  contest_id = message->GetInteger ("contest");
+    GList *current    = _batch_list;
 
+    while (current)
     {
-      gchar *id = message->GetString ("contest");
+      Batch *batch = (Batch *) current->data;
 
-      contest_id = (guint32) g_ascii_strtoull (id,
-                                               NULL,
-                                               16);
-      g_free (id);
-    }
-
-    {
-      GList *current = _batch_list;
-
-      while (current)
+      if (batch->GetId () == contest_id)
       {
-        Batch *batch = (Batch *) current->data;
-
-        if (batch->GetId () == contest_id)
-        {
-          batch->RemoveJob (message);
-          _timeline->Redraw ();
-          break;
-        }
-
-        current = g_list_next (current);
+        batch->RemoveJob (message);
+        _timeline->Redraw ();
+        break;
       }
+
+      current = g_list_next (current);
     }
   }
 
   // --------------------------------------------------------------------------------
   void Hall::DeleteFencer (Net::Message *message)
   {
-    gchar *id    = message->GetString ("contest");
+    guint  id    = message->GetInteger ("contest");
     Batch *batch = GetBatch (id);
 
     if (batch)
     {
       batch->DeleteFencer (message);
     }
-
-    g_free (id);
   }
 
   // --------------------------------------------------------------------------------
@@ -390,16 +360,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Batch *Hall::GetBatch (const gchar *id)
-  {
-    guint32 dnd_id = (guint32) g_ascii_strtoull (id,
-                                                 NULL,
-                                                 16);
-    return GetBatch (dnd_id);
-  }
-
-  // --------------------------------------------------------------------------------
-  Batch *Hall::GetBatch (guint32 id)
+  Batch *Hall::GetBatch (guint id)
   {
     GList *current = _batch_list;
 

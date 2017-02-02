@@ -62,7 +62,7 @@ namespace Pool
             const gchar *xml_player_tag,
             guint32      rand_seed);
 
-      void         SetIdChain       (const gchar *contest, const gchar *stage_name, guint stage_id);
+      void         SetIdChain       (guint contest, const gchar *stage_name, guint stage_id);
       void         SetPiste         (guint piste);
       guint        GetPiste         ();
       FieTime     *GetStartTime     ();

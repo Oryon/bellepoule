@@ -34,8 +34,8 @@ namespace Marshaller
   } ColumnId;
 
   // --------------------------------------------------------------------------------
-  Batch::Batch (const gchar *id,
-                Listener    *listener)
+  Batch::Batch (guint     id,
+                Listener *listener)
     : Object ("Batch"),
       Module ("batch.glade")
   {
@@ -46,9 +46,7 @@ namespace Marshaller
     _fencer_list    = NULL;
     _weapon         = NULL;
 
-    _id = (guint32) g_ascii_strtoull (id,
-                                      NULL,
-                                      16);
+    _id = id;
 
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
@@ -120,7 +118,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  guint32 Batch::GetId ()
+  guint Batch::GetId ()
   {
     return _id;
   }
@@ -337,7 +335,7 @@ namespace Marshaller
                           JOB_ptr, &current_job,
                           -1);
 
-      if (message->GetUUID () == current_job->GetUUID ())
+      if (message->GetNetID () == current_job->GetNetID ())
       {
         gtk_list_store_remove (_job_store,
                                &iter);
@@ -367,7 +365,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Job *Batch::GetJob (guint uuid)
+  Job *Batch::GetJob (guint netid)
   {
     GtkTreeIter iter;
     gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
@@ -382,7 +380,7 @@ namespace Marshaller
                           JOB_ptr, &current_job,
                           -1);
 
-      if (current_job->GetUUID () == uuid)
+      if (current_job->GetNetID () == netid)
       {
         return current_job;
       }
@@ -397,7 +395,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Batch::Load (Net::Message *message)
   {
-    if (GetJob (message->GetUUID ()) == NULL)
+    if (GetJob (message->GetNetID ()) == NULL)
     {
       gchar     *xml = message->GetString ("xml");
       xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
@@ -417,7 +415,7 @@ namespace Marshaller
           if (xml_nodeset->nodeNr == 1)
           {
             LoadJob (xml_nodeset->nodeTab[0],
-                     message->GetUUID ());
+                     message->GetNetID ());
           }
 
           xmlXPathFreeObject  (xml_object);
@@ -435,7 +433,7 @@ namespace Marshaller
 
   // --------------------------------------------------------------------------------
   void Batch::LoadJob (xmlNode *xml_node,
-                       guint    uuid,
+                       guint    netid,
                        Job     *job)
   {
     for (xmlNode *n = xml_node; n != NULL; n = n->next)
@@ -460,7 +458,7 @@ namespace Marshaller
           gchar       *name;
           guint        sibling_order = g_list_length (_pending_list);
 
-          job = new Job (this, uuid, sibling_order, _gdk_color);
+          job = new Job (this, netid, sibling_order, _gdk_color);
 
           attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
           if (attr)
@@ -505,7 +503,7 @@ namespace Marshaller
         }
 
         LoadJob (n->children,
-                 uuid,
+                 netid,
                  job);
       }
     }
@@ -568,8 +566,8 @@ namespace Marshaller
           fencer->Load (xml_nodeset->nodeTab[0]);
 
           fencer->SetData (this,
-                           "uuid",
-                           GUINT_TO_POINTER (message->GetUUID ()));
+                           "netid",
+                           GUINT_TO_POINTER (message->GetNetID ()));
 
           _fencer_list = g_list_prepend (_fencer_list,
                                          fencer);
@@ -587,13 +585,13 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Batch::DeleteFencer (Net::Message *message)
   {
-    guint  id      = message->GetUUID ();
+    guint  id      = message->GetNetID ();
     GList *current = _fencer_list;
 
     while (current)
     {
       Player *fencer     = (Player *) current->data;
-      guint   current_id = fencer->GetIntData (this, "uuid");
+      guint   current_id = fencer->GetIntData (this, "netid");
 
       if (current_id == id)
       {

@@ -200,14 +200,15 @@ gboolean Contest::Time::IsEqualTo (Time *to)
 }
 
 // --------------------------------------------------------------------------------
-Contest::Contest (gboolean for_duplication )
+Contest::Contest (gboolean for_duplication)
   : Object ("Contest"),
     Module ("contest.glade")
 {
+  Disclose ("Competition");
+
   _save_timeout_id = 0;
 
-  _uuid   = g_strdup_printf ("%x", g_random_int ());
-  _fie_id = g_strdup        (_uuid);
+  _fie_id = g_strdup_printf ("%x", GetNetID ());
 
   _read_only  = FALSE;
   _authority  = NULL;
@@ -220,8 +221,6 @@ Contest::Contest (gboolean for_duplication )
   _team_event = FALSE;
   _derived    = FALSE;
   _source     = NULL;
-
-  Disclose ("Competition");
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
@@ -683,11 +682,12 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
           xmlFree (attr);
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "UUID");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "NetID");
         if (attr)
         {
-          g_free (_uuid);
-          _uuid = g_strdup (attr);
+          _parcel->SetNetID (g_ascii_strtoull (attr,
+                                               NULL,
+                                               0));
           xmlFree (attr);
         }
 
@@ -924,7 +924,6 @@ Contest::~Contest ()
 
   g_free (_authority);
   g_free (_fie_id);
-  g_free (_uuid);
   g_free (_name);
   g_free (_filename);
   g_free (_organizer);
@@ -962,7 +961,6 @@ void Contest::FeedParcel (Net::Message *parcel)
 {
   gchar *color = gdk_color_to_string (_gdk_color);
 
-  parcel->Set ("uuid",     _uuid);
   parcel->Set ("color",    color);
   parcel->Set ("weapon",   _weapon->GetXmlImage ());
   parcel->Set ("gender",   gender_xml_image[_gender]);
@@ -1679,12 +1677,9 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
                                    BAD_CAST _fie_id);
     }
 
-    if (_uuid)
-    {
-      xmlTextWriterWriteAttribute (xml_writer,
-                                   BAD_CAST "UUID",
-                                   BAD_CAST _uuid);
-    }
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "NetID",
+                                       "%u", GetNetID ());
 
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "Annee",
@@ -2239,9 +2234,9 @@ gchar *Contest::GetName ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *Contest::GetId ()
+guint Contest::GetNetID ()
 {
-  return _uuid;
+  return _parcel->GetNetID ();
 }
 
 // --------------------------------------------------------------------------------

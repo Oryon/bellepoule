@@ -132,11 +132,6 @@ gboolean BellPouleApp::OnHttpPost (Net::Message *message)
 // --------------------------------------------------------------------------------
 gchar *BellPouleApp::OnHttpGet (const gchar *url)
 {
-  if (_tournament)
-  {
-    return _tournament->OnHttpGet (url);
-  }
-
   return NULL;
 }
 

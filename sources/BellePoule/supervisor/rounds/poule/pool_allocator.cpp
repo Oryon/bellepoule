@@ -282,11 +282,30 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::Spread ()
   {
-    for (guint p = 0; p < GetNbPools (); p++)
+    GSList *current = _drop_zones;
+
+    while (current)
     {
-      Pool *pool = GetPool (p);
+      Pool *pool = GetPoolOf (current);
 
       pool->Spread ();
+
+      current = g_slist_next (current);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::Recall ()
+  {
+    GSList *current = _drop_zones;
+
+    while (current)
+    {
+      Pool *pool = GetPoolOf (current);
+
+      pool->Recall ();
+
+      current = g_slist_next (current);
     }
   }
 
@@ -737,7 +756,7 @@ namespace Pool
                                      number+1,
                                      GetXmlPlayerTag (),
                                      _rand_seed);
-            current_pool->SetIdChain (_contest->GetId (),
+            current_pool->SetIdChain (_contest->GetNetID (),
                                       GetName (),
                                       GetId () + 1);
             current_pool->RegisterRoadmapListener (this);
@@ -1031,7 +1050,7 @@ namespace Pool
                                   i+1,
                                   GetXmlPlayerTag (),
                                   _rand_seed);
-        pool_table[i]->SetIdChain (_contest->GetId (),
+        pool_table[i]->SetIdChain (_contest->GetNetID (),
                                    GetName (),
                                    GetId () + 1);
         pool_table[i]->RegisterRoadmapListener (this);

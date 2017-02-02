@@ -1433,6 +1433,7 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
     {
       Module *module = (Module *) dynamic_cast <Module *> (stage);
 
+      stage->Recall ();
       stage->Reset ();
       module->UnPlug ();
 

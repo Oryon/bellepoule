@@ -91,7 +91,7 @@ class Contest : public Module
                          const gchar **ressource,
                          const gchar *data);
 
-    gchar    *GetId              ();
+    guint     GetNetID           ();
     gchar    *GetOrganizer       ();
     gchar    *GetDate            ();
     Weapon   *GetWeapon          ();
@@ -144,7 +144,6 @@ class Contest : public Module
 
     gchar                *_authority;
     gchar                *_fie_id;
-    gchar                *_uuid;
     gchar                *_name;
     gchar                *_organizer;
     gchar                *_source;
