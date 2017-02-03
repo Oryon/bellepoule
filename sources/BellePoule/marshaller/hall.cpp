@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/fie_time.hpp"
 #include "actors/referees_list.hpp"
 
 #include "enlisted_referee.hpp"
@@ -250,7 +251,40 @@ namespace Marshaller
 
     if (batch)
     {
-      batch->Load (message);
+      guint    piste_id;
+      guint    referee_id;
+      FieTime *start_time = NULL;
+      Job     *job;
+
+      job = batch->Load (message,
+                         &piste_id,
+                         &referee_id,
+                         &start_time);
+      if (job && start_time)
+      {
+        Piste *piste = GetPiste (piste_id);
+
+        if (piste)
+        {
+          Slot *slot = piste->GetFreeSlot (start_time->GetGDateTime (),
+                                           30*G_TIME_SPAN_MINUTE);
+
+          if (slot)
+          {
+            EnlistedReferee *referee = _referee_pool->GetReferee (referee_id);
+
+            if (referee)
+            {
+              slot->AddJob     (job);
+              slot->AddReferee (referee);
+            }
+            else
+            {
+              slot->Release ();
+            }
+          }
+        }
+      }
     }
   }
 
@@ -357,6 +391,26 @@ namespace Marshaller
     }
 
     return piste;
+  }
+
+  // --------------------------------------------------------------------------------
+  Piste *Hall::GetPiste (guint id)
+  {
+    GList *current = _piste_list;
+
+    while (current)
+    {
+      Piste *piste = (Piste *) current->data;
+
+      if (piste->GetId () == id)
+      {
+        return piste;
+      }
+
+      current = g_list_next (current);
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------

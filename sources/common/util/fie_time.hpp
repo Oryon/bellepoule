@@ -29,9 +29,12 @@ class FieTime : public Object
 
     const gchar *GetXmlImage ();
 
+    GDateTime *GetGDateTime ();
+
   private:
-    gchar *_image;
-    gchar *_xml_image;
+    gchar     *_image;
+    gchar     *_xml_image;
+    GDateTime *_g_date_time;
 
     virtual ~FieTime ();
 

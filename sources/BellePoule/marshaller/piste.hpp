@@ -53,6 +53,9 @@ namespace Marshaller
 
       void SetListener (Listener *listener);
 
+      Slot *GetFreeSlot (GDateTime *from,
+                         GTimeSpan  duration);
+
       GList *GetFreeSlots (GDateTime *from,
                            GTimeSpan  duration);
 

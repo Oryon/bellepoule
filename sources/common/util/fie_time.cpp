@@ -22,6 +22,7 @@
 FieTime::FieTime (GDateTime *time)
   : Object ("FieTime")
 {
+  _g_date_time = g_date_time_ref (time);
   MakeImages (time);
 }
 
@@ -29,8 +30,9 @@ FieTime::FieTime (GDateTime *time)
 FieTime::FieTime (const gchar *time)
   : Object ("FieTime")
 {
-  _image     = NULL;
-  _xml_image = NULL;
+  _image       = NULL;
+  _xml_image   = NULL;
+  _g_date_time = NULL;
 
   {
     gchar **tokens = g_strsplit_set (time,
@@ -48,16 +50,14 @@ FieTime::FieTime (const gchar *time)
 
       if (token_count == 5)
       {
-        GDateTime *date_time;
-
         // JJ.MM.AAAA HH:MI
-        date_time = g_date_time_new_local (atoi (tokens[2]),
-                                           atoi (tokens[1]),
-                                           atoi (tokens[0]),
-                                           atoi (tokens[3]),
-                                           atoi (tokens[4]),
-                                           0.0);
-        MakeImages (date_time);
+        _g_date_time = g_date_time_new_local (atoi (tokens[2]),
+                                              atoi (tokens[1]),
+                                              atoi (tokens[0]),
+                                              atoi (tokens[3]),
+                                              atoi (tokens[4]),
+                                              0.0);
+        MakeImages (_g_date_time);
       }
 
       g_strfreev (tokens);
@@ -70,6 +70,11 @@ FieTime::~FieTime ()
 {
   g_free (_image);
   g_free (_xml_image);
+
+  if (_g_date_time)
+  {
+    g_date_time_ref (_g_date_time);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -80,6 +85,12 @@ void FieTime::MakeImages (GDateTime *date_time)
 
   _xml_image = g_date_time_format (date_time,
                                    "%d.%m.%Y %R");
+}
+
+// --------------------------------------------------------------------------------
+GDateTime *FieTime::GetGDateTime ()
+{
+  return _g_date_time;
 }
 
 // --------------------------------------------------------------------------------

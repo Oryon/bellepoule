@@ -853,6 +853,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
     Spread ();
 
+    _referees_list->SetWeapon (_weapon);
+
     {
       AttributeDesc *league_desc = AttributeDesc::GetDescFromCodeName ("league");
 
@@ -874,9 +876,6 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
     }
 
     _schedule->SetTeamEvent (_team_event);
-
-    _referees_list->SetWeapon (_weapon);
-    _referees_list->ConvertFromBaseToResult ();
 
     if (need_post_processing)
     {
@@ -900,9 +899,6 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
   _state = OPERATIONAL;
   _schedule->OnLoadingCompleted ();
-
-  _referees_list->Disclose ("Referee");
-  _referees_list->Spread ();
 }
 
 // --------------------------------------------------------------------------------

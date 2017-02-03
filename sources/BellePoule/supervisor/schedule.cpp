@@ -1012,6 +1012,9 @@ void Schedule::Load (xmlDoc          *doc,
 
   referees->LoadList (xml_context,
                       contest_keyword);
+  referees->ConvertFromBaseToResult ();
+  referees->Disclose ("Referee");
+  referees->Spread ();
 
   // Checkin - Player list
   if (checkin_stage)

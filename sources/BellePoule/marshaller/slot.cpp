@@ -306,14 +306,59 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  Slot *Slot::GetFreeSlot (Owner     *owner,
+                           GList     *booked_slots,
+                           GDateTime *from,
+                           GTimeSpan  duration)
+  {
+    Slot  *slot  = NULL;
+    GList *slots = GetFreeSlots (owner,
+                                 booked_slots,
+                                 from,
+                                 duration,
+                                 FALSE);
+    GList *current = slots;
+
+    while (current)
+    {
+      slot = (Slot *) current->data;
+
+      if (   (slot->_duration == duration)
+          && (g_date_time_compare (from, slot->_start) == 0))
+      {
+        slot->Retain ();
+        break;
+      }
+
+      slot = NULL;
+      current = g_list_next (current);
+    }
+
+    FreeFullGList (Slot, slots);
+
+    return slot;
+  }
+
+  // --------------------------------------------------------------------------------
   GList *Slot::GetFreeSlots (Owner     *owner,
                              GList     *booked_slots,
                              GDateTime *from,
-                             GTimeSpan  duration)
+                             GTimeSpan  duration,
+                             gboolean   round_date)
   {
     GList     *slots        = NULL;
     GList     *current      = booked_slots;
-    GDateTime *rounded_from = GetRoundedDate (from);
+    GDateTime *rounded_from;
+
+    if (round_date)
+    {
+      rounded_from = GetRoundedDate (from);
+    }
+    else
+    {
+      rounded_from = from;
+      g_date_time_ref (rounded_from);
+    }
 
     while (current)
     {
@@ -377,13 +422,23 @@ namespace Marshaller
 
     if (slots == NULL)
     {
-      GDateTime *now = g_date_time_new_now_local ();
+      GDateTime *now;
 
+      if (round_date)
       {
-        GDateTime *rounded_date = Slot::GetRoundedDate (now);
+        now = g_date_time_new_now_local ();
 
-        g_date_time_unref (now);
-        now = rounded_date;
+        {
+          GDateTime *rounded_date = Slot::GetRoundedDate (now);
+
+          g_date_time_unref (now);
+          now = rounded_date;
+        }
+      }
+      else
+      {
+        now = from;
+        g_date_time_ref (now);
       }
 
       {

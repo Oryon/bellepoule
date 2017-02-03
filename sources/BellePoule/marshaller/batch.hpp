@@ -22,6 +22,7 @@
 #include "util/module.hpp"
 
 class Player;
+class FieTime;
 
 namespace Marshaller
 {
@@ -43,7 +44,10 @@ namespace Marshaller
 
       void AttachTo (GtkNotebook *to);
 
-      void Load (Net::Message *message);
+      Job *Load (Net::Message  *message,
+                 guint         *piste_id,
+                 guint         *referee_id,
+                 FieTime      **start_time);
 
       void SetVisibility (Job      *job,
                           gboolean  visibility);
@@ -93,10 +97,6 @@ namespace Marshaller
       GData        *_properties;
 
       virtual ~Batch ();
-
-      void LoadJob (xmlNode *xml_node,
-                    guint    netid,
-                    Job     *job = NULL);
 
       Job *GetJob (guint netid);
 
