@@ -155,6 +155,7 @@ namespace Marshaller
       Job *job = (Job *) current->data;
 
       RemoveJob (job);
+      job->ResetRoadMap ();
 
       current = g_list_next (current);
     }
@@ -204,8 +205,6 @@ namespace Marshaller
       _job_list = g_list_delete_link (_job_list,
                                       node);
     }
-
-    job->ResetRoadMap ();
 
     {
       Batch *batch = job->GetBatch ();

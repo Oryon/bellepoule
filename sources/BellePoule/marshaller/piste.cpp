@@ -401,6 +401,7 @@ namespace Marshaller
           if (job->GetBatch () == batch)
           {
             slot->RemoveJob (job);
+            job->ResetRoadMap ();
           }
 
           current_job = g_list_next (current_job);
