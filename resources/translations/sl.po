@@ -1,0 +1,918 @@
+# Slovenian translation for bellepoule
+# Copyright (c) 2017 Rosetta Contributors and Canonical Ltd 2017
+# This file is distributed under the same license as the bellepoule package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bellepoule\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2016-08-23 17:21+0200\n"
+"PO-Revision-Date: 2017-02-06 13:10+0000\n"
+"Last-Translator: Simon Dobelsek <Unknown>\n"
+"Language-Team: Slovenian <sl@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2017-02-07 05:28+0000\n"
+"X-Generator: Launchpad (build 18326)\n"
+
+msgid "Long text"
+msgstr "Dolgo besedilo"
+
+msgid "Short text"
+msgstr "Kratko besedilo"
+
+msgid "Graphic"
+msgstr "Grafično"
+
+msgid "Data to display"
+msgstr "Podatki za prikaz"
+
+msgid "Visibility"
+msgstr "Vidnost"
+
+msgid "Data"
+msgstr "Podatki"
+
+msgid "Look"
+msgstr "Pogled"
+
+msgid "Split"
+msgstr "Razdeli"
+
+msgid "List of fencers to extract"
+msgstr "Seznam sabljačev za izvoz"
+
+msgid "Choose a rank file to apply..."
+msgstr ""
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr ""
+
+msgid "All files"
+msgstr "Vse datoteke"
+
+msgid "<b>Smartpoule</b> configuration code"
+msgstr "<b>Smartpoule</b> konfiguracijska koda"
+
+msgid ""
+"Uncheck this box to quicken the data input. The corresponding field will be "
+"ignored on TAB key pressed."
+msgstr ""
+"Odizberi kvadratek za pospešen vnos podatkov. Ustrezno polje bo ignorirano "
+"ob pritisku TAB."
+
+msgid "Choose a fencer file to import..."
+msgstr "Izberi datoteko sabljača za vnos..."
+
+msgid "Fencer files"
+msgstr "Datoteke sabljačev"
+
+msgid "Referee files"
+msgstr "Datoteke sodnikov"
+
+msgid "List of registered"
+msgstr "Seznam prijavljenih"
+
+msgid "List of presents"
+msgstr "Seznam prisotnih"
+
+msgid "List of absents"
+msgstr "Seznam odsotnih"
+
+msgid "Fencer list"
+msgstr "Seznam sabljačev"
+
+msgid "Barrage"
+msgstr ""
+
+msgid "Copy"
+msgstr "Kopiraj"
+
+msgid "Paste"
+msgstr "Prilepi"
+
+msgid "Page"
+msgstr "Stran"
+
+msgid "Check-in"
+msgstr "Registracija"
+
+msgid "** Without team **"
+msgstr "**  Brez ekipe **"
+
+msgid "Expected fencers"
+msgstr "Pričakovani sabljači"
+
+msgid "Expected teams"
+msgstr "Pričakovane ekipe"
+
+msgid "Team size"
+msgstr "Velikost ekipe"
+
+#, c-format
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
+msgstr "Nastavljena je minimalna velikost ekipe na <b>%d</b> sabljačev."
+
+msgid "Tick the present players of the team."
+msgstr "Izberi prisotne v ekipi."
+
+msgid "Untick the absent players of the team."
+msgstr "Odizberi odsotne iz ekipe."
+
+msgid "General classification"
+msgstr "Splošna klasifikacija"
+
+msgid "Choose a target file..."
+msgstr "Izberi ciljno datoteko..."
+
+msgid "All FFF files (.FFF)"
+msgstr "Vse FFF datoteke"
+
+msgid "All PDF files (.PDF)"
+msgstr "Vse PDF datoteke"
+
+msgid "All HTML files (.HTML)"
+msgstr "Vse HTML datoteke"
+
+msgid "Classification"
+msgstr "Klasifikácia"
+
+msgid "Sabre"
+msgstr "Sablja"
+
+msgid "Epée"
+msgstr "Meč"
+
+msgid "Foil"
+msgstr "Floret"
+
+msgid "Educ"
+msgstr ""
+
+msgid "Male"
+msgstr "Moški"
+
+msgid "Female"
+msgstr "ženski"
+
+msgid "Mixed"
+msgstr "Mešano"
+
+msgid "League"
+msgstr "Liga"
+
+msgid "Regional"
+msgstr "Področno"
+
+msgid "Open"
+msgstr "Odprto"
+
+msgid "World cup"
+msgstr "World Cup"
+
+msgid "National championships"
+msgstr "Državno prvenstvo"
+
+msgid "World championships"
+msgstr "Svetovno prvenstvo"
+
+msgid "Other"
+msgstr "Drugo"
+
+msgid "Choose a file..."
+msgstr "Izberi datoteko ..."
+
+msgid "BellePoule files (.cotcot)"
+msgstr "Datoteke BellePoule (.cotcot)"
+
+msgid "Close without saving"
+msgstr "Zapri brez shranjevanja"
+
+msgid "U5"
+msgstr "U5"
+
+msgid "U7"
+msgstr "U7"
+
+msgid "U9"
+msgstr "U9"
+
+msgid "U11"
+msgstr "U11"
+
+msgid "U14"
+msgstr "U14"
+
+msgid "U17"
+msgstr "U17"
+
+msgid "U20"
+msgstr "U20"
+
+msgid "U23"
+msgstr "U23"
+
+msgid "Senior"
+msgstr "Člani"
+
+msgid "Veteran"
+msgstr "Veterani"
+
+msgid "Veteran 1"
+msgstr "V1"
+
+msgid "Veteran 2"
+msgstr "V2"
+
+msgid "Veteran 3"
+msgstr "V3"
+
+msgid "Veteran 4"
+msgstr "V4"
+
+msgid "Veteran 3+4"
+msgstr "V3+4"
+
+msgid "Meal"
+msgstr "Obrok"
+
+msgid "Drink"
+msgstr "Pijača"
+
+msgid "Dessert"
+msgstr "Sladica"
+
+msgid "Coffee"
+msgstr "Kava"
+
+msgid "Payment book"
+msgstr "Seznam plačil"
+
+msgid "Signature"
+msgstr "Podpis"
+
+msgid "Restart BellePoule for this change to take effect"
+msgstr "Ponovni zagon programa je potreben za izvršitev spremembe"
+
+msgid "Choose a competion file to open... "
+msgstr "Izberi datoteko tekmovanja... "
+
+msgid "Competition files (.cotcot / .xml)"
+msgstr "Datoteke tekmovanj (.cotcot / .xml)"
+
+msgid "Recently opened files"
+msgstr "Nedavno odprte datoteke"
+
+msgid "BellePoule files"
+msgstr "Datoteke BellePoule"
+
+msgid "Meal tickets"
+msgstr "Kuponi za obroke"
+
+msgid "Choose a backup files location..."
+msgstr "Izberi lokacijo varnostnih kopij..."
+
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr "<b><big>Ali res želite zapreti BellePoule</big></b>"
+
+msgid "Quit BellePoule?"
+msgstr "Zapri BellePoule?"
+
+msgid "All the unsaved competions will be lost."
+msgstr "Vsa neshranjena tekmovanja bodo izgubljena."
+
+#, c-format
+msgid "Round #%d"
+msgstr "Runda #%d"
+
+msgid "Formula"
+msgstr "Formula"
+
+msgid "<b><big>Do you really want to cancel the current round?</big></b>"
+msgstr "<b><big>Ali želiš preklicati trenutno rundo?</big></b>"
+
+msgid "Go back to the previous round?"
+msgstr "Nazaj na prejšno rundo?"
+
+msgid "All the inputs of this round will be cancelled."
+msgstr "Vsi vnosi trenutne runde bodo preklicani"
+
+msgid ""
+"<b><big>Because of ties, the quota is exceeded.\n"
+"Do you wish to add a barrage round?</big></b>"
+msgstr ""
+"<b><big>Zaradi izenačenih mest je kvota prekoračena. Želite dodati odločilno "
+"rundo?</big></b>"
+
+msgid "ref"
+msgstr "sodnik"
+
+msgid "place"
+msgstr "kraj"
+
+msgid "team"
+msgstr "ekipa"
+
+msgid "last name"
+msgstr "priimek"
+
+msgid "first name"
+msgstr "ime"
+
+msgid "date of birth"
+msgstr "datum rojstva"
+
+msgid "gender"
+msgstr "spol"
+
+msgid "country"
+msgstr "država"
+
+msgid "league"
+msgstr "liga"
+
+msgid "club"
+msgstr "klub"
+
+msgid "licence"
+msgstr "licenca"
+
+msgid "IP address"
+msgstr "IP naslov"
+
+msgid "rate"
+msgstr ""
+
+msgid "level"
+msgstr "nivo"
+
+msgid "ranking"
+msgstr "rang"
+
+msgid "presence"
+msgstr "prisotnost"
+
+msgid "exported"
+msgstr "izvoženo"
+
+msgid "global status"
+msgstr "globalni status"
+
+msgid "Qualified"
+msgstr "Kvalificiral"
+
+msgid "Not qualified"
+msgstr "Ni kvalificiral"
+
+msgid "Withdrawal"
+msgstr "Odstopil"
+
+msgid "Excluded"
+msgstr "Izločen"
+
+msgid "Forfeit"
+msgstr "Prenehal"
+
+msgid "status"
+msgstr "stanje"
+
+msgid "pool #"
+msgstr "# grupe"
+
+msgid "Victories"
+msgstr "Zmage"
+
+msgid "Bouts"
+msgstr "Borbe"
+
+msgid "Vict./Bouts (‰)"
+msgstr "Zmage/Borbe (‰)"
+
+msgid "index"
+msgstr "indeks"
+
+msgid "Hits scored"
+msgstr "Zadetki"
+
+msgid "Round start rank"
+msgstr ""
+
+msgid "promoted"
+msgstr ""
+
+msgid "availability"
+msgstr ""
+
+msgid "Busy"
+msgstr ""
+
+msgid "Absent"
+msgstr ""
+
+msgid "Free"
+msgstr ""
+
+msgid "connection"
+msgstr ""
+
+msgid "Broken"
+msgstr ""
+
+msgid "Waiting"
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Manual"
+msgstr ""
+
+msgid "Pools arrangement"
+msgstr ""
+
+msgid "or"
+msgstr ""
+
+msgid "Wrong fencers count!"
+msgstr ""
+
+msgid "Allocation"
+msgstr ""
+
+msgid "Seeding"
+msgstr ""
+
+msgid "Balanced"
+msgstr ""
+
+msgid "Grouped by strength"
+msgstr ""
+
+msgid "Max score"
+msgstr ""
+
+#, c-format
+msgid "Pool #%02d"
+msgstr ""
+
+msgid "Referee"
+msgstr ""
+
+msgid "Piste"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Vict./Matchs"
+msgstr ""
+
+msgid "H. scored"
+msgstr ""
+
+msgid "H. received"
+msgstr ""
+
+msgid "Index"
+msgstr ""
+
+msgid "Place"
+msgstr ""
+
+msgid "Pools"
+msgstr ""
+
+msgid "Bout without winner!"
+msgstr ""
+
+msgid "Place #"
+msgstr ""
+
+msgid "cutting"
+msgstr ""
+
+msgid "Table"
+msgstr ""
+
+#, c-format
+msgid "%s: score sheets printing"
+msgstr ""
+
+msgid "Winner"
+msgstr ""
+
+msgid "Final"
+msgstr ""
+
+msgid "Semi-final"
+msgstr ""
+
+#, c-format
+msgid "Table of %d"
+msgstr ""
+
+#, c-format
+msgid "Match %s"
+msgstr ""
+
+msgid "No winner!"
+msgstr ""
+
+msgid "Table classification"
+msgstr ""
+
+msgid "Fenced places"
+msgstr ""
+
+msgid "All"
+msgstr ""
+
+msgid "Third place"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Fencer list printing"
+msgstr ""
+
+msgid "<b><big>What do you want to print?</big></b>"
+msgstr ""
+
+msgid "All the presents"
+msgstr ""
+
+msgid "All the absents"
+msgstr ""
+
+msgid "Presents"
+msgstr ""
+
+msgid "Absents"
+msgstr ""
+
+msgid "all"
+msgstr ""
+
+msgid "Import fencers"
+msgstr ""
+
+msgid "Import ranking"
+msgstr ""
+
+msgid "Minimum team size"
+msgstr ""
+
+msgid "Team classification"
+msgstr ""
+
+msgid "Manually assigned"
+msgstr ""
+
+msgid "Derived from fencer classification"
+msgstr ""
+
+msgid "when unknown"
+msgstr ""
+
+msgid "Table printing"
+msgstr ""
+
+msgid "<b><big>How to print?</big></b>"
+msgstr ""
+
+msgid "The table"
+msgstr ""
+
+msgid "Score sheets"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid ""
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
+msgstr ""
+
+msgid "All the score sheets"
+msgstr ""
+
+msgid "The pending score sheets"
+msgstr ""
+
+msgid "<b>Match</b>"
+msgstr ""
+
+msgid "A fencer"
+msgstr ""
+
+msgid "B fencer"
+msgstr ""
+
+msgid "<b>Score</b>"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "<b>Schedule</b>"
+msgstr ""
+
+msgid "<b>Parameters</b>"
+msgstr ""
+
+msgid "Previous round"
+msgstr ""
+
+msgid "Next round"
+msgstr ""
+
+msgid "Export to <b>HTML</b>"
+msgstr ""
+
+msgid "Export to <b>FFF</b>"
+msgstr ""
+
+msgid "Export to <b>PDF</b>"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Number"
+msgstr ""
+
+msgid "Pool sheets printing"
+msgstr ""
+
+msgid "<b><big>Print...</big></b>"
+msgstr ""
+
+msgid "All the pools"
+msgstr ""
+
+msgid "Only the selected pool"
+msgstr ""
+
+msgid "<b>What?</b>"
+msgstr ""
+
+msgid "For arbitration"
+msgstr ""
+
+msgid "Matches watermarked"
+msgstr ""
+
+msgid "For the bulletin board"
+msgstr ""
+
+msgid "<b>For what?</b>"
+msgstr ""
+
+msgid "Automatic stuffing"
+msgstr ""
+
+msgid "Combined classification"
+msgstr ""
+
+msgid "Single classification"
+msgstr ""
+
+msgid "Content designed for the referees."
+msgstr ""
+
+msgid "Promoted"
+msgstr ""
+
+msgid "Eliminated"
+msgstr ""
+
+msgid "Fill in a match"
+msgstr ""
+
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+
+msgid "From"
+msgstr ""
+
+msgid "To"
+msgstr ""
+
+msgid "For place"
+msgstr ""
+
+msgid "Zoom"
+msgstr ""
+
+msgid "Mask or unmask some data type as well as define their display order."
+msgstr ""
+
+msgid "Print"
+msgstr ""
+
+msgid "Number of pools"
+msgstr ""
+
+msgid "Fencers / pools"
+msgstr ""
+
+msgid "Swapping"
+msgstr ""
+
+msgid ""
+"Fencing tournament management software.\n"
+"\n"
+"\n"
+msgstr ""
+
+msgid "WPA"
+msgstr ""
+
+msgid "Security"
+msgstr ""
+
+msgid "Passphrase"
+msgstr ""
+
+msgid ""
+"Enter your WIFI network settings here.\n"
+"They will be used to automatically configure\n"
+"the smarthphones running <b>SmartPoule</b>"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "FTP server"
+msgstr ""
+
+msgid "<b>Web site</b>"
+msgstr ""
+
+msgid "<b>Video server</b>"
+msgstr ""
+
+msgid "BellePoule - Fencing tournament"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "Recently opened"
+msgstr ""
+
+msgid "Backup"
+msgstr ""
+
+msgid "Backup files location..."
+msgstr ""
+
+msgid "Activate"
+msgstr ""
+
+msgid "Deactivate"
+msgstr ""
+
+msgid "Referees"
+msgstr ""
+
+msgid "Print meal tickets"
+msgstr ""
+
+msgid "Print payment book"
+msgstr ""
+
+msgid "Ecosystem"
+msgstr ""
+
+msgid "WIFI"
+msgstr ""
+
+msgid "Score sheet scanner"
+msgstr ""
+
+msgid "Publication"
+msgstr ""
+
+msgid "New version!"
+msgstr ""
+
+msgid "Open an example..."
+msgstr ""
+
+msgid "User manual"
+msgstr ""
+
+msgid "Fencer file template (.csv)"
+msgstr ""
+
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
+msgstr ""
+
+msgid "<b>Score sheet scanner</b>"
+msgstr ""
+
+msgid "Form"
+msgstr ""
+
+msgid "Date of competition"
+msgstr ""
+
+msgid "Competition properties"
+msgstr ""
+
+msgid "Weapon"
+msgstr ""
+
+msgid "Gender"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Level"
+msgstr ""
+
+msgid "Individual"
+msgstr ""
+
+msgid "Team"
+msgstr ""
+
+msgid "<b>Type</b>"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Organizer"
+msgstr ""
+
+msgid "Web site"
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "<b>Overviews</b>"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Scratch"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "<b>Date / Time</b>"
+msgstr ""
+
+msgid "Allow"
+msgstr ""
+
+msgid "Forbid"
+msgstr ""
+
+msgid ""
+"Automatic\n"
+"score\n"
+"stuffing"
+msgstr ""
+
+msgid "<b>Scores</b>"
+msgstr ""
+
+msgid "Event"
+msgstr ""
+
+msgid "Save the current state of the competition."
+msgstr ""
+
+msgid "To specify the features of the competition."
+msgstr ""
+
+msgid "Man"
+msgstr ""
+
+msgid "U16"
+msgstr ""
+
+msgid "Import referee file"
+msgstr ""
