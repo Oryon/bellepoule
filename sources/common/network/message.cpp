@@ -45,7 +45,7 @@ namespace Net
 
     g_key_file_set_integer (_key_file,
                             "Header",
-                            "uuid",
+                            "netid",
                             g_random_int ());
   }
 
@@ -96,11 +96,20 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  guint Message::GetUUID ()
+  void Message::SetNetID (guint id)
+  {
+    g_key_file_set_integer (_key_file,
+                            "Header",
+                            "netid",
+                            id);
+  }
+
+  // --------------------------------------------------------------------------------
+  guint Message::GetNetID ()
   {
     return g_key_file_get_integer (_key_file,
                                    "Header",
-                                   "uuid",
+                                   "netid",
                                    NULL);
   }
 

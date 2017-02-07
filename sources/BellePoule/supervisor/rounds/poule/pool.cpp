@@ -100,7 +100,7 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::SetIdChain (const gchar *contest,
+  void Pool::SetIdChain (guint        contest,
                          const gchar *stage_name,
                          guint        stage_id)
   {
@@ -108,7 +108,7 @@ namespace Pool
     _parcel->Set ("round",   stage_name);
 
     {
-      gchar *ref = g_strdup_printf ("#%s/%d/%d",
+      gchar *ref = g_strdup_printf ("#%u/%d/%d",
                                     contest,
                                     stage_id,
                                     _number);
@@ -116,12 +116,6 @@ namespace Pool
       SetFlashRef (ref);
       g_free (ref);
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Pool::SetPiste (guint piste)
-  {
-    _piste = piste;
   }
 
   // --------------------------------------------------------------------------------
@@ -134,15 +128,6 @@ namespace Pool
   FieTime *Pool::GetStartTime ()
   {
     return _start_time;
-  }
-
-  // --------------------------------------------------------------------------------
-  void Pool::SetStartTime (FieTime *start_time)
-  {
-    Object::TryToRelease (_start_time);
-
-    _start_time = start_time;
-    _start_time->Retain ();
   }
 
   // --------------------------------------------------------------------------------
@@ -2169,7 +2154,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::OnMessage (Net::Message *message)
   {
-    if (message->GetInteger ("listener") == _parcel->GetUUID ())
+    if (message->GetInteger ("listener") == _parcel->GetNetID ())
     {
       _piste = 0;
 
@@ -2197,9 +2182,14 @@ namespace Pool
 
     xmlTextWriterStartElement (xml_writer,
                                BAD_CAST "Poule");
+
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "ID",
                                        "%d", _number);
+
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "NetID",
+                                       "%x", _parcel->GetNetID ());
     if (_piste)
     {
       xmlTextWriterWriteFormatAttribute (xml_writer,
@@ -2307,6 +2297,44 @@ namespace Pool
     }
 
     xmlTextWriterEndElement (xml_writer);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::Load (xmlNode *xml_node)
+  {
+    {
+      gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "NetID");
+
+      if (attr)
+      {
+        _parcel->SetNetID (g_ascii_strtoull (attr,
+                                             NULL,
+                                             16));
+        xmlFree (attr);
+      }
+    }
+
+    {
+      gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Piste");
+
+      if (attr)
+      {
+        _piste = atoi (attr);
+        xmlFree (attr);
+      }
+    }
+
+    {
+      gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
+
+      if (attr)
+      {
+        Object::TryToRelease (_start_time);
+        _start_time = new FieTime (attr);
+
+        xmlFree (attr);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

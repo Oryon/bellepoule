@@ -1012,6 +1012,9 @@ void Schedule::Load (xmlDoc          *doc,
 
   referees->LoadList (xml_context,
                       contest_keyword);
+  referees->ConvertFromBaseToResult ();
+  referees->Disclose ("Referee");
+  referees->Spread ();
 
   // Checkin - Player list
   if (checkin_stage)
@@ -1433,6 +1436,7 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
     {
       Module *module = (Module *) dynamic_cast <Module *> (stage);
 
+      stage->Recall ();
       stage->Reset ();
       module->UnPlug ();
 

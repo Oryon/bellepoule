@@ -629,36 +629,32 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
             {
               if (tokens[2] && (g_strcmp0 (tokens[2], "Competition") == 0))
               {
-                gchar *competition_id = tokens[3];
+                guint  competition_id = g_ascii_strtoull (tokens[3], NULL, 0);
+                GList *current        = _contest_list;
 
-                if (competition_id)
+                while (current)
                 {
-                  GList *current = _contest_list;
+                  Contest *contest = (Contest *) current->data;
 
-                  while (current)
+                  if (competition_id == contest->GetNetID ())
                   {
-                    Contest *contest = (Contest *) current->data;
-
-                    if (g_strcmp0 (contest->GetId (), competition_id) == 0)
+                    if (g_strcmp0 (tokens[1], "ScoreSheet") == 0)
                     {
-                      if (g_strcmp0 (tokens[1], "ScoreSheet") == 0)
-                      {
-                        GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
-                        gint        page = gtk_notebook_page_num (nb,
-                                                                  contest->GetRootWidget ());
+                      GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
+                      gint        page = gtk_notebook_page_num (nb,
+                                                                contest->GetRootWidget ());
 
-                        g_object_set (G_OBJECT (nb),
-                                      "page", page,
-                                      NULL);
-                      }
-
-                      result = contest->OnHttpPost (tokens[1],
-                                                    (const gchar**) &tokens[4],
-                                                    body);
-                      break;
+                      g_object_set (G_OBJECT (nb),
+                                    "page", page,
+                                    NULL);
                     }
-                    current = g_list_next (current);
+
+                    result = contest->OnHttpPost (tokens[1],
+                                                  (const gchar**) &tokens[4],
+                                                  body);
+                    break;
                   }
+                  current = g_list_next (current);
                 }
               }
             }
@@ -669,89 +665,6 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
       g_strfreev (lines);
       g_free (data);
     }
-  }
-
-  return result;
-}
-
-// --------------------------------------------------------------------------------
-gchar *Tournament::OnHttpGet (const gchar *url)
-{
-  gchar *result = NULL;
-
-  if (strstr (url, "/tournament/competition/"))
-  {
-    gchar *id = (gchar *) strrchr (url, '/');
-
-    if (id && id[1])
-    {
-      GList *current = _contest_list;
-
-      id++;
-      while (current)
-      {
-        Contest *contest = (Contest *) current->data;
-
-        if (    contest->GetFilename ()
-             && (g_strcmp0 (contest->GetId (), id) == 0))
-        {
-          g_file_get_contents (contest->GetFilename (),
-                               &result,
-                               NULL,
-                               NULL);
-          break;
-        }
-        current = g_list_next (current);
-      }
-    }
-  }
-  else if (g_strcmp0 (url, "/tournament") == 0)
-  {
-    GList   *current  = _contest_list;
-    GString *response = g_string_new ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-
-    response = g_string_append (response,
-                                "<Competitions>\n");
-    while (current)
-    {
-      Contest *contest = (Contest *) current->data;
-
-      response = g_string_append (response,
-                                  "<Competition ");
-
-      response = g_string_append (response, "UUID=\"");
-      response = g_string_append (response, contest->GetId ());
-      response = g_string_append (response, "\" ");
-
-      response = g_string_append (response, "Name=\"");
-      response = g_string_append (response, contest->GetName ());
-      response = g_string_append (response, "\" ");
-
-      {
-        Weapon *weapon = contest->GetWeapon ();
-
-        response = g_string_append (response, "Weapon=\"");
-        response = g_string_append (response, weapon->GetImage ());
-        response = g_string_append (response, "\" ");
-      }
-
-      response = g_string_append (response, "Gender=\"");
-      response = g_string_append (response, contest->GetGenderCode ());
-      response = g_string_append (response, "\" ");
-
-      response = g_string_append (response, "Category=\"");
-      response = g_string_append (response, contest->GetCategory ());
-      response = g_string_append (response,
-                                  "\"/>\n");
-
-      current = g_list_next (current);
-    }
-    response = g_string_append (response,
-                                "</Competitions>");
-
-    result = response->str;
-    g_string_free (response,
-                   FALSE);
   }
 
   return result;

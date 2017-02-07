@@ -381,7 +381,7 @@ namespace AskFred
   }
 
   // --------------------------------------------------------------------------------
-  void Parser::LoadTournament (xmlXPathContext *context )
+  void Parser::LoadTournament (xmlXPathContext *context)
   {
     xmlXPathObject *xml_object;
 

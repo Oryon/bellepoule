@@ -24,7 +24,7 @@ namespace Marshaller
 {
   // --------------------------------------------------------------------------------
   Job::Job (Batch    *batch,
-            guint     uuid,
+            guint     netid,
             guint     sibling_order,
             GdkColor *gdk_color)
     : Object ("Job")
@@ -33,12 +33,12 @@ namespace Marshaller
     _gdk_color     = gdk_color_copy (gdk_color);
     _name          = NULL;
     _batch         = batch;
-    _uuid          = uuid;
+    _netid         = netid;
     _sibling_order = sibling_order;
     _slot          = NULL;
 
     Disclose ("Roadmap");
-    _parcel->Set ("listener", uuid);
+    _parcel->Set ("listener", netid);
   }
 
   // --------------------------------------------------------------------------------
@@ -121,9 +121,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  guint Job::GetUUID ()
+  guint Job::GetNetID ()
   {
-    return _uuid;
+    return _netid;
   }
 
   // --------------------------------------------------------------------------------

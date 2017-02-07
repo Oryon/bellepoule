@@ -71,10 +71,16 @@ namespace Marshaller
       static gint CompareAvailbility (Slot *a,
                                       Slot *b);
 
+      static Slot *GetFreeSlot (Owner     *owner,
+                                GList     *busy_slots,
+                                GDateTime *from,
+                                GTimeSpan  duration);
+
       static GList *GetFreeSlots (Owner     *owner,
                                   GList     *busy_slots,
                                   GDateTime *from,
-                                  GTimeSpan  duration);
+                                  GTimeSpan  duration,
+                                  gboolean   round_date = TRUE);
 
     private:
       Owner     *_owner;

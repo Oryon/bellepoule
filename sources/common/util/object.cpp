@@ -114,11 +114,7 @@ Object::~Object ()
 
   TryToRelease (_flash_code);
 
-  if (_parcel)
-  {
-    Recall  ();
-    _parcel->Release ();
-  }
+  TryToRelease (_parcel);
 
 #ifdef DEBUG
   _nb_objects--;

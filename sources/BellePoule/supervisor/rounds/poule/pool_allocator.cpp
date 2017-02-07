@@ -282,11 +282,30 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::Spread ()
   {
-    for (guint p = 0; p < GetNbPools (); p++)
+    GSList *current = _drop_zones;
+
+    while (current)
     {
-      Pool *pool = GetPool (p);
+      Pool *pool = GetPoolOf (current);
 
       pool->Spread ();
+
+      current = g_slist_next (current);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::Recall ()
+  {
+    GSList *current = _drop_zones;
+
+    while (current)
+    {
+      Pool *pool = GetPoolOf (current);
+
+      pool->Recall ();
+
+      current = g_slist_next (current);
     }
   }
 
@@ -508,6 +527,7 @@ namespace Pool
         _selected_config = _best_config;
 
         CreatePools ();
+        Spread ();
       }
     }
   }
@@ -560,6 +580,10 @@ namespace Pool
               }
             }
           }
+          Recall ();
+          RefreshDisplay ();
+          Spread ();
+          return;
         }
       }
 
@@ -737,7 +761,7 @@ namespace Pool
                                      number+1,
                                      GetXmlPlayerTag (),
                                      _rand_seed);
-            current_pool->SetIdChain (_contest->GetId (),
+            current_pool->SetIdChain (_contest->GetNetID (),
                                       GetName (),
                                       GetId () + 1);
             current_pool->RegisterRoadmapListener (this);
@@ -752,30 +776,7 @@ namespace Pool
             }
           }
 
-          {
-            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "Piste");
-
-            if (attr)
-            {
-              current_pool->SetPiste (atoi (attr));
-
-              xmlFree (attr);
-            }
-          }
-
-          {
-            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "Date");
-
-            if (attr)
-            {
-              FieTime *fie_time = new FieTime (attr);
-
-              current_pool->SetStartTime (fie_time);
-              fie_time->Release ();
-
-              xmlFree (attr);
-            }
-          }
+          current_pool->Load (n);
         }
         else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
@@ -830,6 +831,7 @@ namespace Pool
           _swapper->Configure (_drop_zones,
                                _swapping_criteria_list);
           _swapper->CheckCurrentDistribution ();
+          Spread ();
           return;
         }
       }
@@ -1031,7 +1033,7 @@ namespace Pool
                                   i+1,
                                   GetXmlPlayerTag (),
                                   _rand_seed);
-        pool_table[i]->SetIdChain (_contest->GetId (),
+        pool_table[i]->SetIdChain (_contest->GetNetID (),
                                    GetName (),
                                    GetId () + 1);
         pool_table[i]->RegisterRoadmapListener (this);
@@ -1987,7 +1989,9 @@ namespace Pool
 
       _selected_config = config;
 
+      Recall ();
       RefreshDisplay ();
+      Spread ();
     }
   }
 
@@ -1996,8 +2000,6 @@ namespace Pool
   {
     gtk_widget_show (_glade->GetWidget ("marshaller_spinner"));
     gtk_widget_hide (_glade->GetWidget ("marshaller_image"));
-
-    Spread ();
   }
 
   // --------------------------------------------------------------------------------
@@ -2163,7 +2165,9 @@ namespace Pool
       g_string_free (string,
                      TRUE);
 
+      allocator->Recall ();
       allocator->RefreshDisplay ();
+      allocator->Spread ();
     }
   }
 

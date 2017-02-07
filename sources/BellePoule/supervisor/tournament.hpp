@@ -76,8 +76,6 @@ class Tournament : public Module, public Net::Twitter::Listener
 
     gboolean OnHttpPost (Net::Message *message);
 
-    gchar *OnHttpGet (const gchar *url);
-
     gchar *GetSecretKey (const gchar *authentication_scheme);
 
   public:

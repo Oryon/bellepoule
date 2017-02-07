@@ -225,6 +225,16 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  Slot *Piste::GetFreeSlot (GDateTime *from,
+                            GTimeSpan  duration)
+  {
+    return Slot::GetFreeSlot (this,
+                              _slots,
+                              from,
+                              duration);
+  }
+
+  // --------------------------------------------------------------------------------
   GList *Piste::GetFreeSlots (GDateTime *from,
                               GTimeSpan  duration)
   {
@@ -391,6 +401,7 @@ namespace Marshaller
           if (job->GetBatch () == batch)
           {
             slot->RemoveJob (job);
+            job->ResetRoadMap ();
           }
 
           current_job = g_list_next (current_job);

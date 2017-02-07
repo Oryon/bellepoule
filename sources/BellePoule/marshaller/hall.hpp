@@ -48,6 +48,8 @@ namespace Marshaller
 
       Piste *AddPiste (gdouble tx = 0.0, gdouble ty = 0.0);
 
+      Piste *GetPiste (guint id);
+
       void RemovePiste (Piste *piste);
 
       void TranslateSelected (gdouble tx,
@@ -95,8 +97,6 @@ namespace Marshaller
       void SelectPiste (Piste *piste);
 
       void UnSelectPiste (Piste *piste);
-
-      Batch *GetBatch (const gchar *id);
 
       Batch *GetBatch (guint id);
 

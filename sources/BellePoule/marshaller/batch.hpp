@@ -22,6 +22,7 @@
 #include "util/module.hpp"
 
 class Player;
+class FieTime;
 
 namespace Marshaller
 {
@@ -38,12 +39,15 @@ namespace Marshaller
       };
 
     public:
-      Batch (const gchar *id,
-             Listener    *listener);
+      Batch (guint     id,
+             Listener *listener);
 
       void AttachTo (GtkNotebook *to);
 
-      void Load (Net::Message *message);
+      Job *Load (Net::Message  *message,
+                 guint         *piste_id,
+                 guint         *referee_id,
+                 FieTime      **start_time);
 
       void SetVisibility (Job      *job,
                           gboolean  visibility);
@@ -79,7 +83,7 @@ namespace Marshaller
       void on_batch_treeview_row_activated (GtkTreePath *path);
 
     private:
-      guint32       _id;
+      guint         _id;
       GtkListStore *_job_store;
       guint32       _dnd_key;
       GdkColor     *_gdk_color;
@@ -94,11 +98,7 @@ namespace Marshaller
 
       virtual ~Batch ();
 
-      void LoadJob (xmlNode *xml_node,
-                    guint    uuid,
-                    Job     *job = NULL);
-
-      Job *GetJob (guint uuid);
+      Job *GetJob (guint netid);
 
       Player *GetFencer (guint ref);
 

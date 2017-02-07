@@ -33,7 +33,9 @@ namespace Net
 
       gchar *GetSender ();
 
-      guint GetUUID ();
+      void SetNetID (guint id);
+
+      guint GetNetID ();
 
       void Recall ();
 

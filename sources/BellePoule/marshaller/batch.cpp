@@ -18,6 +18,7 @@
 #include <libxml/tree.h>
 
 #include "util/player.hpp"
+#include "util/fie_time.hpp"
 #include "actors/player_factory.hpp"
 
 #include "job.hpp"
@@ -34,8 +35,8 @@ namespace Marshaller
   } ColumnId;
 
   // --------------------------------------------------------------------------------
-  Batch::Batch (const gchar *id,
-                Listener    *listener)
+  Batch::Batch (guint     id,
+                Listener *listener)
     : Object ("Batch"),
       Module ("batch.glade")
   {
@@ -46,9 +47,7 @@ namespace Marshaller
     _fencer_list    = NULL;
     _weapon         = NULL;
 
-    _id = (guint32) g_ascii_strtoull (id,
-                                      NULL,
-                                      16);
+    _id = id;
 
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
@@ -120,7 +119,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  guint32 Batch::GetId ()
+  guint Batch::GetId ()
   {
     return _id;
   }
@@ -337,7 +336,7 @@ namespace Marshaller
                           JOB_ptr, &current_job,
                           -1);
 
-      if (message->GetUUID () == current_job->GetUUID ())
+      if (message->GetNetID () == current_job->GetNetID ())
       {
         gtk_list_store_remove (_job_store,
                                &iter);
@@ -367,7 +366,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Job *Batch::GetJob (guint uuid)
+  Job *Batch::GetJob (guint netid)
   {
     GtkTreeIter iter;
     gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
@@ -382,7 +381,7 @@ namespace Marshaller
                           JOB_ptr, &current_job,
                           -1);
 
-      if (current_job->GetUUID () == uuid)
+      if (current_job->GetNetID () == netid)
       {
         return current_job;
       }
@@ -395,9 +394,14 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::Load (Net::Message *message)
+  Job *Batch::Load (Net::Message  *message,
+                    guint         *piste_id,
+                    guint         *referee_id,
+                    FieTime      **start_time)
   {
-    if (GetJob (message->GetUUID ()) == NULL)
+    Job *job = NULL;
+
+    if (GetJob (message->GetNetID ()) == NULL)
     {
       gchar     *xml = message->GetString ("xml");
       xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
@@ -416,8 +420,90 @@ namespace Marshaller
 
           if (xml_nodeset->nodeNr == 1)
           {
-            LoadJob (xml_nodeset->nodeTab[0],
-                     message->GetUUID ());
+            xmlNode     *root_node     = xml_nodeset->nodeTab[0];
+            GtkTreeIter  iter;
+            gchar       *attr;
+            gchar       *name;
+            guint        sibling_order = g_list_length (_pending_list);
+
+            job = new Job (this,
+                           message->GetNetID (),
+                           sibling_order,
+                           _gdk_color);
+
+            attr = (gchar *) xmlGetProp (root_node, BAD_CAST "ID");
+            if (attr)
+            {
+              name = g_strdup_printf ("%s%s", gettext ("Pool #"), attr);
+              xmlFree (attr);
+            }
+            else
+            {
+              name = g_strdup (gettext ("Pool"));
+            }
+
+            attr = (gchar *) xmlGetProp (root_node, BAD_CAST "Piste");
+            if (attr)
+            {
+              *piste_id = atoi (attr);
+              xmlFree (attr);
+            }
+
+            attr = (gchar *) xmlGetProp (root_node, BAD_CAST "Date");
+            if (attr)
+            {
+              *start_time = new FieTime (attr);
+              xmlFree (attr);
+            }
+
+            gtk_list_store_append (_job_store,
+                                   &iter);
+
+            job->SetName (name);
+            gtk_list_store_set (_job_store, &iter,
+                                NAME_str,   name,
+                                JOB_ptr,    job,
+                                JOB_color,  "Black",
+                                -1);
+            g_free (name);
+
+            _pending_list = g_list_append (_pending_list,
+                                           job);
+            _job_board->AddJob (job);
+
+            for (xmlNode *n = xml_nodeset->nodeTab[0]->children; n != NULL; n = n->next)
+            {
+              if (n->type == XML_ELEMENT_NODE)
+              {
+                if (g_strcmp0 ((gchar *)n->name, "Tireur") == 0)
+                {
+                  attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+                  if (attr)
+                  {
+                    Player *fencer = GetFencer (atoi (attr));
+
+                    if (fencer == NULL)
+                    {
+                      g_error ("Fencer %s not found!\n", attr);
+                    }
+                    else
+                    {
+                      job->AddFencer (fencer);
+                    }
+                    xmlFree (attr);
+                  }
+                }
+                else if (g_strcmp0 ((gchar *)n->name, "Arbitre") == 0)
+                {
+                  attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+                  if (attr)
+                  {
+                    *referee_id = atoi (attr);
+                    xmlFree (attr);
+                  }
+                }
+              }
+            }
           }
 
           xmlXPathFreeObject  (xml_object);
@@ -425,90 +511,13 @@ namespace Marshaller
         }
         xmlFreeDoc (doc);
       }
-
       g_free (xml);
 
       g_free (_name);
       _name = message->GetString ("round");
     }
-  }
 
-  // --------------------------------------------------------------------------------
-  void Batch::LoadJob (xmlNode *xml_node,
-                       guint    uuid,
-                       Job     *job)
-  {
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
-    {
-      if (n->type == XML_ELEMENT_NODE)
-      {
-        if (g_strcmp0 ((char *) n->name, "TourDePoules") == 0)
-        {
-          GtkLabel *label = GTK_LABEL (_glade->GetWidget ("batch_label"));
-          gchar    *name;
-
-          name = g_strdup_printf ("%s %s",
-                                  gettext ("Pool"),
-                                  (gchar *) xmlGetProp (n, BAD_CAST "ID"));
-          gtk_label_set_text (label, name);
-          g_free (name);
-        }
-        else if (g_strcmp0 ((char *) n->name, "Poule") == 0)
-        {
-          GtkTreeIter  iter;
-          gchar       *attr;
-          gchar       *name;
-          guint        sibling_order = g_list_length (_pending_list);
-
-          job = new Job (this, uuid, sibling_order, _gdk_color);
-
-          attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
-          if (attr)
-          {
-            name = g_strdup_printf ("%s%s", gettext ("Pool #"), attr);
-            xmlFree (attr);
-          }
-          else
-          {
-            name = g_strdup (gettext ("Pool"));
-          }
-
-          gtk_list_store_append (_job_store,
-                                 &iter);
-
-          job->SetName (name);
-          gtk_list_store_set (_job_store, &iter,
-                              NAME_str,   name,
-                              JOB_ptr,    job,
-                              JOB_color,  "Black",
-                              -1);
-          g_free (name);
-
-          _pending_list = g_list_append (_pending_list,
-                                         job);
-          _job_board->AddJob (job);
-        }
-        else if (g_strcmp0 ((char *) n->name, "Tireur") == 0)
-        {
-          gchar  *attr   = (gchar *) xmlGetProp (n, BAD_CAST "REF");
-          Player *fencer = GetFencer (atoi (attr));
-
-          if (fencer == NULL)
-          {
-            g_error ("Fencer %s not found!\n", attr);
-          }
-          else
-          {
-            job->AddFencer (fencer);
-          }
-          xmlFree (attr);
-        }
-
-        LoadJob (n->children,
-                 uuid,
-                 job);
-      }
-    }
+    return job;
   }
 
   // --------------------------------------------------------------------------------
@@ -568,8 +577,8 @@ namespace Marshaller
           fencer->Load (xml_nodeset->nodeTab[0]);
 
           fencer->SetData (this,
-                           "uuid",
-                           GUINT_TO_POINTER (message->GetUUID ()));
+                           "netid",
+                           GUINT_TO_POINTER (message->GetNetID ()));
 
           _fencer_list = g_list_prepend (_fencer_list,
                                          fencer);
@@ -587,13 +596,13 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Batch::DeleteFencer (Net::Message *message)
   {
-    guint  id      = message->GetUUID ();
+    guint  id      = message->GetNetID ();
     GList *current = _fencer_list;
 
     while (current)
     {
       Player *fencer     = (Player *) current->data;
-      guint   current_id = fencer->GetIntData (this, "uuid");
+      guint   current_id = fencer->GetIntData (this, "netid");
 
       if (current_id == id)
       {

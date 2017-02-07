@@ -69,7 +69,7 @@ namespace Pool
     private:
       void OnLocked ();
       void OnUnLocked ();
-      void OnCanceled ();
+      void Recall ();
       void Reset ();
       GSList *GetCurrentClassification ();
       void LoadConfiguration (xmlNode *xml_node);
