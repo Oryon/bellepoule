@@ -386,7 +386,10 @@ void Application::Start (int    argc,
                                               "Rui Pedro Vieira      (Portuguese)\n"
                                               "Mohamed Rebai         (Arabic)\n"
                                               "Mikael Hiort af Ornäs (Swedish)\n"
-                                              "Sergev Makhtanov      (Russian)");
+                                              "Sergev Makhtanov      (Russian)"
+                                              "Alcedo Attis          (Hungarian)\n"
+                                              "Simon Dobelsek        (Slovenian)\n"
+                                              "Ben Haeberli          (German)");
 
     gtk_about_dialog_set_translator_credits (GTK_ABOUT_DIALOG (w),
                                              translators);

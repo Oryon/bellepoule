@@ -123,6 +123,7 @@ Source: "..\..\..\resources\translations\pt_br\*"; DestDir: "{app}\share\{#PRODU
 Source: "..\..\..\resources\translations\sv\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\sv"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\ja\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ja"; Flags: ignoreversion recursesubdirs
 ;Source: "..\..\..\resources\translations\hu\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\hu"; Flags: ignoreversion recursesubdirs
+;Source: "..\..\..\resources\translations\sl\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\sl"; Flags: ignoreversion recursesubdirs
 
 #ifdef MINGW
 ;WebServer
@@ -194,6 +195,10 @@ Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{a
 Source: "{#MINGW}\share\locale\hu\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\hu\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\hu\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\hu\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\hu\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\hu\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\sl\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\sl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\sl\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\sl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\sl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\sl\LC_MESSAGES"; Flags: ignoreversion
 #endif
 
 ;Resources
