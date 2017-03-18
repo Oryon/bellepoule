@@ -39,8 +39,10 @@ class Stage : public virtual Object
 
     typedef Stage * (*Creator) (StageClass *stage_class);
 
-    typedef void (*StatusCbk) (Stage *stage,
-                               void  *data);
+    struct Listener
+    {
+      virtual void OnStageStatusChanged (Stage *stage) = 0;
+    };
 
     typedef enum
     {
@@ -120,8 +122,7 @@ class Stage : public virtual Object
 
     StageClass *GetClass ();
 
-    void SetStatusCbk (StatusCbk  cbk,
-                       void      *data);
+    void SetStatusListener (Listener *listener);
 
     void SetScoreStuffingPolicy (gboolean allowed);
 
@@ -239,8 +240,7 @@ class Stage : public virtual Object
     SensitivityTrigger *_score_stuffing_trigger;
     gboolean            _classification_on;
 
-    void      *_status_cbk_data;
-    StatusCbk  _status_cbk;
+    Listener *_status_listener;
 
     void SetResult ();
     void FreeResult ();

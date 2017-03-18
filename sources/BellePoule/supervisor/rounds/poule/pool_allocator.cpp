@@ -477,11 +477,6 @@ namespace Pool
       PopulateFencerList ();
     }
 
-    {
-      gtk_widget_hide (_glade->GetWidget ("marshaller_spinner"));
-      gtk_widget_hide (_glade->GetWidget ("marshaller_image"));
-    }
-
     if (_main_table)
     {
       goo_canvas_item_remove (_main_table);
@@ -1691,11 +1686,18 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gchar *Allocator::GetError ()
   {
-    GSList *current = _drop_zones;
+    gboolean  resources_assigned = FALSE;
+    GSList   *current            = _drop_zones;
 
     while (current)
     {
       Pool *pool = GetPoolOf (current);
+
+      if (resources_assigned == FALSE)
+      {
+        resources_assigned = (   (pool->GetPiste ()       != 0)
+                              && (pool->GetRefereeList () != NULL));
+      }
 
       if (pool->GetUIntData (this, "is_balanced") == 0)
       {
@@ -1704,6 +1706,12 @@ namespace Pool
                                 pool->GetName (), gettext ("Wrong fencers count!"));
       }
       current = g_slist_next (current);
+    }
+
+    if (resources_assigned == FALSE)
+    {
+      return g_strdup_printf ("<span foreground=\"black\" weight=\"400\">%s</span>",
+                              gettext (" Referees allocation \n ongoing "));
     }
 
     return NULL;
@@ -1996,21 +2004,11 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::OnMarshallerClicked ()
-  {
-    gtk_widget_show (_glade->GetWidget ("marshaller_spinner"));
-    gtk_widget_hide (_glade->GetWidget ("marshaller_image"));
-  }
-
-  // --------------------------------------------------------------------------------
   void Allocator::OnPoolRoadmap (Pool         *pool,
                                  Net::Message *message)
   {
     PoolZone *zone = (PoolZone *) g_slist_nth_data (_drop_zones,
                                                     pool->GetNumber () - 1);
-
-    gtk_widget_hide (_glade->GetWidget ("marshaller_spinner"));
-    gtk_widget_show (_glade->GetWidget ("marshaller_image"));
 
     {
       guint   ref     = message->GetInteger ("referee");
@@ -2217,14 +2215,5 @@ namespace Pool
     Allocator *p = dynamic_cast <Allocator *> (owner);
 
     p->OnFencerListToggled (gtk_toggle_tool_button_get_active (widget));
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_marshaller_toolbutton_clicked (GtkWidget *widget,
-                                                                    Object    *owner)
-  {
-    Allocator *pa = dynamic_cast <Allocator *> (owner);
-
-    pa->OnMarshallerClicked ();
   }
 }

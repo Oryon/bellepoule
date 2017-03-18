@@ -43,8 +43,7 @@ Stage::Stage (StageClass *stage_class)
 
   _score_stuffing_trigger = NULL;
 
-  _status_cbk_data = NULL;
-  _status_cbk      = NULL;
+  _status_listener = NULL;
 
   _max_score = NULL;
 
@@ -78,20 +77,17 @@ Stage::StageView Stage::GetStageView (GtkPrintOperation *operation)
 }
 
 // --------------------------------------------------------------------------------
-void Stage::SetStatusCbk (StatusCbk  cbk,
-                          void      *data)
+void Stage::SetStatusListener (Listener *listener)
 {
-  _status_cbk_data = data;
-  _status_cbk      = cbk;
+  _status_listener = listener;
 }
 
 // --------------------------------------------------------------------------------
 void Stage::SignalStatusUpdate ()
 {
-  if (_status_cbk)
+  if (_status_listener)
   {
-    _status_cbk (this,
-                 _status_cbk_data);
+    _status_listener->OnStageStatusChanged (this);
   }
 }
 

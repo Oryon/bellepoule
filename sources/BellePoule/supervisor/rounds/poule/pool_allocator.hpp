@@ -64,7 +64,6 @@ namespace Pool
       void OnFencerListToggled (gboolean toggled);
       void OnFilterClicked ();
       void OnPrintClicked ();
-      void OnMarshallerClicked ();
 
     private:
       void OnLocked ();
