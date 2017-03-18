@@ -13,21 +13,6 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">images/referee.png</property>
-  </object>
-  <object class="GtkListStore" id="swapping_liststore">
-    <columns>
-      <!-- column-name attribute_image -->
-      <column type="gchararray"/>
-      <!-- column-name criteria -->
-      <column type="gpointer"/>
-      <!-- column-name errors -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
     <child>
@@ -44,7 +29,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Mask or unmask some data type as well as define their display order.</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Data</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_filter_button_clicked" swapped="no"/>
@@ -58,7 +42,6 @@
               <object class="GtkToolButton" id="print_toolbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Print</property>
                 <property name="stock_id">gtk-print</property>
                 <signal name="clicked" handler="on_print_toolbutton_clicked" swapped="no"/>
@@ -72,7 +55,6 @@
               <object class="GtkSeparatorToolItem" id="toolbutton1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -83,7 +65,6 @@
               <object class="GtkToggleToolButton" id="fencer_list">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Fencer list</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-justify-fill</property>
@@ -98,74 +79,6 @@
               <object class="GtkSeparatorToolItem" id="separatortoolitem1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="marshaller_toolbutton">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
-                <property name="label" translatable="yes">Assign referees</property>
-                <property name="use_underline">True</property>
-                <property name="icon_widget">image1</property>
-                <signal name="clicked" handler="on_marshaller_toolbutton_clicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolItem" id="marshaller_toolitem">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
-                <child>
-                  <object class="GtkHBox" id="hbox2">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkSpinner" id="marshaller_spinner">
-                        <property name="width_request">20</property>
-                        <property name="height_request">20</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="active">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkImage" id="marshaller_image">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="stock">gtk-apply</property>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSeparatorToolItem" id="separatortoolitem2">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -331,14 +244,14 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                  <object class="GtkLabel" id="label1">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Swapping</property>
-                    <attributes>
-                      <attribute name="weight" value="bold"/>
-                    </attributes>
-                  </object>
+                      <object class="GtkLabel" id="label1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Swapping</property>
+                        <attributes>
+                          <attribute name="weight" value="bold"/>
+                        </attributes>
+                      </object>
                     </child>
                   </object>
                   <packing>
@@ -436,5 +349,15 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="swapping_liststore">
+    <columns>
+      <!-- column-name attribute_image -->
+      <column type="gchararray"/>
+      <!-- column-name criteria -->
+      <column type="gpointer"/>
+      <!-- column-name errors -->
+      <column type="gchararray"/>
+    </columns>
   </object>
 </interface>

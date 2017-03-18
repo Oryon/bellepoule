@@ -32,7 +32,8 @@ namespace People
 
 class Contest;
 
-class Schedule : public Module
+class Schedule : public Module,
+                 public Stage::Listener
 {
   public:
     typedef void (Object::*StageEvent_t) ();
@@ -145,8 +146,7 @@ class Schedule : public Module
                    GtkPrintContext   *context,
                    gint               page_nr);
 
-    static void OnStageStatusUpdated (Stage    *stage,
-                                      Schedule *schedule);
+    void OnStageStatusChanged (Stage *stage);
 
     static void on_row_selected (GtkWidget *widget,
                                  GdkEvent  *event,

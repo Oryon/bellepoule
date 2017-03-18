@@ -1181,8 +1181,7 @@ void Schedule::SetCurrentStage (guint index)
 
     if (stage)
     {
-      stage->SetStatusCbk ((Stage::StatusCbk) OnStageStatusUpdated,
-                           this);
+      stage->SetStatusListener (this);
     }
   }
 
@@ -1190,10 +1189,9 @@ void Schedule::SetCurrentStage (guint index)
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::OnStageStatusUpdated (Stage    *stage,
-                                     Schedule *schedule)
+void Schedule::OnStageStatusChanged (Stage *stage)
 {
-  schedule->RefreshSensitivity ();
+  RefreshSensitivity ();
 }
 
 // --------------------------------------------------------------------------------
