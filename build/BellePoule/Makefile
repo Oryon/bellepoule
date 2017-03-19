@@ -221,6 +221,9 @@ build_staging     = build_ubuntu
 publish_staging   = publish_ubuntu
 endif
 
+archlinux:
+	python arch/make_pkgbuild.py
+
 package: prepare_staging $(prepare_ubuntu) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www)
 	rm -rf `find $(PACKAGE) -name "*~*"`
 	rm -rf `find $(PACKAGE) -name "*.swp"`
@@ -280,6 +283,7 @@ prepare_resources:
 	cp -rf ../../resources/translations/ja    $(PACKAGE)/$(RELEASE)/resources/translations
 #	cp -rf ../../resources/translations/hu    $(PACKAGE)/$(RELEASE)/resources/translations
 #	cp -rf ../../resources/translations/sl    $(PACKAGE)/$(RELEASE)/resources/translations
+#	cp -rf ../../resources/translations/eu    $(PACKAGE)/$(RELEASE)/resources/translations
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade/images
 	cp -f ../../resources/glade/images/*.png   $(PACKAGE)/$(RELEASE)/resources/glade/images
 	cp -f ../../resources/glade/images/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade/images
@@ -399,6 +403,9 @@ clean_sources:
 #-- Help --------------------------------------------
 #----------------------------------------------------
 help: vars
+	@echo "\033[1;43m**** Archlinux ****\033[0m"
+	@echo "make -s archlinux V=$(V)"
+	@echo ""
 	@echo "\033[1;42m**** Windows ****\033[0m"
 	@echo "make -s UBUNTU=windows V=$(V) package"
 	@echo ""
