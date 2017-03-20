@@ -1,5 +1,5 @@
 pkgname=__APPLICATION__
-pkgver=__MAJOR__.__MINOR__
+pkgver=beta__MAJOR__.__MINOR__
 pkgrel=1
 pkgdesc="Fencing tournament management software"
 arch=('i686' 'x86_64')
