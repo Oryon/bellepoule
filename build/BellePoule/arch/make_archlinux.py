@@ -8,21 +8,80 @@ launchpad   = 'https://launchpad.net/~betonniere/+archive/ubuntu/'
 application = 'bellepoule'
 major       = None
 minor       = None
+phase       = None
 maturity    = None
 sha256      = None
 
-# --------------------------------
-def generate (tpl, out):
-    with open (tpl, 'r') as template:
-        content = template.read ()
-        content = content.replace ('__APPLICATION__', application)
-        content = content.replace ('__MAJOR__',       major)
-        content = content.replace ('__MINOR__',       minor)
-        content = content.replace ('__SHA256__',      sha256)
+dep_list = ['gtk2>=2.24.0',
+            'xml2',
+            'curl',
+            'libmicrohttpd',
+            'goocanvas1',
+            'qrencode',
+            'openssl',
+            'lighttpd',
+            'php-cgi',
+            'json-glib']
 
-        with open (out, 'w') as output:
-            output.write (content)
-            output.close ()
+class TargetFile:
+    # --------------------------------
+    def __init__ (self, template, output_file):
+        self.__template    = template
+        self.__output_file = output_file
+
+    # --------------------------------
+    def generate (self):
+        with open (self.__template, 'r') as template:
+            content = template.read ()
+            content = content.replace ('#APPLICATION', application)
+            content = content.replace ('#PHASE',       phase)
+            content = content.replace ('#MAJOR',       major)
+            content = content.replace ('#MINOR',       minor)
+            content = content.replace ('#MATURITY',    maturity)
+            content = content.replace ('#DEPS',        self.get_deps_image ())
+            content = content.replace ('#SHA256',      sha256)
+
+            with open (self.__output_file, 'w') as output:
+                output.write (content)
+                output.close ()
+
+    # --------------------------------
+    def get_deps_image (self):
+        return 'get_deps_image ==> Not implemented'
+
+class PkgbuildFile (TargetFile):
+    # --------------------------------
+    def __init__ (self, out):
+        TargetFile.__init__ (self, 'PKGBUILD.tpl', out)
+
+    # --------------------------------
+    def get_deps_image (self):
+        deps_image = ''
+
+        for dep in dep_list:
+            if deps_image != '':
+                deps_image = deps_image + ' '
+            deps_image = deps_image + "'" + dep + "'"
+
+        return deps_image
+
+class SrcInfoFile (TargetFile):
+    # --------------------------------
+    def __init__ (self, out):
+        TargetFile.__init__ (self, 'SRCINFO.tpl', out)
+
+    # --------------------------------
+    def get_deps_image (self):
+        deps_image = ''
+        eol        = None
+
+        for dep in dep_list:
+            if eol:
+                deps_image = deps_image + eol
+            deps_image = deps_image + '	depends = ' + dep
+            eol = '\n'
+
+        return deps_image
 
 # --------------------------------
 def get_version (tag):
@@ -33,7 +92,7 @@ def get_version (tag):
             segments = line.group(0).split ()
             return segments[2].replace ('"', '')
 
-    return None
+        return None
 
 # --------------------------------
 def get_sha256 ():
@@ -41,7 +100,7 @@ def get_sha256 ():
     dsc_uri += application
     dsc_uri += '/+files/'
     dsc_uri += application
-    dsc_uri += 'beta_'
+    dsc_uri += phase + '_'
     dsc_uri += major
     dsc_uri += '.'
     dsc_uri += minor
@@ -68,7 +127,16 @@ if __name__ == '__main__':
     major    = get_version ("VERSION")
     minor    = get_version ("VERSION_REVISION")
     maturity = get_version ("VERSION_MATURITY").replace ('alpha', '')
-    sha256   = get_sha256  ()
+    branch   = get_version ("VERSION_BRANCH")
+    if branch == 'UNSTABLE':
+        phase = 'beta'
+    else:
+        phase = ''
 
-    generate ('SRCINFO.tpl',  '.SRCINFO')
-    generate ('PKGBUILD.tpl', 'PKGBUILD')
+    sha256 = get_sha256 ()
+
+    target = SrcInfoFile ('.SRCINFO')
+    target.generate ()
+
+    target = PkgbuildFile ('PKGBUILD')
+    target.generate ()
