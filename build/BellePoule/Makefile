@@ -10,7 +10,7 @@ VERSION_MAJOR:=$(shell grep "VERSION " $(VERSION_FILE) | sed 's/.* //')
 VERSION_MINOR:=$(shell grep VERSION_REVISION $(VERSION_FILE) | sed 's/.* //')
 VERSION_MATURITY:=$(shell grep VERSION_MATURITY $(VERSION_FILE) | sed 's/.* //')
 ifneq ($(UBUNTU), windows)
-STEP := $(shell echo $(VERSION_MATURITY) | sed 's/alpha0/ubuntu/' | sed 's/alpha/ubuntu/')
+STEP := $(shell echo $(VERSION_MATURITY) | sed 's/alpha0//' | sed 's/alpha//')
 endif
 
 PRODUCT = bellepoulebeta
@@ -212,6 +212,10 @@ ifeq ($(UBUNTU), windows)
 prepare_resources = prepare_windows_resources
 build_staging     = build_windows
 publish_staging   = publish_windows
+else ifeq ($(UBUNTU), archlinux)
+prepare_arch    = prepare_arch
+build_staging   = build_arch
+publish_staging = publish_arch
 else
 prepare_ubuntu    = prepare_ubuntu
 prepare_www       = prepare_www
@@ -221,11 +225,15 @@ build_staging     = build_ubuntu
 publish_staging   = publish_ubuntu
 endif
 
-package: prepare_staging $(prepare_ubuntu) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www)
+package: prepare_staging $(prepare_arch) $(prepare_ubuntu) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www)
 	rm -rf `find $(PACKAGE) -name "*~*"`
 	rm -rf `find $(PACKAGE) -name "*.swp"`
 	rm -rf `find $(PACKAGE) -name ".*.swp"`
 	find $(PACKAGE)/$(RELEASE) -type f -exec chmod a-x {} \;
+
+prepare_arch:
+	git clone --quiet git+ssh://aur@aur.archlinux.org/$(PRODUCT).git $(PACKAGE)/$(RELEASE)/arch
+	cp -rf arch/* $(PACKAGE)/$(RELEASE)/arch
 
 prepare_ubuntu: prepare_debian prepare_changelog prepare_control prepare_rules prepare_copyright prepare_desktop
 
@@ -280,6 +288,7 @@ prepare_resources:
 	cp -rf ../../resources/translations/ja    $(PACKAGE)/$(RELEASE)/resources/translations
 #	cp -rf ../../resources/translations/hu    $(PACKAGE)/$(RELEASE)/resources/translations
 #	cp -rf ../../resources/translations/sl    $(PACKAGE)/$(RELEASE)/resources/translations
+#	cp -rf ../../resources/translations/eu    $(PACKAGE)/$(RELEASE)/resources/translations
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade/images
 	cp -f ../../resources/glade/images/*.png   $(PACKAGE)/$(RELEASE)/resources/glade/images
 	cp -f ../../resources/glade/images/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade/images
@@ -303,7 +312,7 @@ prepare_debian:
 
 prepare_changelog:
 	rm -f $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo "$(PRODUCT) ($(VERSION)$(STEP)~$(UBUNTU)$(V)) $(UBUNTU); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo "$(PRODUCT) ($(VERSION)ubuntu$(STEP)~$(UBUNTU)$(V)) $(UBUNTU); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "  * Miscellaneous improvements" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
@@ -348,6 +357,14 @@ build_ubuntu:
 publish_ubuntu:
 	debuild -S -sa -k`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
 	dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes
+
+build_arch:
+	python arch/make_archlinux.py
+	git -C arch add .
+	git -C arch commit --quiet -m "$(VERSION)-$(STEP)"
+
+publish_arch:
+	git -C arch push origin master
 
 #----------------------------------------------------
 #-- debuild -----------------------------------------
@@ -399,6 +416,13 @@ clean_sources:
 #-- Help --------------------------------------------
 #----------------------------------------------------
 help: vars
+	@echo "\033[1;43m**** Archlinux ****\033[0m"
+	@echo "make -s UBUNTU=archlinux V=$(V) package"
+	@echo ""
+	@echo "cd $(PACKAGE)/$(RELEASE)"
+	@echo "make -s UBUNTU=archlinux build"
+	@echo "make -s UBUNTU=archlinux publish"
+	@echo ""
 	@echo "\033[1;42m**** Windows ****\033[0m"
 	@echo "make -s UBUNTU=windows V=$(V) package"
 	@echo ""

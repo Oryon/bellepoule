@@ -14,3 +14,4 @@ windows/setup/Output
 *.exe
 ./build/BellePoule/windows/Output
 ./build/BellePoule/debug
+PKGBUILD

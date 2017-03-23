@@ -380,6 +380,7 @@ void Application::Start (int    argc,
                                               "Alexis Pigeon         (Spanish)\n"
                                               "Paulo Morales         (Spanish)\n"
                                               "Ignacio Gil           (Spanish)\n"
+                                              "Stefano Schirone      (Spanish)\n"
                                               "Dominik Denkiewicz    (Polish)\n"
                                               "Eduardo Alberto Calvo (Spanish, Portuguese)\n"
                                               "Ricardo Catanho       (Portuguese)\n"
@@ -389,6 +390,7 @@ void Application::Start (int    argc,
                                               "Sergev Makhtanov      (Russian)"
                                               "Alcedo Attis          (Hungarian)\n"
                                               "Simon Dobelsek        (Slovenian)\n"
+                                              "Ibon Santisteban      (Basque)\n"
                                               "Ben Haeberli          (German)");
 
     gtk_about_dialog_set_translator_credits (GTK_ABOUT_DIALOG (w),
