@@ -70,9 +70,9 @@ namespace Net
                                                NULL,
                                                FALSE);
 
-        _job_url[0] = g_strdup_printf ("http://www.escrime-info.com/~resultxml/Greg/envoyer.php?fichier=%s",
+        _job_url[0] = g_strdup_printf ("http://www.escrime-info.com/gregxml/Greg/envoyer.php?fichier=%s",
                                        escaped);
-        _job_url[1] = g_strdup_printf ("http://www.escrime-info.com/~resultxml/Greg/envoyer.php?fichier=./temp/%s&valide=1",
+        _job_url[1] = g_strdup_printf ("http://www.escrime-info.com/gregxml/Greg/envoyer.php?fichier=./temp/%s&valide=1",
                                        escaped);
 
         g_free (escaped);

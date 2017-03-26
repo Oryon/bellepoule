@@ -811,53 +811,57 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
                      4.0 * paper_w / 100);
 
     {
-      GooCanvas     *canvas = Canvas::CreatePrinterCanvas (context);
-      FlashCode     *flash  = _contest->GetFlashCode ();
-      GooCanvasItem *item;
-      gdouble        image_w;
+      FlashCode *flash = _contest->GetFlashCode ();
 
-      item = goo_canvas_image_new (goo_canvas_get_root_item (canvas),
-                                   flash->GetPixbuf (),
-                                   0.0,
-                                   0.0,
-                                   NULL);
-
+      if (flash)
       {
-        GooCanvasBounds bounds;
-        gdouble         h = 0.0;
+        GooCanvas     *canvas = Canvas::CreatePrinterCanvas (context);
+        GooCanvasItem *item;
+        gdouble        image_w;
 
-        goo_canvas_item_get_bounds (item,
-                                    &bounds);
-        image_w = bounds.x2- bounds.x1;
+        item = goo_canvas_image_new (goo_canvas_get_root_item (canvas),
+                                     flash->GetPixbuf (),
+                                     0.0,
+                                     0.0,
+                                     NULL);
 
-        goo_canvas_convert_to_item_space (canvas,
-                                          item,
-                                          &image_w,
-                                          &h);
+        {
+          GooCanvasBounds bounds;
+          gdouble         h = 0.0;
+
+          goo_canvas_item_get_bounds (item,
+                                      &bounds);
+          image_w = bounds.x2- bounds.x1;
+
+          goo_canvas_convert_to_item_space (canvas,
+                                            item,
+                                            &image_w,
+                                            &h);
+        }
+
+        goo_canvas_item_scale (item,
+                               20/image_w,   // 20% of paper_w
+                               20/image_w);  // 20% of paper_w
+
+        {
+          gchar *url = flash->GetText ();
+
+          goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                               url,
+                               2.0, 21.0,
+                               -1.0,
+                               GTK_ANCHOR_W,
+                               "fill-color", "blue",
+                               "font", BP_FONT "Bold 2px", NULL);
+          g_free (url);
+        }
+
+        goo_canvas_render (canvas,
+                           gtk_print_context_get_cairo_context (context),
+                           NULL,
+                           1.0);
+        gtk_widget_destroy (GTK_WIDGET (canvas));
       }
-
-      goo_canvas_item_scale (item,
-                             20/image_w,   // 20% of paper_w
-                             20/image_w);  // 20% of paper_w
-
-      {
-        gchar *url = flash->GetText ();
-
-        goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                             url,
-                             2.0, 21.0,
-                             -1.0,
-                             GTK_ANCHOR_W,
-                             "fill-color", "blue",
-                             "font", BP_FONT "Bold 2px", NULL);
-        g_free (url);
-      }
-
-      goo_canvas_render (canvas,
-                         gtk_print_context_get_cairo_context (context),
-                         NULL,
-                         1.0);
-      gtk_widget_destroy (GTK_WIDGET (canvas));
     }
   }
 }
