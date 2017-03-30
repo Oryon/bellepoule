@@ -1,0 +1,12 @@
+*.swp
+*.exe
+bin
+obj
+.cproject
+.project
+*.layout
+*.depend
+./trucs
+build/BellePoule/debug
+./webserver
+PKGBUILD
