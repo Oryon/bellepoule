@@ -343,13 +343,13 @@ build:   $(build_staging)
 publish: $(publish_staging)
 
 build_windows: all
-	cp Release/$(PRODUCT)-*.exe ~/Project/Gtk/trunk/build/BellePoule/windows/exe/
-	#echo "cp Debug/$(PRODUCT)-*.exe ~/Project/Gtk/trunk/build/BellePoule/windows/exe/"
-	#cp ~/Project/Gtk/trunk/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/$(PRODUCT)/bin
+	cp Release/$(PRODUCT)-*.exe ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/
+	#echo "cp Debug/$(PRODUCT)-*.exe ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/"
+	#cp ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/$(PRODUCT)/bin
 	env WINEPREFIX="$(HOME)/.wine" wine C:\\windows\\command\\start.exe /Unix $(HOME)/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Inno\ Setup\ 5/Inno\ Setup\ Compiler.lnk
 
 publish_windows:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule ~/Project/Gtk/trunk/build/BellePoule/windows/Output/setup$(VERSION_MAJOR)_$(VERSION_MINOR)$(VERSION_MATURITY).exe; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/Output/setup$(VERSION_MAJOR)_$(VERSION_MINOR)$(VERSION_MATURITY).exe; quit"
 
 build_ubuntu:
 	debuild -us -uc --lintian-opts --color always
