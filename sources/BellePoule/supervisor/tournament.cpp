@@ -546,7 +546,6 @@ Player *Tournament::UpdateConnectionStatus (GList       *player_list,
       Player::AttributeId connection_attr_id ("connection");
       Player::AttributeId ip_attr_id         ("IP");
 
-      current_player = current_player;
       current_player->SetAttributeValue (&connection_attr_id,
                                          "OK");
       if (ip_address)
