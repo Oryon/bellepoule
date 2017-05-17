@@ -170,6 +170,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  GList *Piste::GetSlots ()
+  {
+    return _slots;
+  }
+
+  // --------------------------------------------------------------------------------
   Slot *Piste::GetSlotAt (GDateTime *start_time)
   {
     GList *current = _slots;

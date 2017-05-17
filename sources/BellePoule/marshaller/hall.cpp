@@ -601,17 +601,37 @@ namespace Marshaller
   void Hall::OnPisteDoubleClick (Piste          *piste,
                                  GdkEventButton *event)
   {
-    GDateTime *cursor = _timeline->RetreiveCursorTime ();
-    Slot      *slot   = piste->GetSlotAt (cursor);
+    GList *slots  = piste->GetSlots ();
 
-    if (slot)
+    if (slots)
     {
-      _job_board->AddJobs (slot->GetJobList ());
-      _job_board->Display ();
-      _job_board->Clean   ();
-    }
+      while (slots)
+      {
+        Slot *slot = (Slot *) slots->data;
 
-    g_date_time_unref (cursor);
+        _job_board->AddJobs (slot->GetJobList ());
+
+        slots = g_list_next (slots);
+      }
+
+      {
+        GDateTime *cursor = _timeline->RetreiveCursorTime ();
+        Slot      *slot   = piste->GetSlotAt (cursor);
+        Job       *job    = NULL;
+
+        if (slot)
+        {
+          GList *jobs = slot->GetJobList ();
+
+          job = (Job *) jobs->data;
+        }
+
+        _job_board->Display (job);
+        g_date_time_unref (cursor);
+      }
+
+      _job_board->Clean ();
+    }
   }
 
   // --------------------------------------------------------------------------------

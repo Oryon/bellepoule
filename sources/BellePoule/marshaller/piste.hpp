@@ -134,6 +134,8 @@ namespace Marshaller
 
       Slot *GetSlotAt (GDateTime *time);
 
+      GList *GetSlots ();
+
       static gboolean OnButtonPress (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
