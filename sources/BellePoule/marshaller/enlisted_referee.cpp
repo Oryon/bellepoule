@@ -71,7 +71,8 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean EnlistedReferee::IsAvailableFor (Slot *slot)
+  gboolean EnlistedReferee::IsAvailableFor (Slot      *slot,
+                                            GTimeSpan  duration)
   {
     gboolean             slot_fixed = FALSE;
     Player::AttributeId  attr_id ("attending");
@@ -85,7 +86,7 @@ namespace Marshaller
       free_slots = Slot::GetFreeSlots (NULL,
                                        _slots,
                                        now,
-                                       0);
+                                       duration);
 
       {
         GList *current = free_slots;

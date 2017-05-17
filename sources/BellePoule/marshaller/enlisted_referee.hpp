@@ -31,7 +31,8 @@ namespace Marshaller
 
       void AddSlot (Slot *slot);
 
-      gboolean IsAvailableFor (Slot *slot);
+      gboolean IsAvailableFor (Slot      *slot,
+                               GTimeSpan  duration);
 
       gint GetWorkload ();
 

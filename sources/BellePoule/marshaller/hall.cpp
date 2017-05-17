@@ -168,7 +168,7 @@ namespace Marshaller
         while (current)
         {
           Job   *job   = (Job *) current->data;
-          GList *slots = piste->GetFreeSlots (from, 30 *G_TIME_SPAN_MINUTE);
+          GList *slots = piste->GetFreeSlots (from, 30*G_TIME_SPAN_MINUTE);
           Slot  *slot  = (Slot *) slots->data;
 
           slot->AddJob (job);
@@ -832,7 +832,8 @@ namespace Marshaller
             EnlistedReferee *referee;
 
             referee = GetFreeRefereeFor (referee_list,
-                                         slot);
+                                         slot,
+                                         30*G_TIME_SPAN_MINUTE);
             if (referee)
             {
               slot->Retain ();
@@ -902,7 +903,7 @@ namespace Marshaller
 
         free_slots = g_list_concat (free_slots,
                                     piste->GetFreeSlots (when,
-                                                         30*G_TIME_SPAN_MINUTE));
+                                                         duration));
 
         current = g_list_next (current);
       }
@@ -918,8 +919,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  EnlistedReferee *Hall::GetFreeRefereeFor (GList *referee_list,
-                                            Slot  *slot)
+  EnlistedReferee *Hall::GetFreeRefereeFor (GList     *referee_list,
+                                            Slot      *slot,
+                                            GTimeSpan  duration)
   {
     GList           *current_referee;
     GList           *sorted_list;
@@ -933,7 +935,8 @@ namespace Marshaller
     {
       EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
 
-      if (referee->IsAvailableFor (slot))
+      if (referee->IsAvailableFor (slot,
+                                   duration))
       {
         available_referee = referee;
         break;
