@@ -1134,6 +1134,7 @@ void Contest::ManageReferee (Net::Message *message)
           if (old)
           {
             old->UpdateFrom (referee);
+            old->Spread ();
           }
           else
           {

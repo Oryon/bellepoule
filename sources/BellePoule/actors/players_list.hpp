@@ -138,6 +138,7 @@ namespace People
       gdouble      *_column_width;
       gboolean      _flat_print;
       PlayersStore *_store;
+      const gchar  *_parcel_name;
 
       void RefreshDisplay ();
 

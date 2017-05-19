@@ -39,6 +39,7 @@ namespace People
     _store           = NULL;
     _column_width    = NULL;
     _selector_column = -1;
+    _parcel_name     = NULL;
 
     {
       _tree_view = GTK_TREE_VIEW (_glade->GetWidget ("players_list"));
@@ -359,6 +360,8 @@ namespace People
                             player, -1);
       }
     }
+
+    player->Spread ();
   }
 
   // --------------------------------------------------------------------------------
@@ -780,6 +783,11 @@ namespace People
 
     _player_list = g_list_append (_player_list,
                                   player);
+
+    if (_parcel_name)
+    {
+      player->Disclose (_parcel_name);
+    }
 
     Update (player);
   }
@@ -1661,6 +1669,8 @@ namespace People
 
       current = g_list_next (current);
     }
+
+    _parcel_name = as;
   }
 
   // --------------------------------------------------------------------------------
