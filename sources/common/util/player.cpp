@@ -826,7 +826,7 @@ gboolean Player::SendMessage (const gchar *where,
         g_free (content);
       }
 
-      uploader->Release ();
+      uploader->Stop ();
       return TRUE;
     }
   }
