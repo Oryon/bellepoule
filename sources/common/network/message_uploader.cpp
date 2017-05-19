@@ -41,8 +41,6 @@ namespace Net
 
     _message_queue = g_async_queue_new_full ((GDestroyNotify) Object::TryToRelease);
 
-    Retain ();
-
     {
       GError *error = NULL;
 
