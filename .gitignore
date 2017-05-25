@@ -1,5 +1,6 @@
 *.swp
 *.exe
+*.o
 *.layout
 *.depend
 build/BellePoule/debug

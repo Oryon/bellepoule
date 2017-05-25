@@ -3,6 +3,7 @@ EXEC = livepoule
 CC = arm-linux-gnueabihf-gcc
 
 CFLAGS  =
+CFLAGS += -DWIRING_PI
 CFLAGS += -DLIVE_POOL
 CFLAGS += -Wshadow
 CFLAGS += -Winit-self
@@ -14,7 +15,7 @@ CFLAGS += -Wmissing-include-dirs
 CFLAGS += -Wswitch-enum
 CFLAGS += -Wswitch-default
 CFLAGS += -pedantic
-CFLAGS += -std=c++98
+CFLAGS += -std=c++0x
 CFLAGS += -Wextra
 CFLAGS += -Wall
 CFLAGS += -Wno-int-to-pointer-cast
@@ -23,6 +24,7 @@ CFLAGS += -Wno-unused-parameter
 CFLAGS += -Wno-shadow
 CFLAGS += -Wno-vla
 CFLAGS += -Wno-variadic-macros
+CFLAGS += -Wno-deprecated-declarations
 CFLAGS += $(shell pkg-config --cflags gtk+-3.0 libxml-2.0 libcurl libmicrohttpd libqrencode libssl)
 CFLAGS += -I../../sources/common
 CFLAGS += -I../../sources/LivePoule
@@ -42,6 +44,7 @@ SRC  := $(filter-out ../../sources/common/util/drop_zone.cpp, $(SRC))
 SRC  := $(filter-out ../../sources/common/util/canvas.cpp, $(SRC))
 SRC  := $(filter-out ../../sources/common/util/player.cpp, $(SRC))
 SRC  := $(filter-out ../../sources/common/network/web_server.cpp, $(SRC))
+SRC  := $(filter-out ../../sources/common/network/greg_uploader.cpp, $(SRC))
 OBJ   = $(SRC:.cpp=.o)
 HPP   = $(SRC:.cpp=.hpp)
 HPP  := $(filter-out ../../sources/LivePoule/main.hpp, $(HPP))
@@ -50,8 +53,14 @@ HPP  := $(filter-out ../../sources/LivePoule/main.hpp, $(HPP))
 ##
 ## Compilation section
 ##
-all: extract $(EXEC)
-	mv $(EXEC) /home/pi/livepoule/bin
+all: $(EXEC)
+
+install:
+	mkdir -p $(HOME)/livepoule/bin
+	mv $(EXEC) $(HOME)/livepoule/bin
+	mkdir -p $(HOME)/livepoule/share/livepoule
+	cp -r ../../Exemples $(HOME)/livepoule/share/livepoule
+	cp -r ../../resources $(HOME)/livepoule/share/livepoule
 
 $(EXEC): $(OBJ)
 	@echo "\033[1;36m" $< "\033[0m"
