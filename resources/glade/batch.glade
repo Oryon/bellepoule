@@ -38,6 +38,8 @@
       <column type="gpointer"/>
       <!-- column-name color -->
       <column type="gchararray"/>
+      <!-- column-name icon -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkWindow" id="window">
@@ -166,7 +168,13 @@
                       <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                         <property name="title" translatable="yes">Matchs</property>
                         <child>
-                          <object class="GtkCellRendererText" id="batch_renderer"/>
+                          <object class="GtkCellRendererPixbuf" id="job_status"/>
+                          <attributes>
+                            <attribute name="stock-id">3</attribute>
+                          </attributes>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="job_name"/>
                           <attributes>
                             <attribute name="foreground">2</attribute>
                             <attribute name="text">0</attribute>

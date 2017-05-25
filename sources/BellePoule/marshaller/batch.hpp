@@ -49,8 +49,9 @@ namespace Marshaller
                  guint         *referee_id,
                  FieTime      **start_time);
 
-      void SetVisibility (Job      *job,
-                          gboolean  visibility);
+      void SetJobStatus (Job      *job,
+                         gboolean  has_slot,
+                         gboolean  has_referee);
 
       void RemoveJob (Net::Message *message);
 

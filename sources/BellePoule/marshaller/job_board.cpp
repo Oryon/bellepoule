@@ -159,11 +159,23 @@ namespace Marshaller
         GtkLabel *title_label = GTK_LABEL (_glade->GetWidget ("current_job_label"));
         GtkLabel *piste_label = GTK_LABEL (_glade->GetWidget ("piste_label"));
         GtkLabel *time_label  = GTK_LABEL (_glade->GetWidget ("time_label"));
-        gchar    *time        = g_date_time_format (slot->GetStartTime (), "%H:%M");
-        gchar    *piste       = g_strdup_printf    (gettext ("Piste %d"),
-                                                    slot->GetOwner()->GetId ());
+        gchar    *time;
+        gchar    *piste;
 
-        gtk_label_set_text (title_label, job->GetName  ());
+        gtk_label_set_text (title_label, job->GetName ());
+
+        if (slot)
+        {
+          time  = g_date_time_format (slot->GetStartTime (), "%H:%M");
+          piste = g_strdup_printf    (gettext ("Piste %d"),
+                                      slot->GetOwner()->GetId ());
+        }
+        else
+        {
+          time  = g_strdup (gettext ("No time!"));
+          piste = g_strdup (gettext ("No piste!"));
+        }
+
         gtk_label_set_text (piste_label, piste);
         gtk_label_set_text (time_label,  time);
 
@@ -174,10 +186,14 @@ namespace Marshaller
       if (slot)
       {
         _referee_details = new JobDetails (slot->GetRefereeList ());
-
-        Plug (_referee_details,
-              _glade->GetWidget ("referee_detail_hook"));
       }
+      else
+      {
+        _referee_details = new JobDetails (NULL);
+      }
+
+      Plug (_referee_details,
+            _glade->GetWidget ("referee_detail_hook"));
 
       {
         _fencer_details  = new JobDetails (job->GetFencerList ());

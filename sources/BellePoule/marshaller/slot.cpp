@@ -61,8 +61,9 @@ namespace Marshaller
         Job   *job   = (Job *) current->data;
         Batch *batch = job->GetBatch ();
 
-        batch->SetVisibility (job,
-                              TRUE);
+        batch->SetJobStatus (job,
+                             FALSE,
+                             FALSE);
         job->RemoveObjectListener (this);
 
         current = g_list_next (current);
@@ -187,8 +188,9 @@ namespace Marshaller
     {
       Batch *batch = job->GetBatch ();
 
-      batch->SetVisibility (job,
-                            FALSE);
+      batch->SetJobStatus (job,
+                           _job_list     != NULL,
+                           _referee_list != NULL);
     }
 
     _owner->OnSlotUpdated (this);
@@ -209,8 +211,9 @@ namespace Marshaller
     {
       Batch *batch = job->GetBatch ();
 
-      batch->SetVisibility (job,
-                            TRUE);;
+      batch->SetJobStatus (job,
+                           FALSE,
+                           FALSE);
     }
 
     job->RemoveObjectListener (this);
@@ -242,9 +245,13 @@ namespace Marshaller
 
       while (current)
       {
-        Job *job = (Job *) current->data;
+        Job   *job   = (Job *) current->data;
+        Batch *batch = job->GetBatch ();
 
         job->SetReferee (referee->GetRef ());
+        batch->SetJobStatus (job,
+                             _job_list     != NULL,
+                             _referee_list != NULL);
 
         current = g_list_next (current);
       }
