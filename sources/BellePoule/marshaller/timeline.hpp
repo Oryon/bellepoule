@@ -44,8 +44,9 @@ namespace Marshaller
       static gboolean RedrawCbk (Timeline *tl);
 
     private:
-      static const guint HOURS_MONITORED = 10;
-      static const guint START_MARGING   = 15*G_TIME_SPAN_MINUTE;
+      static const guint     HOURS_MONITORED = 10;
+      static const GTimeSpan STEP            = 15*G_TIME_SPAN_MINUTE;
+      static const GTimeSpan START_MARGING   = STEP;
 
       GList         *_batch_list;
       GTimeSpan      _cursor;
@@ -68,6 +69,8 @@ namespace Marshaller
       void DrawCursors ();
 
       void DrawSlots ();
+
+      void TranslateCursor (gdouble delta);
 
       void RefreshCursorTime ();
 

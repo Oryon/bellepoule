@@ -112,7 +112,7 @@ namespace Marshaller
                            NULL);
       goo_canvas_text_new (GetRootItem (),
                            time,
-                           (i*G_TIME_SPAN_HOUR + START_MARGING) *_time_scale,
+                           (i*G_TIME_SPAN_HOUR + START_MARGING) * _time_scale,
                            _batch_scale,
                            -1.0,
                            GTK_ANCHOR_S,
@@ -272,46 +272,53 @@ namespace Marshaller
   {
     if (item)
     {
-      // Translation
+      gdouble drag_now = event->x;
+
+      if (drag_now < 2.0)
       {
-        gdouble drag_now = event->x;
-
-        if (drag_now < 2.0)
-        {
-          drag_now = 2.0;
-        }
-        if (drag_now > tl->_allocation.width - 2.0)
-        {
-          drag_now = tl->_allocation.width - 2.0;
-        }
-
-        goo_canvas_item_translate (tl->_goo_cursor,
-                                   drag_now - tl->_drag_start,
-                                   0.0);
-        goo_canvas_item_translate (tl->_goo_cursor_time,
-                                   drag_now - tl->_drag_start,
-                                   0.0);
+        drag_now = 2.0;
+      }
+      if (drag_now > tl->_allocation.width - 2.0)
+      {
+        drag_now = tl->_allocation.width - 2.0;
       }
 
-      // Update the cursor attribute
-      {
-        GooCanvasBounds bounds;
+      tl->TranslateCursor (drag_now - tl->_drag_start);
 
-        goo_canvas_item_get_bounds (tl->_goo_cursor,
-                                    &bounds);
-        tl->_cursor = bounds.x1 / tl->_time_scale;
-      }
-
-      tl->RefreshCursorTime ();
-
-      if (tl->_listener)
-      {
-        tl->_listener->OnTimelineCursorMoved ();
-      }
       return TRUE;
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Timeline::TranslateCursor (gdouble delta)
+  {
+    // Translation
+    {
+      goo_canvas_item_translate (_goo_cursor,
+                                 delta,
+                                 0.0);
+      goo_canvas_item_translate (_goo_cursor_time,
+                                 delta,
+                                 0.0);
+    }
+
+    // Update the cursor attribute
+    {
+      GooCanvasBounds bounds;
+
+      goo_canvas_item_get_bounds (_goo_cursor,
+                                  &bounds);
+      _cursor = bounds.x1 / _time_scale;
+    }
+
+    RefreshCursorTime ();
+
+    if (_listener)
+    {
+      _listener->OnTimelineCursorMoved ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -342,6 +349,22 @@ namespace Marshaller
     __gcc_extension__ g_signal_handlers_disconnect_by_func (item,
                                                             (void *) OnMotion,
                                                             tl);
+
+    {
+      GTimeSpan round = tl->_cursor % STEP;
+
+      if (round > (STEP / 2))
+      {
+        round = STEP - round;
+      }
+      else
+      {
+        round = -round;
+      }
+
+      tl->TranslateCursor (round * tl->_time_scale);
+    }
+
     return TRUE;
   }
 
