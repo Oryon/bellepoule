@@ -2173,7 +2173,7 @@ namespace Pool
                                           message);
       }
 
-      FeedParcel (_parcel);
+      RefreshParcel ();
     }
   }
 

@@ -143,7 +143,7 @@
   <object class="GtkWindow" id="root">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">BellePoule - Fencing tournament</property>
-    <property name="icon">images/supervisor.png</property>
+    <property name="icon">images/supervisor-small.png</property>
     <accel-groups>
       <group name="accelgroup1"/>
     </accel-groups>

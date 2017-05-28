@@ -374,6 +374,12 @@ void Object::FeedParcel (Net::Message *parcel)
 }
 
 // --------------------------------------------------------------------------------
+void Object::RefreshParcel ()
+{
+  FeedParcel (_parcel);
+}
+
+// --------------------------------------------------------------------------------
 gboolean Object::OnMessage (Net::Message *message)
 {
   return FALSE;

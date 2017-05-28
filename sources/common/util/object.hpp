@@ -129,6 +129,8 @@ class Object
 
     virtual void Recall ();
 
+    void RefreshParcel ();
+
     virtual void FeedParcel (Net::Message *parcel);
 
     gboolean OnMessage (Net::Message *message);
