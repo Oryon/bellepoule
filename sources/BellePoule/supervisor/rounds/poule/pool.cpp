@@ -2172,6 +2172,8 @@ namespace Pool
         _roadmap_listener->OnPoolRoadmap (this,
                                           message);
       }
+
+      FeedParcel (_parcel);
     }
   }
 

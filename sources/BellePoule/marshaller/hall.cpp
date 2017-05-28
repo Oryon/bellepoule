@@ -277,6 +277,7 @@ namespace Marshaller
             {
               slot->AddJob     (job);
               slot->AddReferee (referee);
+              _timeline->Redraw ();
             }
             else
             {

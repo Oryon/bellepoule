@@ -4,6 +4,6 @@
 #define VERSION_BRANCH    "UNSTABLE"
 #define VERSION           "5"
 #define VERSION_REVISION  "0"
-#define VERSION_MATURITY  "alpha14"
+#define VERSION_MATURITY  "alpha15"
 
 #endif
