@@ -43,7 +43,8 @@ namespace Marshaller
 
       _cursor = g_date_time_difference (now,
                                         _origin);
-      _cursor += 5 * G_TIME_SPAN_MINUTE;
+      _cursor += STEP;
+      _cursor -= _cursor % STEP;
 
       g_date_time_unref (now);
     }

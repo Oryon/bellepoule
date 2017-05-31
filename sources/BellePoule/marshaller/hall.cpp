@@ -883,11 +883,14 @@ namespace Marshaller
 
     // When?
     {
-      GtkToggleButton *now = GTK_TOGGLE_BUTTON (_glade->GetWidget ("now"));
+      GtkToggleButton *now_button = GTK_TOGGLE_BUTTON (_glade->GetWidget ("now"));
 
-      if (gtk_toggle_button_get_active (now))
+      if (gtk_toggle_button_get_active (now_button))
       {
-        when = g_date_time_new_now_local ();
+        GDateTime *now = g_date_time_new_now_local ();
+
+        when = Slot::GetAsap (now);
+        g_date_time_unref (now);
       }
       else
       {
@@ -897,20 +900,18 @@ namespace Marshaller
 
 
     // Loop over the pistes
+    while (current)
     {
-      while (current)
-      {
-        Piste *piste = (Piste *) current->data;
+      Piste *piste     = (Piste *) current->data;
+      GList *new_slots = piste->GetFreeSlots (when,
+                                              duration);
+      free_slots = g_list_concat (free_slots,
+                                  new_slots);
 
-        free_slots = g_list_concat (free_slots,
-                                    piste->GetFreeSlots (when,
-                                                         duration));
-
-        current = g_list_next (current);
-      }
-
-      g_date_time_unref (when);
+      current = g_list_next (current);
     }
+
+    g_date_time_unref (when);
 
     // Sort the result
     free_slots = g_list_sort (free_slots,

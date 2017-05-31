@@ -80,12 +80,11 @@ namespace Marshaller
 
     if (attr && (attr->GetUIntValue () == TRUE))
     {
-      GDateTime *now        = g_date_time_new_now_local ();
-      GList     *free_slots;
+      GList *free_slots;
 
       free_slots = Slot::GetFreeSlots (NULL,
                                        _slots,
-                                       now,
+                                       slot->GetStartTime (),
                                        duration);
 
       {
@@ -93,9 +92,9 @@ namespace Marshaller
 
         while (current)
         {
-          Slot *current_slot = (Slot *) current->data;
+          Slot *referee_slot = (Slot *) current->data;
 
-          slot_fixed = slot->FitWith (current_slot);
+          slot_fixed = slot->FitWith (referee_slot);
           if (slot_fixed)
           {
             break;
@@ -106,7 +105,6 @@ namespace Marshaller
       }
 
       FreeFullGList (Slot, free_slots);
-      g_date_time_unref (now);
     }
 
     return slot_fixed;

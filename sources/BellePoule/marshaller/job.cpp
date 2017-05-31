@@ -155,4 +155,10 @@ namespace Marshaller
   {
     return a->_sibling_order - b->_sibling_order;
   }
+
+  // --------------------------------------------------------------------------------
+  void Job::Dump (Job *what)
+  {
+    printf ("%s\n", what->_name);
+  }
 }

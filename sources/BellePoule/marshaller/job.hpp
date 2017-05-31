@@ -64,6 +64,8 @@ namespace Marshaller
       static gint CompareSiblingOrder (Job *a,
                                        Job *b);
 
+      static void Dump (Job *what);
+
     private:
       guint     _sibling_order;
       gchar    *_name;

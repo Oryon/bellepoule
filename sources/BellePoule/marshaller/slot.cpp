@@ -33,15 +33,11 @@ namespace Marshaller
     _referee_list = NULL;
     _owner        = owner;
 
-    _fie_time = new FieTime (start_time);
     _duration = duration;
 
-    _start = start_time;
-    g_date_time_ref (_start);
-    if (_start)
-    {
-      g_date_time_ref (_start);
-    }
+    _fie_time = NULL;
+    _start    = NULL;
+    SetStartTime (start_time);
 
     _end = end_time;
     if (_end)
@@ -88,6 +84,24 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Slot::SetStartTime (GDateTime *time)
+  {
+    if (_start)
+    {
+      g_date_time_unref (_start);
+    }
+
+    _start = time;
+    if (_start)
+    {
+      g_date_time_ref (_start);
+    }
+
+    TryToRelease (_fie_time);
+    _fie_time = new FieTime (time);
+  }
+
+  // --------------------------------------------------------------------------------
   GDateTime *Slot::GetStartTime ()
   {
     return _start;
@@ -102,41 +116,47 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   gboolean Slot::FitWith (Slot *with)
   {
+    gboolean   fit = TRUE;
+    GDateTime *fixed_start;
     GDateTime *fixed_end;
-    GTimeSpan  delta = g_date_time_difference (with->_start,
-                                               _start);
 
-    if (delta <= 0)
+    if (g_date_time_difference (with->_start,
+                                _start) <= 0)
     {
-      delta = 0;
-    }
-    fixed_end = g_date_time_add (_start, _duration + delta);
-
-    if (_end && (g_date_time_compare (fixed_end, _end) > 0))
-    {
-      g_date_time_unref (fixed_end);
-      return FALSE;
-    }
-    else if (with->_end && (g_date_time_compare (fixed_end, with->_end) > 0))
-    {
-      g_date_time_unref (fixed_end);
-      return FALSE;
+      fixed_start = g_date_time_add (_start, 0);
     }
     else
     {
-      GDateTime *fixed_start = g_date_time_add (_start, delta);
+      fixed_start = g_date_time_add (with->_start, 0);
+    }
 
-      g_date_time_unref (_start);
-      _start = fixed_start;
+    fixed_end = g_date_time_add (fixed_start, _duration);
+
+    if (_end && (g_date_time_compare (fixed_end, _end) > 0))
+    {
+      fit = FALSE;
+    }
+    else if (with->_end && (g_date_time_compare (fixed_end, with->_end) > 0))
+    {
+      fit = FALSE;
+    }
+
+    if (fit)
+    {
+      SetStartTime (fixed_start);
 
       if (_end)
       {
         g_date_time_unref (_end);
       }
       _end = fixed_end;
+      g_date_time_ref (_end);
     }
 
-    return TRUE;
+    g_date_time_unref (fixed_start);
+    g_date_time_unref (fixed_end);
+
+    return fit;
   }
 
   // --------------------------------------------------------------------------------
@@ -321,8 +341,7 @@ namespace Marshaller
     GList *slots = GetFreeSlots (owner,
                                  booked_slots,
                                  from,
-                                 duration,
-                                 FALSE);
+                                 duration);
     GList *current = slots;
 
     while (current)
@@ -349,128 +368,99 @@ namespace Marshaller
   GList *Slot::GetFreeSlots (Owner     *owner,
                              GList     *booked_slots,
                              GDateTime *from,
-                             GTimeSpan  duration,
-                             gboolean   round_date)
+                             GTimeSpan  duration)
   {
-    GList     *slots        = NULL;
-    GList     *current      = booked_slots;
-    GDateTime *rounded_from;
+    GList *slots = NULL;
 
-    if (round_date)
+    // Before the booked slots
+    if (booked_slots == NULL)
     {
-      rounded_from = GetRoundedDate (from);
+      Slot *free_slot = new Slot (owner,
+                                  from,
+                                  NULL,
+                                  duration);
+      slots = g_list_append (slots,
+                             free_slot);
     }
     else
     {
-      rounded_from = from;
-      g_date_time_ref (rounded_from);
-    }
+      Slot      *first_slot = (Slot *) booked_slots->data;
+      GDateTime *end_time   = g_date_time_add (from, duration);
 
-    while (current)
-    {
-      GList *next         = g_list_next (current);
-      Slot  *current_slot = (Slot *) current->data;
-      Slot  *free_slot    = NULL;
-
-      if (current == booked_slots)
-      {
-        // Before the booked slots
-        GDateTime *end_time    = g_date_time_add (rounded_from, duration);
-        gboolean   enough_time = (g_date_time_compare (current_slot->_start, end_time) >= 0);
-
-        g_date_time_unref (end_time);
-        if (enough_time)
-        {
-          break;
-        }
-      }
-      if (next == NULL)
-      {
-        // After the booked slots
-        free_slot = new Slot (owner,
-                              GetLatestDate (rounded_from, current_slot->_end),
-                              NULL,
-                              duration);
-      }
-      else
-      {
-        // Between the booked slots
-        Slot      *next_slot      = (Slot *) next->data;
-        GDateTime *max_start_time;
-
-        if (duration == 0)
-        {
-          duration = g_date_time_difference (next_slot->_end,
-                                             current_slot->_start);
-        }
-
-        max_start_time = g_date_time_add (next_slot->_start, -duration);
-
-        if (   (g_date_time_compare (max_start_time, current_slot->_end) > 0)
-            && (g_date_time_compare (max_start_time, rounded_from) >= 0))
-        {
-          free_slot = new Slot (owner,
-                                GetLatestDate (rounded_from, current_slot->_end),
-                                next_slot->_start,
-                                duration);
-        }
-        g_date_time_unref (max_start_time);
-      }
-
-      if (free_slot)
-      {
-        slots = g_list_append (slots,
-                               free_slot);
-      }
-
-      current = g_list_next (current);
-    }
-
-    if (slots == NULL)
-    {
-      GDateTime *now;
-
-      if (round_date)
-      {
-        now = g_date_time_new_now_local ();
-
-        {
-          GDateTime *rounded_date = Slot::GetRoundedDate (now);
-
-          g_date_time_unref (now);
-          now = rounded_date;
-        }
-      }
-      else
-      {
-        now = from;
-        g_date_time_ref (now);
-      }
-
+      if (g_date_time_compare (first_slot->_start, end_time) >= 0)
       {
         Slot *free_slot = new Slot (owner,
-                                    GetLatestDate (rounded_from, now),
-                                    NULL,
+                                    from,
+                                    first_slot->_start,
                                     duration);
         slots = g_list_append (slots,
                                free_slot);
       }
-
-      g_date_time_unref (now);
+      g_date_time_unref (end_time);
     }
 
-    g_date_time_unref (rounded_from);
+    {
+      GList *current = booked_slots;
+
+      while (current)
+      {
+        GList *next         = g_list_next (current);
+        Slot  *current_slot = (Slot *) current->data;
+        Slot  *free_slot    = NULL;
+
+        if (next == NULL)
+        {
+          // After the booked slots
+          free_slot = new Slot (owner,
+                                GetLatestDate (from, current_slot->_end),
+                                NULL,
+                                duration);
+        }
+        else
+        {
+          // Between the booked slots
+          Slot      *next_slot      = (Slot *) next->data;
+          GDateTime *max_start_time;
+
+          if (duration == 0)
+          {
+            duration = g_date_time_difference (next_slot->_end,
+                                               current_slot->_start);
+          }
+
+          max_start_time = g_date_time_add (next_slot->_start, -duration);
+
+          if (   (g_date_time_compare (max_start_time, current_slot->_end) > 0)
+              && (g_date_time_compare (max_start_time, from) >= 0))
+          {
+            free_slot = new Slot (owner,
+                                  GetLatestDate (from, current_slot->_end),
+                                  next_slot->_start,
+                                  duration);
+          }
+          g_date_time_unref (max_start_time);
+        }
+
+        if (free_slot)
+        {
+          slots = g_list_append (slots,
+                                 free_slot);
+        }
+
+        current = g_list_next (current);
+      }
+    }
 
     return slots;
   }
 
   // --------------------------------------------------------------------------------
-  GDateTime *Slot::GetRoundedDate (GDateTime *of)
+  GDateTime *Slot::GetAsap (GDateTime *after)
   {
     GDateTime *tmp;
     GDateTime *new_time;
 
-    new_time = g_date_time_add_minutes (of, 15);
+    new_time = g_date_time_add_minutes (after, 15);
 
     // Round minutes
     {
@@ -512,6 +502,14 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Slot::Dump (Slot *what)
   {
-    printf ("%p ==> %s\n", (void *) what->_owner, g_date_time_format (what->_start, "%T"));
+    printf ("[%d]  %s .. ", what->_owner->GetId (), g_date_time_format (what->_start, "%R"));
+    if (what->_end)
+    {
+      printf ("%s\n" ESC, g_date_time_format (what->_end, "%R"));
+    }
+    else
+    {
+      printf ("~\n");
+    }
   }
 }

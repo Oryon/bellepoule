@@ -79,8 +79,9 @@ namespace Marshaller
       static GList *GetFreeSlots (Owner     *owner,
                                   GList     *busy_slots,
                                   GDateTime *from,
-                                  GTimeSpan  duration,
-                                  gboolean   round_date = TRUE);
+                                  GTimeSpan  duration);
+
+      static GDateTime *GetAsap (GDateTime *after);
 
     private:
       Owner     *_owner;
@@ -95,9 +96,9 @@ namespace Marshaller
 
       void OnObjectDeleted (Object *object);
 
+      void SetStartTime (GDateTime *time);
+
       static GDateTime *GetLatestDate (GDateTime *a,
                                        GDateTime *b);
-
-      static GDateTime *GetRoundedDate (GDateTime *of);
   };
 }
