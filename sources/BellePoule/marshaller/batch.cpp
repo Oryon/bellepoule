@@ -436,8 +436,9 @@ namespace Marshaller
             GtkTreeIter  iter;
             gchar       *attr;
             gchar       *name;
-            guint        sibling_order = g_list_length (_pending_list);
+            guint        sibling_order;
 
+            sibling_order = g_list_length (_pending_list) + g_list_length (_scheduled_list);
             job = new Job (this,
                            message->GetNetID (),
                            sibling_order,

@@ -287,6 +287,7 @@ namespace Marshaller
           }
         }
       }
+      _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
     }
   }
 
