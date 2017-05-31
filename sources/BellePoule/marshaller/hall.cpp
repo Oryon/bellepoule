@@ -55,7 +55,8 @@ namespace Marshaller
       Plug (_timeline,
             _glade->GetWidget ("timeline_viewport"));
 
-      JobBoard::SetTimeLine (_timeline);
+      JobBoard::SetTimeLine (_timeline,
+                             this);
     }
 
     _lasso = new Lasso ();
@@ -947,6 +948,15 @@ namespace Marshaller
     }
 
     g_date_time_unref (cursor);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::OnJobBoardFocus (guint focus)
+  {
+    Piste *piste = GetPiste (focus);
+
+    CancelSelection ();
+    SelectPiste (piste);
   }
 
   // --------------------------------------------------------------------------------

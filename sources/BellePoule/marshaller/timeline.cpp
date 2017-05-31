@@ -293,6 +293,18 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Timeline::SetCursorTime (GDateTime *time)
+  {
+    _cursor = g_date_time_difference (time,
+                                      _origin);
+    if (_listener)
+    {
+      _listener->OnTimelineCursorMoved ();
+    }
+    Redraw ();
+  }
+
+  // --------------------------------------------------------------------------------
   void Timeline::TranslateCursor (gdouble delta)
   {
     // Translation

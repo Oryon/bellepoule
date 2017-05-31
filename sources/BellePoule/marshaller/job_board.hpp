@@ -28,6 +28,12 @@ namespace Marshaller
   class JobBoard : public Module, Object::Listener
   {
     public:
+      struct Listener
+      {
+        virtual void OnJobBoardFocus (guint focus) = 0;
+      };
+
+    public:
       JobBoard ();
 
       void AddJob (Job *job);
@@ -42,10 +48,12 @@ namespace Marshaller
 
       void OnNextClicked ();
 
-      static void SetTimeLine (Timeline *timeline);
+      static void SetTimeLine (Timeline *timeline,
+                               Listener *listener);
 
     private:
       static Timeline *_timeline;
+      static Listener *_listener;
 
       GtkWidget  *_dialog;
       GList      *_job_list;

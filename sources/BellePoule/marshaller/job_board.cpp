@@ -25,7 +25,8 @@
 
 namespace Marshaller
 {
-  Timeline *JobBoard::_timeline = NULL;
+  Timeline           *JobBoard::_timeline = NULL;
+  JobBoard::Listener *JobBoard::_listener = NULL;
 
   // --------------------------------------------------------------------------------
   JobBoard::JobBoard ()
@@ -49,9 +50,11 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void JobBoard::SetTimeLine (Timeline *timeline)
+  void JobBoard::SetTimeLine (Timeline *timeline,
+                              Listener *listener)
   {
     _timeline = timeline;
+    _listener = listener;
   }
 
   // --------------------------------------------------------------------------------
@@ -195,9 +198,15 @@ namespace Marshaller
 
         if (slot)
         {
-          time  = g_date_time_format (slot->GetStartTime (), "%H:%M");
+          GDateTime *start_time = slot->GetStartTime ();
+          guint      piste_id   = slot->GetOwner()->GetId ();
+
+          _timeline->SetCursorTime (start_time);
+          _listener->OnJobBoardFocus (piste_id);
+
+          time  = g_date_time_format (start_time, "%H:%M");
           piste = g_strdup_printf    (gettext ("Piste %d"),
-                                      slot->GetOwner()->GetId ());
+                                      piste_id);
         }
         else
         {

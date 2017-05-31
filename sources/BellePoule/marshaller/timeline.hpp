@@ -37,6 +37,8 @@ namespace Marshaller
 
       void RemoveBatch (Batch *batch);
 
+      void SetCursorTime (GDateTime *time);
+
       GDateTime *RetreiveCursorTime ();
 
       gboolean Redraw ();

@@ -22,6 +22,7 @@
 #include "batch.hpp"
 #include "timeline.hpp"
 #include "clock.hpp"
+#include "job_board.hpp"
 
 namespace Marshaller
 {
@@ -33,6 +34,7 @@ namespace Marshaller
     public Piste::Listener,
     public Batch::Listener,
     public Timeline::Listener,
+    public JobBoard::Listener,
     public Clock::Listener
   {
     public:
@@ -141,5 +143,7 @@ namespace Marshaller
       void OnBatchAssignmentCancel (Batch *batch);
 
       void OnTimelineCursorMoved ();
+
+      void OnJobBoardFocus (guint focus);
   };
 }

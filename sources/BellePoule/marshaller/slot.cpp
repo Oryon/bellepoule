@@ -334,13 +334,13 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   gboolean Slot::TimeIsInside (GDateTime *time)
   {
-    if (g_date_time_compare (GetStartTime (), time) <= 0)
+    if (g_date_time_compare (_start, time) <= 0)
     {
-      GDateTime *end_time = g_date_time_add (GetStartTime (),
+      GDateTime *end_time = g_date_time_add (_start,
                                              GetDuration  ());
 
       if (g_date_time_compare (time,
-                               end_time) <= 0)
+                               end_time) < 0)
       {
         g_date_time_unref (end_time);
         return TRUE;
