@@ -21,8 +21,9 @@
 #include "util/canvas.hpp"
 #include "enlisted_referee.hpp"
 #include "job.hpp"
-
+#include "job_board.hpp"
 #include "batch.hpp"
+
 #include "piste.hpp"
 
 namespace Marshaller
@@ -42,6 +43,8 @@ namespace Marshaller
     _horizontal = TRUE;
     _listener   = NULL;
     _slots      = NULL;
+
+    _job_board = new JobBoard ();
 
     _display_time = g_date_time_new_now_local ();
 
@@ -161,6 +164,8 @@ namespace Marshaller
     {
       g_date_time_unref (_display_time);
     }
+
+    _job_board->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -176,27 +181,6 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Slot *Piste::GetSlotAt (GDateTime *start_time)
-  {
-    GList *current = _slots;
-
-    while (current)
-    {
-      Slot *slot = (Slot *) current->data;
-
-      if (TimeIsInSlot (start_time,
-                        slot))
-      {
-        return slot;
-      }
-
-      current = g_list_next (current);
-    }
-
-    return NULL;
-  }
-
-  // --------------------------------------------------------------------------------
   void Piste::DisplayAtTime (GDateTime *time)
   {
     if (_display_time)
@@ -206,28 +190,8 @@ namespace Marshaller
     _display_time = g_date_time_add (time, 0);
 
     CleanDisplay  ();
-    OnSlotUpdated (GetSlotAt (time));
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Piste::TimeIsInSlot (GDateTime *time,
-                                Slot      *slot)
-  {
-    if (slot && (g_date_time_compare (slot->GetStartTime (), time) <= 0))
-    {
-      GDateTime *end_time = g_date_time_add (slot->GetStartTime (),
-                                             slot->GetDuration  ());
-
-      if (g_date_time_compare (time,
-                               end_time) <= 0)
-      {
-        g_date_time_unref (end_time);
-        return TRUE;
-      }
-      g_date_time_unref (end_time);
-    }
-
-    return FALSE;
+    OnSlotUpdated (Slot::GetSlotAt (time,
+                                    _slots));
   }
 
   // --------------------------------------------------------------------------------
@@ -269,7 +233,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Piste::OnSlotUpdated (Slot *slot)
   {
-    if (TimeIsInSlot (_display_time, slot))
+    if (slot && slot->TimeIsInside (_display_time))
     {
       GString     *match_name   = g_string_new ("");
       const gchar *last_name    = NULL;
@@ -378,7 +342,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Piste::AddReferee (EnlistedReferee *referee)
   {
-    Slot *slot = GetSlotAt (_display_time);
+    Slot *slot = Slot::GetSlotAt (_display_time,
+                                  _slots);
 
     if (slot)
     {
@@ -518,6 +483,28 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Piste::OnDoubleClick (Piste          *piste,
+                             GdkEventButton *event)
+  {
+    GList *slots = piste->GetSlots ();
+
+    if (slots)
+    {
+      while (slots)
+      {
+        Slot *slot = (Slot *) slots->data;
+
+        _job_board->AddJobs (slot->GetJobList ());
+
+        slots = g_list_next (slots);
+      }
+
+      _job_board->Display ();
+      _job_board->Clean ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Piste::OnButtonPress (GooCanvasItem  *item,
                                  GooCanvasItem  *target,
                                  GdkEventButton *event,
@@ -527,8 +514,8 @@ namespace Marshaller
     {
       if (event->time == piste->_button_press_time)
       {
-        piste->_listener->OnPisteDoubleClick (piste,
-                                              event);
+        piste->OnDoubleClick (piste,
+                              event);
       }
       else
       {

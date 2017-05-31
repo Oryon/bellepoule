@@ -27,7 +27,6 @@ namespace Marshaller
 {
   class RefereePool;
   class Lasso;
-  class JobBoard;
 
   class Hall :
     public CanvasModule,
@@ -85,7 +84,6 @@ namespace Marshaller
       Timeline    *_timeline;
       Lasso       *_lasso;
       Clock       *_clock;
-      JobBoard    *_job_board;
       Listener    *_listener;
 
       ~Hall ();
@@ -133,9 +131,6 @@ namespace Marshaller
       gboolean OnCursorMotion (GdkEventMotion *event);
 
       void OnPisteButtonEvent (Piste          *piste,
-                               GdkEventButton *event);
-
-      void OnPisteDoubleClick (Piste          *piste,
                                GdkEventButton *event);
 
       void OnPisteMotionEvent (Piste          *piste,

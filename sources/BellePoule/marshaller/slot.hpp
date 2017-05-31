@@ -66,6 +66,8 @@ namespace Marshaller
 
       gboolean FitWith (Slot *what);
 
+      gboolean TimeIsInside (GDateTime *time);
+
       static void Dump (Slot *what);
 
       static gint CompareAvailbility (Slot *a,
@@ -82,6 +84,9 @@ namespace Marshaller
                                   GTimeSpan  duration);
 
       static GDateTime *GetAsap (GDateTime *after);
+
+      static Slot *GetSlotAt (GDateTime *time,
+                              GList     *slots);
 
     private:
       Owner     *_owner;

@@ -332,6 +332,47 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Slot::TimeIsInside (GDateTime *time)
+  {
+    if (g_date_time_compare (GetStartTime (), time) <= 0)
+    {
+      GDateTime *end_time = g_date_time_add (GetStartTime (),
+                                             GetDuration  ());
+
+      if (g_date_time_compare (time,
+                               end_time) <= 0)
+      {
+        g_date_time_unref (end_time);
+        return TRUE;
+      }
+      g_date_time_unref (end_time);
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  Slot *Slot::GetSlotAt (GDateTime *start_time,
+                         GList     *slots)
+  {
+    GList *current = slots;
+
+    while (current)
+    {
+      Slot *slot = (Slot *) current->data;
+
+      if (slot->TimeIsInside (start_time))
+      {
+        return slot;
+      }
+
+      current = g_list_next (current);
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   Slot *Slot::GetFreeSlot (Owner     *owner,
                            GList     *booked_slots,
                            GDateTime *from,

@@ -19,11 +19,14 @@
 #include "batch.hpp"
 #include "job.hpp"
 #include "job_details.hpp"
+#include "timeline.hpp"
 
 #include "job_board.hpp"
 
 namespace Marshaller
 {
+  Timeline *JobBoard::_timeline = NULL;
+
   // --------------------------------------------------------------------------------
   JobBoard::JobBoard ()
     : Object ("JobBoard"),
@@ -43,6 +46,12 @@ namespace Marshaller
     Object::TryToRelease (_fencer_details);
 
     g_list_free (_job_list);
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::SetTimeLine (Timeline *timeline)
+  {
+    _timeline = timeline;
   }
 
   // --------------------------------------------------------------------------------
@@ -109,15 +118,35 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void JobBoard::Display (Job *job)
   {
+    _current_job = _job_list;
+
     if (_job_list && job)
     {
       _current_job = g_list_find (_job_list,
                                   job);
     }
-
-    if (_current_job == NULL)
+    else
     {
-      _current_job = _job_list;
+      GList *current = _job_list;
+
+      while (current)
+      {
+        GDateTime *cursor = _timeline->RetreiveCursorTime ();
+        Slot      *slot;
+
+        job  = (Job *) current->data;
+        slot = job->GetSlot ();
+
+        if (slot && (slot->TimeIsInside (cursor)))
+        {
+          _current_job = current;
+          g_date_time_unref (cursor);
+          break;
+        }
+
+        g_date_time_unref (cursor);
+        current = g_list_next (current);
+      }
     }
 
     DisplayCurrent ();

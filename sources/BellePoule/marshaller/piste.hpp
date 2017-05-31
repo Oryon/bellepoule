@@ -28,6 +28,7 @@ namespace Marshaller
   class Job;
   class Batch;
   class EnlistedReferee;
+  class JobBoard;
 
   class Piste :
     public DropZone,
@@ -37,8 +38,6 @@ namespace Marshaller
       struct Listener
       {
         virtual void OnPisteButtonEvent (Piste          *piste,
-                                         GdkEventButton *event) = 0;
-        virtual void OnPisteDoubleClick (Piste          *piste,
                                          GdkEventButton *event) = 0;
         virtual void OnPisteMotionEvent (Piste          *piste,
                                          GdkEventMotion *event) = 0;
@@ -91,6 +90,8 @@ namespace Marshaller
 
       static const gdouble _W;
       static const gdouble _H;
+
+    private:
       static const gdouble _BORDER_W;
       static const gdouble _RESOLUTION;
 
@@ -108,6 +109,7 @@ namespace Marshaller
       gchar           *_focus_color;
       GList           *_slots;
       GDateTime       *_display_time;
+      JobBoard        *_job_board;
 
       ~Piste ();
 
@@ -129,12 +131,21 @@ namespace Marshaller
 
       void  OnSlotLocked  (Slot *slot);
 
-      gboolean TimeIsInSlot (GDateTime *time,
-                             Slot      *slot);
-
-      Slot *GetSlotAt (GDateTime *time);
-
       GList *GetSlots ();
+
+      static gint CompareJob (Job *a,
+                              Job *b);
+
+    private:
+      guint32 _button_press_time;
+
+      void OnDoubleClick (Piste          *piste,
+                          GdkEventButton *event);
+
+      static gboolean OnMotionNotify (GooCanvasItem  *item,
+                                      GooCanvasItem  *target,
+                                      GdkEventMotion *event,
+                                      Piste          *piste);
 
       static gboolean OnButtonPress (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
@@ -145,16 +156,5 @@ namespace Marshaller
                                        GooCanvasItem  *target,
                                        GdkEventButton *event,
                                        Piste          *piste);
-
-      static gboolean OnMotionNotify (GooCanvasItem  *item,
-                                      GooCanvasItem  *target,
-                                      GdkEventMotion *event,
-                                      Piste          *piste);
-
-      static gint CompareJob (Job *a,
-                              Job *b);
-
-    private:
-      guint32 _button_press_time;
   };
 }

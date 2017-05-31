@@ -54,11 +54,12 @@ namespace Marshaller
 
       Plug (_timeline,
             _glade->GetWidget ("timeline_viewport"));
+
+      JobBoard::SetTimeLine (_timeline);
     }
 
-    _lasso     = new Lasso ();
-    _clock     = new Clock (this);
-    _job_board = new JobBoard ();
+    _lasso = new Lasso ();
+    _clock = new Clock (this);
 
     OnTimelineCursorMoved ();
   }
@@ -69,10 +70,9 @@ namespace Marshaller
     FreeFullGList (Batch, _batch_list);
     FreeFullGList (Piste, _piste_list);
 
-    _timeline->Release  ();
-    _lasso->Release     ();
-    _clock->Release     ();
-    _job_board->Release ();
+    _timeline->Release ();
+    _lasso->Release    ();
+    _clock->Release    ();
   }
 
   // --------------------------------------------------------------------------------
@@ -596,43 +596,6 @@ namespace Marshaller
     _selected_list = g_list_remove_link (_selected_list,
                                          selected_node);
     piste->UnSelect ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void Hall::OnPisteDoubleClick (Piste          *piste,
-                                 GdkEventButton *event)
-  {
-    GList *slots  = piste->GetSlots ();
-
-    if (slots)
-    {
-      while (slots)
-      {
-        Slot *slot = (Slot *) slots->data;
-
-        _job_board->AddJobs (slot->GetJobList ());
-
-        slots = g_list_next (slots);
-      }
-
-      {
-        GDateTime *cursor = _timeline->RetreiveCursorTime ();
-        Slot      *slot   = piste->GetSlotAt (cursor);
-        Job       *job    = NULL;
-
-        if (slot)
-        {
-          GList *jobs = slot->GetJobList ();
-
-          job = (Job *) jobs->data;
-        }
-
-        _job_board->Display (job);
-        g_date_time_unref (cursor);
-      }
-
-      _job_board->Clean ();
-    }
   }
 
   // --------------------------------------------------------------------------------

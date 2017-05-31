@@ -23,6 +23,7 @@ namespace Marshaller
   class Message;
   class Job;
   class JobDetails;
+  class Timeline;
 
   class JobBoard : public Module, Object::Listener
   {
@@ -41,7 +42,11 @@ namespace Marshaller
 
       void OnNextClicked ();
 
+      static void SetTimeLine (Timeline *timeline);
+
     private:
+      static Timeline *_timeline;
+
       GtkWidget  *_dialog;
       GList      *_job_list;
       GList      *_current_job;
