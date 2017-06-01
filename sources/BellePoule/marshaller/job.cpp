@@ -97,7 +97,6 @@ namespace Marshaller
   void Job::SetReferee (guint referee_ref)
   {
     _parcel->Set ("referee", referee_ref);
-    Spread ();
   }
 
   // --------------------------------------------------------------------------------
@@ -106,8 +105,6 @@ namespace Marshaller
   {
     _parcel->Set ("piste",      piste_id);
     _parcel->Set ("start_time", start_time);
-
-    Spread ();
   }
 
   // --------------------------------------------------------------------------------

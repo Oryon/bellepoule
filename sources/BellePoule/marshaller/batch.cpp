@@ -48,6 +48,10 @@ namespace Marshaller
     _fencer_list    = NULL;
     _weapon         = NULL;
 
+    _assign_button = _glade->GetWidget ("assign_toolbutton");
+    _cancel_button = _glade->GetWidget ("cancel_toolbutton");
+    _lock_button   = _glade->GetWidget ("lock_toolbutton");
+
     _id = id;
 
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
@@ -141,6 +145,24 @@ namespace Marshaller
   const gchar *Batch::GetName ()
   {
     return _name;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Batch::RefreshControlPanel ()
+  {
+    gtk_widget_set_sensitive (_assign_button, TRUE);
+    gtk_widget_set_sensitive (_cancel_button, TRUE);
+    gtk_widget_set_sensitive (_lock_button,   TRUE);
+
+    if (_pending_list == NULL)
+    {
+      gtk_widget_set_sensitive (_assign_button, FALSE);
+    }
+    if (_scheduled_list == NULL)
+    {
+      gtk_widget_set_sensitive (_cancel_button, FALSE);
+      gtk_widget_set_sensitive (_lock_button,   FALSE);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -312,6 +334,8 @@ namespace Marshaller
                                                 job,
                                                 (GCompareFunc) Job::CompareSiblingOrder);
         }
+
+        RefreshControlPanel ();
         break;
       }
 
@@ -367,6 +391,7 @@ namespace Marshaller
                                                 node);
         }
 
+        RefreshControlPanel ();
         current_job->Release ();
 
         break;
@@ -531,6 +556,7 @@ namespace Marshaller
       _name = message->GetString ("round");
     }
 
+    RefreshControlPanel ();
     return job;
   }
 
@@ -564,6 +590,21 @@ namespace Marshaller
   void Batch::OnCancelAssign ()
   {
     _listener->OnBatchAssignmentCancel (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Batch::OnValidateAssign ()
+  {
+    GList *current = _scheduled_list;
+
+    while (current)
+    {
+      Job *job = (Job *) current->data;
+
+      job->Spread ();
+
+      current = g_list_next (current);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -691,5 +732,14 @@ namespace Marshaller
     Batch *b = dynamic_cast <Batch *> (owner);
 
     b->OnCancelAssign ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_lock_toolbutton_clicked (GtkToolButton *widget,
+                                                              Object        *owner)
+  {
+    Batch *b = dynamic_cast <Batch *> (owner);
+
+    b->OnValidateAssign ();
   }
 }

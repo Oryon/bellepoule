@@ -25,10 +25,15 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">images/shuffle.png</property>
   </object>
+  <object class="GtkImage" id="image4">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">images/draft.png</property>
+  </object>
   <object class="GtkImage" id="image5">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-execute</property>
+    <property name="pixbuf">images/calendar.png</property>
   </object>
   <object class="GtkListStore" id="liststore">
     <columns>
@@ -54,14 +59,15 @@
             <property name="can_focus">False</property>
             <child>
               <object class="GtkToolbar" id="toolbar1">
-                <property name="width_request">150</property>
+                <property name="width_request">110</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="toolbar_style">both</property>
+                <property name="toolbar_style">icons</property>
                 <child>
                   <object class="GtkToolButton" id="assign_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Assign</property>
                     <property name="label" translatable="yes">Assign</property>
                     <property name="use_underline">True</property>
                     <property name="icon_widget">image5</property>
@@ -76,10 +82,26 @@
                   <object class="GtkToolButton" id="cancel_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Cancel</property>
                     <property name="label" translatable="yes">Undo</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-undo</property>
+                    <property name="icon_widget">image4</property>
                     <signal name="clicked" handler="on_cancel_toolbutton_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="lock_toolbutton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Validate</property>
+                    <property name="label" translatable="yes">Validate</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-apply</property>
+                    <signal name="clicked" handler="on_lock_toolbutton_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>

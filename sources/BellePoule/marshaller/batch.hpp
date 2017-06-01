@@ -71,6 +71,8 @@ namespace Marshaller
 
       void OnCancelAssign ();
 
+      void OnValidateAssign ();
+
       GdkColor *GetColor ();
 
       GData *GetProperties ();
@@ -96,10 +98,15 @@ namespace Marshaller
       gchar        *_weapon;
       JobBoard     *_job_board;
       GData        *_properties;
+      GtkWidget    *_assign_button;
+      GtkWidget    *_cancel_button;
+      GtkWidget    *_lock_button;
 
       virtual ~Batch ();
 
       Job *GetJob (guint netid);
+
+      void RefreshControlPanel ();
 
       Player *GetFencer (guint ref);
 
