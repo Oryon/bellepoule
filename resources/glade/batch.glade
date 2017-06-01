@@ -178,14 +178,14 @@
                 <property name="hscrollbar_policy">automatic</property>
                 <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <object class="GtkTreeView" id="batch_treeview">
+                  <object class="GtkTreeView" id="competition_treeview">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="model">liststore</property>
                     <property name="headers_visible">False</property>
                     <property name="headers_clickable">False</property>
                     <property name="search_column">0</property>
-                    <signal name="row-activated" handler="on_batch_treeview_row_activated" swapped="no"/>
+                    <signal name="row-activated" handler="on_competition_treeview_row_activated" swapped="no"/>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                         <property name="title" translatable="yes">Matchs</property>
@@ -224,7 +224,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="contest_weapon_label">
+                  <object class="GtkLabel" id="competition_weapon_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Sabre</property>
@@ -239,7 +239,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="contest_gender_label">
+                  <object class="GtkLabel" id="competition_gender_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Man</property>
@@ -254,7 +254,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="contest_category_label">
+                  <object class="GtkLabel" id="competition_category_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">U16</property>

@@ -23,7 +23,7 @@
 
 #include "job.hpp"
 #include "job_board.hpp"
-#include "batch.hpp"
+#include "competition.hpp"
 
 namespace Marshaller
 {
@@ -36,10 +36,10 @@ namespace Marshaller
   } ColumnId;
 
   // --------------------------------------------------------------------------------
-  Batch::Batch (guint     id,
-                Listener *listener)
-    : Object ("Batch"),
-      Module ("batch.glade")
+  Competition::Competition (guint     id,
+                            Listener *listener)
+    : Object ("Competition"),
+    Module ("batch.glade")
   {
     _name           = NULL;
     _listener       = listener;
@@ -61,14 +61,14 @@ namespace Marshaller
     _job_board = new JobBoard ();
 
     {
-      GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("batch_treeview"));
+      GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("competition_treeview"));
 
       gtk_tree_selection_set_mode (gtk_tree_view_get_selection (treeview),
                                    GTK_SELECTION_MULTIPLE);
     }
 
     {
-      GtkWidget *source = _glade->GetWidget ("batch_treeview");
+      GtkWidget *source = _glade->GetWidget ("competition_treeview");
 
       _dnd_key = _dnd_config->AddTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
@@ -83,7 +83,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Batch::~Batch ()
+  Competition::~Competition ()
   {
     {
       GtkTreeIter iter;
@@ -124,31 +124,31 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  guint Batch::GetId ()
+  guint Competition::GetId ()
   {
     return _id;
   }
 
   // --------------------------------------------------------------------------------
-  GData *Batch::GetProperties ()
+  GData *Competition::GetProperties ()
   {
     return _properties;
   }
 
   // --------------------------------------------------------------------------------
-  GdkColor *Batch::GetColor ()
+  GdkColor *Competition::GetColor ()
   {
     return _gdk_color;
   }
 
   // --------------------------------------------------------------------------------
-  const gchar *Batch::GetName ()
+  const gchar *Competition::GetName ()
   {
     return _name;
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::RefreshControlPanel ()
+  void Competition::RefreshControlPanel ()
   {
     gtk_widget_set_sensitive (_assign_button, TRUE);
     gtk_widget_set_sensitive (_cancel_button, TRUE);
@@ -166,10 +166,10 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::SetProperty (Net::Message *message,
-                           const gchar  *property)
+  void Competition::SetProperty (Net::Message *message,
+                                 const gchar  *property)
   {
-    gchar         *property_widget = g_strdup_printf ("contest_%s_label", property);
+    gchar         *property_widget = g_strdup_printf ("competition_%s_label", property);
     GtkLabel      *label           = GTK_LABEL (_glade->GetGObject (property_widget));
     AttributeDesc *desc            = AttributeDesc::GetDescFromCodeName (property);
     gchar         *xml             = message->GetString (property);
@@ -187,7 +187,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::SetProperties (Net::Message *message)
+  void Competition::SetProperties (Net::Message *message)
   {
     SetProperty (message, "gender");
     SetProperty (message, "weapon");
@@ -214,18 +214,18 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  const gchar *Batch::GetWeaponCode ()
+  const gchar *Competition::GetWeaponCode ()
   {
     return _weapon;
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::AttachTo (GtkNotebook *to)
+  void Competition::AttachTo (GtkNotebook *to)
   {
     GtkWidget *root = GetRootWidget ();
 
     g_object_set_data (G_OBJECT (root),
-                       "batch",
+                       "competition",
                        this);
     gtk_notebook_append_page (to,
                               root,
@@ -233,10 +233,10 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *Batch::GetCurrentSelection ()
+  GList *Competition::GetCurrentSelection ()
   {
     GList            *result    = NULL;
-    GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("batch_treeview"));
+    GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("competition_treeview"));
     GtkTreeSelection *selection = gtk_tree_view_get_selection (tree_view);
 
     if (selection)
@@ -273,9 +273,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::SetJobStatus (Job      *job,
-                            gboolean  has_slot,
-                            gboolean  has_referee)
+  void Competition::SetJobStatus (Job      *job,
+                                  gboolean  has_slot,
+                                  gboolean  has_referee)
   {
     GtkTreeIter iter;
     gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
@@ -345,19 +345,19 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *Batch::GetScheduledJobs ()
+  GList *Competition::GetScheduledJobs ()
   {
     return _scheduled_list;
   }
 
   // --------------------------------------------------------------------------------
-  GList *Batch::GetPendingJobs ()
+  GList *Competition::GetPendingJobs ()
   {
     return _pending_list;
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::RemoveJob (Net::Message *message)
+  void Competition::RemoveJob (Net::Message *message)
   {
     GtkTreeIter iter;
     gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
@@ -403,7 +403,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Job *Batch::GetJob (guint netid)
+  Job *Competition::GetJob (guint netid)
   {
     GtkTreeIter iter;
     gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
@@ -431,10 +431,10 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Job *Batch::Load (Net::Message  *message,
-                    guint         *piste_id,
-                    guint         *referee_id,
-                    FieTime      **start_time)
+  Job *Competition::Load (Net::Message  *message,
+                          guint         *piste_id,
+                          guint         *referee_id,
+                          FieTime      **start_time)
   {
     Job *job = NULL;
 
@@ -561,11 +561,11 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::OnDragDataGet (GtkWidget        *widget,
-                             GdkDragContext   *drag_context,
-                             GtkSelectionData *data,
-                             guint             key,
-                             guint             time)
+  void Competition::OnDragDataGet (GtkWidget        *widget,
+                                   GdkDragContext   *drag_context,
+                                   GtkSelectionData *data,
+                                   guint             key,
+                                   guint             time)
   {
     if (key == _dnd_key)
     {
@@ -578,22 +578,22 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::OnAssign ()
+  void Competition::OnAssign ()
   {
-    if (_listener->OnBatchAssignmentRequest (this))
+    if (_listener->OnCompetitionAssignmentRequest (this))
     {
       _job_board->Display ();
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::OnCancelAssign ()
+  void Competition::OnCancelAssign ()
   {
-    _listener->OnBatchAssignmentCancel (this);
+    _listener->OnCompetitionAssignmentCancel (this);
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::OnValidateAssign ()
+  void Competition::OnValidateAssign ()
   {
     GList *current = _scheduled_list;
 
@@ -608,7 +608,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::ManageFencer (Net::Message *message)
+  void Competition::ManageFencer (Net::Message *message)
   {
     gchar     *xml = message->GetString ("xml");
     xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
@@ -649,7 +649,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::DeleteFencer (Net::Message *message)
+  void Competition::DeleteFencer (Net::Message *message)
   {
     guint  id      = message->GetNetID ();
     GList *current = _fencer_list;
@@ -669,7 +669,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Player *Batch::GetFencer (guint ref)
+  Player *Competition::GetFencer (guint ref)
   {
     GList *current = _fencer_list;
 
@@ -689,18 +689,18 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_batch_treeview_row_activated  (GtkTreeView       *tree_view,
-                                                                    GtkTreePath       *path,
-                                                                    GtkTreeViewColumn *column,
-                                                                    Object            *owner)
+  extern "C" G_MODULE_EXPORT void on_competition_treeview_row_activated  (GtkTreeView       *tree_view,
+                                                                          GtkTreePath       *path,
+                                                                          GtkTreeViewColumn *column,
+                                                                          Object            *owner)
   {
-    Batch *b = dynamic_cast <Batch *> (owner);
+    Competition *b = dynamic_cast <Competition *> (owner);
 
-    b->on_batch_treeview_row_activated (path);
+    b->on_competition_treeview_row_activated (path);
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::on_batch_treeview_row_activated (GtkTreePath *path)
+  void Competition::on_competition_treeview_row_activated (GtkTreePath *path)
   {
     GtkTreeModel *model = GTK_TREE_MODEL (_job_store);
     Job          *job;
@@ -720,7 +720,7 @@ namespace Marshaller
   extern "C" G_MODULE_EXPORT void on_assign_toolbutton_clicked (GtkToolButton *widget,
                                                                 Object        *owner)
   {
-    Batch *b = dynamic_cast <Batch *> (owner);
+    Competition *b = dynamic_cast <Competition *> (owner);
 
     b->OnAssign ();
   }
@@ -729,7 +729,7 @@ namespace Marshaller
   extern "C" G_MODULE_EXPORT void on_cancel_toolbutton_clicked (GtkToolButton *widget,
                                                                 Object        *owner)
   {
-    Batch *b = dynamic_cast <Batch *> (owner);
+    Competition *b = dynamic_cast <Competition *> (owner);
 
     b->OnCancelAssign ();
   }
@@ -738,7 +738,7 @@ namespace Marshaller
   extern "C" G_MODULE_EXPORT void on_lock_toolbutton_clicked (GtkToolButton *widget,
                                                               Object        *owner)
   {
-    Batch *b = dynamic_cast <Batch *> (owner);
+    Competition *b = dynamic_cast <Competition *> (owner);
 
     b->OnValidateAssign ();
   }

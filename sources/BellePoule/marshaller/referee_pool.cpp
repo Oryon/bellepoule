@@ -22,7 +22,6 @@
 #include "enlisted_referee.hpp"
 #include "job.hpp"
 #include "slot.hpp"
-#include "batch.hpp"
 #include "referee_pool.hpp"
 
 namespace Marshaller

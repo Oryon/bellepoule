@@ -104,7 +104,7 @@ namespace Pool
                          const gchar *stage_name,
                          guint        stage_id)
   {
-    _parcel->Set ("contest", contest);
+    _parcel->Set ("competition", contest);
     _parcel->Set ("round",   stage_name);
 
     {

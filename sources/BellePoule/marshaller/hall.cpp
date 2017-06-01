@@ -20,7 +20,7 @@
 #include "enlisted_referee.hpp"
 #include "piste.hpp"
 #include "job.hpp"
-#include "batch.hpp"
+#include "competition.hpp"
 #include "referee_pool.hpp"
 #include "timeline.hpp"
 #include "job_board.hpp"
@@ -34,7 +34,7 @@ namespace Marshaller
   Hall::Hall (RefereePool *referee_pool,
               Listener    *listener)
     : Object ("Hall"),
-      CanvasModule ("hall.glade")
+    CanvasModule ("hall.glade")
   {
     _listener      = listener;
     _piste_list    = NULL;
@@ -45,7 +45,7 @@ namespace Marshaller
     SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")),
                1.5);
 
-    _batch_list = NULL;
+    _competition_list = NULL;
 
     _referee_pool = referee_pool;
 
@@ -68,7 +68,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Hall::~Hall ()
   {
-    FreeFullGList (Batch, _batch_list);
+    FreeFullGList (Competition, _competition_list);
     FreeFullGList (Piste, _piste_list);
 
     _timeline->Release ();
@@ -144,7 +144,7 @@ namespace Marshaller
     }
     else if (g_strcmp0 (g_quark_to_string (key), "bellepoule/job") == 0)
     {
-      return GetBatch (ref);
+      return GetCompetition (ref);
     }
 
     return NULL;
@@ -158,11 +158,11 @@ namespace Marshaller
     Piste *piste = dynamic_cast <Piste *> (target_zone);
 
     {
-      Batch *batch = dynamic_cast <Batch *> (object);
+      Competition *competition = dynamic_cast <Competition *> (object);
 
-      if (batch)
+      if (competition)
       {
-        GList     *selection = batch->GetCurrentSelection ();
+        GList     *selection = competition->GetCurrentSelection ();
         GList     *current   = selection;
         GDateTime *from      = _timeline->RetreiveCursorTime ();
 
@@ -199,68 +199,68 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::ManageContest (Net::Message *message,
-                            GtkNotebook  *notebook)
+  void Hall::ManageCompetition (Net::Message *message,
+                                GtkNotebook  *notebook)
   {
-    guint  id    = message->GetNetID ();
-    Batch *batch = GetBatch (id);
+    guint        id          = message->GetNetID ();
+    Competition *competition = GetCompetition (id);
 
-    if (batch == NULL)
+    if (competition == NULL)
     {
-      batch = new Batch (id,
-                         this);
+      competition = new Competition (id,
+                                     this);
 
-      _batch_list = g_list_prepend (_batch_list,
-                                    batch);
+      _competition_list = g_list_prepend (_competition_list,
+                                          competition);
 
-      batch->SetProperties (message);
-      batch->AttachTo (notebook);
-      _timeline->AddBatch (batch);
+      competition->SetProperties (message);
+      competition->AttachTo (notebook);
+      _timeline->AddCompetition (competition);
     }
     else
     {
-      batch->SetProperties (message);
+      competition->SetProperties (message);
     }
 
     _referee_pool->Spread ();
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::DeleteContest (Net::Message *message)
+  void Hall::DeleteCompetition (Net::Message *message)
   {
-    guint  id    = message->GetNetID ();
-    Batch *batch = GetBatch (id);
+    guint        id          = message->GetNetID ();
+    Competition *competition = GetCompetition (id);
 
-    if (batch)
+    if (competition)
     {
-      GList *node = g_list_find (_batch_list,
-                                 batch);
+      GList *node = g_list_find (_competition_list,
+                                 competition);
 
-      _batch_list = g_list_delete_link (_batch_list,
-                                        node);
+      _competition_list = g_list_delete_link (_competition_list,
+                                              node);
 
-      _timeline->RemoveBatch (batch);
-      batch->Release ();
+      _timeline->RemoveCompetition (competition);
+      competition->Release ();
     }
   }
 
   // --------------------------------------------------------------------------------
   void Hall::ManageJob (Net::Message *message)
   {
-    guint  id    = message->GetInteger ("contest");
-    Batch *batch = GetBatch (id);
+    guint        id          = message->GetInteger ("competition");
+    Competition *competition = GetCompetition (id);
 
-    if (batch)
+    if (competition)
     {
       guint    piste_id;
       guint    referee_id;
       FieTime *start_time = NULL;
       Job     *job;
 
-      job = batch->Load (message,
-                         &piste_id,
-                         &referee_id,
-                         &start_time);
+      job = competition->Load (message,
+                               &piste_id,
+                               &referee_id,
+                               &start_time);
       if (job && start_time)
       {
         Piste *piste = GetPiste (piste_id);
@@ -287,35 +287,35 @@ namespace Marshaller
           }
         }
       }
-      _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
+      _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
     }
   }
 
   // --------------------------------------------------------------------------------
   void Hall::ManageFencer (Net::Message *message)
   {
-    guint  id    = message->GetInteger ("contest");
-    Batch *batch = GetBatch (id);
+    guint        id          = message->GetInteger ("competition");
+    Competition *competition = GetCompetition (id);
 
-    if (batch)
+    if (competition)
     {
-      batch->ManageFencer (message);
+      competition->ManageFencer (message);
     }
   }
 
   // --------------------------------------------------------------------------------
   void Hall::DeleteJob (Net::Message *message)
   {
-    guint  contest_id = message->GetInteger ("contest");
-    GList *current    = _batch_list;
+    guint  id      = message->GetInteger ("competition");
+    GList *current = _competition_list;
 
     while (current)
     {
-      Batch *batch = (Batch *) current->data;
+      Competition *competition = (Competition *) current->data;
 
-      if (batch->GetId () == contest_id)
+      if (competition->GetId () == id)
       {
-        batch->RemoveJob (message);
+        competition->RemoveJob (message);
         _timeline->Redraw ();
         break;
       }
@@ -327,12 +327,12 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::DeleteFencer (Net::Message *message)
   {
-    guint  id    = message->GetInteger ("contest");
-    Batch *batch = GetBatch (id);
+    guint        id          = message->GetInteger ("competition");
+    Competition *competition = GetCompetition (id);
 
-    if (batch)
+    if (competition)
     {
-      batch->DeleteFencer (message);
+      competition->DeleteFencer (message);
     }
   }
 
@@ -417,17 +417,17 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Batch *Hall::GetBatch (guint id)
+  Competition *Hall::GetCompetition (guint id)
   {
-    GList *current = _batch_list;
+    GList *current = _competition_list;
 
     while (current)
     {
-      Batch *batch = (Batch *) current->data;
+      Competition *competition = (Competition *) current->data;
 
-      if (batch->GetId () == id)
+      if (competition->GetId () == id)
       {
-        return batch;
+        return competition;
       }
 
       current = g_list_next (current);
@@ -719,13 +719,13 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Hall::OnBatchAssignmentRequest (Batch *batch)
+  gboolean Hall::OnCompetitionAssignmentRequest (Competition *competition)
   {
     gboolean done = FALSE;
 
-    _listener->OnExposeWeapon (batch->GetWeaponCode ());
+    _listener->OnExposeWeapon (competition->GetWeaponCode ());
 
-    if (_referee_pool->WeaponHasReferees (batch->GetWeaponCode ()) == FALSE)
+    if (_referee_pool->WeaponHasReferees (competition->GetWeaponCode ()) == FALSE)
     {
       GtkWidget *error_dialog = _glade->GetWidget ("referee_error_dialog");
 
@@ -762,17 +762,17 @@ namespace Marshaller
 
           if (gtk_toggle_button_get_active (all_jobs))
           {
-            job_list = g_list_copy (batch->GetPendingJobs ());
+            job_list = g_list_copy (competition->GetPendingJobs ());
           }
           else
           {
-            job_list = g_list_copy (batch->GetCurrentSelection ());
+            job_list = g_list_copy (competition->GetCurrentSelection ());
           }
         }
 
         // All the referees?
         {
-          People::RefereesList *checkin_list = _referee_pool->GetListOf (batch->GetWeaponCode ());
+          People::RefereesList *checkin_list = _referee_pool->GetListOf (competition->GetWeaponCode ());
           GtkToggleButton      *all_referees = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_referees"));
 
           if (gtk_toggle_button_get_active (all_referees))
@@ -818,7 +818,7 @@ namespace Marshaller
         g_list_free (job_list);
         g_list_free (referee_list);
 
-        _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
+        _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
         _timeline->Redraw ();
         OnTimelineCursorMoved ();
       }
@@ -961,7 +961,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::OnBatchAssignmentCancel (Batch *batch)
+  void Hall::OnCompetitionAssignmentCancel (Competition *competition)
   {
     GList *current_piste = _piste_list;
 
@@ -969,15 +969,15 @@ namespace Marshaller
     {
       Piste *piste = (Piste *) current_piste->data;
 
-      piste->RemoveBatch (batch);
+      piste->RemoveCompetition (competition);
 
       current_piste = g_list_next (current_piste);
     }
 
-    _referee_pool->RefreshWorkload (batch->GetWeaponCode ());
+    _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
     _timeline->Redraw ();
 
-    _listener->OnExposeWeapon (batch->GetWeaponCode ());
+    _listener->OnExposeWeapon (competition->GetWeaponCode ());
   }
 
   // --------------------------------------------------------------------------------

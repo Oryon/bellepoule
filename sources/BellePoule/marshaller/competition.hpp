@@ -29,18 +29,18 @@ namespace Marshaller
   class Job;
   class JobBoard;
 
-  class Batch : public Module
+  class Competition : public Module
   {
     public:
       struct Listener
       {
-        virtual gboolean OnBatchAssignmentRequest (Batch *batch) = 0;
-        virtual void     OnBatchAssignmentCancel  (Batch *batch) = 0;
+        virtual gboolean OnCompetitionAssignmentRequest (Competition *competition) = 0;
+        virtual void     OnCompetitionAssignmentCancel  (Competition *competition) = 0;
       };
 
     public:
-      Batch (guint     id,
-             Listener *listener);
+      Competition (guint     id,
+                   Listener *listener);
 
       void AttachTo (GtkNotebook *to);
 
@@ -83,7 +83,7 @@ namespace Marshaller
 
       void DeleteFencer (Net::Message *message);
 
-      void on_batch_treeview_row_activated (GtkTreePath *path);
+      void on_competition_treeview_row_activated (GtkTreePath *path);
 
     private:
       guint         _id;
@@ -102,7 +102,7 @@ namespace Marshaller
       GtkWidget    *_cancel_button;
       GtkWidget    *_lock_button;
 
-      virtual ~Batch ();
+      virtual ~Competition ();
 
       Job *GetJob (guint netid);
 

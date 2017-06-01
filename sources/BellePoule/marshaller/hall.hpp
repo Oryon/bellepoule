@@ -19,7 +19,7 @@
 #include "util/canvas_module.hpp"
 #include "network/message.hpp"
 #include "piste.hpp"
-#include "batch.hpp"
+#include "competition.hpp"
 #include "timeline.hpp"
 #include "clock.hpp"
 #include "job_board.hpp"
@@ -32,7 +32,7 @@ namespace Marshaller
   class Hall :
     public CanvasModule,
     public Piste::Listener,
-    public Batch::Listener,
+    public Competition::Listener,
     public Timeline::Listener,
     public JobBoard::Listener,
     public Clock::Listener
@@ -62,10 +62,10 @@ namespace Marshaller
 
       void AlignSelectedOnGrid ();
 
-      void ManageContest (Net::Message *message,
-                          GtkNotebook  *notebook);
+      void ManageCompetition (Net::Message *message,
+                              GtkNotebook  *notebook);
 
-      void DeleteContest (Net::Message *message);
+      void DeleteCompetition (Net::Message *message);
 
       void ManageJob (Net::Message *message);
 
@@ -81,7 +81,7 @@ namespace Marshaller
       gboolean     _dragging;
       gdouble      _drag_x;
       gdouble      _drag_y;
-      GList       *_batch_list;
+      GList       *_competition_list;
       RefereePool *_referee_pool;
       Timeline    *_timeline;
       Lasso       *_lasso;
@@ -98,7 +98,7 @@ namespace Marshaller
 
       void UnSelectPiste (Piste *piste);
 
-      Batch *GetBatch (guint id);
+      Competition *GetCompetition (guint id);
 
       GList *GetFreePisteSlots (GTimeSpan duration);
 
@@ -138,9 +138,9 @@ namespace Marshaller
       void OnPisteMotionEvent (Piste          *piste,
                                GdkEventMotion *event);
 
-      gboolean OnBatchAssignmentRequest (Batch *batch);
+      gboolean OnCompetitionAssignmentRequest (Competition *competition);
 
-      void OnBatchAssignmentCancel (Batch *batch);
+      void OnCompetitionAssignmentCancel (Competition *competition);
 
       void OnTimelineCursorMoved ();
 

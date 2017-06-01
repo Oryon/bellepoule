@@ -16,7 +16,7 @@
 
 #include "network/message.hpp"
 #include "slot.hpp"
-#include "batch.hpp"
+#include "competition.hpp"
 #include "job.hpp"
 #include "job_details.hpp"
 #include "timeline.hpp"
@@ -262,9 +262,9 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void JobBoard::SetHeader ()
   {
-    Job   *job        = (Job *) _current_job->data;
-    Batch *batch      = job->GetBatch ();
-    GData *properties = batch->GetProperties ();
+    Job         *job         = (Job *) _current_job->data;
+    Competition *competition = job->GetCompetition ();
+    GData       *properties  = competition->GetProperties ();
 
     // Title
     g_datalist_foreach (&properties,
@@ -277,7 +277,7 @@ namespace Marshaller
 
       gtk_widget_modify_bg (header_box,
                             GTK_STATE_NORMAL,
-                            batch->GetColor ());
+                            competition->GetColor ());
     }
 
     // Arrows

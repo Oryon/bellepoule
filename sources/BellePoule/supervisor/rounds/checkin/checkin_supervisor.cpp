@@ -764,7 +764,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::FeedParcel (Net::Message *parcel)
   {
-    parcel->Set ("contest",
+    parcel->Set ("competition",
                  _contest->GetNetID ());
   }
 

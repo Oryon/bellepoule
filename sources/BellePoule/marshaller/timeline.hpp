@@ -20,7 +20,7 @@
 
 namespace Marshaller
 {
-  class Batch;
+  class Competition;
 
   class Timeline : public CanvasModule
   {
@@ -33,9 +33,9 @@ namespace Marshaller
     public:
       Timeline (Listener *listener);
 
-      void AddBatch (Batch *batch);
+      void AddCompetition (Competition *competition);
 
-      void RemoveBatch (Batch *batch);
+      void RemoveCompetition (Competition *competition);
 
       void SetCursorTime (GDateTime *time);
 
@@ -50,12 +50,12 @@ namespace Marshaller
       static const GTimeSpan STEP            = 15*G_TIME_SPAN_MINUTE;
       static const GTimeSpan START_MARGING   = STEP;
 
-      GList         *_batch_list;
+      GList         *_competition_list;
       GTimeSpan      _cursor;
       gdouble        _drag_start;
       GtkAllocation  _allocation;
       gdouble        _time_scale;
-      gdouble        _batch_scale;
+      gdouble        _competition_scale;
       GDateTime     *_origin;
       guint          _redraw_timeout;
       GooCanvasItem *_goo_cursor;

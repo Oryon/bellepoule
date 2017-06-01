@@ -17,7 +17,7 @@
 #include "util/fie_time.hpp"
 #include "enlisted_referee.hpp"
 #include "job.hpp"
-#include "batch.hpp"
+#include "competition.hpp"
 #include "slot.hpp"
 
 namespace Marshaller
@@ -54,12 +54,12 @@ namespace Marshaller
 
       while (current)
       {
-        Job   *job   = (Job *) current->data;
-        Batch *batch = job->GetBatch ();
+        Job         *job         = (Job *) current->data;
+        Competition *competition = job->GetCompetition ();
 
-        batch->SetJobStatus (job,
-                             FALSE,
-                             FALSE);
+        competition->SetJobStatus (job,
+                                   FALSE,
+                                   FALSE);
         job->RemoveObjectListener (this);
 
         current = g_list_next (current);
@@ -206,11 +206,11 @@ namespace Marshaller
     }
 
     {
-      Batch *batch = job->GetBatch ();
+      Competition *competition = job->GetCompetition ();
 
-      batch->SetJobStatus (job,
-                           _job_list     != NULL,
-                           _referee_list != NULL);
+      competition->SetJobStatus (job,
+                                 _job_list     != NULL,
+                                 _referee_list != NULL);
     }
 
     _owner->OnSlotUpdated (this);
@@ -229,11 +229,11 @@ namespace Marshaller
     }
 
     {
-      Batch *batch = job->GetBatch ();
+      Competition *competition = job->GetCompetition ();
 
-      batch->SetJobStatus (job,
-                           FALSE,
-                           FALSE);
+      competition->SetJobStatus (job,
+                                 FALSE,
+                                 FALSE);
     }
 
     job->RemoveObjectListener (this);
@@ -265,13 +265,13 @@ namespace Marshaller
 
       while (current)
       {
-        Job   *job   = (Job *) current->data;
-        Batch *batch = job->GetBatch ();
+        Job         *job         = (Job *) current->data;
+        Competition *competition = job->GetCompetition ();
 
         job->SetReferee (referee->GetRef ());
-        batch->SetJobStatus (job,
-                             _job_list     != NULL,
-                             _referee_list != NULL);
+        competition->SetJobStatus (job,
+                                   _job_list     != NULL,
+                                   _referee_list != NULL);
 
         current = g_list_next (current);
       }

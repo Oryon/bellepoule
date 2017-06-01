@@ -26,7 +26,7 @@ class Module;
 namespace Marshaller
 {
   class Job;
-  class Batch;
+  class Competition;
   class EnlistedReferee;
   class JobBoard;
 
@@ -60,7 +60,7 @@ namespace Marshaller
 
       void AddReferee (EnlistedReferee *referee);
 
-      void RemoveBatch (Batch *batch);
+      void RemoveCompetition (Competition *competition);
 
       void Disable ();
 

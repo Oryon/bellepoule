@@ -14,7 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "batch.hpp"
+#include "competition.hpp"
 #include "slot.hpp"
 #include "job.hpp"
 #include "timeline.hpp"
@@ -24,11 +24,11 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Timeline::Timeline (Listener *listener)
     : Object ("Timeline"),
-      CanvasModule ("timeline.glade", "canvas_scrolled_window")
+    CanvasModule ("timeline.glade", "canvas_scrolled_window")
   {
-    _batch_list     = NULL;
-    _redraw_timeout = 0;
-    _listener       = listener;
+    _competition_list = NULL;
+    _redraw_timeout   = 0;
+    _listener         = listener;
 
     {
       GDateTime *now = g_date_time_new_now_local ();
@@ -58,7 +58,7 @@ namespace Marshaller
       g_source_remove (_redraw_timeout);
     }
 
-    g_list_free       (_batch_list);
+    g_list_free       (_competition_list);
     g_date_time_unref (_origin);
   }
 
@@ -74,22 +74,22 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Timeline::AddBatch (Batch *batch)
+  void Timeline::AddCompetition (Competition *competition)
   {
-    _batch_list = g_list_append (_batch_list,
-                                 batch);
+    _competition_list = g_list_append (_competition_list,
+                                       competition);
   }
 
   // --------------------------------------------------------------------------------
-  void Timeline::RemoveBatch (Batch *batch)
+  void Timeline::RemoveCompetition (Competition *competition)
   {
-    GList *node = g_list_find (_batch_list,
-                               batch);
+    GList *node = g_list_find (_competition_list,
+                               competition);
 
     if (node)
     {
-      _batch_list = g_list_delete_link (_batch_list,
-                                        node);
+      _competition_list = g_list_delete_link (_competition_list,
+                                              node);
     }
   }
 
@@ -105,16 +105,16 @@ namespace Marshaller
 
       goo_canvas_rect_new (GetRootItem (),
                            (i*G_TIME_SPAN_HOUR + START_MARGING) * _time_scale,
-                           0.7 * _batch_scale,
+                           0.7 * _competition_scale,
                            0.5,
-                           0.3 * _batch_scale,
+                           0.3 * _competition_scale,
                            "fill-color",     "black",
                            "stroke-pattern", NULL,
                            NULL);
       goo_canvas_text_new (GetRootItem (),
                            time,
                            (i*G_TIME_SPAN_HOUR + START_MARGING) * _time_scale,
-                           _batch_scale,
+                           _competition_scale,
                            -1.0,
                            GTK_ANCHOR_S,
                            "fill-color", "grey",
@@ -136,7 +136,7 @@ namespace Marshaller
                            0.0,
                            0.0,
                            x * _time_scale,
-                           _batch_scale,
+                           _competition_scale,
                            "fill-color-rgba", 0x0000000F,
                            "stroke-pattern", NULL,
                            NULL);
@@ -148,7 +148,7 @@ namespace Marshaller
                                          _cursor * _time_scale,
                                          0.0,
                                          2.0,
-                                         _batch_scale,
+                                         _competition_scale,
                                          "fill-color",     "black",
                                          "stroke-pattern", NULL,
                                          NULL);
@@ -158,7 +158,7 @@ namespace Marshaller
       _goo_cursor_time = goo_canvas_text_new (GetRootItem (),
                                               "",
                                               _cursor * _time_scale,
-                                              _batch_scale/2.0,
+                                              _competition_scale/2.0,
                                               -1.0,
                                               GTK_ANCHOR_W,
                                               "font",       BP_FONT "10px",
@@ -173,13 +173,13 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Timeline::DrawSlots ()
   {
-    GList *current_batch = _batch_list;
+    GList *current_competition = _competition_list;
 
-    for (guint i = 0; current_batch != NULL; i++)
+    for (guint i = 0; current_competition != NULL; i++)
     {
-      Batch *batch       = (Batch *) current_batch->data;
-      gchar *color       = gdk_color_to_string (batch->GetColor ());
-      GList *current_job = batch->GetScheduledJobs ();
+      Competition *competition = (Competition *) current_competition->data;
+      gchar       *color       = gdk_color_to_string (competition->GetColor ());
+      GList       *current_job = competition->GetScheduledJobs ();
 
       while (current_job != NULL)
       {
@@ -191,9 +191,9 @@ namespace Marshaller
 
         goo_canvas_rect_new (GetRootItem (),
                              x,
-                             i*_batch_scale/10.0,
+                             i*_competition_scale/10.0,
                              w,
-                             _batch_scale/10.0,
+                             _competition_scale/10.0,
                              "fill-color",     color,
                              "stroke-pattern", NULL,
                              NULL);
@@ -203,7 +203,7 @@ namespace Marshaller
 
       g_free (color);
 
-      current_batch = g_list_next (current_batch);
+      current_competition = g_list_next (current_competition);
     }
   }
 
@@ -222,8 +222,8 @@ namespace Marshaller
       gtk_widget_get_allocation (GetRootWidget (),
                                  &_allocation);
 
-      _batch_scale = (gdouble)_allocation.height;
-      _time_scale  = (gdouble)_allocation.width
+      _competition_scale = (gdouble)_allocation.height;
+      _time_scale        = (gdouble)_allocation.width
         / (HOURS_MONITORED*G_TIME_SPAN_HOUR + START_MARGING);
     }
 

@@ -23,16 +23,16 @@
 namespace Marshaller
 {
   // --------------------------------------------------------------------------------
-  Job::Job (Batch    *batch,
-            guint     netid,
-            guint     sibling_order,
-            GdkColor *gdk_color)
+  Job::Job (Competition *competition,
+            guint        netid,
+            guint        sibling_order,
+            GdkColor    *gdk_color)
     : Object ("Job")
   {
     _fencer_list   = NULL;
     _gdk_color     = gdk_color_copy (gdk_color);
     _name          = NULL;
-    _batch         = batch;
+    _competition   = competition;
     _netid         = netid;
     _sibling_order = sibling_order;
     _slot          = NULL;
@@ -124,9 +124,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Batch *Job::GetBatch ()
+  Competition *Job::GetCompetition ()
   {
-    return _batch;
+    return _competition;
   }
 
   // --------------------------------------------------------------------------------

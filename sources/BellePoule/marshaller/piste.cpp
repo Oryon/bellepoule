@@ -22,7 +22,7 @@
 #include "enlisted_referee.hpp"
 #include "job.hpp"
 #include "job_board.hpp"
-#include "batch.hpp"
+#include "competition.hpp"
 
 #include "piste.hpp"
 
@@ -279,9 +279,9 @@ namespace Marshaller
             }
 
             {
-              Batch *batch = job->GetBatch ();
+              Competition *competition = job->GetCompetition ();
 
-              g_string_append (match_name, batch->GetName ());
+              g_string_append (match_name, competition->GetName ());
               g_string_append (match_name, " - <b>");
             }
 
@@ -352,7 +352,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Piste::RemoveBatch (Batch *batch)
+  void Piste::RemoveCompetition (Competition *competition)
   {
     GList *slot_list    = g_list_copy (_slots);
     GList *current_slot = slot_list;
@@ -369,7 +369,7 @@ namespace Marshaller
         {
           Job *job = (Job *) current_job->data;
 
-          if (job->GetBatch () == batch)
+          if (job->GetCompetition () == competition)
           {
             slot->RemoveJob (job);
             job->ResetRoadMap ();

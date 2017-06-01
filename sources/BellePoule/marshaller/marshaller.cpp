@@ -17,8 +17,9 @@
 #include "network/message.hpp"
 #include "network/ring.hpp"
 #include "application/weapon.hpp"
-
 #include "actors/referees_list.hpp"
+
+#include "competition.hpp"
 
 #include "marshaller.hpp"
 
@@ -84,8 +85,8 @@ namespace Marshaller
     {
       if (message->Is ("Competition"))
       {
-        _hall->ManageContest (message,
-                              GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
+        _hall->ManageCompetition (message,
+                                  GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
         return TRUE;
       }
       else if (message->Is ("Job"))
@@ -108,7 +109,7 @@ namespace Marshaller
     {
       if (message->Is ("Competition"))
       {
-        _hall->DeleteContest (message);
+        _hall->DeleteCompetition (message);
         return TRUE;
       }
       else if (message->Is ("Job"))
@@ -180,10 +181,10 @@ namespace Marshaller
                                                                  guint        page_num,
                                                                  Object      *owner)
   {
-    Marshaller *m     = dynamic_cast <Marshaller *> (owner);
-    Batch      *batch = (Batch *) g_object_get_data (G_OBJECT (page), "batch");
+    Marshaller  *m           = dynamic_cast <Marshaller *> (owner);
+    Competition *competition = (Competition *) g_object_get_data (G_OBJECT (page), "competition");
 
-    m->OnExposeWeapon (batch->GetWeaponCode ());
+    m->OnExposeWeapon (competition->GetWeaponCode ());
   }
 
   // --------------------------------------------------------------------------------

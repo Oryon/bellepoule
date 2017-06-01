@@ -22,16 +22,16 @@ class Player;
 
 namespace Marshaller
 {
-  class Batch;
+  class Competition;
   class Slot;
 
   class Job : public Object
   {
     public:
-      Job (Batch    *batch,
-           guint     netid,
-           guint     sibling_order,
-           GdkColor *gdk_color);
+      Job (Competition  *competition,
+           guint        netid,
+           guint        sibling_order,
+           GdkColor    *gdk_color);
 
       void SetName (const gchar *name);
 
@@ -45,7 +45,7 @@ namespace Marshaller
 
       const gchar *GetName ();
 
-      Batch *GetBatch ();
+      Competition *GetCompetition ();
 
       GdkColor *GetGdkColor ();
 
@@ -67,13 +67,13 @@ namespace Marshaller
       static void Dump (Job *what);
 
     private:
-      guint     _sibling_order;
-      gchar    *_name;
-      guint     _netid;
-      GdkColor *_gdk_color;
-      Batch    *_batch;
-      Slot     *_slot;
-      GList    *_fencer_list;
+      guint        _sibling_order;
+      gchar       *_name;
+      guint        _netid;
+      GdkColor    *_gdk_color;
+      Competition *_competition;
+      Slot        *_slot;
+      GList       *_fencer_list;
 
       ~Job ();
   };
