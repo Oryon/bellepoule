@@ -89,6 +89,11 @@ namespace Marshaller
                                   GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
         return TRUE;
       }
+      else if (message->Is ("Batch"))
+      {
+        _hall->ManageBatch (message);
+        return TRUE;
+      }
       else if (message->Is ("Job"))
       {
         _hall->ManageJob (message);
@@ -110,6 +115,11 @@ namespace Marshaller
       if (message->Is ("Competition"))
       {
         _hall->DeleteCompetition (message);
+        return TRUE;
+      }
+      else if (message->Is ("Batch"))
+      {
+        _hall->DeleteBatch (message);
         return TRUE;
       }
       else if (message->Is ("Job"))

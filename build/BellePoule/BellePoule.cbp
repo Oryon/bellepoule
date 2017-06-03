@@ -208,6 +208,12 @@
 		<Unit filename="../../sources/BellePoule/marshaller/batch.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/competition.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/competition.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/clock.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>

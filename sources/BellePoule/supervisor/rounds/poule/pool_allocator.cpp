@@ -57,6 +57,8 @@ namespace Pool
       Stage (stage_class),
       CanvasModule ("pool_allocator.glade")
   {
+    Disclose ("Batch");
+
     _config_list            = NULL;
     _selected_config        = NULL;
     _main_table             = NULL;
@@ -280,7 +282,7 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::Spread ()
+  void Allocator::SpreadJobs ()
   {
     GSList *current = _drop_zones;
 
@@ -295,7 +297,15 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::Recall ()
+  void Allocator::FeedParcel (Net::Message *parcel)
+  {
+    parcel->Set ("competition", _contest->GetNetID ());
+    parcel->Set ("name",        GetName ());
+    parcel->Set ("locked",      Locked ());
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::RecallJobs ()
   {
     GSList *current = _drop_zones;
 
@@ -469,6 +479,8 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::Display ()
   {
+    Stage::Display ();
+
     SetUpCombobox ();
 
     {
@@ -508,6 +520,7 @@ namespace Pool
     DisplaySwapperError ();
     FixUpTablesBounds ();
     SignalStatusUpdate ();
+    SpreadJobs ();
   }
 
   // --------------------------------------------------------------------------------
@@ -522,7 +535,6 @@ namespace Pool
         _selected_config = _best_config;
 
         CreatePools ();
-        Spread ();
       }
     }
   }
@@ -575,9 +587,9 @@ namespace Pool
               }
             }
           }
-          Recall ();
+          RecallJobs ();
           RefreshDisplay ();
-          Spread ();
+          SpreadJobs ();
           return;
         }
       }
@@ -757,7 +769,7 @@ namespace Pool
                                      GetXmlPlayerTag (),
                                      _rand_seed);
             current_pool->SetIdChain (_contest->GetNetID (),
-                                      GetName (),
+                                      _parcel->GetNetID (),
                                       GetId () + 1);
             current_pool->RegisterRoadmapListener (this);
             current_pool->SetStrengthContributors (_selected_config->_size - _selected_config->_size%2);
@@ -826,7 +838,6 @@ namespace Pool
           _swapper->Configure (_drop_zones,
                                _swapping_criteria_list);
           _swapper->CheckCurrentDistribution ();
-          Spread ();
           return;
         }
       }
@@ -1029,7 +1040,7 @@ namespace Pool
                                   GetXmlPlayerTag (),
                                   _rand_seed);
         pool_table[i]->SetIdChain (_contest->GetNetID (),
-                                   GetName (),
+                                   _parcel->GetNetID (),
                                    GetId () + 1);
         pool_table[i]->RegisterRoadmapListener (this);
         pool_table[i]->SetStrengthContributors (_selected_config->_size - _selected_config->_size%2);
@@ -1997,9 +2008,9 @@ namespace Pool
 
       _selected_config = config;
 
-      Recall ();
+      RecallJobs ();
       RefreshDisplay ();
-      Spread ();
+      SpreadJobs ();
     }
   }
 
@@ -2163,9 +2174,9 @@ namespace Pool
       g_string_free (string,
                      TRUE);
 
-      allocator->Recall ();
+      allocator->RecallJobs ();
       allocator->RefreshDisplay ();
-      allocator->Spread ();
+      allocator->SpreadJobs ();
     }
   }
 

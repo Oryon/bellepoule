@@ -20,58 +20,31 @@
 
 #include "network/message.hpp"
 #include "util/module.hpp"
+#include "batch.hpp"
 
 class Player;
-class FieTime;
 
 namespace Marshaller
 {
-  class Job;
-  class JobBoard;
-
   class Competition : public Module
   {
     public:
-      struct Listener
-      {
-        virtual gboolean OnCompetitionAssignmentRequest (Competition *competition) = 0;
-        virtual void     OnCompetitionAssignmentCancel  (Competition *competition) = 0;
-      };
+      Competition (guint            id,
+                   Batch::Listener *listener);
 
-    public:
-      Competition (guint     id,
-                   Listener *listener);
+      void ManageBatch (Net::Message *message);
+
+      void DeleteBatch (Net::Message *message);
+
+      Batch *GetBatch (guint id);
+
+      GList *GetBatches ();
 
       void AttachTo (GtkNotebook *to);
 
-      Job *Load (Net::Message  *message,
-                 guint         *piste_id,
-                 guint         *referee_id,
-                 FieTime      **start_time);
-
-      void SetJobStatus (Job      *job,
-                         gboolean  has_slot,
-                         gboolean  has_referee);
-
-      void RemoveJob (Net::Message *message);
-
       guint GetId ();
 
-      GList *GetScheduledJobs ();
-
-      GList *GetPendingJobs ();
-
-      const gchar *GetName ();
-
       void SetProperties (Net::Message *message);
-
-      GList *GetCurrentSelection ();
-
-      void OnAssign ();
-
-      void OnCancelAssign ();
-
-      void OnValidateAssign ();
 
       GdkColor *GetColor ();
 
@@ -81,42 +54,22 @@ namespace Marshaller
 
       void ManageFencer (Net::Message *message);
 
+      Player *GetFencer (guint ref);
+
       void DeleteFencer (Net::Message *message);
 
-      void on_competition_treeview_row_activated (GtkTreePath *path);
-
     private:
-      guint         _id;
-      GtkListStore *_job_store;
-      guint32       _dnd_key;
-      GdkColor     *_gdk_color;
-      gchar        *_name;
-      Listener     *_listener;
-      GList        *_scheduled_list;
-      GList        *_pending_list;
-      GList        *_fencer_list;
-      gchar        *_weapon;
-      JobBoard     *_job_board;
-      GData        *_properties;
-      GtkWidget    *_assign_button;
-      GtkWidget    *_cancel_button;
-      GtkWidget    *_lock_button;
+      guint            _id;
+      GdkColor        *_gdk_color;
+      GList           *_fencer_list;
+      gchar           *_weapon;
+      GData           *_properties;
+      Batch::Listener *_batch_listener;
+      GList           *_batches;
 
       virtual ~Competition ();
 
-      Job *GetJob (guint netid);
-
-      void RefreshControlPanel ();
-
-      Player *GetFencer (guint ref);
-
       void SetProperty (Net::Message *message,
                         const gchar  *property);
-
-      void OnDragDataGet (GtkWidget        *widget,
-                          GdkDragContext   *drag_context,
-                          GtkSelectionData *data,
-                          guint             key,
-                          guint             time);
   };
 }

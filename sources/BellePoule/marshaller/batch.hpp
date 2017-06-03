@@ -1,0 +1,111 @@
+// Copyright (C) 2009 Yannick Le Roux.
+// This file is part of BellePoule.
+//
+//   BellePoule is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, either version 3 of the License, or
+//   (at your option) any later version.
+//
+//   BellePoule is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public License
+//   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
+
+#pragma once
+
+#include <libxml/xpath.h>
+
+#include "network/message.hpp"
+#include "util/module.hpp"
+
+class FieTime;
+
+namespace Marshaller
+{
+  class Competition;
+  class Job;
+  class JobBoard;
+
+  class Batch : public Module
+  {
+    public:
+      struct Listener
+      {
+        virtual gboolean OnBatchAssignmentRequest (Batch *batch) = 0;
+        virtual void     OnBatchAssignmentCancel  (Batch *batch) = 0;
+      };
+
+    public:
+      Batch (guint        id,
+             Competition *competition,
+             Listener    *listener);
+
+      Competition *GetCompetition ();
+
+      Job *Load (Net::Message  *message,
+                 guint         *piste_id,
+                 guint         *referee_id,
+                 FieTime      **start_time);
+
+      void SetJobStatus (Job      *job,
+                         gboolean  has_slot,
+                         gboolean  has_referee);
+
+      void RemoveJob (Net::Message *message);
+
+      guint GetId ();
+
+      GList *GetScheduledJobs ();
+
+      GList *GetPendingJobs ();
+
+      const gchar *GetName ();
+
+      void SetProperties (Net::Message *message);
+
+      GList *GetCurrentSelection ();
+
+      void OnAssign ();
+
+      void OnCancelAssign ();
+
+      void OnValidateAssign ();
+
+      GData *GetProperties ();
+
+      void on_competition_treeview_row_activated (GtkTreePath *path);
+
+    private:
+      guint         _id;
+      Competition  *_competition;
+      GtkListStore *_job_store;
+      guint32       _dnd_key;
+      gchar        *_name;
+      Listener     *_listener;
+      GList        *_scheduled_list;
+      GList        *_pending_list;
+      JobBoard     *_job_board;
+      GData        *_properties;
+      GtkWidget    *_assign_button;
+      GtkWidget    *_cancel_button;
+      GtkWidget    *_lock_button;
+
+      virtual ~Batch ();
+
+      Job *GetJob (guint netid);
+
+      void RefreshControlPanel ();
+
+      void SetProperty (Net::Message *message,
+                        const gchar  *property);
+
+      void OnDragDataGet (GtkWidget        *widget,
+                          GdkDragContext   *drag_context,
+                          GtkSelectionData *data,
+                          guint             key,
+                          guint             time);
+  };
+}

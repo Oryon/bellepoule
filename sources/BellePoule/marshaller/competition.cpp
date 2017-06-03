@@ -18,66 +18,25 @@
 #include <libxml/tree.h>
 
 #include "util/player.hpp"
-#include "util/fie_time.hpp"
 #include "actors/player_factory.hpp"
 
-#include "job.hpp"
-#include "job_board.hpp"
 #include "competition.hpp"
 
 namespace Marshaller
 {
-  typedef enum
-  {
-    NAME_str,
-    JOB_ptr,
-    JOB_color,
-    JOB_status
-  } ColumnId;
-
   // --------------------------------------------------------------------------------
-  Competition::Competition (guint     id,
-                            Listener *listener)
+  Competition::Competition (guint            id,
+                            Batch::Listener *listener)
     : Object ("Competition"),
-    Module ("batch.glade")
+    Module ("competition.glade", "batch_viewport")
   {
-    _name           = NULL;
-    _listener       = listener;
-    _scheduled_list = NULL;
-    _pending_list   = NULL;
-    _fencer_list    = NULL;
-    _weapon         = NULL;
+    _fencer_list = NULL;
+    _batches     = NULL;
+    _weapon      = NULL;
+    _id          = id;
+    _gdk_color   = g_new (GdkColor, 1);
 
-    _assign_button = _glade->GetWidget ("assign_toolbutton");
-    _cancel_button = _glade->GetWidget ("cancel_toolbutton");
-    _lock_button   = _glade->GetWidget ("lock_toolbutton");
-
-    _id = id;
-
-    _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
-
-    _gdk_color = g_new (GdkColor, 1);
-
-    _job_board = new JobBoard ();
-
-    {
-      GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("competition_treeview"));
-
-      gtk_tree_selection_set_mode (gtk_tree_view_get_selection (treeview),
-                                   GTK_SELECTION_MULTIPLE);
-    }
-
-    {
-      GtkWidget *source = _glade->GetWidget ("competition_treeview");
-
-      _dnd_key = _dnd_config->AddTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
-
-      _dnd_config->SetOnAWidgetSrc (source,
-                                    GDK_MODIFIER_MASK,
-                                    GDK_ACTION_COPY);
-
-      ConnectDndSource (source);
-    }
+    _batch_listener = listener;
 
     g_datalist_init (&_properties);
   }
@@ -85,42 +44,13 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Competition::~Competition ()
   {
-    {
-      GtkTreeIter iter;
-      gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
-                                                                 &iter);
-
-      while (iter_is_valid)
-      {
-        Job *job;
-
-        gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
-                            &iter,
-                            JOB_ptr, &job,
-                            -1);
-
-        job->Release ();
-
-        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
-                                                  &iter);
-      }
-
-      gtk_list_store_clear (_job_store);
-    }
-
     gdk_color_free (_gdk_color);
-    g_free (_name);
-
-    g_list_free (_scheduled_list);
-    g_list_free (_pending_list);
-
     g_datalist_clear (&_properties);
 
     FreeFullGList (Player, _fencer_list);
+    FreeFullGList (Batch,  _batches);
 
     g_free (_weapon);
-
-    _job_board->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -139,30 +69,6 @@ namespace Marshaller
   GdkColor *Competition::GetColor ()
   {
     return _gdk_color;
-  }
-
-  // --------------------------------------------------------------------------------
-  const gchar *Competition::GetName ()
-  {
-    return _name;
-  }
-
-  // --------------------------------------------------------------------------------
-  void Competition::RefreshControlPanel ()
-  {
-    gtk_widget_set_sensitive (_assign_button, TRUE);
-    gtk_widget_set_sensitive (_cancel_button, TRUE);
-    gtk_widget_set_sensitive (_lock_button,   TRUE);
-
-    if (_pending_list == NULL)
-    {
-      gtk_widget_set_sensitive (_assign_button, FALSE);
-    }
-    if (_scheduled_list == NULL)
-    {
-      gtk_widget_set_sensitive (_cancel_button, FALSE);
-      gtk_widget_set_sensitive (_lock_button,   FALSE);
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -220,6 +126,66 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Competition::ManageBatch (Net::Message *message)
+  {
+    Batch *batch = new Batch (message->GetNetID (),
+                              this,
+                              _batch_listener);
+
+    _batches = g_list_append (_batches,
+                              batch);
+
+    Plug (batch,
+          _glade->GetWidget ("batch_viewport"));
+  }
+
+  // --------------------------------------------------------------------------------
+  void Competition::DeleteBatch (Net::Message *message)
+  {
+    Batch *batch = GetBatch (message->GetNetID ());
+
+    if (batch)
+    {
+      GList *node = g_list_find (_batches,
+                                 batch);
+
+      if (node)
+      {
+        _batches = g_list_delete_link (_batches,
+                                       node);
+      }
+      batch->UnPlug ();
+      batch->Release ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  Batch *Competition::GetBatch (guint id)
+  {
+    GList *current = _batches;
+
+    while (current)
+    {
+      Batch *batch = (Batch *) current->data;
+
+      if (batch->GetId () == id)
+      {
+        return batch;
+      }
+
+      current = g_list_next (current);
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  GList *Competition::GetBatches ()
+  {
+    return _batches;
+  }
+
+  // --------------------------------------------------------------------------------
   void Competition::AttachTo (GtkNotebook *to)
   {
     GtkWidget *root = GetRootWidget ();
@@ -230,381 +196,6 @@ namespace Marshaller
     gtk_notebook_append_page (to,
                               root,
                               _glade->GetWidget ("notebook_title"));
-  }
-
-  // --------------------------------------------------------------------------------
-  GList *Competition::GetCurrentSelection ()
-  {
-    GList            *result    = NULL;
-    GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("competition_treeview"));
-    GtkTreeSelection *selection = gtk_tree_view_get_selection (tree_view);
-
-    if (selection)
-    {
-      GList        *current;
-      GtkTreeModel *model          = gtk_tree_view_get_model (tree_view);
-      GList        *selection_list = gtk_tree_selection_get_selected_rows (selection,
-                                                                           NULL);
-
-      current = selection_list;
-      while (current)
-      {
-        GtkTreeIter  iter;
-        Job         *job;
-
-        gtk_tree_model_get_iter (model,
-                                 &iter,
-                                 (GtkTreePath *) current->data);
-        gtk_tree_model_get (model, &iter,
-                            JOB_ptr,
-                            &job, -1);
-
-        result = g_list_append (result,
-                                job);
-
-        current = g_list_next (current);
-      }
-
-      g_list_free_full (selection_list,
-                        (GDestroyNotify) gtk_tree_path_free);
-    }
-
-    return result;
-  }
-
-  // --------------------------------------------------------------------------------
-  void Competition::SetJobStatus (Job      *job,
-                                  gboolean  has_slot,
-                                  gboolean  has_referee)
-  {
-    GtkTreeIter iter;
-    gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
-                                                               &iter);
-
-    while (iter_is_valid)
-    {
-      Job *current_job;
-
-      gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
-                          &iter,
-                          JOB_ptr, &current_job,
-                          -1);
-
-      if (current_job == job)
-      {
-        if (has_slot && has_referee)
-        {
-          gtk_list_store_set (_job_store, &iter,
-                              JOB_color,  "Grey",
-                              JOB_status, NULL,
-                              -1);
-        }
-        else
-        {
-          gtk_list_store_set (_job_store, &iter,
-                              JOB_color,  "Black",
-                              JOB_status, GTK_STOCK_DIALOG_WARNING,
-                              -1);
-        }
-
-        if (has_slot)
-        {
-          GList *node = g_list_find (_pending_list,
-                                     job);
-
-          if (node)
-          {
-            _pending_list = g_list_delete_link (_pending_list,
-                                                node);
-
-            _scheduled_list = g_list_insert_sorted (_scheduled_list,
-                                                    job,
-                                                    (GCompareFunc) Job::CompareStartTime);
-          }
-        }
-        else
-        {
-          GList *node = g_list_find (_scheduled_list,
-                                     job);
-
-          _scheduled_list = g_list_delete_link (_scheduled_list,
-                                                node);
-
-          _pending_list = g_list_insert_sorted (_pending_list,
-                                                job,
-                                                (GCompareFunc) Job::CompareSiblingOrder);
-        }
-
-        RefreshControlPanel ();
-        break;
-      }
-
-      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
-                                                &iter);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  GList *Competition::GetScheduledJobs ()
-  {
-    return _scheduled_list;
-  }
-
-  // --------------------------------------------------------------------------------
-  GList *Competition::GetPendingJobs ()
-  {
-    return _pending_list;
-  }
-
-  // --------------------------------------------------------------------------------
-  void Competition::RemoveJob (Net::Message *message)
-  {
-    GtkTreeIter iter;
-    gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
-                                                               &iter);
-
-    while (iter_is_valid)
-    {
-      Job *current_job;
-
-      gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
-                          &iter,
-                          JOB_ptr, &current_job,
-                          -1);
-
-      if (message->GetNetID () == current_job->GetNetID ())
-      {
-        gtk_list_store_remove (_job_store,
-                               &iter);
-
-        {
-          GList *node = g_list_find (_pending_list,
-                                     current_job);
-          _pending_list = g_list_delete_link (_pending_list,
-                                              node);
-        }
-
-        {
-          GList *node = g_list_find (_scheduled_list,
-                                     current_job);
-          _scheduled_list = g_list_delete_link (_scheduled_list,
-                                                node);
-        }
-
-        RefreshControlPanel ();
-        current_job->Release ();
-
-        break;
-      }
-
-      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
-                                                &iter);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  Job *Competition::GetJob (guint netid)
-  {
-    GtkTreeIter iter;
-    gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
-                                                               &iter);
-
-    while (iter_is_valid)
-    {
-      Job *current_job;
-
-      gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
-                          &iter,
-                          JOB_ptr, &current_job,
-                          -1);
-
-      if (current_job->GetNetID () == netid)
-      {
-        return current_job;
-      }
-
-      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
-                                                &iter);
-    }
-
-    return NULL;
-  }
-
-  // --------------------------------------------------------------------------------
-  Job *Competition::Load (Net::Message  *message,
-                          guint         *piste_id,
-                          guint         *referee_id,
-                          FieTime      **start_time)
-  {
-    Job *job = NULL;
-
-    if (GetJob (message->GetNetID ()) == NULL)
-    {
-      gchar     *xml = message->GetString ("xml");
-      xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
-
-      if (doc)
-      {
-        xmlXPathInit ();
-
-        {
-          xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-          xmlXPathObject  *xml_object;
-          xmlNodeSet      *xml_nodeset;
-
-          xml_object = xmlXPathEval (BAD_CAST "/Poule", xml_context);
-          xml_nodeset = xml_object->nodesetval;
-
-          if (xml_nodeset->nodeNr == 1)
-          {
-            xmlNode     *root_node     = xml_nodeset->nodeTab[0];
-            GtkTreeIter  iter;
-            gchar       *attr;
-            gchar       *name;
-            guint        sibling_order;
-
-            sibling_order = g_list_length (_pending_list) + g_list_length (_scheduled_list);
-            job = new Job (this,
-                           message->GetNetID (),
-                           sibling_order,
-                           _gdk_color);
-
-            attr = (gchar *) xmlGetProp (root_node, BAD_CAST "ID");
-            if (attr)
-            {
-              name = g_strdup_printf ("%s%s", gettext ("Pool #"), attr);
-              xmlFree (attr);
-            }
-            else
-            {
-              name = g_strdup (gettext ("Pool"));
-            }
-
-            attr = (gchar *) xmlGetProp (root_node, BAD_CAST "Piste");
-            if (attr)
-            {
-              *piste_id = atoi (attr);
-              xmlFree (attr);
-            }
-
-            attr = (gchar *) xmlGetProp (root_node, BAD_CAST "Date");
-            if (attr)
-            {
-              *start_time = new FieTime (attr);
-              xmlFree (attr);
-            }
-
-            gtk_list_store_append (_job_store,
-                                   &iter);
-
-            job->SetName (name);
-            gtk_list_store_set (_job_store, &iter,
-                                NAME_str,   name,
-                                JOB_ptr,    job,
-                                JOB_color,  "Black",
-                                JOB_status, GTK_STOCK_DIALOG_WARNING,
-                                -1);
-            g_free (name);
-
-            _pending_list = g_list_append (_pending_list,
-                                           job);
-            _job_board->AddJob (job);
-
-            for (xmlNode *n = xml_nodeset->nodeTab[0]->children; n != NULL; n = n->next)
-            {
-              if (n->type == XML_ELEMENT_NODE)
-              {
-                if (g_strcmp0 ((gchar *)n->name, "Tireur") == 0)
-                {
-                  attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
-                  if (attr)
-                  {
-                    Player *fencer = GetFencer (atoi (attr));
-
-                    if (fencer == NULL)
-                    {
-                      g_error ("Fencer %s not found!\n", attr);
-                    }
-                    else
-                    {
-                      job->AddFencer (fencer);
-                    }
-                    xmlFree (attr);
-                  }
-                }
-                else if (g_strcmp0 ((gchar *)n->name, "Arbitre") == 0)
-                {
-                  attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
-                  if (attr)
-                  {
-                    *referee_id = atoi (attr);
-                    xmlFree (attr);
-                  }
-                }
-              }
-            }
-          }
-
-          xmlXPathFreeObject  (xml_object);
-          xmlXPathFreeContext (xml_context);
-        }
-        xmlFreeDoc (doc);
-      }
-      g_free (xml);
-
-      g_free (_name);
-      _name = message->GetString ("round");
-    }
-
-    RefreshControlPanel ();
-    return job;
-  }
-
-  // --------------------------------------------------------------------------------
-  void Competition::OnDragDataGet (GtkWidget        *widget,
-                                   GdkDragContext   *drag_context,
-                                   GtkSelectionData *data,
-                                   guint             key,
-                                   guint             time)
-  {
-    if (key == _dnd_key)
-    {
-      gtk_selection_data_set (data,
-                              gtk_selection_data_get_target (data),
-                              32,
-                              (guchar *) &_id,
-                              sizeof (_id));
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Competition::OnAssign ()
-  {
-    if (_listener->OnCompetitionAssignmentRequest (this))
-    {
-      _job_board->Display ();
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Competition::OnCancelAssign ()
-  {
-    _listener->OnCompetitionAssignmentCancel (this);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Competition::OnValidateAssign ()
-  {
-    GList *current = _scheduled_list;
-
-    while (current)
-    {
-      Job *job = (Job *) current->data;
-
-      job->Spread ();
-
-      current = g_list_next (current);
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -686,60 +277,5 @@ namespace Marshaller
     }
 
     return NULL;
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_competition_treeview_row_activated  (GtkTreeView       *tree_view,
-                                                                          GtkTreePath       *path,
-                                                                          GtkTreeViewColumn *column,
-                                                                          Object            *owner)
-  {
-    Competition *b = dynamic_cast <Competition *> (owner);
-
-    b->on_competition_treeview_row_activated (path);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Competition::on_competition_treeview_row_activated (GtkTreePath *path)
-  {
-    GtkTreeModel *model = GTK_TREE_MODEL (_job_store);
-    Job          *job;
-    GtkTreeIter   iter;
-
-    gtk_tree_model_get_iter (model,
-                             &iter,
-                             path);
-    gtk_tree_model_get (model, &iter,
-                        JOB_ptr,
-                        &job, -1);
-
-    _job_board->Display (job);
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_assign_toolbutton_clicked (GtkToolButton *widget,
-                                                                Object        *owner)
-  {
-    Competition *b = dynamic_cast <Competition *> (owner);
-
-    b->OnAssign ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_cancel_toolbutton_clicked (GtkToolButton *widget,
-                                                                Object        *owner)
-  {
-    Competition *b = dynamic_cast <Competition *> (owner);
-
-    b->OnCancelAssign ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_lock_toolbutton_clicked (GtkToolButton *widget,
-                                                              Object        *owner)
-  {
-    Competition *b = dynamic_cast <Competition *> (owner);
-
-    b->OnValidateAssign ();
   }
 }

@@ -95,6 +95,11 @@ namespace Net
   void MessageUploader::PrepareData (gchar       *data_copy,
                                      const gchar *passphrase)
   {
+    if (data_copy == NULL)
+    {
+      g_error ("MessageUploader::PrepareData ==> data_copy NULL");
+    }
+
     if (passphrase)
     {
       guchar *iv;
@@ -119,13 +124,9 @@ namespace Net
   // --------------------------------------------------------------------------------
   void MessageUploader::PushMessage (Message *message)
   {
-    if (message->IsWaitingToBeSent () == FALSE)
-    {
-      message->MarkAsWaitingToBeSent ();
-      message->Retain ();
-      g_async_queue_push (_message_queue,
-                          message);
-    }
+    Message *clone = message->Clone ();
+    g_async_queue_push (_message_queue,
+                        clone);
   }
 
   // --------------------------------------------------------------------------------
@@ -192,8 +193,7 @@ namespace Net
     {
       {
         Message *message = (Message *) g_async_queue_pop (uploader->_message_queue);
-
-        message->MarkAsSent ();
+        message->Dump (FALSE);
 
         if (message->Is ("MessageUploader::stop_sending"))
         {

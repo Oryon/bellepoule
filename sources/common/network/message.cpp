@@ -23,10 +23,9 @@ namespace Net
   Message::Message ()
     : Object ("Message")
   {
-    _passphrase         = NULL;
-    _is_valid           = TRUE;
-    _waiting_to_be_sent = FALSE;
-    _key_file           = g_key_file_new ();
+    _passphrase = NULL;
+    _is_valid   = TRUE;
+    _key_file   = g_key_file_new ();
   }
 
   // --------------------------------------------------------------------------------
@@ -72,6 +71,29 @@ namespace Net
   {
     g_free (_passphrase);
     g_key_file_free (_key_file);
+  }
+
+  // --------------------------------------------------------------------------------
+  Message *Message::Clone ()
+  {
+    Message *clone = new Message ();
+
+    clone->_is_valid = _is_valid;
+    clone->_passphrase = g_strdup (_passphrase);
+
+    {
+      gchar *data = g_key_file_to_data (_key_file,
+                                        NULL,
+                                        NULL);
+
+      g_key_file_load_from_data (clone->_key_file,
+                                 data,
+                                 -1,
+                                 G_KEY_FILE_NONE,
+                                 NULL);
+    }
+
+    return clone;
   }
 
   // --------------------------------------------------------------------------------
@@ -129,12 +151,6 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Message::IsWaitingToBeSent ()
-  {
-    return _waiting_to_be_sent;
-  }
-
-  // --------------------------------------------------------------------------------
   void Message::SetPassPhrase (const gchar *passphrase)
   {
     g_free (_passphrase);
@@ -170,18 +186,6 @@ namespace Net
   void Message::Spread ()
   {
     Ring::SpreadMessage (this);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Message::MarkAsSent ()
-  {
-    _waiting_to_be_sent = FALSE;
-  }
-
-  // --------------------------------------------------------------------------------
-  void Message::MarkAsWaitingToBeSent ()
-  {
-    _waiting_to_be_sent = TRUE;
   }
 
   // --------------------------------------------------------------------------------
@@ -248,12 +252,25 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Message::Dump ()
+  void Message::Dump (gboolean regular)
   {
-    gchar *parcel = GetParcel ();
+    if (regular)
+    {
+      gchar *parcel = GetParcel ();
 
-    printf (BLUE "-----------------\n" ESC);
-    printf ("%s\n", parcel);
-    g_free (parcel);
+      printf (BLUE "-----------------\n" ESC);
+      printf ("%s\n", parcel);
+      g_free (parcel);
+    }
+    else
+    {
+      gchar *field_name = g_key_file_get_string (_key_file,
+                                                 "Header",
+                                                 "name",
+                                                 NULL);
+
+      printf (BLUE "< %s >\n" ESC, field_name);
+      g_free (field_name);
+    }
   }
 }

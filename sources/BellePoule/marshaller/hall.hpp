@@ -19,20 +19,21 @@
 #include "util/canvas_module.hpp"
 #include "network/message.hpp"
 #include "piste.hpp"
-#include "competition.hpp"
+#include "batch.hpp"
 #include "timeline.hpp"
 #include "clock.hpp"
 #include "job_board.hpp"
 
 namespace Marshaller
 {
+  class Competition;
   class RefereePool;
   class Lasso;
 
   class Hall :
     public CanvasModule,
     public Piste::Listener,
-    public Competition::Listener,
+    public Batch::Listener,
     public Timeline::Listener,
     public JobBoard::Listener,
     public Clock::Listener
@@ -64,15 +65,15 @@ namespace Marshaller
 
       void ManageCompetition (Net::Message *message,
                               GtkNotebook  *notebook);
-
       void DeleteCompetition (Net::Message *message);
 
+      void ManageBatch (Net::Message *message);
+      void DeleteBatch (Net::Message *message);
+
       void ManageJob (Net::Message *message);
-
-      void ManageFencer (Net::Message *message);
-
       void DeleteJob (Net::Message *message);
 
+      void ManageFencer (Net::Message *message);
       void DeleteFencer (Net::Message *message);
 
     private:
@@ -138,9 +139,9 @@ namespace Marshaller
       void OnPisteMotionEvent (Piste          *piste,
                                GdkEventMotion *event);
 
-      gboolean OnCompetitionAssignmentRequest (Competition *competition);
+      gboolean OnBatchAssignmentRequest (Batch *batch);
 
-      void OnCompetitionAssignmentCancel (Competition *competition);
+      void OnBatchAssignmentCancel (Batch *batch);
 
       void OnTimelineCursorMoved ();
 

@@ -68,7 +68,6 @@ namespace Pool
     private:
       void OnLocked ();
       void OnUnLocked ();
-      void Recall ();
       void Reset ();
       GSList *GetCurrentClassification ();
       void LoadConfiguration (xmlNode *xml_node);
@@ -134,7 +133,11 @@ namespace Pool
       void OnPoolRoadmap (Pool         *pool,
                           Net::Message *message);
 
-      void Spread ();
+      void SpreadJobs ();
+
+      void RecallJobs ();
+
+      void FeedParcel (Net::Message *parcel);
 
       gint GetNbMatchs ();
 

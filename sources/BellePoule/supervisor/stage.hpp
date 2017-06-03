@@ -130,7 +130,7 @@ class Stage : public virtual Object
 
     virtual void Reset ();
 
-    virtual void Display () {};
+    virtual void Display ();
 
     virtual void Garnish () {};
 

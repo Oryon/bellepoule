@@ -177,28 +177,35 @@ namespace Marshaller
 
     for (guint i = 0; current_competition != NULL; i++)
     {
-      Competition *competition = (Competition *) current_competition->data;
-      gchar       *color       = gdk_color_to_string (competition->GetColor ());
-      GList       *current_job = competition->GetScheduledJobs ();
+      Competition *competition   = (Competition *) current_competition->data;
+      gchar       *color         = gdk_color_to_string (competition->GetColor ());
+      GList       *current_batch = competition->GetBatches ();
 
-      while (current_job != NULL)
+      while (current_batch)
       {
-        Job       *job   = (Job *) current_job->data;
-        Slot      *slot  = job->GetSlot ();
-        GDateTime *start = slot->GetStartTime ();
-        gdouble    x     = g_date_time_difference (start, _origin) *_time_scale;
-        gdouble    w     = (slot->GetDuration () - 3 *G_TIME_SPAN_MINUTE) *_time_scale;
+        Batch *batch       = (Batch *) current_batch->data;
+        GList *current_job = batch->GetScheduledJobs ();
 
-        goo_canvas_rect_new (GetRootItem (),
-                             x,
-                             i*_competition_scale/10.0,
-                             w,
-                             _competition_scale/10.0,
-                             "fill-color",     color,
-                             "stroke-pattern", NULL,
-                             NULL);
+        while (current_job != NULL)
+        {
+          Job       *job   = (Job *) current_job->data;
+          Slot      *slot  = job->GetSlot ();
+          GDateTime *start = slot->GetStartTime ();
+          gdouble    x     = g_date_time_difference (start, _origin) *_time_scale;
+          gdouble    w     = (slot->GetDuration () - 3 *G_TIME_SPAN_MINUTE) *_time_scale;
 
-        current_job = g_list_next (current_job);
+          goo_canvas_rect_new (GetRootItem (),
+                               x,
+                               i*_competition_scale/10.0,
+                               w,
+                               _competition_scale/10.0,
+                               "fill-color",     color,
+                               "stroke-pattern", NULL,
+                               NULL);
+
+          current_job = g_list_next (current_job);
+        }
+        current_batch = g_list_next (current_batch);
       }
 
       g_free (color);

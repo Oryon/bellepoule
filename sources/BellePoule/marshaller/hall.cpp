@@ -21,6 +21,7 @@
 #include "piste.hpp"
 #include "job.hpp"
 #include "competition.hpp"
+#include "batch.hpp"
 #include "referee_pool.hpp"
 #include "timeline.hpp"
 #include "job_board.hpp"
@@ -158,11 +159,11 @@ namespace Marshaller
     Piste *piste = dynamic_cast <Piste *> (target_zone);
 
     {
-      Competition *competition = dynamic_cast <Competition *> (object);
+      Batch *batch = dynamic_cast <Batch *> (object);
 
-      if (competition)
+      if (batch)
       {
-        GList     *selection = competition->GetCurrentSelection ();
+        GList     *selection = batch->GetCurrentSelection ();
         GList     *current   = selection;
         GDateTime *from      = _timeline->RetreiveCursorTime ();
 
@@ -245,6 +246,30 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::ManageBatch (Net::Message *message)
+  {
+    guint        id          = message->GetInteger ("competition");
+    Competition *competition = GetCompetition (id);
+
+    if (competition)
+    {
+      competition->ManageBatch (message);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::DeleteBatch (Net::Message *message)
+  {
+    guint        id          = message->GetInteger ("competition");
+    Competition *competition = GetCompetition (id);
+
+    if (competition)
+    {
+      competition->DeleteBatch (message);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Hall::ManageJob (Net::Message *message)
   {
     guint        id          = message->GetInteger ("competition");
@@ -252,42 +277,47 @@ namespace Marshaller
 
     if (competition)
     {
-      guint    piste_id;
-      guint    referee_id;
-      FieTime *start_time = NULL;
-      Job     *job;
+      Batch *batch = competition->GetBatch (message->GetInteger ("batch"));
 
-      job = competition->Load (message,
-                               &piste_id,
-                               &referee_id,
-                               &start_time);
-      if (job && start_time)
+      if (batch)
       {
-        Piste *piste = GetPiste (piste_id);
+        guint    piste_id;
+        guint    referee_id;
+        FieTime *start_time = NULL;
+        Job     *job;
 
-        if (piste)
+        job = batch->Load (message,
+                           &piste_id,
+                           &referee_id,
+                           &start_time);
+        if (job && start_time)
         {
-          Slot *slot = piste->GetFreeSlot (start_time->GetGDateTime (),
-                                           30*G_TIME_SPAN_MINUTE);
+          Piste *piste = GetPiste (piste_id);
 
-          if (slot)
+          if (piste)
           {
-            EnlistedReferee *referee = _referee_pool->GetReferee (referee_id);
+            Slot *slot = piste->GetFreeSlot (start_time->GetGDateTime (),
+                                             30*G_TIME_SPAN_MINUTE);
 
-            if (referee)
+            if (slot)
             {
-              slot->AddJob     (job);
-              slot->AddReferee (referee);
-              _timeline->Redraw ();
-            }
-            else
-            {
-              slot->Release ();
+              EnlistedReferee *referee = _referee_pool->GetReferee (referee_id);
+
+              if (referee)
+              {
+                slot->AddJob     (job);
+                slot->AddReferee (referee);
+                _timeline->Redraw ();
+              }
+              else
+              {
+                slot->Release ();
+              }
             }
           }
         }
+        _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
       }
-      _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
     }
   }
 
@@ -306,21 +336,18 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::DeleteJob (Net::Message *message)
   {
-    guint  id      = message->GetInteger ("competition");
-    GList *current = _competition_list;
+    guint        id          = message->GetInteger ("competition");
+    Competition *competition = GetCompetition (id);
 
-    while (current)
+    if (competition)
     {
-      Competition *competition = (Competition *) current->data;
+      Batch *batch = competition->GetBatch (message->GetInteger ("batch"));
 
-      if (competition->GetId () == id)
+      if (batch)
       {
-        competition->RemoveJob (message);
+        batch->RemoveJob (message);
         _timeline->Redraw ();
-        break;
       }
-
-      current = g_list_next (current);
     }
   }
 
@@ -719,9 +746,10 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Hall::OnCompetitionAssignmentRequest (Competition *competition)
+  gboolean Hall::OnBatchAssignmentRequest (Batch *batch)
   {
-    gboolean done = FALSE;
+    Competition *competition = batch->GetCompetition ();
+    gboolean     done        = FALSE;
 
     _listener->OnExposeWeapon (competition->GetWeaponCode ());
 
@@ -762,11 +790,11 @@ namespace Marshaller
 
           if (gtk_toggle_button_get_active (all_jobs))
           {
-            job_list = g_list_copy (competition->GetPendingJobs ());
+            job_list = g_list_copy (batch->GetPendingJobs ());
           }
           else
           {
-            job_list = g_list_copy (competition->GetCurrentSelection ());
+            job_list = g_list_copy (batch->GetCurrentSelection ());
           }
         }
 
@@ -961,15 +989,16 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::OnCompetitionAssignmentCancel (Competition *competition)
+  void Hall::OnBatchAssignmentCancel (Batch *batch)
   {
-    GList *current_piste = _piste_list;
+    Competition *competition   = batch->GetCompetition ();
+    GList       *current_piste = _piste_list;
 
     while (current_piste)
     {
       Piste *piste = (Piste *) current_piste->data;
 
-      piste->RemoveCompetition (competition);
+      piste->RemoveBatch (batch);
 
       current_piste = g_list_next (current_piste);
     }

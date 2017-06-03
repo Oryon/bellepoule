@@ -27,6 +27,8 @@ namespace Net
 
       Message (const guint8 *data);
 
+      Message *Clone ();
+
       gboolean Is (const gchar *name);
 
       gboolean IsValid ();
@@ -61,18 +63,11 @@ namespace Net
 
       gchar *GetParcel ();
 
-      void Dump ();
+      void Dump (gboolean regular = TRUE);
 
       void Spread ();
 
-      void MarkAsSent ();
-
-      void MarkAsWaitingToBeSent ();
-
-      gboolean IsWaitingToBeSent ();
-
     private:
-      gboolean  _waiting_to_be_sent;
       gboolean  _is_valid;
       GKeyFile *_key_file;
       gchar    *_passphrase;

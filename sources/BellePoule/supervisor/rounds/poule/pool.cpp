@@ -100,16 +100,16 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::SetIdChain (guint        contest,
-                         const gchar *stage_name,
-                         guint        stage_id)
+  void Pool::SetIdChain (guint contest_netid,
+                         guint batch_netid,
+                         guint stage_id)
   {
-    _parcel->Set ("competition", contest);
-    _parcel->Set ("round",   stage_name);
+    _parcel->Set ("competition", contest_netid);
+    _parcel->Set ("batch",       batch_netid);
 
     {
       gchar *ref = g_strdup_printf ("#%u/%d/%d",
-                                    contest,
+                                    contest_netid,
                                     stage_id,
                                     _number);
 
