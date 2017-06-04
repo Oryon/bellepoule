@@ -193,7 +193,6 @@ namespace Net
     {
       {
         Message *message = (Message *) g_async_queue_pop (uploader->_message_queue);
-        message->Dump (FALSE);
 
         if (message->Is ("MessageUploader::stop_sending"))
         {

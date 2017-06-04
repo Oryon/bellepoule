@@ -38,11 +38,12 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
     Batch::Batch (guint        id,
                   Competition *competition,
+                  const gchar *name,
                   Listener    *listener)
     : Object ("Batch"),
     Module ("batch.glade")
   {
-    _name           = NULL;
+    _name           = g_strdup (name);
     _listener       = listener;
     _scheduled_list = NULL;
     _pending_list   = NULL;
@@ -76,8 +77,6 @@ namespace Marshaller
 
       ConnectDndSource (source);
     }
-
-    g_datalist_init (&_properties);
   }
 
   // --------------------------------------------------------------------------------
@@ -111,8 +110,6 @@ namespace Marshaller
     g_list_free (_scheduled_list);
     g_list_free (_pending_list);
 
-    g_datalist_clear (&_properties);
-
     _job_board->Release ();
   }
 
@@ -126,12 +123,6 @@ namespace Marshaller
   Competition *Batch::GetCompetition ()
   {
     return _competition;
-  }
-
-  // --------------------------------------------------------------------------------
-  GData *Batch::GetProperties ()
-  {
-    return _properties;
   }
 
   // --------------------------------------------------------------------------------
@@ -156,27 +147,6 @@ namespace Marshaller
       gtk_widget_set_sensitive (_cancel_button, FALSE);
       gtk_widget_set_sensitive (_lock_button,   FALSE);
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Batch::SetProperty (Net::Message *message,
-                           const gchar  *property)
-  {
-    gchar         *property_widget = g_strdup_printf ("competition_%s_label", property);
-    GtkLabel      *label           = GTK_LABEL (_glade->GetGObject (property_widget));
-    AttributeDesc *desc            = AttributeDesc::GetDescFromCodeName (property);
-    gchar         *xml             = message->GetString (property);
-    gchar         *image           = desc->GetUserImage (xml, AttributeDesc::LONG_TEXT);
-
-    g_datalist_set_data_full (&_properties,
-                              property,
-                              image,
-                              g_free);
-    gtk_label_set_text (label,
-                        gettext (image));
-
-    g_free (property_widget);
-    g_free (xml);
   }
 
   // --------------------------------------------------------------------------------
@@ -498,9 +468,6 @@ namespace Marshaller
         xmlFreeDoc (doc);
       }
       g_free (xml);
-
-      g_free (_name);
-      _name = message->GetString ("round");
     }
 
     RefreshControlPanel ();

@@ -156,7 +156,6 @@ namespace Net
   void Ring::Leave ()
   {
     {
-      printf (RED "<<< Farewell >>>\n" ESC);
       Message *message = new Message ("Farewell");
 
       message->Set ("role", _role);
@@ -283,7 +282,6 @@ namespace Net
           }
           else if (message->Is ("Farewell"))
           {
-            printf (YELLOW "<<< Farewell >>>\n" ESC);
             Remove (role);
           }
         }

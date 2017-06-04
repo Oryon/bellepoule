@@ -128,9 +128,13 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Competition::ManageBatch (Net::Message *message)
   {
-    Batch *batch = new Batch (message->GetNetID (),
-                              this,
-                              _batch_listener);
+    gchar *round_name = message->GetString ("name");
+    Batch *batch      = new Batch (message->GetNetID (),
+                                   this,
+                                   round_name,
+                                   _batch_listener);
+
+    g_free (round_name);
 
     _batches = g_list_append (_batches,
                               batch);

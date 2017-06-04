@@ -41,6 +41,7 @@ namespace Marshaller
     public:
       Batch (guint        id,
              Competition *competition,
+             const gchar *name,
              Listener    *listener);
 
       Competition *GetCompetition ();
@@ -64,8 +65,6 @@ namespace Marshaller
 
       const gchar *GetName ();
 
-      void SetProperties (Net::Message *message);
-
       GList *GetCurrentSelection ();
 
       void OnAssign ();
@@ -73,8 +72,6 @@ namespace Marshaller
       void OnCancelAssign ();
 
       void OnValidateAssign ();
-
-      GData *GetProperties ();
 
       void on_competition_treeview_row_activated (GtkTreePath *path);
 
@@ -88,7 +85,6 @@ namespace Marshaller
       GList        *_scheduled_list;
       GList        *_pending_list;
       JobBoard     *_job_board;
-      GData        *_properties;
       GtkWidget    *_assign_button;
       GtkWidget    *_cancel_button;
       GtkWidget    *_lock_button;
@@ -98,9 +94,6 @@ namespace Marshaller
       Job *GetJob (guint netid);
 
       void RefreshControlPanel ();
-
-      void SetProperty (Net::Message *message,
-                        const gchar  *property);
 
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,
