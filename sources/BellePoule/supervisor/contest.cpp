@@ -1522,7 +1522,7 @@ void Contest::AttachTo (GtkNotebook *to)
 // --------------------------------------------------------------------------------
 void Contest::Publish ()
 {
-  if (_tournament && (_schedule->ScoreStuffingIsAllowed () == FALSE))
+  if (_tournament)
   {
     EcoSystem         *ecosystem = _tournament->GetEcosystem ();
     Net::FileUploader *uploader  = ecosystem->GetUpLoader ();

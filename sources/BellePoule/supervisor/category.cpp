@@ -127,7 +127,7 @@ void Category::ReadUserChoice ()
 
     for (guint i = 0; i < _nb_category; i++)
     {
-      if (g_strcmp0 (_fallback, _display_image[i]) == 0)
+      if (g_strcmp0 (_fallback, gettext (_display_image[i])) == 0)
       {
         _id = i;
 
