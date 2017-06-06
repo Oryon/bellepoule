@@ -248,7 +248,11 @@ void Object::Release ()
 
   if (_ref_count == 0)
   {
+#ifdef DEBUG
     g_warning ("Object::Release ERROR\n");
+#else
+    g_error ("Object::Release ERROR\n");
+#endif
     return;
   }
 

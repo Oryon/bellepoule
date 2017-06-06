@@ -301,7 +301,7 @@ namespace Pool
   {
     parcel->Set ("competition", _contest->GetNetID ());
     parcel->Set ("name",        GetName ());
-    parcel->Set ("locked",      Locked ());
+    parcel->Set ("done",        Locked ());
   }
 
   // --------------------------------------------------------------------------------
@@ -599,6 +599,13 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Allocator::Recall ()
+  {
+    RecallJobs ();
+    Stage::Recall ();
+  }
+
+  // --------------------------------------------------------------------------------
   void Allocator::FillInConfig ()
   {
     Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
@@ -728,6 +735,17 @@ namespace Pool
             {
               nb_pool = (guint) atoi (string);
               xmlFree (string);
+            }
+          }
+          {
+            gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "NetID");
+
+            if (attr)
+            {
+              _parcel->SetNetID (g_ascii_strtoull (attr,
+                                                   NULL,
+                                                   16));
+              xmlFree (attr);
             }
           }
           _loaded = TRUE;
@@ -863,6 +881,9 @@ namespace Pool
                                          BAD_CAST "NbDePoules",
                                          "%d", g_slist_length (_drop_zones));
     }
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "NetID",
+                                       "%x", _parcel->GetNetID ());
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "PhaseSuivanteDesQualifies",
                                        "%d", GetId ()+2);

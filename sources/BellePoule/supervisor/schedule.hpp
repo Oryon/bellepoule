@@ -65,8 +65,6 @@ class Schedule : public Module,
 
     void OnLoadingCompleted ();
 
-    void RemoveAllStages ();
-
     void ApplyNewConfig ();
 
     void SetScoreStuffingPolicy (gboolean allowed);

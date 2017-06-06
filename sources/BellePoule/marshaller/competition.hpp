@@ -66,10 +66,13 @@ namespace Marshaller
       GData           *_properties;
       Batch::Listener *_batch_listener;
       GList           *_batches;
+      Batch           *_current_batch;
 
       virtual ~Competition ();
 
       void SetProperty (Net::Message *message,
                         const gchar  *property);
+
+      void SetCurrentBatch (Batch *batch);
   };
 }

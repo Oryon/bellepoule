@@ -133,6 +133,8 @@ namespace Pool
       void OnPoolRoadmap (Pool         *pool,
                           Net::Message *message);
 
+      void Recall ();
+
       void SpreadJobs ();
 
       void RecallJobs ();

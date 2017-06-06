@@ -30,11 +30,12 @@ namespace Marshaller
     : Object ("Competition"),
     Module ("competition.glade", "batch_viewport")
   {
-    _fencer_list = NULL;
-    _batches     = NULL;
-    _weapon      = NULL;
-    _id          = id;
-    _gdk_color   = g_new (GdkColor, 1);
+    _fencer_list   = NULL;
+    _batches       = NULL;
+    _weapon        = NULL;
+    _id            = id;
+    _gdk_color     = g_new (GdkColor, 1);
+    _current_batch = NULL;
 
     _batch_listener = listener;
 
@@ -128,19 +129,51 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Competition::ManageBatch (Net::Message *message)
   {
-    gchar *round_name = message->GetString ("name");
-    Batch *batch      = new Batch (message->GetNetID (),
-                                   this,
-                                   round_name,
-                                   _batch_listener);
+    Batch *batch = GetBatch (message->GetNetID ());
 
-    g_free (round_name);
+    if (batch == NULL)
+    {
+      gchar *round_name = message->GetString ("name");
 
-    _batches = g_list_append (_batches,
-                              batch);
+      batch = new Batch (message->GetNetID (),
+                         this,
+                         round_name,
+                         _batch_listener);
 
-    Plug (batch,
-          _glade->GetWidget ("batch_viewport"));
+      g_free (round_name);
+
+      _batches = g_list_append (_batches,
+                                batch);
+    }
+
+    if (message->GetInteger ("done"))
+    {
+      if (_current_batch == batch)
+      {
+        SetCurrentBatch (NULL);
+      }
+    }
+    else
+    {
+      SetCurrentBatch (batch);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Competition::SetCurrentBatch (Batch *batch)
+  {
+    if (_current_batch)
+    {
+      _current_batch->UnPlug ();
+    }
+
+    _current_batch = batch;
+
+    if (_current_batch)
+    {
+      Plug (_current_batch,
+            _glade->GetWidget ("batch_viewport"));
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -158,7 +191,9 @@ namespace Marshaller
         _batches = g_list_delete_link (_batches,
                                        node);
       }
-      batch->UnPlug ();
+
+      SetCurrentBatch (NULL);
+
       batch->Release ();
     }
   }

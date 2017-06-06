@@ -107,7 +107,8 @@ Schedule::Schedule (Contest *contest,
 // --------------------------------------------------------------------------------
 Schedule::~Schedule ()
 {
-  RemoveAllStages ();
+  gtk_list_store_clear (_list_store);
+  FreeFullGList (Stage, _stage_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -542,21 +543,6 @@ void Schedule::InsertStage (Stage *stage,
     GiveName (stage);
     stage->FillInConfig ();
     RefreshSensitivity ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Schedule::RemoveAllStages ()
-{
-  GList *current = g_list_last (_stage_list);
-
-  while (current)
-  {
-    Stage *stage = (Stage *) current->data;
-
-    RemoveStage (stage);
-
-    current = g_list_last (_stage_list);
   }
 }
 

@@ -269,7 +269,14 @@ namespace Net
                                                  "name",
                                                  NULL);
 
-      printf (BLUE "< %s >\n" ESC, field_name);
+      if (GetFitness ())
+      {
+        printf (BLUE "< %s >\n" ESC, field_name);
+      }
+      else
+      {
+        printf (RED "< %s >\n" ESC, field_name);
+      }
       g_free (field_name);
     }
   }

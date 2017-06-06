@@ -55,6 +55,8 @@ namespace Marshaller
 
     _id = id;
 
+    g_object_ref (GetRootWidget ());
+
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
     _job_board = new JobBoard ();
@@ -111,6 +113,8 @@ namespace Marshaller
     g_list_free (_pending_list);
 
     _job_board->Release ();
+
+    g_object_unref (GetRootWidget ());
   }
 
   // --------------------------------------------------------------------------------

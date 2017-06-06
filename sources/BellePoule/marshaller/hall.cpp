@@ -346,6 +346,7 @@ namespace Marshaller
       if (batch)
       {
         batch->RemoveJob (message);
+        _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
         _timeline->Redraw ();
       }
     }
