@@ -1925,6 +1925,12 @@ void Contest::AddFileToRecentManager (const gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
+gboolean Contest::OnMessage (Net::Message *message)
+{
+  return _schedule->OnMessage (message);
+}
+
+// --------------------------------------------------------------------------------
 gboolean Contest::OnHttpPost (const gchar *command,
                               const gchar **resource,
                               const gchar *data)

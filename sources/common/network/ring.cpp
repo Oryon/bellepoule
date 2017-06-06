@@ -331,6 +331,8 @@ namespace Net
     partner->Retain ();
     _partner_list = g_list_prepend (_partner_list,
                                     partner);
+    NotifyPartnerStatus (partner,
+                         TRUE);
     Synchronize (partner);
   }
 
@@ -353,6 +355,8 @@ namespace Net
 
         _partner_list = g_list_delete_link (_partner_list,
                                             current);
+        NotifyPartnerStatus (partner,
+                             FALSE);
         partner->Release ();
         break;
       }
@@ -424,6 +428,20 @@ namespace Net
   {
     _listeners = g_list_prepend (_listeners,
                                  listener);
+
+    {
+      GList *current = _partner_list;
+
+      while (current)
+      {
+        Partner *partner = (Partner *) current->data;
+
+        NotifyPartnerStatus (partner,
+                             TRUE);
+
+        current = g_list_next (current);
+      }
+    }
   }
 
   // -------------------------------------------------------------------------------
@@ -440,7 +458,8 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  void Ring::PostToListener (Net::Message *message)
+  void Ring::NotifyPartnerStatus (Partner  *partner,
+                                  gboolean  joined)
   {
     GList *current = _listeners;
 
@@ -448,7 +467,9 @@ namespace Net
     {
       Listener *listener = (Listener *) current->data;
 
-      listener->OnMessage (message);
+      listener->OnPartnerJoined (partner,
+                                 joined);
+
       current = g_list_next (current);
     }
   }

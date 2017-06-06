@@ -384,6 +384,17 @@ void Object::RefreshParcel ()
 }
 
 // --------------------------------------------------------------------------------
+guint Object::GetNetID ()
+{
+  if (_parcel)
+  {
+    return _parcel->GetNetID ();
+  }
+
+  return 0;
+}
+
+// --------------------------------------------------------------------------------
 gboolean Object::OnMessage (Net::Message *message)
 {
   return FALSE;

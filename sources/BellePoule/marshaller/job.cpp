@@ -17,6 +17,7 @@
 #include "util/player.hpp"
 #include "network/message.hpp"
 #include "slot.hpp"
+#include "competition.hpp"
 #include "batch.hpp"
 
 #include "job.hpp"
@@ -39,7 +40,9 @@ namespace Marshaller
     _slot          = NULL;
 
     Disclose ("Roadmap");
-    _parcel->Set ("listener", netid);
+    _parcel->Set ("competition", batch->GetCompetition ()->GetId ());
+    _parcel->Set ("batch",       batch->GetId ());
+    _parcel->Set ("source",      netid);
   }
 
   // --------------------------------------------------------------------------------

@@ -100,6 +100,8 @@ class Tournament : public Module, public Net::Twitter::Listener
 
     virtual ~Tournament ();
 
+    Contest *GetContest (guint netid);
+
     void OnTwitterID (const gchar *id);
 
     void SetBackupLocation (gchar *location);

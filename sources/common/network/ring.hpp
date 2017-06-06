@@ -30,7 +30,8 @@ namespace Net
       class Listener
       {
         public:
-          virtual void OnMessage (Net::Message *message) = 0;
+          virtual void OnPartnerJoined (Partner  *partner,
+                                        gboolean  joined) = 0;
       };
 
     public:
@@ -52,7 +53,8 @@ namespace Net
 
       static void UnregisterListener (Listener *listener);
 
-      static void PostToListener (Net::Message *message);
+      static void NotifyPartnerStatus (Partner  *partner,
+                                       gboolean  join);
 
       static const gchar *GetIpV4Address ();
 

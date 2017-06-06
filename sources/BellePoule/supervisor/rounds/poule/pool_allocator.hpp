@@ -21,6 +21,7 @@
 #include "util/canvas_module.hpp"
 #include "util/data.hpp"
 #include "util/player.hpp"
+#include "network/ring.hpp"
 #include "actors/players_list.hpp"
 #include "../../stage.hpp"
 
@@ -33,7 +34,7 @@ namespace Pool
   class Allocator :
     public Stage,
     public CanvasModule,
-    public Pool::RoadmapListener
+    public Net::Ring::Listener
   {
     public:
       static void Declare ();
@@ -113,6 +114,7 @@ namespace Pool
       SensitivityTrigger   _swapping_sensitivity_trigger;
       People::PlayersList *_fencer_list;
       Swapper             *_swapper;
+      gboolean             _has_marshaller;
 
       void Setup ();
       void PopulateFencerList ();
@@ -128,7 +130,7 @@ namespace Pool
       void RegisterConfig (Configuration *config);
       const gchar *GetInputProviderClient ();
 
-      void OnMessage (Net::Message *message);
+      gboolean OnMessage (Net::Message *message);
 
       void OnPoolRoadmap (Pool         *pool,
                           Net::Message *message);
@@ -152,6 +154,9 @@ namespace Pool
       void OnPlugged ();
 
       void OnUnPlugged ();
+
+      void OnPartnerJoined (Net::Partner *partner,
+                            gboolean      joined);
 
       void DisplaySwapperError ();
       static Stage *CreateInstance (StageClass *stage_class);

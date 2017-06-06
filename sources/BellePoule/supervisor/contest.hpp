@@ -87,6 +87,8 @@ class Contest : public Module
 
     State GetState ();
 
+    gboolean OnMessage (Net::Message *message);
+
     gboolean OnHttpPost (const gchar *command,
                          const gchar **ressource,
                          const gchar *data);

@@ -125,6 +125,8 @@ class Object
 
     void RemoveObjectListener (Listener *listener);
 
+    guint GetNetID ();
+
     virtual Net::Message *Disclose (const gchar *as);
 
     virtual void Recall ();
@@ -133,7 +135,7 @@ class Object
 
     virtual void FeedParcel (Net::Message *parcel);
 
-    gboolean OnMessage (Net::Message *message);
+    virtual gboolean OnMessage (Net::Message *message);
 
     virtual void Spread ();
 

@@ -581,6 +581,15 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
 
     result = TRUE;
   }
+  else if (message->Is ("Roadmap"))
+  {
+    Contest *contest = GetContest (message->GetInteger ("competition"));
+
+    if (contest)
+    {
+      result = contest->OnMessage (message);
+    }
+  }
   else
   {
     gchar *data = message->GetString ("content");
@@ -628,32 +637,25 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
             {
               if (tokens[2] && (g_strcmp0 (tokens[2], "Competition") == 0))
               {
-                guint  competition_id = g_ascii_strtoull (tokens[3], NULL, 0);
-                GList *current        = _contest_list;
+                guint    competition_id = g_ascii_strtoull (tokens[3], NULL, 0);
+                Contest *contest        = GetContest (competition_id);
 
-                while (current)
+                if (contest)
                 {
-                  Contest *contest = (Contest *) current->data;
-
-                  if (competition_id == contest->GetNetID ())
+                  if (g_strcmp0 (tokens[1], "ScoreSheet") == 0)
                   {
-                    if (g_strcmp0 (tokens[1], "ScoreSheet") == 0)
-                    {
-                      GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
-                      gint        page = gtk_notebook_page_num (nb,
-                                                                contest->GetRootWidget ());
+                    GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
+                    gint        page = gtk_notebook_page_num (nb,
+                                                              contest->GetRootWidget ());
 
-                      g_object_set (G_OBJECT (nb),
-                                    "page", page,
-                                    NULL);
-                    }
-
-                    result = contest->OnHttpPost (tokens[1],
-                                                  (const gchar**) &tokens[4],
-                                                  body);
-                    break;
+                    g_object_set (G_OBJECT (nb),
+                                  "page", page,
+                                  NULL);
                   }
-                  current = g_list_next (current);
+
+                  result = contest->OnHttpPost (tokens[1],
+                                                (const gchar**) &tokens[4],
+                                                body);
                 }
               }
             }
@@ -702,6 +704,26 @@ void Tournament::OnContestDeleted (Contest *contest)
       gtk_widget_hide (_glade->GetWidget ("notebook"));
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+Contest *Tournament::GetContest (guint netid)
+{
+  GList *current = _contest_list;
+
+  while (current)
+  {
+    Contest *contest = (Contest *) current->data;
+
+    if (netid == contest->GetNetID ())
+    {
+      return contest;
+    }
+
+    current = g_list_next (current);
+  }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------

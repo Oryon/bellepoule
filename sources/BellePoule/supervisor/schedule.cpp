@@ -669,6 +669,26 @@ void Schedule::RemoveFromNotebook (Stage *stage)
 }
 
 // --------------------------------------------------------------------------------
+gboolean Schedule::OnMessage (Net::Message *message)
+{
+  GList *current  = _stage_list;
+
+  while (current)
+  {
+    Stage *stage = (Stage *) current->data;
+
+    if (stage->GetNetID () == message->GetInteger ("batch"))
+    {
+      return stage->OnMessage (message);
+    }
+
+    current = g_list_next (current);
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 gboolean Schedule::OnHttpPost (const gchar *command,
                                const gchar **ressource,
                                const gchar *data)

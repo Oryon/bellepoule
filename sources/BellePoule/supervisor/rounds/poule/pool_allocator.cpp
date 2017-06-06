@@ -59,6 +59,7 @@ namespace Pool
   {
     Disclose ("Batch");
 
+    _has_marshaller         = FALSE;
     _config_list            = NULL;
     _selected_config        = NULL;
     _main_table             = NULL;
@@ -201,11 +202,15 @@ namespace Pool
         filter->Release ();
       }
     }
+
+    Net::Ring::RegisterListener (this);
   }
 
   // --------------------------------------------------------------------------------
   Allocator::~Allocator ()
   {
+    Net::Ring::UnregisterListener (this);
+
     _max_score->Release        ();
     _swapping->Release         ();
     _seeding_balanced->Release ();
@@ -277,8 +282,25 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::OnMessage (Net::Message *message)
+  gboolean Allocator::OnMessage (Net::Message *message)
   {
+    GSList *current = _drop_zones;
+
+    while (current)
+    {
+      Pool *pool = GetPoolOf (current);
+
+      if (pool->OnMessage (message))
+      {
+        OnPoolRoadmap (pool,
+                       message);
+        return TRUE;
+      }
+
+      current = g_slist_next (current);
+    }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -737,17 +759,6 @@ namespace Pool
               xmlFree (string);
             }
           }
-          {
-            gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "NetID");
-
-            if (attr)
-            {
-              _parcel->SetNetID (g_ascii_strtoull (attr,
-                                                   NULL,
-                                                   16));
-              xmlFree (attr);
-            }
-          }
           _loaded = TRUE;
         }
         else if (g_strcmp0 ((char *) n->name, "Poule") == 0)
@@ -789,7 +800,6 @@ namespace Pool
             current_pool->SetIdChain (_contest->GetNetID (),
                                       _parcel->GetNetID (),
                                       GetId () + 1);
-            current_pool->RegisterRoadmapListener (this);
             current_pool->SetStrengthContributors (_selected_config->_size - _selected_config->_size%2);
 
             {
@@ -881,9 +891,6 @@ namespace Pool
                                          BAD_CAST "NbDePoules",
                                          "%d", g_slist_length (_drop_zones));
     }
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "NetID",
-                                       "%x", _parcel->GetNetID ());
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "PhaseSuivanteDesQualifies",
                                        "%d", GetId ()+2);
@@ -1063,7 +1070,6 @@ namespace Pool
         pool_table[i]->SetIdChain (_contest->GetNetID (),
                                    _parcel->GetNetID (),
                                    GetId () + 1);
-        pool_table[i]->RegisterRoadmapListener (this);
         pool_table[i]->SetStrengthContributors (_selected_config->_size - _selected_config->_size%2);
 
         {
@@ -1124,6 +1130,14 @@ namespace Pool
       }
       g_free (pool_table);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::OnPartnerJoined (Net::Partner *partner,
+                                   gboolean      joined)
+  {
+    _has_marshaller = joined;
+    SignalStatusUpdate ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1705,6 +1719,15 @@ namespace Pool
     {
       Pool *pool = GetPoolOf (current);
 
+      if (_has_marshaller)
+      {
+        if (   (pool->GetPiste ()       == 0)
+            || (pool->GetRefereeList () == NULL))
+        {
+          return FALSE;
+        }
+      }
+
       if (pool->GetUIntData (this, "is_balanced") == 0)
       {
         return FALSE;
@@ -1718,18 +1741,22 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gchar *Allocator::GetError ()
   {
-    gboolean  resources_assigned = FALSE;
-    GSList   *current            = _drop_zones;
+    GSList *current = _drop_zones;
 
     while (current)
     {
       Pool *pool = GetPoolOf (current);
 
-      if (resources_assigned == FALSE)
+      if (_has_marshaller)
       {
-        resources_assigned = (   (pool->GetPiste ()       != 0)
-                              && (pool->GetRefereeList () != NULL));
+        if (   (pool->GetPiste ()       == 0)
+            || (pool->GetRefereeList () == NULL))
+        {
+          return g_strdup_printf ("<span foreground=\"black\" weight=\"400\">%s</span>",
+                                  gettext (" Referees allocation \n ongoing "));
+        }
       }
+
 
       if (pool->GetUIntData (this, "is_balanced") == 0)
       {
@@ -1738,12 +1765,6 @@ namespace Pool
                                 pool->GetName (), gettext ("Wrong fencers count!"));
       }
       current = g_slist_next (current);
-    }
-
-    if (resources_assigned == FALSE)
-    {
-      return g_strdup_printf ("<span foreground=\"black\" weight=\"400\">%s</span>",
-                              gettext (" Referees allocation \n ongoing "));
     }
 
     return NULL;
@@ -2058,6 +2079,9 @@ namespace Pool
       }
       pool->RemoveAllReferee ();
     }
+
+    MakeDirty ();
+    SignalStatusUpdate ();
 
     FillPoolTable (zone);
     FixUpTablesBounds ();

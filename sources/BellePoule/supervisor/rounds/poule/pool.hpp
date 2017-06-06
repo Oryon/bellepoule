@@ -22,7 +22,6 @@
 #include "util/data.hpp"
 #include "util/canvas_module.hpp"
 #include "util/player.hpp"
-#include "network/ring.hpp"
 #include "../../stage.hpp"
 #include "../../score_collector.hpp"
 
@@ -32,16 +31,9 @@ class FieTime;
 
 namespace Pool
 {
-  class Pool : public CanvasModule, Net::Ring::Listener
+  class Pool : public CanvasModule
   {
     public:
-      class RoadmapListener
-      {
-        public:
-          virtual void OnPoolRoadmap (Pool         *pool,
-                                      Net::Message *roadmap) = 0;
-      };
-
       class StatusListener
       {
         public:
@@ -89,13 +81,13 @@ namespace Pool
       void CopyPlayersStatus (Object *from);
 
       void  RegisterStatusListener (StatusListener *listener);
-      void  RegisterRoadmapListener (RoadmapListener *listener);
 
       void SetStrengthContributors (gint contributors_count);
 
       gboolean IsOver ();
       gboolean HasError ();
 
+      gboolean OnMessage (Net::Message *message);
       gboolean OnHttpPost (const gchar **ressource,
                            const gchar *data);
 
@@ -167,7 +159,6 @@ namespace Pool
     Dispatcher      *_dispatcher;
 
     StatusListener  *_status_listener;
-    RoadmapListener *_roadmap_listener;
 
     private:
       typedef enum
@@ -235,8 +226,6 @@ namespace Pool
                              gchar             *value);
 
       void FeedParcel (Net::Message *parcel);
-
-      void OnMessage (Net::Message *message);
 
       static gint CompareMatch (Match *a,
                                 Match *b,

@@ -121,8 +121,6 @@ gboolean BellPouleApp::OnHttpPost (Net::Message *message)
 {
   if (Application::OnHttpPost (message) == FALSE)
   {
-    Net::Ring::PostToListener (message);
-
     return _tournament->OnHttpPost (message);
   }
 

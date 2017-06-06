@@ -61,7 +61,6 @@ namespace Pool
       _strength_contributors = 0;
 
       _status_listener       = NULL;
-      _roadmap_listener      = NULL;
 
       _score_collector       = NULL;
 
@@ -75,7 +74,6 @@ namespace Pool
     _dispatcher = new Dispatcher (_name);
 
     Disclose ("Job");
-    Net::Ring::RegisterListener (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -96,7 +94,6 @@ namespace Pool
     Object::TryToRelease (_score_collector);
 
     _dispatcher->Release ();
-    Net::Ring::UnregisterListener (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -230,12 +227,6 @@ namespace Pool
     _status_listener = listener;
 
     RefreshStatus ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void Pool::RegisterRoadmapListener (RoadmapListener *listener)
-  {
-    _roadmap_listener = listener;
   }
 
   // --------------------------------------------------------------------------------
@@ -2150,9 +2141,9 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::OnMessage (Net::Message *message)
+  gboolean Pool::OnMessage (Net::Message *message)
   {
-    if (message->GetInteger ("listener") == _parcel->GetNetID ())
+    if (message->GetInteger ("source") == _parcel->GetNetID ())
     {
       _piste = 0;
 
@@ -2165,14 +2156,12 @@ namespace Pool
         _start_time = new FieTime (message->GetString  ("start_time"));
       }
 
-      if (_roadmap_listener)
-      {
-        _roadmap_listener->OnPoolRoadmap (this,
-                                          message);
-      }
-
       RefreshParcel ();
+
+      return TRUE;
     }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

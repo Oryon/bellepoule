@@ -1210,6 +1210,19 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
     _nb_qualified->Load (xml_node);
   }
 
+  if (_parcel)
+  {
+    gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "NetID");
+
+    if (attr)
+    {
+      _parcel->SetNetID (g_ascii_strtoull (attr,
+                                           NULL,
+                                           16));
+      xmlFree (attr);
+    }
+  }
+
   InitQualifiedForm ();
 }
 
@@ -1237,6 +1250,13 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
   xmlTextWriterWriteAttribute (xml_writer,
                                BAD_CAST "ID",
                                BAD_CAST GetName ());
+
+  if (_parcel)
+  {
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "NetID",
+                                       "%x", _parcel->GetNetID ());
+  }
 
   if (_max_score)
   {
