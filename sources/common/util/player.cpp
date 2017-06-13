@@ -749,6 +749,12 @@ void Player::SetName (const gchar *name)
 // --------------------------------------------------------------------------------
 void Player::FeedParcel (Net::Message *parcel)
 {
+  if (parcel == NULL)
+  {
+    g_warning ("Player::FeedParcel (%s) ==> No parcel.\n", GetName ());
+    return;
+  }
+
   xmlBuffer *xml_buffer = xmlBufferCreate ();
 
   {

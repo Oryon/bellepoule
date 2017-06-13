@@ -27,6 +27,7 @@
 namespace People
 {
   class Checkin;
+  class RefereesList;
   class CheckinSupervisor;
 }
 
@@ -59,9 +60,9 @@ class Schedule : public Module,
 
     void DumpToHTML (FILE *file);
 
-    void Load (xmlDoc          *doc,
-               const gchar     *contest_keyword,
-               People::Checkin *referees);
+    void Load (xmlDoc               *doc,
+               const gchar          *contest_keyword,
+               People::RefereesList *referees);
 
     void OnLoadingCompleted ();
 

@@ -145,6 +145,8 @@ namespace Marshaller
 
       void OnTimelineCursorMoved ();
 
+      void OnJobBoardUpdated (Competition *competition);
+
       void OnJobBoardFocus (guint focus);
   };
 }

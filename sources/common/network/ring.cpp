@@ -415,11 +415,14 @@ namespace Net
 
     if (node)
     {
-      message->SetFitness (0);
-      Send (message);
-
       _message_list = g_list_delete_link (_message_list,
                                           node);
+    }
+
+    if (message->GetFitness ())
+    {
+      message->SetFitness (0);
+      Send (message);
     }
   }
 

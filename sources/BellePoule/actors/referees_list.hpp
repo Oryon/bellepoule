@@ -23,6 +23,7 @@
 #include "actors/checkin.hpp"
 
 class Weapon;
+class Referee;
 
 namespace People
 {
@@ -35,7 +36,7 @@ namespace People
 
       const gchar *GetWeaponCode ();
 
-      void ConvertFromBaseToResult ();
+      void GiveRefereesAnId ();
 
       void Expand ();
 
@@ -53,6 +54,8 @@ namespace People
       Weapon  *_weapon;
 
       void Monitor (Player *referee);
+
+      void GiveRefereeAnId (Referee *referee);
 
       void OnPlayerLoaded (Player *referee,
                            Player *owner);

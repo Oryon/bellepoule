@@ -39,6 +39,8 @@ namespace Marshaller
     _current_job     = NULL;
     _referee_details = NULL;
     _fencer_details  = NULL;
+
+    _take_off_button = _glade->GetWidget ("take_off_button");
   }
 
   // --------------------------------------------------------------------------------
@@ -155,7 +157,18 @@ namespace Marshaller
 
     DisplayCurrent ();
 
-    RunDialog (GTK_DIALOG (_dialog));
+    if (RunDialog (GTK_DIALOG (_dialog)))
+    {
+      if (_current_job)
+      {
+        Job   *job_to_delete = (Job *) _current_job->data;
+        Batch *batch         = job_to_delete->GetBatch ();
+        Slot  *slot          = job_to_delete->GetSlot ();
+
+        slot->RemoveJob (job_to_delete);
+        _listener->OnJobBoardUpdated (batch->GetCompetition ());
+      }
+    }
     gtk_widget_hide (_dialog);
   }
 
@@ -196,6 +209,9 @@ namespace Marshaller
         gchar    *piste;
 
         gtk_label_set_text (title_label, job->GetName ());
+
+        gtk_widget_set_sensitive (_take_off_button,
+                                  slot != NULL);
 
         if (slot)
         {

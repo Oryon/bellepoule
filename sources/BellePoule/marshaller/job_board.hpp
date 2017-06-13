@@ -24,13 +24,15 @@ namespace Marshaller
   class Job;
   class JobDetails;
   class Timeline;
+  class Competition;
 
   class JobBoard : public Module, Object::Listener
   {
     public:
       struct Listener
       {
-        virtual void OnJobBoardFocus (guint focus) = 0;
+        virtual void OnJobBoardUpdated (Competition *competition) = 0;
+        virtual void OnJobBoardFocus   (guint focus) = 0;
       };
 
     public:
@@ -60,6 +62,7 @@ namespace Marshaller
       GList      *_current_job;
       JobDetails *_referee_details;
       JobDetails *_fencer_details;
+      GtkWidget  *_take_off_button;
 
       ~JobBoard ();
 

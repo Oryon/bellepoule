@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 
 #include "util/canvas.hpp"
+#include "actors/referees_list.hpp"
 #include "rounds/classification/general_classification.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
 
@@ -982,9 +983,9 @@ void Schedule::DumpToHTML (FILE *file)
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::Load (xmlDoc          *doc,
-                     const gchar     *contest_keyword,
-                     People::Checkin *referees)
+void Schedule::Load (xmlDoc               *doc,
+                     const gchar          *contest_keyword,
+                     People::RefereesList *referees)
 {
   xmlXPathContext *xml_context         = xmlXPathNewContext (doc);
   gint             current_stage_index = -1;
@@ -1022,7 +1023,7 @@ void Schedule::Load (xmlDoc          *doc,
 
   referees->LoadList (xml_context,
                       contest_keyword);
-  referees->ConvertFromBaseToResult ();
+  referees->GiveRefereesAnId ();
   referees->Disclose ("Referee");
   referees->Spread ();
 

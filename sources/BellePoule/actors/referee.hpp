@@ -27,6 +27,8 @@ class Referee : public Player
 
     const gchar *GetXmlTag ();
 
+    void GiveAnId ();
+
   protected:
     Referee ();
 

@@ -990,6 +990,13 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::OnJobBoardUpdated (Competition *competition)
+  {
+    _timeline->Redraw ();
+    _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
+  }
+
+  // --------------------------------------------------------------------------------
   void Hall::OnBatchAssignmentCancel (Batch *batch)
   {
     Competition *competition   = batch->GetCompetition ();

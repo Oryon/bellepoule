@@ -25,6 +25,7 @@
 #include "util/filter.hpp"
 #include "util/player.hpp"
 #include "application/weapon.hpp"
+#include "referee.hpp"
 
 #include "referees_list.hpp"
 
@@ -135,6 +136,7 @@ namespace People
                                     "Free");
       }
     }
+    GiveRefereeAnId ((Referee *) referee);
   }
 
   // --------------------------------------------------------------------------------
@@ -158,51 +160,40 @@ namespace People
       }
     }
 
+    GiveRefereeAnId ((Referee *) referee);
+
     Checkin::OnFormEvent (referee,
                           event);
   }
 
   // --------------------------------------------------------------------------------
-  void RefereesList::ConvertFromBaseToResult ()
+  void RefereesList::GiveRefereesAnId ()
   {
-    Player::AttributeId name_attr_id      ("name");
-    Player::AttributeId firstname_attr_id ("first_name");
-    Player::AttributeId weapon_attr_id    ("weapon");
-    GChecksum *checksum = g_checksum_new (G_CHECKSUM_SHA1);
-    GList     *current  = GetList ();
+    GList *current = GetList ();
 
     while (current)
     {
-      Player    *referee        = (Player *) current->data;
-      Attribute *name_attr      = referee->GetAttribute (&name_attr_id);
-      Attribute *firstname_attr = referee->GetAttribute (&firstname_attr_id);
-      gchar     *digest;
+      Player  *player  = (Player *) current->data;
+      Referee *referee = dynamic_cast <Referee *> (player);
 
-      if (_weapon)
-      {
-        referee->SetAttributeValue (&weapon_attr_id,
-                                    _weapon->GetXmlImage ());
-      }
-
-      g_checksum_update (checksum,
-                         (guchar *) name_attr->GetStrValue (),
-                         -1);
-      g_checksum_update (checksum,
-                         (guchar *) firstname_attr->GetStrValue (),
-                         -1);
-
-      digest = g_strdup (g_checksum_get_string (checksum));
-      digest[8] = 0;
-      referee->SetRef (g_ascii_strtoll (digest,
-                                        NULL,
-                                        16));
-      g_free (digest);
-      g_checksum_reset (checksum);
+      GiveRefereeAnId (referee);
 
       current = g_list_next (current);
     }
+  }
 
-    g_checksum_free (checksum);
+  // --------------------------------------------------------------------------------
+  void RefereesList::GiveRefereeAnId (Referee *referee)
+  {
+    referee->GiveAnId ();
+
+    if (_weapon)
+    {
+      Player::AttributeId weapon_attr_id ("weapon");
+
+      referee->SetAttributeValue (&weapon_attr_id,
+                                  _weapon->GetXmlImage ());
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -301,6 +301,7 @@ namespace Pool
       referee->SetChangeCbk ("connection",
                              (Player::OnChange) OnAttrConnectionChanged,
                              this);
+      RefreshParcel ();
     }
   }
 

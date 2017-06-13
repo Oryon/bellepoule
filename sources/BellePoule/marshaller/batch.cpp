@@ -55,8 +55,6 @@ namespace Marshaller
 
     _id = id;
 
-    g_object_ref (GetRootWidget ());
-
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
     _job_board = new JobBoard ();
@@ -113,8 +111,6 @@ namespace Marshaller
     g_list_free (_pending_list);
 
     _job_board->Release ();
-
-    g_object_unref (GetRootWidget ());
   }
 
   // --------------------------------------------------------------------------------
@@ -136,20 +132,41 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Batch::RecallList (GList *list)
+  {
+    GList *current = list;
+
+    while (current)
+    {
+      Job *job = (Job *) current->data;
+
+      job->Recall ();
+
+      current = g_list_next (current);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Batch::RefreshControlPanel ()
   {
     gtk_widget_set_sensitive (_assign_button, TRUE);
     gtk_widget_set_sensitive (_cancel_button, TRUE);
-    gtk_widget_set_sensitive (_lock_button,   TRUE);
+    gtk_widget_set_sensitive (_lock_button,   FALSE);
 
     if (_pending_list == NULL)
     {
       gtk_widget_set_sensitive (_assign_button, FALSE);
+      gtk_widget_set_sensitive (_lock_button,   TRUE);
     }
+    else
+    {
+      RecallList (_scheduled_list);
+      RecallList (_pending_list);
+    }
+
     if (_scheduled_list == NULL)
     {
       gtk_widget_set_sensitive (_cancel_button, FALSE);
-      gtk_widget_set_sensitive (_lock_button,   FALSE);
     }
   }
 
@@ -358,6 +375,10 @@ namespace Marshaller
                     FieTime      **start_time)
   {
     Job *job = NULL;
+
+    *piste_id   = 0;
+    *referee_id = 0;
+    *start_time = NULL;
 
     if (GetJob (message->GetNetID ()) == NULL)
     {

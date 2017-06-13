@@ -93,6 +93,8 @@ namespace Marshaller
 
       Job *GetJob (guint netid);
 
+      void RecallList (GList *list);
+
       void RefreshControlPanel ();
 
       void OnDragDataGet (GtkWidget        *widget,

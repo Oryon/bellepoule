@@ -1124,10 +1124,15 @@ void Contest::ManageReferee (Net::Message *message)
 
       if (xml_nodeset->nodeNr == 1)
       {
-        Player *referee = PlayerFactory::CreatePlayer ("Referee");
+        Player::AttributeId weapon_attr_id ("weapon");
+        Attribute *weapon_attr;
+        Player    *referee     = PlayerFactory::CreatePlayer ("Referee");
 
         referee->Load (xml_nodeset->nodeTab[0]);
 
+        weapon_attr = referee->GetAttribute (&weapon_attr_id);
+        if (   weapon_attr
+            && (g_ascii_strcasecmp (_weapon->GetXmlImage (), weapon_attr->GetStrValue ()) == 0))
         {
           Player *old = _referees_list->GetPlayerFromRef (referee->GetRef ());
 
