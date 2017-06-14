@@ -105,7 +105,8 @@ namespace People
     }
 
     // Popup menu
-    SetPasteVisibility (TRUE);
+    SetPopupVisibility ("PlayersList::ReadWriteAction",
+                        TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -377,16 +378,8 @@ namespace People
 
     SetFilter (_expanded_filter);
 
-    {
-      GtkAction *action = GetAction ("RefereesListActionGroup",
-                                     "JobListAction");
-
-      if (action)
-      {
-        gtk_action_set_visible (action,
-                                FALSE);
-      }
-    }
+    SetPopupVisibility ("RefereesList::JobActions",
+                        FALSE);
 
     OnAttrListUpdated ();
   }
@@ -408,16 +401,8 @@ namespace People
 
     SetFilter (_collapsed_filter);
 
-    {
-      GtkAction *action = GetAction ("RefereesListActionGroup",
-                                     "JobListAction");
-
-      if (action)
-      {
-        gtk_action_set_visible (action,
-                                TRUE);
-      }
-    }
+    SetPopupVisibility ("RefereesList::JobActions",
+                        TRUE);
 
     OnAttrListUpdated ();
   }

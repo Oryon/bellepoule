@@ -80,8 +80,8 @@ namespace People
 
       GtkUIManager *GetUiManager ();
 
-      GtkAction *GetAction (const gchar *group_name,
-                            const gchar *name);
+      void SetPopupVisibility (const gchar *group,
+                               gboolean     visibility);
 
       static const guint NO_RIGHT   = 0x00000000;
       static const guint SORTABLE   = 0x00000001;
@@ -122,7 +122,7 @@ namespace People
                                      gboolean             new_value,
                                      gboolean             popup_on_error = FALSE);
 
-      void SetPasteVisibility (gboolean visibility);
+      GtkActionGroup *GetActionGroup (const gchar *group_name);
 
       void SetVisibileFunc (GtkTreeModelFilterVisibleFunc func,
                             gpointer                      data);
@@ -192,6 +192,9 @@ namespace People
 
       static void OnPasteSelection (GtkWidget   *w,
                                     PlayersList *players_list);
+
+      static void OnRemoveSelection (GtkWidget   *w,
+                                     PlayersList *players_list);
 
       static void OnCellDataFunc (GtkTreeViewColumn *tree_column,
                                   GtkCellRenderer   *cell,

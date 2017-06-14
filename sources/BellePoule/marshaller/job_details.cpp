@@ -21,10 +21,13 @@
 namespace Marshaller
 {
   // --------------------------------------------------------------------------------
-  JobDetails::JobDetails (GList *player_list)
+  JobDetails::JobDetails (Listener *listener,
+                          GList    *player_list)
     : Object ("JobDetails"),
       PlayersList ("details.glade", SORTABLE)
   {
+    _listener = listener;
+
     {
       GSList *attr_list;
       Filter *filter;
@@ -76,6 +79,9 @@ namespace Marshaller
         current = g_list_next (current);
       }
     }
+
+    SetPopupVisibility ("PlayersList::ReadOnlyAction",
+                        FALSE);
   }
 
   // --------------------------------------------------------------------------------
@@ -88,5 +94,11 @@ namespace Marshaller
   {
     OnAttrListUpdated ();
     gtk_widget_show_all (GetRootWidget ());
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobDetails::OnPlayerRemoved (Player *player)
+  {
+    _listener->OnPlayerRemoved (player);
   }
 }

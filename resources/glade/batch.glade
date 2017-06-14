@@ -20,6 +20,11 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">images/draft.png</property>
   </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">images/hight_speaker.png</property>
+  </object>
   <object class="GtkListStore" id="liststore">
     <columns>
       <!-- column-name name -->
@@ -77,10 +82,10 @@
               <object class="GtkToolButton" id="lock_toolbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Validate</property>
+                <property name="tooltip_text" translatable="yes">Spread</property>
                 <property name="label" translatable="yes">Validate</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-apply</property>
+                <property name="icon_widget">image3</property>
                 <signal name="clicked" handler="on_lock_toolbutton_clicked" swapped="no"/>
               </object>
               <packing>

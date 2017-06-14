@@ -23,11 +23,22 @@ namespace Marshaller
   class JobDetails : public People::PlayersList
   {
     public:
-      JobDetails (GList *player_list);
+      struct Listener
+      {
+        virtual void OnPlayerRemoved (Player *player) = 0;
+      };
+
+    public:
+      JobDetails (Listener *listener,
+                  GList    *player_list);
 
     private:
+      Listener *_listener;
+
       void OnPlugged ();
 
       virtual ~JobDetails ();
+
+      void OnPlayerRemoved (Player *player);
   };
 }

@@ -52,6 +52,8 @@ namespace Marshaller
 
       void AddReferee (EnlistedReferee *referee);
 
+      void RemoveReferee (EnlistedReferee *referee);
+
       GList *GetRefereeList ();
 
       Owner *GetOwner ();

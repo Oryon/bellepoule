@@ -67,6 +67,7 @@ namespace People
               "  <popup name='PopupMenu'>\n"
               "    <menuitem action='CopyAction'/>\n"
               "    <menuitem action='PasteAction'/>\n"
+              "    <menuitem action='RemoveAction'/>\n"
               "  </popup>\n"
               "</ui>";
 
@@ -83,11 +84,10 @@ namespace People
 
           // Actions
           {
-            GtkActionGroup *action_group = gtk_action_group_new ("PlayersListActionGroup");
+            GtkActionGroup *action_group = gtk_action_group_new ("PlayersList::ReadOnlyAction");
             static GtkActionEntry entries[] =
             {
-              {"CopyAction",  GTK_STOCK_COPY,  gettext ("Copy"),  NULL, NULL, G_CALLBACK (OnCopySelection)},
-              {"PasteAction", GTK_STOCK_PASTE, gettext ("Paste"), NULL, NULL, G_CALLBACK (OnPasteSelection)},
+              {"CopyAction",   GTK_STOCK_COPY, gettext ("Copy"),   NULL, NULL, G_CALLBACK (OnCopySelection)},
             };
 
             gtk_action_group_add_actions (action_group,
@@ -101,6 +101,24 @@ namespace People
             g_object_unref (G_OBJECT (action_group));
           }
 
+          {
+            GtkActionGroup *action_group = gtk_action_group_new ("PlayersList::ReadWriteAction");
+            static GtkActionEntry entries[] =
+            {
+              {"PasteAction",  GTK_STOCK_PASTE,  gettext ("Paste"),  NULL, NULL, G_CALLBACK (OnPasteSelection)},
+              {"RemoveAction", GTK_STOCK_REMOVE, gettext ("Remove"), NULL, NULL, G_CALLBACK (OnRemoveSelection)},
+            };
+
+            gtk_action_group_add_actions (action_group,
+                                          entries,
+                                          G_N_ELEMENTS (entries),
+                                          this);
+            gtk_ui_manager_insert_action_group (_ui_manager,
+                                                action_group,
+                                                0);
+
+            g_object_unref (G_OBJECT (action_group));
+          }
 
           {
             GtkWidget *menu = gtk_ui_manager_get_widget (_ui_manager, "/PopupMenu");
@@ -111,22 +129,23 @@ namespace People
                                       G_CALLBACK (OnButtonPress), menu);
           }
 
-          SetPasteVisibility (FALSE);
+          SetPopupVisibility ("PlayersList::ReadWriteAction",
+                              FALSE);
         }
       }
     }
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::SetPasteVisibility (gboolean visibility)
+  void PlayersList::SetPopupVisibility (const gchar *group,
+                                        gboolean     visibility)
   {
-    GtkAction *paste_action = GetAction ("PlayersListActionGroup",
-                                         "PasteAction");
+    GtkActionGroup *action_group = GetActionGroup (group);
 
-    if (paste_action)
+    if (action_group)
     {
-      gtk_action_set_visible (paste_action,
-                              visibility);
+      gtk_action_group_set_visible (action_group,
+                                    visibility);
     }
   }
 
@@ -196,8 +215,7 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  GtkAction *PlayersList::GetAction (const gchar *group_name,
-                                     const gchar *name)
+  GtkActionGroup *PlayersList::GetActionGroup (const gchar *group_name)
   {
     GList *groups = gtk_ui_manager_get_action_groups (_ui_manager);
 
@@ -207,21 +225,7 @@ namespace People
 
       if (g_strcmp0 (gtk_action_group_get_name (group), group_name) == 0)
       {
-        GList *actions = gtk_action_group_list_actions (group);
-
-        while (actions)
-        {
-          GtkAction *action = (GtkAction *) actions->data;
-
-          if (g_strcmp0 (gtk_action_get_name (action), name) == 0)
-          {
-            return action;
-          }
-
-          actions = g_list_next (actions);
-        }
-
-        break;
+        return group;
       }
 
       groups = g_list_next (groups);
@@ -1593,6 +1597,13 @@ namespace People
       g_list_free (_clipboard);
       _clipboard = NULL;
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::OnRemoveSelection (GtkWidget   *w,
+                                       PlayersList *players_list)
+  {
+    players_list->RemoveSelection ();
   }
 
   // --------------------------------------------------------------------------------

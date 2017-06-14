@@ -238,20 +238,28 @@ namespace Marshaller
         g_free (time);
       }
 
-      if (slot)
       {
-        _referee_details = new JobDetails (slot->GetRefereeList ());
-      }
-      else
-      {
-        _referee_details = new JobDetails (NULL);
+        if (slot)
+        {
+          _referee_details = new JobDetails (this,
+                                             slot->GetRefereeList ());
+        }
+        else
+        {
+          _referee_details = new JobDetails (this,
+                                             NULL);
+        }
+
+        Plug (_referee_details,
+              _glade->GetWidget ("referee_detail_hook"));
+
+        _referee_details->SetPopupVisibility ("PlayersList::ReadWriteAction",
+                                              TRUE);
       }
 
-      Plug (_referee_details,
-            _glade->GetWidget ("referee_detail_hook"));
-
       {
-        _fencer_details  = new JobDetails (job->GetFencerList ());
+        _fencer_details  = new JobDetails (this,
+                                           job->GetFencerList ());
 
         Plug (_fencer_details,
               _glade->GetWidget ("fencer_detail_hook"));
@@ -307,6 +315,20 @@ namespace Marshaller
 
       arrow = _glade->GetWidget ("next_job");
       gtk_widget_set_sensitive (arrow, g_list_next (_current_job) != NULL);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::OnPlayerRemoved (Player *player)
+  {
+    if (_current_job)
+    {
+      Job   *job   = (Job *) _current_job->data;
+      Batch *batch = job->GetBatch ();
+      Slot  *slot  = job->GetSlot ();
+
+      slot->RemoveReferee ((EnlistedReferee *) player);
+      _listener->OnJobBoardUpdated (batch->GetCompetition ());
     }
   }
 

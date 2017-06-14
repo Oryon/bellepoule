@@ -142,7 +142,7 @@ namespace People
       ConnectDndSource (GTK_WIDGET (_tree_view));
       ConnectDndDest   (GTK_WIDGET (_tree_view));
     }
-    SetPasteVisibility (TRUE);
+    SetPopupVisibility ("PlayersList::ReadWriteAction", TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -721,7 +721,7 @@ namespace People
     if (Locked ())
     {
       SetSensitiveState (FALSE);
-      SetPasteVisibility (FALSE);
+      SetPopupVisibility ("PlayersList::ReadWriteAction", FALSE);
     }
   }
 
@@ -748,7 +748,7 @@ namespace People
   {
     DisableSensitiveWidgets ();
     SetSensitiveState (FALSE);
-    SetPasteVisibility (FALSE);
+    SetPopupVisibility ("PlayersList::ReadWriteAction", FALSE);
 
     UpdateChecksum ();
     UpdateRanking  ();
@@ -819,7 +819,7 @@ namespace People
   {
     EnableSensitiveWidgets ();
     SetSensitiveState (TRUE);
-    SetPasteVisibility (TRUE);
+    SetPopupVisibility ("PlayersList::ReadWriteAction", TRUE);
     _form->UnLock ();
     EnableDragAndDrop ();
 

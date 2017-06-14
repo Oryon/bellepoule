@@ -17,16 +17,18 @@
 #pragma once
 
 #include "util/module.hpp"
+#include "job_details.hpp"
 
 namespace Marshaller
 {
   class Message;
   class Job;
-  class JobDetails;
   class Timeline;
   class Competition;
 
-  class JobBoard : public Module, Object::Listener
+  class JobBoard : public Module,
+                          JobDetails::Listener,
+                          Object::Listener
   {
     public:
       struct Listener
@@ -78,5 +80,7 @@ namespace Marshaller
                                JobBoard *job_board);
 
       void DisplayCurrent ();
+
+      void OnPlayerRemoved (Player *player);
   };
 }

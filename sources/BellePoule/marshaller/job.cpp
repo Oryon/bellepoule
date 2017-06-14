@@ -104,6 +104,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Job::RemoveReferee (Player *referee)
+  {
+    _parcel->Remove ("referee");
+  }
+
+  // --------------------------------------------------------------------------------
   void Job::SetPiste (guint        piste_id,
                       const gchar *start_time)
   {

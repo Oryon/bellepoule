@@ -82,6 +82,12 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Batch::~Batch ()
   {
+    g_list_free (_scheduled_list);
+    _scheduled_list = NULL;
+
+    g_list_free (_pending_list);
+    _pending_list = NULL;
+
     {
       GtkTreeIter iter;
       gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
@@ -106,9 +112,6 @@ namespace Marshaller
     }
 
     g_free (_name);
-
-    g_list_free (_scheduled_list);
-    g_list_free (_pending_list);
 
     _job_board->Release ();
   }
@@ -245,7 +248,7 @@ namespace Marshaller
                               -1);
         }
 
-        if (has_slot)
+        if (has_slot && has_referee)
         {
           GList *node = g_list_find (_pending_list,
                                      job);
@@ -265,12 +268,15 @@ namespace Marshaller
           GList *node = g_list_find (_scheduled_list,
                                      job);
 
-          _scheduled_list = g_list_delete_link (_scheduled_list,
-                                                node);
+          if (node)
+          {
+            _scheduled_list = g_list_delete_link (_scheduled_list,
+                                                  node);
 
-          _pending_list = g_list_insert_sorted (_pending_list,
-                                                job,
-                                                (GCompareFunc) Job::CompareSiblingOrder);
+            _pending_list = g_list_insert_sorted (_pending_list,
+                                                  job,
+                                                  (GCompareFunc) Job::CompareSiblingOrder);
+          }
         }
 
         RefreshControlPanel ();

@@ -817,8 +817,21 @@ namespace Marshaller
         current_job = job_list;
         while (current_job)
         {
-          Job   *job          = (Job *) current_job->data;
-          GList *free_slots   = GetFreePisteSlots (30*G_TIME_SPAN_MINUTE);
+          GList *free_slots = NULL;
+          Job   *job        = (Job *) current_job->data;
+          Slot  *job_slot   = job->GetSlot ();
+
+          if (job_slot)
+          {
+            job_slot->Retain ();
+            free_slots = g_list_append (free_slots,
+                                        job_slot);
+          }
+          else
+          {
+            free_slots = GetFreePisteSlots (30*G_TIME_SPAN_MINUTE);
+          }
+
           GList *current_slot = free_slots;
 
           while (current_slot)

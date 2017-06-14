@@ -53,6 +53,8 @@ namespace Marshaller
 
       void SetReferee (guint referee_ref);
 
+      void RemoveReferee (Player *referee);
+
       void SetPiste (guint        piste_id,
                      const gchar *start_time);
 

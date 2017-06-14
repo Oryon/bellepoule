@@ -281,6 +281,40 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Slot::RemoveReferee (EnlistedReferee *referee)
+  {
+    GList *node = g_list_find (_referee_list,
+                               referee);
+
+    if (node)
+    {
+      _referee_list = g_list_delete_link (_referee_list,
+                                          node);
+    }
+
+    {
+      GList *current = _job_list;
+
+      while (current)
+      {
+        Job   *job   = (Job *) current->data;
+        Batch *batch = job->GetBatch ();
+
+        job->RemoveReferee (referee);
+        EnlistedReferee::OnRemovedFromSlot (referee,
+                                            this);
+        batch->SetJobStatus (job,
+                             _job_list     != NULL,
+                             _referee_list != NULL);
+
+        current = g_list_next (current);
+      }
+    }
+
+    _owner->OnSlotUpdated (this);
+  }
+
+  // --------------------------------------------------------------------------------
   void Slot::OnObjectDeleted (Object *object)
   {
     Job *job = (Job *) object;

@@ -72,7 +72,7 @@ namespace Marshaller
 
       // Actions
       {
-        GtkActionGroup *action_group = gtk_action_group_new ("RefereesListActionGroup");
+        GtkActionGroup *action_group = gtk_action_group_new ("RefereesList::JobActions");
         static GtkActionEntry entries[] =
         {
           {"JobListAction", GTK_STOCK_JUSTIFY_FILL, gettext ("Display jobs"), NULL, NULL, G_CALLBACK (OnDisplayJobs)}
