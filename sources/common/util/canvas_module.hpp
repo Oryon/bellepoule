@@ -135,6 +135,12 @@ class CanvasModule : public Module
                              guint             key,
                              guint             time);
 
+    gboolean OnDragDrop (GtkWidget      *widget,
+                         GdkDragContext *drag_context,
+                         gint            x,
+                         gint            y,
+                         guint           time);
+
     gboolean OnButtonPress (GooCanvasItem  *item,
                             GooCanvasItem  *target,
                             GdkEventButton *event,

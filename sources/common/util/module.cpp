@@ -110,6 +110,7 @@ void Module::DragDataGet (GtkWidget        *widget,
                           guint             time,
                           Module           *owner)
 {
+  printf ("DragDataGet\n");
   owner->OnDragDataGet (widget,
                         drag_context,
                         data,
@@ -134,6 +135,7 @@ gboolean Module::DragDrop (GtkWidget      *widget,
                            guint           time,
                            Module         *owner)
 {
+  printf ("DragDrop\n");
   return owner->OnDragDrop (widget,
                             drag_context,
                             x,
@@ -154,10 +156,13 @@ gboolean Module::OnDragDrop (GtkWidget      *widget,
 
   if (atom)
   {
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       atom,
-                       time);
+    if (_dnd_config->DataFetchedAtEarliest () == FALSE)
+    {
+      gtk_drag_get_data (widget,
+                         drag_context,
+                         atom,
+                         time);
+    }
     return TRUE;
   }
 
@@ -195,6 +200,19 @@ gboolean Module::OnDragMotion (GtkWidget      *widget,
 
     if (atom)
     {
+      if (_dnd_config->DataFetchedAtEarliest ())
+      {
+        _dnd_config->SetContext (drag_context);
+
+        if (_dnd_config->GetFloatingObject () == NULL)
+        {
+          gtk_drag_get_data (widget,
+                             drag_context,
+                             atom,
+                             time);
+        }
+      }
+
       gdk_drag_status (drag_context,
                        gdk_drag_context_get_suggested_action (drag_context),
                        time);
@@ -211,6 +229,7 @@ void Module::DragLeave (GtkWidget      *widget,
                         guint           time,
                         Module         *owner)
 {
+  printf ("DragLeave\n");
   owner->OnDragLeave (widget,
                       drag_context,
                       time);
@@ -233,6 +252,7 @@ void Module::DragDataReceived (GtkWidget        *widget,
                                guint             time,
                                Module           *owner)
 {
+  printf ("DragDataReceived\n");
   owner->OnDragDataReceived (widget,
                              drag_context,
                              x,

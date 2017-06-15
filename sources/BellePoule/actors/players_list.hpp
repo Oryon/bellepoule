@@ -80,6 +80,10 @@ namespace People
 
       GtkUIManager *GetUiManager ();
 
+      void AddPopupEntries (const gchar    *group,
+                            guint           n,
+                            GtkActionEntry *entries);
+
       void SetPopupVisibility (const gchar *group,
                                gboolean     visibility);
 

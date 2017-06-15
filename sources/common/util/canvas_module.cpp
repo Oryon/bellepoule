@@ -39,6 +39,8 @@ CanvasModule::CanvasModule (const gchar *glade_file,
   _zoom_factor      = 1.0;
   _h_adj            = 0.0;
   _v_adj            = 0.0;
+
+  _dnd_config->FetchDataAtEarliest ();
 }
 
 // --------------------------------------------------------------------------------
@@ -634,8 +636,6 @@ void CanvasModule::OnDragDataReceived (GtkWidget        *widget,
                                        guint             key,
                                        guint             time)
 {
-  gboolean result = FALSE;
-
   if (data && (gtk_selection_data_get_length (data) >= 0))
   {
     guint32 *ref = (guint32 *) gtk_selection_data_get_data (data);
@@ -643,27 +643,41 @@ void CanvasModule::OnDragDataReceived (GtkWidget        *widget,
     _dnd_config->SetFloatingObject (GetDropObjectFromRef (*ref,
                                                           key));
   }
+}
 
-  if (_target_drop_zone)
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::OnDragDrop (GtkWidget      *widget,
+                                   GdkDragContext *drag_context,
+                                   gint            x,
+                                   gint            y,
+                                   guint           time)
+{
+  gboolean result = FALSE;
+
+  if (Module::OnDragDrop (widget,
+                          drag_context,
+                          x,
+                          y,
+                          time))
   {
-    _target_drop_zone->Unfocus ();
-
-    if (_dnd_config->GetFloatingObject ())
+    if (_target_drop_zone)
     {
-      DropObject (_dnd_config->GetFloatingObject (),
-                  NULL,
-                  _target_drop_zone);
+      _target_drop_zone->Unfocus ();
 
-      result = TRUE;
+      if (_dnd_config->GetFloatingObject ())
+      {
+        DropObject (_dnd_config->GetFloatingObject (),
+                    NULL,
+                    _target_drop_zone);
+
+        result = TRUE;
+      }
+
+      _target_drop_zone = NULL;
     }
-
-    _target_drop_zone = NULL;
   }
 
-  gtk_drag_finish (drag_context,
-                   result,
-                   FALSE,
-                   time);
+  return result;
 }
 
 // --------------------------------------------------------------------------------

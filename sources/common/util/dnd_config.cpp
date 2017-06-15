@@ -20,14 +20,27 @@
 DndConfig::DndConfig ()
   : Object ("DndConfig")
 {
-  _floating_object = NULL;
-  _target_list     = gtk_target_list_new (NULL, 0);
+  _floating_object        = NULL;
+  _target_list            = gtk_target_list_new (NULL, 0);
+  _fetch_data_at_earliest = FALSE;
 }
 
 // --------------------------------------------------------------------------------
 DndConfig::~DndConfig ()
 {
   gtk_target_list_unref (_target_list);
+}
+
+// --------------------------------------------------------------------------------
+void DndConfig::FetchDataAtEarliest ()
+{
+  _fetch_data_at_earliest = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean DndConfig::DataFetchedAtEarliest ()
+{
+  return _fetch_data_at_earliest;
 }
 
 // --------------------------------------------------------------------------------
@@ -104,4 +117,18 @@ void DndConfig::SetFloatingObject (Object *object)
 Object *DndConfig::GetFloatingObject ()
 {
   return _floating_object;
+}
+
+// --------------------------------------------------------------------------------
+void DndConfig::SetContext (GdkDragContext *context)
+{
+  if (g_object_get_data (G_OBJECT (context),
+                         "DndConfig") == NULL)
+  {
+    _floating_object = NULL;
+
+    g_object_set_data (G_OBJECT (context),
+                       "DndConfig",
+                       this);
+  }
 }

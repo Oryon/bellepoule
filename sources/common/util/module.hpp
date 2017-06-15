@@ -213,7 +213,7 @@ class Module : public virtual Object
                                  gint            y,
                                  guint           time);
 
-  private:
+  private: // https://wiki.gnome.org/Newcomers/DragNDropTutorial
     static void DragDataGet (GtkWidget        *widget,
                              GdkDragContext   *drag_context,
                              GtkSelectionData *data,

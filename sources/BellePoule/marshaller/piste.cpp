@@ -66,11 +66,12 @@ namespace Marshaller
     {
       _progress_item = goo_canvas_rect_new (_root_item,
                                             _BORDER_W,
-                                            _H - (_H/10.0),
-                                            _W/2.0,
-                                            (_H/10.0)-_BORDER_W,
-                                            "fill-color", "#fe7418",
-                                            "line-width", 0.0,
+                                            _BORDER_W,
+                                            //_W/2.0,
+                                            0.0,
+                                            _H-(2.0*_BORDER_W),
+                                            "fill-color-rgba", 0xd3d3d360,
+                                            "line-width",      0.0,
                                             NULL);
       MonitorEvent (_progress_item);
     }

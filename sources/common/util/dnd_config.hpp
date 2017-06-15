@@ -48,9 +48,16 @@ class DndConfig : public Object
 
     Object *GetFloatingObject ();
 
+    void SetContext (GdkDragContext *context);
+
+    void FetchDataAtEarliest ();
+
+    gboolean DataFetchedAtEarliest ();
+
   private:
     GtkTargetList *_target_list;
     Object        *_floating_object;
+    gboolean       _fetch_data_at_earliest;
 
     ~DndConfig ();
 };

@@ -105,7 +105,7 @@ namespace People
     }
 
     // Popup menu
-    SetPopupVisibility ("PlayersList::ReadWriteAction",
+    SetPopupVisibility ("PlayersList::WriteAction",
                         TRUE);
   }
 

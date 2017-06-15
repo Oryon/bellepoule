@@ -142,7 +142,7 @@ namespace People
       ConnectDndSource (GTK_WIDGET (_tree_view));
       ConnectDndDest   (GTK_WIDGET (_tree_view));
     }
-    SetPopupVisibility ("PlayersList::ReadWriteAction", TRUE);
+    SetPopupVisibility ("PlayersList::WriteAction", TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -721,7 +721,7 @@ namespace People
     if (Locked ())
     {
       SetSensitiveState (FALSE);
-      SetPopupVisibility ("PlayersList::ReadWriteAction", FALSE);
+      SetPopupVisibility ("PlayersList::WriteAction", FALSE);
     }
   }
 
@@ -748,7 +748,7 @@ namespace People
   {
     DisableSensitiveWidgets ();
     SetSensitiveState (FALSE);
-    SetPopupVisibility ("PlayersList::ReadWriteAction", FALSE);
+    SetPopupVisibility ("PlayersList::WriteAction", FALSE);
 
     UpdateChecksum ();
     UpdateRanking  ();
@@ -819,7 +819,7 @@ namespace People
   {
     EnableSensitiveWidgets ();
     SetSensitiveState (TRUE);
-    SetPopupVisibility ("PlayersList::ReadWriteAction", TRUE);
+    SetPopupVisibility ("PlayersList::WriteAction", TRUE);
     _form->UnLock ();
     EnableDragAndDrop ();
 
@@ -1222,7 +1222,7 @@ namespace People
       if (selection_data && (gtk_selection_data_get_length (selection_data) >= 0))
       {
         guint32 *ref    = (guint32 *) gtk_selection_data_get_data (selection_data);
-        Player  *fencer = GetFencerFromRef (*ref);
+        Player  *fencer = GetPlayerFromRef (*ref);
 
         _dnd_config->SetFloatingObject (fencer);
       }

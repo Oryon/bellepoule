@@ -253,7 +253,11 @@ namespace Marshaller
         Plug (_referee_details,
               _glade->GetWidget ("referee_detail_hook"));
 
-        _referee_details->SetPopupVisibility ("PlayersList::ReadWriteAction",
+        _referee_details->SetPopupVisibility ("PlayersList::ReadOnlyAction",
+                                              FALSE);
+        _referee_details->SetPopupVisibility ("PlayersList::WriteAction",
+                                              FALSE);
+        _referee_details->SetPopupVisibility ("PlayersList::RemoveAction",
                                               TRUE);
       }
 

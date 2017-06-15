@@ -82,42 +82,40 @@ namespace People
             }
           }
 
-          // Actions
+          // Popup
           {
-            GtkActionGroup *action_group = gtk_action_group_new ("PlayersList::ReadOnlyAction");
             static GtkActionEntry entries[] =
             {
-              {"CopyAction",   GTK_STOCK_COPY, gettext ("Copy"),   NULL, NULL, G_CALLBACK (OnCopySelection)},
+              {"CopyAction", GTK_STOCK_COPY, gettext ("Copy"), NULL, NULL, G_CALLBACK (OnCopySelection)},
             };
 
-            gtk_action_group_add_actions (action_group,
-                                          entries,
-                                          G_N_ELEMENTS (entries),
-                                          this);
-            gtk_ui_manager_insert_action_group (_ui_manager,
-                                                action_group,
-                                                0);
-
-            g_object_unref (G_OBJECT (action_group));
+            AddPopupEntries ("PlayersList::ReadOnlyAction",
+                             G_N_ELEMENTS (entries),
+                             entries);
           }
 
+          // Popup
           {
-            GtkActionGroup *action_group = gtk_action_group_new ("PlayersList::ReadWriteAction");
             static GtkActionEntry entries[] =
             {
-              {"PasteAction",  GTK_STOCK_PASTE,  gettext ("Paste"),  NULL, NULL, G_CALLBACK (OnPasteSelection)},
+              {"PasteAction", GTK_STOCK_PASTE, gettext ("Paste"), NULL, NULL, G_CALLBACK (OnPasteSelection)},
+            };
+
+            AddPopupEntries ("PlayersList::WriteAction",
+                             G_N_ELEMENTS (entries),
+                             entries);
+          }
+
+          // Popup
+          {
+            static GtkActionEntry entries[] =
+            {
               {"RemoveAction", GTK_STOCK_REMOVE, gettext ("Remove"), NULL, NULL, G_CALLBACK (OnRemoveSelection)},
             };
 
-            gtk_action_group_add_actions (action_group,
-                                          entries,
-                                          G_N_ELEMENTS (entries),
-                                          this);
-            gtk_ui_manager_insert_action_group (_ui_manager,
-                                                action_group,
-                                                0);
-
-            g_object_unref (G_OBJECT (action_group));
+            AddPopupEntries ("PlayersList::RemoveAction",
+                             G_N_ELEMENTS (entries),
+                             entries);
           }
 
           {
@@ -129,12 +127,33 @@ namespace People
                                       G_CALLBACK (OnButtonPress), menu);
           }
 
-          SetPopupVisibility ("PlayersList::ReadWriteAction",
+          SetPopupVisibility ("PlayersList::WriteAction",
+                              FALSE);
+          SetPopupVisibility ("PlayersList::RemoveAction",
                               FALSE);
         }
       }
     }
   }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::AddPopupEntries (const gchar    *group,
+                                     guint           n,
+                                     GtkActionEntry *entries)
+  {
+    GtkActionGroup *action_group = gtk_action_group_new (group);
+
+    gtk_action_group_add_actions (action_group,
+                                  entries,
+                                  n,
+                                  this);
+    gtk_ui_manager_insert_action_group (_ui_manager,
+                                        action_group,
+                                        0);
+
+    g_object_unref (G_OBJECT (action_group));
+  }
+
 
   // --------------------------------------------------------------------------------
   void PlayersList::SetPopupVisibility (const gchar *group,
