@@ -43,6 +43,7 @@ namespace Marshaller
     _parcel->Set ("competition", batch->GetCompetition ()->GetId ());
     _parcel->Set ("batch",       batch->GetId ());
     _parcel->Set ("source",      netid);
+    _parcel->SetFitness (1);
   }
 
   // --------------------------------------------------------------------------------

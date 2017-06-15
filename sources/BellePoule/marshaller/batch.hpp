@@ -51,6 +51,8 @@ namespace Marshaller
                  guint         *referee_id,
                  FieTime      **start_time);
 
+      void CloseLoading ();
+
       void SetJobStatus (Job      *job,
                          gboolean  has_slot,
                          gboolean  has_referee);
@@ -88,6 +90,7 @@ namespace Marshaller
       GtkWidget    *_assign_button;
       GtkWidget    *_cancel_button;
       GtkWidget    *_lock_button;
+      gboolean      _loading;
 
       virtual ~Batch ();
 

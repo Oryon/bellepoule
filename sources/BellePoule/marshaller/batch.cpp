@@ -48,6 +48,7 @@ namespace Marshaller
     _scheduled_list = NULL;
     _pending_list   = NULL;
     _competition    = competition;
+    _loading        = FALSE;
 
     _assign_button = _glade->GetWidget ("assign_toolbutton");
     _cancel_button = _glade->GetWidget ("cancel_toolbutton");
@@ -117,6 +118,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Batch::CloseLoading ()
+  {
+    _loading = FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   guint Batch::GetId ()
   {
     return _id;
@@ -161,7 +168,7 @@ namespace Marshaller
       gtk_widget_set_sensitive (_assign_button, FALSE);
       gtk_widget_set_sensitive (_lock_button,   TRUE);
     }
-    else
+    else if (_loading == FALSE)
     {
       RecallList (_scheduled_list);
       RecallList (_pending_list);
@@ -386,6 +393,8 @@ namespace Marshaller
     *referee_id = 0;
     *start_time = NULL;
 
+    _loading = TRUE;
+
     if (GetJob (message->GetNetID ()) == NULL)
     {
       gchar     *xml = message->GetString ("xml");
@@ -499,9 +508,10 @@ namespace Marshaller
         xmlFreeDoc (doc);
       }
       g_free (xml);
+
+      RefreshControlPanel ();
     }
 
-    RefreshControlPanel ();
     return job;
   }
 

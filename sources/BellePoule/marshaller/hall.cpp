@@ -69,6 +69,9 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Hall::~Hall ()
   {
+    JobBoard::SetTimeLine (NULL,
+                           NULL);
+
     FreeFullGList (Competition, _competition_list);
     FreeFullGList (Piste, _piste_list);
 
@@ -316,6 +319,7 @@ namespace Marshaller
             }
           }
         }
+        batch->CloseLoading ();
         _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
       }
     }

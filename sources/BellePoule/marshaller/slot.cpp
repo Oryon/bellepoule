@@ -359,11 +359,11 @@ namespace Marshaller
   {
     if (a == NULL)
     {
-      return a;
+      return b;
     }
     if (b == NULL)
     {
-      return b;
+      return a;
     }
 
     if (g_date_time_compare (a, b) >= 0)
@@ -379,6 +379,7 @@ namespace Marshaller
   {
     if (g_date_time_compare (_start, time) <= 0)
     {
+      if (_start == NULL) Dump (this);
       GDateTime *end_time = g_date_time_add (_start,
                                              GetDuration  ());
 
