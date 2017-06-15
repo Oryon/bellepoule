@@ -70,6 +70,8 @@ namespace Marshaller
 
       void UnSelect ();
 
+      Slot *GetSlotAt (GDateTime *time);
+
       void DisplayAtTime (GDateTime *time);
 
       void Translate (gdouble tx,

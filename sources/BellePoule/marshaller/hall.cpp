@@ -1031,6 +1031,30 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Hall::DroppingIsAllowed (Object   *floating_object,
+                                    DropZone *in_zone)
+  {
+    if (CanvasModule::DroppingIsAllowed (floating_object,
+                                         in_zone))
+    {
+      EnlistedReferee *referee = dynamic_cast <EnlistedReferee *> (floating_object);
+      Piste           *piste   = dynamic_cast <Piste *> (in_zone);
+      GDateTime       *cursor  = _timeline->RetreiveCursorTime ();
+      Slot            *slot    = piste->GetSlotAt (cursor);
+
+      g_date_time_unref (cursor);
+
+      if (slot)
+      {
+        return referee->IsAvailableFor (slot,
+                                        slot->GetDuration ());
+      }
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_add_piste_button_clicked (GtkWidget *widget,
                                                                Object    *owner)
   {

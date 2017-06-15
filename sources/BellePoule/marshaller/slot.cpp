@@ -357,6 +357,15 @@ namespace Marshaller
   GDateTime *Slot::GetLatestDate (GDateTime *a,
                                   GDateTime *b)
   {
+    if (a == NULL)
+    {
+      return a;
+    }
+    if (b == NULL)
+    {
+      return b;
+    }
+
     if (g_date_time_compare (a, b) >= 0)
     {
       return a;
@@ -577,7 +586,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Slot::Dump (Slot *what)
   {
-    printf ("[%d]  %s .. ", what->_owner->GetId (), g_date_time_format (what->_start, "%R"));
+    printf ("%s .. ", g_date_time_format (what->_start, "%R"));
     if (what->_end)
     {
       printf ("%s\n" ESC, g_date_time_format (what->_end, "%R"));

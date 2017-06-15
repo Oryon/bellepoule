@@ -612,10 +612,14 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
 
       if (drop_zone)
       {
-        drop_zone->Focus ();
-        _target_drop_zone = drop_zone;
+        if (DroppingIsAllowed (_dnd_config->GetFloatingObject (),
+                               drop_zone))
+        {
+          drop_zone->Focus ();
+          _target_drop_zone = drop_zone;
 
-        return TRUE;
+          return TRUE;
+        }
       }
     }
   }

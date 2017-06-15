@@ -148,5 +148,8 @@ namespace Marshaller
       void OnJobBoardUpdated (Competition *competition);
 
       void OnJobBoardFocus (guint focus);
+
+      gboolean DroppingIsAllowed (Object   *floating_object,
+                                  DropZone *in_zone);
   };
 }

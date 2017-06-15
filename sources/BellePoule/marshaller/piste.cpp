@@ -182,6 +182,13 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  Slot *Piste::GetSlotAt (GDateTime *time)
+  {
+    return Slot::GetSlotAt (time,
+                            _slots);
+  }
+
+  // --------------------------------------------------------------------------------
   void Piste::DisplayAtTime (GDateTime *time)
   {
     if (_display_time)
@@ -191,8 +198,7 @@ namespace Marshaller
     _display_time = g_date_time_add (time, 0);
 
     CleanDisplay  ();
-    OnSlotUpdated (Slot::GetSlotAt (time,
-                                    _slots));
+    OnSlotUpdated (GetSlotAt (time));
   }
 
   // --------------------------------------------------------------------------------

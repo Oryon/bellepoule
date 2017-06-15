@@ -110,7 +110,6 @@ void Module::DragDataGet (GtkWidget        *widget,
                           guint             time,
                           Module           *owner)
 {
-  printf ("DragDataGet\n");
   owner->OnDragDataGet (widget,
                         drag_context,
                         data,
@@ -135,7 +134,6 @@ gboolean Module::DragDrop (GtkWidget      *widget,
                            guint           time,
                            Module         *owner)
 {
-  printf ("DragDrop\n");
   return owner->OnDragDrop (widget,
                             drag_context,
                             x,
@@ -229,7 +227,6 @@ void Module::DragLeave (GtkWidget      *widget,
                         guint           time,
                         Module         *owner)
 {
-  printf ("DragLeave\n");
   owner->OnDragLeave (widget,
                       drag_context,
                       time);
@@ -252,7 +249,6 @@ void Module::DragDataReceived (GtkWidget        *widget,
                                guint             time,
                                Module           *owner)
 {
-  printf ("DragDataReceived\n");
   owner->OnDragDataReceived (widget,
                              drag_context,
                              x,
