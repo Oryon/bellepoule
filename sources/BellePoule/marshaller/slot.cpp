@@ -515,7 +515,7 @@ namespace Marshaller
 
           max_start_time = g_date_time_add (next_slot->_start, -duration);
 
-          if (   (g_date_time_compare (max_start_time, current_slot->_end) > 0)
+          if (   (g_date_time_compare (max_start_time, current_slot->_end) >= 0)
               && (g_date_time_compare (max_start_time, from) >= 0))
           {
             free_slot = new Slot (owner,

@@ -148,7 +148,27 @@ namespace Marshaller
     }
     else if (g_strcmp0 (g_quark_to_string (key), "bellepoule/job") == 0)
     {
-      return GetCompetition (ref);
+      GList *current_competition = _competition_list;
+
+      while (current_competition)
+      {
+        Competition *competition   = (Competition *) current_competition->data;
+        GList       *current_batch = competition->GetBatches ();
+
+        while (current_batch)
+        {
+          Batch *batch = (Batch *) current_batch->data;
+          Job   *job   = batch->GetJob (ref);
+
+          if (job)
+          {
+            return job;
+          }
+          current_batch = g_list_next (current_batch);
+        }
+
+        current_competition = g_list_next (current_competition);
+      }
     }
 
     return NULL;
@@ -162,27 +182,18 @@ namespace Marshaller
     Piste *piste = dynamic_cast <Piste *> (target_zone);
 
     {
-      Batch *batch = dynamic_cast <Batch *> (object);
+      Job *job = dynamic_cast <Job *> (object);
 
-      if (batch)
+      if (job)
       {
-        GList     *selection = batch->GetCurrentSelection ();
-        GList     *current   = selection;
-        GDateTime *from      = _timeline->RetreiveCursorTime ();
+        GDateTime *from  = _timeline->RetreiveCursorTime ();
+        GList     *slots = piste->GetFreeSlots (from, 30 *G_TIME_SPAN_MINUTE);
+        Slot      *slot  = (Slot *) slots->data;
 
-        while (current)
-        {
-          Job   *job   = (Job *) current->data;
-          GList *slots = piste->GetFreeSlots (from, 30*G_TIME_SPAN_MINUTE);
-          Slot  *slot  = (Slot *) slots->data;
+        slot->AddJob (job);
 
-          slot->AddJob (job);
-
-          current = g_list_next (current);
-        }
         g_date_time_unref (from);
 
-        g_list_free (selection);
         _timeline->Redraw ();
         return;
       }
@@ -198,6 +209,7 @@ namespace Marshaller
 
         piste->AddReferee (referee);
         _referee_pool->RefreshWorkload (weapon_attr->GetStrValue ());
+        _timeline->Redraw ();
       }
     }
   }
@@ -1042,16 +1054,34 @@ namespace Marshaller
                                          in_zone))
     {
       EnlistedReferee *referee = dynamic_cast <EnlistedReferee *> (floating_object);
+      Job             *job     = dynamic_cast <Job *> (floating_object);
       Piste           *piste   = dynamic_cast <Piste *> (in_zone);
       GDateTime       *cursor  = _timeline->RetreiveCursorTime ();
-      Slot            *slot    = piste->GetSlotAt (cursor);
+      Slot            *slot    = NULL;
+
+      if (referee)
+      {
+        slot = piste->GetSlotAt (cursor);
+      }
+      else if (job)
+      {
+        slot = piste->GetFreeSlot (cursor,
+                                   30*G_TIME_SPAN_MINUTE);
+      }
 
       g_date_time_unref (cursor);
 
       if (slot)
       {
-        return referee->IsAvailableFor (slot,
-                                        slot->GetDuration ());
+        if (referee)
+        {
+          return referee->IsAvailableFor (slot,
+                                          slot->GetDuration ());
+        }
+        else if (job)
+        {
+          return TRUE;
+        }
       }
     }
 

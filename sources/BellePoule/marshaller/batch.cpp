@@ -524,11 +524,15 @@ namespace Marshaller
   {
     if (key == _dnd_key)
     {
+      GList   *selected = GetCurrentSelection ();
+      Job     *job      = (Job *) selected->data;
+      guint32  job_ref  = job->GetNetID ();
+
       gtk_selection_data_set (data,
                               gtk_selection_data_get_target (data),
                               32,
-                              (guchar *) &_id,
-                              sizeof (_id));
+                              (guchar *) &job_ref,
+                              sizeof (job_ref));
     }
   }
 

@@ -65,6 +65,8 @@ namespace Marshaller
 
       GList *GetPendingJobs ();
 
+      Job *GetJob (guint netid);
+
       const gchar *GetName ();
 
       GList *GetCurrentSelection ();
@@ -93,8 +95,6 @@ namespace Marshaller
       gboolean      _loading;
 
       virtual ~Batch ();
-
-      Job *GetJob (guint netid);
 
       void RecallList (GList *list);
 

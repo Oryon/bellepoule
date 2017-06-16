@@ -124,152 +124,158 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void JobBoard::Display (Job *job)
   {
-    _current_job = _job_list;
-
-    if (_job_list && job)
+    if (_timeline)
     {
-      _current_job = g_list_find (_job_list,
-                                  job);
-    }
-    else
-    {
-      GList *current = _job_list;
+      _current_job = _job_list;
 
-      while (current)
+      if (_job_list && job)
       {
-        GDateTime *cursor = _timeline->RetreiveCursorTime ();
-        Slot      *slot;
+        _current_job = g_list_find (_job_list,
+                                    job);
+      }
+      else
+      {
+        GList *current = _job_list;
 
-        job  = (Job *) current->data;
-        slot = job->GetSlot ();
-
-        if (slot && (slot->TimeIsInside (cursor)))
+        while (current)
         {
-          _current_job = current;
+          GDateTime *cursor = _timeline->RetreiveCursorTime ();
+          Slot      *slot;
+
+          job  = (Job *) current->data;
+          slot = job->GetSlot ();
+
+          if (slot && (slot->TimeIsInside (cursor)))
+          {
+            _current_job = current;
+            g_date_time_unref (cursor);
+            break;
+          }
+
           g_date_time_unref (cursor);
-          break;
+          current = g_list_next (current);
         }
-
-        g_date_time_unref (cursor);
-        current = g_list_next (current);
       }
-    }
 
-    DisplayCurrent ();
+      DisplayCurrent ();
 
-    if (RunDialog (GTK_DIALOG (_dialog)))
-    {
-      if (_current_job)
+      if (RunDialog (GTK_DIALOG (_dialog)))
       {
-        Job   *job_to_delete = (Job *) _current_job->data;
-        Batch *batch         = job_to_delete->GetBatch ();
-        Slot  *slot          = job_to_delete->GetSlot ();
+        if (_current_job)
+        {
+          Job   *job_to_delete = (Job *) _current_job->data;
+          Batch *batch         = job_to_delete->GetBatch ();
+          Slot  *slot          = job_to_delete->GetSlot ();
 
-        slot->RemoveJob (job_to_delete);
-        _listener->OnJobBoardUpdated (batch->GetCompetition ());
+          slot->RemoveJob (job_to_delete);
+          _listener->OnJobBoardUpdated (batch->GetCompetition ());
+        }
       }
+      gtk_widget_hide (_dialog);
     }
-    gtk_widget_hide (_dialog);
   }
 
   // --------------------------------------------------------------------------------
   void JobBoard::DisplayCurrent ()
   {
+    if (_timeline)
     {
       {
-        GtkLabel *title = GTK_LABEL (_glade->GetWidget ("current_job_label"));
-
-        gtk_label_set_text (title, "");
-      }
-
-      if (_referee_details)
-      {
-        _referee_details->UnPlug ();
-        _referee_details->Release ();
-        _referee_details = NULL;
-      }
-      if (_fencer_details)
-      {
-        _fencer_details->UnPlug ();
-        _fencer_details->Release ();
-        _fencer_details = NULL;
-      }
-    }
-
-    if (_current_job)
-    {
-      Job  *job  = (Job *) _current_job->data;
-      Slot *slot = job->GetSlot ();
-
-      {
-        GtkLabel *title_label = GTK_LABEL (_glade->GetWidget ("current_job_label"));
-        GtkLabel *piste_label = GTK_LABEL (_glade->GetWidget ("piste_label"));
-        GtkLabel *time_label  = GTK_LABEL (_glade->GetWidget ("time_label"));
-        gchar    *time;
-        gchar    *piste;
-
-        gtk_label_set_text (title_label, job->GetName ());
-
-        gtk_widget_set_sensitive (_take_off_button,
-                                  slot != NULL);
-
-        if (slot)
         {
-          GDateTime *start_time = slot->GetStartTime ();
-          guint      piste_id   = slot->GetOwner()->GetId ();
+          GtkLabel *title = GTK_LABEL (_glade->GetWidget ("current_job_label"));
 
-          _timeline->SetCursorTime (start_time);
-          _listener->OnJobBoardFocus (piste_id);
-
-          time  = g_date_time_format (start_time, "%H:%M");
-          piste = g_strdup_printf    (gettext ("Piste %d"),
-                                      piste_id);
-        }
-        else
-        {
-          time  = g_strdup (gettext ("No time!"));
-          piste = g_strdup (gettext ("No piste!"));
+          gtk_label_set_text (title, "");
         }
 
-        gtk_label_set_text (piste_label, piste);
-        gtk_label_set_text (time_label,  time);
-
-        g_free (piste);
-        g_free (time);
-      }
-
-      {
-        if (slot)
+        if (_referee_details)
         {
-          _referee_details = new JobDetails (this,
-                                             slot->GetRefereeList ());
+          _referee_details->UnPlug ();
+          _referee_details->Release ();
+          _referee_details = NULL;
         }
-        else
+        if (_fencer_details)
         {
-          _referee_details = new JobDetails (this,
-                                             NULL);
+          _fencer_details->UnPlug ();
+          _fencer_details->Release ();
+          _fencer_details = NULL;
+        }
+      }
+
+      if (_current_job)
+      {
+        Job  *job  = (Job *) _current_job->data;
+        Slot *slot = job->GetSlot ();
+
+        {
+          GtkLabel *title_label = GTK_LABEL (_glade->GetWidget ("current_job_label"));
+          GtkLabel *piste_label = GTK_LABEL (_glade->GetWidget ("piste_label"));
+          GtkLabel *time_label  = GTK_LABEL (_glade->GetWidget ("time_label"));
+          gchar    *time;
+          gchar    *piste;
+
+          gtk_label_set_text (title_label, job->GetName ());
+
+          gtk_widget_set_sensitive (_take_off_button,
+                                    slot != NULL);
+
+          if (slot)
+          {
+            GDateTime *start_time = slot->GetStartTime ();
+            guint      piste_id   = slot->GetOwner()->GetId ();
+
+            _timeline->SetCursorTime (start_time);
+            _listener->OnJobBoardFocus (piste_id);
+
+            time  = g_date_time_format (start_time, "%H:%M");
+            piste = g_strdup_printf    (gettext ("Piste %d"),
+                                        piste_id);
+          }
+          else
+          {
+            time  = g_strdup (gettext ("No time!"));
+            piste = g_strdup (gettext ("No piste!"));
+          }
+
+          gtk_label_set_text (piste_label, piste);
+          gtk_label_set_text (time_label,  time);
+
+          g_free (piste);
+          g_free (time);
         }
 
-        Plug (_referee_details,
-              _glade->GetWidget ("referee_detail_hook"));
+        {
+          if (slot)
+          {
+            _referee_details = new JobDetails (this,
+                                               slot->GetRefereeList ());
+          }
+          else
+          {
+            _referee_details = new JobDetails (this,
+                                               NULL);
+          }
 
-        _referee_details->SetPopupVisibility ("PlayersList::ReadOnlyAction",
-                                              FALSE);
-        _referee_details->SetPopupVisibility ("PlayersList::WriteAction",
-                                              FALSE);
-        _referee_details->SetPopupVisibility ("PlayersList::RemoveAction",
-                                              TRUE);
+          Plug (_referee_details,
+                _glade->GetWidget ("referee_detail_hook"));
+
+          _referee_details->SetPopupVisibility ("PlayersList::ReadOnlyAction",
+                                                FALSE);
+          _referee_details->SetPopupVisibility ("PlayersList::WriteAction",
+                                                FALSE);
+          _referee_details->SetPopupVisibility ("PlayersList::RemoveAction",
+                                                TRUE);
+        }
+
+        {
+          _fencer_details  = new JobDetails (this,
+                                             job->GetFencerList ());
+
+          Plug (_fencer_details,
+                _glade->GetWidget ("fencer_detail_hook"));
+        }
+
+        SetHeader ();
       }
-
-      {
-        _fencer_details  = new JobDetails (this,
-                                           job->GetFencerList ());
-
-        Plug (_fencer_details,
-              _glade->GetWidget ("fencer_detail_hook"));
-      }
-
-      SetHeader ();
     }
   }
 

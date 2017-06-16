@@ -211,6 +211,8 @@ namespace Pool
   {
     Net::Ring::UnregisterListener (this);
 
+    DeletePools ();
+
     _max_score->Release        ();
     _swapping->Release         ();
     _seeding_balanced->Release ();
