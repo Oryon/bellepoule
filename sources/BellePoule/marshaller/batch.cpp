@@ -52,7 +52,9 @@ namespace Marshaller
 
     _assign_button = _glade->GetWidget ("assign_toolbutton");
     _cancel_button = _glade->GetWidget ("cancel_toolbutton");
-    _lock_button   = _glade->GetWidget ("lock_toolbutton");
+    _spread_button = _glade->GetWidget ("spread_toolbutton");
+
+    gtk_widget_set_sensitive (_spread_button, FALSE);
 
     _id = id;
 
@@ -161,12 +163,16 @@ namespace Marshaller
   {
     gtk_widget_set_sensitive (_assign_button, TRUE);
     gtk_widget_set_sensitive (_cancel_button, TRUE);
-    gtk_widget_set_sensitive (_lock_button,   FALSE);
+    gtk_widget_set_sensitive (_spread_button, FALSE);
 
     if (_pending_list == NULL)
     {
       gtk_widget_set_sensitive (_assign_button, FALSE);
-      gtk_widget_set_sensitive (_lock_button,   TRUE);
+
+      if (_loading == FALSE)
+      {
+        gtk_widget_set_sensitive (_spread_button, TRUE);
+      }
     }
     else if (_loading == FALSE)
     {
@@ -564,6 +570,8 @@ namespace Marshaller
 
       current = g_list_next (current);
     }
+
+    gtk_widget_set_sensitive (_spread_button, FALSE);
   }
 
   // --------------------------------------------------------------------------------
@@ -613,8 +621,8 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_lock_toolbutton_clicked (GtkToolButton *widget,
-                                                              Object        *owner)
+  extern "C" G_MODULE_EXPORT void on_spread_toolbutton_clicked (GtkToolButton *widget,
+                                                                Object        *owner)
   {
     Batch *b = dynamic_cast <Batch *> (owner);
 

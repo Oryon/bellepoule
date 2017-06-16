@@ -45,6 +45,8 @@ namespace Marshaller
 
       const gchar *GetName ();
 
+      GTimeSpan GetRegularDuration ();
+
       Batch *GetBatch ();
 
       GdkColor *GetGdkColor ();

@@ -187,7 +187,7 @@ namespace Marshaller
       if (job)
       {
         GDateTime *from  = _timeline->RetreiveCursorTime ();
-        GList     *slots = piste->GetFreeSlots (from, 30 *G_TIME_SPAN_MINUTE);
+        GList     *slots = piste->GetFreeSlots (from, job->GetRegularDuration ());
         Slot      *slot  = (Slot *) slots->data;
 
         slot->AddJob (job);
@@ -312,7 +312,7 @@ namespace Marshaller
           if (piste)
           {
             Slot *slot = piste->GetFreeSlot (start_time->GetGDateTime (),
-                                             30*G_TIME_SPAN_MINUTE);
+                                             job->GetRegularDuration ());
 
             if (slot)
             {
@@ -845,7 +845,7 @@ namespace Marshaller
           }
           else
           {
-            free_slots = GetFreePisteSlots (30*G_TIME_SPAN_MINUTE);
+            free_slots = GetFreePisteSlots (job->GetRegularDuration ());
           }
 
           GList *current_slot = free_slots;
@@ -857,7 +857,7 @@ namespace Marshaller
 
             referee = GetFreeRefereeFor (referee_list,
                                          slot,
-                                         30*G_TIME_SPAN_MINUTE);
+                                         job->GetRegularDuration ());
             if (referee)
             {
               slot->Retain ();
@@ -1063,10 +1063,10 @@ namespace Marshaller
       {
         slot = piste->GetSlotAt (cursor);
       }
-      else if (job)
+      else if (job && (job->GetSlot () == FALSE))
       {
         slot = piste->GetFreeSlot (cursor,
-                                   30*G_TIME_SPAN_MINUTE);
+                                   job->GetRegularDuration ());
       }
 
       g_date_time_unref (cursor);
@@ -1080,6 +1080,7 @@ namespace Marshaller
         }
         else if (job)
         {
+          slot->Release ();
           return TRUE;
         }
       }

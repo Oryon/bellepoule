@@ -91,7 +91,7 @@ namespace Marshaller
       JobBoard     *_job_board;
       GtkWidget    *_assign_button;
       GtkWidget    *_cancel_button;
-      GtkWidget    *_lock_button;
+      GtkWidget    *_spread_button;
       gboolean      _loading;
 
       virtual ~Batch ();

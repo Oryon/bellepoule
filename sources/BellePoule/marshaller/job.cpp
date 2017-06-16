@@ -85,6 +85,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  GTimeSpan Job::GetRegularDuration ()
+  {
+    return 30*G_TIME_SPAN_MINUTE;
+  }
+
+  // --------------------------------------------------------------------------------
   void Job::AddFencer (Player *fencer)
   {
     fencer->Retain ();
