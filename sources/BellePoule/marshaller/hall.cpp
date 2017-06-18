@@ -37,9 +37,10 @@ namespace Marshaller
     : Object ("Hall"),
     CanvasModule ("hall.glade")
   {
-    _listener      = listener;
-    _piste_list    = NULL;
-    _selected_list = NULL;
+    _listener       = listener;
+    _piste_list     = NULL;
+    _selected_list  = NULL;
+    _redraw_timeout = 0;
 
     _dragging = FALSE;
 
@@ -71,6 +72,11 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Hall::~Hall ()
   {
+    if (_redraw_timeout > 0)
+    {
+      g_source_remove (_redraw_timeout);
+    }
+
     JobBoard::SetTimeLine (NULL,
                            NULL);
 
@@ -196,7 +202,7 @@ namespace Marshaller
 
         g_date_time_unref (from);
 
-        _timeline->Redraw ();
+        Redraw ();
         return;
       }
     }
@@ -211,7 +217,7 @@ namespace Marshaller
 
         piste->AddReferee (referee);
         _referee_pool->RefreshWorkload (weapon_attr->GetStrValue ());
-        _timeline->Redraw ();
+        Redraw ();
       }
     }
   }
@@ -324,7 +330,7 @@ namespace Marshaller
               {
                 slot->AddJob     (job);
                 slot->AddReferee (referee);
-                _timeline->Redraw ();
+                Redraw ();
               }
               else
               {
@@ -365,7 +371,7 @@ namespace Marshaller
       {
         batch->RemoveJob (message);
         _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
-        _timeline->Redraw ();
+        Redraw ();
       }
     }
   }
@@ -499,7 +505,7 @@ namespace Marshaller
     g_list_free (_selected_list);
     _selected_list = NULL;
 
-    _timeline->Redraw ();
+    Redraw ();
   }
 
   // --------------------------------------------------------------------------------
@@ -934,7 +940,7 @@ namespace Marshaller
         g_list_free (referee_list);
 
         _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
-        _timeline->Redraw ();
+        Redraw ();
         OnTimelineCursorMoved ();
       }
 
@@ -1078,7 +1084,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::OnJobBoardUpdated (Competition *competition)
   {
-    _timeline->Redraw ();
+    Redraw ();
     _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
   }
 
@@ -1098,7 +1104,7 @@ namespace Marshaller
     }
 
     _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
-    _timeline->Redraw ();
+    Redraw ();
 
     _listener->OnExposeWeapon (competition->GetWeaponCode ());
   }
@@ -1160,6 +1166,42 @@ namespace Marshaller
 
       current = g_list_next (current);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Hall::Redraw ()
+  {
+    _timeline->Redraw ();
+
+    {
+      GList *current = _piste_list;
+
+      while (current)
+      {
+        Piste *piste = (Piste *) current->data;
+
+        piste->Redraw ();
+
+        current = g_list_next (current);
+      }
+
+      if (_redraw_timeout > 0)
+      {
+        g_source_remove (_redraw_timeout);
+      }
+    }
+
+    _redraw_timeout = g_timeout_add_seconds (60,
+                                             (GSourceFunc) RedrawCbk,
+                                             this);
+
+    return G_SOURCE_CONTINUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Hall::RedrawCbk (Hall *hall)
+  {
+    return hall->Redraw ();
   }
 
   // --------------------------------------------------------------------------------

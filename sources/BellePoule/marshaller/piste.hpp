@@ -66,6 +66,8 @@ namespace Marshaller
 
       void Block (gboolean block);
 
+      void Redraw ();
+
       void Disable ();
 
       gboolean Overlaps (GooCanvasBounds *rectangle);

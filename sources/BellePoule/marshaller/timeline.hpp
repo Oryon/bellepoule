@@ -41,9 +41,7 @@ namespace Marshaller
 
       GDateTime *RetreiveCursorTime ();
 
-      gboolean Redraw ();
-
-      static gboolean RedrawCbk (Timeline *tl);
+      void Redraw ();
 
     private:
       static const guint     HOURS_MONITORED = 10;
@@ -57,7 +55,6 @@ namespace Marshaller
       gdouble        _time_scale;
       gdouble        _competition_scale;
       GDateTime     *_origin;
-      guint          _redraw_timeout;
       GooCanvasItem *_goo_cursor;
       GooCanvasItem *_goo_cursor_time;
       Listener      *_listener;

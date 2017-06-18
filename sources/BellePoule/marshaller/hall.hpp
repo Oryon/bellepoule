@@ -88,6 +88,7 @@ namespace Marshaller
       Lasso       *_lasso;
       Clock       *_clock;
       Listener    *_listener;
+      guint        _redraw_timeout;
 
       ~Hall ();
 
@@ -156,5 +157,9 @@ namespace Marshaller
 
       gboolean DroppingIsAllowed (Object   *floating_object,
                                   DropZone *in_zone);
+
+      static gboolean RedrawCbk (Hall *hall);
+
+      gboolean Redraw ();
   };
 }

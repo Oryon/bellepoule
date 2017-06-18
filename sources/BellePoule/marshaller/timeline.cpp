@@ -27,7 +27,6 @@ namespace Marshaller
     CanvasModule ("timeline.glade", "canvas_scrolled_window")
   {
     _competition_list = NULL;
-    _redraw_timeout   = 0;
     _listener         = listener;
 
     {
@@ -53,11 +52,6 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Timeline::~Timeline ()
   {
-    if (_redraw_timeout > 0)
-    {
-      g_source_remove (_redraw_timeout);
-    }
-
     g_list_free       (_competition_list);
     g_date_time_unref (_origin);
   }
@@ -215,13 +209,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Timeline::RedrawCbk (Timeline *tl)
-  {
-    return tl->Redraw ();
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Timeline::Redraw ()
+  void Timeline::Redraw ()
   {
     Wipe ();
 
@@ -237,17 +225,6 @@ namespace Marshaller
     DrawSlots   ();
     DrawTimes   ();
     DrawCursors ();
-
-    if (_redraw_timeout > 0)
-    {
-      g_source_remove (_redraw_timeout);
-    }
-
-    _redraw_timeout = g_timeout_add_seconds (60,
-                                             (GSourceFunc) RedrawCbk,
-                                             this);
-
-    return G_SOURCE_CONTINUE;
   }
 
   // --------------------------------------------------------------------------------
@@ -395,6 +372,6 @@ namespace Marshaller
   {
     Timeline *timeline = dynamic_cast <Timeline *> (object);
 
-    Timeline::RedrawCbk (timeline);
+    timeline->Redraw ();
   }
 }

@@ -274,8 +274,21 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Piste::Redraw ()
+  {
+    GDateTime *from = g_date_time_ref (_display_time);
+
+    DisplayAtTime (from);
+    g_date_time_unref (from);
+  }
+
+  // --------------------------------------------------------------------------------
   void Piste::OnSlotUpdated (Slot *slot)
   {
+    g_object_set (G_OBJECT (_progress_item),
+                  "width", 0.0,
+                  NULL);
+
     if (slot && slot->TimeIsInside (_display_time))
     {
       GString     *match_name   = g_string_new ("");
@@ -342,6 +355,20 @@ namespace Marshaller
 
           current = g_list_next (current);
         }
+      }
+
+      {
+        GDateTime *start_time = slot->GetStartTime ();
+        GTimeSpan  duration   = slot->GetDuration ();
+        GDateTime *now        = g_date_time_new_now_local ();
+        GTimeSpan  elapsed    = g_date_time_difference (now, start_time);
+        gdouble    progress   = (elapsed * _W) / duration;
+
+        g_object_set (G_OBJECT (_progress_item),
+                      "width", progress,
+                      NULL);
+
+        g_date_time_unref (now);
       }
 
       if (last_name)
