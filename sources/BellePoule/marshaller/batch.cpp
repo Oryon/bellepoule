@@ -144,6 +144,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Batch::IsModifiable ()
+  {
+    return _competition->BatchIsModifialble (this);
+  }
+
+  // --------------------------------------------------------------------------------
   void Batch::RecallList (GList *list)
   {
     GList *current = list;

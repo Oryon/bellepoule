@@ -81,6 +81,8 @@ namespace Marshaller
 
       void DisplayCurrent ();
 
+      void SetSensitivity ();
+
       void OnPlayerRemoved (Player *player);
   };
 }

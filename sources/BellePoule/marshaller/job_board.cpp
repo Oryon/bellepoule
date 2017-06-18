@@ -176,6 +176,26 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void JobBoard::SetSensitivity ()
+  {
+    GtkWidget *take_off = _glade->GetWidget ("take_off_button");
+
+    gtk_widget_set_sensitive (take_off, FALSE);
+    _referee_details->SetPopupVisibility ("PlayersList::RemoveAction",
+                                          FALSE);
+
+    if (_current_job)
+    {
+      Job   *job   = (Job *) _current_job->data;
+      Batch *batch = job->GetBatch ();
+
+      gtk_widget_set_sensitive (take_off, batch->IsModifiable ());
+      _referee_details->SetPopupVisibility ("PlayersList::RemoveAction",
+                                            batch->IsModifiable ());
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void JobBoard::DisplayCurrent ()
   {
     if (_timeline)
@@ -262,8 +282,6 @@ namespace Marshaller
                                                 FALSE);
           _referee_details->SetPopupVisibility ("PlayersList::WriteAction",
                                                 FALSE);
-          _referee_details->SetPopupVisibility ("PlayersList::RemoveAction",
-                                                TRUE);
         }
 
         {
@@ -277,6 +295,8 @@ namespace Marshaller
         SetHeader ();
       }
     }
+
+     SetSensitivity ();
   }
 
   // --------------------------------------------------------------------------------

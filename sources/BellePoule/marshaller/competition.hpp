@@ -58,6 +58,8 @@ namespace Marshaller
 
       void DeleteFencer (Net::Message *message);
 
+      gboolean BatchIsModifialble (Batch *batch);
+
     private:
       guint            _id;
       GdkColor        *_gdk_color;

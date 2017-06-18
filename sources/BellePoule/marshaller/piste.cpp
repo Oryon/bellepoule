@@ -365,7 +365,7 @@ namespace Marshaller
         gdouble    progress   = (elapsed * _W) / duration;
 
         g_object_set (G_OBJECT (_progress_item),
-                      "width", progress,
+                      "width", MIN (progress, _W),
                       NULL);
 
         g_date_time_unref (now);

@@ -77,6 +77,8 @@ namespace Marshaller
 
       void OnValidateAssign ();
 
+      gboolean IsModifiable ();
+
       void on_competition_treeview_row_activated (GtkTreePath *path);
 
     private:

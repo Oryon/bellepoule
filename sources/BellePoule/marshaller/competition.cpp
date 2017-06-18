@@ -94,6 +94,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Competition::BatchIsModifialble (Batch *batch)
+  {
+    return (batch == _current_batch);
+  }
+
+  // --------------------------------------------------------------------------------
   void Competition::SetProperties (Net::Message *message)
   {
     SetProperty (message, "gender");
