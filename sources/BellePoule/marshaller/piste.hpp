@@ -62,6 +62,10 @@ namespace Marshaller
 
       void RemoveBatch (Batch *batch);
 
+      gboolean IsBlocked ();
+
+      void Block (gboolean block);
+
       void Disable ();
 
       gboolean Overlaps (GooCanvasBounds *rectangle);
@@ -105,6 +109,7 @@ namespace Marshaller
       GooCanvasItem   *_title_item;
       GooCanvasItem   *_referee_table;
       GooCanvasItem   *_referee_name;
+      GooCanvasItem   *_cone;
       guint            _id;
       gboolean         _horizontal;
       gchar           *_color;
@@ -112,6 +117,7 @@ namespace Marshaller
       GList           *_slots;
       GDateTime       *_display_time;
       JobBoard        *_job_board;
+      gboolean         _blocked;
 
       ~Piste ();
 

@@ -95,6 +95,8 @@ namespace Marshaller
 
       void CancelSelection ();
 
+      void SetToolBarSensitivity ();
+
       void SelectPiste (Piste *piste);
 
       void UnSelectPiste (Piste *piste);
@@ -130,6 +132,9 @@ namespace Marshaller
                                       GooCanvasItem  *target,
                                       GdkEventMotion *event,
                                       Hall           *hall);
+
+      static void OnConeToggled (GtkToggleToolButton *widget,
+                                 Hall                *hall);
 
       gboolean OnCursorMotion (GdkEventMotion *event);
 

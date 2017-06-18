@@ -63,6 +63,8 @@ namespace Marshaller
     _lasso = new Lasso ();
     _clock = new Clock (this);
 
+    SetToolBarSensitivity ();
+
     OnTimelineCursorMoved ();
   }
 
@@ -623,6 +625,57 @@ namespace Marshaller
 
     g_list_free (_selected_list);
     _selected_list = NULL;
+
+    SetToolBarSensitivity ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::SetToolBarSensitivity ()
+  {
+    gtk_widget_set_sensitive (_glade->GetWidget ("remove_piste_button"),
+                              _selected_list != NULL);
+    gtk_widget_set_sensitive (_glade->GetWidget ("rotate_piste_button"),
+                              _selected_list != NULL);
+    gtk_widget_set_sensitive (_glade->GetWidget ("cone_togglebutton"),
+                              FALSE);
+    if (_selected_list)
+    {
+      GList    *current = _selected_list;
+      gboolean  first;
+
+      while (current)
+      {
+        Piste *piste = (Piste *) current->data;
+
+        if (current == _selected_list)
+        {
+          first = piste->IsBlocked ();
+        }
+        else
+        {
+          if (piste->IsBlocked () != first)
+          {
+            return;
+          }
+        }
+
+        current = g_list_next (current);
+      }
+
+      {
+        GtkWidget *cone = _glade->GetWidget ("cone_togglebutton");
+
+        __gcc_extension__ g_signal_handlers_disconnect_by_func (G_OBJECT (cone),
+                                                                (void *) OnConeToggled,
+                                                                (Object *) this);
+        gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (cone),
+                                           first);
+        g_signal_connect (G_OBJECT (cone), "toggled",
+                          G_CALLBACK (OnConeToggled), this);
+        gtk_widget_set_sensitive (cone,
+                                  TRUE);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -632,6 +685,8 @@ namespace Marshaller
                                      piste);
 
     piste->Select ();
+
+    SetToolBarSensitivity ();
   }
 
   // --------------------------------------------------------------------------------
@@ -642,6 +697,8 @@ namespace Marshaller
     _selected_list = g_list_remove_link (_selected_list,
                                          selected_node);
     piste->UnSelect ();
+
+    SetToolBarSensitivity ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1087,6 +1144,22 @@ namespace Marshaller
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::OnConeToggled (GtkToggleToolButton *widget,
+                            Hall                *hall)
+  {
+    GList *current = hall->_selected_list;
+
+    while (current)
+    {
+      Piste *piste = (Piste *) current->data;
+
+      piste->Block (gtk_toggle_tool_button_get_active (widget));
+
+      current = g_list_next (current);
+    }
   }
 
   // --------------------------------------------------------------------------------

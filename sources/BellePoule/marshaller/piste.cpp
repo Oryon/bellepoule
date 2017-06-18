@@ -40,6 +40,8 @@ namespace Marshaller
   {
     _button_press_time = 0;
 
+    _blocked = FALSE;
+
     _horizontal = TRUE;
     _listener   = NULL;
     _slots      = NULL;
@@ -137,6 +139,35 @@ namespace Marshaller
       MonitorEvent (_referee_table);
     }
 
+    // Cone
+    {
+      gchar     *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "images", "VLC.png", NULL);
+      GdkPixbuf *pixbuf    = gdk_pixbuf_new_from_file_at_size (icon_file, 13, 15, NULL);
+
+      _cone = goo_canvas_image_new (_root_item,
+                                    pixbuf,
+                                    0.0,
+                                    0.0,
+                                    NULL);
+      g_object_unref (pixbuf);
+      g_free (icon_file);
+
+      Canvas::VAlign (_cone,
+                      Canvas::MIDDLE,
+                      _root_item,
+                      Canvas::MIDDLE);
+      Canvas::HAlign (_cone,
+                      Canvas::MIDDLE,
+                      _root_item,
+                      Canvas::MIDDLE);
+
+      MonitorEvent (_cone);
+
+      g_object_set (G_OBJECT (_cone),
+                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                    NULL);
+    }
+
     goo_canvas_item_translate (_root_item,
                                _RESOLUTION,
                                _RESOLUTION);
@@ -215,10 +246,15 @@ namespace Marshaller
   GList *Piste::GetFreeSlots (GDateTime *from,
                               GTimeSpan  duration)
   {
-    return Slot::GetFreeSlots (this,
-                               _slots,
-                               from,
-                               duration);
+    if (_blocked == FALSE)
+    {
+      return Slot::GetFreeSlots (this,
+                                 _slots,
+                                 from,
+                                 duration);
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -552,6 +588,31 @@ namespace Marshaller
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Piste::IsBlocked ()
+  {
+    return _blocked;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Piste::Block (gboolean block)
+  {
+    _blocked = block;
+
+    if (_blocked)
+    {
+      g_object_set (G_OBJECT (_cone),
+                    "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                    NULL);
+    }
+    else
+    {
+      g_object_set (G_OBJECT (_cone),
+                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                    NULL);
+    }
   }
 
   // --------------------------------------------------------------------------------
