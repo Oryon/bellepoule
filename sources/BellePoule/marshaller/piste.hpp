@@ -66,6 +66,8 @@ namespace Marshaller
 
       void Block (gboolean block);
 
+      void Blur ();
+
       void Redraw ();
 
       void Disable ();
@@ -112,6 +114,7 @@ namespace Marshaller
       GooCanvasItem   *_referee_table;
       GooCanvasItem   *_referee_name;
       GooCanvasItem   *_cone;
+      GooCanvasItem   *_shutter;
       guint            _id;
       gboolean         _horizontal;
       gchar           *_color;

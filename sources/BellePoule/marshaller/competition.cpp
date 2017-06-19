@@ -133,7 +133,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Competition::ManageBatch (Net::Message *message)
+  Batch *Competition::ManageBatch (Net::Message *message)
   {
     Batch *batch = GetBatch (message->GetNetID ());
 
@@ -163,6 +163,8 @@ namespace Marshaller
     {
       SetCurrentBatch (batch);
     }
+
+    return batch;
   }
 
   // --------------------------------------------------------------------------------

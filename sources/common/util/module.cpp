@@ -103,6 +103,12 @@ Module::~Module ()
 }
 
 // --------------------------------------------------------------------------------
+DndConfig *Module::GetDndConfig ()
+{
+  return _dnd_config;
+}
+
+// --------------------------------------------------------------------------------
 void Module::DragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,
                           GtkSelectionData *data,
@@ -124,6 +130,22 @@ void Module::OnDragDataGet (GtkWidget        *widget,
                             guint             key,
                             guint             time)
 {
+}
+
+// --------------------------------------------------------------------------------
+void Module::DragEnd (GtkWidget      *widget,
+                      GdkDragContext *drag_context,
+                      Module         *owner)
+{
+  owner->OnDragEnd (widget,
+                    drag_context);
+}
+
+// --------------------------------------------------------------------------------
+void Module::OnDragEnd (GtkWidget      *widget,
+                        GdkDragContext *drag_context)
+{
+  _dnd_config->DragEnd ();
 }
 
 // --------------------------------------------------------------------------------
@@ -274,6 +296,8 @@ void Module::ConnectDndSource (GtkWidget *widget)
 {
   g_signal_connect (widget, "drag-data-get",
                     G_CALLBACK (DragDataGet), this);
+  g_signal_connect (widget, "drag-end",
+                    G_CALLBACK (DragEnd), this);
 }
 
 // --------------------------------------------------------------------------------

@@ -55,6 +55,8 @@ namespace Marshaller
 
       People::RefereesList *GetListOf (const gchar *weapon);
 
+      void SetDndPeerListener (DndConfig::Listener *listener);
+
     private:
       GList *_list_by_weapon;
 

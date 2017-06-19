@@ -28,12 +28,20 @@ namespace Marshaller
   class Job : public Object
   {
     public:
+      struct Listener
+      {
+        virtual void OnJobUpdated (Job *job) = 0;
+      };
+
+    public:
       Job (Batch    *batch,
            guint     netid,
            guint     sibling_order,
            GdkColor *gdk_color);
 
       void SetName (const gchar *name);
+
+      void SetListener (Listener *listener);
 
       void AddFencer (Player *fencer);
 
@@ -78,6 +86,7 @@ namespace Marshaller
       Batch    *_batch;
       Slot     *_slot;
       GList    *_fencer_list;
+      Listener *_listener;
 
       ~Job ();
   };

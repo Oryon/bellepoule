@@ -72,8 +72,19 @@ namespace Marshaller
 
     if (_current_job == node)
     {
-      _current_job = _job_list;
-      DisplayCurrent ();
+      gtk_dialog_response (GTK_DIALOG (_dialog),
+                           0);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::ForgetCurrentJob ()
+  {
+    if (_current_job)
+    {
+      Job *job = (Job *) _current_job->data;
+
+      job->SetListener (NULL);
     }
   }
 
@@ -82,6 +93,11 @@ namespace Marshaller
                             JobBoard *job_board)
   {
     job->RemoveObjectListener (job_board);
+
+    if (job_board->_current_job && ((Job *) (job_board->_current_job->data) == job))
+    {
+      job_board->ForgetCurrentJob ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -124,7 +140,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void JobBoard::Display (Job *job)
   {
-    if (_timeline)
+    if (_timeline && _job_list)
     {
       _current_job = _job_list;
 
@@ -159,40 +175,64 @@ namespace Marshaller
 
       DisplayCurrent ();
 
-      if (RunDialog (GTK_DIALOG (_dialog)))
       {
-        if (_current_job)
-        {
-          Job   *job_to_delete = (Job *) _current_job->data;
-          Batch *batch         = job_to_delete->GetBatch ();
-          Slot  *slot          = job_to_delete->GetSlot ();
+        guint response = gtk_dialog_run (GTK_DIALOG (_dialog));
 
-          slot->RemoveJob (job_to_delete);
-          _listener->OnJobBoardUpdated (batch->GetCompetition ());
+        if (response == 1)
+        {
+          if (_current_job)
+          {
+            Job   *job_to_delete = (Job *) _current_job->data;
+            Batch *batch         = job_to_delete->GetBatch ();
+            Slot  *slot          = job_to_delete->GetSlot ();
+
+            slot->RemoveJob (job_to_delete);
+            _listener->OnJobBoardUpdated (batch->GetCompetition ());
+          }
+        }
+        else if (response == 2)
+        {
+          if (_current_job)
+          {
+            Job *job_to_move = (Job *) _current_job->data;
+
+            _listener->OnJobMove (job_to_move);
+          }
         }
       }
       gtk_widget_hide (_dialog);
     }
+
+    ForgetCurrentJob ();
   }
 
   // --------------------------------------------------------------------------------
   void JobBoard::SetSensitivity ()
   {
-    GtkWidget *take_off = _glade->GetWidget ("take_off_button");
-
-    gtk_widget_set_sensitive (take_off, FALSE);
-    _referee_details->SetPopupVisibility ("PlayersList::RemoveAction",
-                                          FALSE);
-
-    if (_current_job)
+    if (_referee_details)
     {
-      Job   *job   = (Job *) _current_job->data;
-      Batch *batch = job->GetBatch ();
+      GtkWidget *take_off = _glade->GetWidget ("take_off_button");
 
-      gtk_widget_set_sensitive (take_off, batch->IsModifiable ());
+      gtk_widget_set_sensitive (take_off, FALSE);
       _referee_details->SetPopupVisibility ("PlayersList::RemoveAction",
-                                            batch->IsModifiable ());
+                                            FALSE);
+
+      if (_current_job)
+      {
+        Job   *job   = (Job *) _current_job->data;
+        Batch *batch = job->GetBatch ();
+
+        gtk_widget_set_sensitive (take_off, batch->IsModifiable ());
+        _referee_details->SetPopupVisibility ("PlayersList::RemoveAction",
+                                              batch->IsModifiable ());
+      }
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::OnJobUpdated (Job *job)
+  {
+    DisplayCurrent ();
   }
 
   // --------------------------------------------------------------------------------
@@ -225,6 +265,8 @@ namespace Marshaller
       {
         Job  *job  = (Job *) _current_job->data;
         Slot *slot = job->GetSlot ();
+
+        job->SetListener (this);
 
         {
           GtkLabel *title_label = GTK_LABEL (_glade->GetWidget ("current_job_label"));
@@ -365,6 +407,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void JobBoard::OnPreviousClicked ()
   {
+    ForgetCurrentJob ();
     _current_job = g_list_previous (_current_job);
     DisplayCurrent ();
   }
@@ -372,6 +415,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void JobBoard::OnNextClicked ()
   {
+    ForgetCurrentJob ();
     _current_job = g_list_next (_current_job);
     DisplayCurrent ();
   }

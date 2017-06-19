@@ -41,6 +41,7 @@ namespace Marshaller
     _piste_list     = NULL;
     _selected_list  = NULL;
     _redraw_timeout = 0;
+    _floating_job   = NULL;
 
     _dragging = FALSE;
 
@@ -50,6 +51,7 @@ namespace Marshaller
     _competition_list = NULL;
 
     _referee_pool = referee_pool;
+    _referee_pool->SetDndPeerListener (this);
 
     {
       _timeline = new Timeline (this);
@@ -276,7 +278,10 @@ namespace Marshaller
 
     if (competition)
     {
-      competition->ManageBatch (message);
+      Batch     *batch      = competition->ManageBatch (message);
+      DndConfig *dnd_config = batch->GetDndConfig ();
+
+      dnd_config->SetPeerListener (this);
     }
   }
 
@@ -632,6 +637,13 @@ namespace Marshaller
     g_list_free (_selected_list);
     _selected_list = NULL;
 
+    if (_floating_job)
+    {
+      _floating_job = NULL;
+      _listener->OnUnBlur ();
+      OnTimelineCursorMoved ();
+    }
+
     SetToolBarSensitivity ();
   }
 
@@ -689,6 +701,21 @@ namespace Marshaller
   {
     _selected_list = g_list_prepend (_selected_list,
                                      piste);
+
+    /*
+    if (_floating_job)
+    {
+      Slot *slot;
+
+      {
+        slot = _floating_job->GetSlot ();
+        slot->RemoveJob (_floating_job);
+      }
+
+      slot->AddJob     (_floating_job);
+      slot->AddReferee (referee);
+    }
+    */
 
     piste->Select ();
 
@@ -1065,6 +1092,16 @@ namespace Marshaller
 
         piste->DisplayAtTime (cursor);
 
+        if (_floating_job)
+        {
+          Slot *slot = piste->GetSlotAt (cursor);
+
+          if (slot)
+          {
+            piste->Blur ();
+          }
+        }
+
         current_piste = g_list_next (current_piste);
       }
     }
@@ -1079,6 +1116,15 @@ namespace Marshaller
 
     CancelSelection ();
     SelectPiste (piste);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::OnJobMove (Job *job)
+  {
+    _floating_job = job;
+    _listener->OnBlur ();
+
+    OnTimelineCursorMoved ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1116,36 +1162,47 @@ namespace Marshaller
     if (CanvasModule::DroppingIsAllowed (floating_object,
                                          in_zone))
     {
-      EnlistedReferee *referee = dynamic_cast <EnlistedReferee *> (floating_object);
-      Job             *job     = dynamic_cast <Job *> (floating_object);
-      Piste           *piste   = dynamic_cast <Piste *> (in_zone);
-      GDateTime       *cursor  = _timeline->RetreiveCursorTime ();
-      Slot            *slot    = NULL;
+      Piste *piste = dynamic_cast <Piste *> (in_zone);
 
+      return DroppingIsAllowed (floating_object,
+                                piste);
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Hall::DroppingIsAllowed (Object *floating_object,
+                                    Piste  *piste)
+  {
+    EnlistedReferee *referee = dynamic_cast <EnlistedReferee *> (floating_object);
+    Job             *job     = dynamic_cast <Job *> (floating_object);
+    GDateTime       *cursor  = _timeline->RetreiveCursorTime ();
+    Slot            *slot    = NULL;
+
+    if (referee)
+    {
+      slot = piste->GetSlotAt (cursor);
+    }
+    else if (job && (job->GetSlot () == FALSE))
+    {
+      slot = piste->GetFreeSlot (cursor,
+                                 job->GetRegularDuration ());
+    }
+
+    g_date_time_unref (cursor);
+
+    if (slot)
+    {
       if (referee)
       {
-        slot = piste->GetSlotAt (cursor);
+        return referee->IsAvailableFor (slot,
+                                        slot->GetDuration ());
       }
-      else if (job && (job->GetSlot () == FALSE))
+      else if (job)
       {
-        slot = piste->GetFreeSlot (cursor,
-                                   job->GetRegularDuration ());
-      }
-
-      g_date_time_unref (cursor);
-
-      if (slot)
-      {
-        if (referee)
-        {
-          return referee->IsAvailableFor (slot,
-                                          slot->GetDuration ());
-        }
-        else if (job)
-        {
-          slot->Release ();
-          return TRUE;
-        }
+        slot->Release ();
+        return TRUE;
       }
     }
 
@@ -1202,6 +1259,47 @@ namespace Marshaller
   gboolean Hall::RedrawCbk (Hall *hall)
   {
     return hall->Redraw ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::OnDragAndDropEnd ()
+  {
+    OnTimelineCursorMoved ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::OnDragDataReceived (GtkWidget        *widget,
+                                 GdkDragContext   *drag_context,
+                                 gint              x,
+                                 gint              y,
+                                 GtkSelectionData *data,
+                                 guint             key,
+                                 guint             time)
+  {
+    CanvasModule::OnDragDataReceived (widget,
+                                      drag_context,
+                                      x,
+                                      y,
+                                      data,
+                                      key,
+                                      time);
+
+    {
+      GList *current = _piste_list;
+
+      while (current)
+      {
+        Piste *piste = (Piste *) current->data;
+
+        if (DroppingIsAllowed (_dnd_config->GetFloatingObject (),
+                               piste) == FALSE)
+        {
+          piste->Blur ();
+        }
+
+        current = g_list_next (current);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

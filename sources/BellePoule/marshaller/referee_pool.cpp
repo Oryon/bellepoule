@@ -137,6 +137,22 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void RefereePool::SetDndPeerListener (DndConfig::Listener *listener)
+  {
+    GList *current_weapon = _list_by_weapon;
+
+    while (current_weapon)
+    {
+      People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
+      DndConfig            *dnd_config   = referee_list->GetDndConfig ();
+
+      dnd_config->SetPeerListener (listener);
+
+      current_weapon = g_list_next (current_weapon);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void RefereePool::RefreshWorkload (const gchar *weapon_code)
   {
     People::RefereesList *referee_list         = GetListOf (weapon_code);

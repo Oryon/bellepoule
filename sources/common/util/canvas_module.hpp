@@ -76,6 +76,14 @@ class CanvasModule : public Module
     virtual gboolean DroppingIsAllowed (Object   *floating_object,
                                         DropZone *in_zone);
 
+    virtual void OnDragDataReceived (GtkWidget        *widget,
+                                     GdkDragContext   *drag_context,
+                                     gint              x,
+                                     gint              y,
+                                     GtkSelectionData *data,
+                                     guint             key,
+                                     guint             time);
+
   public:
     void EnableDndOnCanvas ();
 
@@ -126,14 +134,6 @@ class CanvasModule : public Module
     void OnDragLeave (GtkWidget      *widget,
                       GdkDragContext *drag_context,
                       guint           time);
-
-    void OnDragDataReceived (GtkWidget        *widget,
-                             GdkDragContext   *drag_context,
-                             gint              x,
-                             gint              y,
-                             GtkSelectionData *data,
-                             guint             key,
-                             guint             time);
 
     gboolean OnDragDrop (GtkWidget      *widget,
                          GdkDragContext *drag_context,

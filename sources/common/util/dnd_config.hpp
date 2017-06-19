@@ -23,6 +23,12 @@
 class DndConfig : public Object
 {
   public:
+    struct Listener
+    {
+      virtual void OnDragAndDropEnd () = 0;
+    };
+
+  public:
     DndConfig ();
 
     guint32 AddTarget (const gchar *target,
@@ -54,10 +60,15 @@ class DndConfig : public Object
 
     gboolean DataFetchedAtEarliest ();
 
+    void SetPeerListener (Listener *peer);
+
+    void DragEnd ();
+
   private:
     GtkTargetList *_target_list;
     Object        *_floating_object;
     gboolean       _fetch_data_at_earliest;
+    Listener      *_peer_listener;
 
     ~DndConfig ();
 };

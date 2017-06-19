@@ -32,7 +32,7 @@ namespace Marshaller
       Competition (guint            id,
                    Batch::Listener *listener);
 
-      void ManageBatch (Net::Message *message);
+      Batch *ManageBatch (Net::Message *message);
 
       void DeleteBatch (Net::Message *message);
 

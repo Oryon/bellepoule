@@ -36,12 +36,15 @@ namespace Marshaller
     public Batch::Listener,
     public Timeline::Listener,
     public JobBoard::Listener,
-    public Clock::Listener
+    public Clock::Listener,
+    public DndConfig::Listener
   {
     public:
       struct Listener
       {
         virtual void OnExposeWeapon (const gchar *weapon) = 0;
+        virtual void OnBlur         () = 0;
+        virtual void OnUnBlur       () = 0;
       };
 
     public:
@@ -89,6 +92,7 @@ namespace Marshaller
       Clock       *_clock;
       Listener    *_listener;
       guint        _redraw_timeout;
+      Job         *_floating_job;
 
       ~Hall ();
 
@@ -155,11 +159,26 @@ namespace Marshaller
 
       void OnJobBoardFocus (guint focus);
 
+      void OnJobMove (Job *job);
+
       gboolean DroppingIsAllowed (Object   *floating_object,
                                   DropZone *in_zone);
+
+      gboolean DroppingIsAllowed (Object *floating_object,
+                                  Piste  *piste);
 
       static gboolean RedrawCbk (Hall *hall);
 
       gboolean Redraw ();
+
+      void OnDragAndDropEnd ();
+
+      void OnDragDataReceived (GtkWidget        *widget,
+                               GdkDragContext   *drag_context,
+                               gint              x,
+                               gint              y,
+                               GtkSelectionData *data,
+                               guint             key,
+                               guint             time);
   };
 }

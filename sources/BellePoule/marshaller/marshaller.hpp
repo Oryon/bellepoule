@@ -46,5 +46,9 @@ namespace Marshaller
       virtual ~Marshaller ();
 
       void OnEvent (const gchar *event);
+
+      void OnBlur ();
+
+      void OnUnBlur ();
   };
 }

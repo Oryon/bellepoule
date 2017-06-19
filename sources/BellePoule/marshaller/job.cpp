@@ -31,6 +31,7 @@ namespace Marshaller
             GdkColor *gdk_color)
     : Object ("Job")
   {
+    _listener      = NULL;
     _fencer_list   = NULL;
     _gdk_color     = gdk_color_copy (gdk_color);
     _name          = NULL;
@@ -64,6 +65,12 @@ namespace Marshaller
   void Job::SetName (const gchar *name)
   {
     _name = g_strdup (name);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Job::SetListener (Listener *listener)
+  {
+    _listener = listener;
   }
 
   // --------------------------------------------------------------------------------
@@ -108,6 +115,11 @@ namespace Marshaller
   void Job::SetReferee (guint referee_ref)
   {
     _parcel->Set ("referee", referee_ref);
+
+    if (_listener)
+    {
+      _listener->OnJobUpdated (this);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -122,6 +134,11 @@ namespace Marshaller
   {
     _parcel->Set ("piste",      piste_id);
     _parcel->Set ("start_time", start_time);
+
+    if (_listener)
+    {
+      _listener->OnJobUpdated (this);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -132,6 +149,11 @@ namespace Marshaller
     _parcel->Remove ("piste");
     _parcel->Remove ("start_time");
     _parcel->Remove ("referee");
+
+    if (_listener)
+    {
+      _listener->OnJobUpdated (this);
+    }
   }
 
   // --------------------------------------------------------------------------------

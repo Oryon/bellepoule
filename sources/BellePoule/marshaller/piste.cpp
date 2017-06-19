@@ -69,7 +69,6 @@ namespace Marshaller
       _progress_item = goo_canvas_rect_new (_root_item,
                                             _BORDER_W,
                                             _BORDER_W,
-                                            //_W/2.0,
                                             0.0,
                                             _H-(2.0*_BORDER_W),
                                             "fill-color-rgba", 0xd3d3d360,
@@ -164,6 +163,21 @@ namespace Marshaller
       MonitorEvent (_cone);
 
       g_object_set (G_OBJECT (_cone),
+                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                    NULL);
+    }
+
+    // Shutter
+    {
+      _shutter = goo_canvas_rect_new (_root_item,
+                                      0.0, 0.0,
+                                      _W, _H,
+                                      "fill-color-rgba", 0xf3f3f3c0,
+                                      "line-width",      0.0,
+                                      NULL);
+      MonitorEvent (_shutter);
+
+      g_object_set (G_OBJECT (_shutter),
                     "visibility", GOO_CANVAS_ITEM_INVISIBLE,
                     NULL);
     }
@@ -271,6 +285,18 @@ namespace Marshaller
     g_object_set (G_OBJECT (_referee_table),
                   "visibility", GOO_CANVAS_ITEM_INVISIBLE,
                   NULL);
+
+    g_object_set (G_OBJECT (_shutter),
+                  "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                  NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Piste::Blur ()
+  {
+    g_object_set (G_OBJECT (_shutter),
+                  "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                  NULL);
   }
 
   // --------------------------------------------------------------------------------
@@ -364,9 +390,18 @@ namespace Marshaller
         GTimeSpan  elapsed    = g_date_time_difference (now, start_time);
         gdouble    progress   = (elapsed * _W) / duration;
 
-        g_object_set (G_OBJECT (_progress_item),
-                      "width", MIN (progress, _W),
-                      NULL);
+        if (elapsed > 0)
+        {
+          g_object_set (G_OBJECT (_progress_item),
+                        "width", MIN (progress, _W),
+                        NULL);
+        }
+        else
+        {
+          g_object_set (G_OBJECT (_progress_item),
+                        "width", 0.0,
+                        NULL);
+        }
 
         g_date_time_unref (now);
       }

@@ -88,6 +88,8 @@ class Module : public virtual Object
 
     virtual void DumpToHTML (FILE *file);
 
+    DndConfig *GetDndConfig ();
+
   public:
     virtual guint PreparePrint (GtkPrintOperation *operation,
                                 GtkPrintContext   *context) {return 0;};
@@ -225,6 +227,12 @@ class Module : public virtual Object
                                 GtkSelectionData *data,
                                 guint             info,
                                 guint             time);
+
+    static void DragEnd (GtkWidget      *widget,
+                         GdkDragContext *drag_context,
+                         Module         *owner);
+    virtual void OnDragEnd (GtkWidget      *widget,
+                            GdkDragContext *drag_context);
 
     static gboolean DragMotion (GtkWidget      *widget,
                                 GdkDragContext *drag_context,

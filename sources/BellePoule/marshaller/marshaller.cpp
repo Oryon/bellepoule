@@ -166,6 +166,24 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Marshaller::OnBlur ()
+  {
+    gtk_widget_set_sensitive (_glade->GetWidget ("referee_vbox"),
+                              FALSE);
+    gtk_widget_set_sensitive (_glade->GetWidget ("batch_vbox"),
+                              FALSE);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Marshaller::OnUnBlur ()
+  {
+    gtk_widget_set_sensitive (_glade->GetWidget ("referee_vbox"),
+                              TRUE);
+    gtk_widget_set_sensitive (_glade->GetWidget ("batch_vbox"),
+                              TRUE);
+  }
+
+  // --------------------------------------------------------------------------------
   void Marshaller::OnExposeWeapon (const gchar *weapon_code)
   {
     GList *current = Weapon::GetList ();

@@ -18,15 +18,16 @@
 
 #include "util/module.hpp"
 #include "job_details.hpp"
+#include "job.hpp"
 
 namespace Marshaller
 {
   class Message;
-  class Job;
   class Timeline;
   class Competition;
 
   class JobBoard : public Module,
+                          Job::Listener,
                           JobDetails::Listener,
                           Object::Listener
   {
@@ -35,6 +36,7 @@ namespace Marshaller
       {
         virtual void OnJobBoardUpdated (Competition *competition) = 0;
         virtual void OnJobBoardFocus   (guint focus) = 0;
+        virtual void OnJobMove         (Job *job) = 0;
       };
 
     public:
@@ -79,10 +81,14 @@ namespace Marshaller
                                gchar    *data,
                                JobBoard *job_board);
 
+      void ForgetCurrentJob ();
+
       void DisplayCurrent ();
 
       void SetSensitivity ();
 
       void OnPlayerRemoved (Player *player);
+
+      void OnJobUpdated (Job *job);
   };
 }

@@ -23,12 +23,28 @@ DndConfig::DndConfig ()
   _floating_object        = NULL;
   _target_list            = gtk_target_list_new (NULL, 0);
   _fetch_data_at_earliest = FALSE;
+  _peer_listener          = NULL;
 }
 
 // --------------------------------------------------------------------------------
 DndConfig::~DndConfig ()
 {
   gtk_target_list_unref (_target_list);
+}
+
+// --------------------------------------------------------------------------------
+void DndConfig::SetPeerListener (Listener *listener)
+{
+  _peer_listener = listener;
+}
+
+// --------------------------------------------------------------------------------
+void DndConfig::DragEnd ()
+{
+  if (_peer_listener)
+  {
+    _peer_listener->OnDragAndDropEnd ();
+  }
 }
 
 // --------------------------------------------------------------------------------
