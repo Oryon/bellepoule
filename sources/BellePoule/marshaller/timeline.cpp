@@ -293,6 +293,19 @@ namespace Marshaller
   {
     // Translation
     {
+      GooCanvasBounds bounds;
+
+      goo_canvas_item_get_bounds (_goo_cursor,
+                                  &bounds);
+      if (delta < 0.0)
+      {
+        delta = MAX (delta, -bounds.x1);
+      }
+      else
+      {
+        delta = MIN (delta, _allocation.width - (bounds.x2 * 1.04));
+      }
+
       goo_canvas_item_translate (_goo_cursor,
                                  delta,
                                  0.0);

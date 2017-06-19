@@ -647,7 +647,7 @@ namespace Marshaller
     if (_selected_list)
     {
       GList    *current = _selected_list;
-      gboolean  first;
+      gboolean  first   = FALSE;
 
       while (current)
       {
