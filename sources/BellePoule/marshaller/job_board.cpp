@@ -41,6 +41,7 @@ namespace Marshaller
     _fencer_details  = NULL;
 
     _take_off_button = _glade->GetWidget ("take_off_button");
+    _move_button     = _glade->GetWidget ("move_button");
   }
 
   // --------------------------------------------------------------------------------
@@ -227,6 +228,17 @@ namespace Marshaller
                                               batch->IsModifiable ());
       }
     }
+
+    if (_current_job)
+    {
+      Job   *job   = (Job *) _current_job->data;
+      Batch *batch = job->GetBatch ();
+
+      gtk_widget_set_sensitive (_move_button,
+                                job->GetSlot () != NULL);
+      gtk_widget_set_sensitive (_take_off_button,
+                                batch->IsModifiable () && job->GetSlot ());
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -276,9 +288,6 @@ namespace Marshaller
           gchar    *piste;
 
           gtk_label_set_text (title_label, job->GetName ());
-
-          gtk_widget_set_sensitive (_take_off_button,
-                                    slot != NULL);
 
           if (slot)
           {

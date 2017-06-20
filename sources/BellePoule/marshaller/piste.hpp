@@ -68,6 +68,8 @@ namespace Marshaller
 
       void Blur ();
 
+      gboolean Blured ();
+
       void Redraw ();
 
       void Disable ();

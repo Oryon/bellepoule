@@ -250,10 +250,15 @@ namespace Marshaller
   Slot *Piste::GetFreeSlot (GDateTime *from,
                             GTimeSpan  duration)
   {
-    return Slot::GetFreeSlot (this,
-                              _slots,
-                              from,
-                              duration);
+    if (_blocked == FALSE)
+    {
+      return Slot::GetFreeSlot (this,
+                                _slots,
+                                from,
+                                duration);
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -297,6 +302,18 @@ namespace Marshaller
     g_object_set (G_OBJECT (_shutter),
                   "visibility", GOO_CANVAS_ITEM_VISIBLE,
                   NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Piste::Blured ()
+  {
+    gboolean blured;
+
+    g_object_get (G_OBJECT (_shutter),
+                  "visibility", &blured,
+                  NULL);
+
+    return (blured == GOO_CANVAS_ITEM_VISIBLE);
   }
 
   // --------------------------------------------------------------------------------

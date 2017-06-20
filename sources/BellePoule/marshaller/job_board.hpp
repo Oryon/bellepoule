@@ -67,6 +67,7 @@ namespace Marshaller
       JobDetails *_referee_details;
       JobDetails *_fencer_details;
       GtkWidget  *_take_off_button;
+      GtkWidget  *_move_button;
 
       ~JobBoard ();
 

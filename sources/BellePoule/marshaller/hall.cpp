@@ -587,11 +587,24 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::StopMovingJob ()
+  {
+    if (_floating_job)
+    {
+      _floating_job = NULL;
+      _listener->OnUnBlur ();
+      OnTimelineCursorMoved ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Hall::OnButtonPress (GooCanvasItem  *item,
                                 GooCanvasItem  *target,
                                 GdkEventButton *event,
                                 Hall           *hall)
   {
+    hall->StopMovingJob ();
+
     if (event->button == 1)
     {
       hall->CancelSelection ();
@@ -636,13 +649,6 @@ namespace Marshaller
 
     g_list_free (_selected_list);
     _selected_list = NULL;
-
-    if (_floating_job)
-    {
-      _floating_job = NULL;
-      _listener->OnUnBlur ();
-      OnTimelineCursorMoved ();
-    }
 
     SetToolBarSensitivity ();
   }
@@ -702,20 +708,48 @@ namespace Marshaller
     _selected_list = g_list_prepend (_selected_list,
                                      piste);
 
-    /*
-    if (_floating_job)
+    if (_floating_job && (piste->Blured () == FALSE))
     {
-      Slot *slot;
+      GList *referees;
 
       {
-        slot = _floating_job->GetSlot ();
+        Slot *slot = _floating_job->GetSlot ();
+
+        referees = g_list_copy (slot->GetRefereeList ());
         slot->RemoveJob (_floating_job);
       }
 
-      slot->AddJob     (_floating_job);
-      slot->AddReferee (referee);
+      {
+        GDateTime *cursor  = _timeline->RetreiveCursorTime ();
+        GList     *current = referees;
+        Slot      *slot;
+
+        slot = piste->GetFreeSlot (cursor,
+                                   _floating_job->GetRegularDuration ());
+
+        if (slot)
+        {
+          slot->AddJob (_floating_job);
+
+          while (current)
+          {
+            EnlistedReferee *referee = (EnlistedReferee *) current->data;
+
+            slot->AddReferee (referee);
+            current = g_list_next (current);
+          }
+        }
+
+        g_date_time_unref (cursor);
+      }
+
+      if (referees)
+      {
+        g_list_free (referees);
+      }
+
+      StopMovingJob ();
     }
-    */
 
     piste->Select ();
 
@@ -1094,11 +1128,34 @@ namespace Marshaller
 
         if (_floating_job)
         {
-          Slot *slot = piste->GetSlotAt (cursor);
-
-          if (slot)
+          if (piste->GetSlotAt (cursor))
           {
             piste->Blur ();
+          }
+          else
+          {
+            Slot  *source_slot     = _floating_job->GetSlot ();
+            GList *current_referee = source_slot->GetRefereeList ();
+            Slot  *dest_slot       = piste->GetFreeSlot (cursor,
+                                                         _floating_job->GetRegularDuration ());
+
+            if (dest_slot)
+            {
+              while (current_referee)
+              {
+                EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+
+                if (referee->IsAvailableFor (dest_slot,
+                                             _floating_job->GetRegularDuration ()) == FALSE)
+                {
+                  piste->Blur ();
+                  break;
+                }
+
+                current_referee = g_list_next (current_referee);
+              }
+              dest_slot->Release ();
+            }
           }
         }
 
@@ -1121,6 +1178,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::OnJobMove (Job *job)
   {
+    CancelSelection ();
+
     _floating_job = job;
     _listener->OnBlur ();
 
@@ -1149,8 +1208,8 @@ namespace Marshaller
       current_piste = g_list_next (current_piste);
     }
 
-    _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
     Redraw ();
+    _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
 
     _listener->OnExposeWeapon (competition->GetWeaponCode ());
   }

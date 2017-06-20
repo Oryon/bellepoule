@@ -141,16 +141,18 @@ class CanvasModule : public Module
                          gint            y,
                          guint           time);
 
-    gboolean OnButtonPress (GooCanvasItem  *item,
-                            GooCanvasItem  *target,
-                            GdkEventButton *event,
-                            DropZone       *drop_zone);
-    gboolean OnButtonRelease (GooCanvasItem  *item,
-                              GooCanvasItem  *target,
-                              GdkEventButton *event);
-    gboolean OnMotionNotify (GooCanvasItem  *item,
-                             GooCanvasItem  *target,
-                             GdkEventButton *event);
+    virtual gboolean OnButtonPress (GooCanvasItem  *item,
+                                    GooCanvasItem  *target,
+                                    GdkEventButton *event,
+                                    DropZone       *drop_zone);
+
+    virtual gboolean OnButtonRelease (GooCanvasItem  *item,
+                                      GooCanvasItem  *target,
+                                      GdkEventButton *event);
+
+    virtual gboolean OnMotionNotify (GooCanvasItem  *item,
+                                     GooCanvasItem  *target,
+                                     GdkEventMotion *event);
 
   private:
     static gboolean on_button_press (GooCanvasItem  *item,
@@ -163,7 +165,7 @@ class CanvasModule : public Module
                                        CanvasModule   *module);
     static gboolean on_motion_notify (GooCanvasItem  *item,
                                       GooCanvasItem  *target,
-                                      GdkEventButton *event,
+                                      GdkEventMotion *event,
                                       CanvasModule   *module);
     static gboolean on_enter_object (GooCanvasItem  *item,
                                      GooCanvasItem  *target,

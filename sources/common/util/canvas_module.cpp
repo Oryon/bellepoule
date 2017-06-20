@@ -828,8 +828,8 @@ gboolean CanvasModule::OnButtonRelease (GooCanvasItem  *item,
 // --------------------------------------------------------------------------------
 gboolean CanvasModule::on_motion_notify (GooCanvasItem  *item,
                                          GooCanvasItem  *target,
-                                         GdkEventButton *event,
-                                         CanvasModule  *canvas)
+                                         GdkEventMotion *event,
+                                         CanvasModule   *canvas)
 {
   if (canvas)
   {
@@ -844,7 +844,7 @@ gboolean CanvasModule::on_motion_notify (GooCanvasItem  *item,
 // --------------------------------------------------------------------------------
 gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
                                        GooCanvasItem  *target,
-                                       GdkEventButton *event)
+                                       GdkEventMotion *event)
 {
   if (_dragging && (event->state & GDK_BUTTON1_MASK))
   {

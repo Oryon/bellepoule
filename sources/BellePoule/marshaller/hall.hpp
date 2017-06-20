@@ -173,6 +173,8 @@ namespace Marshaller
 
       void OnDragAndDropEnd ();
 
+      void StopMovingJob ();
+
       void OnDragDataReceived (GtkWidget        *widget,
                                GdkDragContext   *drag_context,
                                gint              x,
