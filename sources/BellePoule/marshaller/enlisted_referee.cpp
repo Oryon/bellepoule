@@ -74,7 +74,25 @@ namespace Marshaller
   gboolean EnlistedReferee::IsAvailableFor (Slot      *slot,
                                             GTimeSpan  duration)
   {
-    gboolean             slot_fixed = FALSE;
+    gboolean  available      = FALSE;
+    Slot     *available_slot = GetAvailableSlotFor (slot,
+                                                    duration);
+
+    available = (available_slot != NULL);
+    if (available_slot)
+    {
+      available = TRUE;
+      available_slot->Release ();
+    }
+
+    return available;
+  }
+
+  // --------------------------------------------------------------------------------
+  Slot *EnlistedReferee::GetAvailableSlotFor (Slot      *slot,
+                                              GTimeSpan  duration)
+  {
+    Slot                *available_slot = NULL;
     Player::AttributeId  attr_id ("attending");
     Attribute           *attr = GetAttribute (&attr_id);
 
@@ -94,9 +112,10 @@ namespace Marshaller
         {
           Slot *referee_slot = (Slot *) current->data;
 
-          slot_fixed = slot->FitWith (referee_slot);
-          if (slot_fixed)
+          if (slot->CanWrap (referee_slot))
           {
+            available_slot = referee_slot;
+            available_slot->Retain ();
             break;
           }
 
@@ -107,7 +126,7 @@ namespace Marshaller
       FreeFullGList (Slot, free_slots);
     }
 
-    return slot_fixed;
+    return available_slot;
   }
 
   // --------------------------------------------------------------------------------

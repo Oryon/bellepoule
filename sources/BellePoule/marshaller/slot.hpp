@@ -66,7 +66,10 @@ namespace Marshaller
 
       GTimeSpan GetDuration ();
 
-      gboolean FitWith (Slot *what);
+      gboolean CanWrap (Slot *what);
+
+      void TailWith (Slot      *what,
+                     GTimeSpan  duration);
 
       gboolean TimeIsInside (GDateTime *time);
 

@@ -114,49 +114,42 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Slot::FitWith (Slot *with)
+  void Slot::TailWith (Slot      *what,
+                       GTimeSpan  duration)
   {
-    gboolean   fit = TRUE;
-    GDateTime *fixed_start;
-    GDateTime *fixed_end;
+    GDateTime *end = g_date_time_add (_start, duration);
+
+    _duration = duration;
+    if (_end)
+    {
+      g_date_time_unref (_end);
+    }
+    _end = end;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Slot::CanWrap (Slot *with)
+  {
+    gboolean wrap = TRUE;
 
     if (g_date_time_difference (with->_start,
-                                _start) <= 0)
+                                _start) > 0)
     {
-      fixed_start = g_date_time_add (_start, 0);
+      wrap = FALSE;
     }
-    else
+    else if (with->_end)
     {
-      fixed_start = g_date_time_add (with->_start, 0);
-    }
+      GDateTime *end = g_date_time_add (_start, _duration);
 
-    fixed_end = g_date_time_add (fixed_start, _duration);
-
-    if (_end && (g_date_time_compare (fixed_end, _end) > 0))
-    {
-      fit = FALSE;
-    }
-    else if (with->_end && (g_date_time_compare (fixed_end, with->_end) > 0))
-    {
-      fit = FALSE;
-    }
-
-    if (fit)
-    {
-      SetStartTime (fixed_start);
-
-      if (_end)
+      if (g_date_time_compare (end, with->_end) > 0)
       {
-        g_date_time_unref (_end);
+        wrap = FALSE;
       }
-      _end = fixed_end;
-      g_date_time_ref (_end);
+
+      g_date_time_unref (end);
     }
 
-    g_date_time_unref (fixed_start);
-    g_date_time_unref (fixed_end);
-
-    return fit;
+    return wrap;
   }
 
   // --------------------------------------------------------------------------------
@@ -433,7 +426,7 @@ namespace Marshaller
     {
       slot = (Slot *) current->data;
 
-      if (   (slot->_duration == duration)
+      if (   (slot->_duration >= duration)
           && (g_date_time_compare (from, slot->_start) == 0))
       {
         slot->Retain ();
@@ -466,6 +459,7 @@ namespace Marshaller
                                   duration);
       slots = g_list_append (slots,
                              free_slot);
+      printf ("(1) ==> "); Slot::Dump (free_slot);
     }
     else
     {
@@ -480,6 +474,7 @@ namespace Marshaller
                                     duration);
         slots = g_list_append (slots,
                                free_slot);
+        printf ("(2) ==> "); Slot::Dump (free_slot);
       }
       g_date_time_unref (end_time);
     }
@@ -493,6 +488,7 @@ namespace Marshaller
         Slot  *current_slot = (Slot *) current->data;
         Slot  *free_slot    = NULL;
 
+        printf ("current: "); Slot::Dump (current_slot);
         if (next == NULL)
         {
           // After the booked slots
@@ -500,6 +496,7 @@ namespace Marshaller
                                 GetLatestDate (from, current_slot->_end),
                                 NULL,
                                 duration);
+          printf ("(3) ==> "); Slot::Dump (free_slot);
         }
         else
         {
@@ -522,6 +519,7 @@ namespace Marshaller
                                   GetLatestDate (from, current_slot->_end),
                                   next_slot->_start,
                                   duration);
+            printf ("(4) ==> "); Slot::Dump (free_slot);
           }
           g_date_time_unref (max_start_time);
         }

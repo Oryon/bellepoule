@@ -34,6 +34,9 @@ namespace Marshaller
       gboolean IsAvailableFor (Slot      *slot,
                                GTimeSpan  duration);
 
+      Slot *GetAvailableSlotFor (Slot      *slot,
+                                 GTimeSpan  duration);
+
       gint GetWorkload ();
 
       void SetAllRefereWorkload (gint all_referee_workload);

@@ -196,10 +196,13 @@ namespace Marshaller
 
       if (job)
       {
-        GDateTime *from  = _timeline->RetreiveCursorTime ();
-        GList     *slots = piste->GetFreeSlots (from, job->GetRegularDuration ());
-        Slot      *slot  = (Slot *) slots->data;
+        GDateTime *from     = _timeline->RetreiveCursorTime ();
+        GTimeSpan  duration = job->GetRegularDuration ();
+        GList     *slots    = piste->GetFreeSlots (from, duration);
+        Slot      *slot     = (Slot *) slots->data;
 
+        slot->TailWith (NULL,
+                        duration);
         slot->AddJob (job);
 
         g_date_time_unref (from);
@@ -324,8 +327,9 @@ namespace Marshaller
 
           if (piste)
           {
+            GTimeSpan duration = job->GetRegularDuration ();
             Slot *slot = piste->GetFreeSlot (start_time->GetGDateTime (),
-                                             job->GetRegularDuration ());
+                                             duration);
 
             if (slot)
             {
@@ -333,6 +337,8 @@ namespace Marshaller
 
               if (referee)
               {
+                slot->TailWith (NULL,
+                                duration);
                 slot->AddJob     (job);
                 slot->AddReferee (referee);
                 Redraw ();
@@ -720,15 +726,18 @@ namespace Marshaller
       }
 
       {
-        GDateTime *cursor  = _timeline->RetreiveCursorTime ();
-        GList     *current = referees;
+        GTimeSpan  duration = _floating_job->GetRegularDuration ();
+        GDateTime *cursor   = _timeline->RetreiveCursorTime ();
+        GList     *current  = referees;
         Slot      *slot;
 
         slot = piste->GetFreeSlot (cursor,
-                                   _floating_job->GetRegularDuration ());
+                                   duration);
 
         if (slot)
         {
+          slot->TailWith (NULL,
+                          duration);
           slot->AddJob (_floating_job);
 
           while (current)
@@ -748,6 +757,7 @@ namespace Marshaller
         g_list_free (referees);
       }
 
+      _timeline->Redraw ();
       StopMovingJob ();
     }
 
@@ -914,7 +924,7 @@ namespace Marshaller
         gtk_toggle_button_set_active (toggle, TRUE);
         toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_pistes"));
         gtk_toggle_button_set_active (toggle, TRUE);
-        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("now"));
+        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("cursor"));
         gtk_toggle_button_set_active (toggle, TRUE);
       }
 
@@ -976,17 +986,12 @@ namespace Marshaller
 
           while (current_slot)
           {
-            Slot            *slot    = (Slot *) current_slot->data;
-            EnlistedReferee *referee;
+            Slot *slot = (Slot *) current_slot->data;
 
-            referee = GetFreeRefereeFor (referee_list,
-                                         slot,
-                                         job->GetRegularDuration ());
-            if (referee)
+            if (SetFreeRefereeFor (referee_list,
+                                   slot,
+                                   job))
             {
-              slot->Retain ();
-              slot->AddJob     (job);
-              slot->AddReferee (referee);
               break;
             }
 
@@ -1068,13 +1073,14 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  EnlistedReferee *Hall::GetFreeRefereeFor (GList     *referee_list,
-                                            Slot      *slot,
-                                            GTimeSpan  duration)
+  gboolean Hall::SetFreeRefereeFor (GList *referee_list,
+                                    Slot  *slot,
+                                    Job   *job)
   {
-    GList           *current_referee;
-    GList           *sorted_list;
-    EnlistedReferee *available_referee = NULL;
+    GList     *current_referee;
+    GList     *sorted_list;
+    GTimeSpan  duration        = job->GetRegularDuration ();
+    gboolean   result          = FALSE;
 
     sorted_list = g_list_sort (g_list_copy (referee_list),
                                (GCompareFunc) EnlistedReferee::CompareWorkload);
@@ -1082,12 +1088,21 @@ namespace Marshaller
     current_referee = sorted_list;
     while (current_referee)
     {
-      EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+      EnlistedReferee *referee      = (EnlistedReferee *) current_referee->data;
+      Slot            *referee_slot = referee->GetAvailableSlotFor (slot,
+                                                                    duration);
 
-      if (referee->IsAvailableFor (slot,
-                                   duration))
+      if (referee_slot)
       {
-        available_referee = referee;
+        result = TRUE;
+
+        slot->Retain ();
+        slot->TailWith (referee_slot,
+                        duration);
+        slot->AddJob     (job);
+        slot->AddReferee (referee);
+
+        referee_slot->Release ();
         break;
       }
 
@@ -1095,7 +1110,7 @@ namespace Marshaller
     }
 
     g_list_free (sorted_list);
-    return available_referee;
+    return result;
   }
 
   // --------------------------------------------------------------------------------
@@ -1247,6 +1262,7 @@ namespace Marshaller
     {
       slot = piste->GetFreeSlot (cursor,
                                  job->GetRegularDuration ());
+      if (slot) Slot::Dump (slot);
     }
 
     g_date_time_unref (cursor);
