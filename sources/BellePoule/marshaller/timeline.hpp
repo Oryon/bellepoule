@@ -80,6 +80,11 @@ namespace Marshaller
                                        GdkEventButton *event,
                                        Timeline       *tl);
 
+      static gboolean OnBgMotion (GooCanvasItem  *item,
+                                  GooCanvasItem  *target_item,
+                                  GdkEventMotion *event,
+                                  Timeline       *tl);
+
       static gboolean OnButtonPress (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,

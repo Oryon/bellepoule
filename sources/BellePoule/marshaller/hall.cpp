@@ -818,6 +818,7 @@ namespace Marshaller
     }
     else
     {
+      ResetCursor ();
       _lasso->Pull ();
 
       if (_dragging)
@@ -883,6 +884,10 @@ namespace Marshaller
 
         current = g_list_next (current);
       }
+    }
+    else if (_floating_job)
+    {
+      SetCursor (GDK_PLUS);
     }
 
     return TRUE;

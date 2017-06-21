@@ -68,6 +68,8 @@ namespace Marshaller
 
     g_signal_connect (GetRootItem (), "button_press_event",
                       G_CALLBACK (OnBgButtonPress), this);
+    g_signal_connect (GetRootItem (), "motion-notify-event",
+                      G_CALLBACK (OnBgMotion), this);
   }
 
   // --------------------------------------------------------------------------------
@@ -256,6 +258,9 @@ namespace Marshaller
                       G_CALLBACK (OnMotion), tl);
     g_signal_connect (G_OBJECT (item), "button_release_event",
                       G_CALLBACK (OnButtonRelease), tl);
+
+    tl->SetCursor (GDK_FLEUR);
+
     return TRUE;
   }
 
@@ -274,6 +279,17 @@ namespace Marshaller
 
       tl->TranslateCursor (round * tl->_time_scale);
     }
+
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Timeline::OnBgMotion (GooCanvasItem  *item,
+                                 GooCanvasItem  *target_item,
+                                 GdkEventMotion *event,
+                                 Timeline       *tl)
+  {
+    tl->SetCursor (GDK_ARROW);
 
     return TRUE;
   }
@@ -421,6 +437,8 @@ namespace Marshaller
 
       tl->TranslateCursor (round * tl->_time_scale);
     }
+
+    tl->ResetCursor ();
 
     return TRUE;
   }
