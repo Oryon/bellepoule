@@ -56,10 +56,6 @@ class DndConfig : public Object
 
     void SetContext (GdkDragContext *context);
 
-    void FetchDataAtEarliest ();
-
-    gboolean DataFetchedAtEarliest ();
-
     void SetPeerListener (Listener *peer);
 
     void DragEnd ();
@@ -67,7 +63,6 @@ class DndConfig : public Object
   private:
     GtkTargetList *_target_list;
     Object        *_floating_object;
-    gboolean       _fetch_data_at_earliest;
     Listener      *_peer_listener;
 
     ~DndConfig ();

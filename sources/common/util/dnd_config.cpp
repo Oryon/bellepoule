@@ -20,10 +20,9 @@
 DndConfig::DndConfig ()
   : Object ("DndConfig")
 {
-  _floating_object        = NULL;
-  _target_list            = gtk_target_list_new (NULL, 0);
-  _fetch_data_at_earliest = FALSE;
-  _peer_listener          = NULL;
+  _floating_object = NULL;
+  _target_list     = gtk_target_list_new (NULL, 0);
+  _peer_listener   = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -45,18 +44,6 @@ void DndConfig::DragEnd ()
   {
     _peer_listener->OnDragAndDropEnd ();
   }
-}
-
-// --------------------------------------------------------------------------------
-void DndConfig::FetchDataAtEarliest ()
-{
-  _fetch_data_at_earliest = TRUE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean DndConfig::DataFetchedAtEarliest ()
-{
-  return _fetch_data_at_earliest;
 }
 
 // --------------------------------------------------------------------------------

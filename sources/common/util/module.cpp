@@ -174,19 +174,7 @@ gboolean Module::OnDragDrop (GtkWidget      *widget,
                                             drag_context,
                                             NULL);
 
-  if (atom)
-  {
-    if (_dnd_config->DataFetchedAtEarliest () == FALSE)
-    {
-      gtk_drag_get_data (widget,
-                         drag_context,
-                         atom,
-                         time);
-    }
-    return TRUE;
-  }
-
-  return FALSE;
+  return (atom != 0);
 }
 
 // --------------------------------------------------------------------------------
@@ -220,17 +208,14 @@ gboolean Module::OnDragMotion (GtkWidget      *widget,
 
     if (atom)
     {
-      if (_dnd_config->DataFetchedAtEarliest ())
-      {
-        _dnd_config->SetContext (drag_context);
+      _dnd_config->SetContext (drag_context);
 
-        if (_dnd_config->GetFloatingObject () == NULL)
-        {
-          gtk_drag_get_data (widget,
-                             drag_context,
-                             atom,
-                             time);
-        }
+      if (_dnd_config->GetFloatingObject () == NULL)
+      {
+        gtk_drag_get_data (widget,
+                           drag_context,
+                           atom,
+                           time);
       }
 
       gdk_drag_status (drag_context,

@@ -39,8 +39,6 @@ CanvasModule::CanvasModule (const gchar *glade_file,
   _zoom_factor      = 1.0;
   _h_adj            = 0.0;
   _v_adj            = 0.0;
-
-  _dnd_config->FetchDataAtEarliest ();
 }
 
 // --------------------------------------------------------------------------------

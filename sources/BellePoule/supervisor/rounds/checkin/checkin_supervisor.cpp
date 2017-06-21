@@ -40,8 +40,8 @@ namespace People
   // --------------------------------------------------------------------------------
   CheckinSupervisor::CheckinSupervisor (StageClass *stage_class)
     : Object ("CheckinSupervisor"),
-      Checkin ("checkin.glade", "Fencer", "Team"),
-      Stage (stage_class)
+    Checkin ("checkin.glade", "Fencer", "Team"),
+    Stage (stage_class)
   {
     _checksum_list = NULL;
 
@@ -944,9 +944,9 @@ namespace People
       gchar *size_msg = g_strdup_printf (gettext ("You have configured the minimum team size to <b>%d</b> fencers."),
                                          _minimum_team_size->_value);
       gchar *full_msg = g_strdup_printf ("%s\n%s\n\n%s",
-                                        gettext ("Tick the present players of the team."),
-                                        gettext ("Untick the absent players of the team."),
-                                        size_msg);
+                                         gettext ("Tick the present players of the team."),
+                                         gettext ("Untick the absent players of the team."),
+                                         size_msg);
 
       dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
                                        GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -1227,10 +1227,24 @@ namespace People
         _dnd_config->SetFloatingObject (fencer);
       }
     }
+  }
 
+  // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::OnDragDrop (GtkWidget      *widget,
+                                          GdkDragContext *drag_context,
+                                          gint            x,
+                                          gint            y,
+                                          guint           time)
+  {
+    gboolean result = FALSE;
+
+    if (Module::OnDragDrop (widget,
+                            drag_context,
+                            x,
+                            y,
+                            time))
     {
-      gboolean  result = FALSE;
-      Player   *player = (Player *) _dnd_config->GetFloatingObject ();
+      Player *player = (Player *) _dnd_config->GetFloatingObject ();
 
       if (player && player->Is ("Fencer"))
       {
@@ -1271,135 +1285,132 @@ namespace People
           result = TRUE;
         }
       }
+    }
 
-      gtk_drag_finish (drag_context,
-                       result,
-                       FALSE,
-                       time);
+    return result;
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::CellDataFunc (GtkTreeViewColumn *tree_column,
+                                        GtkCellRenderer   *cell,
+                                        GtkTreeModel      *tree_model,
+                                        GtkTreeIter       *iter)
+  {
+    if (_contest->IsTeamEvent ())
+    {
+      GtkTreeIter parent_iter;
+
+      if (gtk_tree_model_iter_parent (gtk_tree_view_get_model (_tree_view),
+                                      &parent_iter,
+                                      iter) == FALSE)
+      {
+        g_object_set (cell,
+                      "weight", PANGO_WEIGHT_BOLD,
+                      NULL);
+      }
+      else
+      {
+        g_object_set (cell,
+                      "weight", PANGO_WEIGHT_NORMAL,
+                      NULL);
+      }
     }
   }
 
-    // --------------------------------------------------------------------------------
-    void CheckinSupervisor::CellDataFunc (GtkTreeViewColumn *tree_column,
-                                          GtkCellRenderer   *cell,
-                                          GtkTreeModel      *tree_model,
-                                          GtkTreeIter       *iter)
-    {
-      if (_contest->IsTeamEvent ())
-      {
-        GtkTreeIter parent_iter;
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_expand_eventbox_button_press_event (GtkWidget *widget,
+                                                                             GdkEvent  *event,
+                                                                             Object    *owner)
+  {
+    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
 
-        if (gtk_tree_model_iter_parent (gtk_tree_view_get_model (_tree_view),
-                                        &parent_iter,
-                                        iter) == FALSE)
-        {
-          g_object_set (cell,
-                        "weight", PANGO_WEIGHT_BOLD,
-                        NULL);
-        }
-        else
-        {
-          g_object_set (cell,
-                        "weight", PANGO_WEIGHT_NORMAL,
-                        NULL);
-        }
-      }
-    }
+    supervisor->ExpandAll ();
+    return TRUE;
+  }
 
-    // --------------------------------------------------------------------------------
-    extern "C" G_MODULE_EXPORT gboolean on_expand_eventbox_button_press_event (GtkWidget *widget,
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_collapse_eventbox_button_press_event (GtkWidget *widget,
                                                                                GdkEvent  *event,
                                                                                Object    *owner)
+  {
+    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+    supervisor->CollapseAll ();
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_ranking_toolbutton_clicked (GtkWidget *widget,
+                                                                 Object    *owner)
+  {
+    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+    supervisor->OnImportRanking ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_teamsize_entry_value_changed (GtkSpinButton *spin_button,
+                                                                   Object        *owner)
+  {
+    CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
+
+    c->OnConfigChanged ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_worst_entry_activate (GtkEntry *entry,
+                                                           Object   *owner)
+  {
+    CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
+
+    c->OnConfigChanged ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_worst_entry_focus_out_event (GtkWidget *widget,
+                                                                      GdkEvent  *event,
+                                                                      Object    *owner)
+  {
+    CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
+
+    c->OnConfigChanged ();
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_worst_entry_changed (GtkEditable *editable,
+                                                          Object      *owner)
+  {
+    if (gtk_widget_has_focus (GTK_WIDGET (editable)))
     {
-      CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
-
-      supervisor->ExpandAll ();
-      return TRUE;
-    }
-
-    // --------------------------------------------------------------------------------
-    extern "C" G_MODULE_EXPORT gboolean on_collapse_eventbox_button_press_event (GtkWidget *widget,
-                                                                                 GdkEvent  *event,
-                                                                                 Object    *owner)
-    {
-      CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
-
-      supervisor->CollapseAll ();
-      return TRUE;
-    }
-
-    // --------------------------------------------------------------------------------
-    extern "C" G_MODULE_EXPORT void on_ranking_toolbutton_clicked (GtkWidget *widget,
-                                                                   Object    *owner)
-    {
-      CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
-
-      supervisor->OnImportRanking ();
-    }
-
-    // --------------------------------------------------------------------------------
-    extern "C" G_MODULE_EXPORT void on_teamsize_entry_value_changed (GtkSpinButton *spin_button,
-                                                                     Object        *owner)
-    {
-      CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
-
-      c->OnConfigChanged ();
-    }
-
-    // --------------------------------------------------------------------------------
-    extern "C" G_MODULE_EXPORT void on_worst_entry_activate (GtkEntry *entry,
-                                                             Object   *owner)
-    {
-      CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
-
-      c->OnConfigChanged ();
-    }
-
-    // --------------------------------------------------------------------------------
-    extern "C" G_MODULE_EXPORT gboolean on_worst_entry_focus_out_event (GtkWidget *widget,
-                                                                        GdkEvent  *event,
-                                                                        Object    *owner)
-    {
-      CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
-
-      c->OnConfigChanged ();
-      return FALSE;
-    }
-
-    // --------------------------------------------------------------------------------
-    extern "C" G_MODULE_EXPORT void on_worst_entry_changed (GtkEditable *editable,
-                                                            Object      *owner)
-    {
-      if (gtk_widget_has_focus (GTK_WIDGET (editable)))
       {
-        {
-          GdkColor *color = g_new (GdkColor, 1);
+        GdkColor *color = g_new (GdkColor, 1);
 
-          gdk_color_parse ("#c5c5c5", color);
+        gdk_color_parse ("#c5c5c5", color);
 
-          gtk_widget_modify_base (GTK_WIDGET (editable),
-                                  GTK_STATE_NORMAL,
-                                  color);
-          g_free (color);
-        }
+        gtk_widget_modify_base (GTK_WIDGET (editable),
+                                GTK_STATE_NORMAL,
+                                color);
+        g_free (color);
+      }
 
-        {
-          PangoFontDescription *font_desc = pango_font_description_new ();
+      {
+        PangoFontDescription *font_desc = pango_font_description_new ();
 
-          pango_font_description_set_style (font_desc,
-                                            PANGO_STYLE_ITALIC);
-          gtk_widget_modify_font (GTK_WIDGET (editable),
-                                  font_desc);
-        }
+        pango_font_description_set_style (font_desc,
+                                          PANGO_STYLE_ITALIC);
+        gtk_widget_modify_font (GTK_WIDGET (editable),
+                                font_desc);
       }
     }
-
-    // --------------------------------------------------------------------------------
-    extern "C" G_MODULE_EXPORT void on_manual_radiobutton_toggled (GtkToggleButton *spin_button,
-                                                                   Object          *owner)
-    {
-      CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
-
-      c->OnConfigChanged ();
-    }
   }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_manual_radiobutton_toggled (GtkToggleButton *spin_button,
+                                                                 Object          *owner)
+  {
+    CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
+
+    c->OnConfigChanged ();
+  }
+}
