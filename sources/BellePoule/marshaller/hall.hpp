@@ -169,6 +169,10 @@ namespace Marshaller
 
       static gboolean RedrawCbk (Hall *hall);
 
+      void ScheduleRedraw ();
+
+      void StopRedraw ();
+
       gboolean Redraw ();
 
       void OnDragAndDropEnd ();

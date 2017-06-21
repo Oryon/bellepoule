@@ -65,6 +65,9 @@ namespace Marshaller
                   "bounds-padding",     0.0,
                   "bounds-from-origin", TRUE,
                   NULL);
+
+    g_signal_connect (GetRootItem (), "button_press_event",
+                      G_CALLBACK (OnBgButtonPress), this);
   }
 
   // --------------------------------------------------------------------------------
@@ -90,15 +93,16 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Timeline::DrawTimes ()
   {
-    for (guint i = 0; i <= HOURS_MONITORED; i++)
+    for (guint h = 0; h <= HOURS_MONITORED; h++)
     {
-      guint  h    = (g_date_time_get_hour (_origin) + i+1) % 24;
-      gchar *time = g_strdup_printf ("<span background=\"white\">%02d:00</span>", h);
+      GTimeSpan  x_span = h *G_TIME_SPAN_HOUR + START_MARGING;
+      guint      hh     = (g_date_time_get_hour (_origin) + h+1) % 24;
+      gchar     *time   = g_strdup_printf ("<span background=\"white\">%02d:00</span>", hh);
 
-      time = g_strdup_printf ("<span background=\"white\">%02d:00</span>", h);
+      time = g_strdup_printf ("<span background=\"white\">%02d:00</span>", hh);
 
       goo_canvas_rect_new (GetRootItem (),
-                           (i*G_TIME_SPAN_HOUR + START_MARGING) * _time_scale,
+                           x_span * _time_scale,
                            0.7 * _competition_scale,
                            0.5,
                            0.3 * _competition_scale,
@@ -107,7 +111,7 @@ namespace Marshaller
                            NULL);
       goo_canvas_text_new (GetRootItem (),
                            time,
-                           (i*G_TIME_SPAN_HOUR + START_MARGING) * _time_scale,
+                           x_span * _time_scale,
                            _competition_scale,
                            -1.0,
                            GTK_ANCHOR_S,
@@ -115,6 +119,19 @@ namespace Marshaller
                            "font",       BP_FONT "10px",
                            "use-markup", TRUE,
                            NULL);
+
+      for (guint q = 1; q <= 3; q++)
+      {
+        goo_canvas_rect_new (GetRootItem (),
+                             (x_span + q*15*G_TIME_SPAN_MINUTE) * _time_scale,
+                             0.95 * _competition_scale,
+                             0.3,
+                             0.05 * _competition_scale,
+                             "fill-color",     "black",
+                             "stroke-pattern", NULL,
+                             NULL);
+      }
+
       g_free (time);
     }
   }
@@ -243,10 +260,49 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GDateTime *Timeline::RetreiveCursorTime ()
+  gboolean Timeline::OnBgButtonPress (GooCanvasItem  *item,
+                                      GooCanvasItem  *target,
+                                      GdkEventButton *event,
+                                      Timeline       *tl)
   {
+    GTimeSpan new_cursor = event->x / tl->_time_scale;
+
+    tl->TranslateCursor ((new_cursor - tl->_cursor) * tl->_time_scale);
+
+    {
+      GTimeSpan round = tl->GetCursorRectification ();
+
+      tl->TranslateCursor (round * tl->_time_scale);
+    }
+
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  GDateTime *Timeline::RetreiveCursorTime (gboolean rounded)
+  {
+    GTimeSpan cursor = _cursor;
+
+    if (rounded)
+    {
+      cursor += GetCursorRectification ();
+    }
+
     return g_date_time_add (_origin,
-                            _cursor);
+                            cursor);
+  }
+
+  // --------------------------------------------------------------------------------
+  GTimeSpan Timeline::GetCursorRectification ()
+  {
+    GTimeSpan round = _cursor % STEP;
+
+    if (round > (STEP / 2))
+    {
+      return STEP - round;
+    }
+
+    return -round;
   }
 
   // --------------------------------------------------------------------------------
@@ -361,16 +417,7 @@ namespace Marshaller
                                                             tl);
 
     {
-      GTimeSpan round = tl->_cursor % STEP;
-
-      if (round > (STEP / 2))
-      {
-        round = STEP - round;
-      }
-      else
-      {
-        round = -round;
-      }
+      GTimeSpan round = tl->GetCursorRectification ();
 
       tl->TranslateCursor (round * tl->_time_scale);
     }

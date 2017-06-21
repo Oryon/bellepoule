@@ -39,7 +39,7 @@ namespace Marshaller
 
       void SetCursorTime (GDateTime *time);
 
-      GDateTime *RetreiveCursorTime ();
+      GDateTime *RetreiveCursorTime (gboolean rounded = FALSE);
 
       void Redraw ();
 
@@ -72,6 +72,13 @@ namespace Marshaller
       void TranslateCursor (gdouble delta);
 
       void RefreshCursorTime ();
+
+      GTimeSpan GetCursorRectification ();
+
+      static gboolean OnBgButtonPress (GooCanvasItem  *item,
+                                       GooCanvasItem  *target,
+                                       GdkEventButton *event,
+                                       Timeline       *tl);
 
       static gboolean OnButtonPress (GooCanvasItem  *item,
                                      GooCanvasItem  *target,

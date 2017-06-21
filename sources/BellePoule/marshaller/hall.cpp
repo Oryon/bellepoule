@@ -74,10 +74,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Hall::~Hall ()
   {
-    if (_redraw_timeout > 0)
-    {
-      g_source_remove (_redraw_timeout);
-    }
+    StopRedraw ();
 
     JobBoard::SetTimeLine (NULL,
                            NULL);
@@ -599,8 +596,12 @@ namespace Marshaller
     {
       _floating_job = NULL;
       _listener->OnUnBlur ();
+      gtk_widget_set_sensitive (_glade->GetWidget ("toolbar"),
+                                TRUE);
       OnTimelineCursorMoved ();
     }
+
+    ScheduleRedraw ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1116,7 +1117,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::OnTimelineCursorMoved ()
   {
-    GDateTime *cursor = _timeline->RetreiveCursorTime ();
+    GDateTime *cursor         = _timeline->RetreiveCursorTime ();
+    GDateTime *rounded_cursor = _timeline->RetreiveCursorTime (TRUE);
 
     {
       GtkLabel *popup_clock = GTK_LABEL (_glade->GetWidget ("cursor_date"));
@@ -1139,29 +1141,34 @@ namespace Marshaller
       {
         Piste *piste = (Piste *) current_piste->data;
 
-        piste->DisplayAtTime (cursor);
+        piste->DisplayAtTime (rounded_cursor);
 
         if (_floating_job)
         {
-          if (piste->GetSlotAt (cursor))
+          if (piste->GetSlotAt (rounded_cursor))
           {
             piste->Blur ();
           }
           else
           {
-            Slot  *source_slot     = _floating_job->GetSlot ();
-            GList *current_referee = source_slot->GetRefereeList ();
-            Slot  *dest_slot       = piste->GetFreeSlot (cursor,
-                                                         _floating_job->GetRegularDuration ());
+            Slot      *source_slot     = _floating_job->GetSlot ();
+            GList     *current_referee = source_slot->GetRefereeList ();
+            GTimeSpan  duration        = _floating_job->GetRegularDuration ();
+            Slot      *dest_slot       = piste->GetFreeSlot (rounded_cursor,
+                                                             duration);
 
-            if (dest_slot)
+            if (dest_slot == FALSE)
+            {
+              piste->Blur ();
+            }
+            else
             {
               while (current_referee)
               {
                 EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
 
                 if (referee->IsAvailableFor (dest_slot,
-                                             _floating_job->GetRegularDuration ()) == FALSE)
+                                             duration) == FALSE)
                 {
                   piste->Blur ();
                   break;
@@ -1179,6 +1186,7 @@ namespace Marshaller
     }
 
     g_date_time_unref (cursor);
+    g_date_time_unref (rounded_cursor);
   }
 
   // --------------------------------------------------------------------------------
@@ -1196,6 +1204,10 @@ namespace Marshaller
     CancelSelection ();
 
     _floating_job = job;
+
+    gtk_widget_set_sensitive (_glade->GetWidget ("toolbar"),
+                              FALSE);
+    StopRedraw ();
     _listener->OnBlur ();
 
     OnTimelineCursorMoved ();
@@ -1301,6 +1313,26 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::ScheduleRedraw ()
+  {
+    StopRedraw ();
+
+    _redraw_timeout = g_timeout_add_seconds (60,
+                                             (GSourceFunc) RedrawCbk,
+                                             this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::StopRedraw ()
+  {
+    if (_redraw_timeout > 0)
+    {
+      g_source_remove (_redraw_timeout);
+      _redraw_timeout = 0;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Hall::Redraw ()
   {
     _timeline->Redraw ();
@@ -1316,16 +1348,9 @@ namespace Marshaller
 
         current = g_list_next (current);
       }
-
-      if (_redraw_timeout > 0)
-      {
-        g_source_remove (_redraw_timeout);
-      }
     }
 
-    _redraw_timeout = g_timeout_add_seconds (60,
-                                             (GSourceFunc) RedrawCbk,
-                                             this);
+    ScheduleRedraw ();
 
     return G_SOURCE_CONTINUE;
   }
