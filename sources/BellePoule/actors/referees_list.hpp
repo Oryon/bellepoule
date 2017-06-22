@@ -48,7 +48,6 @@ namespace People
       virtual ~RefereesList ();
 
     private:
-      guint32  _dnd_key;
       Filter  *_expanded_filter;
       Filter  *_collapsed_filter;
       Weapon  *_weapon;

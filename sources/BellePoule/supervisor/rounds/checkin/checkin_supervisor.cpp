@@ -137,7 +137,7 @@ namespace People
     }
 
     {
-      _dnd_key = _dnd_config->AddTarget ("bellepoule/fencer", GTK_TARGET_SAME_WIDGET);
+      _dnd_config->AddTarget ("bellepoule/fencer", GTK_TARGET_SAME_WIDGET);
 
       ConnectDndSource (GTK_WIDGET (_tree_view));
       ConnectDndDest   (GTK_WIDGET (_tree_view));
@@ -1158,18 +1158,15 @@ namespace People
                                          guint             key,
                                          guint             time)
   {
-    if (key == _dnd_key)
-    {
-      GList   *selected   = GetSelectedPlayers ();
-      Player  *fencer     = (Player *) selected->data;
-      guint32  fencer_ref = fencer->GetRef ();
+    GList   *selected   = GetSelectedPlayers ();
+    Player  *fencer     = (Player *) selected->data;
+    guint32  fencer_ref = fencer->GetRef ();
 
-      gtk_selection_data_set (selection_data,
-                              gtk_selection_data_get_target (selection_data),
-                              32,
-                              (guchar *) &fencer_ref,
-                              sizeof (fencer_ref));
-    }
+    gtk_selection_data_set (selection_data,
+                            gtk_selection_data_get_target (selection_data),
+                            32,
+                            (guchar *) &fencer_ref,
+                            sizeof (fencer_ref));
   }
 
   // --------------------------------------------------------------------------------
@@ -1197,36 +1194,27 @@ namespace People
         gtk_tree_view_set_drag_dest_row (_tree_view,
                                          path,
                                          pos);
+
+        gdk_drag_status  (drag_context,
+                          GDK_ACTION_DEFAULT,
+                          time);
+
         return FALSE;
       }
     }
 
     gdk_drag_status  (drag_context,
-                      GDK_ACTION_DEFAULT,
+                      GDK_ACTION_PRIVATE,
                       time);
 
     return TRUE;
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::OnDragDataReceived (GtkWidget        *widget,
-                                              GdkDragContext   *drag_context,
-                                              gint              x,
-                                              gint              y,
-                                              GtkSelectionData *selection_data,
-                                              guint             key,
-                                              guint             time)
+  Object *CheckinSupervisor::GetDropObjectFromRef (guint32 ref,
+                                                   guint   key)
   {
-    if (key == _dnd_key)
-    {
-      if (selection_data && (gtk_selection_data_get_length (selection_data) >= 0))
-      {
-        guint32 *ref    = (guint32 *) gtk_selection_data_get_data (selection_data);
-        Player  *fencer = GetPlayerFromRef (*ref);
-
-        _dnd_config->SetFloatingObject (fencer);
-      }
-    }
+    return GetPlayerFromRef (ref);
   }
 
   // --------------------------------------------------------------------------------
@@ -1236,8 +1224,6 @@ namespace People
                                           gint            y,
                                           guint           time)
   {
-    gboolean result = FALSE;
-
     if (Module::OnDragDrop (widget,
                             drag_context,
                             x,
@@ -1282,12 +1268,12 @@ namespace People
                                      dest->GetName ());
           OnListChanged ();
 
-          result = TRUE;
+          return TRUE;
         }
       }
     }
 
-    return result;
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

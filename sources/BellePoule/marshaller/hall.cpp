@@ -107,8 +107,8 @@ namespace Marshaller
 
 
     {
-      _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
-      _dnd_config->AddTarget ("bellepoule/job",     GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+      _referee_key = _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+      _job_key     = _dnd_config->AddTarget ("bellepoule/job",     GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
       _dnd_config->SetOnAWidgetDest (GTK_WIDGET (GetCanvas ()),
                                      GDK_ACTION_COPY);
@@ -149,11 +149,11 @@ namespace Marshaller
   Object *Hall::GetDropObjectFromRef (guint32 ref,
                                       guint   key)
   {
-    if (g_strcmp0 (g_quark_to_string (key), "bellepoule/referee") == 0)
+    if (key == _referee_key)
     {
       return _referee_pool->GetReferee (ref);
     }
-    else if (g_strcmp0 (g_quark_to_string (key), "bellepoule/job") == 0)
+    else if (key == _job_key)
     {
       GList *current_competition = _competition_list;
 

@@ -15,18 +15,26 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "job.hpp"
+#include "referee_pool.hpp"
+#include "enlisted_referee.hpp"
+#include "slot.hpp"
 
 #include "job_details.hpp"
 
 namespace Marshaller
 {
+  RefereePool *JobDetails::_referee_pool = NULL;
+
   // --------------------------------------------------------------------------------
   JobDetails::JobDetails (Listener *listener,
-                          GList    *player_list)
+                          GList    *player_list,
+                          Job      *job,
+                          gboolean  dnd_capable)
     : Object ("JobDetails"),
-      PlayersList ("details.glade", SORTABLE)
+    PlayersList ("details.glade", SORTABLE)
   {
     _listener = listener;
+    _job      = job;
 
     {
       GSList *attr_list;
@@ -82,6 +90,20 @@ namespace Marshaller
 
     SetPopupVisibility ("PlayersList::ReadOnlyAction",
                         FALSE);
+
+    if (dnd_capable)
+    {
+      _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+
+      ConnectDndSource (GTK_WIDGET (_tree_view));
+      ConnectDndDest   (GTK_WIDGET (_tree_view));
+
+      _dnd_config->SetOnAWidgetSrc (_tree_view,
+                                    GDK_BUTTON1_MASK,
+                                    GDK_ACTION_COPY);
+      _dnd_config->SetOnAWidgetDest (_tree_view,
+                                     GDK_ACTION_COPY);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -100,5 +122,101 @@ namespace Marshaller
   void JobDetails::OnPlayerRemoved (Player *player)
   {
     _listener->OnPlayerRemoved (player);
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobDetails::OnDragDataGet (GtkWidget        *widget,
+                                  GdkDragContext   *drag_context,
+                                  GtkSelectionData *selection_data,
+                                  guint             key,
+                                  guint             time)
+  {
+    GList   *selected   = GetSelectedPlayers ();
+    Player  *fencer     = (Player *) selected->data;
+    guint32  fencer_ref = fencer->GetRef ();
+
+    gtk_selection_data_set (selection_data,
+                            gtk_selection_data_get_target (selection_data),
+                            32,
+                            (guchar *) &fencer_ref,
+                            sizeof (fencer_ref));
+
+    printf ("===> %s\n", fencer->GetName ());
+  }
+
+  // --------------------------------------------------------------------------------
+  Object *JobDetails::GetDropObjectFromRef (guint32 ref,
+                                            guint   key)
+  {
+    return _referee_pool->GetReferee (ref);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean JobDetails::OnDragMotion (GtkWidget      *widget,
+                                     GdkDragContext *drag_context,
+                                     gint            x,
+                                     gint            y,
+                                     guint           time)
+  {
+    if (Module::OnDragMotion (widget,
+                              drag_context,
+                              x,
+                              y,
+                              time))
+    {
+      EnlistedReferee *referee      = (EnlistedReferee *) _dnd_config->GetFloatingObject ();
+      Slot            *referee_slot = referee->GetAvailableSlotFor (_job->GetSlot (),
+                                                                    _job->GetRegularDuration ());
+      if (referee_slot)
+      {
+        referee_slot->Release ();
+        gdk_drag_status  (drag_context,
+                          GDK_ACTION_DEFAULT,
+                          time);
+        return FALSE;
+      }
+    }
+
+    gdk_drag_status  (drag_context,
+                      GDK_ACTION_PRIVATE,
+                      time);
+
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean JobDetails::OnDragDrop (GtkWidget      *widget,
+                                   GdkDragContext *drag_context,
+                                   gint            x,
+                                   gint            y,
+                                   guint           time)
+  {
+    if (Module::OnDragDrop (widget,
+                            drag_context,
+                            x,
+                            y,
+                            time))
+    {
+      EnlistedReferee *referee      = (EnlistedReferee *) _dnd_config->GetFloatingObject ();
+      Slot            *job_slot     = _job->GetSlot ();
+      Slot            *referee_slot = referee->GetAvailableSlotFor (job_slot,
+                                                                    _job->GetRegularDuration ());
+      if (referee_slot)
+      {
+        job_slot->TailWith (referee_slot,
+                            _job->GetRegularDuration ());
+        job_slot->AddReferee (referee);
+
+        referee_slot->Release ();
+      }
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobDetails::SetRefereePool (RefereePool *referee_pool)
+  {
+    _referee_pool = referee_pool;
   }
 }

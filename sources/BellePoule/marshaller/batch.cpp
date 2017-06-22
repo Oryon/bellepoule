@@ -72,7 +72,7 @@ namespace Marshaller
     {
       GtkWidget *source = _glade->GetWidget ("competition_treeview");
 
-      _dnd_key = _dnd_config->AddTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+      _dnd_config->AddTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
       _dnd_config->SetOnAWidgetSrc (source,
                                     GDK_MODIFIER_MASK,
@@ -534,18 +534,15 @@ namespace Marshaller
                              guint             key,
                              guint             time)
   {
-    if (key == _dnd_key)
-    {
-      GList   *selected = GetCurrentSelection ();
-      Job     *job      = (Job *) selected->data;
-      guint32  job_ref  = job->GetNetID ();
+    GList   *selected = GetCurrentSelection ();
+    Job     *job      = (Job *) selected->data;
+    guint32  job_ref  = job->GetNetID ();
 
-      gtk_selection_data_set (data,
-                              gtk_selection_data_get_target (data),
-                              32,
-                              (guchar *) &job_ref,
-                              sizeof (job_ref));
-    }
+    gtk_selection_data_set (data,
+                            gtk_selection_data_get_target (data),
+                            32,
+                            (guchar *) &job_ref,
+                            sizeof (job_ref));
   }
 
   // --------------------------------------------------------------------------------

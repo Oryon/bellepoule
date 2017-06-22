@@ -75,7 +75,6 @@ namespace People
       Data     *_minimum_team_size;
       Data     *_default_classification;
       NullTeam *_null_team;
-      guint32   _dnd_key;
 
       static Stage *CreateInstance (StageClass *stage_class);
 
@@ -129,13 +128,8 @@ namespace People
                           guint             key,
                           guint             time);
 
-      void OnDragDataReceived (GtkWidget        *widget,
-                               GdkDragContext   *drag_context,
-                               gint              x,
-                               gint              y,
-                               GtkSelectionData *selection_data,
-                               guint             key,
-                               guint             time);
+      Object *GetDropObjectFromRef (guint32 ref,
+                                    guint   key);
 
       gboolean OnDragMotion (GtkWidget      *widget,
                              GdkDragContext *drag_context,

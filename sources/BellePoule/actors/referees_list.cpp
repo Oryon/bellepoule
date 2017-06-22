@@ -93,7 +93,7 @@ namespace People
     }
 
     {
-      _dnd_key = _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+      _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
       _dnd_config->SetOnAWidgetSrc (GTK_WIDGET (_tree_view),
                                     GDK_MODIFIER_MASK,
@@ -353,18 +353,15 @@ namespace People
                                     guint             key,
                                     guint             time)
   {
-    if (key == _dnd_key)
-    {
-      GList   *selected    = GetSelectedPlayers ();
-      Player  *referee     = (Player *) selected->data;
-      guint32  referee_ref = referee->GetRef ();
+    GList   *selected    = GetSelectedPlayers ();
+    Player  *referee     = (Player *) selected->data;
+    guint32  referee_ref = referee->GetRef ();
 
-      gtk_selection_data_set (data,
-                              gtk_selection_data_get_target (data),
-                              32,
-                              (guchar *) &referee_ref,
-                              sizeof (referee_ref));
-    }
+    gtk_selection_data_set (data,
+                            gtk_selection_data_get_target (data),
+                            32,
+                            (guchar *) &referee_ref,
+                            sizeof (referee_ref));
   }
 
   // --------------------------------------------------------------------------------

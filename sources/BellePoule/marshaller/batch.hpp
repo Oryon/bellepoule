@@ -85,7 +85,6 @@ namespace Marshaller
       guint         _id;
       Competition  *_competition;
       GtkListStore *_job_store;
-      guint32       _dnd_key;
       gchar        *_name;
       Listener     *_listener;
       GList        *_scheduled_list;

@@ -318,12 +318,16 @@ namespace Marshaller
           if (slot)
           {
             _referee_details = new JobDetails (this,
-                                               slot->GetRefereeList ());
+                                               slot->GetRefereeList (),
+                                               job,
+                                               TRUE);
           }
           else
           {
             _referee_details = new JobDetails (this,
-                                               NULL);
+                                               NULL,
+                                               job,
+                                               TRUE);
           }
 
           Plug (_referee_details,
@@ -337,7 +341,9 @@ namespace Marshaller
 
         {
           _fencer_details  = new JobDetails (this,
-                                             job->GetFencerList ());
+                                             job->GetFencerList (),
+                                             job,
+                                             FALSE);
 
           Plug (_fencer_details,
                 _glade->GetWidget ("fencer_detail_hook"));

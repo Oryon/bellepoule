@@ -206,6 +206,13 @@ class Module : public virtual Object
                                    gint            x,
                                    gint            y,
                                    guint           time);
+    virtual void OnDragDataReceived (GtkWidget        *widget,
+                                     GdkDragContext   *drag_context,
+                                     gint              x,
+                                     gint              y,
+                                     GtkSelectionData *data,
+                                     guint             info,
+                                     guint             time);
     virtual void OnDragLeave (GtkWidget      *widget,
                               GdkDragContext *drag_context,
                               guint           time);
@@ -216,6 +223,9 @@ class Module : public virtual Object
                                  guint           time);
 
   private: // https://wiki.gnome.org/Newcomers/DragNDropTutorial
+    virtual Object *GetDropObjectFromRef (guint32 ref,
+                                          guint   key);
+
     static void DragDataGet (GtkWidget        *widget,
                              GdkDragContext   *drag_context,
                              GtkSelectionData *data,
@@ -261,11 +271,4 @@ class Module : public virtual Object
                                   guint             info,
                                   guint             time,
                                   Module           *owner);
-    virtual void OnDragDataReceived (GtkWidget        *widget,
-                                     GdkDragContext   *drag_context,
-                                     gint              x,
-                                     gint              y,
-                                     GtkSelectionData *data,
-                                     guint             info,
-                                     guint             time);
 };

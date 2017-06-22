@@ -630,24 +630,6 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule::OnDragDataReceived (GtkWidget        *widget,
-                                       GdkDragContext   *drag_context,
-                                       gint              x,
-                                       gint              y,
-                                       GtkSelectionData *data,
-                                       guint             key,
-                                       guint             time)
-{
-  if (data && (gtk_selection_data_get_length (data) >= 0))
-  {
-    guint32 *ref = (guint32 *) gtk_selection_data_get_data (data);
-
-    _dnd_config->SetFloatingObject (GetDropObjectFromRef (*ref,
-                                                          key));
-  }
-}
-
-// --------------------------------------------------------------------------------
 gboolean CanvasModule::OnDragDrop (GtkWidget      *widget,
                                    GdkDragContext *drag_context,
                                    gint            x,
@@ -893,13 +875,6 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
   }
 
   return TRUE;
-}
-
-// --------------------------------------------------------------------------------
-Object *CanvasModule::GetDropObjectFromRef (guint32 ref,
-                                            guint   key)
-{
-  return NULL;
 }
 
 // --------------------------------------------------------------------------------

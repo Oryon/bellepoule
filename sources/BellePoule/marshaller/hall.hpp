@@ -93,6 +93,8 @@ namespace Marshaller
       Listener    *_listener;
       guint        _redraw_timeout;
       Job         *_floating_job;
+      guint        _referee_key;
+      guint        _job_key;
 
       ~Hall ();
 

@@ -274,6 +274,20 @@ void Module::OnDragDataReceived (GtkWidget        *widget,
                                  guint             key,
                                  guint             time)
 {
+  if (data && (gtk_selection_data_get_length (data) >= 0))
+  {
+    guint32 *ref = (guint32 *) gtk_selection_data_get_data (data);
+
+    _dnd_config->SetFloatingObject (GetDropObjectFromRef (*ref,
+                                                          key));
+  }
+}
+
+// --------------------------------------------------------------------------------
+Object *Module::GetDropObjectFromRef (guint32 ref,
+                                      guint   key)
+{
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------

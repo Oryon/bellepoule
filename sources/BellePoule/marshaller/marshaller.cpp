@@ -64,6 +64,8 @@ namespace Marshaller
       Plug (_hall,
             _glade->GetWidget ("hall_viewport"));
     }
+
+    JobDetails::SetRefereePool (_referee_pool);
   }
 
   // --------------------------------------------------------------------------------

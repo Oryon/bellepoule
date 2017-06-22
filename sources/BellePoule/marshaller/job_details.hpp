@@ -20,6 +20,8 @@
 
 namespace Marshaller
 {
+  class RefereePool;
+
   class JobDetails : public People::PlayersList
   {
     public:
@@ -30,15 +32,43 @@ namespace Marshaller
 
     public:
       JobDetails (Listener *listener,
-                  GList    *player_list);
+                  GList    *player_list,
+                  Job      *job,
+                  gboolean  dnd_capable);
+
+      static void SetRefereePool (RefereePool *referee_pool);
 
     private:
-      Listener *_listener;
+      static RefereePool *_referee_pool;
+      Listener           *_listener;
+      Job                *_job;
 
       void OnPlugged ();
 
       virtual ~JobDetails ();
 
       void OnPlayerRemoved (Player *player);
+
+    private:
+      void OnDragDataGet (GtkWidget        *widget,
+                          GdkDragContext   *drag_context,
+                          GtkSelectionData *selection_data,
+                          guint             key,
+                          guint             time);
+
+      Object *GetDropObjectFromRef (guint32 ref,
+                                    guint   key);
+
+      gboolean OnDragMotion (GtkWidget      *widget,
+                             GdkDragContext *drag_context,
+                             gint            x,
+                             gint            y,
+                             guint           time);
+
+      gboolean OnDragDrop (GtkWidget      *widget,
+                           GdkDragContext *drag_context,
+                           gint            x,
+                           gint            y,
+                           guint           time);
   };
 }

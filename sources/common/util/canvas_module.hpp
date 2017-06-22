@@ -76,14 +76,6 @@ class CanvasModule : public Module
     virtual gboolean DroppingIsAllowed (Object   *floating_object,
                                         DropZone *in_zone);
 
-    virtual void OnDragDataReceived (GtkWidget        *widget,
-                                     GdkDragContext   *drag_context,
-                                     gint              x,
-                                     gint              y,
-                                     GtkSelectionData *data,
-                                     guint             key,
-                                     guint             time);
-
   public:
     void EnableDndOnCanvas ();
 
@@ -92,9 +84,6 @@ class CanvasModule : public Module
                             DropZone      *drop_zone);
 
   private:
-    virtual Object *GetDropObjectFromRef (guint32 ref,
-                                          guint   key);
-
     virtual void DragObject (Object   *object,
                              DropZone *from_zone);
 
