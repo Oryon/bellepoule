@@ -179,25 +179,21 @@ namespace Marshaller
       {
         guint response = gtk_dialog_run (GTK_DIALOG (_dialog));
 
-        if (response == 1)
+        if (_current_job)
         {
-          if (_current_job)
-          {
-            Job   *job_to_delete = (Job *) _current_job->data;
-            Batch *batch         = job_to_delete->GetBatch ();
-            Slot  *slot          = job_to_delete->GetSlot ();
+          Job *selected_job = (Job *) _current_job->data;
 
-            slot->RemoveJob (job_to_delete);
+          if (response == 1)
+          {
+            Batch *batch = selected_job->GetBatch ();
+            Slot  *slot  = selected_job->GetSlot ();
+
+            slot->RemoveJob (selected_job);
             _listener->OnJobBoardUpdated (batch->GetCompetition ());
           }
-        }
-        else if (response == 2)
-        {
-          if (_current_job)
+          else if (response == 2)
           {
-            Job *job_to_move = (Job *) _current_job->data;
-
-            _listener->OnJobMove (job_to_move);
+            _listener->OnJobMove (selected_job);
           }
         }
       }

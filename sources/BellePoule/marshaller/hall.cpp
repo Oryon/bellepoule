@@ -594,7 +594,10 @@ namespace Marshaller
   {
     if (_floating_job)
     {
+      _floating_job->RemoveData (this,
+                                 "floating_referees");
       _floating_job = NULL;
+
       _listener->OnUnBlur ();
       gtk_widget_set_sensitive (_glade->GetWidget ("toolbar"),
                                 TRUE);
@@ -717,19 +720,10 @@ namespace Marshaller
 
     if (_floating_job && (piste->Blured () == FALSE))
     {
-      GList *referees;
-
-      {
-        Slot *slot = _floating_job->GetSlot ();
-
-        referees = g_list_copy (slot->GetRefereeList ());
-        slot->RemoveJob (_floating_job);
-      }
-
       {
         GTimeSpan  duration = _floating_job->GetRegularDuration ();
         GDateTime *cursor   = _timeline->RetreiveCursorTime ();
-        GList     *current  = referees;
+        GList     *current  = (GList *) _floating_job->GetPtrData (this, "floating_referees");
         Slot      *slot;
 
         slot = piste->GetFreeSlot (cursor,
@@ -751,11 +745,6 @@ namespace Marshaller
         }
 
         g_date_time_unref (cursor);
-      }
-
-      if (referees)
-      {
-        g_list_free (referees);
       }
 
       _timeline->Redraw ();
@@ -1156,11 +1145,9 @@ namespace Marshaller
           }
           else
           {
-            Slot      *source_slot     = _floating_job->GetSlot ();
-            GList     *current_referee = source_slot->GetRefereeList ();
+            GList     *current_referee = (GList *) _floating_job->GetPtrData (this, "floating_referees");
             GTimeSpan  duration        = _floating_job->GetRegularDuration ();
-            Slot      *dest_slot       = piste->GetFreeSlot (rounded_cursor,
-                                                             duration);
+            Slot      *dest_slot       = piste->GetFreeSlot (rounded_cursor, duration);
 
             if (dest_slot == FALSE)
             {
@@ -1209,6 +1196,19 @@ namespace Marshaller
     CancelSelection ();
 
     _floating_job = job;
+
+    {
+      Slot  *slot  = _floating_job->GetSlot ();
+      Batch *batch = _floating_job->GetBatch ();
+
+      _floating_job->SetData (this,
+                              "floating_referees",
+                              g_list_copy (slot->GetRefereeList ()),
+                              GDestroyNotify (g_list_free));
+
+      slot->RemoveJob (_floating_job);
+      OnJobBoardUpdated (batch->GetCompetition ());
+    }
 
     gtk_widget_set_sensitive (_glade->GetWidget ("toolbar"),
                               FALSE);
