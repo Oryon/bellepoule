@@ -52,9 +52,9 @@ namespace Marshaller
 
     _assign_button = _glade->GetWidget ("assign_toolbutton");
     _cancel_button = _glade->GetWidget ("cancel_toolbutton");
-    _spread_button = _glade->GetWidget ("spread_toolbutton");
 
-    gtk_widget_set_sensitive (_spread_button, FALSE);
+    _competition->SetBatchStatus (this,
+                                  DISCLOSED);
 
     _id = id;
 
@@ -169,7 +169,6 @@ namespace Marshaller
   {
     gtk_widget_set_sensitive (_assign_button, TRUE);
     gtk_widget_set_sensitive (_cancel_button, TRUE);
-    gtk_widget_set_sensitive (_spread_button, FALSE);
 
     if (_pending_list == NULL)
     {
@@ -177,13 +176,25 @@ namespace Marshaller
 
       if (_loading == FALSE)
       {
-        gtk_widget_set_sensitive (_spread_button, TRUE);
+        _competition->SetBatchStatus (this,
+                                      CONCEALED);
+      }
+      else
+      {
+        _competition->SetBatchStatus (this,
+                                      DISCLOSED);
       }
     }
-    else if (_loading == FALSE)
+    else
     {
-      RecallList (_scheduled_list);
-      RecallList (_pending_list);
+      if (_loading == FALSE)
+      {
+        RecallList (_scheduled_list);
+        RecallList (_pending_list);
+      }
+
+      _competition->SetBatchStatus (this,
+                                    UNCOMPLETED);
     }
 
     if (_scheduled_list == NULL)
@@ -574,7 +585,8 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    gtk_widget_set_sensitive (_spread_button, FALSE);
+    _competition->SetBatchStatus (this,
+                                  DISCLOSED);
   }
 
   // --------------------------------------------------------------------------------
@@ -621,14 +633,5 @@ namespace Marshaller
     Batch *b = dynamic_cast <Batch *> (owner);
 
     b->OnCancelAssign ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_spread_toolbutton_clicked (GtkToolButton *widget,
-                                                                Object        *owner)
-  {
-    Batch *b = dynamic_cast <Batch *> (owner);
-
-    b->OnValidateAssign ();
   }
 }

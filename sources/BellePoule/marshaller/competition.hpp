@@ -60,6 +60,11 @@ namespace Marshaller
 
       gboolean BatchIsModifialble (Batch *batch);
 
+      void SetBatchStatus (Batch         *batch,
+                           Batch::Status  status);
+
+      void OnSpread ();
+
     private:
       guint            _id;
       GdkColor        *_gdk_color;
@@ -69,6 +74,8 @@ namespace Marshaller
       Batch::Listener *_batch_listener;
       GList           *_batches;
       Batch           *_current_batch;
+      GtkWidget       *_batch_image;
+      GtkWidget       *_spread_button;
 
       virtual ~Competition ();
 

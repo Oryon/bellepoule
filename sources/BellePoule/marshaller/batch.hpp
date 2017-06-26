@@ -38,6 +38,13 @@ namespace Marshaller
         virtual void     OnBatchAssignmentCancel  (Batch *batch) = 0;
       };
 
+      enum Status
+      {
+        UNCOMPLETED,
+        CONCEALED,
+        DISCLOSED
+      };
+
     public:
       Batch (guint        id,
              Competition *competition,
@@ -92,7 +99,6 @@ namespace Marshaller
       JobBoard     *_job_board;
       GtkWidget    *_assign_button;
       GtkWidget    *_cancel_button;
-      GtkWidget    *_spread_button;
       gboolean      _loading;
 
       virtual ~Batch ();

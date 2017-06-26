@@ -40,6 +40,12 @@ namespace Marshaller
     _batch_listener = listener;
 
     g_datalist_init (&_properties);
+
+    _batch_image   = _glade->GetWidget ("batch_image");
+    _spread_button = _glade->GetWidget ("spread_button");
+
+    gtk_widget_set_visible (_batch_image,   FALSE);
+    gtk_widget_set_visible (_spread_button, FALSE);
   }
 
   // --------------------------------------------------------------------------------
@@ -109,7 +115,7 @@ namespace Marshaller
     _weapon = message->GetString ("weapon");
 
     {
-      GtkWidget *tab   = _glade->GetWidget ("notebook_title");
+      GtkWidget *tab   = _glade->GetWidget ("color_box");
       gchar     *color = message->GetString ("color");
 
       gdk_color_parse (color,
@@ -200,7 +206,10 @@ namespace Marshaller
                                        node);
       }
 
-      SetCurrentBatch (NULL);
+      if (_current_batch == batch)
+      {
+        SetCurrentBatch (NULL);
+      }
 
       batch->Release ();
     }
@@ -324,5 +333,53 @@ namespace Marshaller
     }
 
     return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Competition::OnSpread ()
+  {
+    if (_current_batch)
+    {
+      _current_batch->OnValidateAssign ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Competition::SetBatchStatus (Batch         *batch,
+                                    Batch::Status  status)
+  {
+    if (batch == _current_batch)
+    {
+      if (status == Batch::UNCOMPLETED)
+      {
+        gtk_widget_set_visible (_batch_image,
+                                TRUE);
+        gtk_widget_set_visible (_spread_button,
+                                FALSE);
+      }
+      else if (status == Batch::CONCEALED)
+      {
+        gtk_widget_set_visible (_batch_image,
+                                FALSE);
+        gtk_widget_set_visible (_spread_button,
+                                TRUE);
+      }
+      else if (status == Batch::DISCLOSED)
+      {
+        gtk_widget_set_visible (_batch_image,
+                                FALSE);
+        gtk_widget_set_visible (_spread_button,
+                                FALSE);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_spread_button_clicked (GtkToolButton *widget,
+                                                            Object        *owner)
+  {
+    Competition *c = dynamic_cast <Competition *> (owner);
+
+    c->OnSpread ();
   }
 }
