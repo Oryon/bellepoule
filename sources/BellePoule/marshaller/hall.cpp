@@ -997,12 +997,18 @@ namespace Marshaller
           current_job = g_list_next (current_job);
         }
 
+        {
+          Job       *first = (Job *) job_list->data;
+          Slot      *slot  = first->GetSlot ();
+          GDateTime *start = slot->GetStartTime ();
+
+          _timeline->SetCursorTime (start);
+        }
+
         g_list_free (job_list);
         g_list_free (referee_list);
 
         _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
-        Redraw ();
-        OnTimelineCursorMoved ();
       }
 
       gtk_widget_hide (dialog);

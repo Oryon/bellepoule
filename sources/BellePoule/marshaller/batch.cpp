@@ -559,10 +559,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Batch::OnAssign ()
   {
-    if (_listener->OnBatchAssignmentRequest (this))
-    {
-      _job_board->Display ();
-    }
+    _listener->OnBatchAssignmentRequest (this);
   }
 
   // --------------------------------------------------------------------------------

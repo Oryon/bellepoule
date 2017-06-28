@@ -165,13 +165,13 @@ namespace Net
     }
 
     {
-      g_free (_role);
-      _role = NULL;
+      FreeFullGList (Partner, _partner_list);
+      _partner_list = NULL;
     }
 
     {
-      FreeFullGList (Partner, _partner_list);
-      _partner_list = NULL;
+      g_free (_role);
+      _role = NULL;
     }
   }
 
