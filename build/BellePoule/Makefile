@@ -291,6 +291,7 @@ prepare_resources:
 #	cp -rf ../../resources/translations/eu    $(PACKAGE)/$(RELEASE)/resources/translations
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade/images
 	cp -f ../../resources/glade/images/*.png   $(PACKAGE)/$(RELEASE)/resources/glade/images
+	cp -f ../../resources/glade/images/*.gif   $(PACKAGE)/$(RELEASE)/resources/glade/images
 	cp -f ../../resources/glade/images/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade/images
 	cp -f ../../resources/glade/*.glade $(PACKAGE)/$(RELEASE)/resources/glade
 	cp -rf ../../resources/countries      $(PACKAGE)/$(RELEASE)/resources/countries

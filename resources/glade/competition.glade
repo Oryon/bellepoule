@@ -3,6 +3,11 @@
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
   <!-- interface-local-resource-path images -->
+  <object class="GtkImage" id="apply_animation">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">images/apply.gif</property>
+  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <child>
@@ -92,17 +97,12 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkButton" id="spread_button">
+                    <property name="label" translatable="yes">Valider</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="image">apply_animation</property>
                     <signal name="clicked" handler="on_spread_button_clicked" swapped="no"/>
-                    <child>
-                      <object class="GtkImage" id="image2">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="pixbuf">images/high_speaker.png</property>
-                      </object>
-                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>

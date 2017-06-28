@@ -17,6 +17,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include "util/global.hpp"
 #include "util/player.hpp"
 #include "actors/player_factory.hpp"
 
@@ -40,6 +41,17 @@ namespace Marshaller
     _batch_listener = listener;
 
     g_datalist_init (&_properties);
+
+    {
+      gchar              *gif       = g_build_filename (Global::_share_dir, "resources", "glade", "images", "apply.gif", NULL);
+      GdkPixbufAnimation *animation = gdk_pixbuf_animation_new_from_file (gif, NULL);
+
+      gtk_image_set_from_animation (GTK_IMAGE (_glade->GetWidget ("apply_animation")),
+                                    animation);
+
+      g_free (gif);
+      g_object_unref (animation);
+    }
 
     _batch_image   = _glade->GetWidget ("batch_image");
     _spread_button = _glade->GetWidget ("spread_button");
