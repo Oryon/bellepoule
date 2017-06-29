@@ -113,6 +113,9 @@ namespace People
 
       virtual gboolean PlayerIsPrintable (Player *player);
 
+      virtual void RefreshAttendingDisplay ();
+
+
     private:
       Listener     *_listener;
       gboolean      _print_attending;
@@ -128,8 +131,6 @@ namespace People
                      const gchar *player_class_xml_tag,
                      const gchar *players_class_xml_tag,
                      Player      *owner = NULL);
-
-      void RefreshAttendingDisplay ();
 
       void OnPlugged ();
 

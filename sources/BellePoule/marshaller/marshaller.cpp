@@ -34,22 +34,26 @@ namespace Marshaller
 
     gtk_window_maximize (GTK_WINDOW (_glade->GetWidget ("root")));
 
-    {
-      GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("referee_notebook"));
-      GList       *current  = Weapon::GetList ();
+    _referee_notebook = GTK_NOTEBOOK (_glade->GetWidget ("referee_notebook"));
 
-      while (current)
+    {
+      GList *current = Weapon::GetList ();
+
+      for (guint page = 0 ; current; page++)
       {
         Weapon               *weapon   = (Weapon *) current->data;
-        People::RefereesList *list     = new People::RefereesList ();
+        People::RefereesList *list     = new People::RefereesList (this);
         GtkWidget            *viewport = gtk_viewport_new (NULL, NULL);
 
         list->SetWeapon (weapon);
+        list->SetData (this,
+                       "page",
+                       GUINT_TO_POINTER (page));
         _referee_pool->ManageList (list);
 
-        gtk_notebook_append_page (notebook,
+        gtk_notebook_append_page (_referee_notebook,
                                   viewport,
-                                  gtk_label_new (gettext (weapon->GetImage ())));
+                                  list->GetHeader ());
         Plug (list,
               viewport);
 
@@ -140,7 +144,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Marshaller::OnRefereeListExpand ()
+  void Marshaller::OnOpenCheckin (People::RefereesList *referee_list)
   {
     {
       GtkPaned      *paned      = GTK_PANED (_glade->GetWidget ("hpaned"));
@@ -152,7 +156,20 @@ namespace Marshaller
       gtk_paned_set_position (paned, allocation.width);
     }
 
+    gtk_notebook_set_current_page (_referee_notebook,
+                                   referee_list->GetIntData (this,
+                                                             "page"));
+
     _referee_pool->ExpandAll ();
+
+    gtk_notebook_set_show_tabs (_referee_notebook,
+                                FALSE);
+    gtk_widget_set_visible (_glade->GetWidget ("hall_viewport"),
+                            FALSE);
+    gtk_widget_set_visible (_glade->GetWidget ("batch_vbox"),
+                            FALSE);
+    gtk_widget_set_visible (_glade->GetWidget ("collapse"),
+                            TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -165,6 +182,15 @@ namespace Marshaller
     }
 
     _referee_pool->CollapseAll ();
+
+    gtk_notebook_set_show_tabs (_referee_notebook,
+                                TRUE);
+    gtk_widget_set_visible (_glade->GetWidget ("hall_viewport"),
+                            TRUE);
+    gtk_widget_set_visible (_glade->GetWidget ("batch_vbox"),
+                            TRUE);
+    gtk_widget_set_visible (_glade->GetWidget ("collapse"),
+                            FALSE);
   }
 
   // --------------------------------------------------------------------------------
@@ -196,7 +222,7 @@ namespace Marshaller
 
       if (g_strcmp0 (weapon->GetXmlImage (), weapon_code) == 0)
       {
-        gtk_notebook_set_current_page (GTK_NOTEBOOK (_glade->GetWidget ("referee_notebook")),
+        gtk_notebook_set_current_page (_referee_notebook,
                                        i);
         break;
       }
@@ -218,18 +244,11 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_edit_referees_toggled (GtkToggleButton *togglebutton,
-                                                            Object          *owner)
+  extern "C" G_MODULE_EXPORT void on_collapse_clicked (GtkToolButton *widget,
+                                                       Object        *owner)
   {
     Marshaller *m = dynamic_cast <Marshaller *> (owner);
 
-    if (gtk_toggle_button_get_active (togglebutton))
-    {
-      m->OnRefereeListExpand ();
-    }
-    else
-    {
-      m->OnRefereeListCollapse ();
-    }
+    m->OnRefereeListCollapse ();
   }
 }

@@ -30,7 +30,13 @@ namespace People
   class RefereesList : public People::Checkin
   {
     public:
-      RefereesList ();
+      struct Listener
+      {
+        virtual void OnOpenCheckin (RefereesList *referee_list) = 0;
+      };
+
+    public:
+      RefereesList (Listener *listener = NULL);
 
       void SetWeapon (Weapon *weapon);
 
@@ -44,13 +50,20 @@ namespace People
 
       gboolean IsCollapsed ();
 
+      GtkWidget *GetHeader ();
+
+      void OnCheckinClicked ();
+
     protected:
       virtual ~RefereesList ();
 
     private:
-      Filter  *_expanded_filter;
-      Filter  *_collapsed_filter;
-      Weapon  *_weapon;
+      Filter   *_expanded_filter;
+      Filter   *_collapsed_filter;
+      Weapon   *_weapon;
+      Listener *_listener;
+
+      void RefreshAttendingDisplay ();
 
       void Monitor (Player *referee);
 

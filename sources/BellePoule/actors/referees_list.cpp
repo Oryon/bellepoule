@@ -26,17 +26,19 @@
 #include "util/player.hpp"
 #include "application/weapon.hpp"
 #include "referee.hpp"
+#include "tally_counter.hpp"
 
 #include "referees_list.hpp"
 
 namespace People
 {
   // --------------------------------------------------------------------------------
-  RefereesList::RefereesList ()
+  RefereesList::RefereesList (Listener *listener)
     : Object ("RefereesList"),
       People::Checkin ("referees.glade", "Referee", NULL)
   {
-    _weapon = NULL;
+    _weapon   = NULL;
+    _listener = listener;
 
     {
       GSList *attr_list;
@@ -107,6 +109,8 @@ namespace People
     // Popup menu
     SetPopupVisibility ("PlayersList::WriteAction",
                         TRUE);
+
+    RefreshAttendingDisplay ();
   }
 
   // --------------------------------------------------------------------------------
@@ -116,6 +120,12 @@ namespace People
     _expanded_filter->Release  ();
 
     Object::TryToRelease (_weapon);
+  }
+
+  // --------------------------------------------------------------------------------
+  GtkWidget *RefereesList::GetHeader ()
+  {
+    return _glade->GetWidget ("tab_header");
   }
 
   // --------------------------------------------------------------------------------
@@ -202,6 +212,9 @@ namespace People
   {
     _weapon = weapon;
     _weapon->Retain ();
+
+    gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("weapon")),
+                        gettext (weapon->GetImage ()));
   }
 
   // --------------------------------------------------------------------------------
@@ -402,5 +415,43 @@ namespace People
                         TRUE);
 
     OnAttrListUpdated ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::OnCheckinClicked ()
+  {
+    if (_listener)
+    {
+      _listener->OnOpenCheckin (this);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::RefreshAttendingDisplay ()
+  {
+    Checkin::RefreshAttendingDisplay ();
+
+    {
+      gchar *text;
+
+      text = g_strdup_printf ("%d", _tally_counter->GetPresentsCount ());
+      gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("attending_tab")),
+                          text);
+      g_free (text);
+
+      text = g_strdup_printf ("%d", _tally_counter->GetAbsentsCount ());
+      gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("absent_tab")),
+                          text);
+      g_free (text);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_checkin_clicked (GtkToolButton *widget,
+                                                      Object        *owner)
+  {
+    RefereesList *rl = dynamic_cast <RefereesList *> (owner);
+
+    rl->OnCheckinClicked ();
   }
 }

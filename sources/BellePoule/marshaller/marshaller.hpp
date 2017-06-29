@@ -17,6 +17,7 @@
 #pragma once
 
 #include "util/module.hpp"
+#include "actors/referees_list.hpp"
 #include "referee_pool.hpp"
 #include "hall.hpp"
 
@@ -24,6 +25,7 @@ namespace Marshaller
 {
   class Marshaller :
     public Module,
+    public People::RefereesList::Listener,
     public Hall::Listener
   {
     public:
@@ -35,13 +37,12 @@ namespace Marshaller
 
       void OnExposeWeapon (const gchar *weapon_code);
 
-      void OnRefereeListExpand ();
-
       void OnRefereeListCollapse ();
 
     private:
       Hall        *_hall;
       RefereePool *_referee_pool;
+      GtkNotebook *_referee_notebook;
 
       virtual ~Marshaller ();
 
@@ -50,5 +51,7 @@ namespace Marshaller
       void OnBlur ();
 
       void OnUnBlur ();
+
+      void OnOpenCheckin (People::RefereesList *referee_list);
   };
 }
