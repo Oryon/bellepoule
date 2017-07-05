@@ -78,16 +78,16 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Icons]
-Name: "{userprograms}\{#PRODUCT}\marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exe"
-Name: "{userprograms}\{#PRODUCT}\supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exe"
+Name: "{userprograms}\{#PRODUCT}\bellepoule-2D (beta)"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
+Name: "{userprograms}\{#PRODUCT}\bellepoule (beta)"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
 Name: "{userprograms}\{#PRODUCT}\Uninstall {#PRODUCT}"; Filename: "{uninstallexe}"
-Name: "{commonprograms}\{#PRODUCT}\marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exe"
-Name: "{commonprograms}\{#PRODUCT}\supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exe"
+Name: "{commonprograms}\{#PRODUCT}\bellepoule-2D (beta)"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
+Name: "{commonprograms}\{#PRODUCT}\bellepoule (beta)"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
 Name: "{commonprograms}\{#PRODUCT}\Uninstall {#PRODUCT}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\{#PRODUCT}-marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: desktopicon; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exe"
-Name: "{userdesktop}\{#PRODUCT}-supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: desktopicon; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exe"
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#PRODUCT}-marshaller"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\bin\{#PRODUCT}-marshaller.exe"
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#PRODUCT}-supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exe"
+Name: "{userdesktop}\bellepoule-2D (beta)"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: desktopicon; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
+Name: "{userdesktop}\bellepoule (beta)"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: desktopicon; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\bellepoule-2D (beta)"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\bellepoule (beta)"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
 
 [Files]
 Source: "exe\bellepoulebeta-marshaller.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -212,7 +212,8 @@ Source: "..\..\..\resources\glade\images\*.gif"; DestDir: "{app}\share\{#PRODUCT
 Source: "..\..\..\resources\glade\images\*.jpg"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\images\"; Flags: ignoreversion
 Source: "..\..\..\resources\glade\*.glade"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\"; Flags: ignoreversion
 Source: "..\..\..\resources\countries\*"; DestDir: "{app}\share\{#PRODUCT}\resources\countries\"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\glade\images\exe.ico"; DestDir: "{app}\share\{#PRODUCT}\resources\"; Flags: ignoreversion
+Source: "..\..\..\resources\glade\images\supervisor.ico"; DestDir: "{app}\share\{#PRODUCT}\resources\"; Flags: ignoreversion
+Source: "..\..\..\resources\glade\images\marshaller.ico"; DestDir: "{app}\share\{#PRODUCT}\resources\"; Flags: ignoreversion
 
 Source: "..\..\..\resources\localized_data\*"; DestDir: "{app}\share\{#PRODUCT}\resources\localized_data\"; Flags: ignoreversion recursesubdirs
 

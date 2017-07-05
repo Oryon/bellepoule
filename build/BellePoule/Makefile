@@ -265,7 +265,8 @@ prepare_www:
 
 prepare_windows_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade/images
-	cp -f ../../resources/glade/images/exe.ico $(PACKAGE)/$(RELEASE)/resources/glade/images
+	cp -f ../../resources/glade/images/supervisor.ico $(PACKAGE)/$(RELEASE)/resources/glade/images
+	cp -f ../../resources/glade/images/marshaller.ico $(PACKAGE)/$(RELEASE)/resources/glade/images
 	ln -s $(MINGW)/bin/*dll $(PACKAGE)/$(RELEASE)
 
 prepare_resources:
@@ -335,9 +336,11 @@ prepare_desktop:
 	cp -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
 	sed -i 's/__EXE__/marshaller/g'     $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
+	sed -i 's/__NAME__/bellepoule-2D (beta)/g'     $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
 	cp -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
 	sed -i 's/__EXE__/supervisor/g'     $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
+	sed -i 's/__NAME__/bellepoule (beta)/g'    $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
 	rm -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template
 
 build:   $(build_staging)
