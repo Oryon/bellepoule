@@ -41,7 +41,7 @@
 #include "application.hpp"
 
 // --------------------------------------------------------------------------------
-Application::Application (const gchar   *config_file,
+Application::Application (const gchar   *role,
                           guint          http_port,
                           int           *argc,
                           char        ***argv)
@@ -58,7 +58,7 @@ Application::Application (const gchar   *config_file,
             "0",
             TRUE);
 
-  _role = g_strdup (config_file);
+  _role = g_strdup (role);
 
   // g_mem_set_vtable (glib_mem_profiler_table);
 
@@ -125,7 +125,7 @@ Application::Application (const gchar   *config_file,
 
   curl_global_init (CURL_GLOBAL_ALL);
 
-  Global::_user_config = new UserConfig (config_file);
+  Global::_user_config = new UserConfig ("BellePoule");
 
   {
     _version_downloader = new Net::Downloader ("_version_downloader",
@@ -715,6 +715,12 @@ gboolean Application::IsCsvReady (AttributeDesc *desc)
 }
 
 // --------------------------------------------------------------------------------
+void Application::OnQuit (GtkWindow *window)
+{
+  gtk_main_quit ();
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *menuitem,
                                                                   Object      *owner)
 {
@@ -767,7 +773,8 @@ extern "C" G_MODULE_EXPORT void on_about_menuitem_activate (GtkWidget *w,
 extern "C" G_MODULE_EXPORT void on_user_manual_activate (GtkWidget *w,
                                                          Object    *owner)
 {
-  Application *a = dynamic_cast <Application *> (owner);
+  Application *a = (Application *) owner->GetPtrData (NULL,
+                                                      "application");
 
   a->OnOpenUserManual ();
 }
@@ -792,26 +799,10 @@ extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
                                                           GdkEvent  *event,
                                                           Object    *owner)
 {
-  GtkWidget *dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gtk_widget_get_toplevel (w)),
-                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                          GTK_MESSAGE_QUESTION,
-                                                          GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>Do you really want to quit BellePoule</big></b>"));
+  Application *a = (Application *) owner->GetPtrData (NULL,
+                                                      "application");
 
-  gtk_window_set_title (GTK_WINDOW (dialog),
-                        gettext ("Quit BellePoule?"));
-
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            gettext ("All the unsaved competions will be lost."));
-
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
-  {
-    gtk_main_quit ();
-  }
-  else
-  {
-    gtk_widget_destroy (dialog);
-  }
+  a->OnQuit (GTK_WINDOW (gtk_widget_get_toplevel (w)));
 
   return TRUE;
 }

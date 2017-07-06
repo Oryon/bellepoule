@@ -68,6 +68,9 @@ namespace Marshaller
     _marshaller = new Marshaller ();
 
     _main_module = _marshaller;
+    _main_module->SetData (NULL,
+                           "application",
+                           this);
 
     Application::Start (argc,
                         argv);

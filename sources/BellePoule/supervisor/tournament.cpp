@@ -1345,15 +1345,6 @@ extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_save_menuitem_activate (GtkWidget *w,
-                                                           Object    *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->OnSave ();
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_example_menuitem_activate (GtkWidget *w,
                                                               Object    *owner)
 {

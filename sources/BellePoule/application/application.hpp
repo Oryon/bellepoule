@@ -38,10 +38,12 @@ class Application :
 
     void OnOpenUserManual ();
 
+    virtual void OnQuit (GtkWindow *window);
+
   protected:
     Module *_main_module;
 
-    Application (const gchar   *config_file,
+    Application (const gchar   *role,
                  guint          http_port,
                  int           *argc,
                  char        ***argv);

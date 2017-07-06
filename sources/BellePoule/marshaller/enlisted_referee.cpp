@@ -74,18 +74,16 @@ namespace Marshaller
   gboolean EnlistedReferee::IsAvailableFor (Slot      *slot,
                                             GTimeSpan  duration)
   {
-    gboolean  available      = FALSE;
-    Slot     *available_slot = GetAvailableSlotFor (slot,
-                                                    duration);
+    Slot *available_slot = GetAvailableSlotFor (slot,
+                                                duration);
 
-    available = (available_slot != NULL);
     if (available_slot)
     {
-      available = TRUE;
       available_slot->Release ();
+      return TRUE;
     }
 
-    return available;
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
