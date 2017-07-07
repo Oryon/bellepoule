@@ -66,6 +66,14 @@ namespace Marshaller
     _lasso = new Lasso ();
     _clock = new Clock (this);
 
+    {
+      gchar *json = g_strdup_printf ("%s/BellePoule/hall.json", g_get_user_config_dir ());
+
+      _json_file = new JsonFile (this,
+                                 json);
+      g_free (json);
+    }
+
     SetToolBarSensitivity ();
 
     OnTimelineCursorMoved ();
@@ -74,6 +82,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Hall::~Hall ()
   {
+    _json_file->Save ();
+
     StopRedraw ();
 
     JobBoard::SetTimeLine (NULL,
@@ -117,6 +127,7 @@ namespace Marshaller
       EnableDndOnCanvas ();
     }
 
+    if (_json_file->Load () == FALSE)
     {
       AddPiste ();
       AddPiste ();
@@ -134,6 +145,58 @@ namespace Marshaller
     }
 
     RestoreZoomFactor ();
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Hall::ReadJson (JsonReader *reader)
+  {
+    gboolean result = FALSE;
+
+    if (json_reader_read_member (reader, "pistes"))
+    {
+      guint count = json_reader_count_elements (reader);
+
+      for (guint i = 0; i < count; i++)
+      {
+        Piste *piste  = new Piste (GetRootItem (), this, this);
+
+        json_reader_read_element (reader, i);
+        piste->ReadJson (reader);
+        json_reader_end_element (reader);
+
+        _piste_list = g_list_insert_sorted (_piste_list,
+                                            piste,
+                                            GCompareFunc (Piste::CompareId));
+      }
+
+      result = TRUE;
+    }
+
+    json_reader_end_member (reader);
+
+    return result;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::FeedJsonBuilder (JsonBuilder *builder)
+  {
+    json_builder_set_member_name (builder, "pistes");
+    json_builder_begin_array     (builder);
+
+    {
+      GList *current = _piste_list;
+
+      while (current)
+      {
+        Piste *piste = (Piste *) current->data;
+
+        piste->FeedJsonBuilder (builder);
+
+        current = g_list_next (current);
+      }
+    }
+
+    json_builder_end_array  (builder);
   }
 
   // --------------------------------------------------------------------------------
@@ -400,9 +463,7 @@ namespace Marshaller
   Piste *Hall::AddPiste (gdouble tx, gdouble ty)
   {
     GList *anchor = g_list_last (_piste_list);
-    Piste *piste  = new Piste (GetRootItem (), this);
-
-    piste->SetListener (this);
+    Piste *piste  = new Piste (GetRootItem (), this, this);
 
     _drop_zones = g_slist_append (_drop_zones,
                                   piste);
@@ -766,6 +827,12 @@ namespace Marshaller
     piste->UnSelect ();
 
     SetToolBarSensitivity ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::OnPisteDirty ()
+  {
+    _json_file->MakeDirty ();
   }
 
   // --------------------------------------------------------------------------------

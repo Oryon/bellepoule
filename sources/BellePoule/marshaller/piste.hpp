@@ -17,6 +17,7 @@
 #pragma once
 
 #include <goocanvas.h>
+#include <json-glib/json-glib.h>
 
 #include "util/drop_zone.hpp"
 #include "slot.hpp"
@@ -41,16 +42,20 @@ namespace Marshaller
                                          GdkEventButton *event) = 0;
         virtual void OnPisteMotionEvent (Piste          *piste,
                                          GdkEventMotion *event) = 0;
+        virtual void OnPisteDirty () = 0;
       };
 
     public:
       Piste (GooCanvasItem *parent,
-             Module        *container);
+             Module        *container,
+             Listener      *listener);
+
+      gboolean ReadJson (JsonReader *reader);
+
+      void FeedJsonBuilder (JsonBuilder *builder);
 
       void ConvertFromPisteSpace (gdouble *x,
                                   gdouble *y);
-
-      void SetListener (Listener *listener);
 
       Slot *GetFreeSlot (GDateTime *from,
                          GTimeSpan  duration);
@@ -103,6 +108,9 @@ namespace Marshaller
       static const gdouble _W;
       static const gdouble _H;
 
+      static gint CompareId (Piste *a,
+                             Piste *b);
+
     private:
       static const gdouble _BORDER_W;
       static const gdouble _RESOLUTION;
@@ -147,6 +155,8 @@ namespace Marshaller
       void  OnSlotLocked  (Slot *slot);
 
       GList *GetSlots ();
+
+      void MakeDirty ();
 
       static gint CompareJob (Job *a,
                               Job *b);

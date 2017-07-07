@@ -208,16 +208,16 @@
 		<Unit filename="../../sources/BellePoule/marshaller/batch.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/marshaller/competition.cpp">
-			<Option target="Marshaller_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/marshaller/competition.hpp">
-			<Option target="Marshaller_Debug" />
-		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/clock.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/clock.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/competition.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/competition.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/enlisted_referee.cpp">
@@ -725,6 +725,12 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/util/global.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/json_file.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/json_file.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/util/module.cpp">

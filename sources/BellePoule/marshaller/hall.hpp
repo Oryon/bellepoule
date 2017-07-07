@@ -17,6 +17,7 @@
 #pragma once
 
 #include "util/canvas_module.hpp"
+#include "util/json_file.hpp"
 #include "network/message.hpp"
 #include "piste.hpp"
 #include "batch.hpp"
@@ -37,6 +38,7 @@ namespace Marshaller
     public Timeline::Listener,
     public JobBoard::Listener,
     public Clock::Listener,
+    public JsonFile::Listener,
     public DndConfig::Listener
   {
     public:
@@ -95,6 +97,7 @@ namespace Marshaller
       Job         *_floating_job;
       guint        _referee_key;
       guint        _job_key;
+      JsonFile    *_json_file;
 
       ~Hall ();
 
@@ -151,6 +154,8 @@ namespace Marshaller
       void OnPisteMotionEvent (Piste          *piste,
                                GdkEventMotion *event);
 
+      void OnPisteDirty ();
+
       gboolean OnBatchAssignmentRequest (Batch *batch);
 
       void OnBatchAssignmentCancel (Batch *batch);
@@ -188,5 +193,9 @@ namespace Marshaller
                                GtkSelectionData *data,
                                guint             key,
                                guint             time);
+
+      void FeedJsonBuilder (JsonBuilder *builder);
+
+      gboolean ReadJson (JsonReader *reader);
   };
 }

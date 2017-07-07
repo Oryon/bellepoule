@@ -35,7 +35,8 @@ namespace Marshaller
 
   // --------------------------------------------------------------------------------
   Piste::Piste (GooCanvasItem *parent,
-                Module        *container)
+                Module        *container,
+                Listener      *listener)
     : DropZone (container)
   {
     _button_press_time = 0;
@@ -45,6 +46,8 @@ namespace Marshaller
     _horizontal = TRUE;
     _listener   = NULL;
     _slots      = NULL;
+
+    _listener = listener;
 
     _job_board = new JobBoard ();
 
@@ -212,12 +215,91 @@ namespace Marshaller
     }
 
     _job_board->Release ();
+
+    _listener->OnPisteDirty ();
   }
 
   // --------------------------------------------------------------------------------
-  void Piste::SetListener (Listener *listener)
+  gint Piste::CompareId (Piste *a,
+                         Piste *b)
   {
-    _listener = listener;
+    return a->_id >= b->_id;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Piste::ReadJson (JsonReader *reader)
+  {
+    gint            x;
+    gint            y;
+    GooCanvasBounds bounds;
+
+    goo_canvas_item_get_bounds (_root_item,
+                                &bounds);
+
+    json_reader_read_member (reader, "id");
+    SetId (json_reader_get_int_value (reader));
+    json_reader_end_member (reader);
+
+    json_reader_read_member (reader, "blocked");
+    Block (json_reader_get_int_value (reader));
+    json_reader_end_member (reader);
+
+    json_reader_read_member (reader, "x");
+    x = json_reader_get_int_value (reader);
+    json_reader_end_member (reader);
+
+    json_reader_read_member (reader, "y");
+    y = json_reader_get_int_value (reader);
+    json_reader_end_member (reader);
+
+    Translate (x - bounds.x1,
+               y - bounds.y1);
+
+    json_reader_read_member (reader, "rotation");
+    if (json_reader_get_int_value (reader) == 90)
+    {
+      Rotate ();
+      Translate (_H,
+                 0.0);
+    }
+    json_reader_end_member (reader);
+
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Piste::FeedJsonBuilder (JsonBuilder *builder)
+  {
+    GooCanvasBounds bounds;
+
+    goo_canvas_item_get_bounds (_root_item,
+                                &bounds);
+
+    json_builder_begin_object (builder);
+
+    json_builder_set_member_name (builder, "id");
+    json_builder_add_int_value   (builder, _id);
+
+    json_builder_set_member_name (builder, "blocked");
+    json_builder_add_int_value   (builder, _blocked);
+
+    json_builder_set_member_name (builder, "x");
+    json_builder_add_int_value   (builder, bounds.x1);
+
+    json_builder_set_member_name (builder, "y");
+    json_builder_add_int_value   (builder, bounds.y1);
+
+    json_builder_set_member_name (builder, "rotation");
+    if (_horizontal)
+    {
+      json_builder_add_int_value (builder, 0);
+    }
+    else
+    {
+      json_builder_add_int_value (builder, 90);
+    }
+
+    json_builder_end_object (builder);
   }
 
   // --------------------------------------------------------------------------------
@@ -550,6 +632,8 @@ namespace Marshaller
                                  ty,
                                  -tx);
     }
+
+    _listener->OnPisteDirty ();
   }
 
   // --------------------------------------------------------------------------------
@@ -571,6 +655,8 @@ namespace Marshaller
                               0.0);
       _horizontal = TRUE;
     }
+
+    _listener->OnPisteDirty ();
   }
 
   // --------------------------------------------------------------------------------
@@ -693,6 +779,8 @@ namespace Marshaller
                     "visibility", GOO_CANVAS_ITEM_INVISIBLE,
                     NULL);
     }
+
+    _listener->OnPisteDirty ();
   }
 
   // --------------------------------------------------------------------------------
@@ -791,6 +879,8 @@ namespace Marshaller
     goo_canvas_item_translate (_root_item,
                                GetGridAdjustment (bounds.x1),
                                GetGridAdjustment (bounds.y1));
+
+    _listener->OnPisteDirty ();
   }
 
   // --------------------------------------------------------------------------------
@@ -807,6 +897,8 @@ namespace Marshaller
     goo_canvas_item_translate (_root_item,
                                to_bounds.x1 - bounds.x1,
                                (to_bounds.y1 + _H*1.5) - bounds.y1);
+
+    _listener->OnPisteDirty ();
   }
 
   // --------------------------------------------------------------------------------
