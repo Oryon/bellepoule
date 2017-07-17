@@ -34,7 +34,7 @@ class Category : public Object
     const gchar *GetXmlImage ();
 
   private:
-    static const guint _nb_category = 15;
+    static const guint _nb_category = 16;
     static const gchar *_display_image[_nb_category];
     static const gchar *_xml_image[_nb_category];
     static const gchar *_xml_alias[_nb_category];
