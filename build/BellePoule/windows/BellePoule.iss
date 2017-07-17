@@ -210,6 +210,7 @@ Source: "{#MINGW}\share\locale\eu\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{a
 Source: "..\..\..\resources\glade\images\*.png"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\images\"; Flags: ignoreversion
 Source: "..\..\..\resources\glade\images\*.gif"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\images\"; Flags: ignoreversion
 Source: "..\..\..\resources\glade\images\*.jpg"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\images\"; Flags: ignoreversion
+Source: "..\..\..\resources\glade\images\*.svg"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\images\"; Flags: ignoreversion
 Source: "..\..\..\resources\glade\*.glade"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\"; Flags: ignoreversion
 Source: "..\..\..\resources\countries\*"; DestDir: "{app}\share\{#PRODUCT}\resources\countries\"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\glade\images\supervisor.ico"; DestDir: "{app}\share\{#PRODUCT}\resources\"; Flags: ignoreversion
