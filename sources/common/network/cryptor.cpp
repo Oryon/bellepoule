@@ -43,7 +43,7 @@ namespace Net
                            guchar      **iv)
   {
     gchar          *base64_text;
-    EVP_CIPHER_CTX  cipher;
+    EVP_CIPHER_CTX *cipher = EVP_CIPHER_CTX_new ();
     guint           text_len    = strlen ((gchar *) text) + 1;
     guchar         *cipher_txt  = g_new (guchar, text_len + AES_BLOCK_SIZE);
     gint            written_len;
@@ -51,20 +51,20 @@ namespace Net
 
     *iv = GetIv ();
 
-    EVP_CIPHER_CTX_init (&cipher);
+    EVP_CIPHER_CTX_init (cipher);
 
-    EVP_EncryptInit_ex (&cipher,
+    EVP_EncryptInit_ex (cipher,
                         EVP_aes_256_cbc (),
                         NULL,
                         (guchar *) key,
                         *iv);
 
-    EVP_EncryptUpdate (&cipher,
+    EVP_EncryptUpdate (cipher,
                        cipher_txt, &written_len,
                        (guchar *) text, text_len);
     cipher_len = written_len;
 
-    EVP_EncryptFinal_ex (&cipher,
+    EVP_EncryptFinal_ex (cipher,
                          cipher_txt + written_len,
                          &written_len);
     cipher_len += written_len;
@@ -73,7 +73,8 @@ namespace Net
                                    cipher_len);
     g_free (cipher_txt);
 
-    EVP_CIPHER_CTX_cleanup (&cipher);
+    EVP_CIPHER_CTX_cleanup (cipher);
+    EVP_CIPHER_CTX_free (cipher);
 
     return base64_text;
   }
@@ -91,32 +92,33 @@ namespace Net
 
       if (iv && cipher_bytes)
       {
-        EVP_CIPHER_CTX  cipher;
+        EVP_CIPHER_CTX *cipher = EVP_CIPHER_CTX_new ();
         gint            written_len;
         gint            plain_len;
         guchar         *plaintext   = g_new (guchar, cipher_len+1); // Including provision for
                                                                     // the missing NULL char
 
-        EVP_CIPHER_CTX_init (&cipher);
+        EVP_CIPHER_CTX_init (cipher);
 
-        EVP_DecryptInit_ex  (&cipher,
+        EVP_DecryptInit_ex  (cipher,
                              EVP_aes_256_cbc (),
                              NULL,
                              (guchar *) key,
                              iv);
 
-        EVP_DecryptUpdate (&cipher,
+        EVP_DecryptUpdate (cipher,
                            plaintext, &written_len,
                            cipher_bytes, cipher_len);
         plain_len = written_len;
 
-        EVP_DecryptFinal_ex (&cipher,
+        EVP_DecryptFinal_ex (cipher,
                              plaintext + written_len,
                              &written_len);
         plain_len += written_len;
         plaintext[plain_len] = '\0';
 
-        EVP_CIPHER_CTX_cleanup (&cipher);
+        EVP_CIPHER_CTX_cleanup (cipher);
+        EVP_CIPHER_CTX_free (cipher);
 
         g_free (cipher_bytes);
 
