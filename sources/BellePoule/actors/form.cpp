@@ -63,7 +63,6 @@ namespace People
     page->_visible      = TRUE;
 
     {
-      GtkWidget   *hbox       = gtk_hbox_new (FALSE, 5);
       GSList      *current    = filter->GetAttrList ();
       GtkComboBox *selector_w = NULL;
       GtkWidget   *smartpoule_label = gtk_label_new (gettext ("<b>Smartpoule</b> configuration code"));
@@ -75,32 +74,59 @@ namespace People
 
       gtk_label_set_use_markup (GTK_LABEL (smartpoule_label), TRUE);
 
-      gtk_box_pack_start (GTK_BOX (hbox),
+      {
+        GtkScrolledWindow *scroll_box = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (NULL, NULL));
+        GtkWidget         *field_vbox = gtk_hbox_new (FALSE, 0);
+        GtkWidget         *field_hbox = gtk_hbox_new (FALSE, 5);
+
+        gtk_box_pack_start (GTK_BOX (field_vbox),
+                            field_hbox,
+                            FALSE,
+                            FALSE,
+                            0);
+
+        gtk_box_pack_start (GTK_BOX (field_hbox),
                           page->_check_vbox,
                           FALSE,
                           FALSE,
                           0);
-      gtk_box_pack_start (GTK_BOX (hbox),
+        gtk_box_pack_start (GTK_BOX (field_hbox),
                           page->_title_vbox,
                           FALSE,
                           FALSE,
                           0);
-      gtk_box_pack_start (GTK_BOX (hbox),
+        gtk_box_pack_start (GTK_BOX (field_hbox),
                           page->_value_vbox,
                           FALSE,
                           FALSE,
                           0);
 
-      gtk_box_pack_start (GTK_BOX (vbox),
-                          hbox,
-                          FALSE,
-                          FALSE,
-                          0);
-      gtk_box_pack_start (GTK_BOX (vbox),
-                           gtk_hseparator_new (),
-                          FALSE,
-                          FALSE,
-                          10);
+        {
+          {
+            GdkDisplay *display = gdk_display_get_default ();
+            GdkScreen  *screen  = gdk_display_get_default_screen (display);
+
+            gtk_widget_set_size_request (GTK_WIDGET (scroll_box),
+                                         -1, MIN (450, gdk_screen_get_height(screen) * 60/100));
+          }
+
+          gtk_scrolled_window_set_shadow_type (scroll_box,
+                                               GTK_SHADOW_IN);
+          gtk_scrolled_window_set_policy (scroll_box,
+                                          GTK_POLICY_NEVER,
+                                          GTK_POLICY_AUTOMATIC);
+
+          gtk_scrolled_window_add_with_viewport (scroll_box,
+                                                 field_vbox);
+        }
+
+        gtk_box_pack_start (GTK_BOX (vbox),
+                            GTK_WIDGET (scroll_box),
+                            FALSE,
+                            FALSE,
+                            0);
+      }
+
       gtk_box_pack_start (GTK_BOX (vbox),
                           GTK_WIDGET (page->_flash_code_image),
                           FALSE,

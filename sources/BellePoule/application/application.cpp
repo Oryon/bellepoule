@@ -280,6 +280,11 @@ void Application::Prepare ()
                              "E", gettext ("Excluded"),      "resources/glade/images/black_card.png",
                              "F", gettext ("Forfeit"),       "resources/glade/images/normal.png", NULL);
 
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "custom1", "Divers1", (gchar *) "♥");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "custom2", "Divers2", (gchar *) "♣");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "custom3", "Divers3", (gchar *) "♠");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "custom4", "Divers4", (gchar *) "♦");
+
     // Not persistent data
     {
       desc = AttributeDesc::Declare (G_TYPE_INT, "pool_nr", "pool_nr", gettext ("pool #"));
