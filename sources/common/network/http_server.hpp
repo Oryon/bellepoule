@@ -20,7 +20,6 @@
 #include <microhttpd.h>
 
 #include "util/object.hpp"
-#include "util/player.hpp"
 #include "cryptor.hpp"
 
 namespace Net

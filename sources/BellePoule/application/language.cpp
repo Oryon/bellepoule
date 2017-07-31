@@ -20,6 +20,15 @@
 
 #include "language.hpp"
 
+#ifdef OSX
+// --------------------------------------------------------------------------------
+static gchar *GetRelocatedLocale (const gchar *term,
+                                  const gchar *relocated_domain)
+{
+  return (gchar *) g_dpgettext2 (relocated_domain, "Stock label", term);
+}
+#endif
+
 // --------------------------------------------------------------------------------
 Language::Language ()
   : Object ("Language")
@@ -31,15 +40,18 @@ Language::Language ()
                                                   "interface_language",
                                                   NULL);
 
-    setlocale (LC_ALL, "");
-
     if (user_language == NULL)
     {
-      user_language = g_ascii_strdown (setlocale (LC_ALL, NULL), -1);
+      user_language = g_ascii_strdown (setlocale (LC_MESSAGES, NULL), -1);
 
-      if (user_language && (strlen (user_language) >= 2))
+      if (user_language)
       {
-        user_language[2] = '\0';
+        char *separator = strchr (user_language, '_');
+
+        if (separator)
+        {
+          *separator = '\0';
+        }
       }
     }
 
@@ -71,6 +83,40 @@ Language::Language ()
 
     g_free (translation_path);
   }
+
+#ifdef OSX
+  {
+    gchar *gtk_locale_path = g_build_filename (root_dir, "share", "locale", NULL);
+
+    bindtextdomain ("gtk20r", gtk_locale_path);
+    bind_textdomain_codeset ("gtk20r", "UTF-8");
+
+    g_free (gtk_locale_path);
+  }
+
+  {
+    GtkStockItem item;
+
+    // Force the creation of the stock hash table (workaround)
+    gtk_stock_lookup (GTK_STOCK_ABOUT,
+                      &item);
+
+    gtk_stock_set_translate_func ("gtk20",
+                                  (GtkTranslateFunc) GetRelocatedLocale,
+                                  (gpointer) "gtk20r",
+                                  NULL);
+  }
+
+  {
+    gchar        *gtk_icons_path = g_build_filename (root_dir, "share", "icons", NULL);
+    GtkIconTheme *icon_theme     = gtk_icon_theme_get_default ();
+
+    gtk_icon_theme_prepend_search_path (icon_theme,
+                                        gtk_icons_path);
+
+    g_free (gtk_icons_path);
+  }
+#endif
 
   textdomain ("BellePoule");
 }
@@ -140,7 +186,7 @@ void Language::Populate (GtkMenuItem  *menu_item,
           g_signal_connect (item, "toggled",
                             G_CALLBACK (OnLocaleToggled), (void *)
                             g_strdup (tokens[0]));
-          if (favorite && g_strcmp0 (favorite, tokens[0]) == 0)
+          if (g_strcmp0 (favorite, tokens[0]) == 0)
           {
             gtk_menu_item_set_label (menu_item,
                                      tokens[0]);

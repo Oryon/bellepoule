@@ -28,6 +28,15 @@
 #  include <shellapi.h>
 #endif
 
+#ifdef OSX
+#include <execinfo.h>
+#include "CoreFoundation/CoreFoundation.h"
+#endif
+
+#include <gtk/gtk.h>
+#include <glib/gstdio.h>
+#include "locale"
+
 #include "util/attribute.hpp"
 #include "util/global.hpp"
 #include "util/module.hpp"
@@ -67,16 +76,47 @@ Application::Application (const gchar   *role,
     {
       gchar *binary_dir;
 
+#ifndef OSX
       {
         gchar *program = g_find_program_in_path ((*argv)[0]);
 
         binary_dir = g_path_get_dirname (program);
         g_free (program);
       }
+#else
+      {
+        //CFURLRef    absolute_url = CFURLCopyAbsoluteURL (url);
+        CFBundleRef  bundle      = CFBundleGetMainBundle ();
+        CFURLRef     url         = CFBundleCopyBundleURL (bundle);
+        CFStringRef  string_path = CFURLCopyFileSystemPath (url, kCFURLPOSIXPathStyle);
+        gchar       *bundle_dir;
 
-#if defined(DEBUG) && defined(G_OS_UNIX)
+        {
+          CFIndex len = CFStringGetMaximumSizeForEncoding (CFStringGetLength (string_path),
+                                                           kCFStringEncodingUTF8) + 1;
+
+          bundle_dir = g_new0 (gchar, len);
+
+          CFStringGetCString (string_path,
+                              bundle_dir,
+                              len,
+                              kCFStringEncodingUTF8);
+        }
+
+        binary_dir = g_build_filename (bundle_dir, "Contents", "MacOS", NULL);
+
+        g_free (bundle_dir);
+        CFRelease (string_path);
+        CFRelease (url);
+      }
+#endif
+
+#if defined(DEBUG)
       g_log_set_default_handler (LogHandler,
                                  NULL);
+#endif
+
+#if defined(DEBUG) && defined(G_OS_UNIX)
       Global::_share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);
 #else
       {
@@ -87,7 +127,63 @@ Application::Application (const gchar   *role,
 
         if (segments[0])
         {
+#ifdef OSX
+          gchar *root_dir = g_build_filename (binary_dir, "..", "Resources", NULL);
+
+          Global::_share_dir = g_build_filename (binary_dir, root_dir, "share", segments[0], NULL);
+
+          {
+            gchar *pixbuf_loaders = g_build_filename (root_dir, "etc", "gtk-2.0", "gdk-pixbuf.loaders", NULL);
+            gchar *xdg_path       = g_build_filename (root_dir, "share", NULL);
+
+            g_setenv ("GDK_PIXBUF_MODULE_FILE",
+                      pixbuf_loaders,
+                      TRUE);
+
+            g_setenv ("XDG_DATA_DIRS",
+                      xdg_path,
+                      TRUE);
+
+            g_chdir (binary_dir);
+
+            g_free (pixbuf_loaders);
+            g_free (xdg_path);
+          }
+
+          g_setenv ("GTK_PATH",
+                    root_dir,
+                    TRUE);
+          g_setenv ("GTK_EXE_PREFIX",
+                    root_dir,
+                    TRUE);
+
+          {
+            CFLocaleRef  locale_ref = CFLocaleCopyCurrent ();
+            CFStringRef  locale_str = CFLocaleGetIdentifier (locale_ref);
+            CFIndex      len;
+            gchar       *locale_utf8;
+
+            len = CFStringGetMaximumSizeForEncoding (CFStringGetLength (locale_str),
+                                                     kCFStringEncodingUTF8) + 1;
+
+            locale_utf8 = g_new0 (gchar, len);
+
+            if (CFStringGetCString (locale_str,
+                                    locale_utf8,
+                                    len,
+                                    kCFStringEncodingUTF8))
+            {
+              setlocale (LC_MESSAGES, locale_utf8);
+            }
+
+            g_free (locale_utf8);
+            CFRelease (locale_str);
+            CFRelease (locale_ref);
+          }
+          g_free (root_dir);
+#else
           Global::_share_dir = g_build_filename (binary_dir, "..", "share", segments[0], NULL);
+#endif
         }
 
         g_strfreev (segments);
@@ -705,6 +801,17 @@ void Application::LogHandler (const gchar    *log_domain,
     }
     break;
   }
+#ifdef OSX
+  void  *callstack[128];
+  int    frames         = backtrace(callstack, 128);
+  char **strs           = backtrace_symbols(callstack, frames);
+
+  for (int i = 0; i < frames; ++i)
+  {
+    printf("callstack: %s\n", strs[i]);
+  }
+  free (strs);
+#endif
 }
 #endif
 
