@@ -7,7 +7,7 @@ pkgbase = #APPLICATION#PHASE
 	arch = x86_64
 	license = GPL3
 #DEPS
-	source = https://launchpad.net/~betonniere/+archive/ubuntu/#APPLICATION/+files/#APPLICATION#PHASE_#MAJOR.#MINORubuntu#MATURITY~xenial1.tar.gz
+	source = https://launchpad.net/~betonniere/+archive/ubuntu/#APPLICATION/+files/#APPLICATION#PHASE_#MAJOR.#MINORubuntu#MATURITY~xenial#V.tar.gz
 	sha256sums = #SHA256
 
 pkgname = #APPLICATION#PHASE

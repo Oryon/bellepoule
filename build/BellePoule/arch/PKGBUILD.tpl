@@ -6,7 +6,7 @@ arch=('i686' 'x86_64')
 url="http://betton.escrime.free.fr/fencing-tournament-software/en/bellepoule/index.html"
 license=('GPL3')
 depends=(#DEPS)
-source=("https://launchpad.net/~betonniere/+archive/ubuntu/#APPLICATION/+files/${pkgname}_${pkgver}ubuntu${pkgrel}~xenial1.tar.gz")
+source=("https://launchpad.net/~betonniere/+archive/ubuntu/#APPLICATION/+files/${pkgname}_${pkgver}ubuntu${pkgrel}~xenial#V.tar.gz")
 sha256sums=('#SHA256')
 
 build() {

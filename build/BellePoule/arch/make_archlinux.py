@@ -11,6 +11,7 @@ minor       = None
 phase       = None
 maturity    = None
 sha256      = None
+v           = None
 
 dep_list = ['gtk2>=2.24.0',
             'xml2',
@@ -37,6 +38,7 @@ class TargetFile:
             content = content.replace ('#PHASE',       phase)
             content = content.replace ('#MAJOR',       major)
             content = content.replace ('#MINOR',       minor)
+            content = content.replace ('#V',           v)
             content = content.replace ('#MATURITY',    maturity)
             content = content.replace ('#DEPS',        self.get_deps_image ())
             content = content.replace ('#SHA256',      sha256)
@@ -84,17 +86,6 @@ class SrcInfoFile (TargetFile):
         return deps_image
 
 # --------------------------------
-def get_version (tag):
-    with open ('../sources/BellePoule/application/version.h', 'r') as version_file:
-        content = version_file.read ()
-        line = re.search (r'#define ' +tag + ' .*', content)
-        if line:
-            segments = line.group(0).split ()
-            return segments[2].replace ('"', '')
-
-        return None
-
-# --------------------------------
 def get_sha256 ():
     dsc_uri  = launchpad
     dsc_uri += application
@@ -104,7 +95,8 @@ def get_sha256 ():
     dsc_uri += major
     dsc_uri += '.'
     dsc_uri += minor
-    dsc_uri += 'ubuntu' + maturity + '~xenial1'
+    dsc_uri += 'ubuntu' + maturity + '~xenial'
+    dsc_uri += v
     dsc_uri += '.dsc'
 
     print dsc_uri
@@ -124,14 +116,13 @@ if __name__ == '__main__':
     else:
         os.chdir (os.path.dirname (os.path.realpath (__file__)))
 
-    major    = get_version ("VERSION")
-    minor    = get_version ("VERSION_REVISION")
-    maturity = get_version ("VERSION_MATURITY").replace ('alpha', '')
-    branch   = get_version ("VERSION_BRANCH")
-    if branch == 'UNSTABLE':
-        phase = 'beta'
-    else:
-        phase = ''
+    if len (sys.argv) is 5:
+        major    = sys.argv[1]
+        minor    = sys.argv[2]
+        v        = sys.argv[3]
+        maturity = sys.argv[4]
+        phase    = 'beta'
+        #phase    = ''
 
     sha256 = get_sha256 ()
 
