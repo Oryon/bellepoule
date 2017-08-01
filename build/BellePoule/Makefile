@@ -10,18 +10,27 @@ VERSION_MAJOR:=$(shell grep "VERSION " $(VERSION_FILE) | sed 's/.* //')
 VERSION_MINOR:=$(shell grep VERSION_REVISION $(VERSION_FILE) | sed 's/.* //')
 VERSION_MATURITY:=$(shell grep VERSION_MATURITY $(VERSION_FILE) | sed 's/.* //')
 ifneq ($(UBUNTU), windows)
-STEP := $(shell echo $(VERSION_MATURITY) | sed 's/alpha0//' | sed 's/alpha//')
+	ifneq ($(VERSION_MATURITY), )
+		VERSION_MICRO := $(shell echo $(VERSION_MATURITY) | sed 's/alpha0//' | sed 's/alpha//')
+	else
+		VERSION_MICRO := "1"
+	endif
 endif
 
-PRODUCT = bellepoulebeta
-#PRODUCT = bellepoule
-OUTPUT  = Release
-PACKAGE = $(HOME)/Project/PPA/$(PRODUCT)
-VERSION = $(VERSION_MAJOR).$(VERSION_MINOR)
-RELEASE = $(PRODUCT)_$(VERSION)
-UBUNTU  = trusty
-V       = 1
-DATE    = $(shell date -R)
+PRODUCT      = bellepoulebeta
+#PRODUCT      = bellepoule
+OUTPUT       = Release
+V            = 1
+PACKAGE      = $(HOME)/Project/PPA/$(PRODUCT)
+VERSION      = $(VERSION_MAJOR).$(VERSION_MINOR)
+RELEASE      = $(PRODUCT)_$(VERSION)
+LONG_VERSION = $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)
+DATE         = $(shell date -R)
+OSX_CROSS    = $(HOME)/Project/Osxcross/target/macports/pkgs/opt/local
+
+ifeq ($(UBUNTU),)
+UBUNTU = $(shell grep "^ID=" /usr/lib/os-release | sed 's/.*=//')
+endif
 
 GTK = gtk+-2.0
 GOO = goocanvas
@@ -46,6 +55,13 @@ WINDRES = $(CC_FAMILY)windres
 CC      = $(CC_FAMILY)g++
 AR      = $(CC_FAMILY)ar
 
+ifeq ($(UBUNTU), osx)
+PKG_CONFIG = x86_64-apple-darwin15-pkg-config
+CC  = o64-clang++
+#CC += -arch i386
+CC += -arch x86_64
+endif
+
 ifeq ($(OUTPUT), Debug)
 CC += -g
 else
@@ -57,7 +73,7 @@ endif
 #----------------------------------------------------
 CFLAGS  =
 CFLAGS += -pedantic
-CFLAGS += -std=c++11
+CFLAGS += -std=c++0x
 CFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGSEAL_ENABLE
@@ -88,6 +104,12 @@ endif
 ifeq ($(UBUNTU), windows)
 CFLAGS += -DWINDOWS_TEMPORARY_PATCH=1
 CFLAGS += -DWIN32
+else ifeq ($(UBUNTU), osx)
+CFLAGS += -DOSX
+CFLAGS += -Wno-cast-align
+CFLAGS += -Wno-overloaded-virtual
+CFLAGS += -Wno-unused-private-field
+CFLAGS += -Wno-format-security
 else
 CFLAGS += -fPIC
 endif
@@ -114,7 +136,10 @@ endif
 endif
 LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0)
 
-ifeq ($(OUTPUT), Release)
+ifeq ($(UBUNTU), osx)
+LDFLAGS += -headerpad_max_install_names
+LDFLAGS += -framework CoreFoundation
+else ifeq ($(OUTPUT), Release)
 LDFLAGS += -s
 endif
 
@@ -148,8 +173,13 @@ SHARED_LIB =
 RPATH      =
 STATIC_LIB = $(OUTPUT)/lib$(PRODUCT).a
 else
+ifeq ($(UBUNTU), fedora)
+LIB_FOLDER = $(shell rpm --eval '%{_libdir}')
+else
+LIB_FOLDER = /usr/lib
+endif
 SHARED_LIB = $(OUTPUT)/lib$(PRODUCT).so
-RPATH      = -Wl,--rpath,/usr/lib/$(PRODUCT)
+RPATH      = -Wl,--rpath,$(LIB_FOLDER)/$(PRODUCT)
 STATIC_LIB =
 endif
 
@@ -192,9 +222,10 @@ $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHAL
 #--
 vars:
 	@echo "\033[1;41m**** Variables ****\033[0m"
+	@echo "$(UBUNTU)"
 	@echo "$(VERSION)"
 	@echo "$(VERSION_MATURITY)"
-	@echo "$(STEP)"
+	@echo "$(VERSION_MICRO)"
 	@echo "---------------"
 	@echo $(CFLAGS)
 	@echo "---------------"
@@ -212,45 +243,111 @@ ifeq ($(UBUNTU), windows)
 prepare_resources = prepare_windows_resources
 build_staging     = build_windows
 publish_staging   = publish_windows
+RESOURCES         = $(PACKAGE)/$(RELEASE)/resources
 else ifeq ($(UBUNTU), archlinux)
-prepare_arch    = prepare_arch
-build_staging   = build_arch
-publish_staging = publish_arch
+prepare_linux     = prepare_arch
+build_staging     = build_arch
+publish_staging   = publish_arch
+else ifeq ($(UBUNTU), osx)
+prepare_osx       = prepare_osx
+prepare_examples  = prepare_examples
+prepare_resources = prepare_osx_resources
+build_staging     = build_osx
+publish_staging   = publish_osx
+EXAMPLES          = $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/$(PRODUCT)/Exemples
+RESOURCES         = $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/$(PRODUCT)/resources
 else
-prepare_ubuntu    = prepare_ubuntu
+prepare_linux     = prepare_ubuntu
 prepare_www       = prepare_www
 prepare_examples  = prepare_examples
 prepare_resources = prepare_resources
 build_staging     = build_ubuntu
 publish_staging   = publish_ubuntu
+EXAMPLES          = $(PACKAGE)/$(RELEASE)/Exemples
+RESOURCES         = $(PACKAGE)/$(RELEASE)/resources
 endif
 
-package: prepare_staging $(prepare_arch) $(prepare_ubuntu) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www)
+install_lighttpd  = install_lighttpd
+
+ifeq ($(UBUNTU), fedora)
+prepare_linux     = prepare_fedora
+build_staging     = build_fedora
+publish_staging   = publish_fedora
+install_lighttpd  = 
+endif
+
+package: prepare_staging $(prepare_linux) $(prepare_osx) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www)
 	rm -rf `find $(PACKAGE) -name "*~*"`
 	rm -rf `find $(PACKAGE) -name "*.swp"`
 	rm -rf `find $(PACKAGE) -name ".*.swp"`
 	find $(PACKAGE)/$(RELEASE) -type f -exec chmod a-x {} \;
 
+prepare_osx:
+	cp -rf osx/$(PRODUCT).app $(PACKAGE)/$(RELEASE)
+	sed -i 's/__VERSION__/$(subst $\",,$(LONG_VERSION))/' $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Info.plist
+	cp $(OSX_CROSS)/../relocated/*.dylib $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Frameworks
+	cp $(OSX_CROSS)/../loaders/*.so $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/lib/gdk-pixbuf-2.0/2.10.0/loaders
+	cp $(OSX_CROSS)/../printbackends/*.so $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/lib/gtk-2.0/2.10.0/printbackends
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/fr/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/fr/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/fr/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/nl/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/nl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/nl/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/pl/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/pl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/pl/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ca/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/ca/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ca/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/de/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/de/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/de/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ru/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/ru/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ru/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ar/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/ar/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ar/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/es/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/es/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/es/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/it/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/it/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/it/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ko/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/ko/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ko/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/pt/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/pt/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/pt/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/sv/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/sv/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/sv/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ja/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/ja/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ja/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/hu/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/hu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/hu/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/sl/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/sl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/sl/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/eu/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/eu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/eu/LC_MESSAGES/gtk20r.mo
+
 prepare_arch:
 	git clone --quiet git+ssh://aur@aur.archlinux.org/$(PRODUCT).git $(PACKAGE)/$(RELEASE)/arch
 	cp -rf arch/* $(PACKAGE)/$(RELEASE)/arch
 
+prepare_fedora: prepare_debian prepare_desktop
+	mkdir $(PACKAGE)/$(RELEASE)/rpm
+	cp rpm/bellepoule.spec $(PACKAGE)/$(RELEASE)/rpm/$(PRODUCT).spec
+	sed -i 's/__PRODUCT__/$(subst $\",,$(PRODUCT))/g' $(PACKAGE)/$(RELEASE)/rpm/$(PRODUCT).spec
+	sed -i 's/__VERSION__/$(subst $\",,$(VERSION))/g' $(PACKAGE)/$(RELEASE)/rpm/$(PRODUCT).spec
+	sed -i 's/__VERSION_MICRO__/$(subst $\",,$(VERSION_MICRO))/g' $(PACKAGE)/$(RELEASE)/rpm/$(PRODUCT).spec
+
 prepare_ubuntu: prepare_debian prepare_changelog prepare_control prepare_rules prepare_copyright prepare_desktop
 
 prepare_examples:
-	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples
-	cp -f  ../../Exemples/exemple.cotcot      $(PACKAGE)/$(RELEASE)/Exemples
-	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples/FFE
-	cp -rf ../../Exemples/FFE/Individuelle.XML $(PACKAGE)/$(RELEASE)/Exemples/FFE
-	cp -rf ../../Exemples/FFE/ParEquipe.XML    $(PACKAGE)/$(RELEASE)/Exemples/FFE
-	cp -rf ../../Exemples/FFE/Fencers.FFF      $(PACKAGE)/$(RELEASE)/Exemples/FFE
-	cp -rf ../../Exemples/FFE/Referees.txt     $(PACKAGE)/$(RELEASE)/Exemples/FFE
-	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples/Classements
-	cp -rf ../../Exemples/Classements/EHBEN.TXT $(PACKAGE)/$(RELEASE)/Exemples/Classements
-	cp -rf ../../Exemples/Classements/EHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
-	cp -rf ../../Exemples/Classements/FHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
-	cp -rf ../../Exemples/Classements/FHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
-	find $(PACKAGE)/$(RELEASE)/Exemples -type f -exec chmod a-x {} \;
+	mkdir -p $(EXAMPLES)
+	cp -f  ../../Exemples/exemple.cotcot      $(EXAMPLES)
+	mkdir -p $(EXAMPLES)/FFE
+	cp -rf ../../Exemples/FFE/Individuelle.XML $(EXAMPLES)/FFE
+	cp -rf ../../Exemples/FFE/ParEquipe.XML    $(EXAMPLES)/FFE
+	cp -rf ../../Exemples/FFE/Fencers.FFF      $(EXAMPLES)/FFE
+	cp -rf ../../Exemples/FFE/Referees.txt     $(EXAMPLES)/FFE
+	mkdir -p $(EXAMPLES)/Classements
+	cp -rf ../../Exemples/Classements/EHBEN.TXT $(EXAMPLES)/Classements
+	cp -rf ../../Exemples/Classements/EHBEN.xml $(EXAMPLES)/Classements
+	cp -rf ../../Exemples/Classements/FHBEN.xml $(EXAMPLES)/Classements
+	cp -rf ../../Exemples/Classements/FHBEN.xml $(EXAMPLES)/Classements
+	find $(EXAMPLES) -type f -exec chmod a-x {} \;
 
 prepare_www:
 	mkdir $(PACKAGE)/$(RELEASE)/www
@@ -264,40 +361,43 @@ prepare_www:
 	sed -i 's/bellepouledebug/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop.sh
 
 prepare_windows_resources:
-	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade/images
-	cp -f ../../resources/glade/images/supervisor.ico $(PACKAGE)/$(RELEASE)/resources/glade/images
-	cp -f ../../resources/glade/images/marshaller.ico $(PACKAGE)/$(RELEASE)/resources/glade/images
+	mkdir -p $(RESOURCES)/glade/images
+	cp -f ../../resources/glade/images/supervisor.ico $(RESOURCES)/glade/images
+	cp -f ../../resources/glade/images/marshaller.ico $(RESOURCES)/glade/images
 	ln -s $(MINGW)/bin/*dll $(PACKAGE)/$(RELEASE)
 
+prepare_osx_resources: prepare_resources
+	cp -f ../../resources/gtkrc.osx $(RESOURCES)/gtkrc
+
 prepare_resources:
-	mkdir -p $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -f ../../resources/translations/user_manual.pdf $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -f ../../resources/translations/index.txt $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/fr    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/de    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/nl    $(PACKAGE)/$(RELEASE)/resources/translations
-#	cp -rf ../../resources/translations/pl    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/ru    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/ar    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/es    $(PACKAGE)/$(RELEASE)/resources/translations
-#	cp -rf ../../resources/translations/ca    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/it    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/ko    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/pt    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/pt_BR $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/sv    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../../resources/translations/ja    $(PACKAGE)/$(RELEASE)/resources/translations
-#	cp -rf ../../resources/translations/hu    $(PACKAGE)/$(RELEASE)/resources/translations
-#	cp -rf ../../resources/translations/sl    $(PACKAGE)/$(RELEASE)/resources/translations
-#	cp -rf ../../resources/translations/eu    $(PACKAGE)/$(RELEASE)/resources/translations
-	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade/images
-	cp -f ../../resources/glade/images/*.png   $(PACKAGE)/$(RELEASE)/resources/glade/images
-	cp -f ../../resources/glade/images/*.gif   $(PACKAGE)/$(RELEASE)/resources/glade/images
-	cp -f ../../resources/glade/images/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade/images
-	cp -f ../../resources/glade/*.glade $(PACKAGE)/$(RELEASE)/resources/glade
-	cp -rf ../../resources/countries      $(PACKAGE)/$(RELEASE)/resources/countries
-	cp -rf ../../resources/localized_data $(PACKAGE)/$(RELEASE)/resources/localized_data
-	find $(PACKAGE)/$(RELEASE)/resources -type f -exec chmod a-x {} \;
+	mkdir -p $(RESOURCES)/translations
+	cp -f ../../resources/translations/user_manual.pdf $(RESOURCES)/translations
+	cp -f ../../resources/translations/index.txt $(RESOURCES)/translations
+	cp -rf ../../resources/translations/fr    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/de    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/nl    $(RESOURCES)/translations
+#	cp -rf ../../resources/translations/pl    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/ru    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/ar    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/es    $(RESOURCES)/translations
+#	cp -rf ../../resources/translations/ca    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/it    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/ko    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/pt    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/pt_BR $(RESOURCES)/translations
+	cp -rf ../../resources/translations/sv    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/ja    $(RESOURCES)/translations
+#	cp -rf ../../resources/translations/hu    $(RESOURCES)/translations
+#	cp -rf ../../resources/translations/sl    $(RESOURCES)/translations
+#	cp -rf ../../resources/translations/eu    $(RESOURCES)/translations
+	mkdir -p $(RESOURCES)/glade/images
+	cp -f ../../resources/glade/images/*.png   $(RESOURCES)/glade/images
+	cp -f ../../resources/glade/images/*.gif   $(RESOURCES)/glade/images
+	cp -f ../../resources/glade/images/*.jpg   $(RESOURCES)/glade/images
+	cp -f ../../resources/glade/*.glade $(RESOURCES)/glade
+	cp -rf ../../resources/countries      $(RESOURCES)/countries
+	cp -rf ../../resources/localized_data $(RESOURCES)/localized_data
+	find $(RESOURCES) -type f -exec chmod a-x {} \;
 
 prepare_sources: clean_sources
 	mkdir -p $(PACKAGE)/$(RELEASE)/sources
@@ -314,13 +414,14 @@ prepare_debian:
 
 prepare_changelog:
 	rm -f $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo "$(PRODUCT) ($(VERSION)ubuntu$(STEP)~$(UBUNTU)$(V)) $(UBUNTU); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo "$(PRODUCT) ($(VERSION)ubuntu$(VERSION_MICRO)~$(UBUNTU)$(V)) $(UBUNTU); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "  * Miscellaneous improvements" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo " -- betonniere <bellepoule.dev@free.fr>  $(DATE)" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 
 prepare_control:
+	# language-pack-gnome-fr-base  ...
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/control
 ifeq ($(PRODUCT), bellepoulebeta)
 	sed -i 's/Replaces/#Replaces/' $(PACKAGE)/$(RELEASE)/debian/control
@@ -347,13 +448,25 @@ build:   $(build_staging)
 publish: $(publish_staging)
 
 build_windows: all
-	cp Release/$(PRODUCT)-*.exe ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/
+	cp Release/$(PRODUCT)*.exe ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/exe/
 	#echo "cp Debug/$(PRODUCT)-*.exe ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/"
 	#cp ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/$(PRODUCT)/bin
 	env WINEPREFIX="$(HOME)/.wine" wine C:\\windows\\command\\start.exe /Unix $(HOME)/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Inno\ Setup\ 5/Inno\ Setup\ Compiler.lnk
 
 publish_windows:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/Output/setup$(VERSION_MAJOR)_$(VERSION_MINOR)$(VERSION_MATURITY).exe; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/Output/setup$(VERSION_MAJOR)_$(VERSION_MINOR)$(VERSION_MATURITY).exe; quit"
+
+build_osx: all
+	cp Release/$(PRODUCT) $(PRODUCT).app/Contents/MacOS/$(PRODUCT)
+	chmod a+x $(PRODUCT).app/Contents/MacOS/$(PRODUCT)
+	find $(PRODUCT).app/Contents/Frameworks -type f -printf "%f\n" | while read lib;\
+		do \
+		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(PRODUCT).app/Contents/MacOS/$(PRODUCT); \
+		done
+	zip -qr $(PRODUCT)_$(subst .,_,$(LONG_VERSION)).zip $(PRODUCT).app
+
+publish_osx:
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule $(PRODUCT)_$(subst .,_,$(LONG_VERSION)).zip; quit"
 
 build_ubuntu:
 	debuild -us -uc --lintian-opts --color always
@@ -362,10 +475,20 @@ publish_ubuntu:
 	debuild -S -sa -k`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
 	dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes
 
+build_fedora:
+	cd .. && tar cf $(PRODUCT)_$(VERSION).tar.gz --exclude="$(PRODUCT)_$(VERSION).tar.gz" .
+	mv ../$(PRODUCT)_$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES
+	cp rpm/$(PRODUCT).spec $(HOME)/rpmbuild/SPECS
+	cd $(HOME)/rpmbuild/SPECS && rpmbuild -ba $(PRODUCT).spec
+	cp $(HOME)/rpmbuild/SRPMS/$(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc25.src.rpm .
+
+publish_fedora:
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule $(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc25.src.rpm; quit"
+
 build_arch:
-	python arch/make_archlinux.py
+	python arch/make_archlinux.py $(VERSION_MAJOR) $(VERSION_MINOR) $(V) $(VERSION_MICRO)
 	git -C arch add .
-	git -C arch commit --quiet -m "$(VERSION)-$(STEP)"
+	git -C arch commit --quiet -m "$(VERSION)-$(VERSION_MICRO)"
 
 publish_arch:
 	git -C arch push origin master
@@ -375,12 +498,12 @@ publish_arch:
 #----------------------------------------------------
 .PHONY: install clean_sources
 
-install:
+install: $(install_lighttpd)
 	mkdir -p $(DESTDIR)/usr/bin
-	mkdir -p $(DESTDIR)/usr/lib/$(PRODUCT)
+	mkdir -p $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)
 	install $(OUTPUT)/$(PRODUCT)-supervisor $(DESTDIR)/usr/bin/$(PRODUCT)-supervisor
 	install $(OUTPUT)/$(PRODUCT)-marshaller $(DESTDIR)/usr/bin/$(PRODUCT)-marshaller
-	install $(OUTPUT)/lib$(PRODUCT).so  $(DESTDIR)/usr/lib/$(PRODUCT)/lib$(PRODUCT).so
+	install $(OUTPUT)/lib$(PRODUCT).so  $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)/lib$(PRODUCT).so
 	mkdir -p $(DESTDIR)/usr/share/applications
 	install --mode=644 debian/$(PRODUCT)-marshaller.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-marshaller.desktop
 	install --mode=644 debian/$(PRODUCT)-supervisor.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-supervisor.desktop
@@ -397,7 +520,8 @@ install:
 		do \
 		install --mode=644 $$file '$(DESTDIR)/usr/share/$(PRODUCT)/'$$file ;\
 		done
-	#Lighttpd
+
+install_lighttpd:
 	mkdir -p $(DESTDIR)/etc/lighttpd/conf-available
 	install --mode=644 99-$(PRODUCT).conf '$(DESTDIR)/etc/lighttpd/conf-available/'99-$(PRODUCT).conf ;
 	mkdir -p `find www -type d | sed 's?www?$(DESTDIR)/usr/share/$(PRODUCT)/webserver/LightTPD/&?'`
@@ -433,6 +557,20 @@ help: vars
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "make -s UBUNTU=windows build"
 	@echo "make -s UBUNTU=windows publish"
+	@echo ""
+	@echo "\033[1;41m**** Fedora ****\033[0m"
+	@echo "make -s UBUNTU=fedora V=$(V) package"
+	@echo ""
+	@echo "cd $(PACKAGE)/$(RELEASE)"
+	@echo "make -s UBUNTU=fedora V=$(V) build (VirtualBox)"
+	@echo "make -s UBUNTU=fedora V=$(V) publish"
+	@echo ""
+	@echo "\033[1;45m**** MacOs ****\033[0m"
+	@echo "make -s UBUNTU=osx V=$(V) package"
+	@echo ""
+	@echo "cd $(PACKAGE)/$(RELEASE)"
+	@echo "make -s UBUNTU=osx V=$(V) build"
+	@echo "make -s UBUNTU=osx V=$(V) publish"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
