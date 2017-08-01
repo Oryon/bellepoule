@@ -69,7 +69,21 @@ void Tournament::Init ()
 // --------------------------------------------------------------------------------
 Tournament::~Tournament ()
 {
-  FreeFullGList (Contest, _contest_list);
+  {
+    GList *death_row = g_list_copy (_contest_list);
+    GList *current   = death_row;
+
+    while (current)
+    {
+      Contest *contest = (Contest *) current->data;
+
+      contest->Release ();
+      current = g_list_next (current);
+    }
+
+    g_list_free (death_row);
+  }
+
   FreeFullGList (Player, _referee_list);
 
   _web_server->Release  ();
