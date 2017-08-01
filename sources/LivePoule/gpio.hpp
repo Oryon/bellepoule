@@ -27,17 +27,49 @@ class Gpio : public Object
           GSourceFunc  handler,
           void        *context);
 
+    void GenerateFakeEvent ();
+
     guint GetVoltageState ();
 
   protected:
     virtual ~Gpio ();
 
   private:
-    guint         _pin_id;
-    GSourceFunc   _event_handler;
-    void         *_context;
+    typedef void (*Callback)();
+    struct Pin
+    {
+      Gpio     *_gpio;
+      Callback  _callback;
+    };
 
-    static void OnEvent (Gpio *gpio);
+    static const guint WIRED_PINS = 9;
+    static Pin _wired_pins[WIRED_PINS];
+
+  private:
+    guint        _bcm_id;
+    guint        _fake_voltage;
+    GSourceFunc  _event_handler;
+    void        *_context;
+
+    void OnEvent ();
 
     void SetPinMode (const gchar *mode);
+
+    static gpointer FakeLoop (Gpio *gpio);
+
+  private:
+    // What a dirty workaround!
+    // Usually callbacks have a user-specified parameter acting
+    // as a "context". This is obviously a very valuable information,
+    // but unfortunatelay WiringPi doesn't offer it :(
+    // No other choice that wiring a dedicated callback for each pin!
+    static void OnPin0 ();
+    static void OnPin1 ();
+    static void OnPin2 ();
+    static void OnPin3 ();
+    static void OnPin4 ();
+    static void OnPin5 ();
+    static void OnPin6 ();
+    static void OnPin7 ();
+    static void OnPin8 ();
 };

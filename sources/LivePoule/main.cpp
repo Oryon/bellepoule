@@ -126,7 +126,7 @@ int main (int argc, char **argv)
     }
   }
 
-  WifiCode::SetPort (35832);
+  WifiCode::SetIpPort (35832);
 
   Gpio::Init ();
 

@@ -7,13 +7,14 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-        <Option output="Debug/LivePoule" prefix_auto="1" extension_auto="1" />
+				<Option output="Debug/LivePoule" prefix_auto="1" extension_auto="1" />
 				<Option object_output="Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-DDEBUG=1" />
+					<Add option="-DLIVE_POOL=1" />
 				</Compiler>
 			</Target>
 		</Build>
@@ -39,8 +40,8 @@
 			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGDK_DISABLE_DEPRECATED" />
 			<Add option="-DGSEAL_ENABLE" />
-      <Add directory="../../sources/common" />
-      <Add directory="../../sources/LivePoule" />
+			<Add directory="../../sources/common" />
+			<Add directory="../../sources/LivePoule" />
 			<Add directory="/usr/include/gtk-3.0" />
 			<Add directory="/usr/include" />
 			<Add directory="/usr/include/atk-1.0" />
@@ -83,56 +84,67 @@
 			<Add library="qrencode" />
 			<Add library="crypto" />
 		</Linker>
-    <Unit filename="../../sources/LivePoule/main.cpp" />
-    <Unit filename="../../sources/LivePoule/button.cpp" />
-    <Unit filename="../../sources/LivePoule/button.hpp" />
-    <Unit filename="../../sources/LivePoule/gpio.cpp" />
-    <Unit filename="../../sources/LivePoule/gpio.hpp" />
-    <Unit filename="../../sources/LivePoule/light.cpp" />
-    <Unit filename="../../sources/LivePoule/light.hpp" />
-    <Unit filename="../../sources/LivePoule/scoring_machine.cpp" />
-    <Unit filename="../../sources/LivePoule/scoring_machine.hpp" />
-    <Unit filename="../../sources/LivePoule/sg_machine.cpp" />
-    <Unit filename="../../sources/LivePoule/sg_machine.hpp" />
-    <Unit filename="../../sources/LivePoule/screen.cpp" />
-    <Unit filename="../../sources/LivePoule/screen.hpp" />
-    <Unit filename="../../sources/LivePoule/timer.cpp" />
-    <Unit filename="../../sources/LivePoule/timer.hpp" />
-    <Unit filename="../../sources/LivePoule/wpa.cpp" />
-    <Unit filename="../../sources/LivePoule/wpa.hpp" />
-    <Unit filename="../../sources/common/util/attribute.cpp" />
-    <Unit filename="../../sources/common/util/attribute.hpp" />
-    <Unit filename="../../sources/common/util/attribute_desc.cpp" />
-    <Unit filename="../../sources/common/util/attribute_desc.hpp" />
-    <Unit filename="../../sources/common/util/dnd_config.cpp" />
-    <Unit filename="../../sources/common/util/dnd_config.hpp" />
-    <Unit filename="../../sources/common/util/filter.cpp" />
-    <Unit filename="../../sources/common/util/filter.hpp" />
-    <Unit filename="../../sources/common/util/flash_code.cpp" />
-    <Unit filename="../../sources/common/util/flash_code.hpp" />
-    <Unit filename="../../sources/common/util/glade.cpp" />
-    <Unit filename="../../sources/common/util/glade.hpp" />
-    <Unit filename="../../sources/common/util/module.cpp" />
-    <Unit filename="../../sources/common/util/module.hpp" />
-    <Unit filename="../../sources/common/util/object.cpp" />
-    <Unit filename="../../sources/common/util/object.hpp" />
-    <Unit filename="../../sources/common/util/player.cpp" />
-    <Unit filename="../../sources/common/util/player.hpp" />
-    <Unit filename="../../sources/common/util/sensitivity_trigger.cpp" />
-    <Unit filename="../../sources/common/util/sensitivity_trigger.hpp" />
-    <Unit filename="../../sources/common/util/wifi_code.cpp" />
-    <Unit filename="../../sources/common/util/wifi_code.hpp" />
-    <Unit filename="../../sources/common/network/cryptor.cpp" />
-    <Unit filename="../../sources/common/network/cryptor.hpp" />
-    <Unit filename="../../sources/common/network/http_server.cpp" />
-    <Unit filename="../../sources/common/network/http_server.hpp" />
-    <Unit filename="../../sources/common/network/uploader.cpp" />
-    <Unit filename="../../sources/common/network/uploader.hpp" />
-    <Unit filename="../../sources/common/network/wifi_network.cpp" />
-    <Unit filename="../../sources/common/network/wifi_network.hpp" />
+		<Unit filename="../../sources/LivePoule/button.cpp" />
+		<Unit filename="../../sources/LivePoule/button.hpp" />
+		<Unit filename="../../sources/LivePoule/gpio.cpp" />
+		<Unit filename="../../sources/LivePoule/gpio.hpp" />
+		<Unit filename="../../sources/LivePoule/light.cpp" />
+		<Unit filename="../../sources/LivePoule/light.hpp" />
+		<Unit filename="../../sources/LivePoule/main.cpp" />
+		<Unit filename="../../sources/LivePoule/scoring_machine.cpp" />
+		<Unit filename="../../sources/LivePoule/scoring_machine.hpp" />
+		<Unit filename="../../sources/LivePoule/screen.cpp" />
+		<Unit filename="../../sources/LivePoule/screen.hpp" />
+		<Unit filename="../../sources/LivePoule/sg_machine.cpp" />
+		<Unit filename="../../sources/LivePoule/sg_machine.hpp" />
+		<Unit filename="../../sources/LivePoule/timer.cpp" />
+		<Unit filename="../../sources/LivePoule/timer.hpp" />
+		<Unit filename="../../sources/LivePoule/wpa.cpp" />
+		<Unit filename="../../sources/LivePoule/wpa.hpp" />
+		<Unit filename="../../sources/common/network/cryptor.cpp" />
+		<Unit filename="../../sources/common/network/cryptor.hpp" />
+		<Unit filename="../../sources/common/network/http_server.cpp" />
+		<Unit filename="../../sources/common/network/http_server.hpp" />
+		<Unit filename="../../sources/common/network/message.cpp" />
+		<Unit filename="../../sources/common/network/message.hpp" />
+		<Unit filename="../../sources/common/network/message_uploader.cpp" />
+		<Unit filename="../../sources/common/network/message_uploader.hpp" />
+		<Unit filename="../../sources/common/network/partner.cpp" />
+		<Unit filename="../../sources/common/network/partner.hpp" />
+		<Unit filename="../../sources/common/network/ring.cpp" />
+		<Unit filename="../../sources/common/network/ring.hpp" />
+		<Unit filename="../../sources/common/network/uploader.cpp" />
+		<Unit filename="../../sources/common/network/uploader.hpp" />
+		<Unit filename="../../sources/common/network/wifi_network.cpp" />
+		<Unit filename="../../sources/common/network/wifi_network.hpp" />
+		<Unit filename="../../sources/common/util/attribute.cpp" />
+		<Unit filename="../../sources/common/util/attribute.hpp" />
+		<Unit filename="../../sources/common/util/attribute_desc.cpp" />
+		<Unit filename="../../sources/common/util/attribute_desc.hpp" />
+		<Unit filename="../../sources/common/util/dnd_config.cpp" />
+		<Unit filename="../../sources/common/util/dnd_config.hpp" />
+		<Unit filename="../../sources/common/util/filter.cpp" />
+		<Unit filename="../../sources/common/util/filter.hpp" />
+		<Unit filename="../../sources/common/util/flash_code.cpp" />
+		<Unit filename="../../sources/common/util/flash_code.hpp" />
+		<Unit filename="../../sources/common/util/glade.cpp" />
+		<Unit filename="../../sources/common/util/glade.hpp" />
+		<Unit filename="../../sources/common/util/global.cpp" />
+		<Unit filename="../../sources/common/util/global.hpp" />
+		<Unit filename="../../sources/common/util/module.cpp" />
+		<Unit filename="../../sources/common/util/module.hpp" />
+		<Unit filename="../../sources/common/util/object.cpp" />
+		<Unit filename="../../sources/common/util/object.hpp" />
+		<Unit filename="../../sources/common/util/sensitivity_trigger.cpp" />
+		<Unit filename="../../sources/common/util/sensitivity_trigger.hpp" />
+		<Unit filename="../../sources/common/util/tree_model_index.cpp" />
+		<Unit filename="../../sources/common/util/tree_model_index.hpp" />
+		<Unit filename="../../sources/common/util/wifi_code.cpp" />
+		<Unit filename="../../sources/common/util/wifi_code.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

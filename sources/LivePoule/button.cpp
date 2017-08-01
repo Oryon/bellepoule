@@ -28,6 +28,8 @@ Button::Button (guint       pin_id,
   _debounced_context = context;
 
   _debounce_started = FALSE;
+
+  GenerateFakeEvent ();
 }
 
 // --------------------------------------------------------------------------------

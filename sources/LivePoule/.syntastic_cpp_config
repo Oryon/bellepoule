@@ -1,5 +1,3 @@
--I../../../../wiringPi/wiringPi
--I../common
 -pedantic
 -DGTK_DISABLE_SINGLE_INCLUDES
 -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
@@ -39,3 +37,5 @@
 -I/usr/include/harfbuzz
 -I/usr/include/libxml2
 -I/usr/include/goocanvas-1.0
+-I../common
+-IBellePoule

@@ -83,6 +83,8 @@ void Light::WireGpioPin (const gchar *state,
 
   _pin_list = g_list_prepend (_pin_list,
                               gpio_pin);
+
+  gpio_pin->GenerateFakeEvent ();
 }
 
 // --------------------------------------------------------------------------------

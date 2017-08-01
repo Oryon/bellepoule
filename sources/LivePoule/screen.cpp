@@ -22,7 +22,8 @@
 
 // --------------------------------------------------------------------------------
 Screen::Screen ()
-  : Module ("LivePoule.glade")
+  : Object ("Screen"),
+    Module ("LivePoule.glade")
 {
   GtkWidget *window       = _glade->GetRootWidget ();
   gint       glade_width;
