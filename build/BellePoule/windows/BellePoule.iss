@@ -12,7 +12,7 @@
 [Setup]
 AppName={#PRODUCT}
 AppVerName={#PRODUCT} version {#VERSION}.{#VERSION_REVISION}{#VERSION_MATURITY}
-OutputBaseFilename=setup{#VERSION}_{#VERSION_REVISION}{#VERSION_MATURITY}
+OutputBaseFilename={#PRODUCT}-{#VERSION}-{#VERSION_REVISION}-{#VERSION_MATURITY}-win
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/
@@ -92,7 +92,7 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\bellepoule (beta)"
 [Files]
 Source: "exe\bellepoulebeta-marshaller.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "exe\bellepoulebeta-supervisor.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "..\..\..\resources\gtkrc"; DestDir: "{app}\share\{#PRODUCT}\resources"; Flags: ignoreversion
+Source: "..\..\..\resources\gtkrc.windows"; DestDir: "{app}\share\{#PRODUCT}\resources"; DestName: "gtkrc"; Flags: ignoreversion
 Source: "path_dependent_files\gtk.immodules"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gtk.immodules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 Source: "path_dependent_files\gdk-pixbuf.loaders"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gdk-pixbuf.loaders'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 Source: "path_dependent_files\pango.modules"; DestDir: "{app}\etc\pango"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\pango\pango.modules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)

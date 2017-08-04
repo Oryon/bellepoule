@@ -172,15 +172,24 @@ ifeq ($(UBUNTU), windows)
 SHARED_LIB =
 RPATH      =
 STATIC_LIB = $(OUTPUT)/lib$(PRODUCT).a
+
 else
 ifeq ($(UBUNTU), fedora)
 LIB_FOLDER = $(shell rpm --eval '%{_libdir}')
 else
 LIB_FOLDER = /usr/lib
 endif
+
+ifeq ($(UBUNTU), osx)
+SHARED_OPT = -dynamiclib
+SHARED_LIB = $(OUTPUT)/lib$(PRODUCT).dylib
+else
+SHARED_OPT = -shared
 SHARED_LIB = $(OUTPUT)/lib$(PRODUCT).so
-RPATH      = -Wl,--rpath,$(LIB_FOLDER)/$(PRODUCT)
+endif
+
 STATIC_LIB =
+RPATH      = -Wl,-rpath,$(LIB_FOLDER)/$(PRODUCT)
 endif
 
 #----------------------------------------------------
@@ -195,7 +204,7 @@ output:
 
 $(SHARED_LIB): $(OBJ_LIB)
 	@echo "\033[1;31m" $@ "\033[0m"
-	@$(CC) -shared -o $@ $^ $(LDFLAGS)
+	@$(CC) $(SHARED_OPT) -o $@ $^ $(LDFLAGS)
 
 $(STATIC_LIB): $(OBJ_LIB)
 	@echo "\033[1;31m" $@ "\033[0m"
@@ -454,19 +463,27 @@ build_windows: all
 	env WINEPREFIX="$(HOME)/.wine" wine C:\\windows\\command\\start.exe /Unix $(HOME)/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Inno\ Setup\ 5/Inno\ Setup\ Compiler.lnk
 
 publish_windows:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/Output/setup$(VERSION_MAJOR)_$(VERSION_MINOR)$(VERSION_MATURITY).exe; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/Output/$(PRODUCT)-$(VERSION_MAJOR)-$(VERSION_MINOR)-$(VERSION_MATURITY)-win.exe; quit"
 
 build_osx: all
-	cp Release/$(PRODUCT) $(PRODUCT).app/Contents/MacOS/$(PRODUCT)
-	chmod a+x $(PRODUCT).app/Contents/MacOS/$(PRODUCT)
+	cp Release/$(PRODUCT)-supervisor $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-supervisor
+	cp Release/$(PRODUCT)-marshaller $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-marshaller
+	mkdir $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)
+	cp Release/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
+	chmod a+x $(PRODUCT).app/Contents/MacOS/$(PRODUCT)*
 	find $(PRODUCT).app/Contents/Frameworks -type f -printf "%f\n" | while read lib;\
 		do \
-		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(PRODUCT).app/Contents/MacOS/$(PRODUCT); \
+		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-supervisor; \
+		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-marshaller; \
+		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib; \
 		done
-	zip -qr $(PRODUCT)_$(subst .,_,$(LONG_VERSION)).zip $(PRODUCT).app
+	install_name_tool -id @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
+	install_name_tool -change Release/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-supervisor
+	install_name_tool -change Release/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-marshaller
+	zip -qr $(PRODUCT)-$(subst .,-,$(LONG_VERSION))-osx.zip $(PRODUCT).app
 
 publish_osx:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule $(PRODUCT)_$(subst .,_,$(LONG_VERSION)).zip; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable $(PRODUCT)-$(subst .,-,$(LONG_VERSION))-osx.zip; quit"
 
 build_ubuntu:
 	debuild -us -uc --lintian-opts --color always
@@ -483,7 +500,7 @@ build_fedora:
 	cp $(HOME)/rpmbuild/SRPMS/$(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc25.src.rpm .
 
 publish_fedora:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule $(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc25.src.rpm; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable $(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc25.src.rpm; quit"
 
 build_arch:
 	python arch/make_archlinux.py $(VERSION_MAJOR) $(VERSION_MINOR) $(V) $(VERSION_MICRO)

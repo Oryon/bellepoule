@@ -1,0 +1,1 @@
+gtk-print-preview-command="open -a /Applications/Preview.app %f"

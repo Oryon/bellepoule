@@ -86,7 +86,7 @@ Language::Language ()
 
 #ifdef OSX
   {
-    gchar *gtk_locale_path = g_build_filename (root_dir, "share", "locale", NULL);
+    gchar *gtk_locale_path = g_build_filename (Global::_share_dir, "..", "locale", NULL);
 
     bindtextdomain ("gtk20r", gtk_locale_path);
     bind_textdomain_codeset ("gtk20r", "UTF-8");
@@ -108,7 +108,7 @@ Language::Language ()
   }
 
   {
-    gchar        *gtk_icons_path = g_build_filename (root_dir, "share", "icons", NULL);
+    gchar        *gtk_icons_path = g_build_filename (Global::_share_dir, "..", "icons", NULL);
     GtkIconTheme *icon_theme     = gtk_icon_theme_get_default ();
 
     gtk_icon_theme_prepend_search_path (icon_theme,
