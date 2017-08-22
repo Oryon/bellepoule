@@ -538,45 +538,6 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GDateTime *Slot::GetAsap (GDateTime *after)
-  {
-    GDateTime *tmp;
-    GDateTime *new_time;
-
-    new_time = g_date_time_add_minutes (after, 15);
-
-    // Round minutes
-    {
-      gint minutes = g_date_time_get_minute (new_time);
-      gint crumbs  = minutes % 15;
-
-      if (crumbs > 15/2)
-      {
-        tmp = g_date_time_add_minutes (new_time, 15 - crumbs);
-        g_date_time_unref (new_time);
-        new_time = tmp;
-      }
-      else
-      {
-        tmp = g_date_time_add_minutes (new_time, -crumbs);
-        g_date_time_unref (new_time);
-        new_time = tmp;
-      }
-    }
-
-    tmp = g_date_time_new_local (g_date_time_get_year         (new_time),
-                                 g_date_time_get_month        (new_time),
-                                 g_date_time_get_day_of_month (new_time),
-                                 g_date_time_get_hour         (new_time),
-                                 g_date_time_get_minute       (new_time),
-                                 0);
-    g_date_time_unref (new_time);
-    new_time = tmp;
-
-    return new_time;
-  }
-
-  // --------------------------------------------------------------------------------
   Slot::Owner *Slot::GetOwner ()
   {
     return _owner;

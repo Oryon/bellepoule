@@ -88,8 +88,6 @@ namespace Marshaller
                                   GDateTime *from,
                                   GTimeSpan  duration);
 
-      static GDateTime *GetAsap (GDateTime *after);
-
       static Slot *GetSlotAt (GDateTime *time,
                               GList     *slots);
 

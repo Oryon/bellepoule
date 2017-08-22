@@ -164,6 +164,8 @@ namespace Marshaller
         piste->ReadJson (reader);
         json_reader_end_element (reader);
 
+        _drop_zones = g_slist_append (_drop_zones,
+                                      piste);
         _piste_list = g_list_insert_sorted (_piste_list,
                                             piste,
                                             GCompareFunc (Piste::CompareId));
@@ -986,11 +988,9 @@ namespace Marshaller
         gtk_toggle_button_set_active (toggle, TRUE);
         toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_pistes"));
         gtk_toggle_button_set_active (toggle, TRUE);
-        toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("cursor"));
-        gtk_toggle_button_set_active (toggle, TRUE);
       }
 
-      done = RunDialog (GTK_DIALOG (dialog)) == 0;
+      done = gtk_dialog_run (GTK_DIALOG (dialog)) == 0;
       if (done)
       {
         GList *job_list;
@@ -1087,9 +1087,9 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   GList *Hall::GetFreePisteSlots (GTimeSpan duration)
   {
-    GDateTime *when;
-    GList     *free_slots   = NULL;
-    GList     *current      = _piste_list;
+    GDateTime *when       = _timeline->RetreiveCursorTime ();
+    GList     *free_slots = NULL;
+    GList     *current    = _piste_list;
 
     // All the pistes?
     {
@@ -1100,24 +1100,6 @@ namespace Marshaller
         current = _selected_list;
       }
     }
-
-    // When?
-    {
-      GtkToggleButton *now_button = GTK_TOGGLE_BUTTON (_glade->GetWidget ("now"));
-
-      if (gtk_toggle_button_get_active (now_button))
-      {
-        GDateTime *now = g_date_time_new_now_local ();
-
-        when = Slot::GetAsap (now);
-        g_date_time_unref (now);
-      }
-      else
-      {
-        when = _timeline->RetreiveCursorTime ();
-      }
-    }
-
 
     // Loop over the pistes
     while (current)

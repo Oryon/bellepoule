@@ -329,6 +329,8 @@ prepare_osx:
 	cp $(OSX_CROSS)/share/locale/sl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/sl/LC_MESSAGES/gtk20r.mo
 	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/eu/LC_MESSAGES
 	cp $(OSX_CROSS)/share/locale/eu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/eu/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/fa/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/fa/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/fa/LC_MESSAGES/gtk20r.mo
 
 prepare_arch:
 	git clone --quiet git+ssh://aur@aur.archlinux.org/$(PRODUCT).git $(PACKAGE)/$(RELEASE)/arch
@@ -399,6 +401,7 @@ prepare_resources:
 #	cp -rf ../../resources/translations/hu    $(RESOURCES)/translations
 #	cp -rf ../../resources/translations/sl    $(RESOURCES)/translations
 #	cp -rf ../../resources/translations/eu    $(RESOURCES)/translations
+#	cp -rf ../../resources/translations/fa    $(RESOURCES)/translations
 	mkdir -p $(RESOURCES)/glade/images
 	cp -f ../../resources/glade/images/*.png   $(RESOURCES)/glade/images
 	cp -f ../../resources/glade/images/*.gif   $(RESOURCES)/glade/images

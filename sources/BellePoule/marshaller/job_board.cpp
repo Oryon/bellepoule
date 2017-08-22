@@ -231,7 +231,7 @@ namespace Marshaller
       Batch *batch = job->GetBatch ();
 
       gtk_widget_set_sensitive (_move_button,
-                                job->GetSlot () != NULL);
+                                batch->IsModifiable () && job->GetSlot ());
       gtk_widget_set_sensitive (_take_off_button,
                                 batch->IsModifiable () && job->GetSlot ());
     }
