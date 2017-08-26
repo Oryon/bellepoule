@@ -26,6 +26,7 @@
 #include "timeline.hpp"
 #include "job_board.hpp"
 #include "lasso.hpp"
+#include "affinities.hpp"
 
 #include "hall.hpp"
 
@@ -1123,6 +1124,62 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  gint Hall::CompareReferee (EnlistedReferee *a,
+                             EnlistedReferee *b,
+                             GList           *fencer_list)
+  {
+    gint result = EnlistedReferee::CompareWorkload (a, b);
+
+    if (result == 0)
+    {
+      Affinities *a_affinities   = (Affinities *) a->GetPtrData (NULL, "affinities");
+      Affinities *b_affinities   = (Affinities *) b->GetPtrData (NULL, "affinities");
+      GList      *affinity_names = a_affinities->GetAffinityNames ();
+      guint       affinity_count = g_list_length (affinity_names);
+      guint      *a_kinship = g_new0 (guint, affinity_count);
+      guint      *b_kinship = g_new0 (guint, affinity_count);
+
+      while (fencer_list)
+      {
+        Player     *fencer       = (Player *) fencer_list->data;
+        Affinities *f_affinities = (Affinities *) fencer->GetPtrData (NULL, "affinities");
+
+        for (guint i = 1; i <= affinity_count; i = i<<1)
+        {
+          guint kinship;
+
+          kinship = a_affinities->KinshipWith (f_affinities);
+          if (kinship & i)
+          {
+            a_kinship[i-1]++;
+          }
+
+          kinship = b_affinities->KinshipWith (f_affinities);
+          if (kinship & i)
+          {
+            b_kinship[i-1]++;
+          }
+        }
+        fencer_list = g_list_next (fencer_list);
+      }
+
+      for (guint i = 0; i < affinity_count; i++)
+      {
+        if (a_kinship[i] != b_kinship[i])
+        {
+          result = a_kinship[i] - b_kinship[i];
+          break;
+        }
+      }
+
+      g_free (a_kinship);
+      g_free (b_kinship);
+    }
+
+    return result;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Hall::SetFreeRefereeFor (GList *referee_list,
                                     Slot  *slot,
                                     Job   *job)
@@ -1132,8 +1189,10 @@ namespace Marshaller
     GTimeSpan  duration        = job->GetRegularDuration ();
     gboolean   result          = FALSE;
 
-    sorted_list = g_list_sort (g_list_copy (referee_list),
-                               (GCompareFunc) EnlistedReferee::CompareWorkload);
+    sorted_list = g_list_sort_with_data (g_list_copy (referee_list),
+                                         //(GCompareDataFunc) EnlistedReferee::CompareWorkload,
+                                         (GCompareDataFunc) CompareReferee,
+                                         job->GetFencerList ());
 
     current_referee = sorted_list;
     while (current_referee)
@@ -1334,7 +1393,6 @@ namespace Marshaller
     {
       slot = piste->GetFreeSlot (cursor,
                                  job->GetRegularDuration ());
-      if (slot) Slot::Dump (slot);
     }
 
     g_date_time_unref (cursor);

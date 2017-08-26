@@ -88,7 +88,11 @@ namespace Marshaller
 
       void SetSensitivity ();
 
+      void OnPlayerAdded (Player *player);
+
       void OnPlayerRemoved (Player *player);
+
+      JobDetails *GetPairedOf (JobDetails *of);
 
       void OnJobUpdated (Job *job);
   };

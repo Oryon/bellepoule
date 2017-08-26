@@ -151,6 +151,13 @@ namespace Pool
   // --------------------------------------------------------------------------------
   Supervisor::~Supervisor ()
   {
+    for (guint p = 0; p < _allocator->GetNbPools (); p++)
+    {
+      Pool *pool = _allocator->GetPool (p);
+
+      pool->RegisterStatusListener (NULL);
+    }
+
     Object::TryToRelease (_allocator);
 
     _current_round_classification->Release ();

@@ -20,6 +20,7 @@
 #include "util/global.hpp"
 #include "util/player.hpp"
 #include "actors/player_factory.hpp"
+#include "affinities.hpp"
 
 #include "competition.hpp"
 
@@ -294,6 +295,12 @@ namespace Marshaller
                            "netid",
                            GUINT_TO_POINTER (message->GetNetID ()));
 
+          fencer->SetData (NULL,
+                           "affinities",
+                           new Affinities (fencer),
+                           (GDestroyNotify) Affinities::Destroy);
+
+          DeleteFencer (message);
           _fencer_list = g_list_prepend (_fencer_list,
                                          fencer);
         }
@@ -320,6 +327,9 @@ namespace Marshaller
 
       if (current_id == id)
       {
+        fencer->Release ();
+        _fencer_list = g_list_delete_link (_fencer_list,
+                                           current);
         break;
       }
 

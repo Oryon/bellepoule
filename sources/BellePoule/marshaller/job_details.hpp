@@ -27,7 +27,9 @@ namespace Marshaller
     public:
       struct Listener
       {
-        virtual void OnPlayerRemoved (Player *player) = 0;
+        virtual void        OnPlayerAdded   (Player     *player) = 0;
+        virtual void        OnPlayerRemoved (Player     *player) = 0;
+        virtual JobDetails *GetPairedOf     (JobDetails *of)     = 0;
       };
 
     public:
@@ -49,6 +51,10 @@ namespace Marshaller
 
       void OnPlayerRemoved (Player *player);
 
+      void CellDataFunc (GtkTreeViewColumn *tree_column,
+                         GtkCellRenderer   *cell,
+                         GtkTreeModel      *tree_model,
+                         GtkTreeIter       *iter);
     private:
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,

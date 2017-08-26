@@ -459,7 +459,6 @@ namespace Marshaller
                                   duration);
       slots = g_list_append (slots,
                              free_slot);
-      printf ("(1) ==> "); Slot::Dump (free_slot);
     }
     else
     {
@@ -474,7 +473,6 @@ namespace Marshaller
                                     duration);
         slots = g_list_append (slots,
                                free_slot);
-        printf ("(2) ==> "); Slot::Dump (free_slot);
       }
       g_date_time_unref (end_time);
     }
@@ -488,7 +486,6 @@ namespace Marshaller
         Slot  *current_slot = (Slot *) current->data;
         Slot  *free_slot    = NULL;
 
-        printf ("current: "); Slot::Dump (current_slot);
         if (next == NULL)
         {
           // After the booked slots
@@ -496,7 +493,6 @@ namespace Marshaller
                                 GetLatestDate (from, current_slot->_end),
                                 NULL,
                                 duration);
-          printf ("(3) ==> "); Slot::Dump (free_slot);
         }
         else
         {
@@ -519,7 +515,6 @@ namespace Marshaller
                                   GetLatestDate (from, current_slot->_end),
                                   next_slot->_start,
                                   duration);
-            printf ("(4) ==> "); Slot::Dump (free_slot);
           }
           g_date_time_unref (max_start_time);
         }

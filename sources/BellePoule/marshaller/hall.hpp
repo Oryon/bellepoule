@@ -115,6 +115,10 @@ namespace Marshaller
 
       GList *GetFreePisteSlots (GTimeSpan duration);
 
+      static gint CompareReferee (EnlistedReferee *a,
+                                  EnlistedReferee *b,
+                                  GList           *fencer_list);
+
       gboolean SetFreeRefereeFor (GList *referee_list,
                                   Slot  *slot,
                                   Job   *job);

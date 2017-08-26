@@ -402,6 +402,18 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void JobBoard::OnPlayerAdded (Player *player)
+  {
+    if (_current_job)
+    {
+      Job   *job   = (Job *) _current_job->data;
+      Batch *batch = job->GetBatch ();
+
+      _listener->OnJobBoardUpdated (batch->GetCompetition ());
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void JobBoard::OnPlayerRemoved (Player *player)
   {
     if (_current_job)
@@ -412,6 +424,19 @@ namespace Marshaller
 
       slot->RemoveReferee ((EnlistedReferee *) player);
       _listener->OnJobBoardUpdated (batch->GetCompetition ());
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  JobDetails *JobBoard::GetPairedOf (JobDetails *of)
+  {
+    if (of == _referee_details)
+    {
+      return _fencer_details;
+    }
+    else
+    {
+      return _referee_details;
     }
   }
 

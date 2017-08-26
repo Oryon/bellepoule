@@ -701,12 +701,15 @@ namespace People
                                                          renderer,
                                                          "text", id*AttributeDesc::NB_LOOK + look,
                                                          NULL);
-      gtk_tree_view_column_set_cell_data_func (column,
-                                               renderer,
-                                               (GtkTreeCellDataFunc) OnCellDataFunc,
-                                               this,
-                                               NULL);
     }
+
+    g_object_set_data (G_OBJECT (column),
+                       "PlayersList::AttributeDesc", desc);
+    gtk_tree_view_column_set_cell_data_func (column,
+                                             renderer,
+                                             (GtkTreeCellDataFunc) OnCellDataFunc,
+                                             this,
+                                             NULL);
 
     if (renderer && column)
     {

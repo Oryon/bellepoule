@@ -18,6 +18,7 @@
 #include "referee_pool.hpp"
 #include "enlisted_referee.hpp"
 #include "slot.hpp"
+#include "affinities.hpp"
 
 #include "job_details.hpp"
 
@@ -140,8 +141,6 @@ namespace Marshaller
                             32,
                             (guchar *) &fencer_ref,
                             sizeof (fencer_ref));
-
-    printf ("===> %s\n", fencer->GetName ());
   }
 
   // --------------------------------------------------------------------------------
@@ -158,22 +157,25 @@ namespace Marshaller
                                      gint            y,
                                      guint           time)
   {
-    if (Module::OnDragMotion (widget,
-                              drag_context,
-                              x,
-                              y,
-                              time))
+    if (_job->GetSlot ())
     {
-      EnlistedReferee *referee      = (EnlistedReferee *) _dnd_config->GetFloatingObject ();
-      Slot            *referee_slot = referee->GetAvailableSlotFor (_job->GetSlot (),
-                                                                    _job->GetRegularDuration ());
-      if (referee_slot)
+      if (Module::OnDragMotion (widget,
+                                drag_context,
+                                x,
+                                y,
+                                time))
       {
-        referee_slot->Release ();
-        gdk_drag_status  (drag_context,
-                          GDK_ACTION_DEFAULT,
-                          time);
-        return FALSE;
+        EnlistedReferee *referee      = (EnlistedReferee *) _dnd_config->GetFloatingObject ();
+        Slot            *referee_slot = referee->GetAvailableSlotFor (_job->GetSlot (),
+                                                                      _job->GetRegularDuration ());
+        if (referee_slot)
+        {
+          referee_slot->Release ();
+          gdk_drag_status  (drag_context,
+                            GDK_ACTION_DEFAULT,
+                            time);
+          return FALSE;
+        }
       }
     }
 
@@ -203,9 +205,12 @@ namespace Marshaller
                                                                     _job->GetRegularDuration ());
       if (referee_slot)
       {
+        Listener *listener = _listener;
+
         job_slot->TailWith (referee_slot,
                             _job->GetRegularDuration ());
         job_slot->AddReferee (referee);
+        listener->OnPlayerAdded (referee);
 
         referee_slot->Release ();
       }
@@ -218,5 +223,54 @@ namespace Marshaller
   void JobDetails::SetRefereePool (RefereePool *referee_pool)
   {
     _referee_pool = referee_pool;
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobDetails::CellDataFunc (GtkTreeViewColumn *tree_column,
+                                 GtkCellRenderer   *cell,
+                                 GtkTreeModel      *tree_model,
+                                 GtkTreeIter       *iter)
+  {
+    JobDetails *paired_details = _listener->GetPairedOf (this);
+    GList      *paired_list    = paired_details->GetList ();
+    Player     *player         = GetPlayer (tree_model, iter);
+    Affinities *affinities     = (Affinities *) player->GetPtrData (NULL,
+                                                                    "affinities");
+    g_object_set (cell,
+                  "cell-background-set", FALSE,
+                  NULL);
+
+    while (paired_list)
+    {
+      Player     *paired_player     = (Player *) paired_list->data;
+      Affinities *paired_affinities = (Affinities *) paired_player->GetPtrData (NULL, "affinities");
+      guint       kinship           = affinities->KinshipWith (paired_affinities);
+
+      if (kinship > 0)
+      {
+        GList         *affinity_names = affinities->GetAffinityNames ();
+        AttributeDesc *cell_attribute = (AttributeDesc *) g_object_get_data (G_OBJECT (tree_column),
+                                                                             "PlayersList::AttributeDesc");
+
+        for (guint i = 0; affinity_names != NULL; i++)
+        {
+          if (g_strcmp0 (cell_attribute->_code_name, (gchar *) affinity_names->data) == 0)
+          {
+            if (kinship & 1<<i)
+            {
+              gchar *color = g_strdup_printf ("#ff%x%x", 0x7f+i*0x20, 0x7f+i*0x20);
+
+              g_object_set (cell,
+                            "cell-background",     color,
+                            "cell-background-set", TRUE,
+                            NULL);
+              g_free (color);
+            }
+          }
+          affinity_names = g_list_next (affinity_names);
+        }
+      }
+      paired_list = g_list_next (paired_list);
+    }
   }
 }

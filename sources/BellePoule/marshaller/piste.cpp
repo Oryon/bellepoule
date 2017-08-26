@@ -334,7 +334,6 @@ namespace Marshaller
   {
     if (_blocked == FALSE)
     {
-      printf (BLUE "------ %d ---------\n" ESC, GetId ());
       return Slot::GetFreeSlot (this,
                                 _slots,
                                 from,

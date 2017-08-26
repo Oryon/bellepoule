@@ -202,6 +202,12 @@
 		<Unit filename="../../sources/BellePoule/application/weapon.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/affinities.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/affinities.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/batch.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>

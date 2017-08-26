@@ -22,6 +22,7 @@
 #include "enlisted_referee.hpp"
 #include "job.hpp"
 #include "slot.hpp"
+#include "affinities.hpp"
 #include "referee_pool.hpp"
 
 namespace Marshaller
@@ -267,6 +268,11 @@ namespace Marshaller
 
             if (referee_list->GetPlayerFromRef (referee->GetRef ()) == NULL)
             {
+              referee->SetData (NULL,
+                                "affinities",
+                                new Affinities (referee),
+                                (GDestroyNotify) Affinities::Destroy);
+
               referee_list->RegisterPlayer (referee,
                                             NULL);
               referee_list->OnListChanged ();
