@@ -70,6 +70,12 @@ namespace Marshaller
 
       void ResetRoadMap ();
 
+      gboolean HasReferees ();
+
+      gboolean HasKinship ();
+
+      void RefreshStatus ();
+
       static gint CompareStartTime (Job *a,
                                     Job *b);
 
@@ -87,6 +93,7 @@ namespace Marshaller
       Slot     *_slot;
       GList    *_fencer_list;
       Listener *_listener;
+      guint     _has_kinship;
 
       ~Job ();
   };

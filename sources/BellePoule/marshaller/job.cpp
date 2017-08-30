@@ -18,6 +18,7 @@
 #include "network/message.hpp"
 #include "slot.hpp"
 #include "competition.hpp"
+#include "affinities.hpp"
 #include "batch.hpp"
 
 #include "job.hpp"
@@ -39,6 +40,7 @@ namespace Marshaller
     _netid         = netid;
     _sibling_order = sibling_order;
     _slot          = NULL;
+    _has_kinship   = FALSE;
 
     Disclose ("Roadmap");
     _parcel->Set ("competition", batch->GetCompetition ()->GetId ());
@@ -190,6 +192,63 @@ namespace Marshaller
                                  Job *b)
   {
     return a->_sibling_order - b->_sibling_order;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Job::HasReferees ()
+  {
+    if (_slot)
+    {
+      return _slot->GetRefereeList () != NULL;
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Job::HasKinship ()
+  {
+    return _has_kinship;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Job::RefreshStatus ()
+  {
+    GList *referees = NULL;
+
+    if (_slot)
+    {
+      referees = _slot->GetRefereeList ();
+    }
+
+    _has_kinship = FALSE;
+    while (referees)
+    {
+      Affinities *referee_affinities;
+      Player     *referee            = (Player *) referees->data;
+      GList      *fencers            = GetFencerList ();
+
+      referee_affinities = (Affinities *) referee->GetPtrData (NULL,
+                                                               "affinities");
+      while (fencers)
+      {
+        Affinities *fencer_affinities;
+        Player     *fencer            = (Player *) fencers->data;
+
+        fencer_affinities = (Affinities *) fencer->GetPtrData (NULL,
+                                                               "affinities");
+
+        if (fencer_affinities->KinshipWith (referee_affinities))
+        {
+          _has_kinship = TRUE;
+          return;
+        }
+
+        fencers = g_list_next (fencers);
+      }
+
+      referees = g_list_next (referees);
+    }
   }
 
   // --------------------------------------------------------------------------------

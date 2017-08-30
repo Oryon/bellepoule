@@ -1134,8 +1134,7 @@ namespace Marshaller
     {
       Affinities *a_affinities   = (Affinities *) a->GetPtrData (NULL, "affinities");
       Affinities *b_affinities   = (Affinities *) b->GetPtrData (NULL, "affinities");
-      GList      *affinity_names = a_affinities->GetAffinityNames ();
-      guint       affinity_count = g_list_length (affinity_names);
+      guint       affinity_count = g_list_length (Affinities::GetTitles ());
       guint      *a_kinship = g_new0 (guint, affinity_count);
       guint      *b_kinship = g_new0 (guint, affinity_count);
 
@@ -1521,6 +1520,53 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::OnNewWarningPolicy ()
+  {
+    {
+      GtkToggleButton *toggle;
+
+      toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("club_checkbutton"));
+      Affinities::SetValidity ("club", gtk_toggle_button_get_active (toggle));
+
+      toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("league_checkbutton"));
+      Affinities::SetValidity ("league", gtk_toggle_button_get_active (toggle));
+
+      toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("country_checkbutton"));
+      Affinities::SetValidity ("country", gtk_toggle_button_get_active (toggle));
+    }
+
+    {
+      GList *current_competition = _competition_list;
+
+      while (current_competition)
+      {
+        Competition *competition   = (Competition *) current_competition->data;
+        GList       *current_batch = competition->GetBatches ();
+
+        while (current_batch)
+        {
+          Batch *batch       = (Batch *) current_batch->data;
+          GList *current_job = batch->GetScheduledJobs ();
+
+          while (current_job)
+          {
+            Job *job = (Job *) current_job->data;
+
+            job->RefreshStatus ();
+            batch->OnNewJobStatus (job);
+
+            current_job = g_list_next (current_job);
+          }
+
+          current_batch = g_list_next (current_batch);
+        }
+
+        current_competition = g_list_next (current_competition);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_add_piste_button_clicked (GtkWidget *widget,
                                                                Object    *owner)
   {
@@ -1545,6 +1591,15 @@ namespace Marshaller
     Hall *h = dynamic_cast <Hall *> (owner);
 
     h->RemoveSelected ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_warning_checkbutton_toggled (GtkToggleButton *togglebutton,
+                                                                  Object          *owner)
+  {
+    Hall *h = dynamic_cast <Hall *> (owner);
+
+    h->OnNewWarningPolicy ();
   }
 
   // --------------------------------------------------------------------------------

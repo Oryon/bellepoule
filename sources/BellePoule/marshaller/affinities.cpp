@@ -20,22 +20,30 @@
 
 namespace Marshaller
 {
+  GList *Affinities::_titles     = NULL;
+  GData *Affinities::_validities = NULL;
+
   // --------------------------------------------------------------------------------
   Affinities::Affinities (Player *player)
     : Object ("Affinities")
   {
-    _affinity_names = NULL;
-    _checksums    = NULL;
+    _checksums = NULL;
 
-    SetAffinity (player, "country");
-    SetAffinity (player, "league");
-    SetAffinity (player, "club");
+    {
+      GList *current = g_list_last (_titles);
+
+      while (current)
+      {
+        SetAffinity (player, (const gchar *) current->data);
+
+        current = g_list_previous (current);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------
   Affinities::~Affinities ()
   {
-    g_list_free (_affinity_names);
     g_list_free (_checksums);
   }
 
@@ -46,14 +54,39 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *Affinities::GetAffinityNames ()
+  void Affinities::ManageTitle (const gchar *title)
   {
-    return _affinity_names;
+    if (_titles == NULL)
+    {
+      g_datalist_init (&_validities);
+    }
+
+    _titles = g_list_prepend (_titles,
+                              (void *) title);
+    g_datalist_set_data (&_validities,
+                         title,
+                         (gpointer) TRUE);
+  }
+
+  // --------------------------------------------------------------------------------
+  GList *Affinities::GetTitles ()
+  {
+    return _titles;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Affinities::SetValidity (const gchar *of,
+                                gboolean     validity)
+  {
+    g_datalist_set_data (&_validities,
+                         of,
+                         (gpointer) validity);
   }
 
   // --------------------------------------------------------------------------------
   guint Affinities::KinshipWith (Affinities *with)
   {
+    GList *current_key  = _titles;
     GList *current      = _checksums;
     GList *with_current = with->_checksums;
     guint  kinship      = 0;
@@ -62,9 +95,14 @@ namespace Marshaller
     {
       if (current->data == with_current->data)
       {
-        kinship |= 1<<i;
+        if (g_datalist_get_data (&_validities,
+                                 (const gchar *) current_key->data) != 0)
+        {
+          kinship |= 1<<i;
+        }
       }
 
+      current_key  = g_list_next (current_key);
       current      = g_list_next (current);
       with_current = g_list_next (with_current);
     }
@@ -93,8 +131,6 @@ namespace Marshaller
       g_free (checksum);
     }
 
-    _affinity_names = g_list_prepend (_affinity_names,
-                                      (void *) affinity);
     _checksums = g_list_prepend (_checksums,
                                  GUINT_TO_POINTER (digest));
   }

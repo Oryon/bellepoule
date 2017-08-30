@@ -96,14 +96,10 @@ namespace Marshaller
     {
       _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
-      ConnectDndSource (GTK_WIDGET (_tree_view));
-      ConnectDndDest   (GTK_WIDGET (_tree_view));
-
-      _dnd_config->SetOnAWidgetSrc (_tree_view,
-                                    GDK_BUTTON1_MASK,
-                                    GDK_ACTION_COPY);
       _dnd_config->SetOnAWidgetDest (_tree_view,
                                      GDK_ACTION_COPY);
+
+      ConnectDndDest (GTK_WIDGET (_tree_view));
     }
   }
 
@@ -248,7 +244,7 @@ namespace Marshaller
 
       if (kinship > 0)
       {
-        GList         *affinity_names = affinities->GetAffinityNames ();
+        GList         *affinity_names = Affinities::GetTitles ();
         AttributeDesc *cell_attribute = (AttributeDesc *) g_object_get_data (G_OBJECT (tree_column),
                                                                              "PlayersList::AttributeDesc");
 

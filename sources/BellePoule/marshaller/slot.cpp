@@ -54,12 +54,9 @@ namespace Marshaller
 
       while (current)
       {
-        Job   *job   = (Job *) current->data;
-        Batch *batch = job->GetBatch ();
+        Job *job = (Job *) current->data;
 
-        batch->SetJobStatus (job,
-                             FALSE,
-                             FALSE);
+        RefreshJobStatus (job);
         job->RemoveObjectListener (this);
 
         current = g_list_next (current);
@@ -198,13 +195,7 @@ namespace Marshaller
       }
     }
 
-    {
-      Batch *batch = job->GetBatch ();
-
-      batch->SetJobStatus (job,
-                           _job_list     != NULL,
-                           _referee_list != NULL);
-    }
+    RefreshJobStatus (job);
 
     _owner->OnSlotUpdated (this);
     _owner->OnSlotLocked  (this);
@@ -222,23 +213,17 @@ namespace Marshaller
     }
 
     {
-      Batch *batch = job->GetBatch ();
-
-      batch->SetJobStatus (job,
-                           FALSE,
-                           FALSE);
-    }
-
-    job->RemoveObjectListener (this);
-    job->SetSlot              (NULL);
-
-    {
       g_list_foreach (_referee_list,
                       (GFunc) EnlistedReferee::OnRemovedFromSlot,
                       this);
       g_list_free (_referee_list);
       _referee_list = NULL;
     }
+
+    RefreshJobStatus (job);
+
+    job->RemoveObjectListener (this);
+    job->SetSlot              (NULL);
 
     _owner->OnSlotUpdated (this);
 
@@ -258,13 +243,10 @@ namespace Marshaller
 
       while (current)
       {
-        Job   *job   = (Job *) current->data;
-        Batch *batch = job->GetBatch ();
+        Job *job = (Job *) current->data;
 
         job->SetReferee (referee->GetRef ());
-        batch->SetJobStatus (job,
-                             _job_list     != NULL,
-                             _referee_list != NULL);
+        RefreshJobStatus (job);
 
         current = g_list_next (current);
       }
@@ -290,15 +272,12 @@ namespace Marshaller
 
       while (current)
       {
-        Job   *job   = (Job *) current->data;
-        Batch *batch = job->GetBatch ();
+        Job *job = (Job *) current->data;
 
         job->RemoveReferee (referee);
         EnlistedReferee::OnRemovedFromSlot (referee,
                                             this);
-        batch->SetJobStatus (job,
-                             _job_list     != NULL,
-                             _referee_list != NULL);
+        RefreshJobStatus (job);
 
         current = g_list_next (current);
       }
@@ -536,6 +515,18 @@ namespace Marshaller
   Slot::Owner *Slot::GetOwner ()
   {
     return _owner;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Slot::RefreshJobStatus (Job *job)
+  {
+    job->RefreshStatus ();
+
+    {
+      Batch *batch = job->GetBatch ();
+
+      batch->OnNewJobStatus (job);
+    }
   }
 
   // --------------------------------------------------------------------------------

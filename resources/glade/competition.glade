@@ -115,7 +115,7 @@
                   <object class="GtkImage" id="batch_image">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="stock">gtk-dialog-warning</property>
+                    <property name="stock">gtk-dialog-question</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

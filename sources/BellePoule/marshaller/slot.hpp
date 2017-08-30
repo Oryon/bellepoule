@@ -106,6 +106,8 @@ namespace Marshaller
 
       void SetStartTime (GDateTime *time);
 
+      void RefreshJobStatus (Job *job);
+
       static GDateTime *GetLatestDate (GDateTime *a,
                                        GDateTime *b);
   };

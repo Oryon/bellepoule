@@ -60,9 +60,7 @@ namespace Marshaller
 
       void CloseLoading ();
 
-      void SetJobStatus (Job      *job,
-                         gboolean  has_slot,
-                         gboolean  has_referee);
+      void OnNewJobStatus (Job *job);
 
       void RemoveJob (Net::Message *message);
 

@@ -20,6 +20,7 @@
 #include "actors/referees_list.hpp"
 
 #include "competition.hpp"
+#include "affinities.hpp"
 
 #include "marshaller.hpp"
 
@@ -30,6 +31,12 @@ namespace Marshaller
     : Object ("Marshaller"),
       Module ("marshaller.glade")
   {
+    {
+      Affinities::ManageTitle ("country");
+      Affinities::ManageTitle ("league");
+      Affinities::ManageTitle ("club");
+    }
+
     _referee_pool = new RefereePool ();
 
     gtk_window_maximize (GTK_WINDOW (_glade->GetWidget ("root")));

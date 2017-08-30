@@ -81,6 +81,8 @@ namespace Marshaller
       void ManageFencer (Net::Message *message);
       void DeleteFencer (Net::Message *message);
 
+      void OnNewWarningPolicy ();
+
     private:
       GList       *_piste_list;
       GList       *_selected_list;
