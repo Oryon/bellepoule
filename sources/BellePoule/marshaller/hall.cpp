@@ -68,6 +68,17 @@ namespace Marshaller
     _clock = new Clock (this);
 
     {
+      GList *warnings = Affinities::GetTitles ();
+
+      while (warnings)
+      {
+        SetWarningColors ((const gchar *) warnings->data);
+
+        warnings = g_list_next (warnings);
+      }
+    }
+
+    {
       gchar *json = g_strdup_printf ("%s/BellePoule/hall.json", g_get_user_config_dir ());
 
       _json_file = new JsonFile (this,
@@ -146,6 +157,26 @@ namespace Marshaller
     }
 
     RestoreZoomFactor ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::SetWarningColors (const gchar *warning)
+  {
+    gchar     *box_name = g_strdup_printf ("%s_box", warning);
+    GtkWidget *box      = _glade->GetWidget (box_name);
+
+    if (box)
+    {
+      GdkColor  *gdk_color = Affinities::GetColor (warning);
+
+      gtk_widget_modify_bg (box,
+                            GTK_STATE_NORMAL,
+                            gdk_color);
+      gtk_widget_modify_bg (box,
+                            GTK_STATE_ACTIVE,
+                            gdk_color);
+    }
+    g_free (box_name);
   }
 
   // --------------------------------------------------------------------------------

@@ -31,15 +31,21 @@ namespace Marshaller
 
       guint KinshipWith (Affinities *with);
 
-      static void ManageTitle (const gchar *title);
+      static void Manage (const gchar *title,
+                          const gchar *color);
 
       static GList *GetTitles ();
+
+      static GdkColor *GetColor (const gchar *of);
+
+      static GdkColor *GetColor (guint of);
 
       static void SetValidity (const gchar *of,
                                gboolean     validity);
 
     private:
       static GList *_titles;
+      static GData *_colors;
       static GData *_validities;
       GList        *_checksums;
 

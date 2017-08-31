@@ -23,6 +23,8 @@
       <column type="gchararray"/>
       <!-- column-name icon -->
       <column type="gchararray"/>
+      <!-- column-name warning_color -->
+      <column type="GdkColor"/>
     </columns>
   </object>
   <object class="GtkWindow" id="window1">
@@ -100,6 +102,7 @@
                     <child>
                       <object class="GtkCellRendererText" id="job_name"/>
                       <attributes>
+                        <attribute name="background-gdk">4</attribute>
                         <attribute name="foreground">2</attribute>
                         <attribute name="text">0</attribute>
                       </attributes>

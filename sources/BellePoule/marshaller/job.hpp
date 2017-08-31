@@ -72,7 +72,7 @@ namespace Marshaller
 
       gboolean HasReferees ();
 
-      gboolean HasKinship ();
+      guint GetKinship ();
 
       void RefreshStatus ();
 
@@ -93,7 +93,7 @@ namespace Marshaller
       Slot     *_slot;
       GList    *_fencer_list;
       Listener *_listener;
-      guint     _has_kinship;
+      guint     _kinship;
 
       ~Job ();
   };

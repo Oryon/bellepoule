@@ -40,7 +40,7 @@ namespace Marshaller
     _netid         = netid;
     _sibling_order = sibling_order;
     _slot          = NULL;
-    _has_kinship   = FALSE;
+    _kinship       = 0;
 
     Disclose ("Roadmap");
     _parcel->Set ("competition", batch->GetCompetition ()->GetId ());
@@ -206,9 +206,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Job::HasKinship ()
+  guint Job::GetKinship ()
   {
-    return _has_kinship;
+    return _kinship;
   }
 
   // --------------------------------------------------------------------------------
@@ -221,7 +221,7 @@ namespace Marshaller
       referees = _slot->GetRefereeList ();
     }
 
-    _has_kinship = FALSE;
+    _kinship = 0;
     while (referees)
     {
       Affinities *referee_affinities;
@@ -234,14 +234,15 @@ namespace Marshaller
       {
         Affinities *fencer_affinities;
         Player     *fencer            = (Player *) fencers->data;
+        guint       kinship;
 
         fencer_affinities = (Affinities *) fencer->GetPtrData (NULL,
                                                                "affinities");
 
-        if (fencer_affinities->KinshipWith (referee_affinities))
+        kinship = fencer_affinities->KinshipWith (referee_affinities);
+        if (kinship > _kinship)
         {
-          _has_kinship = TRUE;
-          return;
+          _kinship = kinship;
         }
 
         fencers = g_list_next (fencers);

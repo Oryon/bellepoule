@@ -254,13 +254,10 @@ namespace Marshaller
           {
             if (kinship & 1<<i)
             {
-              gchar *color = g_strdup_printf ("#ff%x%x", 0x7f+i*0x20, 0x7f+i*0x20);
-
               g_object_set (cell,
-                            "cell-background",     color,
+                            "cell-background-gdk", Affinities::GetColor (cell_attribute->_code_name),
                             "cell-background-set", TRUE,
                             NULL);
-              g_free (color);
             }
           }
           affinity_names = g_list_next (affinity_names);

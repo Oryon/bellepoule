@@ -24,6 +24,7 @@
 #include "job.hpp"
 #include "job_board.hpp"
 #include "batch.hpp"
+#include "affinities.hpp"
 
 namespace Marshaller
 {
@@ -32,7 +33,8 @@ namespace Marshaller
     NAME_str,
     JOB_ptr,
     JOB_color,
-    JOB_status
+    JOB_status,
+    JOB_warning_color
   } ColumnId;
 
   // --------------------------------------------------------------------------------
@@ -263,8 +265,9 @@ namespace Marshaller
       {
         if (job->HasReferees ())
         {
-          GList *node = g_list_find (_pending_list,
-                                     job);
+          guint  kinship = job->GetKinship ();
+          GList *node    = g_list_find (_pending_list,
+                                        job);
 
           if (node)
           {
@@ -276,20 +279,10 @@ namespace Marshaller
                                                     (GCompareFunc) Job::CompareStartTime);
           }
 
-          if (job->HasKinship ())
-          {
-            gtk_list_store_set (_job_store, &iter,
-                                JOB_color,  "Grey",
-                                JOB_status, GTK_STOCK_DIALOG_WARNING,
-                                -1);
-          }
-          else
-          {
-            gtk_list_store_set (_job_store, &iter,
-                                JOB_color,  "Grey",
-                                JOB_status, NULL,
-                                -1);
-          }
+          gtk_list_store_set (_job_store,        &iter,
+                              JOB_status,        NULL,
+                              JOB_warning_color, Affinities::GetColor (kinship),
+                              -1);
         }
         else
         {
@@ -306,9 +299,9 @@ namespace Marshaller
                                                   (GCompareFunc) Job::CompareSiblingOrder);
           }
 
-          gtk_list_store_set (_job_store, &iter,
-                              JOB_color,  "Black",
-                              JOB_status, GTK_STOCK_DIALOG_QUESTION,
+          gtk_list_store_set (_job_store,        &iter,
+                              JOB_status,        GTK_STOCK_DIALOG_QUESTION,
+                              JOB_warning_color, NULL,
                               -1);
         }
 
@@ -484,7 +477,6 @@ namespace Marshaller
             gtk_list_store_set (_job_store, &iter,
                                 NAME_str,   name,
                                 JOB_ptr,    job,
-                                JOB_color,  "Black",
                                 JOB_status, GTK_STOCK_DIALOG_QUESTION,
                                 -1);
             g_free (name);

@@ -21,6 +21,7 @@
 namespace Marshaller
 {
   GList *Affinities::_titles     = NULL;
+  GData *Affinities::_colors     = NULL;
   GData *Affinities::_validities = NULL;
 
   // --------------------------------------------------------------------------------
@@ -54,15 +55,28 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Affinities::ManageTitle (const gchar *title)
+  void Affinities::Manage (const gchar *title,
+                           const gchar *color)
   {
     if (_titles == NULL)
     {
+      g_datalist_init (&_colors);
       g_datalist_init (&_validities);
     }
 
     _titles = g_list_prepend (_titles,
                               (void *) title);
+
+    {
+      GdkColor *gdk_color = g_new (GdkColor, 1);
+
+      gdk_color_parse (color,
+                       gdk_color);
+      g_datalist_set_data (&_colors,
+                           title,
+                           gdk_color);
+    }
+
     g_datalist_set_data (&_validities,
                          title,
                          (gpointer) TRUE);
@@ -72,6 +86,30 @@ namespace Marshaller
   GList *Affinities::GetTitles ()
   {
     return _titles;
+  }
+
+  // --------------------------------------------------------------------------------
+  GdkColor *Affinities::GetColor (const gchar *of)
+  {
+    return (GdkColor *) g_datalist_get_data (&_colors,
+                                             of);
+  }
+
+  // --------------------------------------------------------------------------------
+  GdkColor *Affinities::GetColor (guint of)
+  {
+    GList *current = _titles;
+
+    for (guint i = 0; current != NULL; i++)
+    {
+      if (of & 1<<i)
+      {
+        return GetColor ((const gchar *) current->data);
+      }
+      current = g_list_next (current);
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------

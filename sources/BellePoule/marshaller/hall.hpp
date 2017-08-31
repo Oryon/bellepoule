@@ -203,5 +203,7 @@ namespace Marshaller
       void FeedJsonBuilder (JsonBuilder *builder);
 
       gboolean ReadJson (JsonReader *reader);
+
+      void SetWarningColors (const gchar *warning);
   };
 }

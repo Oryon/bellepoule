@@ -32,9 +32,9 @@ namespace Marshaller
       Module ("marshaller.glade")
   {
     {
-      Affinities::ManageTitle ("country");
-      Affinities::ManageTitle ("league");
-      Affinities::ManageTitle ("club");
+      Affinities::Manage ("country", "#fff36c");
+      Affinities::Manage ("league",  "#ffb245");
+      Affinities::Manage ("club",    "#ffa191");
     }
 
     _referee_pool = new RefereePool ();
