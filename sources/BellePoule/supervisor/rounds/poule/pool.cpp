@@ -598,9 +598,10 @@ namespace Pool
         if (_referee_list)
         {
           Player *referee = (Player *) _referee_list->data;
+          gchar  *name    = referee->GetName ();
 
           goo_canvas_text_new (referee_group,
-                               referee->GetName (),
+                               name,
                                5.0,
                                cell_h/2.0,
                                -1,
@@ -608,6 +609,7 @@ namespace Pool
                                "fill-color", "Black",
                                "font", BP_FONT "bold 25.0px",
                                NULL);
+          g_free (name);
         }
 
         Canvas::HAlign (referee_group,

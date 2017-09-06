@@ -845,6 +845,7 @@ namespace People
     team->SetManualClassification  (_manual_classification);
 
     ApplyConfig (team);
+    g_free (name);
   }
 
   // --------------------------------------------------------------------------------
@@ -1103,7 +1104,11 @@ namespace People
     {
       if (player->Is ("Team"))
       {
-        if (GetTeam (player->GetName ()))
+        gchar *name = player->GetName ();
+        Team  *team = GetTeam (name);
+
+        g_free (name);
+        if (team)
         {
           return;
         }
@@ -1264,8 +1269,13 @@ namespace People
             dest = dest_fencer->GetTeam ();
           }
 
-          fencer->SetAttributeValue (&attr_id,
-                                     dest->GetName ());
+          {
+            gchar *name = dest->GetName ();
+
+            fencer->SetAttributeValue (&attr_id,
+                                       name);
+            g_free (name);
+          }
           OnListChanged ();
 
           return TRUE;

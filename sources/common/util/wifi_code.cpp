@@ -135,6 +135,8 @@ gchar *WifiCode::GetText ()
 #ifndef LIVE_POOL
   if (_player)
   {
+    gchar *name = _player->GetName ();
+
     text = g_strdup_printf ("%s%s:%d-%s-%d-%s",
                             network,
                             ip,
@@ -142,6 +144,7 @@ gchar *WifiCode::GetText ()
                             _player->GetName (),
                             _player->GetRef (),
                             key);
+    g_free (name);
   }
   else
 #endif

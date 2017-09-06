@@ -189,8 +189,10 @@ namespace Table
         }
 
         {
+          gchar *name = referee->GetName ();
+
           GooCanvasItem *item = Canvas::PutTextInTable (table,
-                                                        referee->GetName (),
+                                                        name,
                                                         row + i,
                                                         column+1);
           Canvas::SetTableItemAttribute (item, "x-align", 1.0);
@@ -202,6 +204,7 @@ namespace Table
           canvas_module->SetObjectDropZone (referee,
                                             item,
                                             this);
+          g_free (name);
         }
 
         current = g_slist_next (current);

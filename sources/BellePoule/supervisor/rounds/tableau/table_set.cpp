@@ -3278,8 +3278,10 @@ namespace Table
 
               if (referee)
               {
+                gchar *name = ((Player *) (referee->data))->GetName ();
+
                 goo_canvas_text_new (referee_group,
-                                     ((Player *) (referee->data))->GetName (),
+                                     name,
                                      30.0,
                                      3.2,
                                      -1,
@@ -3287,6 +3289,7 @@ namespace Table
                                      "fill-color", "Black",
                                      "font", font,
                                      NULL);
+                g_free (name);
               }
             }
 
