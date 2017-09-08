@@ -763,7 +763,7 @@ Contest *Tournament::GetContest (const gchar *filename)
 // --------------------------------------------------------------------------------
 void Tournament::OnNew ()
 {
-  Contest *contest = new Contest ();
+  Contest *contest = new Contest (_twitter);
 
   Manage (contest);
   contest->AskForSettings ();
@@ -959,7 +959,7 @@ void Tournament::OpenUriContest (const gchar *uri)
       while (events)
       {
         AskFred::Event *event   = (AskFred::Event *) events->data;
-        Contest        *contest = new Contest ();
+        Contest        *contest = new Contest (_twitter);
 
         Plug (contest,
               NULL);
@@ -1001,7 +1001,7 @@ void Tournament::OpenUriContest (const gchar *uri)
         if (g_str_has_suffix (uri,
                               contest_suffix_table[i]))
         {
-          contest = new Contest ();
+          contest = new Contest (_twitter);
 
           contest->LoadXml (uri);
 
@@ -1018,7 +1018,7 @@ void Tournament::OpenUriContest (const gchar *uri)
         if (g_str_has_suffix (uri,
                               people_suffix_table[i]))
         {
-          contest = new Contest ();
+          contest = new Contest (_twitter);
 
           contest->LoadFencerFile (uri);
 
@@ -1276,7 +1276,6 @@ void Tournament::OnTwitterID (const gchar *id)
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton),
                                   FALSE);
   }
-
 }
 
 // --------------------------------------------------------------------------------

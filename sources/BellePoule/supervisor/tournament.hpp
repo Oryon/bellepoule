@@ -20,7 +20,7 @@
 #include "util/glade.hpp"
 #include "network/downloader.hpp"
 #include "network/web_server.hpp"
-#include "network/twitter.hpp"
+#include "network/twitter/twitter.hpp"
 #include "ecosystem.hpp"
 
 class Contest;

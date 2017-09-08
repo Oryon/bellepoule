@@ -43,7 +43,10 @@ namespace Oauth
       virtual void ParseResponse (const gchar *response);
 
       void AddHeaderField (const gchar *key,
-                                        const gchar *value);
+                           const gchar *value);
+
+      void AddParameterField (const gchar *key,
+                              const gchar *value);
 
       Status GetStatus ();
 
@@ -51,8 +54,19 @@ namespace Oauth
 
       virtual const gchar *GetURL () = 0;
 
+      gchar *GetParameters ();
+
+      const gchar *GetMethod ();
+
+      void SetRateLimitLimit (guint limit);
+
+      void SetRateLimitRemaining (guint remaining);
+
+      void SetRateLimitReset (guint reset);
+
     protected:
       static const gchar *GET;
+      static const gchar *POST;
       Session            *_session;
       JsonParser         *_parser;
 
@@ -65,12 +79,18 @@ namespace Oauth
 
       gchar *GetJsonAtPath (const gchar *path);
 
+      void ForgiveError ();
+
     private:
       static const gchar  _nonce_range[];
       GRand              *_rand;
       GList              *_header_list;
+      GList              *_parameter_list;
       const gchar        *_http_method;
       Status              _status;
+      guint               _rate_limit_limit;
+      guint               _rate_limit_remaining;
+      GDateTime          *_rate_limit_reset;
 
       void Stamp ();
 

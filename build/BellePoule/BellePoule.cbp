@@ -86,6 +86,7 @@
 			<Add directory="../../sources/BellePoule" />
 			<Add directory="../../sources/common" />
 			<Add directory="/usr/include/json-glib-1.0" />
+			<Add directory="../../sources/common/network" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--export-dynamic" />
@@ -625,16 +626,28 @@
 		<Unit filename="../../sources/common/network/ring.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter.cpp">
+		<Unit filename="../../sources/common/network/twitter/statuses_update_request.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter.hpp">
+		<Unit filename="../../sources/common/network/twitter/statuses_update_request.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter_uploader.cpp">
+		<Unit filename="../../sources/common/network/twitter/twitter.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/twitter_uploader.hpp">
+		<Unit filename="../../sources/common/network/twitter/twitter.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/twitter_uploader.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/twitter_uploader.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/verify_credentials_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/verify_credentials_request.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/uploader.cpp">

@@ -23,7 +23,8 @@
 
 namespace Oauth
 {
-  const gchar *HttpRequest::GET = "GET";
+  const gchar *HttpRequest::GET  = "GET";
+  const gchar *HttpRequest::POST = "POST";
 
   const gchar HttpRequest::_nonce_range[] =
   {
@@ -40,12 +41,17 @@ namespace Oauth
   {
     _status = READY;
 
-    _rand        = g_rand_new ();
-    _header_list = NULL;
-    _parser      = NULL;
+    _rand           = g_rand_new ();
+    _header_list    = NULL;
+    _parameter_list = NULL;
+    _parser         = NULL;
 
     _http_method = http_method;
     _session     = session;
+
+    _rate_limit_limit     = 0;
+    _rate_limit_remaining = 0;
+    _rate_limit_reset     = NULL;
 
     {
       gchar *nonce = GetNonce ();
@@ -68,11 +74,23 @@ namespace Oauth
   HttpRequest::~HttpRequest ()
   {
     FreeFullGList (Field, _header_list);
+    FreeFullGList (Field, _parameter_list);
 
     if (_parser)
     {
       g_object_unref (_parser);
     }
+
+    if (_rate_limit_reset)
+    {
+      g_date_time_unref (_rate_limit_reset);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *HttpRequest::GetMethod ()
+  {
+    return _http_method;
   }
 
   // --------------------------------------------------------------------------------
@@ -124,7 +142,7 @@ namespace Oauth
           {
             for (guint i = 0; segments[i] != NULL; i++)
             {
-              if (i == 2)
+              if (*segments[i] != '\0')
               {
                 result = g_strdup (segments[i]);
                 break;
@@ -168,7 +186,31 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   void HttpRequest::ParseResponse (const gchar *response)
   {
-    printf ("%s\n\n\n", response);
+    // printf ("%s\n\n\n", response);
+
+    if (_rate_limit_reset)
+    {
+      GDateTime *now   = g_date_time_new_now_utc ();
+      GTimeSpan  delay = g_date_time_difference (_rate_limit_reset, now);
+      GDateTime *reset_time;
+      gchar     *reset_str;
+
+      {
+        GTimeVal tv;
+
+        tv.tv_sec  = delay / G_TIME_SPAN_SECOND;
+        tv.tv_usec = 0;
+
+        reset_time = g_date_time_new_from_timeval_utc (&tv);
+      }
+
+      reset_str = g_date_time_format (reset_time, "%H:%M:%S");
+      printf ("%s ==> " BLUE "%d/%d (%s)\n" ESC, GetURL (), _rate_limit_remaining, _rate_limit_limit, reset_str);
+
+      g_date_time_unref (reset_time);
+      g_date_time_unref (now);
+      g_free (reset_str);
+    }
 
     if (response == NULL)
     {
@@ -218,6 +260,12 @@ namespace Oauth
   }
 
   // --------------------------------------------------------------------------------
+  void HttpRequest::ForgiveError ()
+  {
+    _status = ACCEPTED;
+  }
+
+  // --------------------------------------------------------------------------------
   void HttpRequest::AddHeaderField (const gchar *key,
                                     const gchar *value)
   {
@@ -227,6 +275,18 @@ namespace Oauth
     _header_list = g_list_insert_sorted (_header_list,
                                          field,
                                          (GCompareFunc) Field::Compare);
+  }
+
+  // --------------------------------------------------------------------------------
+  void HttpRequest::AddParameterField (const gchar *key,
+                                       const gchar *value)
+  {
+    Field *field = new Field (key,
+                              value);
+
+    _parameter_list = g_list_insert_sorted (_parameter_list,
+                                            field,
+                                            (GCompareFunc) Field::Compare);
   }
 
   // --------------------------------------------------------------------------------
@@ -262,7 +322,7 @@ namespace Oauth
     gchar *header;
 
     Stamp ();
-    Sign  ();
+    Sign ();
 
     {
       GString *header_string = g_string_new ("Authorization: OAuth ");
@@ -301,9 +361,8 @@ namespace Oauth
     GString *base_string = g_string_new (NULL);
     gchar   *signature;
 
-    // Base string to sign
+    // String to sign
     {
-      // Method
       base_string = g_string_append (base_string,
                                      _http_method);
       base_string = g_string_append_c (base_string,
@@ -325,9 +384,13 @@ namespace Oauth
 
       // Fields
       {
+        GList   *current;
         GString *parameter_string = g_string_new (NULL);
-        GList   *current          = _header_list;
-
+        GList   *signing_list     = g_list_concat (g_list_copy (_header_list),
+                                                   g_list_copy (_parameter_list));
+        signing_list = g_list_sort (signing_list,
+                                    (GCompareFunc) Field::Compare);
+        current = signing_list;
         for (guint i = 0; current; i++)
         {
           Field *field = (Field *) current->data;
@@ -356,6 +419,7 @@ namespace Oauth
 
         g_string_free (parameter_string,
                        TRUE);
+        g_list_free (signing_list);
       }
     }
 
@@ -398,5 +462,61 @@ namespace Oauth
 
     AddHeaderField ("oauth_signature", signature);
     g_free (signature);
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *HttpRequest::GetParameters ()
+  {
+    gchar *parameters = NULL;
+
+    if (_parameter_list)
+    {
+      GList   *current          = _parameter_list;
+      GString *parameter_string = g_string_new (NULL);
+
+      for (guint i = 0; current; i++)
+      {
+        Field *field = (Field *) current->data;
+
+        if (i > 0)
+        {
+          parameter_string = g_string_append_c (parameter_string,
+                                                '&');
+        }
+
+        parameter_string = g_string_append (parameter_string,
+                                            field->GetParcel ());
+
+        current = g_list_next (current);
+      }
+
+      parameters = parameter_string->str;
+      g_string_free (parameter_string,
+                     FALSE);
+    }
+
+    return parameters;
+  }
+
+  // --------------------------------------------------------------------------------
+  void HttpRequest::SetRateLimitLimit (guint limit)
+  {
+    _rate_limit_limit = limit;
+  }
+
+  // --------------------------------------------------------------------------------
+  void HttpRequest::SetRateLimitRemaining (guint remaining)
+  {
+    _rate_limit_remaining = remaining;
+  }
+
+  // --------------------------------------------------------------------------------
+  void HttpRequest::SetRateLimitReset (guint reset)
+  {
+    GTimeVal time_val;
+
+    time_val.tv_sec  = reset;
+    time_val.tv_usec = 0;
+    _rate_limit_reset = g_date_time_new_from_timeval_utc (&time_val);
   }
 }

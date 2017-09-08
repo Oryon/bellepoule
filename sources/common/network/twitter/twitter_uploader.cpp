@@ -27,6 +27,7 @@ namespace Net
   {
     _request     = NULL;
     _http_header = NULL;
+    _postfields  = NULL;
 
     _listener = listener;
     if (_listener)
@@ -44,6 +45,8 @@ namespace Net
     {
       curl_slist_free_all (_http_header);
     }
+
+    g_free (_postfields);
 
     if (_listener)
     {
@@ -82,11 +85,87 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  size_t TwitterUploader::OnResponseHeader (char            *buffer,
+                                            size_t           size,
+                                            size_t           nitems,
+                                            TwitterUploader *uploader)
+  {
+    guint  load            = size *nitems;
+    gchar *header_response = (gchar *) g_malloc0 (load + 1);
+
+    memcpy (header_response,
+            buffer,
+            load);
+
+    if (g_strrstr (header_response, "x-rate-limit-limit:"))
+    {
+      gchar **fields = g_strsplit (header_response,
+                                   ":",
+                                   -1);
+      if (fields[1])
+      {
+        uploader->_request->SetRateLimitLimit (g_ascii_strtoull (fields[1],
+                                                                 NULL,
+                                                                 10));
+      }
+      g_strfreev (fields);
+    }
+    else if (g_strrstr (header_response, "x-rate-limit-remaining:"))
+    {
+      gchar **fields = g_strsplit (header_response,
+                                   ":",
+                                   -1);
+      if (fields[1])
+      {
+        uploader->_request->SetRateLimitRemaining (g_ascii_strtoull (fields[1],
+                                                                     NULL,
+                                                                     10));
+      }
+      g_strfreev (fields);
+    }
+    else if (g_strrstr (header_response, "x-rate-limit-reset:"))
+    {
+      gchar **fields = g_strsplit (header_response,
+                                   ":",
+                                   -1);
+      if (fields[1])
+      {
+        uploader->_request->SetRateLimitReset (g_ascii_strtoull (fields[1],
+                                                                 NULL,
+                                                                 10));
+      }
+      g_strfreev (fields);
+    }
+
+    g_free (header_response);
+
+    return load;
+  }
+
+  // --------------------------------------------------------------------------------
   void TwitterUploader::SetCurlOptions (CURL *curl)
   {
     Uploader::SetCurlOptions (curl);
 
-    curl_easy_setopt (curl, CURLOPT_SSL_VERIFYPEER, 1);
+    curl_easy_setopt (curl, CURLOPT_SSL_VERIFYPEER, 1L);
+    curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, OnResponseHeader);
+    curl_easy_setopt (curl, CURLOPT_HEADERDATA,     this);
+
+    if (g_strcmp0 (_request->GetMethod (), "POST") == 0)
+    {
+      curl_easy_setopt (curl, CURLOPT_POST, 1L);
+
+      g_free (_postfields);
+      _postfields = _request->GetParameters ();
+      if (_postfields)
+      {
+        curl_easy_setopt (curl, CURLOPT_POSTFIELDS, _postfields);
+      }
+    }
+    else
+    {
+      curl_easy_setopt (curl, CURLOPT_POST, 0L);
+    }
 
     if (_http_header)
     {

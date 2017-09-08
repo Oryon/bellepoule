@@ -883,6 +883,12 @@ const gchar *Stage::GetInputProviderClient ()
 }
 
 // --------------------------------------------------------------------------------
+gchar *Stage::GetTweet ()
+{
+  return g_strdup_printf ("%s launched", _name);
+}
+
+// --------------------------------------------------------------------------------
 void Stage::InitQualifiedForm ()
 {
   Module *module = dynamic_cast <Module *> (this);

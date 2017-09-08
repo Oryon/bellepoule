@@ -16,55 +16,21 @@
 
 #pragma once
 
-#include "util/module.hpp"
-
-#include "twitter_uploader.hpp"
-
-namespace Oauth
-{
-  class Session;
-}
+#include "oauth/http_request.hpp"
 
 namespace Net
 {
-  class Twitter : public Module, public TwitterUploader::Listener
+  class StatusesUpdate : public Oauth::HttpRequest
   {
     public:
-      class Listener
-      {
-        public:
-          virtual void OnTwitterID (const gchar *id) = 0;
-      };
-
-    public:
-      Twitter (Listener *listener);
-
-      void SwitchOn ();
-
-      void SwitchOff ();
-
-      void Reset ();
+      StatusesUpdate (Oauth::Session *session,
+                      const gchar    *tweet);
 
     private:
-      enum State
-      {
-        OFF,
-        WAITING_FOR_TOKEN,
-        ON
-      };
+      virtual ~StatusesUpdate ();
 
-      Listener       *_listener;
-      Oauth::Session *_session;
-      State           _state;
+      const gchar *GetURL ();
 
-      ~Twitter ();
-
-      void SendRequest (Oauth::HttpRequest *request);
-
-      void OnTwitterResponse (Oauth::HttpRequest *request);
-
-      void Use ();
-
-      void Drop ();
+      void ParseResponse (const gchar *response);
   };
 }

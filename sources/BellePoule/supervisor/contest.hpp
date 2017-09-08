@@ -36,6 +36,11 @@ namespace AskFred
   class Event;
 }
 
+namespace Net
+{
+  class Twitter;
+}
+
 class Tournament;
 class Weapon;
 class Category;
@@ -43,7 +48,8 @@ class Category;
 class Contest : public Module
 {
   public:
-    Contest (gboolean for_duplication = FALSE);
+    Contest (Net::Twitter  *twitter,
+             gboolean       for_duplication = FALSE);
 
     virtual ~Contest ();
 
@@ -174,6 +180,7 @@ class Contest : public Module
     People::RefereesList *_referees_list;
     State                 _state;
     gboolean              _read_only;
+    Net::Twitter         *_twitter;
 
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;

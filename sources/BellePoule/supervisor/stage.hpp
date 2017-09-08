@@ -25,6 +25,7 @@
 #include "util/object.hpp"
 #include "util/data.hpp"
 #include "util/sensitivity_trigger.hpp"
+#include "twitter/twitter.hpp"
 #include "attendees.hpp"
 
 class Player;
@@ -32,7 +33,8 @@ class Classification;
 class Filter;
 class Contest;
 
-class Stage : public virtual Object
+class Stage : public virtual Object,
+              public Net::Twitter::Feeder
 {
   public:
     struct StageClass;
@@ -255,4 +257,6 @@ class Stage : public virtual Object
     Object *GetPlayerDataOwner ();
 
     void InitQualifiedForm ();
+
+    gchar *GetTweet ();
 };

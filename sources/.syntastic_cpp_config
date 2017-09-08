@@ -39,4 +39,5 @@
 -I/usr/include/goocanvas-1.0
 -I/usr/include/json-glib-1.0
 -Icommon
+-Icommon/network
 -IBellePoule

@@ -19,56 +19,10 @@
 #include "oauth/request_token.hpp"
 #include "oauth/access_token.hpp"
 
+#include "verify_credentials_request.hpp"
+#include "statuses_update_request.hpp"
+
 #include "twitter.hpp"
-
-namespace Net
-{
-  class VerifyCredentials : public Oauth::HttpRequest
-  {
-    public:
-      gchar *_twitter_account;
-
-    public:
-      VerifyCredentials (Oauth::Session *session)
-        : Oauth::HttpRequest (session, GET, "VerifyCredentials")
-      {
-        _twitter_account = NULL;
-      }
-
-    private:
-      virtual ~VerifyCredentials ()
-      {
-        g_free (_twitter_account);
-      }
-
-      const gchar *GetURL ()
-      {
-        return "https://api.twitter.com/1.1/account/verify_credentials.json";
-      }
-
-      void ParseResponse (const gchar *response)
-      {
-        HttpRequest::ParseResponse (response);
-
-        if (GetStatus () == Oauth::HttpRequest::ACCEPTED)
-        {
-          if (LoadJson (response))
-          {
-            char *name        = GetJsonAtPath ("$.name");
-            char *screen_name = GetJsonAtPath ("$.screen_name");
-
-            if (name && screen_name)
-            {
-              _twitter_account = g_strdup_printf ("%s@%s", name, screen_name);
-            }
-
-            g_free (screen_name);
-            g_free (name);
-          }
-        }
-      }
-  };
-}
 
 namespace Net
 {
@@ -84,8 +38,8 @@ namespace Net
     _session = new Oauth::Session ("E7YgKcY2Yt9bHLxceaVBSg",
                                    "8HnMWMXOZgCrRE5VFILIlx0pQUuXIxkgd5aYh34rfg");
 
-    //_session->SetToken       ("300716447-zFkdBm8f9uDKBG1j2fR6OjcVx4IWKFb7prgD7OUJ");
-    //_session->SetTokenSecret ("SsEyYrg6PWapYCsLMDjMpl4R4o1t8KZlp5o1k1WH5HmYh");
+    _session->SetToken       ("905893129982705673-jrcZ4jJGoMRaO8WMlSxjHMAJfkz9340");
+    _session->SetTokenSecret ("8lRYb357PLZXgPLVwktoOUDZsM7JfRXJ3rj2OvhhQR2mf");
 
     _listener->OnTwitterID ("");
   }
@@ -218,5 +172,25 @@ namespace Net
   void Twitter::Reset ()
   {
     _session->Reset ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Twitter::Tweet (const gchar *tweet)
+  {
+    if (_state == ON)
+    {
+      SendRequest (new StatusesUpdate (_session,
+                                       tweet));
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Twitter::Tweet (Feeder *feeder)
+  {
+    if (_state == ON)
+    {
+      SendRequest (new StatusesUpdate (_session,
+                                       feeder->GetTweet ()));
+    }
   }
 }

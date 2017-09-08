@@ -40,6 +40,7 @@
 #include "actors/checkin.hpp"
 #include "actors/referees_list.hpp"
 #include "actors/player_factory.hpp"
+#include "twitter/twitter.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "ecosystem.hpp"
 
@@ -200,7 +201,8 @@ gboolean Contest::Time::IsEqualTo (Time *to)
 }
 
 // --------------------------------------------------------------------------------
-Contest::Contest (gboolean for_duplication)
+Contest::Contest (Net::Twitter *twitter,
+                  gboolean      for_duplication)
   : Object ("Contest"),
     Module ("contest.glade")
 {
@@ -221,6 +223,7 @@ Contest::Contest (gboolean for_duplication)
   _team_event = FALSE;
   _derived    = FALSE;
   _source     = NULL;
+  _twitter    = twitter;
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
@@ -276,6 +279,7 @@ Contest::Contest (gboolean for_duplication)
 
   {
     _schedule = new Schedule (this,
+                              _twitter,
                               _minimum_team_size,
                               _manual_classification,
                               _default_classification);
@@ -1046,7 +1050,7 @@ void Contest::AskForSettings ()
 // --------------------------------------------------------------------------------
 Contest *Contest::Duplicate ()
 {
-  Contest *contest = new Contest (TRUE);
+  Contest *contest = new Contest (_twitter, TRUE);
 
   contest->_schedule->CreateDefault (TRUE);
   contest->_derived = TRUE;

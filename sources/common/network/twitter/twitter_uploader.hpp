@@ -48,6 +48,7 @@ namespace Net
       Listener           *_listener;
       Oauth::HttpRequest *_request;
       struct curl_slist  *_http_header;
+      gchar              *_postfields;
 
       static gpointer ThreadFunction (TwitterUploader *uploader);
 
@@ -59,5 +60,10 @@ namespace Net
       const gchar *GetUrl ();
 
       void OnUploadDone (const gchar *response);
+
+      static size_t OnResponseHeader (char            *buffer,
+                                      size_t           size,
+                                      size_t           nitems,
+                                      TwitterUploader *uploader);
   };
 }

@@ -117,6 +117,7 @@ endif
 CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0)
 
 CFLAGS += -Isources/common
+CFLAGS += -Isources/common/network
 CFLAGS += -Isources/BellePoule
 
 #----------------------------------------------------
@@ -148,6 +149,7 @@ endif
 #----------------------------------------------------
 SRC  = $(wildcard sources/common/network/*.cpp)
 SRC += $(wildcard sources/common/network/oauth/*.cpp)
+SRC += $(wildcard sources/common/network/twitter/*.cpp)
 SRC += $(wildcard sources/common/util/*.cpp)
 SRC += $(wildcard sources/BellePoule/actors/*.cpp)
 SRC += $(wildcard sources/BellePoule/application/*.cpp)
