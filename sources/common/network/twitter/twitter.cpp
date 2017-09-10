@@ -34,6 +34,8 @@ namespace Net
     _listener = listener;
 
     _state = OFF;
+    _title = NULL;
+    _link  = NULL;
 
     _session = new Oauth::Session ("E7YgKcY2Yt9bHLxceaVBSg",
                                    "8HnMWMXOZgCrRE5VFILIlx0pQUuXIxkgd5aYh34rfg");
@@ -48,6 +50,7 @@ namespace Net
   Twitter::~Twitter ()
   {
     _session->Release ();
+    g_free (_title);
   }
 
   // --------------------------------------------------------------------------------
@@ -175,22 +178,57 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void Twitter::SetTitle (const gchar *title)
+  {
+    g_free (_title);
+    _title = NULL;
+
+    if (title)
+    {
+      _title = g_strdup_printf ("%c%c%c%c %s", 0xF0, 0x9F, 0xA4, 0xBA, title);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Twitter::SetLink (const gchar *link)
+  {
+    g_free (_link);
+    _link = NULL;
+
+    if (link)
+    {
+      _link = g_strdup (link);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Twitter::Tweet (const gchar *tweet)
   {
-    if (_state == ON)
+    if ((_state == ON) && (_title))
     {
+      gchar *message;
+
+      if (_link)
+      {
+        message = g_strdup_printf ("%s\n%s\n%s", _title, tweet, _link);
+      }
+      else
+      {
+        message = g_strdup_printf ("%s\n%s", _title, tweet);
+      }
+
       SendRequest (new StatusesUpdate (_session,
-                                       tweet));
+                                       message));
+      g_free (message);
     }
   }
 
   // --------------------------------------------------------------------------------
   void Twitter::Tweet (Feeder *feeder)
   {
-    if (_state == ON)
-    {
-      SendRequest (new StatusesUpdate (_session,
-                                       feeder->GetTweet ()));
-    }
+    gchar *tweet = feeder->GetTweet ();
+
+    Tweet (tweet);
+    g_free (tweet);
   }
 }

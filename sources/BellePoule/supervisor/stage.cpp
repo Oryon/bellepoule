@@ -885,7 +885,16 @@ const gchar *Stage::GetInputProviderClient ()
 // --------------------------------------------------------------------------------
 gchar *Stage::GetTweet ()
 {
-  return g_strdup_printf ("%s launched", _name);
+  gchar *name = GetName ();
+
+  if (name[0])
+  {
+    return g_strdup_printf ("%s '%s' %s", _class->_name, GetName (), gettext ("OVER"));
+  }
+  else
+  {
+    return g_strdup_printf ("%s %s", _class->_name, gettext ("OVER"));
+  }
 }
 
 // --------------------------------------------------------------------------------

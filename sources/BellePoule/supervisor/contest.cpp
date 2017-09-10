@@ -484,19 +484,21 @@ void Contest::LoadAskFred (AskFred::Event *askfred,
 
   FillInProperties ();
 }
+
+// --------------------------------------------------------------------------------
 void Contest::LoadXml (const gchar *filename)
 {
   if (g_path_is_absolute (filename) == FALSE)
   {
     gchar *current_dir = g_get_current_dir ();
 
-    _filename = g_build_filename (current_dir,
-                                  filename, NULL);
+    SetFilename (g_build_filename (current_dir,
+                                   filename, NULL));
     g_free (current_dir);
   }
   else
   {
-    _filename = g_strdup (filename);
+    SetFilename (g_strdup (filename));
   }
 
 
@@ -514,8 +516,7 @@ void Contest::LoadXml (const gchar *filename)
       if (g_str_has_suffix (_filename,
                             ".cotcot") == FALSE)
       {
-        g_free (_filename);
-        _filename = NULL;
+        SetFilename (NULL);
       }
       else
       {
@@ -973,6 +974,27 @@ void Contest::FeedParcel (Net::Message *parcel)
 gchar *Contest::GetFilename ()
 {
   return _filename;
+}
+
+// --------------------------------------------------------------------------------
+void Contest::SetFilename (gchar *filename)
+{
+  g_free (_filename);
+  _filename = filename;
+
+  {
+    gchar *base_name = g_path_get_basename (_filename);
+    gchar *suffix    = g_strrstr (base_name,
+                                  ".cotcot");
+    if (suffix)
+    {
+      *suffix = '\0';
+
+      _twitter->SetTitle (base_name);
+    }
+
+    g_free (base_name);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1553,6 +1575,10 @@ void Contest::Publish ()
         greg_uploader->SetCategory     (_category->GetXmlImage ());
       }
 
+      {
+        _twitter->SetLink  ("http://www.escrime-info.com");
+      }
+
       uploader->UploadFile (_filename);
       uploader->Release ();
     }
@@ -1892,7 +1918,7 @@ gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
 
   if (response == GTK_RESPONSE_ACCEPT)
   {
-    _filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+    SetFilename (gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser)));
 
     if (_filename)
     {

@@ -1485,6 +1485,7 @@ void Schedule::on_next_stage_toolbutton_clicked ()
   stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
   stage->Lock ();
   DisplayLocks ();
+  _twitter->Tweet (stage);
 
   if (stage->GetQuotaExceedance ())
   {
@@ -1515,8 +1516,6 @@ void Schedule::on_next_stage_toolbutton_clicked ()
 
   SetCurrentStage (_current_stage+1);
   MakeDirty ();
-
-  _twitter->Tweet (stage);
 }
 
 // --------------------------------------------------------------------------------

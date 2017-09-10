@@ -222,6 +222,8 @@ class Contest : public Module
 
     void AddFileToRecentManager (const gchar *filename);
 
+    void SetFilename (gchar *filename);
+
   private:
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);

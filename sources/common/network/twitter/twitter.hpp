@@ -51,6 +51,10 @@ namespace Net
 
       void Reset ();
 
+      void SetTitle (const gchar *title);
+
+      void SetLink (const gchar *link);
+
       void Tweet (const gchar *tweet);
 
       void Tweet (Feeder *feeder);
@@ -66,6 +70,8 @@ namespace Net
       Listener       *_listener;
       Oauth::Session *_session;
       State           _state;
+      gchar          *_link;
+      gchar          *_title;
 
       ~Twitter ();
 
