@@ -1579,7 +1579,7 @@ void Contest::Publish ()
 
       g_list_foreach (_advertisers,
                       (GFunc) Net::Advertiser::SetLink,
-                      (gpointer) uploader->GetDomain ());
+                      (gpointer) uploader->GetWWW ());
 
       uploader->UploadFile (_filename);
       uploader->Release ();

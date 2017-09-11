@@ -23,9 +23,10 @@ typedef enum
 {
   FTP_NAME_str,
   FTP_PIXBUF_pix,
-  FTP_URL_str,
+  FTP_FTP_str,
   FTP_USER_str,
-  FTP_PASSWD_str
+  FTP_PASSWD_str,
+  FTP_WWW_str
 } FTPColumn;
 
 // --------------------------------------------------------------------------------
@@ -60,9 +61,10 @@ EcoSystem::EcoSystem (Glade *glade)
     gtk_list_store_set (model, &iter,
                         FTP_NAME_str,   "<b><big>Escrime Info  </big></b>",
                         FTP_PIXBUF_pix, pixbuf,
-                        FTP_URL_str,    "www.escrime-info.com",
+                        FTP_FTP_str,    "escrime-info.com",
                         FTP_USER_str,   "GREG",
                         FTP_PASSWD_str, "cul qui gratte au couché doigt qui sent au levé",
+                        FTP_WWW_str,    "http://www.escrime-info.com",
                         -1);
     g_object_unref (pixbuf);
   }
@@ -123,15 +125,17 @@ Net::FileUploader *EcoSystem::GetUpLoader ()
   {
     return NULL;
   }
-  else if (strstr (url, "www.escrime-info.com"))
+  else if (g_strrstr (url, "escrime-info.com"))
   {
-    return new Net::GregUploader (url);
+    return new Net::GregUploader (url,
+                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("www"))));
   }
   else
   {
     return new Net::FileUploader (url,
                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
-                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))),
+                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("www"))));
   }
 }
 
@@ -145,24 +149,29 @@ void EcoSystem::OnRemoteHostChanged (GtkEditable *widget,
   if (gtk_combo_box_get_active_iter (combo,
                                      &iter))
   {
-    gchar *url;
+    gchar *ftp;
     gchar *user;
     gchar *passwd;
+    gchar *www;
 
     gtk_tree_model_get (gtk_combo_box_get_model (combo),
                         &iter,
-                        FTP_URL_str,    &url,
+                        FTP_FTP_str,    &ftp,
                         FTP_USER_str,   &user,
                         FTP_PASSWD_str, &passwd,
+                        FTP_WWW_str,    &www,
                         -1);
 
     gtk_entry_set_text (GTK_ENTRY (ecosystem->_glade->GetWidget ("user_entry")),
                         user);
     gtk_entry_set_text (GTK_ENTRY (ecosystem->_glade->GetWidget ("passwd_entry")),
                         passwd);
+    gtk_entry_set_text (GTK_ENTRY (ecosystem->_glade->GetWidget ("www")),
+                        www);
 
-    g_free (url);
+    g_free (ftp);
     g_free (user);
     g_free (passwd);
+    g_free (www);
   }
 }

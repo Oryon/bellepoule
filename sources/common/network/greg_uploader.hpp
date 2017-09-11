@@ -23,7 +23,8 @@ namespace Net
   class GregUploader : public FileUploader
   {
     public:
-      GregUploader (const gchar *url);
+      GregUploader (const gchar *url,
+                    const gchar *www);
 
       void SetTeamEvent    (gboolean     is_team_event);
       void SetRunningState (gboolean     is_over);

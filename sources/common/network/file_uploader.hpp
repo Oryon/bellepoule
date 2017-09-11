@@ -23,9 +23,10 @@ namespace Net
   class FileUploader : public Uploader
   {
     public:
-      FileUploader (const gchar  *url,
-                    const gchar  *user,
-                    const gchar  *passwd);
+      FileUploader (const gchar *url,
+                    const gchar *user,
+                    const gchar *passwd,
+                    const gchar *www);
 
       virtual void UploadFile (const gchar *file_path);
 
@@ -33,7 +34,7 @@ namespace Net
 
       virtual void SetCurlOptions (CURL *curl);
 
-      const gchar *GetDomain ();
+      const gchar *GetWWW ();
 
     protected:
       gchar *_file_path;
@@ -45,7 +46,7 @@ namespace Net
       gchar *_passwd;
       gchar *_full_url;
       gchar *_url;
-      gchar *_domain;
+      gchar *_www;
 
       void PushMessage (Message *message);
 

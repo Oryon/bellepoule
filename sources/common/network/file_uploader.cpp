@@ -19,16 +19,17 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  FileUploader::FileUploader (const gchar  *url,
-                              const gchar  *user,
-                              const gchar  *passwd)
+  FileUploader::FileUploader (const gchar *url,
+                              const gchar *user,
+                              const gchar *passwd,
+                              const gchar *www)
   {
     _full_url  = NULL;
     _user      = g_strdup (user);
     _passwd    = g_strdup (passwd);
     _file_path = NULL;
     _url       = g_strdup (url);
-    _domain    = g_strdup (url);
+    _www       = g_strdup (url);
   }
 
   // --------------------------------------------------------------------------------
@@ -40,7 +41,7 @@ namespace Net
     g_free (_file_path);
     g_free (_full_url);
     g_free (_url);
-    g_free (_domain);
+    g_free (_www);
   }
 
   // --------------------------------------------------------------------------------
@@ -96,9 +97,9 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  const gchar *FileUploader::GetDomain ()
+  const gchar *FileUploader::GetWWW ()
   {
-    return _domain;
+    return _www;
   }
 
   // --------------------------------------------------------------------------------

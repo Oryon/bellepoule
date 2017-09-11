@@ -28,8 +28,9 @@ static const guint JOB_COUNT = 2;
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  GregUploader::GregUploader (const gchar *url)
-    : FileUploader (url, NULL, NULL)
+  GregUploader::GregUploader (const gchar *url,
+                              const gchar *www)
+    : FileUploader (url, NULL, NULL, www)
   {
     _current_job  = 0;
     _local_file   = NULL;
