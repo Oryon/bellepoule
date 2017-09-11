@@ -33,7 +33,7 @@ namespace People
 
 namespace Net
 {
-  class Twitter;
+  class Advertiser;
 }
 
 class Contest;
@@ -45,11 +45,11 @@ class Schedule : public Module,
     typedef void (Object::*StageEvent_t) ();
 
   public:
-    Schedule (Contest      *contest,
-              Net::Twitter *twitter,
-              Data         *minimum_team_size,
-              Data         *manual_classification,
-              Data         *default_classification);
+    Schedule (Contest         *contest,
+              Net::Advertiser *advertiser,
+              Data            *minimum_team_size,
+              Data            *manual_classification,
+              Data            *default_classification);
 
     People::CheckinSupervisor *GetCheckinSupervisor ();
 
@@ -113,7 +113,7 @@ class Schedule : public Module,
     Data               *_minimum_team_size;
     Data               *_default_classification;
     Data               *_manual_classification;
-    Net::Twitter       *_twitter;
+    Net::Advertiser    *_advertiser;
 
     void SetCurrentStage (guint index);
 

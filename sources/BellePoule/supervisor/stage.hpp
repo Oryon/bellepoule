@@ -25,7 +25,7 @@
 #include "util/object.hpp"
 #include "util/data.hpp"
 #include "util/sensitivity_trigger.hpp"
-#include "twitter/twitter.hpp"
+#include "network/advertiser.hpp"
 #include "attendees.hpp"
 
 class Player;
@@ -34,7 +34,7 @@ class Filter;
 class Contest;
 
 class Stage : public virtual Object,
-              public Net::Twitter::Feeder
+              public Net::Advertiser::Feeder
 {
   public:
     struct StageClass;

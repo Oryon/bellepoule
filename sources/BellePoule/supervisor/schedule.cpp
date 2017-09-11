@@ -20,7 +20,7 @@
 #include <gtk/gtk.h>
 
 #include "util/canvas.hpp"
-#include "twitter/twitter.hpp"
+#include "network/advertiser.hpp"
 #include "actors/referees_list.hpp"
 #include "rounds/classification/general_classification.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
@@ -39,18 +39,18 @@ typedef enum
 } ColumnId;
 
 // --------------------------------------------------------------------------------
-Schedule::Schedule (Contest      *contest,
-                    Net::Twitter *twitter,
-                    Data         *minimum_team_size,
-                    Data         *manual_classification,
-                    Data         *default_classification)
+Schedule::Schedule (Contest         *contest,
+                    Net::Advertiser *advertiser,
+                    Data            *minimum_team_size,
+                    Data            *manual_classification,
+                    Data            *default_classification)
   : Object ("Schedule"),
     Module ("schedule.glade", "schedule_notebook")
 {
-  _stage_list    = NULL;
-  _current_stage = 0;
-  _contest       = contest;
-  _twitter       = twitter;
+   _stage_list    = NULL;
+   _current_stage = 0;
+   _contest       = contest;
+   _advertiser    = advertiser;
 
   _minimum_team_size      = minimum_team_size;
   _manual_classification  = manual_classification;
@@ -1485,7 +1485,7 @@ void Schedule::on_next_stage_toolbutton_clicked ()
   stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
   stage->Lock ();
   DisplayLocks ();
-  _twitter->Tweet (stage);
+  _advertiser->Tweet (stage);
 
   if (stage->GetQuotaExceedance ())
   {

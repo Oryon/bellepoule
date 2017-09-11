@@ -28,6 +28,7 @@ namespace Net
     _passwd    = g_strdup (passwd);
     _file_path = NULL;
     _url       = g_strdup (url);
+    _domain    = g_strdup (url);
   }
 
   // --------------------------------------------------------------------------------
@@ -39,6 +40,7 @@ namespace Net
     g_free (_file_path);
     g_free (_full_url);
     g_free (_url);
+    g_free (_domain);
   }
 
   // --------------------------------------------------------------------------------
@@ -91,6 +93,12 @@ namespace Net
   const gchar *FileUploader::GetUrl ()
   {
     return _full_url;
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *FileUploader::GetDomain ()
+  {
+    return _domain;
   }
 
   // --------------------------------------------------------------------------------

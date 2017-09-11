@@ -32,6 +32,7 @@
 #include "application/weapon.hpp"
 #include "actors/form.hpp"
 #include "network/http_server.hpp"
+#include "twitter/twitter.hpp"
 #include "contest.hpp"
 #include "ask_fred.hpp"
 
@@ -46,7 +47,11 @@ Tournament::Tournament ()
   _referee_list = NULL;
   _referee_ref  = 1;
 
-  _twitter = new Net::Twitter (this);
+  _advertiser = new Net::Twitter ();
+  _advertiser->Plug (GTK_TABLE (_glade->GetWidget ("advertiser_table")));
+
+  Net::Advertiser *a = new Net::Advertiser ("facebook");
+  a->Plug (GTK_TABLE (_glade->GetWidget ("advertiser_table")));
 }
 
 // --------------------------------------------------------------------------------
@@ -90,7 +95,7 @@ Tournament::~Tournament ()
   _ecosystem->Release   ();
   Contest::Cleanup ();
 
-  _twitter->Release ();
+  _advertiser->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -763,7 +768,7 @@ Contest *Tournament::GetContest (const gchar *filename)
 // --------------------------------------------------------------------------------
 void Tournament::OnNew ()
 {
-  Contest *contest = new Contest (_twitter);
+  Contest *contest = new Contest (_advertiser);
 
   Manage (contest);
   contest->AskForSettings ();
@@ -959,7 +964,7 @@ void Tournament::OpenUriContest (const gchar *uri)
       while (events)
       {
         AskFred::Event *event   = (AskFred::Event *) events->data;
-        Contest        *contest = new Contest (_twitter);
+        Contest        *contest = new Contest (_advertiser);
 
         Plug (contest,
               NULL);
@@ -1001,7 +1006,7 @@ void Tournament::OpenUriContest (const gchar *uri)
         if (g_str_has_suffix (uri,
                               contest_suffix_table[i]))
         {
-          contest = new Contest (_twitter);
+          contest = new Contest (_advertiser);
 
           contest->LoadXml (uri);
 
@@ -1018,7 +1023,7 @@ void Tournament::OpenUriContest (const gchar *uri)
         if (g_str_has_suffix (uri,
                               people_suffix_table[i]))
         {
-          contest = new Contest (_twitter);
+          contest = new Contest (_advertiser);
 
           contest->LoadFencerFile (uri);
 
@@ -1232,68 +1237,6 @@ void Tournament::OnActivateBackup ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnTwitterToggled (gboolean on)
-{
-  if (on)
-  {
-    GtkWidget *togglebutton = _glade->GetWidget ("twitter_checkbutton");
-    GtkWidget *spinner      = _glade->GetWidget ("twitter_spinner");
-    GtkEntry  *entry        = GTK_ENTRY (_glade->GetWidget ("twitter_id"));
-
-    gtk_widget_show (spinner);
-    gtk_widget_set_sensitive (togglebutton,
-                              FALSE);
-
-    gtk_entry_set_text (entry,
-                        "");
-
-    _twitter->SwitchOn ();
-  }
-  else
-  {
-    _twitter->SwitchOff ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::OnTwitterID (const gchar *id)
-{
-  GtkWidget *togglebutton = _glade->GetWidget ("twitter_checkbutton");
-  GtkWidget *spinner      = _glade->GetWidget ("twitter_spinner");
-  GtkEntry  *entry        = GTK_ENTRY (_glade->GetWidget ("twitter_id"));
-
-  gtk_widget_hide (spinner);
-  gtk_widget_set_sensitive (togglebutton,
-                            TRUE);
-
-  gtk_entry_set_text (entry,
-                      id);
-
-  if (g_strstr_len (id,
-                    -1,
-                    "@") == NULL)
-  {
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton),
-                                  FALSE);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::OnResetTwitterAccount ()
-{
-  GtkEntry        *entry        = GTK_ENTRY         (_glade->GetWidget ("twitter_id"));
-  GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (_glade->GetWidget ("twitter_checkbutton"));
-
-  gtk_toggle_button_set_active (togglebutton,
-                                FALSE);
-
-  gtk_entry_set_text (entry,
-                      "");
-
-  _twitter->Reset ();
-}
-
-// --------------------------------------------------------------------------------
 void Tournament::OnVideoReleased ()
 {
   GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (_glade->GetWidget ("video_off"));
@@ -1433,15 +1376,6 @@ extern "C" G_MODULE_EXPORT void on_activate_radiomenuitem_toggled (GtkCheckMenuI
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_twitter_checkbutton_toggled (GtkToggleButton *button,
-                                                                Object          *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->OnTwitterToggled (gtk_toggle_button_get_active (button));
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_root_drag_data_received (GtkWidget        *widget,
                                                             GdkDragContext   *context,
                                                             gint              x,
@@ -1514,15 +1448,4 @@ extern "C" G_MODULE_EXPORT void on_video_released (GtkWidget *widget,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnVideoReleased ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_twitter_id_icon_press (GtkEntry             *entry,
-                                                          GtkEntryIconPosition  icon_pos,
-                                                          GdkEvent             *event,
-                                                          Object               *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->OnResetTwitterAccount ();
 }

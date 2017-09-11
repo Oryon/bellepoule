@@ -2,6 +2,19 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkEntry" id="entry">
+    <property name="visible">True</property>
+    <property name="sensitive">False</property>
+    <property name="can_focus">True</property>
+    <property name="editable">False</property>
+    <property name="invisible_char">•</property>
+    <property name="secondary_icon_stock">gtk-clear</property>
+    <property name="primary_icon_activatable">False</property>
+    <property name="secondary_icon_activatable">True</property>
+    <property name="primary_icon_sensitive">True</property>
+    <property name="secondary_icon_sensitive">True</property>
+    <signal name="icon-press" handler="on_entry_icon_press" swapped="no"/>
+  </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -171,6 +184,45 @@ to tweet on your behalf</property>
           </packing>
         </child>
       </object>
+    </child>
+  </object>
+  <object class="GtkImage" id="logo">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">images/twitter.png</property>
+  </object>
+  <object class="GtkHBox" id="header">
+    <property name="visible">True</property>
+    <property name="sensitive">False</property>
+    <property name="can_focus">False</property>
+    <property name="spacing">5</property>
+    <child>
+      <object class="GtkCheckButton" id="checkbutton">
+        <property name="label" translatable="yes">Advertiser</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="image">logo</property>
+        <property name="draw_indicator">True</property>
+        <signal name="toggled" handler="on_checkbutton_toggled" swapped="no"/>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSpinner" id="spinner">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="active">True</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
     </child>
   </object>
 </interface>

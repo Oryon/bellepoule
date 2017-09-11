@@ -20,12 +20,16 @@
 #include "util/glade.hpp"
 #include "network/downloader.hpp"
 #include "network/web_server.hpp"
-#include "network/twitter/twitter.hpp"
 #include "ecosystem.hpp"
 
 class Contest;
 
-class Tournament : public Module, public Net::Twitter::Listener
+namespace Net
+{
+  class Advertiser;
+}
+
+class Tournament : public Module
 {
   public:
     Tournament ();
@@ -48,8 +52,6 @@ class Tournament : public Module, public Net::Twitter::Listener
 
     void OnSave ();
 
-    void OnResetTwitterAccount ();
-
     void PrintMealTickets ();
 
     void PrintPaymentBook ();
@@ -65,8 +67,6 @@ class Tournament : public Module, public Net::Twitter::Listener
     const gchar *GetBackupLocation ();
 
     void OnActivateBackup ();
-
-    void OnTwitterToggled (gboolean on);
 
     void OnVideoReleased ();
 
@@ -91,18 +91,16 @@ class Tournament : public Module, public Net::Twitter::Listener
 
     guint _referee_ref;
 
-    GList          *_contest_list;
-    GList          *_referee_list;
-    Net::WebServer *_web_server;
-    gboolean        _print_meal_tickets;
-    EcoSystem      *_ecosystem;
-    Net::Twitter   *_twitter;
+    GList           *_contest_list;
+    GList           *_referee_list;
+    Net::WebServer  *_web_server;
+    gboolean         _print_meal_tickets;
+    EcoSystem       *_ecosystem;
+    Net::Advertiser *_advertiser;
 
     virtual ~Tournament ();
 
     Contest *GetContest (guint netid);
-
-    void OnTwitterID (const gchar *id);
 
     void SetBackupLocation (gchar *location);
 

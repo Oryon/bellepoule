@@ -40,7 +40,7 @@
 #include "actors/checkin.hpp"
 #include "actors/referees_list.hpp"
 #include "actors/player_factory.hpp"
-#include "twitter/twitter.hpp"
+#include "network/advertiser.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "ecosystem.hpp"
 
@@ -201,8 +201,8 @@ gboolean Contest::Time::IsEqualTo (Time *to)
 }
 
 // --------------------------------------------------------------------------------
-Contest::Contest (Net::Twitter *twitter,
-                  gboolean      for_duplication)
+Contest::Contest (Net::Advertiser *advertiser,
+                  gboolean         for_duplication)
   : Object ("Contest"),
     Module ("contest.glade")
 {
@@ -223,7 +223,7 @@ Contest::Contest (Net::Twitter *twitter,
   _team_event = FALSE;
   _derived    = FALSE;
   _source     = NULL;
-  _twitter    = twitter;
+  _advertiser = advertiser;
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
@@ -279,7 +279,7 @@ Contest::Contest (Net::Twitter *twitter,
 
   {
     _schedule = new Schedule (this,
-                              _twitter,
+                              _advertiser,
                               _minimum_team_size,
                               _manual_classification,
                               _default_classification);
@@ -990,7 +990,7 @@ void Contest::SetFilename (gchar *filename)
     {
       *suffix = '\0';
 
-      _twitter->SetTitle (base_name);
+      _advertiser->SetTitle (base_name);
     }
 
     g_free (base_name);
@@ -1072,7 +1072,7 @@ void Contest::AskForSettings ()
 // --------------------------------------------------------------------------------
 Contest *Contest::Duplicate ()
 {
-  Contest *contest = new Contest (_twitter, TRUE);
+  Contest *contest = new Contest (_advertiser, TRUE);
 
   contest->_schedule->CreateDefault (TRUE);
   contest->_derived = TRUE;
@@ -1575,9 +1575,7 @@ void Contest::Publish ()
         greg_uploader->SetCategory     (_category->GetXmlImage ());
       }
 
-      {
-        _twitter->SetLink  ("http://www.escrime-info.com");
-      }
+      _advertiser->SetLink  (uploader->GetDomain ());
 
       uploader->UploadFile (_filename);
       uploader->Release ();

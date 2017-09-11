@@ -33,6 +33,8 @@ namespace Net
 
       virtual void SetCurlOptions (CURL *curl);
 
+      const gchar *GetDomain ();
+
     protected:
       gchar *_file_path;
 
@@ -43,6 +45,7 @@ namespace Net
       gchar *_passwd;
       gchar *_full_url;
       gchar *_url;
+      gchar *_domain;
 
       void PushMessage (Message *message);
 

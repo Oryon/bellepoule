@@ -542,6 +542,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/tournament.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/advertiser.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/advertiser.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/cryptor.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>

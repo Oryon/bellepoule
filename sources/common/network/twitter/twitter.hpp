@@ -18,6 +18,7 @@
 
 #include "util/module.hpp"
 
+#include "advertiser.hpp"
 #include "twitter_uploader.hpp"
 
 namespace Oauth
@@ -27,60 +28,14 @@ namespace Oauth
 
 namespace Net
 {
-  class Twitter : public Module, public TwitterUploader::Listener
+  class Advertiser;
+
+  class Twitter : public Advertiser
   {
     public:
-      class Listener
-      {
-        public:
-          virtual void OnTwitterID (const gchar *id) = 0;
-      };
-
-      class Feeder
-      {
-        public:
-          virtual gchar *GetTweet () = 0;
-      };
-
-    public:
-      Twitter (Listener *listener);
-
-      void SwitchOn ();
-
-      void SwitchOff ();
-
-      void Reset ();
-
-      void SetTitle (const gchar *title);
-
-      void SetLink (const gchar *link);
-
-      void Tweet (const gchar *tweet);
-
-      void Tweet (Feeder *feeder);
+      Twitter ();
 
     private:
-      enum State
-      {
-        OFF,
-        WAITING_FOR_TOKEN,
-        ON
-      };
-
-      Listener       *_listener;
-      Oauth::Session *_session;
-      State           _state;
-      gchar          *_link;
-      gchar          *_title;
-
       ~Twitter ();
-
-      void SendRequest (Oauth::HttpRequest *request);
-
-      void OnTwitterResponse (Oauth::HttpRequest *request);
-
-      void Use ();
-
-      void Drop ();
   };
 }
