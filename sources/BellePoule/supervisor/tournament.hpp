@@ -24,11 +24,6 @@
 
 class Contest;
 
-namespace Net
-{
-  class Advertiser;
-}
-
 class Tournament : public Module
 {
   public:
@@ -96,7 +91,7 @@ class Tournament : public Module
     Net::WebServer  *_web_server;
     gboolean         _print_meal_tickets;
     EcoSystem       *_ecosystem;
-    Net::Advertiser *_advertiser;
+    GList           *_advertisers;
 
     virtual ~Tournament ();
 

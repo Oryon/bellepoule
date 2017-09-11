@@ -31,11 +31,6 @@ namespace People
   class CheckinSupervisor;
 }
 
-namespace Net
-{
-  class Advertiser;
-}
-
 class Contest;
 
 class Schedule : public Module,
@@ -45,11 +40,11 @@ class Schedule : public Module,
     typedef void (Object::*StageEvent_t) ();
 
   public:
-    Schedule (Contest         *contest,
-              Net::Advertiser *advertiser,
-              Data            *minimum_team_size,
-              Data            *manual_classification,
-              Data            *default_classification);
+    Schedule (Contest *contest,
+              GList   *advertisers,
+              Data    *minimum_team_size,
+              Data    *manual_classification,
+              Data    *default_classification);
 
     People::CheckinSupervisor *GetCheckinSupervisor ();
 
@@ -113,7 +108,7 @@ class Schedule : public Module,
     Data               *_minimum_team_size;
     Data               *_default_classification;
     Data               *_manual_classification;
-    Net::Advertiser    *_advertiser;
+    GList              *_advertisers;
 
     void SetCurrentStage (guint index);
 

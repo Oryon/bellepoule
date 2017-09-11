@@ -61,7 +61,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   Advertiser::~Advertiser ()
   {
-    _session->Release ();
+    Object::TryToRelease (_session);
     g_free (_title);
     g_free (_name);
   }
@@ -245,26 +245,28 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Advertiser::SetTitle (const gchar *title)
+  void Advertiser::SetTitle (Advertiser  *advertiser,
+                             const gchar *title)
   {
-    g_free (_title);
-    _title = NULL;
+    g_free (advertiser->_title);
+    advertiser->_title = NULL;
 
     if (title)
     {
-      _title = g_strdup_printf ("%c%c%c%c %s", 0xF0, 0x9F, 0xA4, 0xBA, title);
+      advertiser->_title = g_strdup_printf ("%c%c%c%c %s", 0xF0, 0x9F, 0xA4, 0xBA, title);
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Advertiser::SetLink (const gchar *link)
+  void Advertiser::SetLink (Advertiser  *advertiser,
+                            const gchar *link)
   {
-    g_free (_link);
-    _link = NULL;
+    g_free (advertiser->_link);
+    advertiser->_link = NULL;
 
     if (link)
     {
-      _link = g_strdup (link);
+      advertiser->_link = g_strdup (link);
     }
   }
 
@@ -291,11 +293,13 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Advertiser::Tweet (Feeder *feeder)
+  void Advertiser::TweetFeeder (Advertiser *advertiser,
+                                Feeder     *feeder)
   {
     gchar *tweet = feeder->GetTweet ();
 
-    Tweet (tweet);
+    advertiser->Tweet (tweet);
+
     g_free (tweet);
   }
 

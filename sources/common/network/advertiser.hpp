@@ -39,15 +39,18 @@ namespace Net
     public:
       Advertiser (const gchar *name);
 
-      void SetTitle (const gchar *title);
-
-      void SetLink (const gchar *link);
+      void Plug (GtkTable *in);
 
       void Tweet (const gchar *tweet);
 
-      void Tweet (Feeder *feeder);
+      static void SetTitle (Advertiser  *advertiser,
+                            const gchar *title);
 
-      void Plug (GtkTable *in);
+      static void SetLink (Advertiser  *advertiser,
+                           const gchar *link);
+
+      static void TweetFeeder (Advertiser *advertiser,
+                               Feeder     *feeder);
 
     private:
       void SwitchOn ();

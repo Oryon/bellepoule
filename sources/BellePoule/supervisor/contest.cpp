@@ -201,8 +201,8 @@ gboolean Contest::Time::IsEqualTo (Time *to)
 }
 
 // --------------------------------------------------------------------------------
-Contest::Contest (Net::Advertiser *advertiser,
-                  gboolean         for_duplication)
+Contest::Contest (GList    *advertisers,
+                  gboolean  for_duplication)
   : Object ("Contest"),
     Module ("contest.glade")
 {
@@ -212,18 +212,18 @@ Contest::Contest (Net::Advertiser *advertiser,
 
   _fie_id = g_strdup_printf ("%x", GetNetID ());
 
-  _read_only  = FALSE;
-  _authority  = NULL;
-  _filename   = NULL;
-  _tournament = NULL;
-  _weapon     = Weapon::GetDefault ();
-  _category   = new Category (_glade->GetWidget ("category_combobox"));
-  _level      = 0;
-  _gender     = 0;
-  _team_event = FALSE;
-  _derived    = FALSE;
-  _source     = NULL;
-  _advertiser = advertiser;
+   _read_only   = FALSE;
+   _authority   = NULL;
+   _filename    = NULL;
+   _tournament  = NULL;
+   _weapon      = Weapon::GetDefault ();
+   _category    = new Category (_glade->GetWidget ("category_combobox"));
+   _level       = 0;
+   _gender      = 0;
+   _team_event  = FALSE;
+   _derived     = FALSE;
+   _source      = NULL;
+   _advertisers = advertisers;
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
@@ -279,7 +279,7 @@ Contest::Contest (Net::Advertiser *advertiser,
 
   {
     _schedule = new Schedule (this,
-                              _advertiser,
+                              _advertisers,
                               _minimum_team_size,
                               _manual_classification,
                               _default_classification);
@@ -990,7 +990,9 @@ void Contest::SetFilename (gchar *filename)
     {
       *suffix = '\0';
 
-      _advertiser->SetTitle (base_name);
+      g_list_foreach (_advertisers,
+                      (GFunc) Net::Advertiser::SetTitle,
+                      base_name);
     }
 
     g_free (base_name);
@@ -1072,7 +1074,7 @@ void Contest::AskForSettings ()
 // --------------------------------------------------------------------------------
 Contest *Contest::Duplicate ()
 {
-  Contest *contest = new Contest (_advertiser, TRUE);
+  Contest *contest = new Contest (_advertisers, TRUE);
 
   contest->_schedule->CreateDefault (TRUE);
   contest->_derived = TRUE;
@@ -1575,20 +1577,14 @@ void Contest::Publish ()
         greg_uploader->SetCategory     (_category->GetXmlImage ());
       }
 
-      _advertiser->SetLink  (uploader->GetDomain ());
+      g_list_foreach (_advertisers,
+                      (GFunc) Net::Advertiser::SetLink,
+                      (gpointer) uploader->GetDomain ());
 
       uploader->UploadFile (_filename);
       uploader->Release ();
     }
   }
-  //if (_checkin_time->IsEqualTo (_scratch_time))
-  //{
-  //return;
-  //}
-  //if (_scratch_time->IsEqualTo (_start_time))
-  //{
-  //return;
-  //}
 }
 
 // --------------------------------------------------------------------------------

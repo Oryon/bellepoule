@@ -47,11 +47,23 @@ Tournament::Tournament ()
   _referee_list = NULL;
   _referee_ref  = 1;
 
-  _advertiser = new Net::Twitter ();
-  _advertiser->Plug (GTK_TABLE (_glade->GetWidget ("advertiser_table")));
+  _advertisers = NULL;
 
-  Net::Advertiser *a = new Net::Advertiser ("facebook");
-  a->Plug (GTK_TABLE (_glade->GetWidget ("advertiser_table")));
+  {
+    Net::Advertiser *twitter = new Net::Twitter ();
+
+    twitter->Plug (GTK_TABLE (_glade->GetWidget ("advertiser_table")));
+    _advertisers = g_list_append (_advertisers,
+                                  twitter);
+  }
+
+  {
+    Net::Advertiser *facebook = new Net::Advertiser ("facebook");
+
+    facebook->Plug (GTK_TABLE (_glade->GetWidget ("advertiser_table")));
+    _advertisers = g_list_append (_advertisers,
+                                  facebook);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -95,7 +107,7 @@ Tournament::~Tournament ()
   _ecosystem->Release   ();
   Contest::Cleanup ();
 
-  _advertiser->Release ();
+  FreeFullGList(Net::Advertiser, _advertisers);
 }
 
 // --------------------------------------------------------------------------------
@@ -768,7 +780,7 @@ Contest *Tournament::GetContest (const gchar *filename)
 // --------------------------------------------------------------------------------
 void Tournament::OnNew ()
 {
-  Contest *contest = new Contest (_advertiser);
+  Contest *contest = new Contest (_advertisers);
 
   Manage (contest);
   contest->AskForSettings ();
@@ -964,7 +976,7 @@ void Tournament::OpenUriContest (const gchar *uri)
       while (events)
       {
         AskFred::Event *event   = (AskFred::Event *) events->data;
-        Contest        *contest = new Contest (_advertiser);
+        Contest        *contest = new Contest (_advertisers);
 
         Plug (contest,
               NULL);
@@ -1006,7 +1018,7 @@ void Tournament::OpenUriContest (const gchar *uri)
         if (g_str_has_suffix (uri,
                               contest_suffix_table[i]))
         {
-          contest = new Contest (_advertiser);
+          contest = new Contest (_advertisers);
 
           contest->LoadXml (uri);
 
@@ -1023,7 +1035,7 @@ void Tournament::OpenUriContest (const gchar *uri)
         if (g_str_has_suffix (uri,
                               people_suffix_table[i]))
         {
-          contest = new Contest (_advertiser);
+          contest = new Contest (_advertisers);
 
           contest->LoadFencerFile (uri);
 

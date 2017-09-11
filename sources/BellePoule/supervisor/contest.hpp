@@ -36,11 +36,6 @@ namespace AskFred
   class Event;
 }
 
-namespace Net
-{
-  class Advertiser;
-}
-
 class Tournament;
 class Weapon;
 class Category;
@@ -48,8 +43,8 @@ class Category;
 class Contest : public Module
 {
   public:
-    Contest (Net::Advertiser *advertiser,
-             gboolean         for_duplication = FALSE);
+    Contest (GList    *advertisers,
+             gboolean  for_duplication = FALSE);
 
     virtual ~Contest ();
 
@@ -180,7 +175,7 @@ class Contest : public Module
     People::RefereesList *_referees_list;
     State                 _state;
     gboolean              _read_only;
-    Net::Advertiser      *_advertiser;
+    GList                *_advertisers;
 
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;
