@@ -24,12 +24,15 @@
 #include "../../score_collector.hpp"
 #include "../../stage.hpp"
 
+#include "table_set.hpp"
+
 namespace Table
 {
-  class TableSet;
   class Table;
 
-  class Supervisor : public Stage, public Module
+  class Supervisor : public Stage,
+                     public Module,
+                     public TableSet::Listener
   {
     public:
       static void Declare ();
@@ -175,8 +178,7 @@ namespace Table
                                         GtkTreeIter  *iter,
                                         Supervisor   *ts);
 
-      static void OnTableSetStatusUpdated (TableSet   *table_set,
-                                           Supervisor *ts);
+      void OnTableSetStatusUpdated (TableSet *table_set);
 
       virtual ~Supervisor ();
   };

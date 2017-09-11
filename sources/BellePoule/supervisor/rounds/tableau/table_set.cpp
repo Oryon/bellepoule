@@ -85,8 +85,7 @@ namespace Table
     _is_active      = FALSE;
     _html_table     = new HtmlTable (supervisor_module);
 
-    _status_cbk_data = NULL;
-    _status_cbk      = NULL;
+    _listener       = NULL;
 
     _page_setup = gtk_page_setup_new ();
 
@@ -392,25 +391,21 @@ namespace Table
       }
     }
 
-    if (_status_cbk)
+    if (_listener)
     {
-      _status_cbk (this,
-                   _status_cbk_data);
+      _listener->OnTableSetStatusUpdated (this);
     }
     MakeDirty ();
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::SetStatusCbk (StatusCbk  cbk,
-                               void      *data)
+  void TableSet::SetListener (Listener *listener)
   {
-    _status_cbk_data = data;
-    _status_cbk      = cbk;
+    _listener = listener;
 
-    if (_status_cbk)
+    if (_listener)
     {
-      _status_cbk (this,
-                   _status_cbk_data);
+      _listener->OnTableSetStatusUpdated (this);
     }
   }
 

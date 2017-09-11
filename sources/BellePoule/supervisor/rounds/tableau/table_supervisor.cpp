@@ -25,7 +25,6 @@
 #include "util/player.hpp"
 #include "../../classification.hpp"
 
-#include "table_set.hpp"
 #include "table_supervisor.hpp"
 
 namespace Table
@@ -697,8 +696,7 @@ namespace Table
       gtk_tree_path_free (path);
 
       table_set->SetDataOwner (this);
-      table_set->SetStatusCbk ((TableSet::StatusCbk) OnTableSetStatusUpdated,
-                               this);
+      table_set->SetListener (this);
 
       gtk_tree_store_set (_table_set_treestore, &iter,
                           TABLE_SET_NAME_COLUMN_str,        table_set->GetName (),
@@ -726,15 +724,14 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnTableSetStatusUpdated (TableSet   *table_set,
-                                            Supervisor *ts)
+  void Supervisor::OnTableSetStatusUpdated (TableSet *table_set)
   {
     GtkTreeIter iter;
 
     {
-      GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) table_set->GetPtrData (ts, "tree_row_ref"));
+      GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) table_set->GetPtrData (this, "tree_row_ref"));
 
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (ts->_table_set_treestore),
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_treestore),
                                &iter,
                                path);
       gtk_tree_path_free (path);
@@ -742,30 +739,30 @@ namespace Table
 
     if (table_set->IsOver ())
     {
-      gtk_tree_store_set (ts->_table_set_treestore, &iter,
+      gtk_tree_store_set (_table_set_treestore, &iter,
                           TABLE_SET_STATUS_COLUMN_str, GTK_STOCK_APPLY,
                           -1);
     }
     else if (table_set->HasError ())
     {
-      gtk_tree_store_set (ts->_table_set_treestore, &iter,
+      gtk_tree_store_set (_table_set_treestore, &iter,
                           TABLE_SET_STATUS_COLUMN_str, GTK_STOCK_DIALOG_WARNING,
                           -1);
     }
     else if (table_set->GetNbTables () > 0)
     {
-      gtk_tree_store_set (ts->_table_set_treestore, &iter,
+      gtk_tree_store_set (_table_set_treestore, &iter,
                           TABLE_SET_STATUS_COLUMN_str, GTK_STOCK_EXECUTE,
                           -1);
     }
     else
     {
-      gtk_tree_store_set (ts->_table_set_treestore, &iter,
+      gtk_tree_store_set (_table_set_treestore, &iter,
                           TABLE_SET_STATUS_COLUMN_str, NULL,
                           -1);
     }
 
-    ts->SignalStatusUpdate ();
+    SignalStatusUpdate ();
   }
 
   // --------------------------------------------------------------------------------
@@ -844,8 +841,7 @@ namespace Table
       }
     }
 
-    OnTableSetStatusUpdated (table_set,
-                             this);
+    OnTableSetStatusUpdated (table_set);
   }
 
   // --------------------------------------------------------------------------------

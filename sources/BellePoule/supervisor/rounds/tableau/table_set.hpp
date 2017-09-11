@@ -36,17 +36,20 @@ namespace Table
   class TableSet : public CanvasModule
   {
     public:
-      typedef void (*StatusCbk) (TableSet *table_set,
-                                 void     *data);
+      class Listener
+      {
+        public:
+          virtual void OnTableSetStatusUpdated (TableSet *table_set) = 0;
+      };
 
+    public:
       TableSet (Supervisor *supervisor,
                 gchar      *id,
                 GtkWidget  *from_container,
                 GtkWidget  *to_container,
                 guint       first_place);
 
-      void SetStatusCbk (StatusCbk  cbk,
-                         void      *data);
+      void SetListener (Listener *listener);
 
       void SetAttendees (GSList *attendees);
 
@@ -179,8 +182,7 @@ namespace Table
       HtmlTable                *_html_table;
       GdkPixbuf                *_printer_pixbuf;
 
-      void      *_status_cbk_data;
-      StatusCbk  _status_cbk;
+      Listener *_listener;
 
       GooCanvasItem *GetQuickScore (const gchar *container);
 
