@@ -66,6 +66,7 @@ namespace Net
 
     protected:
       Oauth::Session *_session;
+      gchar          *_name;
 
       ~Advertiser ();
 
@@ -80,7 +81,6 @@ namespace Net
       };
 
       State  _state;
-      gchar *_name;
       gchar *_link;
       gchar *_title;
 

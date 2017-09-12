@@ -14,22 +14,42 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/global.hpp"
+
 #include "session.hpp"
 
 namespace Oauth
 {
   // --------------------------------------------------------------------------------
-  Session::Session (const gchar *consumer_key,
+  Session::Session (const gchar *service,
+                    const gchar *consumer_key,
                     const gchar *consumer_secret)
     : Object ("Oauth::Session")
   {
-    _consumer_key    = g_strdup (consumer_key);
-    _consumer_secret = g_strdup (consumer_secret);
+     _service         = g_strdup (service);
+     _consumer_key    = g_strdup (consumer_key);
+     _consumer_secret = g_strdup (consumer_secret);
+     _signing_key     = g_string_new ("");
+     _token           = NULL;
 
-    _signing_key = NULL;
+    {
+      gchar *token;
+      gchar *token_secret;
 
-    _token = NULL;
-    SetTokenSecret ("");
+      token = g_key_file_get_string (Global::_user_config->_key_file,
+                                     service,
+                                     "token",
+                                     NULL);
+      token_secret = g_key_file_get_string (Global::_user_config->_key_file,
+                                      service,
+                                      "token_secret",
+                                      NULL);
+      SetToken       (token);
+      SetTokenSecret (token_secret);
+
+      g_free (token);
+      g_free (token_secret);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -38,6 +58,7 @@ namespace Oauth
     g_free (_consumer_key);
     g_free (_consumer_secret);
     g_free (_token);
+    g_free (_service);
 
     g_string_free (_signing_key,
                    TRUE);
@@ -46,10 +67,8 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   void Session::Reset ()
   {
-    g_free (_token);
-    _token = NULL;
-
-    SetTokenSecret ("");
+    SetToken       (NULL);
+    SetTokenSecret (NULL);
   }
 
   // --------------------------------------------------------------------------------
@@ -74,25 +93,50 @@ namespace Oauth
   void Session::SetToken (const gchar *token)
   {
     g_free (_token);
-    _token = g_strdup (token);
+
+    if (token)
+    {
+      _token = g_strdup (token);
+      g_key_file_set_string (Global::_user_config->_key_file,
+                             _service,
+                             "token",
+                             token);
+    }
+    else
+    {
+      _token = NULL;
+      g_key_file_remove_key (Global::_user_config->_key_file,
+                             _service,
+                             "token",
+                             NULL);
+    }
   }
 
   // --------------------------------------------------------------------------------
   void Session::SetTokenSecret (const gchar *token_secret)
   {
-    if (_consumer_secret)
-    {
-      if (_signing_key)
-      {
-        g_string_free (_signing_key,
-                       TRUE);
-      }
+    g_string_free (_signing_key,
+                   TRUE);
 
-      _signing_key = g_string_new (_consumer_secret);
-      _signing_key = g_string_append_c (_signing_key,
-                                        '&');
+    _signing_key = g_string_new      (_consumer_secret);
+    _signing_key = g_string_append_c (_signing_key,
+                                      '&');
+
+    if (token_secret)
+    {
       _signing_key = g_string_append (_signing_key,
                                       token_secret);
+      g_key_file_set_string (Global::_user_config->_key_file,
+                             _service,
+                             "token_secret",
+                             token_secret);
+    }
+    else
+    {
+      g_key_file_remove_key (Global::_user_config->_key_file,
+                             _service,
+                             "token_secret",
+                             NULL);
     }
   }
 }

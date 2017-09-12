@@ -25,11 +25,9 @@ namespace Net
     : Object ("Twitter"),
       Advertiser ("twitter")
   {
-    Oauth::Session *session = new Oauth::Session ("E7YgKcY2Yt9bHLxceaVBSg",
+    Oauth::Session *session = new Oauth::Session (_name,
+                                                  "E7YgKcY2Yt9bHLxceaVBSg",
                                                   "8HnMWMXOZgCrRE5VFILIlx0pQUuXIxkgd5aYh34rfg");
-
-    session->SetToken       ("905893129982705673-jrcZ4jJGoMRaO8WMlSxjHMAJfkz9340");
-    session->SetTokenSecret ("8lRYb357PLZXgPLVwktoOUDZsM7JfRXJ3rj2OvhhQR2mf");
 
     SetSession (session);
   }

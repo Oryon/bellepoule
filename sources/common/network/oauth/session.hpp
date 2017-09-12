@@ -25,7 +25,8 @@ namespace Oauth
   class Session : public Object
   {
     public:
-      Session (const gchar *consumer_key,
+      Session (const gchar *service,
+               const gchar *consumer_key,
                const gchar *consumer_secret);
 
       void SetToken (const gchar *token);
@@ -43,6 +44,7 @@ namespace Oauth
     private:
       virtual ~Session ();
 
+      gchar *_service;
       gchar *_consumer_key;
       gchar *_consumer_secret;
       gchar *_token;
