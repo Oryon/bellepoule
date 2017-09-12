@@ -21,13 +21,15 @@
 #include <libxml/xmlwriter.h>
 
 #include "util/object.hpp"
+#include "network/advertiser.hpp"
 #include "../../match.hpp"
 
 namespace Table
 {
   class TableSet;
 
-  class Table : public Object
+  class Table : public Object,
+                public Net::Advertiser::Feeder
   {
     public:
       Table (TableSet    *table_set,
@@ -108,5 +110,7 @@ namespace Table
                       Match   *match);
 
       void SimplifyLooserTree (GSList **list);
+
+      gchar *GetTweet ();
   };
 }

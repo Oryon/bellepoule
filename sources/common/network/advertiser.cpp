@@ -253,7 +253,7 @@ namespace Net
 
     if (title)
     {
-      advertiser->_title = g_strdup_printf ("%c%c%c%c %s", 0xF0, 0x9F, 0xA4, 0xBA, title);
+      advertiser->_title = g_strdup_printf ("\xf0\x9f\xa4\xba %s", title);
     }
   }
 

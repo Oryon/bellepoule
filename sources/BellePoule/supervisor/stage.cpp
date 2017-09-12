@@ -885,15 +885,17 @@ const gchar *Stage::GetInputProviderClient ()
 // --------------------------------------------------------------------------------
 gchar *Stage::GetTweet ()
 {
-  gchar *name = GetName ();
+  gchar       *name  = GetName ();
+  const gchar *emoji = "\xf0\x9f\x8f\x81";
+  //const  gchar *emoji = "\xe2\x98\x91";
 
   if (name[0])
   {
-    return g_strdup_printf ("%s '%s' %s", _class->_name, GetName (), gettext ("OVER"));
+    return g_strdup_printf ("%s '%s' %s", _class->_name, GetName (), emoji);
   }
   else
   {
-    return g_strdup_printf ("%s %s", _class->_name, gettext ("OVER"));
+    return g_strdup_printf ("%s %s", _class->_name, emoji);
   }
 }
 

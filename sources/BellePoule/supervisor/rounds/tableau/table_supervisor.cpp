@@ -24,6 +24,7 @@
 #include "util/attribute.hpp"
 #include "util/player.hpp"
 #include "../../classification.hpp"
+#include "../../contest.hpp"
 
 #include "table_supervisor.hpp"
 
@@ -842,6 +843,7 @@ namespace Table
     }
 
     OnTableSetStatusUpdated (table_set);
+    _contest->TweetFeeder (table);
   }
 
   // --------------------------------------------------------------------------------

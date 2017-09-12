@@ -559,4 +559,14 @@ namespace Table
 
     return printable_image;
   }
+
+  // --------------------------------------------------------------------------------
+  gchar *Table::GetTweet ()
+  {
+    gchar *image = GetImage ();
+    gchar *tweet = g_strdup_printf ("%s %s", image, gettext ("OVER"));
+
+    g_free (image);
+    return tweet;
+  }
 }

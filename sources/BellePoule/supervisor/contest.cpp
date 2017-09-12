@@ -40,7 +40,6 @@
 #include "actors/checkin.hpp"
 #include "actors/referees_list.hpp"
 #include "actors/player_factory.hpp"
-#include "network/advertiser.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "ecosystem.hpp"
 
@@ -1967,6 +1966,17 @@ gboolean Contest::OnHttpPost (const gchar *command,
   return _schedule->OnHttpPost (command,
                                 resource,
                                 data);
+}
+
+// --------------------------------------------------------------------------------
+void Contest::TweetFeeder (Net::Advertiser::Feeder *feeder)
+{
+  if (_state == OPERATIONAL)
+  {
+    g_list_foreach (_advertisers,
+                    (GFunc) Net::Advertiser::TweetFeeder,
+                    feeder);
+  }
 }
 
 // --------------------------------------------------------------------------------

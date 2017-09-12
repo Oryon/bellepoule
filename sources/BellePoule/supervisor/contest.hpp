@@ -23,6 +23,7 @@
 #include "util/module.hpp"
 #include "util/glade.hpp"
 #include "network/message.hpp"
+#include "network/advertiser.hpp"
 
 #include "schedule.hpp"
 
@@ -93,6 +94,8 @@ class Contest : public Module
     gboolean OnHttpPost (const gchar *command,
                          const gchar **ressource,
                          const gchar *data);
+
+    void TweetFeeder (Net::Advertiser::Feeder *feeder);
 
     guint     GetNetID           ();
     gchar    *GetOrganizer       ();

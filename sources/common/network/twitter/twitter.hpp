@@ -19,7 +19,6 @@
 #include "util/module.hpp"
 
 #include "advertiser.hpp"
-#include "twitter_uploader.hpp"
 
 namespace Oauth
 {
