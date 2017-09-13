@@ -378,6 +378,8 @@ prepare_windows_resources:
 	cp -f ../../resources/glade/images/supervisor.ico $(RESOURCES)/glade/images
 	cp -f ../../resources/glade/images/marshaller.ico $(RESOURCES)/glade/images
 	ln -s $(MINGW)/bin/*dll $(PACKAGE)/$(RELEASE)
+	curl --remote-name --time-cond cacert.pem https://curl.haxx.se/ca/cacert.pem
+	cp -f cacert.pem $(RESOURCES)
 
 prepare_osx_resources: prepare_resources
 	cp -f ../../resources/gtkrc.osx $(RESOURCES)/gtkrc

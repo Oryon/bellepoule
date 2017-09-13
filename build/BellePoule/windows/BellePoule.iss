@@ -93,6 +93,7 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\bellepoule (beta)"
 Source: "exe\bellepoulebeta-marshaller.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "exe\bellepoulebeta-supervisor.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "..\..\..\resources\gtkrc.windows"; DestDir: "{app}\share\{#PRODUCT}\resources"; DestName: "gtkrc"; Flags: ignoreversion
+Source: "..\cacert.pem"; DestDir: "{app}\share\{#PRODUCT}\resources"; Flags: ignoreversion
 Source: "path_dependent_files\gtk.immodules"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gtk.immodules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 Source: "path_dependent_files\gdk-pixbuf.loaders"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gdk-pixbuf.loaders'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 Source: "path_dependent_files\pango.modules"; DestDir: "{app}\etc\pango"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\pango\pango.modules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
@@ -265,6 +266,7 @@ Source: "{#MINGW}\bin\nssutil3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\ssl3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libjson-glib-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libssl-10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
 #endif
 

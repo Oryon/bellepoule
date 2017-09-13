@@ -16,6 +16,7 @@
 
 #include <string.h>
 
+#include "util/global.hpp"
 #include "oauth/http_request.hpp"
 
 #include "twitter_uploader.hpp"
@@ -148,6 +149,17 @@ namespace Net
     Uploader::SetCurlOptions (curl);
 
     curl_easy_setopt (curl, CURLOPT_SSL_VERIFYPEER, 1L);
+
+    {
+      gchar *ca_bundle = g_build_filename (Global::_share_dir, "resources", "cacert.pem", NULL);
+
+      if (g_file_test (ca_bundle, G_FILE_TEST_EXISTS))
+      {
+        curl_easy_setopt (curl, CURLOPT_CAINFO, ca_bundle);
+      }
+      g_free (ca_bundle);
+    }
+
     curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, OnResponseHeader);
     curl_easy_setopt (curl, CURLOPT_HEADERDATA,     this);
 
