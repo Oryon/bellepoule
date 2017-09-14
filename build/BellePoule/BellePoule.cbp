@@ -83,6 +83,8 @@
 			<Add directory="/usr/include/pixman-1" />
 			<Add directory="/usr/include/freetype2" />
 			<Add directory="/usr/include/p11-kit-1" />
+			<Add directory="/usr/include/webkitgtk-1.0" />
+			<Add directory="/usr/include/libsoup-2.4" />
 			<Add directory="../../sources/BellePoule" />
 			<Add directory="../../sources/common" />
 			<Add directory="/usr/include/json-glib-1.0" />
@@ -115,6 +117,7 @@
 			<Add library="microhttpd" />
 			<Add library="qrencode" />
 			<Add library="json-glib-1.0" />
+			<Add library="webkitgtk-1.0" />
 		</Linker>
 		<Unit filename="../../sources/BellePoule/actors/checkin.cpp">
 			<Option target="Lib_Debug" />

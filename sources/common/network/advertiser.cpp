@@ -50,6 +50,16 @@ namespace Net
       g_free (png);
     }
 
+    {
+      GdkDisplay *display     = gdk_display_get_default ();
+      GdkScreen  *screen      = gdk_display_get_default_screen (display);
+      gint        full_height = gdk_screen_get_height (screen);
+
+      gtk_widget_set_size_request (_glade->GetWidget ("webview"),
+                                   700,
+                                   (full_height*70)/100);
+    }
+
     gtk_button_set_label (GTK_BUTTON (_glade->GetWidget ("checkbutton")),
                           name);
 
@@ -123,6 +133,54 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Advertiser::OnRedirect (WebKitWebView             *web_view,
+                                   WebKitWebFrame            *frame,
+                                   WebKitNetworkRequest      *request,
+                                   WebKitWebNavigationAction *navigation_action,
+                                   WebKitWebPolicyDecision   *policy_decision,
+                                   Advertiser                *a)
+  {
+    const gchar *request_uri = webkit_network_request_get_uri (request);
+
+    if (g_strrstr (request_uri, "http://bellepoule.bzh"))
+    {
+      {
+        gchar **params = g_strsplit_set (request_uri,
+                                         "?&",
+                                         -1);
+
+        for (guint p = 0; params[p] != NULL; p++)
+        {
+          if (g_strrstr (params[p], "oauth_verifier="))
+          {
+            gchar **verifyer = g_strsplit_set (params[p],
+                                               "=",
+                                               -1);
+
+            if (verifyer[0] && verifyer[1])
+            {
+              a->SendRequest (new Oauth::AccessToken (a->_session,
+                                                      verifyer[1]));
+            }
+            g_strfreev (verifyer);
+            break;
+          }
+        }
+
+        g_strfreev (params);
+      }
+
+      gtk_dialog_response (GTK_DIALOG (a->_glade->GetWidget ("request_token_dialog")),
+                           GTK_RESPONSE_CANCEL);
+
+      webkit_web_policy_decision_ignore (policy_decision);
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   void Advertiser::OnTwitterResponse (Oauth::HttpRequest *request)
   {
     VerifyCredentials *verify_credentials = dynamic_cast <VerifyCredentials *> (request);
@@ -155,46 +213,36 @@ namespace Net
 
       if (request_token)
       {
-        gchar *pin_url = request_token->GetPinCodeUrl ();
+        GtkWidget *web_view = webkit_web_view_new ();
 
         {
-          GtkWidget *link = _glade->GetWidget ("pin_url");
+          gchar *pin_url = request_token->GetPinCodeUrl ();
 
-          gtk_link_button_set_uri (GTK_LINK_BUTTON (link),
-                                   pin_url);
+          gtk_container_add (GTK_CONTAINER (_glade->GetWidget ("webview")),
+                             web_view);
+          g_signal_connect (G_OBJECT (web_view),
+                            "navigation-policy-decision-requested",
+                            G_CALLBACK (OnRedirect),
+                            this);
+
+          webkit_web_view_load_uri (WEBKIT_WEB_VIEW (web_view),
+                                    pin_url);
+
+          gtk_widget_show (web_view);
+          gtk_widget_grab_focus (web_view);
 
           g_free (pin_url);
         }
 
         {
           GtkWidget *dialog = _glade->GetWidget ("request_token_dialog");
-          GtkEntry  *entry  = GTK_ENTRY (_glade->GetWidget ("pin_entry"));
 
-          if (entry)
-          {
-            gtk_entry_set_text (entry,
-                                "");
-          }
-
-          switch (RunDialog (GTK_DIALOG (dialog)))
-          {
-            case GTK_RESPONSE_OK:
-            {
-              SendRequest (new Oauth::AccessToken (_session,
-                                                   gtk_entry_get_text (entry)));
-
-            }
-            break;
-
-            default:
-            {
-              DisplayId ("");
-            }
-            break;
-          }
-
+          RunDialog (GTK_DIALOG (dialog));
           gtk_widget_hide (dialog);
         }
+
+        gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (web_view)),
+                              web_view);
       }
       else if (dynamic_cast <Oauth::AccessToken *> (request))
       {

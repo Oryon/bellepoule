@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include <webkit/webkit.h>
+
 #include "util/module.hpp"
 
 #include "twitter/twitter_uploader.hpp"
@@ -94,5 +96,12 @@ namespace Net
       void Use ();
 
       void Drop ();
+
+      static gboolean OnRedirect (WebKitWebView             *web_view,
+                                  WebKitWebFrame            *frame,
+                                  WebKitNetworkRequest      *request,
+                                  WebKitWebNavigationAction *navigation_action,
+                                  WebKitWebPolicyDecision   *policy_decision,
+                                  Advertiser                *a);
   };
 }

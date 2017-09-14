@@ -38,6 +38,8 @@
 -I/usr/include/libxml2
 -I/usr/include/goocanvas-1.0
 -I/usr/include/json-glib-1.0
+-I/usr/include/webkitgtk-1.0
+-I/usr/include/libsoup-2.4
 -Icommon
 -Icommon/network
 -IBellePoule

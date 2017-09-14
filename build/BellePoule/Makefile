@@ -114,7 +114,7 @@ else
 CFLAGS += -fPIC
 endif
 
-CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 webkit-1.0)
 
 CFLAGS += -Isources/common
 CFLAGS += -Isources/common/network
@@ -135,7 +135,7 @@ ifeq ($(OUTPUT), Release)
 LDFLAGS += -mwindows
 endif
 endif
-LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 webkit-1.0)
 
 ifeq ($(UBUNTU), osx)
 LDFLAGS += -headerpad_max_install_names
@@ -379,7 +379,6 @@ prepare_windows_resources:
 	cp -f ../../resources/glade/images/marshaller.ico $(RESOURCES)/glade/images
 	ln -s $(MINGW)/bin/*dll $(PACKAGE)/$(RELEASE)
 	curl --remote-name --time-cond cacert.pem https://curl.haxx.se/ca/cacert.pem
-	cp -f cacert.pem $(RESOURCES)
 
 prepare_osx_resources: prepare_resources
 	cp -f ../../resources/gtkrc.osx $(RESOURCES)/gtkrc

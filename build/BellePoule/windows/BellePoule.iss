@@ -208,6 +208,7 @@ Source: "{#MINGW}\share\locale\eu\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{a
 #endif
 
 ;Resources
+Source: "..\cacert.pem"; DestDir: "{app}\share\{#PRODUCT}\resources\"; Flags: ignoreversion
 Source: "..\..\..\resources\glade\images\*.png"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\images\"; Flags: ignoreversion
 Source: "..\..\..\resources\glade\images\*.gif"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\images\"; Flags: ignoreversion
 Source: "..\..\..\resources\glade\images\*.jpg"; DestDir: "{app}\share\{#PRODUCT}\resources\glade\images\"; Flags: ignoreversion
@@ -267,7 +268,26 @@ Source: "{#MINGW}\bin\ssl3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libjson-glib-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libssl-10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-
+Source: "{#MINGW}\bin\libjasper-4.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\icudata56.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\icui18n56.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\icuuc56.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libenchant.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgstapp-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgstaudio-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgstbase-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgstfft-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgstpbutils-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgstreamer-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgsttag-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgstvideo-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libharfbuzz-icu-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libjavascriptcoregtk-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libsoup-2.4-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libsqlite3-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libwebkitgtk-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libwebp-5.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libxslt-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 #endif
 
 ; theme
