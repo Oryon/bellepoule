@@ -75,6 +75,7 @@ namespace Net
     private:
       enum State
       {
+        IDLE,
         OFF,
         WAITING_FOR_TOKEN,
         ON
