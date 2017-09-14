@@ -33,7 +33,7 @@ namespace Net
     : Object ("Advertiser"),
       Module ("advertiser.glade")
   {
-    _state   = OFF;
+    _state   = IDLE;
     _title   = NULL;
     _link    = NULL;
     _session = NULL;
@@ -95,6 +95,8 @@ namespace Net
                               TRUE);
     gtk_widget_set_sensitive (_glade->GetWidget ("entry"),
                               TRUE);
+
+    SendRequest (new VerifyCredentials (_session));
   }
 
   // --------------------------------------------------------------------------------
@@ -140,8 +142,11 @@ namespace Net
       }
       else
       {
+        if (_state != IDLE)
+        {
+          DisplayId ("Access denied!");
+        }
         _state = OFF;
-        DisplayId ("Access denied!");
       }
     }
     else
@@ -197,7 +202,14 @@ namespace Net
       }
       else if (verify_credentials)
       {
-        _state = ON;
+        if (_state == IDLE)
+        {
+          _state = OFF;
+        }
+        else
+        {
+          _state = ON;
+        }
         DisplayId (verify_credentials->_twitter_account);
       }
     }
@@ -362,3 +374,25 @@ extern "C" G_MODULE_EXPORT void on_entry_icon_press (GtkEntry             *entry
 
   a->OnResetAccount ();
 }
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_pin_url_clicked (GtkWidget *widget,
+                                                    Object    *owner)
+{
+  const gchar *uri = gtk_link_button_get_uri (GTK_LINK_BUTTON (widget));
+
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecute (NULL,
+                "open",
+                uri,
+                NULL,
+                NULL,
+                SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                uri,
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
+}
+
