@@ -33,10 +33,11 @@ namespace Net
     : Object ("Advertiser"),
       Module ("advertiser.glade")
   {
-    _state   = IDLE;
-    _title   = NULL;
-    _link    = NULL;
-    _session = NULL;
+    _state           = IDLE;
+    _title           = NULL;
+    _link            = NULL;
+    _session         = NULL;
+    _pending_request = FALSE;
 
     {
 
@@ -185,6 +186,8 @@ namespace Net
   {
     VerifyCredentials *verify_credentials = dynamic_cast <VerifyCredentials *> (request);
 
+    _pending_request = FALSE;
+
     if (request->GetStatus () == Oauth::HttpRequest::NETWORK_ERROR)
     {
       _state = OFF;
@@ -239,6 +242,11 @@ namespace Net
 
           RunDialog (GTK_DIALOG (dialog));
           gtk_widget_hide (dialog);
+
+          if (_pending_request == FALSE)
+          {
+            SendRequest (new VerifyCredentials (_session));
+          }
         }
 
         gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (web_view)),
@@ -280,6 +288,7 @@ namespace Net
   {
     TwitterUploader *uploader = new TwitterUploader (this);
 
+    _pending_request = TRUE;
     uploader->UpLoadRequest (request);
 
     request->Release ();
@@ -333,7 +342,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Advertiser::Tweet (const gchar *tweet)
   {
-    if ((_state == ON) && (_title))
+    if ((_state == ON) && _title)
     {
       gchar *message;
 

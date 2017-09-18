@@ -243,7 +243,6 @@ Source: "{#MINGW}\bin\libgtk-win32-2.0-0.dll"; DestDir: "{app}\bin"; Flags: igno
 Source: "{#MINGW}\bin\libharfbuzz-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libidn-11.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libintl-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libjasper-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libjpeg-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\liblzma-5.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libmicrohttpd-10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -288,6 +287,18 @@ Source: "{#MINGW}\bin\libsqlite3-0.dll"; DestDir: "{app}\bin"; Flags: ignorevers
 Source: "{#MINGW}\bin\libwebkitgtk-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libwebp-5.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libxslt-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgnutls-30.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgmp-10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libhogweed-4-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libnettle-6-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libtasn1-6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libp11-kit-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+
+Source: "{#MINGW}\lib\gio\modules\libgiognutls.dll"; DestDir: "{app}\lib\gio\modules"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\webkitgtk-1.0\*"; DestDir: "{app}\share\webkitgtk-1.0"; Flags: ignoreversion recursesubdirs
+Source: "{#MINGW}\share\fontconfig\*"; DestDir: "{app}\share\fontconfig"; Flags: ignoreversion recursesubdirs
+Source: "{#MINGW}\etc\fonts\*"; DestDir: "{app}\etc\fonts"; Flags: ignoreversion recursesubdirs
 #endif
 
 ; theme

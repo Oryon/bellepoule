@@ -83,9 +83,10 @@ namespace Net
         ON
       };
 
-      State  _state;
-      gchar *_link;
-      gchar *_title;
+      State     _state;
+      gchar    *_link;
+      gchar    *_title;
+      gboolean  _pending_request;
 
       void SendRequest (Oauth::HttpRequest *request);
 

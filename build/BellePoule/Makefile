@@ -43,7 +43,7 @@ GOO = goocanvas
 ifeq ($(UBUNTU), windows)
 CC_FAMILY = i686-w64-mingw32-
 EXE       = .exe
-MINGW=$(HOME)/.local/share/crossroad/roads/w32/bellepoule
+MINGW=$(HOME)/.local/share/crossroad/roads/w32/$(PRODUCT)
 PKG_CONFIG = env PKG_CONFIG_PATH= PKG_CONFIG_LIBDIR=$(MINGW)/lib/pkgconfig $(CC_FAMILY)pkg-config
 else
 CC_FAMILY  =
@@ -132,7 +132,7 @@ ifeq ($(UBUNTU), windows)
 LDFLAGS += -lws2_32
 LDFLAGS += -liphlpapi
 ifeq ($(OUTPUT), Release)
-LDFLAGS += -mwindows
+#LDFLAGS += -mwindows
 endif
 endif
 LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 webkit-1.0)
