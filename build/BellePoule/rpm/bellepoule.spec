@@ -20,6 +20,7 @@ BuildRequires:  goocanvas-devel
 BuildRequires:  qrencode-devel
 BuildRequires:  openssl-devel
 BuildRequires:  json-glib-devel
+BuildRequires:  webkitgtk-devel
 Requires:       gtk2 >= 2.24.0
 Requires:       libxml2
 Requires:       libcurl
@@ -30,6 +31,7 @@ Requires:       openssl-libs
 Requires:       lighttpd
 Requires:       json-glib
 Requires:       lighttpd-fastcgi
+Requires:       webkitgtk
 
 %description
 
