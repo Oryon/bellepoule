@@ -563,6 +563,12 @@
 		<Unit filename="../../sources/common/network/downloader.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/facebook/facebook.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/facebook.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/file_uploader.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
@@ -593,12 +599,6 @@
 		<Unit filename="../../sources/common/network/message_uploader.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/oauth/access_token.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/network/oauth/access_token.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
 		<Unit filename="../../sources/common/network/oauth/field.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
@@ -611,16 +611,40 @@
 		<Unit filename="../../sources/common/network/oauth/http_request.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/oauth/request_token.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/network/oauth/request_token.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
 		<Unit filename="../../sources/common/network/oauth/session.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/oauth/session.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/uploader.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/uploader.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_access_token.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_access_token.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_request_token.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_request_token.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_session.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_session.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v2_access_token.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v2_access_token.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/partner.cpp">
@@ -645,12 +669,6 @@
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/twitter/twitter.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/network/twitter/twitter_uploader.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/network/twitter/twitter_uploader.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/twitter/verify_credentials_request.cpp">

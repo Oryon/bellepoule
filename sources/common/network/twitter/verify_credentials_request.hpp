@@ -31,8 +31,7 @@ namespace Net
     private:
       virtual ~VerifyCredentials ();
 
-      const gchar *GetURL ();
-
-      void ParseResponse (const gchar *response);
+      void ParseResponse (GHashTable  *header,
+                          const gchar *body);
   };
 }

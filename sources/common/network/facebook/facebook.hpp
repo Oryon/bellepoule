@@ -16,20 +16,30 @@
 
 #pragma once
 
-#include "http_request.hpp"
+#include "util/module.hpp"
+
+#include "advertiser.hpp"
 
 namespace Oauth
 {
-  class RequestToken : public HttpRequest
+  class Session;
+}
+
+namespace Net
+{
+  class Advertiser;
+
+  class Facebook : public Advertiser
   {
     public:
-      RequestToken (Session *session);
-
-      gchar *GetPinCodeUrl ();
+      Facebook ();
 
     private:
-      const gchar *GetURL ();
+      ~Facebook ();
 
-      virtual ~RequestToken ();
+      void SwitchOn ();
+
+      gboolean OnRedirect (WebKitNetworkRequest    *request,
+                           WebKitWebPolicyDecision *policy_decision);
   };
 }

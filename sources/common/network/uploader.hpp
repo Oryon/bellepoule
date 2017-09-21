@@ -69,7 +69,7 @@ namespace Net
 
       virtual const gchar *GetUrl ();
 
-      virtual void OnUploadDone (const gchar *response);
+      const gchar *GetResponseBody ();
 
     private:
       CURL  *_curl;

@@ -20,15 +20,16 @@
 
 namespace Oauth
 {
-  class AccessToken : public HttpRequest
+  namespace V1
   {
-    public:
-      AccessToken (Session     *session,
-                   const gchar *pin);
+    class AccessToken : public HttpRequest
+    {
+      public:
+        AccessToken (Oauth::Session *session,
+                     const gchar    *pin);
 
-    private:
-      virtual ~AccessToken ();
-
-      const gchar *GetURL ();
-  };
+      private:
+        virtual ~AccessToken ();
+    };
+  }
 }

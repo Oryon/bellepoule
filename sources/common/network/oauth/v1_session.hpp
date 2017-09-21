@@ -16,20 +16,35 @@
 
 #pragma once
 
-#include "oauth/http_request.hpp"
+#include <glib.h>
 
-namespace Net
+#include "util/object.hpp"
+#include "session.hpp"
+
+namespace Oauth
 {
-  class StatusesUpdate : public Oauth::HttpRequest
+  namespace V1
   {
-    public:
-      StatusesUpdate (Oauth::Session *session,
-                      const gchar    *tweet);
+    class Session : public Oauth::Session
+    {
+      public:
+        Session (const gchar *service,
+                 const gchar *api_uri,
+                 const gchar *consumer_key,
+                 const gchar *consumer_secret);
 
-    private:
-      virtual ~StatusesUpdate ();
+        void Reset ();
 
-      void ParseResponse (GHashTable  *header,
-                          const gchar *body);
-  };
+      public:
+        void SetTokenSecret (const gchar *token_secret);
+
+        const guchar *GetSigningKey ();
+
+      private:
+        virtual ~Session ();
+
+        gchar   *_consumer_secret;
+        GString *_signing_key;
+    };
+  }
 }

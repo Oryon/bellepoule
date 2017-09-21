@@ -19,8 +19,7 @@
 #include <webkit/webkit.h>
 
 #include "util/module.hpp"
-
-#include "twitter/twitter_uploader.hpp"
+#include "oauth/uploader.hpp"
 
 namespace Oauth
 {
@@ -29,13 +28,13 @@ namespace Oauth
 
 namespace Net
 {
-  class Advertiser : public Module, public TwitterUploader::Listener
+  class Advertiser : public Module, public Oauth::Uploader::Listener
   {
     public:
       class Feeder
       {
         public:
-          virtual gchar *GetTweet () = 0;
+          virtual gchar *GetAnnounce () = 0;
       };
 
     public:
@@ -43,7 +42,11 @@ namespace Net
 
       void Plug (GtkTable *in);
 
-      void Tweet (const gchar *tweet);
+      void OnResetAccount ();
+
+      void OnToggled (gboolean on);
+
+      void Publish (const gchar *event);
 
       static void SetTitle (Advertiser  *advertiser,
                             const gchar *title);
@@ -54,18 +57,6 @@ namespace Net
       static void TweetFeeder (Advertiser *advertiser,
                                Feeder     *feeder);
 
-    private:
-      void SwitchOn ();
-
-      void SwitchOff ();
-
-      void Reset ();
-
-    public:
-      void OnResetAccount ();
-
-      void OnToggled (gboolean on);
-
     protected:
       Oauth::Session *_session;
       gchar          *_name;
@@ -74,7 +65,9 @@ namespace Net
 
       void SetSession (Oauth::Session *session);
 
-    private:
+      void SendRequest (Oauth::HttpRequest *request);
+
+    protected:
       enum State
       {
         IDLE,
@@ -83,26 +76,39 @@ namespace Net
         ON
       };
 
-      State     _state;
-      gchar    *_link;
-      gchar    *_title;
-      gboolean  _pending_request;
+      State    _state;
+      gboolean _pending_request;
 
-      void SendRequest (Oauth::HttpRequest *request);
+      virtual void SwitchOn ();
 
-      void OnTwitterResponse (Oauth::HttpRequest *request);
+      void SwitchOff ();
+
+      void Reset ();
 
       void DisplayId (const gchar *id);
+
+      void DisplayAuthorizationPage (const gchar *url);
+
+    private:
+      gchar *_link;
+      gchar *_title;
+
+      virtual void PublishMessage (const gchar *message);
+
+      virtual void OnServerResponse (Oauth::HttpRequest *request);
 
       void Use ();
 
       void Drop ();
 
-      static gboolean OnRedirect (WebKitWebView             *web_view,
-                                  WebKitWebFrame            *frame,
-                                  WebKitNetworkRequest      *request,
-                                  WebKitWebNavigationAction *navigation_action,
-                                  WebKitWebPolicyDecision   *policy_decision,
-                                  Advertiser                *a);
+      virtual gboolean OnRedirect (WebKitNetworkRequest    *request,
+                                   WebKitWebPolicyDecision *policy_decision);
+
+      static gboolean OnWebKitRedirect (WebKitWebView             *web_view,
+                                        WebKitWebFrame            *frame,
+                                        WebKitNetworkRequest      *request,
+                                        WebKitWebNavigationAction *navigation_action,
+                                        WebKitWebPolicyDecision   *policy_decision,
+                                        Advertiser                *t);
   };
 }

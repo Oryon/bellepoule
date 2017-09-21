@@ -20,7 +20,8 @@ namespace Net
 {
   // --------------------------------------------------------------------------------
   VerifyCredentials::VerifyCredentials (Oauth::Session *session)
-    : Oauth::HttpRequest (session, GET, "Twitter::VerifyCredentials")
+    : Object ("Twitter::VerifyCredentials"),
+              Oauth::HttpRequest (session, "1.1/account/verify_credentials.json", GET)
   {
     _twitter_account = NULL;
   }
@@ -32,19 +33,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  const gchar *VerifyCredentials::GetURL ()
+  void VerifyCredentials::ParseResponse (GHashTable  *header,
+                                         const gchar *body)
   {
-    return "https://api.twitter.com/1.1/account/verify_credentials.json";
-  }
-
-  // --------------------------------------------------------------------------------
-  void VerifyCredentials::ParseResponse (const gchar *response)
-  {
-    HttpRequest::ParseResponse (response);
+    HttpRequest::ParseResponse (header,
+                                body);
 
     if (GetStatus () == Oauth::HttpRequest::ACCEPTED)
     {
-      if (LoadJson (response))
+      if (LoadJson (body))
       {
         char *name        = GetJsonAtPath ("$.name");
         char *screen_name = GetJsonAtPath ("$.screen_name");

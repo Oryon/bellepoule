@@ -22,33 +22,31 @@
 
 namespace Oauth
 {
-  class Session : public Object
+  class Session : public virtual Object
   {
     public:
       Session (const gchar *service,
-               const gchar *consumer_key,
-               const gchar *consumer_secret);
+               const gchar *api_uri,
+               const gchar *consumer_key);
+
+      virtual void Reset ();
 
       void SetToken (const gchar *token);
 
-      void SetTokenSecret (const gchar *token_secret);
-
-      void Reset ();
-
       const gchar *GetConsumerKey ();
 
-      const guchar *GetSigningKey ();
+      const gchar *GetApiUri ();
 
       const gchar *GetToken ();
 
-    private:
+    protected:
       virtual ~Session ();
 
+      gchar *_api_uri;
       gchar *_service;
       gchar *_consumer_key;
-      gchar *_consumer_secret;
-      gchar *_token;
 
-      GString *_signing_key;
+    private:
+      gchar *_token;
   };
 }

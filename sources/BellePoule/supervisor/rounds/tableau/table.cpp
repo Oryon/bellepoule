@@ -561,12 +561,12 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Table::GetTweet ()
+  gchar *Table::GetAnnounce ()
   {
-    gchar *image = GetImage ();
-    gchar *tweet = g_strdup_printf ("%s %s", image, gettext ("OVER"));
+    gchar *image    = GetImage ();
+    gchar *announce = g_strdup_printf ("%s %s", image, gettext ("OVER"));
 
     g_free (image);
-    return tweet;
+    return announce;
   }
 }

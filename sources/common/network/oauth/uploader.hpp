@@ -16,54 +16,49 @@
 
 #pragma once
 
-#include "uploader.hpp"
+#include "network/uploader.hpp"
 
 namespace Oauth
 {
   class HttpRequest;
-}
 
-namespace Net
-{
-  class TwitterUploader : public Uploader
+  class Uploader : public Net::Uploader
   {
     public:
       class Listener
       {
         public:
-          virtual void OnTwitterResponse (Oauth::HttpRequest *request) = 0;
+          virtual void OnServerResponse (HttpRequest *request) = 0;
           virtual void Use  () = 0;
           virtual void Drop () = 0;
       };
 
     public:
-      TwitterUploader (Listener *listener);
+      Uploader (Listener *listener);
 
-      void UpLoadRequest (Oauth::HttpRequest *request);
+      void UpLoadRequest (HttpRequest *request);
 
     protected:
-      virtual ~TwitterUploader ();
+      virtual ~Uploader ();
 
     private:
       Listener           *_listener;
-      Oauth::HttpRequest *_request;
+      HttpRequest        *_request;
       struct curl_slist  *_http_header;
       gchar              *_postfields;
+      GHashTable         *_response_header;
 
-      static gpointer ThreadFunction (TwitterUploader *uploader);
+      static gpointer ThreadFunction (Uploader *uploader);
 
-      static gboolean OnThreadDone (TwitterUploader *uploader);
+      static gboolean OnThreadDone (Uploader *uploader);
 
-    private:
       void SetCurlOptions (CURL *curl);
 
       const gchar *GetUrl ();
 
-      void OnUploadDone (const gchar *response);
-
-      static size_t OnResponseHeader (char            *buffer,
-                                      size_t           size,
-                                      size_t           nitems,
-                                      TwitterUploader *uploader);
+      static size_t OnResponseHeader (char     *buffer,
+                                      size_t    size,
+                                      size_t    nitems,
+                                      Uploader *uploader);
   };
 }

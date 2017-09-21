@@ -258,5 +258,5 @@ class Stage : public virtual Object,
 
     void InitQualifiedForm ();
 
-    gchar *GetTweet ();
+    gchar *GetAnnounce ();
 };

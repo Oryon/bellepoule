@@ -23,8 +23,12 @@
 namespace Oauth
 {
   class Session;
+  namespace V1
+  {
+    class Session;
+  }
 
-  class HttpRequest : public Object
+  class HttpRequest : public virtual Object
   {
     public:
       enum Status
@@ -37,10 +41,11 @@ namespace Oauth
 
     public:
       HttpRequest (Session     *session,
-                   const gchar *http_method,
-                   const gchar *class_name);
+                   const gchar *sub_url,
+                   const gchar *http_method);
 
-      virtual void ParseResponse (const gchar *response);
+      virtual void ParseResponse (GHashTable  *header,
+                                  const gchar *body);
 
       void AddHeaderField (const gchar *key,
                            const gchar *value);
@@ -52,22 +57,17 @@ namespace Oauth
 
       gchar *GetHeader ();
 
-      virtual const gchar *GetURL () = 0;
+      const gchar *GetURL ();
 
       gchar *GetParameters ();
 
       const gchar *GetMethod ();
 
-      void SetRateLimitLimit (guint limit);
-
-      void SetRateLimitRemaining (guint remaining);
-
-      void SetRateLimitReset (guint reset);
-
     protected:
       static const gchar *GET;
       static const gchar *POST;
-      Session            *_session;
+      V1::Session        *_session;
+      gchar              *_url;
       JsonParser         *_parser;
 
       ~HttpRequest ();
@@ -88,14 +88,13 @@ namespace Oauth
       GList              *_parameter_list;
       const gchar        *_http_method;
       Status              _status;
-      guint               _rate_limit_limit;
-      guint               _rate_limit_remaining;
-      GDateTime          *_rate_limit_reset;
 
       void Stamp ();
 
       char *GetNonce ();
 
       void Sign ();
+
+      void DumpRateLimits (GHashTable  *header);
   };
 }

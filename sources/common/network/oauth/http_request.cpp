@@ -18,7 +18,7 @@
 #include <string.h>
 
 #include "field.hpp"
-#include "session.hpp"
+#include "v1_session.hpp"
 #include "http_request.hpp"
 
 namespace Oauth
@@ -35,9 +35,9 @@ namespace Oauth
 
   // --------------------------------------------------------------------------------
   HttpRequest::HttpRequest (Session     *session,
-                            const gchar *http_method,
-                            const gchar *class_name)
-    : Object (class_name)
+                            const gchar *sub_url,
+                            const gchar *http_method)
+    : Object ("HttpRequest")
   {
     _status = READY;
 
@@ -45,25 +45,22 @@ namespace Oauth
     _header_list    = NULL;
     _parameter_list = NULL;
     _parser         = NULL;
+    _url            = g_strdup_printf ("%s/%s", session->GetApiUri (), sub_url);
 
     _http_method = http_method;
-    _session     = session;
-
-    _rate_limit_limit     = 0;
-    _rate_limit_remaining = 0;
-    _rate_limit_reset     = NULL;
+    _session     = (V1::Session *) session;
 
     {
       gchar *nonce = GetNonce ();
 
-      AddHeaderField ("oauth_consumer_key",     session->GetConsumerKey ());
+      AddHeaderField ("oauth_consumer_key",     _session->GetConsumerKey ());
       AddHeaderField ("oauth_nonce",            nonce);
       AddHeaderField ("oauth_signature_method", "HMAC-SHA1");
       AddHeaderField ("oauth_version",          "1.0");
 
-      if (session->GetToken ())
+      if (_session->GetToken ())
       {
-        AddHeaderField ("oauth_token", session->GetToken ());
+        AddHeaderField ("oauth_token", _session->GetToken ());
       }
 
       g_free (nonce);
@@ -73,6 +70,8 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   HttpRequest::~HttpRequest ()
   {
+    g_free (_url);
+
     FreeFullGList (Field, _header_list);
     FreeFullGList (Field, _parameter_list);
 
@@ -80,11 +79,12 @@ namespace Oauth
     {
       g_object_unref (_parser);
     }
+  }
 
-    if (_rate_limit_reset)
-    {
-      g_date_time_unref (_rate_limit_reset);
-    }
+  // --------------------------------------------------------------------------------
+  const gchar *HttpRequest::GetURL ()
+  {
+    return _url;
   }
 
   // --------------------------------------------------------------------------------
@@ -184,39 +184,18 @@ namespace Oauth
   }
 
   // --------------------------------------------------------------------------------
-  void HttpRequest::ParseResponse (const gchar *response)
+  void HttpRequest::ParseResponse (GHashTable  *header,
+                                   const gchar *body)
   {
-    // printf ("%s\n\n\n", response);
+    // printf ("%s\n\n\n", body);
 
-    if (_rate_limit_reset)
-    {
-      GDateTime *now   = g_date_time_new_now_utc ();
-      GTimeSpan  delay = g_date_time_difference (_rate_limit_reset, now);
-      GDateTime *reset_time;
-      gchar     *reset_str;
+    DumpRateLimits (header);
 
-      {
-        GTimeVal tv;
-
-        tv.tv_sec  = delay / G_TIME_SPAN_SECOND;
-        tv.tv_usec = 0;
-
-        reset_time = g_date_time_new_from_timeval_utc (&tv);
-      }
-
-      reset_str = g_date_time_format (reset_time, "%H:%M:%S");
-      printf ("%s ==> " BLUE "%d/%d (%s)\n" ESC, GetURL (), _rate_limit_remaining, _rate_limit_limit, reset_str);
-
-      g_date_time_unref (reset_time);
-      g_date_time_unref (now);
-      g_free (reset_str);
-    }
-
-    if (response == NULL)
+    if (body == NULL)
     {
       _status = NETWORK_ERROR;
     }
-    else if (g_strstr_len (response,
+    else if (g_strstr_len (body,
                            -1,
                            "errors"))
     {
@@ -224,7 +203,7 @@ namespace Oauth
     }
     else
     {
-      gchar **fields = g_strsplit (response,
+      gchar **fields = g_strsplit (body,
                                    "&",
                                    -1);
 
@@ -256,6 +235,73 @@ namespace Oauth
         g_strfreev (fields);
       }
       _status = ACCEPTED;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void HttpRequest::DumpRateLimits (GHashTable  *header)
+  {
+    guint        rate_limit_limit;
+    guint        rate_limit_remaining;
+    GDateTime   *rate_limit_reset = NULL;
+    const gchar *value;
+
+    value = (const gchar *) g_hash_table_lookup (header,
+                                                 "x-rate-limit-limit");
+    if (value)
+    {
+      rate_limit_limit = g_ascii_strtoull (value,
+                                           NULL,
+                                           10);
+    }
+
+    value = (const gchar *) g_hash_table_lookup (header,
+                                                 "x-rate-limit-remaining");
+    if (value)
+    {
+      rate_limit_remaining = g_ascii_strtoull (value,
+                                               NULL,
+                                               10);
+    }
+
+    value = (const gchar *) g_hash_table_lookup (header,
+                                                 "x-rate-limit-reset");
+    if (value)
+    {
+      {
+        GTimeVal time_val;
+
+        time_val.tv_sec = g_ascii_strtoull (value,
+                                            NULL,
+                                            10);
+        time_val.tv_usec = 0;
+        rate_limit_reset = g_date_time_new_from_timeval_utc (&time_val);
+      }
+    }
+
+    if (rate_limit_reset)
+    {
+      GDateTime *now   = g_date_time_new_now_utc ();
+      GTimeSpan  delay = g_date_time_difference (rate_limit_reset, now);
+      GDateTime *reset_time;
+      gchar     *reset_str;
+
+      {
+        GTimeVal tv;
+
+        tv.tv_sec  = delay / G_TIME_SPAN_SECOND;
+        tv.tv_usec = 0;
+
+        reset_time = g_date_time_new_from_timeval_utc (&tv);
+      }
+
+      reset_str = g_date_time_format (reset_time, "%H:%M:%S");
+      printf ("%s ==> " BLUE "%d/%d (%s)\n" ESC, GetURL (), rate_limit_remaining, rate_limit_limit, reset_str);
+
+      g_date_time_unref (reset_time);
+      g_date_time_unref (now);
+      g_free (reset_str);
+      g_date_time_unref (rate_limit_reset);
     }
   }
 
@@ -496,27 +542,5 @@ namespace Oauth
     }
 
     return parameters;
-  }
-
-  // --------------------------------------------------------------------------------
-  void HttpRequest::SetRateLimitLimit (guint limit)
-  {
-    _rate_limit_limit = limit;
-  }
-
-  // --------------------------------------------------------------------------------
-  void HttpRequest::SetRateLimitRemaining (guint remaining)
-  {
-    _rate_limit_remaining = remaining;
-  }
-
-  // --------------------------------------------------------------------------------
-  void HttpRequest::SetRateLimitReset (guint reset)
-  {
-    GTimeVal time_val;
-
-    time_val.tv_sec  = reset;
-    time_val.tv_usec = 0;
-    _rate_limit_reset = g_date_time_new_from_timeval_utc (&time_val);
   }
 }

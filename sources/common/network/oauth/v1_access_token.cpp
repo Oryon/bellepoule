@@ -17,26 +17,24 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "access_token.hpp"
+#include "v1_access_token.hpp"
 
 namespace Oauth
 {
-  // --------------------------------------------------------------------------------
-  AccessToken::AccessToken (Session     *session,
-                            const gchar *pin)
-    : HttpRequest (session, GET, "Oauth::AccessToken")
+  namespace V1
   {
-    AddHeaderField ("oauth_verifier", pin);
-  }
+    // --------------------------------------------------------------------------------
+    AccessToken::AccessToken (Oauth::Session *session,
+                              const gchar    *pin)
+      : Object ("Oauth::V1::AccessToken"),
+        HttpRequest (session, "oauth/access_token", GET)
+    {
+      AddHeaderField ("oauth_verifier", pin);
+    }
 
-  // --------------------------------------------------------------------------------
-  AccessToken::~AccessToken ()
-  {
-  }
-
-  // --------------------------------------------------------------------------------
-  const gchar *AccessToken::GetURL ()
-  {
-    return "https://api.twitter.com/oauth/access_token";
+    // --------------------------------------------------------------------------------
+    AccessToken::~AccessToken ()
+    {
+    }
   }
 }

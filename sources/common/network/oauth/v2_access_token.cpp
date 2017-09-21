@@ -14,22 +14,25 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include <stdio.h>
+#include <string.h>
 
-#include "oauth/http_request.hpp"
+#include "v2_access_token.hpp"
 
-namespace Net
+namespace Oauth
 {
-  class StatusesUpdate : public Oauth::HttpRequest
+  namespace V2
   {
-    public:
-      StatusesUpdate (Oauth::Session *session,
-                      const gchar    *tweet);
+    // --------------------------------------------------------------------------------
+    AccessToken::AccessToken (Oauth::Session *session)
+      : Object ("Oauth::V2::AccessToken"),
+        HttpRequest (session, "https://www.facebook.com", GET)
+    {
+    }
 
-    private:
-      virtual ~StatusesUpdate ();
-
-      void ParseResponse (GHashTable  *header,
-                          const gchar *body);
-  };
+    // --------------------------------------------------------------------------------
+    AccessToken::~AccessToken ()
+    {
+    }
+  }
 }
