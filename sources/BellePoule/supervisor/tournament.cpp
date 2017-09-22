@@ -33,6 +33,7 @@
 #include "actors/form.hpp"
 #include "network/http_server.hpp"
 #include "twitter/twitter.hpp"
+#include "facebook/facebook.hpp"
 #include "contest.hpp"
 #include "ask_fred.hpp"
 
@@ -58,7 +59,7 @@ Tournament::Tournament ()
   }
 
   {
-    Net::Advertiser *facebook = new Net::Advertiser ("facebook");
+    Net::Advertiser *facebook = new Net::Facebook ();
 
     facebook->Plug (GTK_TABLE (_glade->GetWidget ("advertiser_table")));
     _advertisers = g_list_append (_advertisers,

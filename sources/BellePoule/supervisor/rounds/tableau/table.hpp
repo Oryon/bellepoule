@@ -111,6 +111,6 @@ namespace Table
 
       void SimplifyLooserTree (GSList **list);
 
-      gchar *GetTweet ();
+      gchar *GetAnnounce ();
   };
 }

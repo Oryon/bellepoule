@@ -223,8 +223,9 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Uploader::OnUploadDone (const gchar *response)
+  const gchar *Uploader::GetResponseBody ()
   {
+    return _body_in->GetContent ();
   }
 
   // --------------------------------------------------------------------------------
@@ -246,8 +247,6 @@ namespace Net
       _body_in->Clear ();
 
       curl_code = curl_easy_perform (_curl);
-
-      OnUploadDone (_body_in->GetContent ());
     }
 
     return curl_code;

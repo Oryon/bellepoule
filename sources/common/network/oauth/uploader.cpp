@@ -17,18 +17,22 @@
 #include <string.h>
 
 #include "util/global.hpp"
-#include "oauth/http_request.hpp"
+#include "http_request.hpp"
+#include "uploader.hpp"
 
-#include "twitter_uploader.hpp"
-
-namespace Net
+namespace Oauth
 {
   // --------------------------------------------------------------------------------
-  TwitterUploader::TwitterUploader (Listener *listener)
+  Uploader::Uploader (Listener *listener)
   {
     _request     = NULL;
     _http_header = NULL;
     _postfields  = NULL;
+
+    _response_header = g_hash_table_new_full (g_str_hash,
+                                              g_str_equal,
+                                              g_free,
+                                              g_free);
 
     _listener = listener;
     if (_listener)
@@ -38,7 +42,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  TwitterUploader::~TwitterUploader ()
+  Uploader::~Uploader ()
   {
     Object::TryToRelease (_request);
 
@@ -53,10 +57,12 @@ namespace Net
     {
       _listener->Drop ();
     }
+
+    g_hash_table_destroy (_response_header);
   }
 
   // --------------------------------------------------------------------------------
-  void TwitterUploader::UpLoadRequest (Oauth::HttpRequest *request)
+  void Uploader::UpLoadRequest (HttpRequest *request)
   {
     if (_request == NULL)
     {
@@ -69,7 +75,7 @@ namespace Net
         GError  *error         = NULL;
         GThread *sender_thread;
 
-        sender_thread = g_thread_try_new ("TwitterUploader",
+        sender_thread = g_thread_try_new ("Oauth::Uploader",
                                           (GThreadFunc) ThreadFunction,
                                           this,
                                           &error);
@@ -86,67 +92,40 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  size_t TwitterUploader::OnResponseHeader (char            *buffer,
-                                            size_t           size,
-                                            size_t           nitems,
-                                            TwitterUploader *uploader)
+  size_t Uploader::OnResponseHeader (char     *buffer,
+                                     size_t    size,
+                                     size_t    nitems,
+                                     Uploader *uploader)
   {
-    guint  load            = size *nitems;
-    gchar *header_response = (gchar *) g_malloc0 (load + 1);
+    guint  load   = size * nitems;
+    gchar *header = (gchar *) g_malloc0 (load + 1);
 
-    memcpy (header_response,
+    memcpy (header,
             buffer,
             load);
 
-    if (g_strrstr (header_response, "x-rate-limit-limit:"))
     {
-      gchar **fields = g_strsplit (header_response,
+      gchar **fields = g_strsplit (header,
                                    ":",
                                    -1);
-      if (fields[1])
+      if (fields[0] && fields[1])
       {
-        uploader->_request->SetRateLimitLimit (g_ascii_strtoull (fields[1],
-                                                                 NULL,
-                                                                 10));
-      }
-      g_strfreev (fields);
-    }
-    else if (g_strrstr (header_response, "x-rate-limit-remaining:"))
-    {
-      gchar **fields = g_strsplit (header_response,
-                                   ":",
-                                   -1);
-      if (fields[1])
-      {
-        uploader->_request->SetRateLimitRemaining (g_ascii_strtoull (fields[1],
-                                                                     NULL,
-                                                                     10));
-      }
-      g_strfreev (fields);
-    }
-    else if (g_strrstr (header_response, "x-rate-limit-reset:"))
-    {
-      gchar **fields = g_strsplit (header_response,
-                                   ":",
-                                   -1);
-      if (fields[1])
-      {
-        uploader->_request->SetRateLimitReset (g_ascii_strtoull (fields[1],
-                                                                 NULL,
-                                                                 10));
+        g_hash_table_replace (uploader->_response_header,
+                              g_strdup (fields[0]),
+                              g_strdup (fields[1]));
       }
       g_strfreev (fields);
     }
 
-    g_free (header_response);
+    g_free (header);
 
     return load;
   }
 
   // --------------------------------------------------------------------------------
-  void TwitterUploader::SetCurlOptions (CURL *curl)
+  void Uploader::SetCurlOptions (CURL *curl)
   {
-    Uploader::SetCurlOptions (curl);
+    Net::Uploader::SetCurlOptions (curl);
 
     curl_easy_setopt (curl, CURLOPT_SSL_VERIFYPEER, 1L);
 
@@ -196,28 +175,24 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  const gchar *TwitterUploader::GetUrl ()
+  const gchar *Uploader::GetUrl ()
   {
     return _request->GetURL ();
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TwitterUploader::OnThreadDone (TwitterUploader *uploader)
+  gboolean Uploader::OnThreadDone (Uploader *uploader)
   {
-    uploader->_listener->OnTwitterResponse (uploader->_request);
+    uploader->_request->ParseResponse (uploader->_response_header,
+                                       uploader->GetResponseBody ());
+    uploader->_listener->OnServerResponse (uploader->_request);
     uploader->Release ();
 
     return G_SOURCE_REMOVE;
   }
 
   // --------------------------------------------------------------------------------
-  void TwitterUploader::OnUploadDone (const gchar *response)
-  {
-    _request->ParseResponse (response);
-  }
-
-  // --------------------------------------------------------------------------------
-  gpointer TwitterUploader::ThreadFunction (TwitterUploader *uploader)
+  gpointer Uploader::ThreadFunction (Uploader *uploader)
   {
     CURLcode curl_code = uploader->Upload ();
 

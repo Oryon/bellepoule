@@ -16,20 +16,19 @@
 
 #pragma once
 
-#include "oauth/http_request.hpp"
+#include "http_request.hpp"
 
-namespace Net
+namespace Oauth
 {
-  class StatusesUpdate : public Oauth::HttpRequest
+  namespace V2
   {
-    public:
-      StatusesUpdate (Oauth::Session *session,
-                      const gchar    *tweet);
+    class AccessToken : public HttpRequest
+    {
+      public:
+        AccessToken (Oauth::Session *session);
 
-    private:
-      virtual ~StatusesUpdate ();
-
-      void ParseResponse (GHashTable  *header,
-                          const gchar *body);
-  };
+      private:
+        virtual ~AccessToken ();
+    };
+  }
 }

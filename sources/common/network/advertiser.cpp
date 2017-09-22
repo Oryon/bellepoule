@@ -18,11 +18,6 @@
 
 #include "oauth/http_request.hpp"
 #include "oauth/session.hpp"
-#include "oauth/request_token.hpp"
-#include "oauth/access_token.hpp"
-
-#include "twitter/verify_credentials_request.hpp"
-#include "twitter/statuses_update_request.hpp"
 
 #include "advertiser.hpp"
 
@@ -33,10 +28,11 @@ namespace Net
     : Object ("Advertiser"),
       Module ("advertiser.glade")
   {
-    _state   = IDLE;
-    _title   = NULL;
-    _link    = NULL;
-    _session = NULL;
+    _state           = IDLE;
+    _title           = NULL;
+    _link            = NULL;
+    _session         = NULL;
+    _pending_request = FALSE;
 
     {
 
@@ -48,6 +44,16 @@ namespace Net
                                path);
       g_free (path);
       g_free (png);
+    }
+
+    {
+      GdkDisplay *display     = gdk_display_get_default ();
+      GdkScreen  *screen      = gdk_display_get_default_screen (display);
+      gint        full_height = gdk_screen_get_height (screen);
+
+      gtk_widget_set_size_request (_glade->GetWidget ("webview"),
+                                   700,
+                                   (full_height*70)/100);
     }
 
     gtk_button_set_label (GTK_BUTTON (_glade->GetWidget ("checkbutton")),
@@ -95,8 +101,6 @@ namespace Net
                               TRUE);
     gtk_widget_set_sensitive (_glade->GetWidget ("entry"),
                               TRUE);
-
-    SendRequest (new VerifyCredentials (_session));
   }
 
   // --------------------------------------------------------------------------------
@@ -123,99 +127,6 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Advertiser::OnTwitterResponse (Oauth::HttpRequest *request)
-  {
-    VerifyCredentials *verify_credentials = dynamic_cast <VerifyCredentials *> (request);
-
-    if (request->GetStatus () == Oauth::HttpRequest::NETWORK_ERROR)
-    {
-      _state = OFF;
-      DisplayId ("Network error!");
-    }
-    else if (request->GetStatus () == Oauth::HttpRequest::REJECTED)
-    {
-      if ((_state == OFF) && verify_credentials)
-      {
-        _state = WAITING_FOR_TOKEN;
-        _session->Reset ();
-        SendRequest (new Oauth::RequestToken (_session));
-      }
-      else
-      {
-        if (_state != IDLE)
-        {
-          DisplayId ("Access denied!");
-        }
-        _state = OFF;
-      }
-    }
-    else
-    {
-      Oauth::RequestToken *request_token = dynamic_cast <Oauth::RequestToken *> (request);
-
-      if (request_token)
-      {
-        gchar *pin_url = request_token->GetPinCodeUrl ();
-
-        {
-          GtkWidget *link = _glade->GetWidget ("pin_url");
-
-          gtk_link_button_set_uri (GTK_LINK_BUTTON (link),
-                                   pin_url);
-
-          g_free (pin_url);
-        }
-
-        {
-          GtkWidget *dialog = _glade->GetWidget ("request_token_dialog");
-          GtkEntry  *entry  = GTK_ENTRY (_glade->GetWidget ("pin_entry"));
-
-          if (entry)
-          {
-            gtk_entry_set_text (entry,
-                                "");
-          }
-
-          switch (RunDialog (GTK_DIALOG (dialog)))
-          {
-            case GTK_RESPONSE_OK:
-            {
-              SendRequest (new Oauth::AccessToken (_session,
-                                                   gtk_entry_get_text (entry)));
-
-            }
-            break;
-
-            default:
-            {
-              DisplayId ("");
-            }
-            break;
-          }
-
-          gtk_widget_hide (dialog);
-        }
-      }
-      else if (dynamic_cast <Oauth::AccessToken *> (request))
-      {
-        SendRequest (new VerifyCredentials (_session));
-      }
-      else if (verify_credentials)
-      {
-        if (_state == IDLE)
-        {
-          _state = OFF;
-        }
-        else
-        {
-          _state = ON;
-        }
-        DisplayId (verify_credentials->_twitter_account);
-      }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void Advertiser::Use ()
   {
     Retain ();
@@ -230,8 +141,9 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Advertiser::SendRequest (Oauth::HttpRequest *request)
   {
-    TwitterUploader *uploader = new TwitterUploader (this);
+    Oauth::Uploader *uploader = new Oauth::Uploader (this);
 
+    _pending_request = TRUE;
     uploader->UpLoadRequest (request);
 
     request->Release ();
@@ -241,7 +153,6 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Advertiser::SwitchOn ()
   {
-    SendRequest (new VerifyCredentials (_session));
   }
 
   // --------------------------------------------------------------------------------
@@ -283,23 +194,22 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Advertiser::Tweet (const gchar *tweet)
+  void Advertiser::Publish (const gchar *event)
   {
-    if ((_state == ON) && (_title))
+    if ((_state == ON) && _title)
     {
       gchar *message;
 
       if (_link)
       {
-        message = g_strdup_printf ("%s\n%s\n%s", _title, tweet, _link);
+        message = g_strdup_printf ("%s\n%s\n%s", _title, event, _link);
       }
       else
       {
-        message = g_strdup_printf ("%s\n%s", _title, tweet);
+        message = g_strdup_printf ("%s\n%s", _title, event);
       }
 
-      SendRequest (new StatusesUpdate (_session,
-                                       message));
+      PublishMessage (message);
       g_free (message);
     }
   }
@@ -308,11 +218,11 @@ namespace Net
   void Advertiser::TweetFeeder (Advertiser *advertiser,
                                 Feeder     *feeder)
   {
-    gchar *tweet = feeder->GetTweet ();
+    gchar *event = feeder->GetAnnounce ();
 
-    advertiser->Tweet (tweet);
+    advertiser->Publish (event);
 
-    g_free (tweet);
+    g_free (event);
   }
 
   // --------------------------------------------------------------------------------
@@ -352,6 +262,66 @@ namespace Net
                         "");
 
     Reset ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Advertiser::DisplayAuthorizationPage (const gchar *url)
+  {
+    GtkWidget *web_view = webkit_web_view_new ();
+
+    {
+      gtk_container_add (GTK_CONTAINER (_glade->GetWidget ("webview")),
+                         web_view);
+      g_signal_connect (G_OBJECT (web_view),
+                        "navigation-policy-decision-requested",
+                        G_CALLBACK (OnWebKitRedirect),
+                        this);
+
+      webkit_web_view_load_uri (WEBKIT_WEB_VIEW (web_view),
+                                url);
+
+      gtk_widget_show (web_view);
+      gtk_widget_grab_focus (web_view);
+    }
+
+    {
+      GtkWidget *dialog = _glade->GetWidget ("request_token_dialog");
+
+      RunDialog (GTK_DIALOG (dialog));
+      gtk_widget_hide (dialog);
+    }
+
+    gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (web_view)),
+                          web_view);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Advertiser::OnWebKitRedirect (WebKitWebView             *web_view,
+                                         WebKitWebFrame            *frame,
+                                         WebKitNetworkRequest      *request,
+                                         WebKitWebNavigationAction *navigation_action,
+                                         WebKitWebPolicyDecision   *policy_decision,
+                                         Advertiser                *a)
+  {
+    return a->OnRedirect (request,
+                          policy_decision);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Advertiser::PublishMessage (const gchar *message)
+  {
+  }
+
+  // --------------------------------------------------------------------------------
+  void Advertiser::OnServerResponse (Oauth::HttpRequest *request)
+  {
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Advertiser::OnRedirect (WebKitNetworkRequest    *request,
+                                   WebKitWebPolicyDecision *policy_decision)
+  {
+    return FALSE;
   }
 }
 
@@ -395,4 +365,3 @@ extern "C" G_MODULE_EXPORT void on_pin_url_clicked (GtkWidget *widget,
                 NULL);
 #endif
 }
-

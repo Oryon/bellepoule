@@ -36,5 +36,14 @@ namespace Net
 
     private:
       ~Twitter ();
+
+      void PublishMessage (const gchar *message);
+
+      void SwitchOn ();
+
+      void OnServerResponse (Oauth::HttpRequest *request);
+
+      gboolean OnRedirect (WebKitNetworkRequest    *request,
+                           WebKitWebPolicyDecision *policy_decision);
   };
 }

@@ -883,7 +883,7 @@ const gchar *Stage::GetInputProviderClient ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *Stage::GetTweet ()
+gchar *Stage::GetAnnounce ()
 {
   gchar       *name  = GetName ();
   const gchar *emoji = "\xf0\x9f\x8f\x81";
