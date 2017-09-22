@@ -16,19 +16,16 @@
 
 #pragma once
 
-#include "http_request.hpp"
+#include "oauth/request.hpp"
 
-namespace Oauth
+namespace Net
 {
-  namespace V2
+  class DebugTokenRequest : public Oauth::Request
   {
-    class AccessToken : public HttpRequest
-    {
-      public:
-        AccessToken (Oauth::Session *session);
+    public:
+      DebugTokenRequest (Oauth::Session *session);
 
-      private:
-        virtual ~AccessToken ();
-    };
-  }
+    private:
+      virtual ~DebugTokenRequest ();
+  };
 }

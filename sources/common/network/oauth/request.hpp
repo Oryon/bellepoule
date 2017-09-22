@@ -16,39 +16,52 @@
 
 #pragma once
 
-#include "util/module.hpp"
+#include <json-glib/json-glib.h>
 
-#include "advertiser.hpp"
+#include "util/object.hpp"
 
 namespace Oauth
 {
   class Session;
-}
 
-namespace Net
-{
-  namespace V1
+  class Request : public virtual Object
   {
-    class Request;
-  }
+      public:
+        enum Status
+        {
+          READY,
+          NETWORK_ERROR,
+          REJECTED,
+          ACCEPTED
+        };
 
-  class Advertiser;
-
-  class Twitter : public Advertiser
-  {
     public:
-      Twitter ();
+      Request (Session     *session,
+               const gchar *sub_url,
+               const gchar *http_method);
 
-    private:
-      ~Twitter ();
+      const gchar *GetMethod ();
 
-      void PublishMessage (const gchar *message);
+      Status GetStatus ();
 
-      void SwitchOn ();
+      const gchar *GetURL ();
 
-      void OnServerResponse (Oauth::V1::Request *request);
+      void ForgiveError ();
 
-      gboolean OnRedirect (WebKitNetworkRequest    *request,
-                           WebKitWebPolicyDecision *policy_decision);
+    protected:
+      static const gchar *GET;
+      static const gchar *POST;
+
+      const gchar *_http_method;
+      Status       _status;
+      gchar       *_url;
+      JsonParser  *_parser;
+      Session     *_session;
+
+      ~Request ();
+
+      gboolean LoadJson (const gchar *json);
+
+      gchar *GetJsonAtPath (const gchar *path);
   };
 }

@@ -16,13 +16,13 @@
 
 #pragma once
 
-#include "http_request.hpp"
+#include "v1_request.hpp"
 
 namespace Oauth
 {
   namespace V1
   {
-    class AccessToken : public HttpRequest
+    class AccessToken : public Request
     {
       public:
         AccessToken (Oauth::Session *session,

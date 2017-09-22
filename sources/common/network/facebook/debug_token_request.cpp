@@ -14,25 +14,19 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdio.h>
-#include <string.h>
+#include "debug_token_request.hpp"
 
-#include "v2_access_token.hpp"
-
-namespace Oauth
+namespace Net
 {
-  namespace V2
+  // --------------------------------------------------------------------------------
+  DebugTokenRequest::DebugTokenRequest (Oauth::Session *session)
+    : Object ("Facebook::DebugTokenRequest"),
+    Request (session, "debug_token", GET)
   {
-    // --------------------------------------------------------------------------------
-    AccessToken::AccessToken (Oauth::Session *session)
-      : Object ("Oauth::V2::AccessToken"),
-        HttpRequest (session, "https://www.facebook.com", GET)
-    {
-    }
+  }
 
-    // --------------------------------------------------------------------------------
-    AccessToken::~AccessToken ()
-    {
-    }
+  // --------------------------------------------------------------------------------
+  DebugTokenRequest::~DebugTokenRequest ()
+  {
   }
 }

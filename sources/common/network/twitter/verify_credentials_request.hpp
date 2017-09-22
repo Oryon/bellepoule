@@ -16,11 +16,16 @@
 
 #pragma once
 
-#include "oauth/http_request.hpp"
+#include "oauth/v1_request.hpp"
 
 namespace Net
 {
-  class VerifyCredentials : public Oauth::HttpRequest
+  namespace V1
+  {
+    class Request;
+  }
+
+  class VerifyCredentials : public Oauth::V1::Request
   {
     public:
       gchar *_twitter_account;

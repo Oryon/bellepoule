@@ -20,9 +20,9 @@ namespace Net
 {
   // --------------------------------------------------------------------------------
   StatusesUpdate::StatusesUpdate (Oauth::Session *session,
-                                  const gchar    *tweet)
+                                  const gchar     *tweet)
     : Object ("Twitter::StatusesUpdate"),
-      Oauth::HttpRequest (session, "1.1/statuses/update.json", POST)
+      Oauth::V1::Request (session, "1.1/statuses/update.json", POST)
   {
     AddParameterField ("status", tweet);
   }
@@ -36,10 +36,10 @@ namespace Net
   void StatusesUpdate::ParseResponse (GHashTable  *header,
                                       const gchar *body)
   {
-    HttpRequest::ParseResponse (header,
-                                body);
+    Oauth::V1::Request::ParseResponse (header,
+                                       body);
 
-    if (GetStatus () == Oauth::HttpRequest::REJECTED)
+    if (GetStatus () == REJECTED)
     {
       if (LoadJson (body))
       {

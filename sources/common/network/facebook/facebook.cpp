@@ -27,7 +27,7 @@ namespace Net
       Advertiser ("facebook")
   {
     Oauth::Session *session = new Oauth::Session (_name,
-                                                  "https://www.facebook.com",
+                                                  "https://graph.facebook.com/v2.8",
                                                   FACEBOOK_CONSUMER_KEY);
 
     SetSession (session);
@@ -46,7 +46,9 @@ namespace Net
     {
       gchar *url = g_strdup_printf ("https://www.facebook.com/v2.8/dialog/oauth"
                                     "?client_id=%s"
-                                    "&redirect_uri=https://www.facebook.com/connect/login_success.html", _session->GetConsumerKey ());
+                                    "&redirect_uri=https://www.facebook.com/connect/login_success.html"
+                                    "&response_type=token",
+                                    _session->GetConsumerKey ());
 
       DisplayAuthorizationPage (url);
       g_free (url);
@@ -59,17 +61,18 @@ namespace Net
   {
     const gchar *request_uri = webkit_network_request_get_uri (request);
 
-    printf (YELLOW "%s\n" ESC, request_uri);
-    if (g_strrstr (request_uri, "https://www.facebook.com/connect/login_success.html?"))
+    printf (YELLOW "%s\n\n" ESC, request_uri);
+    if (   g_strrstr (request_uri, "https://www.facebook.com/connect/login_success.html#")
+        || g_strrstr (request_uri, "https://www.facebook.com/connect/login_success.html?"))
     {
       {
         gchar **params = g_strsplit_set (request_uri,
-                                         "?&",
+                                         "?#&",
                                          -1);
 
         for (guint p = 0; params[p] != NULL; p++)
         {
-          if (g_strrstr (params[p], "code="))
+          if (g_strrstr (params[p], "access_token="))
           {
             gchar **code = g_strsplit_set (params[p],
                                            "=",
@@ -77,7 +80,6 @@ namespace Net
 
             if (code[0] && code[1])
             {
-              printf (BLUE "    %s\n", code[1]);
               _session->SetToken (code[1]);
             }
             g_strfreev (code);

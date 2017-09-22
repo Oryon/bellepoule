@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include "oauth/http_request.hpp"
+#include "oauth/v1_request.hpp"
 
 namespace Net
 {
-  class StatusesUpdate : public Oauth::HttpRequest
+  class StatusesUpdate : public Oauth::V1::Request
   {
     public:
       StatusesUpdate (Oauth::Session *session,

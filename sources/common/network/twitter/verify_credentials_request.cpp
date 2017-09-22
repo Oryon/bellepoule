@@ -21,7 +21,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   VerifyCredentials::VerifyCredentials (Oauth::Session *session)
     : Object ("Twitter::VerifyCredentials"),
-              Oauth::HttpRequest (session, "1.1/account/verify_credentials.json", GET)
+      Oauth::V1::Request (session, "1.1/account/verify_credentials.json", GET)
   {
     _twitter_account = NULL;
   }
@@ -36,10 +36,10 @@ namespace Net
   void VerifyCredentials::ParseResponse (GHashTable  *header,
                                          const gchar *body)
   {
-    HttpRequest::ParseResponse (header,
-                                body);
+    Oauth::V1::Request::ParseResponse (header,
+                                       body);
 
-    if (GetStatus () == Oauth::HttpRequest::ACCEPTED)
+    if (GetStatus () == ACCEPTED)
     {
       if (LoadJson (body))
       {

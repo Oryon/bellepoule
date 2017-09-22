@@ -31,10 +31,10 @@ namespace Net
     : Object ("Twitter"),
       Advertiser ("twitter")
   {
-    Oauth::V1::Session *session = new Oauth::V1::Session (_name,
-                                                          "https://api.twitter.com",
-                                                          TWITTER_CONSUMER_KEY,
-                                                          TWITTER_CONSUMER_SECRET);
+    Oauth::Session *session = new Oauth::V1::Session (_name,
+                                                      "https://api.twitter.com",
+                                                      TWITTER_CONSUMER_KEY,
+                                                      TWITTER_CONSUMER_SECRET);
 
     SetSession (session);
 
@@ -62,18 +62,18 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Twitter::OnServerResponse (Oauth::HttpRequest *request)
+  void Twitter::OnServerResponse (Oauth::V1::Request *request)
   {
     VerifyCredentials *verify_credentials = dynamic_cast <VerifyCredentials *> (request);
 
     _pending_request = FALSE;
 
-    if (request->GetStatus () == Oauth::HttpRequest::NETWORK_ERROR)
+    if (request->GetStatus () == Oauth::V1::Request::NETWORK_ERROR)
     {
       _state = OFF;
       DisplayId ("Network error!");
     }
-    else if (request->GetStatus () == Oauth::HttpRequest::REJECTED)
+    else if (request->GetStatus () == Oauth::V1::Request::REJECTED)
     {
       if ((_state == OFF) && verify_credentials)
       {

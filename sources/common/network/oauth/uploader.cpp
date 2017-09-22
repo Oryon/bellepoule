@@ -17,7 +17,7 @@
 #include <string.h>
 
 #include "util/global.hpp"
-#include "http_request.hpp"
+#include "v1_request.hpp"
 #include "uploader.hpp"
 
 namespace Oauth
@@ -62,7 +62,7 @@ namespace Oauth
   }
 
   // --------------------------------------------------------------------------------
-  void Uploader::UpLoadRequest (HttpRequest *request)
+  void Uploader::UpLoadRequest (V1::Request *request)
   {
     if (_request == NULL)
     {

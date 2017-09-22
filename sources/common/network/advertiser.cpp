@@ -16,7 +16,7 @@
 
 #include "util/global.hpp"
 
-#include "oauth/http_request.hpp"
+#include "oauth/v1_request.hpp"
 #include "oauth/session.hpp"
 
 #include "advertiser.hpp"
@@ -139,7 +139,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Advertiser::SendRequest (Oauth::HttpRequest *request)
+  void Advertiser::SendRequest (Oauth::V1::Request *request)
   {
     Oauth::Uploader *uploader = new Oauth::Uploader (this);
 
@@ -313,7 +313,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Advertiser::OnServerResponse (Oauth::HttpRequest *request)
+  void Advertiser::OnServerResponse (Oauth::V1::Request *request)
   {
   }
 
