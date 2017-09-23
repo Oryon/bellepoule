@@ -139,7 +139,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Advertiser::SendRequest (Oauth::V1::Request *request)
+  void Advertiser::SendRequest (Oauth::Request *request)
   {
     Oauth::Uploader *uploader = new Oauth::Uploader (this);
 
@@ -313,7 +313,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Advertiser::OnServerResponse (Oauth::V1::Request *request)
+  void Advertiser::OnServerResponse (Oauth::Request *request)
   {
   }
 

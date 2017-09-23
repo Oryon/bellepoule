@@ -39,39 +39,12 @@ namespace Oauth
       : Object ("Oauth::V1::Request"),
         Oauth::Request (session, sub_url, http_method)
     {
-      _rand           = g_rand_new ();
-      _header_list    = NULL;
-      _parameter_list = NULL;
-      _parser         = NULL;
-
-      {
-        Session *v1_session = GetSession ();
-        gchar   *nonce      = GetNonce ();
-
-        AddHeaderField ("oauth_consumer_key",     v1_session->GetConsumerKey ());
-        AddHeaderField ("oauth_nonce",            nonce);
-        AddHeaderField ("oauth_signature_method", "HMAC-SHA1");
-        AddHeaderField ("oauth_version",          "1.0");
-
-        if (v1_session->GetToken ())
-        {
-          AddHeaderField ("oauth_token", v1_session->GetToken ());
-        }
-
-        g_free (nonce);
-      }
+      _rand = g_rand_new ();
     }
 
     // --------------------------------------------------------------------------------
     Request::~Request ()
     {
-      FreeFullGList (Field, _header_list);
-      FreeFullGList (Field, _parameter_list);
-
-      if (_parser)
-      {
-        g_object_unref (_parser);
-      }
     }
 
     // --------------------------------------------------------------------------------
@@ -151,7 +124,7 @@ namespace Oauth
     }
 
     // --------------------------------------------------------------------------------
-    void Request::DumpRateLimits (GHashTable  *header)
+    void Request::DumpRateLimits (GHashTable *header)
     {
       guint        rate_limit_limit;
       guint        rate_limit_remaining;
@@ -218,30 +191,6 @@ namespace Oauth
     }
 
     // --------------------------------------------------------------------------------
-    void Request::AddHeaderField (const gchar *key,
-                                  const gchar *value)
-    {
-      Field *field = new Field (key,
-                                value);
-
-      _header_list = g_list_insert_sorted (_header_list,
-                                           field,
-                                           (GCompareFunc) Field::Compare);
-    }
-
-    // --------------------------------------------------------------------------------
-    void Request::AddParameterField (const gchar *key,
-                                     const gchar *value)
-    {
-      Field *field = new Field (key,
-                                value);
-
-      _parameter_list = g_list_insert_sorted (_parameter_list,
-                                              field,
-                                              (GCompareFunc) Field::Compare);
-    }
-
-    // --------------------------------------------------------------------------------
     char *Request::GetNonce ()
     {
       const guint  nonce_length = 32;
@@ -269,45 +218,6 @@ namespace Oauth
     }
 
     // --------------------------------------------------------------------------------
-    gchar *Request::GetHeader ()
-    {
-      gchar *header;
-
-      Stamp ();
-      Sign ();
-
-      {
-        GString *header_string = g_string_new ("Authorization: OAuth ");
-
-        // Fields
-        {
-          GList *current = _header_list;
-
-          for (guint i = 0; current; i++)
-          {
-            Field *field = (Field *) current->data;
-
-            if (i > 0)
-            {
-              header_string = g_string_append (header_string,
-                                               ", ");
-            }
-            header_string = g_string_append (header_string,
-                                             field->GetQuotedParcel ());
-
-            current = g_list_next (current);
-          }
-
-          header = header_string->str;
-          g_string_free (header_string,
-                         FALSE);
-        }
-      }
-
-      return header;
-    }
-
-    // --------------------------------------------------------------------------------
     void Request::Sign ()
     {
       GString *base_string = g_string_new (NULL);
@@ -316,7 +226,7 @@ namespace Oauth
       // String to sign
       {
         base_string = g_string_append (base_string,
-                                       _http_method);
+                                       GetMethod ());
         base_string = g_string_append_c (base_string,
                                          '&');
 
@@ -418,37 +328,59 @@ namespace Oauth
     }
 
     // --------------------------------------------------------------------------------
-    gchar *Request::GetParameters ()
+    gchar *Request::GetHeader ()
     {
-      gchar *parameters = NULL;
+      gchar *header;
 
-      if (_parameter_list)
       {
-        GList   *current          = _parameter_list;
-        GString *parameter_string = g_string_new (NULL);
+        Session *v1_session = GetSession ();
+        gchar   *nonce      = GetNonce ();
 
-        for (guint i = 0; current; i++)
+        AddHeaderField ("oauth_consumer_key",     v1_session->GetConsumerKey ());
+        AddHeaderField ("oauth_nonce",            nonce);
+        AddHeaderField ("oauth_signature_method", "HMAC-SHA1");
+        AddHeaderField ("oauth_version",          "1.0");
+
+        if (v1_session->GetToken ())
         {
-          Field *field = (Field *) current->data;
-
-          if (i > 0)
-          {
-            parameter_string = g_string_append_c (parameter_string,
-                                                  '&');
-          }
-
-          parameter_string = g_string_append (parameter_string,
-                                              field->GetParcel ());
-
-          current = g_list_next (current);
+          AddHeaderField ("oauth_token", v1_session->GetToken ());
         }
 
-        parameters = parameter_string->str;
-        g_string_free (parameter_string,
-                       FALSE);
+        g_free (nonce);
       }
 
-      return parameters;
+      Stamp ();
+      Sign ();
+
+      {
+        GString *header_string = g_string_new ("Authorization: OAuth ");
+
+        // Fields
+        {
+          GList *current = _header_list;
+
+          for (guint i = 0; current; i++)
+          {
+            Field *field = (Field *) current->data;
+
+            if (i > 0)
+            {
+              header_string = g_string_append (header_string,
+                                               ", ");
+            }
+            header_string = g_string_append (header_string,
+                                             field->GetQuotedParcel ());
+
+            current = g_list_next (current);
+          }
+
+          header = header_string->str;
+          g_string_free (header_string,
+                         FALSE);
+        }
+      }
+
+      return header;
     }
   }
 }

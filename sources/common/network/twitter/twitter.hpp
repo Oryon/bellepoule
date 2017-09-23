@@ -23,17 +23,11 @@
 namespace Oauth
 {
   class Session;
+  class Request;
 }
 
 namespace Net
 {
-  namespace V1
-  {
-    class Request;
-  }
-
-  class Advertiser;
-
   class Twitter : public Advertiser
   {
     public:
@@ -46,7 +40,7 @@ namespace Net
 
       void SwitchOn ();
 
-      void OnServerResponse (Oauth::V1::Request *request);
+      void OnServerResponse (Oauth::Request *request);
 
       gboolean OnRedirect (WebKitNetworkRequest    *request,
                            WebKitWebPolicyDecision *policy_decision);

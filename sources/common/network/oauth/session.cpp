@@ -23,13 +23,15 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   Session::Session (const gchar *service,
                     const gchar *api_uri,
-                    const gchar *consumer_key)
+                    const gchar *consumer_key,
+                    const gchar *consumer_secret)
     : Object ("Oauth::Session")
   {
-    _api_uri      = g_strdup (api_uri);
-    _service      = g_strdup (service);
-    _consumer_key = g_strdup (consumer_key);
-    _token        = NULL;
+    _api_uri         = g_strdup (api_uri);
+    _service         = g_strdup (service);
+    _consumer_key    = g_strdup (consumer_key);
+    _consumer_secret = g_strdup (consumer_secret);
+    _token           = NULL;
 
     {
       gchar *token = g_key_file_get_string (Global::_user_config->_key_file,
@@ -47,12 +49,14 @@ namespace Oauth
     g_free (_api_uri);
     g_free (_service);
     g_free (_consumer_key);
+    g_free (_consumer_secret);
     g_free (_token);
   }
 
   // --------------------------------------------------------------------------------
   void Session::Reset ()
   {
+    SetToken (NULL);
   }
 
   // --------------------------------------------------------------------------------
@@ -65,6 +69,18 @@ namespace Oauth
   const gchar *Session::GetConsumerKey ()
   {
     return _consumer_key;
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Session::GetService ()
+  {
+    return _service;
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Session::GetConsumerSecret ()
+  {
+    return _consumer_secret;
   }
 
   // --------------------------------------------------------------------------------

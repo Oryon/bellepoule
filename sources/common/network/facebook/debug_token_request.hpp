@@ -27,5 +27,8 @@ namespace Net
 
     private:
       virtual ~DebugTokenRequest ();
+
+      void ParseResponse (GHashTable  *header,
+                          const gchar *body);
   };
 }

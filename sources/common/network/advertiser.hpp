@@ -24,11 +24,7 @@
 namespace Oauth
 {
   class Session;
-
-  namespace V1
-  {
-    class Request;
-  }
+  class Request;
 }
 
 namespace Net
@@ -70,7 +66,7 @@ namespace Net
 
       void SetSession (Oauth::Session *session);
 
-      void SendRequest (Oauth::V1::Request *request);
+      void SendRequest (Oauth::Request *request);
 
     protected:
       enum State
@@ -100,7 +96,7 @@ namespace Net
 
       virtual void PublishMessage (const gchar *message);
 
-      virtual void OnServerResponse (Oauth::V1::Request *request);
+      virtual void OnServerResponse (Oauth::Request *request);
 
       void Use ();
 

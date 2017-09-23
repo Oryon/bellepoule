@@ -39,6 +39,8 @@ namespace Net
 
       void SwitchOn ();
 
+      void OnServerResponse (Oauth::Request *request);
+
       gboolean OnRedirect (WebKitNetworkRequest    *request,
                            WebKitWebPolicyDecision *policy_decision);
   };

@@ -20,10 +20,7 @@
 
 namespace Oauth
 {
-  namespace V1
-  {
-    class Request;
-  }
+  class Request;
 
   class Uploader : public Net::Uploader
   {
@@ -31,7 +28,7 @@ namespace Oauth
       class Listener
       {
         public:
-          virtual void OnServerResponse (V1::Request *request) = 0;
+          virtual void OnServerResponse (Request *request) = 0;
           virtual void Use  () = 0;
           virtual void Drop () = 0;
       };
@@ -39,16 +36,16 @@ namespace Oauth
     public:
       Uploader (Listener *listener);
 
-      void UpLoadRequest (V1::Request *request);
+      void UpLoadRequest (Request *request);
 
     protected:
       virtual ~Uploader ();
 
     private:
       Listener           *_listener;
-      V1::Request        *_request;
+      Request            *_request;
       struct curl_slist  *_http_header;
-      gchar              *_postfields;
+      gchar              *_url_parameters;
       GHashTable         *_response_header;
 
       static gpointer ThreadFunction (Uploader *uploader);

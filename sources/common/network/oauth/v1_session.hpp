@@ -41,10 +41,9 @@ namespace Oauth
         const guchar *GetSigningKey ();
 
       private:
-        virtual ~Session ();
-
-        gchar   *_consumer_secret;
         GString *_signing_key;
+
+        virtual ~Session ();
     };
   }
 }

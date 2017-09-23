@@ -16,6 +16,7 @@
 
 #include "oauth/session.hpp"
 #include "advertiser_ids.hpp"
+#include "debug_token_request.hpp"
 
 #include "facebook.hpp"
 
@@ -28,7 +29,8 @@ namespace Net
   {
     Oauth::Session *session = new Oauth::Session (_name,
                                                   "https://graph.facebook.com/v2.8",
-                                                  FACEBOOK_CONSUMER_KEY);
+                                                  FACEBOOK_CONSUMER_KEY,
+                                                  FACEBOOK_CONSUMER_SECRET);
 
     SetSession (session);
   }
@@ -61,7 +63,6 @@ namespace Net
   {
     const gchar *request_uri = webkit_network_request_get_uri (request);
 
-    printf (YELLOW "%s\n\n" ESC, request_uri);
     if (   g_strrstr (request_uri, "https://www.facebook.com/connect/login_success.html#")
         || g_strrstr (request_uri, "https://www.facebook.com/connect/login_success.html?"))
     {
@@ -90,6 +91,8 @@ namespace Net
         g_strfreev (params);
       }
 
+      SendRequest (new DebugTokenRequest (_session));
+
       gtk_dialog_response (GTK_DIALOG (_glade->GetWidget ("request_token_dialog")),
                            GTK_RESPONSE_CANCEL);
 
@@ -98,5 +101,25 @@ namespace Net
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Facebook::OnServerResponse (Oauth::Request *request)
+  {
+    if (request->GetStatus () == Oauth::Request::NETWORK_ERROR)
+    {
+      _state = OFF;
+      DisplayId ("Network error!");
+    }
+    else if (request->GetStatus () == Oauth::Request::REJECTED)
+    {
+      _state = OFF;
+      DisplayId ("Access denied!");
+    }
+    else if (dynamic_cast <DebugTokenRequest *> (request))
+    {
+      _state = ON;
+      DisplayId ("XXXX");
+    }
   }
 }

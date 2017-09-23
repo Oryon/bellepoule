@@ -25,9 +25,9 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   Uploader::Uploader (Listener *listener)
   {
-    _request     = NULL;
-    _http_header = NULL;
-    _postfields  = NULL;
+    _request        = NULL;
+    _http_header    = NULL;
+    _url_parameters = NULL;
 
     _response_header = g_hash_table_new_full (g_str_hash,
                                               g_str_equal,
@@ -51,7 +51,7 @@ namespace Oauth
       curl_slist_free_all (_http_header);
     }
 
-    g_free (_postfields);
+    g_free (_url_parameters);
 
     if (_listener)
     {
@@ -62,7 +62,7 @@ namespace Oauth
   }
 
   // --------------------------------------------------------------------------------
-  void Uploader::UpLoadRequest (V1::Request *request)
+  void Uploader::UpLoadRequest (Request *request)
   {
     if (_request == NULL)
     {
@@ -142,20 +142,29 @@ namespace Oauth
     curl_easy_setopt (curl, CURLOPT_HEADERFUNCTION, OnResponseHeader);
     curl_easy_setopt (curl, CURLOPT_HEADERDATA,     this);
 
+    g_free (_url_parameters);
+    _url_parameters = _request->GetParameters ();
+
     if (g_strcmp0 (_request->GetMethod (), "POST") == 0)
     {
       curl_easy_setopt (curl, CURLOPT_POST, 1L);
 
-      g_free (_postfields);
-      _postfields = _request->GetParameters ();
-      if (_postfields)
+      if (_url_parameters)
       {
-        curl_easy_setopt (curl, CURLOPT_POSTFIELDS, _postfields);
+        curl_easy_setopt (curl, CURLOPT_POSTFIELDS, _url_parameters);
       }
     }
     else
     {
       curl_easy_setopt (curl, CURLOPT_POST, 0L);
+
+      if (_url_parameters)
+      {
+        gchar *extended_url = g_strdup_printf ("%s?%s", GetUrl (), _request->GetParameters ());
+
+        curl_easy_setopt (curl, CURLOPT_URL, extended_url);
+        g_free (extended_url);
+      }
     }
 
     if (_http_header)

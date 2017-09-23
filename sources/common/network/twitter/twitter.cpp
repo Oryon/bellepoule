@@ -62,18 +62,62 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Twitter::OnServerResponse (Oauth::V1::Request *request)
+  gboolean Twitter::OnRedirect (WebKitNetworkRequest    *request,
+                                WebKitWebPolicyDecision *policy_decision)
+  {
+    const gchar *request_uri = webkit_network_request_get_uri (request);
+
+    if (g_strrstr (request_uri, "http://bellepoule.bzh"))
+    {
+      {
+        gchar **params = g_strsplit_set (request_uri,
+                                         "?&",
+                                         -1);
+
+        for (guint p = 0; params[p] != NULL; p++)
+        {
+          if (g_strrstr (params[p], "oauth_verifier="))
+          {
+            gchar **verifyer = g_strsplit_set (params[p],
+                                               "=",
+                                               -1);
+
+            if (verifyer[0] && verifyer[1])
+            {
+              SendRequest (new Oauth::V1::AccessToken (_session,
+                                                       verifyer[1]));
+            }
+            g_strfreev (verifyer);
+            break;
+          }
+        }
+
+        g_strfreev (params);
+      }
+
+      gtk_dialog_response (GTK_DIALOG (_glade->GetWidget ("request_token_dialog")),
+                           GTK_RESPONSE_CANCEL);
+
+      webkit_web_policy_decision_ignore (policy_decision);
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Twitter::OnServerResponse (Oauth::Request *request)
   {
     VerifyCredentials *verify_credentials = dynamic_cast <VerifyCredentials *> (request);
 
     _pending_request = FALSE;
 
-    if (request->GetStatus () == Oauth::V1::Request::NETWORK_ERROR)
+    if (request->GetStatus () == Oauth::Request::NETWORK_ERROR)
     {
       _state = OFF;
       DisplayId ("Network error!");
     }
-    else if (request->GetStatus () == Oauth::V1::Request::REJECTED)
+    else if (request->GetStatus () == Oauth::Request::REJECTED)
     {
       if ((_state == OFF) && verify_credentials)
       {
@@ -125,49 +169,5 @@ namespace Net
         DisplayId (verify_credentials->_twitter_account);
       }
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Twitter::OnRedirect (WebKitNetworkRequest    *request,
-                                WebKitWebPolicyDecision *policy_decision)
-  {
-    const gchar *request_uri = webkit_network_request_get_uri (request);
-
-    if (g_strrstr (request_uri, "http://bellepoule.bzh"))
-    {
-      {
-        gchar **params = g_strsplit_set (request_uri,
-                                         "?&",
-                                         -1);
-
-        for (guint p = 0; params[p] != NULL; p++)
-        {
-          if (g_strrstr (params[p], "oauth_verifier="))
-          {
-            gchar **verifyer = g_strsplit_set (params[p],
-                                               "=",
-                                               -1);
-
-            if (verifyer[0] && verifyer[1])
-            {
-              SendRequest (new Oauth::V1::AccessToken (_session,
-                                                       verifyer[1]));
-            }
-            g_strfreev (verifyer);
-            break;
-          }
-        }
-
-        g_strfreev (params);
-      }
-
-      gtk_dialog_response (GTK_DIALOG (_glade->GetWidget ("request_token_dialog")),
-                           GTK_RESPONSE_CANCEL);
-
-      webkit_web_policy_decision_ignore (policy_decision);
-      return TRUE;
-    }
-
-    return FALSE;
   }
 }

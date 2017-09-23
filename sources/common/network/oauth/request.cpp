@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "session.hpp"
+#include "field.hpp"
 #include "request.hpp"
 
 namespace Oauth
@@ -28,16 +29,27 @@ namespace Oauth
                     const gchar *http_method)
     : Object ("Oauth::Request")
   {
-    _session     = session;
-    _status      = READY;
-    _http_method = http_method;
-    _url         = g_strdup_printf ("%s/%s", session->GetApiUri (), sub_url);
+    _session        = session;
+    _status         = READY;
+    _http_method    = http_method;
+    _url            = g_strdup_printf ("%s/%s", session->GetApiUri (), sub_url);
+    _header_list    = NULL;
+    _parameter_list = NULL;
+    _parser         = NULL;
   }
 
   // --------------------------------------------------------------------------------
   Request::~Request ()
   {
+    FreeFullGList (Field, _header_list);
+    FreeFullGList (Field, _parameter_list);
+
     g_free (_url);
+
+    if (_parser)
+    {
+      g_object_unref (_parser);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -62,6 +74,70 @@ namespace Oauth
   Request::Status Request::GetStatus ()
   {
     return _status;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Request::AddHeaderField (const gchar *key,
+                                const gchar *value)
+  {
+    if (value)
+    {
+      Field *field = new Field (key,
+                                value);
+
+      _header_list = g_list_insert_sorted (_header_list,
+                                           field,
+                                           (GCompareFunc) Field::Compare);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Request::AddParameterField (const gchar *key,
+                                   const gchar *value)
+  {
+    if (value)
+    {
+      Field *field = new Field (key,
+                                value);
+
+      _parameter_list = g_list_insert_sorted (_parameter_list,
+                                              field,
+                                              (GCompareFunc) Field::Compare);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Request::GetParameters ()
+  {
+    gchar *parameters = NULL;
+
+    if (_parameter_list)
+    {
+      GList   *current          = _parameter_list;
+      GString *parameter_string = g_string_new (NULL);
+
+      for (guint i = 0; current; i++)
+      {
+        Field *field = (Field *) current->data;
+
+        if (i > 0)
+        {
+          parameter_string = g_string_append_c (parameter_string,
+                                                '&');
+        }
+
+        parameter_string = g_string_append (parameter_string,
+                                            field->GetParcel ());
+
+        current = g_list_next (current);
+      }
+
+      parameters = parameter_string->str;
+      g_string_free (parameter_string,
+                     FALSE);
+    }
+
+    return parameters;
   }
 
   // --------------------------------------------------------------------------------
@@ -132,5 +208,33 @@ namespace Oauth
     }
 
     return result;
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Request::GetHeader ()
+  {
+    return g_strdup ("");
+  }
+
+  // --------------------------------------------------------------------------------
+  void Request::ParseResponse (GHashTable  *header,
+                               const gchar *body)
+  {
+    printf ("%s\n\n\n", body);
+
+    if (body == NULL)
+    {
+      _status = NETWORK_ERROR;
+    }
+    else if (g_strstr_len (body,
+                           -1,
+                           "error"))
+    {
+      _status = REJECTED;
+    }
+    else
+    {
+      _status = ACCEPTED;
+    }
   }
 }

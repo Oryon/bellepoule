@@ -30,10 +30,10 @@ namespace Oauth
       : Object ("Oauth::V1::Session"),
         Oauth::Session (service,
                         api_uri,
-                        consumer_key)
+                        consumer_key,
+                        consumer_secret)
     {
-      _consumer_secret = g_strdup (consumer_secret);
-      _signing_key     = g_string_new ("");
+      _signing_key = g_string_new ("");
 
       {
         gchar *token_secret = g_key_file_get_string (Global::_user_config->_key_file,
@@ -49,8 +49,6 @@ namespace Oauth
     // --------------------------------------------------------------------------------
     Session::~Session ()
     {
-      g_free (_consumer_secret);
-
       g_string_free (_signing_key,
                      TRUE);
     }
@@ -58,7 +56,7 @@ namespace Oauth
     // --------------------------------------------------------------------------------
     void Session::Reset ()
     {
-      SetToken       (NULL);
+      Oauth::Session::Reset ();
       SetTokenSecret (NULL);
     }
 
@@ -74,7 +72,7 @@ namespace Oauth
       g_string_free (_signing_key,
                      TRUE);
 
-      _signing_key = g_string_new      (_consumer_secret);
+      _signing_key = g_string_new      (GetConsumerSecret ());
       _signing_key = g_string_append_c (_signing_key,
                                         '&');
 
@@ -83,14 +81,14 @@ namespace Oauth
         _signing_key = g_string_append (_signing_key,
                                         token_secret);
         g_key_file_set_string (Global::_user_config->_key_file,
-                               _service,
+                               GetService (),
                                "token_secret",
                                token_secret);
       }
       else
       {
         g_key_file_remove_key (Global::_user_config->_key_file,
-                               _service,
+                               GetService (),
                                "token_secret",
                                NULL);
       }

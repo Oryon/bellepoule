@@ -27,13 +27,18 @@ namespace Oauth
     public:
       Session (const gchar *service,
                const gchar *api_uri,
-               const gchar *consumer_key);
+               const gchar *consumer_key,
+               const gchar *consumer_secret);
 
       virtual void Reset ();
 
       void SetToken (const gchar *token);
 
+      const gchar *GetService ();
+
       const gchar *GetConsumerKey ();
+
+      const gchar *GetConsumerSecret ();
 
       const gchar *GetApiUri ();
 
@@ -42,11 +47,11 @@ namespace Oauth
     protected:
       virtual ~Session ();
 
-      gchar *_api_uri;
+    private:
       gchar *_service;
       gchar *_consumer_key;
-
-    private:
+      gchar *_consumer_secret;
       gchar *_token;
+      gchar *_api_uri;
   };
 }

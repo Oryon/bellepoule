@@ -37,15 +37,7 @@ namespace Oauth
         virtual void ParseResponse (GHashTable  *header,
                                     const gchar *body);
 
-        void AddHeaderField (const gchar *key,
-                             const gchar *value);
-
-        void AddParameterField (const gchar *key,
-                                const gchar *value);
-
-        gchar *GetHeader ();
-
-        gchar *GetParameters ();
+        virtual gchar *GetHeader ();
 
       protected:
         ~Request ();
@@ -56,8 +48,6 @@ namespace Oauth
       private:
         static const gchar  _nonce_range[];
         GRand              *_rand;
-        GList              *_header_list;
-        GList              *_parameter_list;
 
         void Stamp ();
 

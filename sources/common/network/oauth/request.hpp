@@ -40,9 +40,16 @@ namespace Oauth
                const gchar *sub_url,
                const gchar *http_method);
 
+      virtual void ParseResponse (GHashTable  *header,
+                                  const gchar *body);
+
+      virtual gchar *GetHeader ();
+
       const gchar *GetMethod ();
 
       Status GetStatus ();
+
+      gchar *GetParameters ();
 
       const gchar *GetURL ();
 
@@ -52,16 +59,26 @@ namespace Oauth
       static const gchar *GET;
       static const gchar *POST;
 
-      const gchar *_http_method;
-      Status       _status;
-      gchar       *_url;
-      JsonParser  *_parser;
-      Session     *_session;
+      Status   _status;
+      gchar   *_url;
+      Session *_session;
+      GList   *_header_list;
+      GList   *_parameter_list;
 
       ~Request ();
 
       gboolean LoadJson (const gchar *json);
 
       gchar *GetJsonAtPath (const gchar *path);
+
+      void AddHeaderField (const gchar *key,
+                           const gchar *value);
+
+      void AddParameterField (const gchar *key,
+                              const gchar *value);
+
+    private:
+      const gchar *_http_method;
+      JsonParser  *_parser;
   };
 }
