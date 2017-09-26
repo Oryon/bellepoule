@@ -32,6 +32,8 @@ namespace Oauth
 
       const gchar *GetQuotedParcel ();
 
+      const gchar *GetHeaderForm ();
+
       void Dump ();
 
       static gint Compare (Field *a,
@@ -46,6 +48,7 @@ namespace Oauth
 
       gchar *_parcel;
       gchar *_quoted_parcel;
+      gchar *_header_form;
 
       virtual ~Field ();
   };

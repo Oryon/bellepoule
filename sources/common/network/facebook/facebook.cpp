@@ -17,6 +17,7 @@
 #include "session.hpp"
 #include "advertiser_ids.hpp"
 #include "debug_token_request.hpp"
+#include "feed_request.hpp"
 #include "me_request.hpp"
 
 #include "facebook.hpp"
@@ -29,15 +30,16 @@ namespace Net
       Advertiser ("facebook")
   {
     Oauth::Session *session = new Session (_name,
-                                           "https://graph.facebook.com/v2.8",
+                                           "https://graph.facebook.com/v2.10",
                                            FACEBOOK_CONSUMER_KEY,
                                            FACEBOOK_CONSUMER_SECRET);
 
     {
-      gchar *url = g_strdup_printf ("https://www.facebook.com/v2.8/dialog/oauth"
+      gchar *url = g_strdup_printf ("https://www.facebook.com/v2.10/dialog/oauth"
                                     "?client_id=%s"
                                     "&redirect_uri=https://www.facebook.com/connect/login_success.html"
-                                    "&response_type=token",
+                                    "&response_type=token"
+                                    "&scope=publish_actions",
                                     session->GetConsumerKey ());
 
       session->SetAuthorizationPage (url);
@@ -50,6 +52,13 @@ namespace Net
   // --------------------------------------------------------------------------------
   Facebook::~Facebook ()
   {
+  }
+
+  // --------------------------------------------------------------------------------
+  void Facebook::PublishMessage (const gchar *message)
+  {
+    SendRequest (new FeedRequest (_session,
+                                  message));
   }
 
   // --------------------------------------------------------------------------------
@@ -113,10 +122,7 @@ namespace Net
   {
     if (dynamic_cast <DebugTokenRequest *> (request))
     {
-      Session *session = dynamic_cast <Session *> (_session);
-
-      SendRequest (new MeRequest (_session,
-                                  session->GetUserId ()));
+      SendRequest (new MeRequest (_session));
       return TRUE;
     }
 

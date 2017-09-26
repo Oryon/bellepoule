@@ -32,6 +32,8 @@ namespace Net
     private:
       ~Facebook ();
 
+      void PublishMessage (const gchar *message);
+
       void CheckAuthorization ();
 
       void ClaimForAuthorization ();

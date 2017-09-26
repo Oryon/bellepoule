@@ -170,16 +170,12 @@ namespace Oauth
     if (_http_header)
     {
       curl_slist_free_all (_http_header);
-      _http_header = NULL;
     }
 
+    _http_header = _request->GetHeader ();
+    if (_http_header)
     {
-      gchar *header = _request->GetHeader ();
-
-      _http_header = curl_slist_append (_http_header, header);
       curl_easy_setopt (curl, CURLOPT_HTTPHEADER, _http_header);
-
-      g_free (header);
     }
   }
 

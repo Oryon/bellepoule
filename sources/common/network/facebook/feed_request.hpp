@@ -20,13 +20,14 @@
 
 namespace Net
 {
-  class MeRequest : public Oauth::V2::Request
+  class FeedRequest : public Oauth::V2::Request
   {
     public:
-      MeRequest (Oauth::Session *session);
+      FeedRequest (Oauth::Session *session,
+                   const gchar    *message);
 
     private:
-      virtual ~MeRequest ();
+      virtual ~FeedRequest ();
 
       void ParseResponse (GHashTable  *header,
                           const gchar *body);

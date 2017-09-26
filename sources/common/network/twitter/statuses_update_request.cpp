@@ -45,7 +45,7 @@ namespace Net
       {
         char *code = GetJsonAtPath ("$.errors[0].code");
 
-        if (g_strcmp0 (code, "187") == 0)
+        if (code && g_strcmp0 (code, "187") == 0)
         {
           printf ("Error << " RED "%s" ESC " >> dropped\n", code);
           ForgiveError ();

@@ -575,6 +575,12 @@
 		<Unit filename="../../sources/common/network/facebook/facebook.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/facebook/feed_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/feed_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/facebook/me_request.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
@@ -663,6 +669,12 @@
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/oauth/v1_session.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v2_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v2_request.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/partner.cpp">

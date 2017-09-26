@@ -20,6 +20,8 @@
 
 #include "util/object.hpp"
 
+struct curl_slist;
+
 namespace Oauth
 {
   class Session;
@@ -37,13 +39,13 @@ namespace Oauth
 
     public:
       Request (Session     *session,
-               const gchar *sub_url,
+               const gchar *signature,
                const gchar *http_method);
 
       virtual void ParseResponse (GHashTable  *header,
                                   const gchar *body);
 
-      virtual gchar *GetHeader ();
+      virtual struct curl_slist *GetHeader ();
 
       const gchar *GetMethod ();
 
@@ -54,6 +56,8 @@ namespace Oauth
       const gchar *GetURL ();
 
       void ForgiveError ();
+
+      void SetSignature (const gchar *signature);
 
     protected:
       static const gchar *GET;

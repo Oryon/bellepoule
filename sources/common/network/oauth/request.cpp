@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <curl/curl.h>
+
 #include "session.hpp"
 #include "field.hpp"
 #include "request.hpp"
@@ -25,14 +27,14 @@ namespace Oauth
 
   // --------------------------------------------------------------------------------
   Request::Request (Session     *session,
-                    const gchar *sub_url,
+                    const gchar *signature,
                     const gchar *http_method)
     : Object ("Oauth::Request")
   {
     _session        = session;
     _status         = READY;
     _http_method    = http_method;
-    _url            = g_strdup_printf ("%s/%s", session->GetApiUri (), sub_url);
+    _url            = g_strdup_printf ("%s/%s", session->GetApiUri (), signature);
     _header_list    = NULL;
     _parameter_list = NULL;
     _parser         = NULL;
@@ -50,6 +52,13 @@ namespace Oauth
     {
       g_object_unref (_parser);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Request::SetSignature (const gchar *signature)
+  {
+    g_free (_url);
+    _url = g_strdup_printf ("%s/%s", _session->GetApiUri (), signature);
   }
 
   // --------------------------------------------------------------------------------
@@ -85,9 +94,26 @@ namespace Oauth
       Field *field = new Field (key,
                                 value);
 
-      _header_list = g_list_insert_sorted (_header_list,
-                                           field,
-                                           (GCompareFunc) Field::Compare);
+      {
+        GList *current = _header_list;
+
+        while (current)
+        {
+          Field *current_field = (Field *) current->data;
+
+          if (Field::Compare (current_field, field) == 0)
+          {
+            _header_list = g_list_delete_link (_header_list,
+                                               current);
+            break;
+          }
+          current = g_list_next (current);
+        }
+      }
+
+        _header_list = g_list_insert_sorted (_header_list,
+                                             field,
+                                             (GCompareFunc) Field::Compare);
     }
   }
 
@@ -211,9 +237,28 @@ namespace Oauth
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Request::GetHeader ()
+  struct curl_slist *Request::GetHeader ()
   {
-    return g_strdup ("");
+    if (_header_list)
+    {
+      struct curl_slist *curl_header = NULL;
+      GList             *current     = _header_list;
+
+      while (current)
+      {
+        Field *field = (Field *) current->data;
+
+        curl_header = curl_slist_append (curl_header,
+                                         field->GetHeaderForm ());
+
+
+        current = g_list_next (current);
+      }
+
+      return curl_header;
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------

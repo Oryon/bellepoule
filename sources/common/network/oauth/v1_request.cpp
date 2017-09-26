@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <curl/curl.h>
 
 #include "field.hpp"
 #include "v1_session.hpp"
@@ -330,9 +331,9 @@ namespace Oauth
     }
 
     // --------------------------------------------------------------------------------
-    gchar *Request::GetHeader ()
+    struct curl_slist *Request::GetHeader ()
     {
-      gchar *header;
+      gchar *bundle = NULL;
 
       {
         Session *v1_session = GetSession ();
@@ -376,13 +377,22 @@ namespace Oauth
             current = g_list_next (current);
           }
 
-          header = header_string->str;
+          bundle = header_string->str;
           g_string_free (header_string,
                          FALSE);
         }
       }
 
-      return header;
+      if (bundle)
+      {
+        struct curl_slist *curl_header = NULL;
+
+        curl_header = curl_slist_append (curl_header, bundle);
+        g_free (bundle);
+        return curl_header;
+      }
+
+      return NULL;
     }
   }
 }

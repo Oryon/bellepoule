@@ -22,17 +22,16 @@ namespace Net
   // --------------------------------------------------------------------------------
   DebugTokenRequest::DebugTokenRequest (Oauth::Session *session)
     : Object ("Facebook::DebugTokenRequest"),
-    Request (session, "debug_token", GET)
+    Oauth::V2::Request (session, "debug_token", GET)
   {
     AddParameterField ("input_token",
                        session->GetToken ());
 
     {
-      gchar *access = g_strdup_printf ("%s|%s", session->GetConsumerKey (), session->GetConsumerSecret ());
+      gchar *bearer = g_strdup_printf ("%s|%s", session->GetConsumerKey (), session->GetConsumerSecret ());
 
-      AddParameterField ("access_token",
-                         access);
-      g_free (access);
+      SetBearer (bearer);
+      g_free (bearer);
     }
   }
 

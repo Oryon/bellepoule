@@ -16,48 +16,28 @@
 
 #pragma once
 
+#include <json-glib/json-glib.h>
+
 #include "util/object.hpp"
 #include "request.hpp"
 
+struct curl_slist;
+
 namespace Oauth
 {
-  class Session;
-
-  namespace V1
+  namespace V2
   {
-    class Session;
-
     class Request : public Oauth::Request
     {
       public:
-        Request (Oauth::Session *session,
-                 const gchar    *sub_url,
-                 const gchar    *http_method);
-
-        virtual void ParseResponse (GHashTable  *header,
-                                    const gchar *body);
-
-        virtual struct curl_slist *GetHeader ();
+        Request (Session     *session,
+                 const gchar *signature,
+                 const gchar *http_method);
 
       protected:
         ~Request ();
 
-        gchar *ExtractParsedField (const gchar *field_desc,
-                                   const gchar *field_name);
-
-      private:
-        static const gchar  _nonce_range[];
-        GRand              *_rand;
-
-        void Stamp ();
-
-        char *GetNonce ();
-
-        void Sign ();
-
-        void DumpRateLimits (GHashTable  *header);
-
-        Session *GetSession ();
+        void SetBearer (const gchar *bearer);
     };
   }
 }

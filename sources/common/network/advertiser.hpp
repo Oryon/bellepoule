@@ -93,13 +93,13 @@ namespace Net
 
       void SwitchOff ();
 
-      virtual void PublishMessage (const gchar *message);
-
       void Use ();
 
       void Drop ();
 
       void OnServerResponse (Oauth::Request *request);
+
+      virtual void PublishMessage (const gchar *message) = 0;
 
       virtual void CheckAuthorization () = 0;
 

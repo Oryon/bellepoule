@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include "oauth/request.hpp"
+#include "oauth/v2_request.hpp"
 
 namespace Net
 {
-  class DebugTokenRequest : public Oauth::Request
+  class DebugTokenRequest : public Oauth::V2::Request
   {
     public:
       DebugTokenRequest (Oauth::Session *session);

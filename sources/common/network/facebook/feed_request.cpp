@@ -16,28 +16,37 @@
 
 #include "oauth/session.hpp"
 #include "session.hpp"
-#include "me_request.hpp"
+#include "feed_request.hpp"
 
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  MeRequest::MeRequest (Oauth::Session *session)
-    : Object ("Facebook::MeRequest"),
-    Oauth::V2::Request (session, "user_id", GET)
+  FeedRequest::FeedRequest (Oauth::Session *session,
+                            const gchar    *message)
+    : Object ("Facebook::FeedRequest"),
+    Oauth::V2::Request (session, "user_id/feed", POST)
   {
-    Session *facebook_session = dynamic_cast <Session *> (_session);
+    {
+      Session *facebook_session = dynamic_cast <Session *> (_session);
+      gchar   *signature = g_strdup_printf ("%s/feed",
+                                            facebook_session->GetUserId ());
 
-    SetSignature (facebook_session->GetUserId ());
+      SetSignature (signature);
+      g_free (signature);
+    }
+
+    AddParameterField ("message",
+                       message);
   }
 
   // --------------------------------------------------------------------------------
-  MeRequest::~MeRequest ()
+  FeedRequest::~FeedRequest ()
   {
   }
 
   // --------------------------------------------------------------------------------
-  void MeRequest::ParseResponse (GHashTable  *header,
-                                 const gchar *body)
+  void FeedRequest::ParseResponse (GHashTable  *header,
+                                   const gchar *body)
   {
     Oauth::Request::ParseResponse (header,
                                    body);
@@ -50,6 +59,21 @@ namespace Net
 
         _session->SetAccountId (id);
         g_free (id);
+      }
+    }
+    else if (GetStatus () == REJECTED)
+    {
+      if (LoadJson (body))
+      {
+        char *code = GetJsonAtPath ("$.error.code");
+
+        if (code && g_strcmp0 (code, "506") == 0)
+        {
+          printf ("Error << " RED "%s" ESC " >> dropped\n", code);
+          ForgiveError ();
+        }
+
+        g_free (code);
       }
     }
   }

@@ -33,6 +33,8 @@ namespace Oauth
 
     _parcel        = g_strdup_printf ("%s=%s",     _encoded_key, _encoded_value);
     _quoted_parcel = g_strdup_printf ("%s=\"%s\"", _encoded_key, _encoded_value);
+
+    _header_form = g_strdup_printf ("%s: %s", _key, _value);
   }
 
   // --------------------------------------------------------------------------------
@@ -46,6 +48,7 @@ namespace Oauth
 
     g_free (_parcel);
     g_free (_quoted_parcel);
+    g_free (_header_form);
   }
 
   // --------------------------------------------------------------------------------
@@ -58,6 +61,12 @@ namespace Oauth
   const gchar *Field::GetQuotedParcel ()
   {
     return _quoted_parcel;
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Field::GetHeaderForm ()
+  {
+    return _header_form;
   }
 
   // --------------------------------------------------------------------------------
