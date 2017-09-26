@@ -37,8 +37,6 @@ namespace Net
                                                       TWITTER_CONSUMER_SECRET);
 
     SetSession (session);
-
-    SendRequest (new VerifyCredentials (_session));
   }
 
   // --------------------------------------------------------------------------------
@@ -51,14 +49,6 @@ namespace Net
   {
     SendRequest (new StatusesUpdate (_session,
                                      message));
-  }
-
-  // --------------------------------------------------------------------------------
-  void Twitter::SwitchOn ()
-  {
-    Advertiser::SwitchOn ();
-
-    SendRequest (new VerifyCredentials (_session));
   }
 
   // --------------------------------------------------------------------------------
@@ -106,68 +96,39 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Twitter::OnServerResponse (Oauth::Request *request)
+  gboolean Twitter::HandleRequestResponse (Oauth::Request *request)
   {
-    VerifyCredentials *verify_credentials = dynamic_cast <VerifyCredentials *> (request);
+    Oauth::V1::RequestToken *request_token = dynamic_cast <Oauth::V1::RequestToken *> (request);
 
-    _pending_request = FALSE;
-
-    if (request->GetStatus () == Oauth::Request::NETWORK_ERROR)
+    if (request_token)
     {
-      _state = OFF;
-      DisplayId ("Network error!");
+      gchar *pin_url = request_token->GetPinCodeUrl ();
+
+      _session->SetAuthorizationPage (pin_url);
+      DisplayAuthorizationPage ();
+      g_free (pin_url);
     }
-    else if (request->GetStatus () == Oauth::Request::REJECTED)
+    else if (dynamic_cast <Oauth::V1::AccessToken *> (request))
     {
-      if ((_state == OFF) && verify_credentials)
-      {
-        _state = WAITING_FOR_TOKEN;
-        _session->Reset ();
-        SendRequest (new Oauth::V1::RequestToken (_session));
-      }
-      else
-      {
-        if (_state != IDLE)
-        {
-          DisplayId ("Access denied!");
-        }
-        _state = OFF;
-      }
+      CheckAuthorization ();
     }
     else
     {
-      Oauth::V1::RequestToken *request_token = dynamic_cast <Oauth::V1::RequestToken *> (request);
-
-      if (request_token)
-      {
-        {
-          gchar *pin_url = request_token->GetPinCodeUrl ();
-
-          DisplayAuthorizationPage (pin_url);
-          g_free (pin_url);
-        }
-
-        if (_pending_request == FALSE)
-        {
-          SendRequest (new VerifyCredentials (_session));
-        }
-      }
-      else if (dynamic_cast <Oauth::V1::AccessToken *> (request))
-      {
-        SendRequest (new VerifyCredentials (_session));
-      }
-      else if (verify_credentials)
-      {
-        if (_state == IDLE)
-        {
-          _state = OFF;
-        }
-        else
-        {
-          _state = ON;
-        }
-        DisplayId (verify_credentials->_twitter_account);
-      }
+      return FALSE;
     }
+
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Twitter::CheckAuthorization ()
+  {
+    SendRequest (new VerifyCredentials (_session));
+  }
+
+  // --------------------------------------------------------------------------------
+  void Twitter::ClaimForAuthorization ()
+  {
+    SendRequest (new Oauth::V1::RequestToken (_session));
   }
 }

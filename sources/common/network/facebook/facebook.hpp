@@ -20,11 +20,6 @@
 
 #include "advertiser.hpp"
 
-namespace Oauth
-{
-  class Session;
-}
-
 namespace Net
 {
   class Advertiser;
@@ -37,9 +32,11 @@ namespace Net
     private:
       ~Facebook ();
 
-      void SwitchOn ();
+      void CheckAuthorization ();
 
-      void OnServerResponse (Oauth::Request *request);
+      void ClaimForAuthorization ();
+
+      gboolean HandleRequestResponse (Oauth::Request *request);
 
       gboolean OnRedirect (WebKitNetworkRequest    *request,
                            WebKitWebPolicyDecision *policy_decision);

@@ -14,7 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "oauth/session.hpp"
+#include "session.hpp"
 #include "debug_token_request.hpp"
 
 namespace Net
@@ -52,8 +52,33 @@ namespace Net
     {
       if (LoadJson (body))
       {
-        printf ("===> %s\n", GetJsonAtPath ("$.data.expires_at"));
-        printf ("===> %s\n", GetJsonAtPath ("$.data.user_id"));
+        {
+          GDateTime *date;
+          gchar     *expires_string = GetJsonAtPath ("$.data.expires_at");
+          guint      expires_int    = g_ascii_strtoull (expires_string,
+                                                        NULL,
+                                                        10);
+
+          date = g_date_time_new_from_unix_utc (expires_int);
+
+          {
+            gchar *log = g_date_time_format (date, "%c");
+
+            g_print (YELLOW "%s ==>" ESC " %s\n", _session->GetService (), log);
+            g_free (log);
+          }
+
+          g_date_time_unref (date);
+          g_free (expires_string);
+        }
+
+        {
+          Session *session = dynamic_cast <Session *> (_session);
+          gchar   *id      = GetJsonAtPath ("$.data.user_id");
+
+          session->SetUserId (id);
+          g_free (id);
+        }
       }
     }
   }

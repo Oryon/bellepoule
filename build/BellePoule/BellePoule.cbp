@@ -575,6 +575,18 @@
 		<Unit filename="../../sources/common/network/facebook/facebook.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/facebook/me_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/me_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/session.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/session.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/file_uploader.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>

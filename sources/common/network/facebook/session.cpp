@@ -14,48 +14,41 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "oauth/session.hpp"
-#include "verify_credentials_request.hpp"
+#include "session.hpp"
 
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  VerifyCredentials::VerifyCredentials (Oauth::Session *session)
-    : Object ("Twitter::VerifyCredentials"),
-      Oauth::V1::Request (session, "1.1/account/verify_credentials.json", GET)
+  Session::Session (const gchar *service,
+                    const gchar *api_uri,
+                    const gchar *consumer_key,
+                    const gchar *consumer_secret)
+    : Object ("Facebook::Session"),
+      Oauth::Session (service,
+                      api_uri,
+                      consumer_key,
+                      consumer_secret)
   {
+    _user_id = NULL;
+
   }
 
   // --------------------------------------------------------------------------------
-  VerifyCredentials::~VerifyCredentials ()
+  Session::~Session ()
   {
+    g_free (_user_id);
   }
 
   // --------------------------------------------------------------------------------
-  void VerifyCredentials::ParseResponse (GHashTable  *header,
-                                         const gchar *body)
+  void Session::SetUserId (const gchar *id)
   {
-    Oauth::V1::Request::ParseResponse (header,
-                                       body);
+    g_free (_user_id);
+    _user_id = g_strdup (id);
+  }
 
-    if (GetStatus () == ACCEPTED)
-    {
-      if (LoadJson (body))
-      {
-        char *name        = GetJsonAtPath ("$.name");
-        char *screen_name = GetJsonAtPath ("$.screen_name");
-
-        if (name && screen_name)
-        {
-          gchar *id = g_strdup_printf ("%s@%s", name, screen_name);
-
-          _session->SetAccountId (id);
-          g_free (id);
-        }
-
-        g_free (screen_name);
-        g_free (name);
-      }
-    }
+  // --------------------------------------------------------------------------------
+  const gchar *Session::GetUserId ()
+  {
+    return _user_id;
   }
 }

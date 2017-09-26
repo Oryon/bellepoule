@@ -28,9 +28,6 @@ namespace Net
   class VerifyCredentials : public Oauth::V1::Request
   {
     public:
-      gchar *_twitter_account;
-
-    public:
       VerifyCredentials (Oauth::Session *session);
 
     private:

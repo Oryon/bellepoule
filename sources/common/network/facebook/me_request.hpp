@@ -16,36 +16,20 @@
 
 #pragma once
 
-#include "util/module.hpp"
-
-#include "advertiser.hpp"
-
-namespace Oauth
-{
-  class Session;
-  class Request;
-}
+#include "oauth/request.hpp"
 
 namespace Net
 {
-  class Twitter : public Advertiser
+  class MeRequest : public Oauth::Request
   {
     public:
-      Twitter ();
+      MeRequest (Oauth::Session *session,
+                 const gchar    *user_id);
 
     private:
-      ~Twitter ();
+      virtual ~MeRequest ();
 
-      void PublishMessage (const gchar *message);
-
-      gboolean HandleRequestResponse (Oauth::Request *request);
-
-      void CheckAuthorization ();
-
-      void ClaimForAuthorization ();
-
-      gboolean OnRedirect (WebKitNetworkRequest    *request,
-                           WebKitWebPolicyDecision *policy_decision);
-
+      void ParseResponse (GHashTable  *header,
+                          const gchar *body);
   };
 }

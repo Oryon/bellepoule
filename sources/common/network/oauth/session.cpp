@@ -27,11 +27,13 @@ namespace Oauth
                     const gchar *consumer_secret)
     : Object ("Oauth::Session")
   {
-    _api_uri         = g_strdup (api_uri);
-    _service         = g_strdup (service);
-    _consumer_key    = g_strdup (consumer_key);
-    _consumer_secret = g_strdup (consumer_secret);
-    _token           = NULL;
+    _api_uri            = g_strdup (api_uri);
+    _service            = g_strdup (service);
+    _consumer_key       = g_strdup (consumer_key);
+    _consumer_secret    = g_strdup (consumer_secret);
+    _token              = NULL;
+    _account_id         = NULL;
+    _authorization_page = NULL;
 
     {
       gchar *token = g_key_file_get_string (Global::_user_config->_key_file,
@@ -51,12 +53,17 @@ namespace Oauth
     g_free (_consumer_key);
     g_free (_consumer_secret);
     g_free (_token);
+    g_free (_account_id);
+    g_free (_authorization_page);
   }
 
   // --------------------------------------------------------------------------------
   void Session::Reset ()
   {
     SetToken (NULL);
+
+    g_free (_account_id);
+    _account_id = NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -87,6 +94,32 @@ namespace Oauth
   const gchar *Session::GetToken ()
   {
     return _token;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Session::SetAccountId (const gchar *id)
+  {
+    g_free (_account_id);
+    _account_id = g_strdup (id);
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Session::GetAccountId ()
+  {
+    return _account_id;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Session::SetAuthorizationPage (const gchar *id)
+  {
+    g_free (_authorization_page);
+    _authorization_page = g_strdup (id);
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Session::GetAuthorizationPage ()
+  {
+    return _authorization_page;
   }
 
   // --------------------------------------------------------------------------------

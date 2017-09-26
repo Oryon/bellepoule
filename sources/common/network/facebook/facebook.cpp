@@ -14,9 +14,10 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "oauth/session.hpp"
+#include "session.hpp"
 #include "advertiser_ids.hpp"
 #include "debug_token_request.hpp"
+#include "me_request.hpp"
 
 #include "facebook.hpp"
 
@@ -27,10 +28,21 @@ namespace Net
     : Object ("Facebook"),
       Advertiser ("facebook")
   {
-    Oauth::Session *session = new Oauth::Session (_name,
-                                                  "https://graph.facebook.com/v2.8",
-                                                  FACEBOOK_CONSUMER_KEY,
-                                                  FACEBOOK_CONSUMER_SECRET);
+    Oauth::Session *session = new Session (_name,
+                                           "https://graph.facebook.com/v2.8",
+                                           FACEBOOK_CONSUMER_KEY,
+                                           FACEBOOK_CONSUMER_SECRET);
+
+    {
+      gchar *url = g_strdup_printf ("https://www.facebook.com/v2.8/dialog/oauth"
+                                    "?client_id=%s"
+                                    "&redirect_uri=https://www.facebook.com/connect/login_success.html"
+                                    "&response_type=token",
+                                    session->GetConsumerKey ());
+
+      session->SetAuthorizationPage (url);
+      g_free (url);
+    }
 
     SetSession (session);
   }
@@ -41,20 +53,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Facebook::SwitchOn ()
+  void Facebook::CheckAuthorization ()
   {
-    Advertiser::SwitchOn ();
+    SendRequest (new DebugTokenRequest (_session));
+  }
 
-    {
-      gchar *url = g_strdup_printf ("https://www.facebook.com/v2.8/dialog/oauth"
-                                    "?client_id=%s"
-                                    "&redirect_uri=https://www.facebook.com/connect/login_success.html"
-                                    "&response_type=token",
-                                    _session->GetConsumerKey ());
-
-      DisplayAuthorizationPage (url);
-      g_free (url);
-    }
+  // --------------------------------------------------------------------------------
+  void Facebook::ClaimForAuthorization ()
+  {
+    DisplayAuthorizationPage ();
   }
 
   // --------------------------------------------------------------------------------
@@ -91,8 +98,6 @@ namespace Net
         g_strfreev (params);
       }
 
-      SendRequest (new DebugTokenRequest (_session));
-
       gtk_dialog_response (GTK_DIALOG (_glade->GetWidget ("request_token_dialog")),
                            GTK_RESPONSE_CANCEL);
 
@@ -104,22 +109,17 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Facebook::OnServerResponse (Oauth::Request *request)
+  gboolean Facebook::HandleRequestResponse (Oauth::Request *request)
   {
-    if (request->GetStatus () == Oauth::Request::NETWORK_ERROR)
+    if (dynamic_cast <DebugTokenRequest *> (request))
     {
-      _state = OFF;
-      DisplayId ("Network error!");
+      Session *session = dynamic_cast <Session *> (_session);
+
+      SendRequest (new MeRequest (_session,
+                                  session->GetUserId ()));
+      return TRUE;
     }
-    else if (request->GetStatus () == Oauth::Request::REJECTED)
-    {
-      _state = OFF;
-      DisplayId ("Access denied!");
-    }
-    else if (dynamic_cast <DebugTokenRequest *> (request))
-    {
-      _state = ON;
-      DisplayId ("XXXX");
-    }
+
+    return FALSE;
   }
 }

@@ -69,41 +69,46 @@ namespace Net
       void SendRequest (Oauth::Request *request);
 
     protected:
+      void Reset ();
+
+      void DisplayId (const gchar *id);
+
+      void DisplayAuthorizationPage ();
+
+    private:
       enum State
       {
-        IDLE,
+        WARMUP,
         OFF,
         WAITING_FOR_TOKEN,
         ON
       };
 
-      State    _state;
-      gboolean _pending_request;
+      gchar    *_link;
+      gchar    *_title;
+      gboolean  _pending_response;
+      State     _state;
 
-      virtual void SwitchOn ();
+      void SwitchOn ();
 
       void SwitchOff ();
 
-      void Reset ();
-
-      void DisplayId (const gchar *id);
-
-      void DisplayAuthorizationPage (const gchar *url);
-
-    private:
-      gchar *_link;
-      gchar *_title;
-
       virtual void PublishMessage (const gchar *message);
-
-      virtual void OnServerResponse (Oauth::Request *request);
 
       void Use ();
 
       void Drop ();
 
+      void OnServerResponse (Oauth::Request *request);
+
+      virtual void CheckAuthorization () = 0;
+
+      virtual void ClaimForAuthorization () = 0;
+
+      virtual gboolean HandleRequestResponse (Oauth::Request *request) = 0;
+
       virtual gboolean OnRedirect (WebKitNetworkRequest    *request,
-                                   WebKitWebPolicyDecision *policy_decision);
+                                   WebKitWebPolicyDecision *policy_decision) = 0;
 
       static gboolean OnWebKitRedirect (WebKitWebView             *web_view,
                                         WebKitWebFrame            *frame,

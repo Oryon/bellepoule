@@ -181,7 +181,9 @@ namespace Oauth
         }
 
         reset_str = g_date_time_format (reset_time, "%H:%M:%S");
-        printf ("%s ==> " BLUE "%d/%d (%s)\n" ESC, GetURL (), rate_limit_remaining, rate_limit_limit, reset_str);
+        g_print (YELLOW "%s ==> " ESC "%d/%d (%s)\n",
+                 _session->GetService (),
+                 rate_limit_remaining, rate_limit_limit, reset_str);
 
         g_date_time_unref (reset_time);
         g_date_time_unref (now);

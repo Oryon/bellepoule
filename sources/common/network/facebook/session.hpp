@@ -16,13 +16,12 @@
 
 #pragma once
 
-#include <glib.h>
-
 #include "util/object.hpp"
+#include "oauth/session.hpp"
 
-namespace Oauth
+namespace Net
 {
-  class Session : public virtual Object
+  class Session : public Oauth::Session
   {
     public:
       Session (const gchar *service,
@@ -30,38 +29,13 @@ namespace Oauth
                const gchar *consumer_key,
                const gchar *consumer_secret);
 
-      virtual void Reset ();
+      void SetUserId (const gchar *id);
 
-      void SetToken (const gchar *token);
-
-      const gchar *GetService ();
-
-      const gchar *GetConsumerKey ();
-
-      const gchar *GetConsumerSecret ();
-
-      const gchar *GetApiUri ();
-
-      const gchar *GetToken ();
-
-      void SetAccountId (const gchar *id);
-
-      const gchar *GetAccountId ();
-
-      void SetAuthorizationPage (const gchar *id);
-
-      const gchar *GetAuthorizationPage ();
-
-    protected:
-      virtual ~Session ();
+      const gchar *GetUserId ();
 
     private:
-      gchar *_service;
-      gchar *_consumer_key;
-      gchar *_consumer_secret;
-      gchar *_token;
-      gchar *_api_uri;
-      gchar *_account_id;
-      gchar *_authorization_page;
+      gchar *_user_id;
+
+      virtual ~Session ();
   };
 }

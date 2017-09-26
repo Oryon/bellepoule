@@ -28,11 +28,11 @@ namespace Net
     : Object ("Advertiser"),
       Module ("advertiser.glade")
   {
-    _state           = IDLE;
-    _title           = NULL;
-    _link            = NULL;
-    _session         = NULL;
-    _pending_request = FALSE;
+    _state            = WARMUP;
+    _title            = NULL;
+    _link             = NULL;
+    _session          = NULL;
+    _pending_response = FALSE;
 
     {
 
@@ -101,6 +101,8 @@ namespace Net
                               TRUE);
     gtk_widget_set_sensitive (_glade->GetWidget ("entry"),
                               TRUE);
+
+    CheckAuthorization ();
   }
 
   // --------------------------------------------------------------------------------
@@ -117,13 +119,8 @@ namespace Net
     gtk_entry_set_text (entry,
                         id);
 
-    if (g_strstr_len (id,
-                      -1,
-                      "@") == NULL)
-    {
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton),
-                                    FALSE);
-    }
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton),
+                                  (_state == ON));
   }
 
   // --------------------------------------------------------------------------------
@@ -143,7 +140,7 @@ namespace Net
   {
     Oauth::Uploader *uploader = new Oauth::Uploader (this);
 
-    _pending_request = TRUE;
+    _pending_response = TRUE;
     uploader->UpLoadRequest (request);
 
     request->Release ();
@@ -153,6 +150,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Advertiser::SwitchOn ()
   {
+    CheckAuthorization ();
   }
 
   // --------------------------------------------------------------------------------
@@ -265,7 +263,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Advertiser::DisplayAuthorizationPage (const gchar *url)
+  void Advertiser::DisplayAuthorizationPage ()
   {
     GtkWidget *web_view = webkit_web_view_new ();
 
@@ -278,7 +276,7 @@ namespace Net
                         this);
 
       webkit_web_view_load_uri (WEBKIT_WEB_VIEW (web_view),
-                                url);
+                                _session->GetAuthorizationPage ());
 
       gtk_widget_show (web_view);
       gtk_widget_grab_focus (web_view);
@@ -293,6 +291,11 @@ namespace Net
 
     gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (web_view)),
                           web_view);
+
+    if (_pending_response == FALSE)
+    {
+      CheckAuthorization ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -315,13 +318,43 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Advertiser::OnServerResponse (Oauth::Request *request)
   {
-  }
+    _pending_response = FALSE;
 
-  // --------------------------------------------------------------------------------
-  gboolean Advertiser::OnRedirect (WebKitNetworkRequest    *request,
-                                   WebKitWebPolicyDecision *policy_decision)
-  {
-    return FALSE;
+    if (request->GetStatus () == Oauth::Request::NETWORK_ERROR)
+    {
+      _state = OFF;
+      DisplayId ("Network error!");
+    }
+    else if (request->GetStatus () == Oauth::Request::REJECTED)
+    {
+      if (_state == WARMUP)
+      {
+        _state = OFF;
+      }
+      else if (_state == OFF)
+      {
+        _state = WAITING_FOR_TOKEN;
+        _session->Reset ();
+        ClaimForAuthorization ();
+      }
+      else
+      {
+        _state = OFF;
+        DisplayId ("Access denied!");
+      }
+    }
+    else if (HandleRequestResponse (request) == FALSE)
+    {
+      if (_state == WARMUP)
+      {
+        _state = OFF;
+      }
+      else
+      {
+        _state = ON;
+      }
+      DisplayId (_session->GetAccountId ());
+    }
   }
 }
 

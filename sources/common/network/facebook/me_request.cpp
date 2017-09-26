@@ -15,46 +15,40 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "oauth/session.hpp"
-#include "verify_credentials_request.hpp"
+#include "me_request.hpp"
 
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  VerifyCredentials::VerifyCredentials (Oauth::Session *session)
-    : Object ("Twitter::VerifyCredentials"),
-      Oauth::V1::Request (session, "1.1/account/verify_credentials.json", GET)
+  MeRequest::MeRequest (Oauth::Session *session,
+                        const gchar    *user_id)
+    : Object ("Facebook::MeRequest"),
+    Request (session, user_id, GET)
+  {
+    AddParameterField ("access_token",
+                       session->GetToken ());
+  }
+
+  // --------------------------------------------------------------------------------
+  MeRequest::~MeRequest ()
   {
   }
 
   // --------------------------------------------------------------------------------
-  VerifyCredentials::~VerifyCredentials ()
+  void MeRequest::ParseResponse (GHashTable  *header,
+                                 const gchar *body)
   {
-  }
-
-  // --------------------------------------------------------------------------------
-  void VerifyCredentials::ParseResponse (GHashTable  *header,
-                                         const gchar *body)
-  {
-    Oauth::V1::Request::ParseResponse (header,
-                                       body);
+    Oauth::Request::ParseResponse (header,
+                                   body);
 
     if (GetStatus () == ACCEPTED)
     {
       if (LoadJson (body))
       {
-        char *name        = GetJsonAtPath ("$.name");
-        char *screen_name = GetJsonAtPath ("$.screen_name");
+        gchar *id = GetJsonAtPath ("$.name");
 
-        if (name && screen_name)
-        {
-          gchar *id = g_strdup_printf ("%s@%s", name, screen_name);
-
-          _session->SetAccountId (id);
-          g_free (id);
-        }
-
-        g_free (screen_name);
-        g_free (name);
+        _session->SetAccountId (id);
+        g_free (id);
       }
     }
   }
