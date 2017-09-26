@@ -62,6 +62,7 @@ namespace Oauth
     protected:
       static const gchar *GET;
       static const gchar *POST;
+      static const gchar *DELETE;
 
       Status   _status;
       gchar   *_url;

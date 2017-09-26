@@ -47,6 +47,15 @@ namespace Net
     }
 
     {
+      GtkMessageDialog *dialog = GTK_MESSAGE_DIALOG (_glade->GetWidget ("request_token_dialog"));
+
+      gtk_message_dialog_format_secondary_markup (dialog,
+                                                  "%s <b>%s</b> :",
+                                                  gettext ("Follow the instructions given by "),
+                                                  name);
+    }
+
+    {
       GdkDisplay *display     = gdk_display_get_default ();
       GdkScreen  *screen      = gdk_display_get_default_screen (display);
       gint        full_height = gdk_screen_get_height (screen);

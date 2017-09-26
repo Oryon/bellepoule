@@ -62,8 +62,8 @@
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="buttons">cancel</property>
-    <property name="text" translatable="yes">BellePoule needs your agreement to tweet on your behalf</property>
-    <property name="secondary_text" translatable="yes">  Follow the instructions given by Twitter:</property>
+    <property name="text" translatable="yes">BellePoule needs your agreement to post announces on your behalf</property>
+    <property name="secondary_text">  Follow the instructions given by Twitter:</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox">
         <property name="visible">True</property>

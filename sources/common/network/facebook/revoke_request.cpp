@@ -14,35 +14,27 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-#include "util/module.hpp"
-
-#include "advertiser.hpp"
+#include "oauth/session.hpp"
+#include "session.hpp"
+#include "revoke_request.hpp"
 
 namespace Net
 {
-  class Advertiser;
-
-  class Facebook : public Advertiser
+  // --------------------------------------------------------------------------------
+  RevokeRequest::RevokeRequest (Oauth::Session *session)
+    : Object ("Facebook::RevokeRequest"),
+    Oauth::V2::Request (session, "user_id", DELETE)
   {
-    public:
-      Facebook ();
+    Session *facebook_session = dynamic_cast <Session *> (_session);
+    gchar   *signature = g_strdup_printf ("%s/permissions/publish_actions",
+                                          facebook_session->GetUserId ());
 
-    private:
-      ~Facebook ();
+    SetSignature (signature);
+    g_free (signature);
+  }
 
-      void Reset ();
-
-      void PublishMessage (const gchar *message);
-
-      void CheckAuthorization ();
-
-      void ClaimForAuthorization ();
-
-      gboolean HandleRequestResponse (Oauth::Request *request);
-
-      gboolean OnRedirect (WebKitNetworkRequest    *request,
-                           WebKitWebPolicyDecision *policy_decision);
-  };
+  // --------------------------------------------------------------------------------
+  RevokeRequest::~RevokeRequest ()
+  {
+  }
 }

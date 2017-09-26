@@ -19,6 +19,7 @@
 #include "debug_token_request.hpp"
 #include "feed_request.hpp"
 #include "me_request.hpp"
+#include "revoke_request.hpp"
 
 #include "facebook.hpp"
 
@@ -71,6 +72,13 @@ namespace Net
   void Facebook::ClaimForAuthorization ()
   {
     DisplayAuthorizationPage ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Facebook::Reset ()
+  {
+    SendRequest (new RevokeRequest (_session));
+    Advertiser::Reset ();
   }
 
   // --------------------------------------------------------------------------------

@@ -16,33 +16,16 @@
 
 #pragma once
 
-#include "util/module.hpp"
-
-#include "advertiser.hpp"
+#include "oauth/v2_request.hpp"
 
 namespace Net
 {
-  class Advertiser;
-
-  class Facebook : public Advertiser
+  class RevokeRequest : public Oauth::V2::Request
   {
     public:
-      Facebook ();
+      RevokeRequest (Oauth::Session *session);
 
     private:
-      ~Facebook ();
-
-      void Reset ();
-
-      void PublishMessage (const gchar *message);
-
-      void CheckAuthorization ();
-
-      void ClaimForAuthorization ();
-
-      gboolean HandleRequestResponse (Oauth::Request *request);
-
-      gboolean OnRedirect (WebKitNetworkRequest    *request,
-                           WebKitWebPolicyDecision *policy_decision);
+      virtual ~RevokeRequest ();
   };
 }

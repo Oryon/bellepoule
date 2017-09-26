@@ -167,6 +167,11 @@ namespace Oauth
       }
     }
 
+    if (g_strcmp0 (_request->GetMethod (), "DELETE") == 0)
+    {
+      curl_easy_setopt (curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+    }
+
     if (_http_header)
     {
       curl_slist_free_all (_http_header);

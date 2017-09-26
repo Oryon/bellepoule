@@ -587,6 +587,12 @@
 		<Unit filename="../../sources/common/network/facebook/me_request.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/facebook/revoke_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/revoke_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/facebook/session.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

@@ -69,7 +69,7 @@ namespace Net
       void SendRequest (Oauth::Request *request);
 
     protected:
-      void Reset ();
+      virtual void Reset ();
 
       void DisplayId (const gchar *id);
 
