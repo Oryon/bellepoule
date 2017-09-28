@@ -27,7 +27,7 @@ namespace Oauth
     AccessToken::AccessToken (Oauth::Session *session,
                               const gchar    *pin)
       : Object ("Oauth::V1::AccessToken"),
-        Request (session, "oauth/access_token", GET)
+        Request (session, "oauth/access_token", HTTP_GET)
     {
       AddHeaderField ("oauth_verifier", pin);
     }

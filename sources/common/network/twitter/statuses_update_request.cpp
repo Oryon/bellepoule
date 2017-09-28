@@ -22,7 +22,7 @@ namespace Net
   StatusesUpdate::StatusesUpdate (Oauth::Session *session,
                                   const gchar     *tweet)
     : Object ("Twitter::StatusesUpdate"),
-      Oauth::V1::Request (session, "1.1/statuses/update.json", POST)
+      Oauth::V1::Request (session, "1.1/statuses/update.json", HTTP_POST)
   {
     AddParameterField ("status", tweet);
   }

@@ -23,7 +23,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   MeRequest::MeRequest (Oauth::Session *session)
     : Object ("Facebook::MeRequest"),
-    Oauth::V2::Request (session, "user_id", GET)
+    Oauth::V2::Request (session, "user_id", HTTP_GET)
   {
     Session *facebook_session = dynamic_cast <Session *> (_session);
 

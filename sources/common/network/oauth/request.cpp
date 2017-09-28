@@ -22,9 +22,9 @@
 
 namespace Oauth
 {
-  const gchar *Request::GET    = "GET";
-  const gchar *Request::POST   = "POST";
-  const gchar *Request::DELETE = "DELETE";
+  const gchar *Request::HTTP_GET    = "GET";
+  const gchar *Request::HTTP_POST   = "POST";
+  const gchar *Request::HTTP_DELETE = "DELETE";
 
   // --------------------------------------------------------------------------------
   Request::Request (Session     *session,

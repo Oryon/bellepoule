@@ -22,7 +22,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   VerifyCredentials::VerifyCredentials (Oauth::Session *session)
     : Object ("Twitter::VerifyCredentials"),
-      Oauth::V1::Request (session, "1.1/account/verify_credentials.json", GET)
+      Oauth::V1::Request (session, "1.1/account/verify_credentials.json", HTTP_GET)
   {
   }
 

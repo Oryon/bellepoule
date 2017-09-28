@@ -60,9 +60,9 @@ namespace Oauth
       void SetSignature (const gchar *signature);
 
     protected:
-      static const gchar *GET;
-      static const gchar *POST;
-      static const gchar *DELETE;
+      static const gchar *HTTP_GET;
+      static const gchar *HTTP_POST;
+      static const gchar *HTTP_DELETE;
 
       Status   _status;
       gchar   *_url;

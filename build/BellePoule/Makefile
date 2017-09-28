@@ -132,7 +132,7 @@ ifeq ($(UBUNTU), windows)
 LDFLAGS += -lws2_32
 LDFLAGS += -liphlpapi
 ifeq ($(OUTPUT), Release)
-#LDFLAGS += -mwindows
+LDFLAGS += -mwindows
 endif
 endif
 LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 webkit-1.0)
@@ -150,6 +150,7 @@ endif
 SRC  = $(wildcard sources/common/network/*.cpp)
 SRC += $(wildcard sources/common/network/oauth/*.cpp)
 SRC += $(wildcard sources/common/network/twitter/*.cpp)
+SRC += $(wildcard sources/common/network/facebook/*.cpp)
 SRC += $(wildcard sources/common/util/*.cpp)
 SRC += $(wildcard sources/BellePoule/actors/*.cpp)
 SRC += $(wildcard sources/BellePoule/application/*.cpp)

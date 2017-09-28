@@ -24,7 +24,7 @@ namespace Net
   FeedRequest::FeedRequest (Oauth::Session *session,
                             const gchar    *message)
     : Object ("Facebook::FeedRequest"),
-    Oauth::V2::Request (session, "user_id/feed", POST)
+    Oauth::V2::Request (session, "user_id/feed", HTTP_POST)
   {
     {
       Session *facebook_session = dynamic_cast <Session *> (_session);

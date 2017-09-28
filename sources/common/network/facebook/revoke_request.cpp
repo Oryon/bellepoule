@@ -23,7 +23,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   RevokeRequest::RevokeRequest (Oauth::Session *session)
     : Object ("Facebook::RevokeRequest"),
-    Oauth::V2::Request (session, "user_id", DELETE)
+    Oauth::V2::Request (session, "user_id", HTTP_DELETE)
   {
     Session *facebook_session = dynamic_cast <Session *> (_session);
     gchar   *signature = g_strdup_printf ("%s/permissions/publish_actions",

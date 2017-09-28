@@ -22,7 +22,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   DebugTokenRequest::DebugTokenRequest (Oauth::Session *session)
     : Object ("Facebook::DebugTokenRequest"),
-    Oauth::V2::Request (session, "debug_token", GET)
+    Oauth::V2::Request (session, "debug_token", HTTP_GET)
   {
     AddParameterField ("input_token",
                        session->GetToken ());

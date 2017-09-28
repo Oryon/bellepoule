@@ -27,7 +27,7 @@ namespace Oauth
     // --------------------------------------------------------------------------------
     RequestToken::RequestToken (Oauth::Session *session)
       : Object ("Oauth::V1::RequestToken"),
-        Request (session, "oauth/request_token", GET)
+        Request (session, "oauth/request_token", HTTP_GET)
     {
       //AddHeaderField ("oauth_callback", "oob");
       AddHeaderField ("oauth_callback", "http://bellepoule.bzh");
