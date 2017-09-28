@@ -40,6 +40,12 @@ namespace Pool
     BEST_PIXMAP_COL
   } ComboboxColumn;
 
+  typedef enum
+  {
+    CRITERIA_COL,
+    CRITERIA_NAME_COL
+  } SwappingColumn;
+
   extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
                                                                 Object    *owner);
   extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
@@ -137,7 +143,7 @@ namespace Pool
     _swapper = NeoSwapper::Swapper::Create (this);
 
     {
-      GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("swapping_criteria_hbox"));
+      GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("regular_swapping_hbox"));
       GSList       *attr          = AttributeDesc::GetSwappableList ();
 
       while (attr)
@@ -199,6 +205,53 @@ namespace Pool
 
         _fencer_list->SetFilter    (filter);
         _fencer_list->SetDataOwner (this);
+
+        // Extra swapping
+        {
+          GSList       *current        = filter->GetAttrList ();
+          GtkListStore *swapping_store = GTK_LIST_STORE (_glade->GetGObject ("swapping_liststore"));
+          GtkTreeIter   iter;
+
+          while (current)
+          {
+            AttributeDesc *attr_desc  = (AttributeDesc *) current->data;
+            GSList        *swappables = AttributeDesc::GetSwappableList ();
+
+            if (   (attr_desc->_rights     == AttributeDesc::PUBLIC)
+                && (attr_desc->_uniqueness == AttributeDesc::NOT_SINGULAR))
+            {
+              if (g_slist_find (swappables,
+                                current->data) == NULL)
+              {
+                gtk_list_store_append (swapping_store, &iter);
+                gtk_list_store_set (swapping_store, &iter,
+                                    CRITERIA_COL,      attr_desc,
+                                    CRITERIA_NAME_COL, attr_desc->_user_name,
+                                    -1);
+              }
+            }
+
+            current = g_slist_next (current);
+          }
+
+          {
+            GtkComboBox *combobox = GTK_COMBO_BOX (_glade->GetWidget ("extra_combobox"));
+
+            gtk_combo_box_set_active (combobox,
+                                      0);
+            g_signal_connect (G_OBJECT (combobox), "changed",
+                              G_CALLBACK (OnSwappingToggled), this);
+          }
+
+          {
+            GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (_glade->GetWidget ("extra_toggle"));
+
+            g_signal_connect (G_OBJECT (togglebutton), "toggled",
+                              G_CALLBACK (OnSwappingToggled), this);
+
+          }
+        }
+
         filter->Release ();
       }
     }
@@ -592,7 +645,7 @@ namespace Pool
             _swapping_criteria_list = NULL;
 
             {
-              GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("swapping_criteria_hbox"));
+              GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("regular_swapping_hbox"));
               GList        *siblings      = gtk_container_get_children (swapping_hbox);
 
               while (siblings)
@@ -608,6 +661,19 @@ namespace Pool
                                   G_CALLBACK (OnSwappingToggled), this);
 
                 siblings = g_list_next (siblings);
+              }
+
+              {
+                GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (_glade->GetWidget ("extra_toggle"));
+
+                __gcc_extension__ g_signal_handlers_disconnect_by_func (G_OBJECT (togglebutton),
+                                                                        (void *) OnSwappingToggled,
+                                                                        (Object *) this);
+                gtk_toggle_button_set_active (togglebutton,
+                                              FALSE);
+                g_signal_connect (G_OBJECT (togglebutton), "toggled",
+                                  G_CALLBACK (OnSwappingToggled), this);
+
               }
             }
           }
@@ -682,19 +748,20 @@ namespace Pool
 
         if (tokens)
         {
-          GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("swapping_criteria_hbox"));
+          GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("regular_swapping_hbox"));
           GList        *siblings      = gtk_container_get_children (swapping_hbox);
 
           for (guint i = 0; tokens[i] != NULL; i++)
           {
             if (*tokens[i] != '\0')
             {
-              GList *current = siblings;
+              gboolean       is_regular = FALSE;
+              GList         *current    = siblings;
+              AttributeDesc *attr_desc;
 
               while (current)
               {
                 GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (current->data);
-                AttributeDesc   *attr_desc;
 
                 attr_desc = (AttributeDesc *) g_object_get_data (G_OBJECT (togglebutton), "criteria_attribute");
 
@@ -705,9 +772,41 @@ namespace Pool
 
                   gtk_toggle_button_set_active (togglebutton,
                                                 TRUE);
+                  is_regular = TRUE;
+                  break;
                 }
 
                 current = g_list_next (current);
+              }
+
+              if (is_regular == FALSE)
+              {
+                GtkTreeModel *store         = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
+                GtkTreeIter   iter;
+                gboolean      iter_is_valid;
+
+                iter_is_valid = gtk_tree_model_get_iter_first (store,
+                                                               &iter);
+                while (iter_is_valid)
+                {
+                  gtk_tree_model_get (store, &iter,
+                                      CRITERIA_COL, &attr_desc,
+                                      -1);
+
+                  if (g_strcmp0 (tokens[i], attr_desc->_code_name) == 0)
+                  {
+                    _swapping_criteria_list = g_slist_prepend (_swapping_criteria_list,
+                                                               attr_desc);
+                    gtk_combo_box_set_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("extra_combobox")),
+                                                   &iter);
+                    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("extra_toggle")),
+                                                  TRUE);
+                    break;
+                  }
+
+                  iter_is_valid = gtk_tree_model_iter_next (store,
+                                                            &iter);
+                }
               }
             }
           }
@@ -2189,13 +2288,14 @@ namespace Pool
   {
     if (allocator->_contest->GetState () == OPERATIONAL)
     {
-      GtkWidget *parent   = gtk_widget_get_parent (GTK_WIDGET (togglebutton));
+      GtkWidget *parent   = allocator->_glade->GetWidget ("regular_swapping_hbox");
       GList     *siblings = gtk_container_get_children (GTK_CONTAINER (parent));
       GString   *string   = g_string_new ("/");
 
       g_slist_free (allocator->_swapping_criteria_list);
       allocator->_swapping_criteria_list = NULL;
 
+      // Regular swapping
       while (siblings)
       {
         GtkToggleButton *sibling_togglebutton = GTK_TOGGLE_BUTTON (siblings->data);
@@ -2215,6 +2315,35 @@ namespace Pool
         }
 
         siblings = g_list_next (siblings);
+      }
+
+      // Extra swapping
+      {
+        GtkToggleButton *extra_toggle = GTK_TOGGLE_BUTTON (allocator->_glade->GetWidget ("extra_toggle"));
+
+        if (gtk_toggle_button_get_active (extra_toggle))
+        {
+          GtkComboBox *extra_combo  = GTK_COMBO_BOX (allocator->_glade->GetWidget ("extra_combobox"));
+          GtkTreeIter  iter;
+
+          if (gtk_combo_box_get_active_iter (extra_combo,
+                                             &iter))
+          {
+            GtkTreeModel  *store = GTK_TREE_MODEL (allocator->_glade->GetGObject ("swapping_liststore"));
+            AttributeDesc *desc;
+
+            gtk_tree_model_get (store, &iter,
+                                CRITERIA_COL, &desc,
+                                -1);
+
+            allocator->_swapping_criteria_list = g_slist_prepend (allocator->_swapping_criteria_list,
+                                                                  desc);
+
+            g_string_append_printf (string,
+                                    "%s/",
+                                    desc->_code_name);
+          }
+        }
       }
 
       allocator->_swapping->SetString (string->str);

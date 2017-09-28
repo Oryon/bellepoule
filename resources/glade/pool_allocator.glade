@@ -269,13 +269,66 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <placeholder/>
+                          <object class="GtkHBox" id="hbox3">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkCheckButton" id="extra_toggle">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBox" id="extra_combobox">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="model">swapping_liststore</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
                         </child>
                         <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
+                          <object class="GtkHBox" id="regular_swapping_hbox">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                     </child>
@@ -352,11 +405,9 @@
   </object>
   <object class="GtkListStore" id="swapping_liststore">
     <columns>
-      <!-- column-name attribute_image -->
-      <column type="gchararray"/>
       <!-- column-name criteria -->
       <column type="gpointer"/>
-      <!-- column-name errors -->
+      <!-- column-name name -->
       <column type="gchararray"/>
     </columns>
   </object>

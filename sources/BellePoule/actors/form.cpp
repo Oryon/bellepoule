@@ -467,11 +467,19 @@ namespace People
               if (attr_id)
               {
                 gchar *value     = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
-                gchar *xml_image = attr_desc->GetDiscreteXmlImage (g_strstrip (value));
+                g_strstrip (value);
+                if (value[0] || (attr_desc->_uniqueness == AttributeDesc::SINGULAR))
+                {
+                  gchar *xml_image = attr_desc->GetDiscreteXmlImage (value);
 
                 player->SetAttributeValue (attr_id,
                                            xml_image);
                 g_free (xml_image);
+                }
+                else
+                {
+                  player->RemoveAttribute (attr_id);
+                }
                 g_free (value);
               }
 
@@ -502,8 +510,16 @@ namespace People
           {
             gchar *value = g_strdup (gtk_entry_get_text (GTK_ENTRY (w)));
 
+            g_strstrip (value);
+            if (value[0] || (attr_desc->_uniqueness == AttributeDesc::SINGULAR))
+            {
             player->SetAttributeValue (attr_id,
-                                       g_strstrip (value));
+                                         value);
+            }
+            else
+            {
+              player->RemoveAttribute (attr_id);
+            }
             g_free (value);
           }
 
@@ -643,7 +659,35 @@ namespace People
         attr_id   = Player::AttributeId::Create (attr_desc, _client);
         attr      = player->GetAttribute (attr_id);
 
-        if (attr)
+        if (   (attr == NULL)
+            && (attr_desc->_uniqueness == AttributeDesc::NOT_SINGULAR))
+        {
+          GtkEntry *entry = NULL;
+
+          if (attr_desc->_type == G_TYPE_BOOLEAN)
+          {
+            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
+                                          FALSE);
+          }
+          else if (attr_desc->HasDiscreteValue ())
+          {
+            if (attr_desc->_free_value_allowed)
+            {
+              entry = GTK_ENTRY (gtk_bin_get_child (GTK_BIN (w)));
+            }
+          }
+          else
+          {
+            entry = GTK_ENTRY (w);
+          }
+
+          if (entry)
+          {
+            gtk_entry_set_text (GTK_ENTRY (entry),
+                                "");
+          }
+        }
+        else if (attr)
         {
           if (attr_desc->_type == G_TYPE_BOOLEAN)
           {
