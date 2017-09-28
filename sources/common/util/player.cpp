@@ -44,6 +44,9 @@ Player::Player (const gchar *player_class)
   {
     Player::AttributeId attr_id ("");
 
+    attr_id._name = (gchar *) "name";
+    SetAttributeValue (&attr_id, "???");
+
     attr_id._name = (gchar *) "attending";
     SetAttributeValue (&attr_id, (guint) FALSE);
 
