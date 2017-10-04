@@ -1595,6 +1595,8 @@ namespace Marshaller
         current_competition = g_list_next (current_competition);
       }
     }
+
+    JobBoard::ForeRedraw ();
   }
 
   // --------------------------------------------------------------------------------

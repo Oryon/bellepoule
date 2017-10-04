@@ -144,7 +144,7 @@ namespace Marshaller
     // Cone
     {
       gchar     *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "images", "VLC.png", NULL);
-      GdkPixbuf *pixbuf    = gdk_pixbuf_new_from_file_at_size (icon_file, 13, 15, NULL);
+      GdkPixbuf *pixbuf    = gdk_pixbuf_new_from_file_at_size (icon_file, 15, 17, NULL);
 
       _cone = goo_canvas_image_new (_root_item,
                                     pixbuf,

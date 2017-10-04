@@ -54,12 +54,15 @@ namespace Marshaller
 
       void OnNextClicked ();
 
+      static void ForeRedraw ();
+
       static void SetTimeLine (Timeline *timeline,
                                Listener *listener);
 
     private:
       static Timeline *_timeline;
       static Listener *_listener;
+      static GList    *_boards;
 
       GtkWidget  *_dialog;
       GList      *_job_list;

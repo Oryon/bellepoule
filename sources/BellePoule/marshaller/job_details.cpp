@@ -109,6 +109,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void JobDetails::ForceRedraw ()
+  {
+    gtk_widget_queue_draw (GetRootWidget ());
+  }
+
+  // --------------------------------------------------------------------------------
   void JobDetails::OnPlugged ()
   {
     OnAttrListUpdated ();

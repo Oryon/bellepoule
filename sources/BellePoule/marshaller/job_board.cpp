@@ -28,6 +28,7 @@ namespace Marshaller
 {
   Timeline           *JobBoard::_timeline = NULL;
   JobBoard::Listener *JobBoard::_listener = NULL;
+  GList              *JobBoard::_boards   = NULL;
 
   // --------------------------------------------------------------------------------
   JobBoard::JobBoard ()
@@ -42,6 +43,9 @@ namespace Marshaller
 
     _take_off_button = _glade->GetWidget ("take_off_button");
     _move_button     = _glade->GetWidget ("move_button");
+
+    _boards = g_list_prepend (_boards,
+                              this);
   }
 
   // --------------------------------------------------------------------------------
@@ -51,6 +55,39 @@ namespace Marshaller
     Object::TryToRelease (_fencer_details);
 
     g_list_free (_job_list);
+
+    {
+      GList *node = g_list_find (_boards,
+                                 this);
+
+      if (node)
+      {
+        _boards = g_list_delete_link (_boards,
+                                      node);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::ForeRedraw ()
+  {
+    GList *current = _boards;
+
+    while (current)
+    {
+      JobBoard *board = (JobBoard *) current->data;
+
+      if (board->_referee_details)
+      {
+        board->_referee_details->ForceRedraw ();
+      }
+      if (board->_fencer_details)
+      {
+        board->_fencer_details->ForceRedraw  ();
+      }
+
+      current = g_list_next (current);
+    }
   }
 
   // --------------------------------------------------------------------------------

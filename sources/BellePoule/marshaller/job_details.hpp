@@ -38,6 +38,8 @@ namespace Marshaller
                   Job      *job,
                   gboolean  dnd_capable);
 
+      void ForceRedraw ();
+
       static void SetRefereePool (RefereePool *referee_pool);
 
     private:
