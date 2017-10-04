@@ -72,6 +72,8 @@ namespace People
       void Disclose (const gchar *as,
                      Object      *extra_feeder = NULL);
 
+      void Conceal ();
+
       void Spread ();
 
       void Recall ();

@@ -129,6 +129,8 @@ class Object
 
     virtual Net::Message *Disclose (const gchar *as);
 
+    virtual void Conceal ();
+
     virtual void Recall ();
 
     void RefreshParcel ();
@@ -150,6 +152,7 @@ class Object
   protected:
     FlashCode    *_flash_code;
     Net::Message *_parcel;
+    Net::Message *_concealed_parcel;
 
     virtual ~Object ();
 

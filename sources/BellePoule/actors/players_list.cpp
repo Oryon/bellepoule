@@ -1707,6 +1707,23 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void PlayersList::Conceal ()
+  {
+    GList *current = _player_list;
+
+    while (current)
+    {
+      Player *p = (Player *) current->data;
+
+      p->Conceal ();
+
+      current = g_list_next (current);
+    }
+
+    _parcel_name = NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   void PlayersList::DumpToHTML (FILE *file)
   {
     if (_filter && file)

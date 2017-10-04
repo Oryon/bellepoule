@@ -911,6 +911,7 @@ Contest::~Contest ()
   _state = LEAVING;
 
   // www
+#ifndef DEBUG
   if (_filename)
   {
     gchar *base_name = g_path_get_basename (_filename);
@@ -921,6 +922,7 @@ Contest::~Contest ()
     g_free (base_name);
     g_free (www_file);
   }
+#endif
 
   g_free (_authority);
   g_free (_fie_id);
@@ -1595,6 +1597,7 @@ void Contest::Save ()
     Save (_filename);
 
     // www
+#ifndef DEBUG
     {
       gchar *base_name = g_path_get_basename (_filename);
       gchar *www_file  = g_build_filename (Global::_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
@@ -1603,6 +1606,7 @@ void Contest::Save ()
       g_free (base_name);
       g_free (www_file);
     }
+#endif
 
     // Backup
     if (_tournament)

@@ -42,9 +42,10 @@ Object::Object (const gchar *class_name)
   g_datalist_init (&_datalist);
   _ref_count = 1;
 
-  _flash_code    = NULL;
-  _parcel        = NULL;
-  _listener_list = NULL;
+  _flash_code       = NULL;
+  _parcel           = NULL;
+  _concealed_parcel = NULL;
+  _listener_list    = NULL;
 
 #ifdef DEBUG
   _nb_objects++;
@@ -347,10 +348,24 @@ Net::Message *Object::Disclose (const gchar *as)
 {
   if (_parcel == NULL)
   {
-    _parcel = new Net::Message (as);
+    if (_concealed_parcel)
+    {
+      _parcel = _concealed_parcel;
+    }
+    else
+    {
+      _parcel = new Net::Message (as);
+    }
   }
 
   return _parcel;
+}
+
+// --------------------------------------------------------------------------------
+void Object::Conceal ()
+{
+  _concealed_parcel = _parcel;
+  _parcel           = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -359,6 +374,10 @@ void Object::Recall ()
   if (_parcel)
   {
     _parcel->Recall ();
+  }
+  else if (_concealed_parcel)
+  {
+    _concealed_parcel->Recall ();
   }
 }
 

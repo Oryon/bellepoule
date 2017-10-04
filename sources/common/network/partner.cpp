@@ -69,6 +69,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Partner::SendMessage (Message *message)
   {
+    message->Dump (FALSE);
     _uploader->PushMessage (message);
   }
 
