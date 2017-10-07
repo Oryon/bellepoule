@@ -8,6 +8,19 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">images/apply.gif</property>
   </object>
+  <object class="GtkListStore" id="batch_store">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name visible -->
+      <column type="gboolean"/>
+      <!-- column-name batch -->
+      <column type="gpointer"/>
+    </columns>
+  </object>
+  <object class="GtkTreeModelFilter" id="batch_store_filter">
+    <property name="child_model">batch_store</property>
+  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <child>
@@ -15,12 +28,48 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <child>
-          <object class="GtkViewport" id="batch_viewport">
-            <property name="width_request">120</property>
+          <object class="GtkVBox" id="root">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <placeholder/>
+              <object class="GtkComboBox" id="batch_combobox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="model">batch_store_filter</property>
+                <signal name="changed" handler="on_batch_combobox_changed" swapped="no"/>
+                <child>
+                  <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="batch_vbox">
+                <property name="width_request">120</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
         </child>

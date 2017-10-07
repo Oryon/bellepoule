@@ -21,6 +21,7 @@
 #include "util/data.hpp"
 #include "util/canvas_module.hpp"
 #include "util/drop_zone.hpp"
+#include "network/ring.hpp"
 #include "../../match.hpp"
 #include "../../score_collector.hpp"
 
@@ -33,7 +34,9 @@ namespace Table
 {
   class Supervisor;
 
-  class TableSet : public CanvasModule
+  class TableSet :
+    public CanvasModule,
+    public Net::Ring::Listener
   {
     public:
       class Listener
@@ -137,6 +140,10 @@ namespace Table
 
       Match *GetFirstError ();
 
+      void Recall ();
+
+      gboolean OnMessage (Net::Message *message);
+
       gboolean OnHttpPost (const gchar *command,
                            const gchar **ressource,
                            const gchar *data);
@@ -181,6 +188,7 @@ namespace Table
       gboolean                 *_row_filled;
       HtmlTable                *_html_table;
       GdkPixbuf                *_printer_pixbuf;
+      gboolean                  _has_marshaller;
 
       Listener *_listener;
 
@@ -202,6 +210,9 @@ namespace Table
 
       Table *GetTable (guint size);
 
+      void RemoveReferee (Match *match,
+                          guint  referee_ref);
+
       void LoadNode (xmlNode *xml_node);
 
       void OnStatusChanged (GtkComboBox *combo_box);
@@ -210,6 +221,9 @@ namespace Table
                             Match         *match,
                             Player        *player,
                             guint          row);
+
+      void OnPartnerJoined (Net::Partner *partner,
+                            gboolean      joined);
 
       static gboolean Stuff (GNode    *node,
                              TableSet *table_set);
@@ -252,7 +266,7 @@ namespace Table
 
       void AddFork (GNode *to);
 
-      void RefreshTableStatus ();
+      void RefreshTableStatus (gboolean quick = FALSE);
 
       void DropMatch (GNode *node);
 

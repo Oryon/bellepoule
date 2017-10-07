@@ -26,18 +26,24 @@
 
 namespace Marshaller
 {
+  typedef enum
+  {
+    BATCH_NAME_COLUMN_str,
+    BATCH_VISIBILITY_COLUMN_bool,
+    BATCH_BATCH_COLUMN_void
+  } BatchStoreColumnId;
+
   // --------------------------------------------------------------------------------
   Competition::Competition (guint            id,
                             Batch::Listener *listener)
     : Object ("Competition"),
-    Module ("competition.glade", "batch_viewport")
+    Module ("competition.glade")
   {
-    _fencer_list   = NULL;
-    _batches       = NULL;
-    _weapon        = NULL;
-    _id            = id;
-    _gdk_color     = g_new (GdkColor, 1);
-    _current_batch = NULL;
+    _fencer_list = NULL;
+    _batches     = NULL;
+    _weapon      = NULL;
+    _id          = id;
+    _gdk_color   = g_new (GdkColor, 1);
 
     _batch_listener = listener;
 
@@ -59,6 +65,16 @@ namespace Marshaller
 
     gtk_widget_set_visible (_batch_image,   FALSE);
     gtk_widget_set_visible (_spread_button, FALSE);
+
+    _combobox = GTK_COMBO_BOX (_glade->GetWidget ("batch_combobox"));
+
+    {
+      _batch_store        = GTK_LIST_STORE (_glade->GetGObject ("batch_store"));
+      _batch_store_filter = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("batch_store_filter"));
+
+      gtk_tree_model_filter_set_visible_column (_batch_store_filter,
+                                                BATCH_VISIBILITY_COLUMN_bool);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -68,7 +84,9 @@ namespace Marshaller
     g_datalist_clear (&_properties);
 
     FreeFullGList (Player, _fencer_list);
-    FreeFullGList (Batch,  _batches);
+
+    gtk_list_store_clear (_batch_store);
+    FreeFullGList (Batch, _batches);
 
     g_free (_weapon);
   }
@@ -113,9 +131,24 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Competition::BatchIsModifialble (Batch *batch)
+  gboolean Competition::BatchIsModifiable (Batch *batch)
   {
-    return (batch == _current_batch);
+    GtkTreeIter *iter = GetBatchIter (batch);
+
+    if (iter)
+    {
+      gboolean visible;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store),
+                          iter,
+                          BATCH_VISIBILITY_COLUMN_bool, &visible,
+                          -1);
+      gtk_tree_iter_free (iter);
+
+      return visible;
+    }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -158,48 +191,95 @@ namespace Marshaller
 
     if (batch == NULL)
     {
-      gchar *round_name = message->GetString ("name");
-
-      batch = new Batch (message->GetNetID (),
+      batch = new Batch (message,
                          this,
-                         round_name,
                          _batch_listener);
 
-      g_free (round_name);
+      {
+        GtkTreeIter iter;
+
+        gtk_list_store_append (_batch_store,
+                               &iter);
+
+        gtk_list_store_set (_batch_store, &iter,
+                            BATCH_NAME_COLUMN_str,   batch->GetName (),
+                            BATCH_BATCH_COLUMN_void, batch,
+                            -1);
+      }
 
       _batches = g_list_append (_batches,
                                 batch);
+
+      Plug (batch,
+            _glade->GetWidget ("batch_vbox"));
+
+      gtk_widget_hide (batch->GetRootWidget ());
     }
 
     if (message->GetInteger ("done"))
     {
-      if (_current_batch == batch)
-      {
-        SetCurrentBatch (NULL);
-      }
+      MaskBatch (batch);
     }
     else
     {
-      SetCurrentBatch (batch);
+      ExposeBatch (batch);
     }
 
     return batch;
   }
 
   // --------------------------------------------------------------------------------
-  void Competition::SetCurrentBatch (Batch *batch)
+  void Competition::ExposeBatch (Batch *batch)
   {
-    if (_current_batch)
+    GtkTreeIter *iter = GetBatchIter (batch);
+
+    if (iter)
     {
-      _current_batch->UnPlug ();
+      gtk_list_store_set (_batch_store, iter,
+                          BATCH_VISIBILITY_COLUMN_bool, 1,
+                          -1);
+
+      if (gtk_combo_box_get_active_iter (_combobox,
+                                         iter) == FALSE)
+      {
+        gtk_combo_box_set_active (_combobox,
+                                  0);
+      }
+
+      gtk_tree_iter_free (iter);
     }
+  }
 
-    _current_batch = batch;
+  // --------------------------------------------------------------------------------
+  void Competition::MaskBatch (Batch *batch)
+  {
+    GtkTreeIter *iter = GetBatchIter (batch);
 
-    if (_current_batch)
+    if (iter)
     {
-      Plug (_current_batch,
-            _glade->GetWidget ("batch_viewport"));
+      GtkTreeIter  active_iter;
+      Batch       *active_batch = NULL;
+
+      if (gtk_combo_box_get_active_iter (_combobox,
+                                         &active_iter))
+      {
+        gtk_tree_model_get (GTK_TREE_MODEL (_batch_store_filter),
+                            &active_iter,
+                            BATCH_BATCH_COLUMN_void, &active_batch,
+                            -1);
+      }
+
+      gtk_list_store_set (_batch_store,
+                          iter,
+                          BATCH_VISIBILITY_COLUMN_bool, FALSE);
+
+      if (active_batch == batch)
+      {
+        gtk_combo_box_set_active (_combobox,
+                                  0);
+      }
+
+      gtk_tree_iter_free (iter);
     }
   }
 
@@ -208,7 +288,6 @@ namespace Marshaller
   {
     Batch *batch = GetBatch (message->GetNetID ());
 
-    if (batch)
     {
       GList *node = g_list_find (_batches,
                                  batch);
@@ -218,14 +297,49 @@ namespace Marshaller
         _batches = g_list_delete_link (_batches,
                                        node);
       }
+    }
 
-      if (_current_batch == batch)
+    {
+      GtkTreeIter *iter = GetBatchIter (batch);
+
+      if (iter)
       {
-        SetCurrentBatch (NULL);
+        gtk_list_store_remove (_batch_store,
+                               iter);
+        gtk_tree_iter_free (iter);
+      }
+    }
+
+    batch->UnPlug ();
+    batch->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  GtkTreeIter *Competition::GetBatchIter (Batch *batch)
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_batch_store),
+                                                               &iter);
+
+    while (iter_is_valid)
+    {
+      Batch *current_batch;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store),
+                          &iter,
+                          BATCH_BATCH_COLUMN_void, &current_batch,
+                          -1);
+
+      if (batch == current_batch)
+      {
+        return gtk_tree_iter_copy (&iter);
       }
 
-      batch->Release ();
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_batch_store),
+                                                &iter);
     }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -237,6 +351,7 @@ namespace Marshaller
     {
       Batch *batch = (Batch *) current->data;
 
+      printf ("%x == %x\n", batch->GetId (), id);
       if (batch->GetId () == id)
       {
         return batch;
@@ -358,11 +473,63 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Competition::OnChangeBatch ()
+  {
+    Batch *batch   = GetCurrentBatch ();
+    GList *current = _batches;
+
+    while (current)
+    {
+      Batch *current_batch = (Batch *) current->data;
+
+      if (batch == current_batch)
+      {
+        gtk_widget_show (current_batch->GetRootWidget ());
+      }
+      else
+      {
+        gtk_widget_hide (current_batch->GetRootWidget ());
+      }
+      current = g_list_next (current);
+    }
+
+    if (batch == NULL)
+    {
+      gtk_widget_set_visible (_batch_image,
+                              FALSE);
+      gtk_widget_set_visible (_spread_button,
+                              FALSE);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  Batch *Competition::GetCurrentBatch ()
+  {
+    GtkTreeIter iter;
+
+    if (gtk_combo_box_get_active_iter (_combobox,
+                                       &iter))
+    {
+      Batch *batch;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store_filter),
+                          &iter,
+                          BATCH_BATCH_COLUMN_void, &batch,
+                          -1);
+      return batch;
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   void Competition::OnSpread ()
   {
-    if (_current_batch)
+    Batch *batch = GetCurrentBatch ();
+
+    if (batch)
     {
-      _current_batch->OnValidateAssign ();
+      batch->OnValidateAssign ();
     }
   }
 
@@ -370,7 +537,7 @@ namespace Marshaller
   void Competition::SetBatchStatus (Batch         *batch,
                                     Batch::Status  status)
   {
-    if (batch == _current_batch)
+    if (batch == GetCurrentBatch ())
     {
       if (status == Batch::UNCOMPLETED)
       {
@@ -403,5 +570,14 @@ namespace Marshaller
     Competition *c = dynamic_cast <Competition *> (owner);
 
     c->OnSpread ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_batch_combobox_changed (GtkComboBox *widget,
+                                                             Object      *owner)
+  {
+    Competition *c = dynamic_cast <Competition *> (owner);
+
+    c->OnChangeBatch ();
   }
 }

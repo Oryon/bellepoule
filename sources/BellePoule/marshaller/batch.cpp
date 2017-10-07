@@ -38,14 +38,13 @@ namespace Marshaller
   } ColumnId;
 
   // --------------------------------------------------------------------------------
-    Batch::Batch (guint        id,
-                  Competition *competition,
-                  const gchar *name,
-                  Listener    *listener)
+    Batch::Batch (Net::Message *message,
+                  Competition  *competition,
+                  Listener     *listener)
     : Object ("Batch"),
     Module ("batch.glade")
   {
-    _name           = g_strdup (name);
+    _name           = message->GetString ("name");
     _listener       = listener;
     _scheduled_list = NULL;
     _pending_list   = NULL;
@@ -58,7 +57,7 @@ namespace Marshaller
     _competition->SetBatchStatus (this,
                                   DISCLOSED);
 
-    _id = id;
+    _id = message->GetNetID ();
 
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
@@ -148,7 +147,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   gboolean Batch::IsModifiable ()
   {
-    return _competition->BatchIsModifialble (this);
+    return _competition->BatchIsModifiable (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -424,12 +423,22 @@ namespace Marshaller
         xmlXPathInit ();
 
         {
+          const char *heading;
+
           xmlXPathContext *xml_context = xmlXPathNewContext (doc);
           xmlXPathObject  *xml_object;
           xmlNodeSet      *xml_nodeset;
 
           xml_object = xmlXPathEval (BAD_CAST "/Poule", xml_context);
           xml_nodeset = xml_object->nodesetval;
+          heading = "Pool";
+
+          if (xml_nodeset->nodeNr == 0)
+          {
+            xml_object = xmlXPathEval (BAD_CAST "/Match", xml_context);
+            xml_nodeset = xml_object->nodesetval;
+            heading = "Match";
+          }
 
           if (xml_nodeset->nodeNr == 1)
           {
@@ -441,14 +450,14 @@ namespace Marshaller
 
             sibling_order = g_list_length (_pending_list) + g_list_length (_scheduled_list);
             job = new Job (this,
-                           message->GetNetID (),
+                           message,
                            sibling_order,
                            _competition->GetColor ());
 
             attr = (gchar *) xmlGetProp (root_node, BAD_CAST "ID");
             if (attr)
             {
-              name = g_strdup_printf ("%s%s", gettext ("Pool #"), attr);
+              name = g_strdup_printf ("%s %s", gettext (heading), attr);
               xmlFree (attr);
             }
             else

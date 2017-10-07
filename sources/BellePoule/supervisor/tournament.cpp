@@ -122,7 +122,7 @@ void Tournament::Start (gchar *filename)
   {
     gchar *html_url;
 
-    html_url = g_strdup_printf ("http://%s/index.php", Net::Ring::GetIpV4Address ());
+    html_url = g_strdup_printf ("http://%s/index.php", Net::Ring::_broker->GetIpV4Address ());
 
     SetFlashRef (html_url);
 

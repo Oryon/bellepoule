@@ -681,7 +681,7 @@ gboolean Schedule::OnMessage (Net::Message *message)
   {
     Stage *stage = (Stage *) current->data;
 
-    if (stage->GetNetID () == message->GetInteger ("batch"))
+    if (stage->GetNetID () == message->GetInteger ("stage"))
     {
       return stage->OnMessage (message);
     }

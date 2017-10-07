@@ -53,6 +53,8 @@ namespace Table
       Stage (stage_class),
       Module ("table_supervisor.glade")
   {
+    Disclose ("Stage");
+
     _max_score = new Data ("ScoreMax",
                            10);
 
@@ -192,6 +194,20 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  void Supervisor::Recall ()
+  {
+    {
+      OnTableSetSelected (_displayed_table_set);
+
+      gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
+                              (GtkTreeModelForeachFunc) RecallTableSet,
+                              this);
+    }
+
+    Stage::Recall ();
+  }
+
+  // --------------------------------------------------------------------------------
   void Supervisor::OnTableSetSelected (TableSet *table_set)
   {
     if (_displayed_table_set)
@@ -208,6 +224,15 @@ namespace Table
 
       _displayed_table_set = table_set;
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Supervisor::OnMessage (Net::Message *message)
+  {
+    gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
+                            (GtkTreeModelForeachFunc) ProcessMessage,
+                            message);
+    return TRUE;
   }
 
   // --------------------------------------------------------------------------------
@@ -264,6 +289,21 @@ namespace Table
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Supervisor::ProcessMessage (GtkTreeModel *model,
+                                       GtkTreePath  *path,
+                                       GtkTreeIter  *iter,
+                                       Net::Message *message)
+  {
+    TableSet *table_set;
+
+    gtk_tree_model_get (model, iter,
+                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        -1);
+
+    return table_set->OnMessage (message);
   }
 
   // --------------------------------------------------------------------------------
@@ -430,6 +470,23 @@ namespace Table
       ts->HideTableSet (table_set,
                         iter);
     }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Supervisor::RecallTableSet (GtkTreeModel *model,
+                                       GtkTreePath  *path,
+                                       GtkTreeIter  *iter,
+                                       Supervisor   *ts)
+  {
+    TableSet *table_set;
+
+    gtk_tree_model_get (model, iter,
+                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        -1);
+
+    table_set->Recall ();
 
     return FALSE;
   }

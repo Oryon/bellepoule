@@ -23,6 +23,7 @@ namespace Net
   Message::Message ()
     : Object ("Message")
   {
+    _spread     = FALSE;
     _passphrase = NULL;
     _is_valid   = TRUE;
     _key_file   = g_key_file_new ();
@@ -40,7 +41,7 @@ namespace Net
     g_key_file_set_string (_key_file,
                            "Header",
                            "sender",
-                           Ring::GetRole ());
+                           Ring::_broker->GetRole ());
 
     g_key_file_set_integer (_key_file,
                             "Header",
@@ -145,9 +146,19 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Message::IsSpread ()
+  {
+    return _spread;
+  }
+
+  // --------------------------------------------------------------------------------
   void Message::Recall ()
   {
-    Ring::RecallMessage (this);
+    if (_spread)
+    {
+      Ring::_broker->RecallMessage (this);
+      _spread = FALSE;
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -185,7 +196,8 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Message::Spread ()
   {
-    Ring::SpreadMessage (this);
+    Ring::_broker->SpreadMessage (this);
+    _spread = TRUE;
   }
 
   // --------------------------------------------------------------------------------

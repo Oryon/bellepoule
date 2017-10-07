@@ -34,10 +34,10 @@ namespace Marshaller
       };
 
     public:
-      Job (Batch    *batch,
-           guint     netid,
-           guint     sibling_order,
-           GdkColor *gdk_color);
+      Job (Batch        *batch,
+           Net::Message *message,
+           guint         sibling_order,
+           GdkColor     *gdk_color);
 
       void SetName (const gchar *name);
 

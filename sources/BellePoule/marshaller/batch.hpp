@@ -46,10 +46,9 @@ namespace Marshaller
       };
 
     public:
-      Batch (guint        id,
-             Competition *competition,
-             const gchar *name,
-             Listener    *listener);
+      Batch (Net::Message *message,
+             Competition  *competition,
+             Listener     *listener);
 
       Competition *GetCompetition ();
 

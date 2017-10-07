@@ -94,6 +94,8 @@ namespace Table
 
       void OnAttrListUpdated ();
 
+      gboolean OnMessage (Net::Message *message);
+
       gboolean IsOver ();
 
       gchar *GetError ();
@@ -103,6 +105,8 @@ namespace Table
       static Stage *CreateInstance (StageClass *stage_class);
 
       TableSet *GetTableSet (gchar *id);
+
+      void Recall ();
 
       void Save (xmlTextWriter *xml_writer);
 
@@ -148,6 +152,11 @@ namespace Table
                        GtkPrintContext   *context,
                        gint               page_nr);
 
+      static gboolean ProcessMessage (GtkTreeModel    *model,
+                                      GtkTreePath     *path,
+                                      GtkTreeIter     *iter,
+                                      Net::Message    *message);
+
       static gboolean TableSetIsOver (GtkTreeModel    *model,
                                       GtkTreePath     *path,
                                       GtkTreeIter     *iter,
@@ -177,6 +186,16 @@ namespace Table
                                         GtkTreePath  *path,
                                         GtkTreeIter  *iter,
                                         Supervisor   *ts);
+
+      static gboolean SpreadTableSet (GtkTreeModel *model,
+                                      GtkTreePath  *path,
+                                      GtkTreeIter  *iter,
+                                      Supervisor   *ts);
+
+      static gboolean RecallTableSet (GtkTreeModel *model,
+                                      GtkTreePath  *path,
+                                      GtkTreeIter  *iter,
+                                      Supervisor   *ts);
 
       void OnTableSetStatusUpdated (TableSet *table_set);
 

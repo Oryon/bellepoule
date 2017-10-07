@@ -19,8 +19,9 @@
 #include <goocanvas.h>
 
 #include "util/canvas.hpp"
-
 #include "util/player.hpp"
+#include "util/fie_time.hpp"
+#include "network/message.hpp"
 
 #include "match.hpp"
 
@@ -29,6 +30,9 @@ Match::Match (Data *max_score)
   : Object ("Match")
 {
   Init (max_score);
+
+  _start_time = NULL;
+  _piste      = 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -44,6 +48,8 @@ Match::Match  (Player *A,
 
   _opponents[1]._fencer   = B;
   _opponents[1]._is_known = TRUE;
+
+  _start_time = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -409,6 +415,20 @@ void Match::Save (xmlTextWriter *xml_writer)
       }
     }
 
+    if (_piste)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Piste",
+                                         "%d", _piste);
+    }
+
+    if (_start_time)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Date",
+                                         "%s", _start_time->GetXmlImage ());
+    }
+
     for (guint i = 0; i < 2; i++)
     {
       Save (xml_writer,
@@ -511,6 +531,50 @@ void Match::Load (xmlNode *node,
 
     xmlFree (attr);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Match::DiscloseWithIdChain (va_list chain_id)
+{
+  Disclose ("Job");
+
+  while (gchar *key = va_arg (chain_id, gchar *))
+  {
+    guint value = va_arg (chain_id, guint);
+
+    _parcel->Set (key, value);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Match::SetPiste (guint piste)
+{
+  _piste = piste;
+}
+
+// --------------------------------------------------------------------------------
+void Match::SetStartTime (FieTime *time)
+{
+  Object::TryToRelease (_start_time);
+  _start_time = time;
+}
+
+// --------------------------------------------------------------------------------
+guint Match::GetPiste ()
+{
+  return _piste;
+}
+
+// --------------------------------------------------------------------------------
+FieTime *Match::GetStartTime ()
+{
+  return _start_time;
+}
+
+// --------------------------------------------------------------------------------
+guint Match::GetNetID ()
+{
+  return _parcel->GetNetID ();
 }
 
 // --------------------------------------------------------------------------------
@@ -646,4 +710,25 @@ void Match::RemoveReferee (Player *referee)
 GSList *Match::GetRefereeList ()
 {
   return _referee_list;
+}
+
+// --------------------------------------------------------------------------------
+void Match::FeedParcel (Net::Message *parcel)
+{
+  xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+  {
+    xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+    xmlTextWriterStartDocument (xml_writer,
+                                NULL,
+                                "UTF-8",
+                                NULL);
+    Save (xml_writer);
+    xmlTextWriterEndDocument (xml_writer);
+    xmlFreeTextWriter (xml_writer);
+  }
+
+  parcel->Set ("xml", (const gchar *) xml_buffer->content);
+  xmlBufferFree (xml_buffer);
 }

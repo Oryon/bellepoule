@@ -30,18 +30,72 @@ namespace Net
 {
   const gchar *Ring::ANNOUNCE_GROUP = "225.0.0.35";
 
-  gchar          *Ring::_role              = NULL;
-  gchar          *Ring::_ip_address        = NULL;
-  guint           Ring::_unicast_port      = 0;
-  GList          *Ring::_partner_list      = NULL;
-  GList          *Ring::_message_list      = NULL;
-  GtkWidget      *Ring::_partner_indicator = NULL;
-  GList          *Ring::_listeners         = NULL;
-  GSocketAddress *Ring::_multicast_address = NULL;
+  Ring *Ring::_broker = NULL;
 
   // --------------------------------------------------------------------------------
-  Ring::Ring ()
+  Ring::Ring (const gchar *role,
+              guint        unicast_port,
+              GtkWidget   *partner_indicator)
+    : Object ("Ring")
   {
+    _ip_address        = NULL;
+    _partner_list      = NULL;
+    _message_list      = NULL;
+    _listeners         = NULL;
+    _multicast_address = NULL;
+    _role              = g_strdup (role);
+    _unicast_port      = unicast_port;
+
+    _partner_indicator = partner_indicator;
+    if (_partner_indicator)
+    {
+      gtk_widget_set_sensitive (_partner_indicator, FALSE);
+      gtk_widget_set_tooltip_text (_partner_indicator, "");
+    }
+
+    // Multicast listener
+    {
+      GError  *error  = NULL;
+      GSocket *socket;
+
+      socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
+                             G_SOCKET_TYPE_DATAGRAM,
+                             G_SOCKET_PROTOCOL_DEFAULT,
+                             NULL);
+
+      {
+        GInetAddress   *any_ip        = g_inet_address_new_any    (G_SOCKET_FAMILY_IPV4);
+        GSocketAddress *bound_address = g_inet_socket_address_new (any_ip, ANNOUNCE_PORT);
+
+        g_socket_bind (socket,
+                       bound_address,
+                       TRUE,
+                       &error);
+
+        g_object_unref (any_ip);
+        g_object_unref (bound_address);
+      }
+
+      if (error)
+      {
+        g_warning ("g_socket_bind: %s\n", error->message);
+        g_clear_error (&error);
+      }
+      else if (JoinMulticast (socket))
+      {
+        GSource *source = g_socket_create_source (socket,
+                                                  (GIOCondition) (G_IO_IN|G_IO_ERR|G_IO_HUP),
+                                                  NULL);
+        g_source_set_callback (source,
+                               (GSourceFunc) OnMulticast,
+                               this,
+                               NULL);
+        g_source_attach (source, NULL);
+        g_source_unref (source);
+      }
+
+      g_object_unref (socket);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -60,65 +114,16 @@ namespace Net
                    guint        unicast_port,
                    GtkWidget   *partner_indicator)
   {
-    if (_role == NULL)
+    if (_broker)
     {
-      _role = g_strdup (role);
-
-      _unicast_port = unicast_port;
-
-      _partner_indicator = partner_indicator;
-      if (_partner_indicator)
-      {
-        gtk_widget_set_sensitive (_partner_indicator, FALSE);
-        gtk_widget_set_tooltip_text (_partner_indicator, "");
-      }
-
-      // Multicast listener
-      {
-        GError  *error  = NULL;
-        GSocket *socket;
-
-        socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
-                               G_SOCKET_TYPE_DATAGRAM,
-                               G_SOCKET_PROTOCOL_DEFAULT,
-                               NULL);
-
-        {
-          GInetAddress   *any_ip        = g_inet_address_new_any    (G_SOCKET_FAMILY_IPV4);
-          GSocketAddress *bound_address = g_inet_socket_address_new (any_ip, ANNOUNCE_PORT);
-
-          g_socket_bind (socket,
-                         bound_address,
-                         TRUE,
-                         &error);
-
-          g_object_unref (any_ip);
-          g_object_unref (bound_address);
-        }
-
-        if (error)
-        {
-          g_warning ("g_socket_bind: %s\n", error->message);
-          g_clear_error (&error);
-        }
-        else if (JoinMulticast (socket))
-        {
-          GSource *source = g_socket_create_source (socket,
-                                                    (GIOCondition) (G_IO_IN|G_IO_ERR|G_IO_HUP),
-                                                    NULL);
-          g_source_set_callback (source,
-                                 (GSourceFunc) OnMulticast,
-                                 NULL,
-                                 NULL);
-          g_source_attach (source, NULL);
-          g_source_unref (source);
-        }
-
-        g_object_unref (socket);
-      }
-
-      AnnounceAvailability ();
+      g_warning ("Ring instanciated more than once");
     }
+
+    _broker = new Ring (role,
+                        unicast_port,
+                        partner_indicator);
+
+    _broker->AnnounceAvailability ();
   }
 
   // --------------------------------------------------------------------------------
@@ -237,7 +242,7 @@ namespace Net
   // -------------------------------------------------------------------------------
   gboolean Ring::OnMulticast (GSocket      *socket,
                               GIOCondition  condition,
-                              gpointer      user_data)
+                              Ring         *ring)
   {
     if (condition == G_IO_HUP)
     {
@@ -267,22 +272,22 @@ namespace Net
         Message *message = new Message ((guint8 *) buffer);
         gchar   *role    = message->GetString ("role");
 
-        if (g_strcmp0 (role, _role) != 0)
+        if (g_strcmp0 (role, ring->_role) != 0)
         {
           if (message->Is ("Announcement"))
           {
-            Remove (role);
+            ring->Remove (role);
 
             {
               Partner *partner = new Partner (message);
 
-              Add (partner);
+              ring->Add (partner);
               partner->Release ();
             }
           }
           else if (message->Is ("Farewell"))
           {
-            Remove (role);
+            ring->Remove (role);
           }
         }
 
@@ -394,11 +399,26 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
+  void Ring::OnObjectDeleted (Object *object)
+  {
+    Message *message = (Message *)object;
+    GList   *node    = g_list_find (_message_list,
+                                    message);
+
+    if (node)
+    {
+      _message_list = g_list_delete_link (_message_list,
+                                          node);
+    }
+  }
+
+  // -------------------------------------------------------------------------------
   void Ring::SpreadMessage (Message *message)
   {
     if (g_list_find (_message_list,
                      message) == NULL)
     {
+      message->AddObjectListener (this);
       _message_list = g_list_prepend (_message_list,
                                       message);
     }

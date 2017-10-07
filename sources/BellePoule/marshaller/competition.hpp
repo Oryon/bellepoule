@@ -58,30 +58,40 @@ namespace Marshaller
 
       void DeleteFencer (Net::Message *message);
 
-      gboolean BatchIsModifialble (Batch *batch);
+      gboolean BatchIsModifiable (Batch *batch);
 
       void SetBatchStatus (Batch         *batch,
                            Batch::Status  status);
 
       void OnSpread ();
 
+      void OnChangeBatch ();
+
     private:
-      guint            _id;
-      GdkColor        *_gdk_color;
-      GList           *_fencer_list;
-      gchar           *_weapon;
-      GData           *_properties;
-      Batch::Listener *_batch_listener;
-      GList           *_batches;
-      Batch           *_current_batch;
-      GtkWidget       *_batch_image;
-      GtkWidget       *_spread_button;
+      guint               _id;
+      GdkColor           *_gdk_color;
+      GList              *_fencer_list;
+      gchar              *_weapon;
+      GData              *_properties;
+      GList              *_batches;
+      Batch::Listener    *_batch_listener;
+      GtkWidget          *_batch_image;
+      GtkWidget          *_spread_button;
+      GtkListStore       *_batch_store;
+      GtkTreeModelFilter *_batch_store_filter;
+      GtkComboBox        *_combobox;
 
       virtual ~Competition ();
 
       void SetProperty (Net::Message *message,
                         const gchar  *property);
 
-      void SetCurrentBatch (Batch *batch);
+      void ExposeBatch (Batch *batch);
+
+      void MaskBatch (Batch *batch);
+
+      GtkTreeIter *GetBatchIter (Batch *batch);
+
+      Batch *GetCurrentBatch ();
   };
 }

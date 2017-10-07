@@ -35,7 +35,9 @@ namespace Pool
   Pool::Pool (Data        *max_score,
               guint        number,
               const gchar *xml_player_tag,
-              guint32      rand_seed)
+              guint32      rand_seed,
+              guint        stage_id,
+              ...)
     : Object ("Pool"),
       CanvasModule ("pool.glade", "canvas_scrolled_window")
   {
@@ -74,6 +76,30 @@ namespace Pool
     _dispatcher = new Dispatcher (_name);
 
     Disclose ("Job");
+
+    {
+      va_list ap;
+
+      va_start (ap, stage_id);
+      while (gchar *key = va_arg (ap, gchar *))
+      {
+        guint value = va_arg (ap, guint);
+
+        _parcel->Set (key, value);
+
+        if (g_strcmp0 (key, "competition") == 0)
+        {
+          gchar *ref = g_strdup_printf ("#%u/%d/%d",
+                                        value,
+                                        stage_id,
+                                        _number);
+
+          SetFlashRef (ref);
+          g_free (ref);
+        }
+      }
+      va_end (ap);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -94,25 +120,6 @@ namespace Pool
     Object::TryToRelease (_score_collector);
 
     _dispatcher->Release ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void Pool::SetIdChain (guint contest_netid,
-                         guint batch_netid,
-                         guint stage_id)
-  {
-    _parcel->Set ("competition", contest_netid);
-    _parcel->Set ("batch",       batch_netid);
-
-    {
-      gchar *ref = g_strdup_printf ("#%u/%d/%d",
-                                    contest_netid,
-                                    stage_id,
-                                    _number);
-
-      SetFlashRef (ref);
-      g_free (ref);
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -573,7 +580,7 @@ namespace Pool
         g_object_unref (pixbuf);
       }
 
-      // Referee / Track
+      // Referee / Strip
       {
         GooCanvasItem *referee_group = goo_canvas_group_new (title_group, NULL);
         GooCanvasItem *piste_group   = goo_canvas_group_new (title_group, NULL);
@@ -2155,8 +2162,11 @@ namespace Pool
 
       if (message->GetFitness () > 0)
       {
+        gchar *start_time = message->GetString  ("start_time");
+
         _piste      = message->GetInteger ("piste");
-        _start_time = new FieTime (message->GetString  ("start_time"));
+        _start_time = new FieTime (start_time);
+        g_free (start_time);
       }
 
       RefreshParcel ();
@@ -2182,6 +2192,7 @@ namespace Pool
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "NetID",
                                        "%x", _parcel->GetNetID ());
+
     if (_piste)
     {
       xmlTextWriterWriteFormatAttribute (xml_writer,

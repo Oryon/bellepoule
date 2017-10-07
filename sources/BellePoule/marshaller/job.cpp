@@ -26,10 +26,10 @@
 namespace Marshaller
 {
   // --------------------------------------------------------------------------------
-  Job::Job (Batch    *batch,
-            guint     netid,
-            guint     sibling_order,
-            GdkColor *gdk_color)
+  Job::Job (Batch        *batch,
+            Net::Message *message,
+            guint         sibling_order,
+            GdkColor     *gdk_color)
     : Object ("Job")
   {
     _listener      = NULL;
@@ -37,15 +37,16 @@ namespace Marshaller
     _gdk_color     = gdk_color_copy (gdk_color);
     _name          = NULL;
     _batch         = batch;
-    _netid         = netid;
+    _netid         = message->GetNetID ();
     _sibling_order = sibling_order;
     _slot          = NULL;
     _kinship       = 0;
 
     Disclose ("Roadmap");
-    _parcel->Set ("competition", batch->GetCompetition ()->GetId ());
-    _parcel->Set ("batch",       batch->GetId ());
-    _parcel->Set ("source",      netid);
+    _parcel->Set ("competition", message->GetInteger ("competition"));
+    _parcel->Set ("stage",       message->GetInteger ("stage"));
+    _parcel->Set ("batch",       message->GetInteger ("batch"));
+    _parcel->Set ("source",      _netid);
     _parcel->SetFitness (1);
   }
 

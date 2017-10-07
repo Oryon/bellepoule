@@ -25,6 +25,7 @@
 #include "util/attribute.hpp"
 #include "util/player.hpp"
 #include "util/dnd_config.hpp"
+#include "util/fie_time.hpp"
 #include "../../classification.hpp"
 #include "../../contest.hpp"
 
@@ -84,6 +85,7 @@ namespace Table
     _loaded         = FALSE;
     _is_active      = FALSE;
     _html_table     = new HtmlTable (supervisor_module);
+    _has_marshaller = FALSE;
 
     _listener       = NULL;
 
@@ -148,11 +150,15 @@ namespace Table
     }
 
     _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+
+    Net::Ring::_broker->RegisterListener (this);
   }
 
   // --------------------------------------------------------------------------------
   TableSet::~TableSet ()
   {
+    Net::Ring::_broker->UnregisterListener (this);
+
     DeleteTree ();
 
     Object::TryToRelease (_quick_score_collector);
@@ -327,7 +333,7 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::RefreshTableStatus ()
+  void TableSet::RefreshTableStatus (gboolean quick)
   {
     if (_tree_root)
     {
@@ -336,9 +342,12 @@ namespace Table
 
       for (guint i = 0; i < _nb_tables; i ++)
       {
-        _tables[i]->_is_over     = TRUE;
-        _tables[i]->_first_error = NULL;
-        if (_tables[i]->_status_item)
+        _tables[i]->_is_over         = TRUE;
+        _tables[i]->_ready_to_fence  = TRUE;
+        _tables[i]->_has_all_roadmap = TRUE;
+        _tables[i]->_roadmap_count   = 0;
+        _tables[i]->_first_error     = NULL;
+        if (_tables[i]->_status_item && (quick == FALSE))
         {
           WipeItem (_tables[i]->_status_item);
           _tables[i]->_status_item = NULL;
@@ -371,21 +380,29 @@ namespace Table
         {
           icon = g_strdup (GTK_STOCK_EXECUTE);
           _is_over = FALSE;
+
+          if (_is_active && table->_ready_to_fence)
+          {
+            table->Spread ();
+          }
         }
 
-        if (    IsPlugged ()
-            && table->IsDisplayed ()
-            && (table->GetSize () > 1))
+        if (quick == FALSE)
         {
-          table->_status_item = Canvas::PutStockIconInTable (table->_header_item,
-                                                             icon,
-                                                             0, 0);
-        }
+          if (    IsPlugged ()
+              && table->IsDisplayed ()
+              && (table->GetSize () > 1))
+          {
+            table->_status_item = Canvas::PutStockIconInTable (table->_header_item,
+                                                               icon,
+                                                               0, 0);
+          }
 
-        _from_border->SetTableIcon (_nb_tables-t-1,
+          _from_border->SetTableIcon (_nb_tables-t-1,
+                                      icon);
+          _to_border->SetTableIcon (_nb_tables-t-1,
                                     icon);
-        _to_border->SetTableIcon (_nb_tables-t-1,
-                                  icon);
+        }
 
         g_free (icon);
       }
@@ -604,9 +621,8 @@ namespace Table
         }
         else if (g_strcmp0 ((char *) n->name, "Tableau") == 0)
         {
-          gchar *prop;
+          gchar *prop = (gchar *) xmlGetProp (n, BAD_CAST "Taille");
 
-          prop = (gchar *) xmlGetProp (n, BAD_CAST "Taille");
           if (prop)
           {
             table = GetTable (atoi (prop));
@@ -615,6 +631,7 @@ namespace Table
             {
               table->Load (n);
             }
+
             xmlFree (prop);
           }
         }
@@ -767,12 +784,16 @@ namespace Table
     _tables = (Table **) g_malloc (_nb_tables * sizeof (Table *));
     for (guint t = 0; t < _nb_tables; t++)
     {
+      Contest *competition = _supervisor->GetContest ();
+
       // Create the tables
       {
         _tables[t] = new Table (this,
                                 _supervisor->GetXmlPlayerTag (),
                                 1 << t,
-                                _nb_tables - t-1);
+                                _nb_tables - t-1,
+                                "competition", competition->GetNetID (),
+                                NULL);
 
         if (t > 0)
         {
@@ -987,9 +1008,27 @@ namespace Table
     {
       if (data->_match->IsOver () == FALSE)
       {
-        if (data->_match->HasError ())
+        if (   data->_match->GetOpponent (0)
+            && data->_match->GetOpponent (1))
         {
-          left_table->_first_error = data->_match;
+          if (data->_match->HasError ())
+          {
+            left_table->_first_error = data->_match;
+          }
+        }
+        else
+        {
+          left_table->_ready_to_fence = FALSE;
+        }
+
+        if (   (data->_match->GetPiste () == 0)
+            || (data->_match->GetStartTime () == NULL))
+        {
+          left_table->_has_all_roadmap = FALSE;
+        }
+        else
+        {
+          left_table->_roadmap_count++;
         }
 
         left_table->_is_over = FALSE;
@@ -1199,7 +1238,10 @@ namespace Table
       }
 
       // _score_goo_table
-      if (parent)
+      if (   parent
+          && (   (table_set->_has_marshaller == FALSE)
+              || data->_table->_is_over
+              || data->_table->_has_all_roadmap))
       {
         data->_score_goo_table = goo_canvas_table_new (data->_fencer_goo_table, NULL);
         Canvas::PutInTable (data->_fencer_goo_table,
@@ -1638,6 +1680,7 @@ namespace Table
         GtkTreeIter  iter;
         gint        *indices;
         GtkTreePath *path;
+        Contest     *contest = _supervisor->GetContest ();
 
         gtk_tree_store_append (_quick_search_treestore,
                                &iter,
@@ -1656,18 +1699,21 @@ namespace Table
         {
           gchar *path_string = gtk_tree_path_to_string (path);
 
-          Contest *contest = _supervisor->GetContest ();
-          gchar   *ref     = g_strdup_printf ("#%u/%d/%s.%s",
-                                              contest->GetNetID (),
-                                              _supervisor->GetId (),
-                                              _id,
-                                              path_string);
+          gchar *ref = g_strdup_printf ("#%u/%d/%s.%s",
+                                        contest->GetNetID (),
+                                        _supervisor->GetId (),
+                                        _id,
+                                        path_string);
           data->_match->SetFlashRef (ref);
           g_free (ref);
           g_free (path_string);
         }
 
-        left_table->ManageMatch (data->_match);
+        left_table->ManageMatch (data->_match,
+                                 "competition", contest->GetNetID (),
+                                 "stage",       _supervisor->GetNetID (),
+                                 "batch",       left_table->GetNetID (),
+                                 NULL);
       }
 
       data->_match->SetData (this,
@@ -1991,6 +2037,64 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  void TableSet::Recall ()
+  {
+    for (guint t = 1; t < _nb_tables; t++)
+    {
+      Table *table = _tables[t];
+
+      table->Recall ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean TableSet::OnMessage (Net::Message *message)
+  {
+    for (guint t = 1; t < _nb_tables; t++)
+    {
+      Table *table = _tables[t];
+      Match *match = table->GetMatch (message);
+
+      if (match)
+      {
+        guint referee = message->GetInteger ("referee");
+
+        if (message->GetFitness () > 0)
+        {
+          gchar *start_time = message->GetString  ("start_time");
+
+          match->SetStartTime (new FieTime (start_time));
+          g_free (start_time);
+
+          match->SetPiste (message->GetInteger ("piste"));
+          AddReferee (match,
+                      referee);
+        }
+        else
+        {
+          match->SetPiste (0);
+          match->SetStartTime (NULL);
+          RemoveReferee (match,
+                         referee);
+        }
+
+        RefreshParcel ();
+        RefreshTableStatus (t == _nb_tables-1);
+
+        if (   ((message->GetFitness () > 0)  && (table->_has_all_roadmap))
+            || ((message->GetFitness () == 0) && (table->_roadmap_count == 0)))
+        {
+          Display (NULL);
+        }
+
+        return TRUE;
+      }
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean TableSet::OnHttpPost (const gchar *command,
                                  const gchar **ressource,
                                  const gchar *data)
@@ -2166,6 +2270,22 @@ namespace Table
                                                        "drop_zone");
 
       zone->AddObject (referee);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSet::RemoveReferee (Match *match,
+                                guint  referee_ref)
+  {
+    Contest  *contest = _supervisor->GetContest ();
+    Player   *referee = contest->GetRefereeFromRef (referee_ref);
+
+    if (referee)
+    {
+      DropZone *zone = (DropZone *) match->GetPtrData (this,
+                                                       "drop_zone");
+
+      zone->RemoveObject (referee);
     }
   }
 
@@ -3265,7 +3385,7 @@ namespace Table
                                  0.0,
                                  -1,
                                  GTK_ANCHOR_W,
-                                 "fill-color", "Black",
+                                 "fill-color", "Grey",
                                  "font", font,
                                  NULL);
             {
@@ -3316,9 +3436,29 @@ namespace Table
                                  0.0,
                                  -1,
                                  GTK_ANCHOR_W,
-                                 "fill-color", "Black",
+                                 "fill-color", "Grey",
                                  "font", font,
                                  NULL);
+
+            if (match->GetPiste ())
+            {
+              FieTime *start_time = match->GetStartTime ();
+
+              gchar *piste = g_strdup_printf ("#%02d @ %s",
+                                              match->GetPiste (),
+                                              start_time->GetImage ());
+
+              goo_canvas_text_new (strip_group,
+                                   piste,
+                                   5.0,
+                                   4.0,
+                                   -1,
+                                   GTK_ANCHOR_W,
+                                   "fill-color", "Black",
+                                   "font", font,
+                                   NULL);
+              g_free (piste);
+            }
 
             Canvas::HAlign (strip_group,
                             Canvas::START,
@@ -3395,6 +3535,14 @@ namespace Table
                               gettext ("Place #"),
                               _first_place);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSet::OnPartnerJoined (Net::Partner *partner,
+                                  gboolean      joined)
+  {
+    _has_marshaller = joined;
+    Display (NULL);
   }
 
   // --------------------------------------------------------------------------------

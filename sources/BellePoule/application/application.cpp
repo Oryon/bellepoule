@@ -238,7 +238,7 @@ Application::Application (const gchar   *role,
 // --------------------------------------------------------------------------------
 Application::~Application ()
 {
-  Net::Ring::Leave ();
+  Net::Ring::_broker->Leave ();
 
   AttributeDesc::Cleanup ();
 
@@ -612,7 +612,7 @@ gboolean Application::OnHttpPost (Net::Message *message)
 {
   if (message->Is ("Handshake"))
   {
-    Net::Ring::Handshake (message);
+    Net::Ring::_broker->Handshake (message);
     return TRUE;
   }
   return FALSE;

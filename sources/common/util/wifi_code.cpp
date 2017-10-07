@@ -128,7 +128,7 @@ gchar *WifiCode::GetKey ()
 gchar *WifiCode::GetText ()
 {
   gchar       *network = GetNetwork ();
-  const gchar *ip      = Net::Ring::GetIpV4Address ();
+  const gchar *ip      = Net::Ring::_broker->GetIpV4Address ();
   gchar       *key     = GetKey ();
   gchar       *text;
 

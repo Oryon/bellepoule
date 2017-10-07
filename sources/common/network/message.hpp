@@ -67,7 +67,10 @@ namespace Net
 
       void Spread ();
 
+      gboolean IsSpread ();
+
     private:
+      gboolean  _spread;
       gboolean  _is_valid;
       GKeyFile *_key_file;
       gchar    *_passphrase;

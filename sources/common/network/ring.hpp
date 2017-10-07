@@ -18,13 +18,16 @@
 
 #include <gtk/gtk.h>
 
+#include <util/object.hpp>
+
 class Partner;
 
 namespace Net
 {
   class Message;
 
-  class Ring
+  class Ring : public Object,
+               public Object::Listener
   {
     public:
       class Listener
@@ -35,64 +38,71 @@ namespace Net
       };
 
     public:
+      static Ring *_broker;
+
       static void Join (const gchar *role,
                         guint        unicast_port,
                         GtkWidget   *partner_indicator);
 
-      static void Leave ();
+      void Leave ();
 
-      static void Handshake (Message *message);
+      void Handshake (Message *message);
 
-      static void SpreadMessage (Message *message);
+      void SpreadMessage (Message *message);
 
-      static void RecallMessage (Message *message);
+      void RecallMessage (Message *message);
 
-      static const gchar *GetRole ();
+      const gchar *GetRole ();
 
-      static void RegisterListener (Listener *listener);
+      void RegisterListener (Listener *listener);
 
-      static void UnregisterListener (Listener *listener);
+      void UnregisterListener (Listener *listener);
 
-      static void NotifyPartnerStatus (Partner  *partner,
-                                       gboolean  join);
+      void NotifyPartnerStatus (Partner  *partner,
+                                gboolean  join);
 
-      static const gchar *GetIpV4Address ();
+      const gchar *GetIpV4Address ();
 
     private:
-      Ring ();
+      Ring (const gchar *role,
+            guint        unicast_port,
+            GtkWidget   *partner_indicator);
+
       virtual ~Ring ();
 
     private:
       static const gchar *ANNOUNCE_GROUP;
       static const guint  ANNOUNCE_PORT = 35000;
 
-      static gchar          *_role;
-      static gchar          *_ip_address;
-      static guint           _unicast_port;
-      static GList          *_partner_list;
-      static GList          *_message_list;
-      static GtkWidget      *_partner_indicator;
-      static GList          *_listeners;
-      static GSocketAddress *_multicast_address;
+      gchar          *_role;
+      gchar          *_ip_address;
+      guint           _unicast_port;
+      GList          *_partner_list;
+      GList          *_message_list;
+      GtkWidget      *_partner_indicator;
+      GList          *_listeners;
+      GSocketAddress *_multicast_address;
 
-      static void Add (Partner *partner);
+      void Add (Partner *partner);
 
-      static void Remove (const gchar *role);
+      void Remove (const gchar *role);
 
-      static void Synchronize (Partner *partner);
+      void Synchronize (Partner *partner);
 
-      static void AnnounceAvailability ();
+      void AnnounceAvailability ();
 
-      static void Multicast (Message *message);
+      void Multicast (Message *message);
 
-      static gboolean JoinMulticast (GSocket *socket);
+      gboolean JoinMulticast (GSocket *socket);
 
       static gboolean OnMulticast (GSocket      *socket,
                                    GIOCondition  condition,
-                                   gpointer      user_data);
+                                   Ring         *ring);
 
-      static void Send (Message *message);
+      void Send (Message *message);
 
-      static gchar *GuessIpV4Address ();
+      gchar *GuessIpV4Address ();
+
+      void OnObjectDeleted (Object *object);
   };
 }

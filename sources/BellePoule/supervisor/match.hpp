@@ -26,6 +26,8 @@
 #include "score.hpp"
 
 class Player;
+class FieTime;
+
 class Match : public Object
 {
   public:
@@ -61,6 +63,14 @@ class Match : public Object
 
     gboolean HasError ();
 
+    void SetPiste (guint piste);
+
+    void SetStartTime (FieTime *time);
+
+    guint GetPiste ();
+
+    FieTime *GetStartTime ();
+
     void SetScore (Player *fencer, gint score, gboolean is_the_best);
 
     gboolean SetScore (Player *fencer, gchar *score);
@@ -78,6 +88,10 @@ class Match : public Object
 
     void Load (xmlNode *node,
                Player        *fencer);
+
+    void DiscloseWithIdChain (va_list chain_id);
+
+    guint GetNetID ();
 
     void CleanScore ();
 
@@ -110,11 +124,15 @@ class Match : public Object
     gchar    *_name;
     guint     _number;
     GSList   *_referee_list;
+    guint     _piste;
+    FieTime  *_start_time;
 
     gboolean ScoreIsNumber (gchar *score);
 
     void Save (xmlTextWriter *xml_writer,
                Player        *fencer);
+
+    void FeedParcel (Net::Message *parcel);
 
     void Init (Data *max_score);
 

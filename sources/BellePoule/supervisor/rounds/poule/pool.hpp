@@ -52,9 +52,10 @@ namespace Pool
       Pool (Data        *max_score,
             guint        number,
             const gchar *xml_player_tag,
-            guint32      rand_seed);
+            guint32      rand_seed,
+            guint        stage_id,
+            ...);
 
-      void         SetIdChain       (guint contest_netid, guint batch_netid, guint stage_id);
       guint        GetPiste         ();
       FieTime     *GetStartTime     ();
       void         AddFencer        (Player *player, Object *rank_owner);

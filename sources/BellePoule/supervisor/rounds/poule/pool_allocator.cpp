@@ -256,13 +256,13 @@ namespace Pool
       }
     }
 
-    Net::Ring::RegisterListener (this);
+    Net::Ring::_broker->RegisterListener (this);
   }
 
   // --------------------------------------------------------------------------------
   Allocator::~Allocator ()
   {
-    Net::Ring::UnregisterListener (this);
+    Net::Ring::_broker->UnregisterListener (this);
 
     DeletePools ();
 
@@ -897,10 +897,12 @@ namespace Pool
             current_pool = new Pool (_max_score,
                                      number+1,
                                      GetXmlPlayerTag (),
-                                     _rand_seed);
-            current_pool->SetIdChain (_contest->GetNetID (),
-                                      _parcel->GetNetID (),
-                                      GetId () + 1);
+                                     _rand_seed,
+                                     GetId ()+1,
+                                     "competition", _contest->GetNetID (),
+                                     "stage",       _parcel->GetNetID (),
+                                     "batch",       _parcel->GetNetID (),
+                                     NULL);
             current_pool->SetStrengthContributors (_selected_config->_size - _selected_config->_size%2);
 
             {
@@ -1167,10 +1169,12 @@ namespace Pool
         pool_table[i] = new Pool (_max_score,
                                   i+1,
                                   GetXmlPlayerTag (),
-                                  _rand_seed);
-        pool_table[i]->SetIdChain (_contest->GetNetID (),
-                                   _parcel->GetNetID (),
-                                   GetId () + 1);
+                                  _rand_seed,
+                                  GetId ()+1,
+                                  "competition", _contest->GetNetID (),
+                                  "stage",       _parcel->GetNetID (),
+                                  "batch",       _parcel->GetNetID (),
+                                  NULL);
         pool_table[i]->SetStrengthContributors (_selected_config->_size - _selected_config->_size%2);
 
         {

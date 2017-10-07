@@ -16,6 +16,8 @@
 
 #include "util/attribute.hpp"
 #include "util/player.hpp"
+#include "util/fie_time.hpp"
+#include "network/message.hpp"
 
 #include "table_set.hpp"
 #include "table_zone.hpp"
@@ -28,7 +30,8 @@ namespace Table
   Table::Table (TableSet    *table_set,
                 const gchar *xml_player_tag,
                 guint        size,
-                guint        number)
+                guint        number,
+                ...)
     : Object ("Table")
   {
     _table_set          = table_set;
@@ -39,6 +42,9 @@ namespace Table
     _right_table        = NULL;
     _first_error        = NULL;
     _is_over            = FALSE;
+    _ready_to_fence     = FALSE;
+    _has_all_roadmap    = FALSE;
+    _roadmap_count      = 0;
     _status_item        = NULL;
     _header_item        = NULL;
     _defeated_table_set = NULL;
@@ -49,6 +55,31 @@ namespace Table
     _xml_player_tag     = xml_player_tag;
 
     _match_list = NULL;
+
+    Disclose ("Batch");
+
+    {
+      va_list ap;
+
+      va_start (ap, number);
+      while (gchar *key = va_arg (ap, gchar *))
+      {
+        guint value = va_arg (ap, guint);
+
+        _parcel->Set (key, value);
+      }
+      va_end (ap);
+
+      {
+        gchar *image = g_strdup_printf ("%s\n%s",
+                                        _table_set->GetName (),
+                                        GetImage ());
+
+        _parcel->Set ("name", image);
+
+        g_free (image);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -255,18 +286,44 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Table::ManageMatch (Match *match)
+  void Table::ManageMatch (Match *match,
+                           ...)
   {
     _match_list = g_slist_insert_sorted (_match_list,
                                          match,
                                          (GCompareFunc) CompareMatchNumber);
+
+    {
+      va_list ap;
+
+      va_start (ap, match);
+      match->DiscloseWithIdChain (ap);
+      va_end (ap);
+    }
   }
 
   // --------------------------------------------------------------------------------
-  Match *Table::GetMatch (guint index)
+  Match *Table::GetMatch (Net::Message *roadmap)
   {
-    return (Match *) g_slist_nth_data (_match_list,
-                                       index);
+    if (_parcel->GetNetID () == roadmap->GetInteger ("batch"))
+    {
+      guint   source        = roadmap->GetInteger ("source");
+      GSList *current_match = _match_list;
+
+      while (current_match)
+      {
+        Match *match = (Match *) current_match->data;
+
+        if (source == match->GetNetID ())
+        {
+          return match;
+        }
+
+        current_match = g_slist_next (current_match);
+      }
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -298,6 +355,7 @@ namespace Table
   {
     _match_list = g_slist_remove (_match_list,
                                   match);
+    match->Recall ();
   }
 
   // --------------------------------------------------------------------------------
@@ -310,33 +368,59 @@ namespace Table
         if ((_loaded == FALSE) && (g_strcmp0 ((char *) n->name, "Tableau") == 0))
         {
           _loaded = TRUE;
+
+          {
+            gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "NetID");
+
+            if (attr)
+            {
+              _parcel->SetNetID (g_ascii_strtoull (attr,
+                                                   NULL,
+                                                   16));
+              xmlFree (attr);
+            }
+          }
         }
         else if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
-          gchar  *attr    = (gchar *) xmlGetProp (n, BAD_CAST "ID");
-          GSList *current = _match_list;
-          gchar  *number  = g_strdup_printf ("%d.%s", GetSize (), attr);
+          gchar *number = NULL;
 
-          while (current)
           {
-            Match       *match = (Match *) current->data;
-            const gchar *id    = match->GetName ();
+            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
 
-            id = strstr (id, "-");
-            if (id)
+            if (attr)
             {
-              id++;
-              if (g_strcmp0 (id, number) == 0)
-              {
-                LoadMatch (n,
-                           match);
-                break;
-              }
+              number = g_strdup_printf ("%d.%s", GetSize (), attr);
+
+              xmlFree (attr);
             }
-            current = g_slist_next (current);
           }
-          g_free (number);
-          xmlFree (attr);
+
+          if (number)
+          {
+            GSList *current = _match_list;
+
+            while (current)
+            {
+              Match       *match = (Match *) current->data;
+              const gchar *id    = match->GetName ();
+
+              id = strstr (id, "-");
+              if (id)
+              {
+                id++;
+                if (g_strcmp0 (id, number) == 0)
+                {
+                  LoadMatch (n,
+                             match);
+                  break;
+                }
+              }
+              current = g_slist_next (current);
+            }
+
+            g_free (number);
+          }
         }
         else
         {
@@ -360,16 +444,39 @@ namespace Table
 
         if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
-          gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
-
-          A = NULL;
-          B = NULL;
-          if ((attr == NULL) || (atoi (attr) != match->GetNumber ()))
           {
+            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+
+            A = NULL;
+            B = NULL;
+            if ((attr == NULL) || (atoi (attr) != match->GetNumber ()))
+            {
+              xmlFree (attr);
+              return;
+            }
             xmlFree (attr);
-            return;
           }
-          xmlFree (attr);
+
+          {
+            gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Piste");
+
+            if (attr)
+            {
+              match->SetPiste (atoi (attr));
+              xmlFree (attr);
+            }
+          }
+
+          {
+            gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
+
+            if (attr)
+            {
+              match->SetStartTime (new FieTime (attr));
+
+              xmlFree (attr);
+            }
+          }
         }
         else if (g_strcmp0 ((char *) n->name, "Arbitre") == 0)
         {
@@ -451,6 +558,11 @@ namespace Table
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "ID",
                                        "A%d", _size);
+
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "NetID",
+                                       "%x", _parcel->GetNetID ());
+
     {
       gchar *image = GetImage ();
 
@@ -459,9 +571,11 @@ namespace Table
                                    BAD_CAST image);
       g_free (image);
     }
+
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "Taille",
                                        "%d", _size);
+
     if (_defeated_table_set)
     {
       xmlTextWriterWriteAttribute (xml_writer,
@@ -529,6 +643,56 @@ namespace Table
   void Table::Hide ()
   {
     _is_displayed = FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Table::FeedParcel (Net::Message *parcel)
+  {
+    parcel->Set ("done", _is_over);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Table::Spread ()
+  {
+    if (_parcel->IsSpread () == FALSE)
+    {
+      Object::Spread ();
+
+      {
+        GSList *current = _match_list;
+
+        while (current)
+        {
+          Match *match = (Match *) current->data;
+
+          if (match->GetOpponent (0) && match->GetOpponent (1))
+          {
+            match->Spread ();
+          }
+
+          current = g_slist_next (current);
+        }
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Table::Recall ()
+  {
+    Object::Recall ();
+
+    {
+      GSList *current = _match_list;
+
+      while (current)
+      {
+        Match *match = (Match *) current->data;
+
+        match->Recall ();
+
+        current = g_slist_next (current);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

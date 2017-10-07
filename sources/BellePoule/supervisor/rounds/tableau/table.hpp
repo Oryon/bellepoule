@@ -35,7 +35,8 @@ namespace Table
       Table (TableSet    *table_set,
              const gchar *xml_player_tag,
              guint        size,
-             guint        number);
+             guint        number,
+             ...);
 
       gchar *GetImage ();
 
@@ -57,6 +58,12 @@ namespace Table
 
       void Hide ();
 
+      void FeedParcel (Net::Message *parcel);
+
+      void Spread ();
+
+      void Recall ();
+
       void SaveHeader (xmlTextWriter *xml_writer);
 
       void Save (xmlTextWriter *xml_writer);
@@ -65,11 +72,12 @@ namespace Table
 
       gboolean IsDisplayed ();
 
-      void ManageMatch (Match *match);
+      void ManageMatch (Match *match,
+                        ...);
 
       void DropMatch (Match *match);
 
-      Match *GetMatch (guint index);
+      Match *GetMatch (Net::Message *roadmap);
 
       void AddNode (GNode *node);
 
@@ -82,7 +90,10 @@ namespace Table
                         GSList **blackcardeds);
 
       Match         *_first_error;
-      guint          _is_over;
+      gboolean       _is_over;
+      gboolean       _ready_to_fence;
+      guint          _roadmap_count;
+      gboolean       _has_all_roadmap;
       GooCanvasItem *_status_item;
       GooCanvasItem *_header_item;
       TableSet      *_defeated_table_set;
