@@ -715,7 +715,7 @@ void Match::AddReferee (Player *referee)
 // --------------------------------------------------------------------------------
 void Match::RemoveReferee (Player *referee)
 {
-  if (_referee_list == NULL)
+  if (_referee_list)
   {
     _referee_list = g_slist_remove (_referee_list,
                                     referee);

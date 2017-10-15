@@ -56,7 +56,6 @@ namespace People
                                           "IP",
                                           "HS",
                                           "attending",
-                                          "availability",
                                           "final_rank",
                                           "global_status",
                                           "indice",

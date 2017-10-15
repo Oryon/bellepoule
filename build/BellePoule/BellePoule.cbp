@@ -356,12 +356,6 @@
 		<Unit filename="../../sources/BellePoule/supervisor/match.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/referee_zone.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/referee_zone.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/barrage/barrage.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

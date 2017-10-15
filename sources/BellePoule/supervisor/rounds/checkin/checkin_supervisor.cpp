@@ -73,7 +73,6 @@ namespace People
 #endif
                                           "IP",
                                           "HS",
-                                          "availability",
                                           "exported",
                                           "final_rank",
                                           "global_status",

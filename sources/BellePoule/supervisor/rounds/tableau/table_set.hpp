@@ -20,7 +20,6 @@
 
 #include "util/data.hpp"
 #include "util/canvas_module.hpp"
-#include "util/drop_zone.hpp"
 #include "network/ring.hpp"
 #include "../../match.hpp"
 #include "../../score_collector.hpp"
@@ -204,14 +203,9 @@ namespace Table
 
       void DrawAllConnectors ();
 
-      void DrawAllZones ();
-
       void Garnish ();
 
       Table *GetTable (guint size);
-
-      void RemoveReferee (Match *match,
-                          guint  referee_ref);
 
       void LoadNode (xmlNode *xml_node);
 
@@ -333,20 +327,6 @@ namespace Table
                                          TableSet       *ts);
 
     private:
-      void DropObject (Object   *object,
-                       DropZone *source_zone,
-                       DropZone *target_zone);
-
-      Object *GetDropObjectFromRef (guint32 ref,
-                                    guint   key);
-
-      gboolean DragingIsForbidden (Object *object);
-
-      GString *GetFloatingImage (Object *floating_object);
-
-      gboolean DroppingIsAllowed (Object   *floating_object,
-                                  DropZone *in_zone);
-
       void GetBounds (GNode           *top,
                       GNode           *bottom,
                       GooCanvasBounds *bounds);

@@ -107,7 +107,6 @@ namespace Pool
                                           "IP",
                                           "HS",
                                           "attending",
-                                          "availability",
                                           "exported",
                                           "final_rank",
                                           "global_status",
@@ -180,7 +179,6 @@ namespace Pool
                                             "IP",
                                             "HS",
                                             "attending",
-                                            "availability",
                                             "exported",
                                             "final_rank",
                                             "global_status",
@@ -412,21 +410,11 @@ namespace Pool
     PoolZone *source_pool_zone = NULL;
     PoolZone *target_pool_zone = NULL;
 
-    if (source_zone)
-    {
-      source_pool_zone = (PoolZone *) source_zone;
-
-      if (floating_object->Is ("Referee"))
-      {
-        source_pool_zone->RemoveObject (floating_object);
-      }
-    }
-
     if (target_zone)
     {
       target_pool_zone = (PoolZone *) target_zone;
 
-      if (floating_object->Is ("Referee") == FALSE)
+      if (floating_object->Is ("Fencer"))
       {
         if (source_pool_zone)
         {
@@ -452,24 +440,6 @@ namespace Pool
 
         _fencer_list->Update (floating_object);
       }
-      else
-      {
-        target_pool_zone->AddObject (floating_object);
-
-        if (Locked ())
-        {
-          Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
-
-          if (next_stage)
-          {
-            next_stage->OnAttrListUpdated ();
-          }
-        }
-        else
-        {
-          MakeDirty ();
-        }
-      }
     }
 
     if (source_pool_zone || target_pool_zone)
@@ -486,9 +456,16 @@ namespace Pool
   {
     Player *player = (Player *) object;
 
-    if (player && player->Is ("Fencer"))
+    if (player)
     {
-      return Locked ();
+      if (player->Is ("Fencer"))
+      {
+        return Locked ();
+      }
+      else
+      {
+        return TRUE;
+      }
     }
 
     return FALSE;
@@ -949,7 +926,9 @@ namespace Pool
 
             if (referee)
             {
-              current_zone->AddObject (referee);
+              Pool *pool = current_zone->GetPool ();
+
+              pool->AddReferee (referee);
             }
             xmlFree (attr);
           }
@@ -1747,11 +1726,11 @@ namespace Pool
                           "font", BP_FONT "14px",
                           "fill_color", "black",
                           NULL);
-          }
 
-          SetObjectDropZone (player,
-                             item,
-                             zone);
+            SetObjectDropZone (player,
+                               item,
+                               zone);
+          }
         }
 
         layout_list = g_slist_next (layout_list);
@@ -1861,7 +1840,6 @@ namespace Pool
                                   gettext (" Referees allocation \n ongoing "));
         }
       }
-
 
       if (pool->GetUIntData (this, "is_balanced") == 0)
       {
@@ -2170,19 +2148,19 @@ namespace Pool
 
     {
       guint   ref     = message->GetInteger ("referee");
-      Object *referee = _contest->GetRefereeFromRef (ref);
+      Player *referee = (Player *) _contest->GetRefereeFromRef (ref);
 
       if (referee)
       {
         if (message->GetFitness () > 0)
         {
-          DropObject (referee,
-                      NULL,
-                      zone);
-          return;
+          pool->AddReferee (referee);
+        }
+        else
+        {
+          pool->RemoveReferee (referee);
         }
       }
-      pool->RemoveAllReferee ();
     }
 
     MakeDirty ();

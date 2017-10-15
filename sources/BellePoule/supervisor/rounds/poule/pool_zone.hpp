@@ -20,13 +20,13 @@
 
 #include "util/object.hpp"
 #include "util/canvas_module.hpp"
-#include "../../referee_zone.hpp"
+#include "util/drop_zone.hpp"
 
 #include "pool.hpp"
 
 namespace Pool
 {
-  class PoolZone : public RefereeZone
+  class PoolZone : public DropZone
   {
     public:
       PoolZone (Module *container,
@@ -40,11 +40,5 @@ namespace Pool
       Pool *_pool;
 
       virtual ~PoolZone ();
-
-      void AddReferee (Player *referee);
-
-      void RemoveReferee (Player *referee);
-
-      guint GetNbMatchs ();
   };
 }

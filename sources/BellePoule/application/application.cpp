@@ -426,15 +426,6 @@ void Application::Prepare ()
       desc->_scope         = AttributeDesc::LOCAL;
       desc->_favorite_look = AttributeDesc::GRAPHICAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_STRING, "availability", "Disponibilite", gettext ("availability"));
-      desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
-      desc->_rights         = AttributeDesc::PRIVATE;
-      desc->_scope          = AttributeDesc::GLOBAL;
-      desc->_favorite_look  = AttributeDesc::GRAPHICAL;
-      desc->AddDiscreteValues ("Busy",   gettext ("Busy"),   (gchar *) GTK_STOCK_EXECUTE,
-                               "Absent", gettext ("Absent"), (gchar *) GTK_STOCK_CLOSE,
-                               "Free",   gettext ("Free"),   (gchar *) GTK_STOCK_APPLY, NULL);
-
       desc = AttributeDesc::Declare (G_TYPE_STRING, "connection", "Connection", gettext ("connection"));
       desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
       desc->_rights         = AttributeDesc::PRIVATE;

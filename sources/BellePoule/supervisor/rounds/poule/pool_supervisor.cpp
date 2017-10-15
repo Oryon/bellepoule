@@ -73,7 +73,6 @@ namespace Pool
                                           "IP",
                                           "HS",
                                           "attending",
-                                          "availability",
                                           "exported",
                                           "final_rank",
                                           "global_status",
@@ -111,7 +110,6 @@ namespace Pool
 #endif
                                             "IP",
                                             "attending",
-                                            "availability",
                                             "exported",
                                             "final_rank",
                                             "global_status",
@@ -372,31 +370,14 @@ namespace Pool
                                        NULL,
                                        pool->GetNumber () - 1))
     {
-      PoolZone *zone = _allocator->GetZone (pool->GetNumber () - 1);
+      GdkPixbuf *pixbuf = pool->GetStatusPixbuf ();
 
-      if (pool->IsOver ())
+      gtk_list_store_set (_pool_liststore, &iter,
+                          STATUS_COLUMN, pixbuf,
+                          -1);
+      if (pixbuf)
       {
-        zone->FreeReferees ();
-      }
-      else if (pool->HasError ())
-      {
-        zone->BookReferees ();
-      }
-      else
-      {
-        zone->BookReferees ();
-      }
-
-      {
-        GdkPixbuf *pixbuf = pool->GetStatusPixbuf ();
-
-        gtk_list_store_set (_pool_liststore, &iter,
-                            STATUS_COLUMN, pixbuf,
-                            -1);
-        if (pixbuf)
-        {
-          g_object_unref (pixbuf);
-        }
+        g_object_unref (pixbuf);
       }
     }
 

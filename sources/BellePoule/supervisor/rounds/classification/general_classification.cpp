@@ -47,7 +47,6 @@ namespace People
                                           "IP",
                                           "HS",
                                           "attending",
-                                          "availability",
                                           "exported",
                                           "global_status",
                                           "indice",

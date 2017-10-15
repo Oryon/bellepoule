@@ -102,10 +102,6 @@ class Player : public Object, Net::MessageUploader::Listener
     Weapon *GetWeapon ();
     void  SetWeapon (Weapon *weapon);
 
-    void  AddMatchs    (guint nb_matchs);
-    void  RemoveMatchs (guint nb_matchs);
-    guint GetNbMatchs  ();
-
     gchar *GetName ();
     void SetName (const gchar *name);
     void Dump ();
@@ -179,7 +175,6 @@ class Player : public Object, Net::MessageUploader::Listener
     static GSList *_attributes_model;
 
     guint         _ref;
-    guint         _nb_matchs;
     Weapon       *_weapon;
     const gchar  *_player_class;
     WifiCode     *_wifi_code;

@@ -697,22 +697,15 @@ namespace Table
       table_set->_quick_score_collector->Refresh (match);
     }
 
+    if ((score_collector == NULL) || match->IsOver ())
     {
-      TableZone *zone = (TableZone *) match->GetPtrData (table_set,
-                                                         "drop_zone");
-
-      if ((score_collector == NULL) || match->IsOver ())
-      {
-        zone->FreeReferees ();
-        table_set->SpreadWinners ();
-        table_set->RefreshNodes ();
-        table_set->RefilterQuickSearch ();
-      }
-      else
-      {
-        zone->BookReferees ();
-        table_set->RefreshTableStatus ();
-      }
+      table_set->SpreadWinners ();
+      table_set->RefreshNodes ();
+      table_set->RefilterQuickSearch ();
+    }
+    else
+    {
+      table_set->RefreshTableStatus ();
     }
 
     {
@@ -745,9 +738,6 @@ namespace Table
       g_node_destroy (_tree_root);
 
       _tree_root = NULL;
-
-      g_slist_free (_drop_zones);
-      _drop_zones = NULL;
     }
 
     for (guint i = 0; i < _nb_tables; i++)
@@ -866,23 +856,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::DrawAllZones ()
-  {
-    if (_tree_root)
-    {
-      GSList *current = _drop_zones;
-
-      while (current)
-      {
-        DropZone *zone = (DropZone *) current->data;
-
-        zone->Draw (GetRootItem ());
-        current = g_slist_next (current);
-      }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void TableSet::DumpToHTML (FILE *file)
   {
     fprintf (file, "        <div>\n");
@@ -953,17 +926,6 @@ namespace Table
     data->_score_goo_image  = NULL;
     data->_fencer_goo_image = NULL;
     data->_print_goo_icon   = NULL;
-
-    if (data->_match)
-    {
-      TableZone *zone = (TableZone *) data->_match->GetPtrData (table_set,
-                                                                "drop_zone");
-
-      if (zone)
-      {
-        zone->Wipe ();
-      }
-    }
 
     return FALSE;
   }
@@ -1203,17 +1165,15 @@ namespace Table
 
         // DropZone
         {
-          DropZone *zone = (DropZone *) data->_match->GetPtrData (table_set,
-                                                                  "drop_zone");
+          TableZone *zone = (TableZone *) data->_match->GetPtrData (table_set,
+                                                                    "table_zone");
 
           if (zone)
           {
-            TableZone *table_zone = (TableZone *) zone;
-
-            table_zone->PutInTable (table_set,
-                                    data->_match_goo_table,
-                                    0,
-                                    0);
+            zone->PutInTable (table_set,
+                              data->_match_goo_table,
+                              0,
+                              0);
           }
         }
       }
@@ -1389,7 +1349,6 @@ namespace Table
 
     RefreshTableStatus ();
     DrawAllConnectors  ();
-    DrawAllZones       ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1556,12 +1515,12 @@ namespace Table
 
     if (data->_match)
     {
-      DropZone *zone = (DropZone *) data->_match->GetPtrData (table_set,
-                                                              "drop_zone");
+      TableZone *zone = (TableZone *) data->_match->GetPtrData (table_set,
+                                                                "table_zone");
 
       Object::TryToRelease (zone);
       data->_match->RemoveData (table_set,
-                                "drop_zone");
+                                "table_zone");
 
       Object::TryToRelease (data->_match);
     }
@@ -1720,15 +1679,12 @@ namespace Table
                              "table", data->_table->GetLeftTable ());
 
       {
-        TableZone *drop_zone = new TableZone (_supervisor,
-                                              _table_spacing);
+        TableZone *zone = new TableZone ();
 
-        _drop_zones = g_slist_prepend (_drop_zones,
-                                       (DropZone *) drop_zone);
-        drop_zone->AddNode (node);
+        zone->AddNode (node);
 
         data->_match->SetData (this,
-                               "drop_zone", (DropZone *) (drop_zone));
+                               "table_zone", zone);
       }
 
       AddFork (node);
@@ -1789,11 +1745,9 @@ namespace Table
       }
 
       {
-        DropZone *zone = (DropZone *) data->_match->GetPtrData (this,
-                                                                "drop_zone");
+        TableZone *zone = (TableZone *) data->_match->GetPtrData (this,
+                                                                  "table_zone");
 
-        _drop_zones = g_slist_remove (_drop_zones,
-                                      zone);
         Object::TryToRelease (zone);
       }
 
@@ -2057,37 +2011,40 @@ namespace Table
 
       if (match)
       {
-        guint referee = message->GetInteger ("referee");
+        guint    referee_ref = message->GetInteger ("referee");
+        Contest *contest     = _supervisor->GetContest ();
+        Player  *referee     = contest->GetRefereeFromRef (referee_ref);
 
-        if (message->GetFitness () > 0)
+        if (referee)
         {
-          gchar *start_time = message->GetString  ("start_time");
+          if (message->GetFitness () > 0)
+          {
+            gchar *start_time = message->GetString  ("start_time");
 
-          match->SetStartTime (new FieTime (start_time));
-          g_free (start_time);
+            match->SetStartTime (new FieTime (start_time));
+            g_free (start_time);
 
-          match->SetPiste (message->GetInteger ("piste"));
-          AddReferee (match,
-                      referee);
+            match->SetPiste (message->GetInteger ("piste"));
+            match->AddReferee (referee);
+          }
+          else
+          {
+            match->SetPiste (0);
+            match->SetStartTime (NULL);
+            match->RemoveReferee (referee);
+          }
+
+          RefreshParcel ();
+          RefreshTableStatus (t == _nb_tables-1);
+
+          if (   ((message->GetFitness () > 0)  && (table->_has_all_roadmap))
+              || ((message->GetFitness () == 0) && (table->_roadmap_count == 0)))
+          {
+            Display (NULL);
+          }
+
+          return TRUE;
         }
-        else
-        {
-          match->SetPiste (0);
-          match->SetStartTime (NULL);
-          RemoveReferee (match,
-                         referee);
-        }
-
-        RefreshParcel ();
-        RefreshTableStatus (t == _nb_tables-1);
-
-        if (   ((message->GetFitness () > 0)  && (table->_has_all_roadmap))
-            || ((message->GetFitness () == 0) && (table->_roadmap_count == 0)))
-        {
-          Display (NULL);
-        }
-
-        return TRUE;
       }
     }
 
@@ -2236,15 +2193,6 @@ namespace Table
                                          g_node_child_position (parent, node));
           }
         }
-
-        {
-          TableZone *zone = (TableZone *) data->_match->GetPtrData (table_set,
-                                                                    "drop_zone");
-          if (zone)
-          {
-            zone->FreeReferees ();
-          }
-        }
       }
     }
 
@@ -2261,32 +2209,10 @@ namespace Table
   void TableSet::AddReferee (Match *match,
                              guint  referee_ref)
   {
-    Contest  *contest = _supervisor->GetContest ();
-    Player   *referee = contest->GetRefereeFromRef (referee_ref);
+    Contest *contest = _supervisor->GetContest ();
+    Player  *referee = contest->GetRefereeFromRef (referee_ref);
 
-    if (referee)
-    {
-      DropZone *zone = (DropZone *) match->GetPtrData (this,
-                                                       "drop_zone");
-
-      zone->AddObject (referee);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void TableSet::RemoveReferee (Match *match,
-                                guint  referee_ref)
-  {
-    Contest  *contest = _supervisor->GetContest ();
-    Player   *referee = contest->GetRefereeFromRef (referee_ref);
-
-    if (referee)
-    {
-      DropZone *zone = (DropZone *) match->GetPtrData (this,
-                                                       "drop_zone");
-
-      zone->RemoveObject (referee);
-    }
+    match->AddReferee (referee);
   }
 
   // --------------------------------------------------------------------------------
@@ -3911,120 +3837,6 @@ namespace Table
       gtk_widget_destroy (GTK_WIDGET (widget));
       return TRUE;
     }
-    return FALSE;
-  }
-
-  // --------------------------------------------------------------------------------
-  void TableSet::DropObject (Object   *object,
-                             DropZone *source_zone,
-                             DropZone *target_zone)
-  {
-    if (source_zone)
-    {
-      source_zone->RemoveObject (object);
-    }
-
-    if (target_zone)
-    {
-      target_zone->AddObject (object);
-    }
-
-    {
-      FreezeZoomer ();
-      Display (NULL);
-      MakeDirty ();
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  Object *TableSet::GetDropObjectFromRef (guint32 ref,
-                                          guint   key)
-  {
-    Contest *contest = _supervisor->GetContest ();
-
-    return contest->GetRefereeFromRef (ref);
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean TableSet::DragingIsForbidden (Object *object)
-  {
-    Player *player = (Player *) object;
-
-    if (player && player->Is ("Fencer"))
-    {
-      return _locked;
-    }
-
-    return FALSE;
-  }
-
-  // --------------------------------------------------------------------------------
-  GString *TableSet::GetFloatingImage (Object *floating_object)
-  {
-    GString *string = g_string_new ("");
-
-    if (floating_object)
-    {
-      Player *player      = (Player *) floating_object;
-      GSList *layout_list = NULL;
-
-      if (_filter)
-      {
-        layout_list = _filter->GetLayoutList ();
-      }
-
-      while (layout_list)
-      {
-        Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;
-        Attribute            *attr;
-        Player::AttributeId  *attr_id;
-
-        attr_id = Player::AttributeId::Create (attr_layout->_desc, this);
-        attr = player->GetAttribute (attr_id);
-        attr_id->Release ();
-
-        if (attr)
-        {
-          gchar *image = attr->GetUserImage (attr_layout->_look);
-
-          string = g_string_append (string,
-                                    image);
-          string = g_string_append (string,
-                                    "  ");
-          g_free (image);
-        }
-        layout_list = g_slist_next (layout_list);
-      }
-    }
-
-    return string;
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean TableSet::DroppingIsAllowed (Object   *floating_object,
-                                        DropZone *in_zone)
-  {
-    if (CanvasModule::DroppingIsAllowed (floating_object,
-                                         in_zone))
-    {
-      TableZone *table_zone = (TableZone *) in_zone;
-      GSList    *current    = table_zone->GetNodeList ();
-
-      while (current)
-      {
-        GNode    *node  = (GNode *) current->data;
-        NodeData *data  = (NodeData *) node->data;
-        Match    *match = data->_match;
-
-        if (match->GetOpponent (0) && match->GetOpponent (1))
-        {
-          return TRUE;
-        }
-
-        current = g_slist_next (current);
-      }
-    }
-
     return FALSE;
   }
 

@@ -22,7 +22,6 @@
 #include "util/object.hpp"
 #include "util/module.hpp"
 #include "util/canvas_module.hpp"
-#include "../../referee_zone.hpp"
 
 class Match;
 
@@ -48,33 +47,21 @@ namespace Table
     GooCanvasItem *_connector;
   };
 
-  class TableZone : public RefereeZone
+  class TableZone : public Object
   {
     public:
-      TableZone (Module  *container,
-                 gdouble  spacing);
-
-      void AddReferee (Player *referee);
-
-      void RemoveReferee (Player *referee);
+      TableZone ();
 
       void AddNode (GNode *node);
-
-      void Draw (GooCanvasItem *root_item);
 
       void PutInTable (CanvasModule  *canvas_module,
                        GooCanvasItem *table,
                        guint          row,
                        guint          column);
 
-      GSList *GetNodeList ();
-
     private:
-      GSList   *_node_list;
-      gdouble   _spacing;
+      GNode *_node;
 
       virtual ~TableZone ();
-
-      guint GetNbMatchs ();
   };
 }

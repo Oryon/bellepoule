@@ -548,13 +548,6 @@ namespace Table
               }
             }
 
-            if (match->IsOver ())
-            {
-              TableZone *zone = (TableZone *) match->GetPtrData (_table_set,
-                                                                 "drop_zone");
-              zone->FreeReferees ();
-            }
-
             A = NULL;
             B = NULL;
             return;

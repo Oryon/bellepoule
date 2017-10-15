@@ -79,20 +79,10 @@ namespace People
                                         GtkTreeIter  *iter,
                                         RefereesList *referee_list);
 
-      static void OnAvailabilityChanged (Player    *referee,
-                                         Attribute *attr,
-                                         Object    *owner,
-                                         guint      step);
-
       static void OnConnectionChanged (Player    *referee,
                                        Attribute *attr,
                                        Object    *owner,
                                        guint      step);
-
-      static void OnAttendingChanged (Player    *referee,
-                                      Attribute *attr,
-                                      Object    *owner,
-                                      guint      step);
 
       static void OnParticipationRateChanged (Player    *referee,
                                               Attribute *attr,

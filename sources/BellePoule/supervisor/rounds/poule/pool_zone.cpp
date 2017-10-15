@@ -25,7 +25,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   PoolZone::PoolZone (Module *container,
                       Pool   *pool)
-    : RefereeZone (container)
+    : DropZone (container)
   {
     _pool = pool;
   }
@@ -33,10 +33,6 @@ namespace Pool
   // --------------------------------------------------------------------------------
   PoolZone::~PoolZone ()
   {
-    while (_referee_list)
-    {
-      RemoveReferee ((Player *) _referee_list->data);
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -55,27 +51,7 @@ namespace Pool
                                         0, 0,
                                         "stroke-pattern", NULL,
                                         NULL);
-      RefereeZone::Draw (root_item);
+      DropZone::Draw (root_item);
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  void PoolZone::AddReferee (Player *referee)
-  {
-    _pool->AddReferee (referee);
-    RefereeZone::AddReferee (referee);
-  }
-
-  // --------------------------------------------------------------------------------
-  void PoolZone::RemoveReferee (Player *referee)
-  {
-    _pool->RemoveReferee (referee);
-    RefereeZone::RemoveReferee (referee);
-  }
-
-  // --------------------------------------------------------------------------------
-  guint PoolZone::GetNbMatchs ()
-  {
-    return _pool->GetNbMatchs ();
   }
 }

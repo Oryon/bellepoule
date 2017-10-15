@@ -82,7 +82,6 @@ namespace People
                                        this);
 
         _expanded_filter->ShowAttribute ("attending");
-        _expanded_filter->ShowAttribute ("availability");
         _expanded_filter->ShowAttribute ("name");
         _expanded_filter->ShowAttribute ("workload_rate");
         _expanded_filter->ShowAttribute ("club");
@@ -135,21 +134,6 @@ namespace People
   void RefereesList::OnPlayerLoaded (Player *referee,
                                      Player *owner)
   {
-    Player::AttributeId  attending_attr_id ("attending");
-    Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);
-
-    if (attending_attr && attending_attr->GetUIntValue ())
-    {
-      Player::AttributeId  availability_attr_id ("availability");
-      Attribute           *availability_attr = referee->GetAttribute (&availability_attr_id);
-
-      if (g_strcmp0 (availability_attr->GetStrValue (),
-                     "Absent") == 0)
-      {
-        referee->SetAttributeValue (&availability_attr_id,
-                                    "Free");
-      }
-    }
     GiveRefereeAnId ((Referee *) referee);
   }
 
@@ -157,23 +141,6 @@ namespace People
   void RefereesList::OnFormEvent (Player                  *referee,
                                   People::Form::FormEvent  event)
   {
-    {
-      Player::AttributeId  attending_attr_id ("attending");
-      Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);
-      Player::AttributeId  availability_attr_id ("availability");
-
-      if (attending_attr && attending_attr->GetUIntValue ())
-      {
-        referee->SetAttributeValue (&availability_attr_id,
-                                    "Free");
-      }
-      else
-      {
-        referee->SetAttributeValue (&availability_attr_id,
-                                    "Absent");
-      }
-    }
-
     GiveRefereeAnId ((Referee *) referee);
 
     Checkin::OnFormEvent (referee,
@@ -239,37 +206,9 @@ namespace People
     referee->SetChangeCbk ("connection",
                            (Player::OnChange) OnConnectionChanged,
                            this);
-    referee->SetChangeCbk ("attending",
-                           (Player::OnChange) OnAttendingChanged,
-                           this);
-    referee->SetChangeCbk ("availability",
-                           (Player::OnChange) OnAvailabilityChanged,
-                           this);
     referee->SetChangeCbk ("workload_rate",
                            (Player::OnChange) OnParticipationRateChanged,
                            this);
-
-    {
-      Player::AttributeId availability_attr_id ("availability");
-
-      if (referee->GetAttribute (&availability_attr_id) == NULL)
-      {
-        Player::AttributeId  attending_attr_id ("attending");
-        Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);
-        guint                attending = attending_attr->GetUIntValue ();
-
-        if (attending == TRUE)
-        {
-          referee->SetAttributeValue (&availability_attr_id,
-                                      "Free");
-        }
-        else if (attending == FALSE)
-        {
-          referee->SetAttributeValue (&availability_attr_id,
-                                      "Absent");
-        }
-      }
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -298,53 +237,10 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void RefereesList::OnAttendingChanged (Player    *referee,
-                                         Attribute *attr,
-                                         Object    *owner,
-                                         guint      step)
-  {
-    guint               value = attr->GetUIntValue ();
-    Player::AttributeId attr_id ("availability");
-
-    if (value == 1)
-    {
-      guint token = referee->GetUIntData (NULL,
-                                          "Referee::token");
-
-      if (token)
-      {
-        referee->SetAttributeValue (&attr_id,
-                                    "Busy");
-      }
-      else
-      {
-        referee->SetAttributeValue (&attr_id,
-                                    "Free");
-      }
-    }
-    else if (value == 0)
-    {
-      referee->SetAttributeValue (&attr_id,
-                                  "Absent");
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void RefereesList::OnConnectionChanged (Player    *referee,
                                           Attribute *attr,
                                           Object    *owner,
                                           guint      step)
-  {
-    Checkin *checkin = dynamic_cast <Checkin *> (owner);
-
-    checkin->Update (referee);
-  }
-
-  // --------------------------------------------------------------------------------
-  void RefereesList::OnAvailabilityChanged (Player    *referee,
-                                            Attribute *attr,
-                                            Object    *owner,
-                                            guint      step)
   {
     Checkin *checkin = dynamic_cast <Checkin *> (owner);
 

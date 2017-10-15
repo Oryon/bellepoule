@@ -30,8 +30,6 @@ Player::Player (const gchar *player_class)
    _ref = _next_ref;
   _next_ref++;
 
-  _nb_matchs = 0;
-
   _player_class = player_class;
 
   _clients = NULL;
@@ -52,9 +50,6 @@ Player::Player (const gchar *player_class)
 
     attr_id._name = (gchar *) "exported";
     SetAttributeValue (&attr_id, (guint) FALSE);
-
-    attr_id._name = (gchar *) "availability";
-    SetAttributeValue (&attr_id, "Absent");
 
     attr_id._name = (gchar *) "global_status";
     SetAttributeValue (&attr_id, "F");
@@ -505,24 +500,6 @@ void Player::SetPartner (Net::Partner *partner)
 {
   _partner = partner;
   NotifyChangesToPartners ();
-}
-
-// --------------------------------------------------------------------------------
-void Player::AddMatchs (guint nb_matchs)
-{
-  _nb_matchs += nb_matchs;
-}
-
-// --------------------------------------------------------------------------------
-void Player::RemoveMatchs (guint nb_matchs)
-{
-  _nb_matchs -= nb_matchs;
-}
-
-// --------------------------------------------------------------------------------
-guint Player::GetNbMatchs ()
-{
-  return _nb_matchs;
 }
 
 // --------------------------------------------------------------------------------
