@@ -405,6 +405,20 @@ void Match::Save (xmlTextWriter *xml_writer)
                                          "%x", _parcel->GetNetID ());
     }
 
+    if (_piste)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Piste",
+                                         "%d", _piste);
+    }
+
+    if (_start_time)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Date",
+                                         "%s", _start_time->GetXmlImage ());
+    }
+
     {
       GSList *current = _referee_list;
 
@@ -421,20 +435,6 @@ void Match::Save (xmlTextWriter *xml_writer)
 
         current = g_slist_next (current);
       }
-    }
-
-    if (_piste)
-    {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Piste",
-                                         "%d", _piste);
-    }
-
-    if (_start_time)
-    {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Date",
-                                         "%s", _start_time->GetXmlImage ());
     }
 
     for (guint i = 0; i < 2; i++)

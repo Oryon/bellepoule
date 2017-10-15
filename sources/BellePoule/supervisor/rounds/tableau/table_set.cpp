@@ -592,7 +592,7 @@ namespace Table
     LoadNode (xml_node);
 
     SpreadWinners ();
-    RefreshTableStatus ();
+    RefreshTableStatus (TRUE);
 
     for (guint t = 1; t < _nb_tables; t++)
     {

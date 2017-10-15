@@ -18,6 +18,7 @@
 #include "util/canvas.hpp"
 #include "util/canvas_module.hpp"
 #include "util/player.hpp"
+#include "util/fie_time.hpp"
 #include "../../match.hpp"
 
 #include "table_zone.hpp"
@@ -54,11 +55,32 @@ namespace Table
 
       if (data->_match)
       {
-        GSList *current = data->_match->GetRefereeList ();
+        GSList  *current    = data->_match->GetRefereeList ();
+        guint    piste      = data->_match->GetPiste ();
+        FieTime *start_time = data->_match->GetStartTime ();
 
-        if (current)
+        if (current && piste && start_time)
         {
-          for (guint i = 0; current != NULL; i++)
+          {
+            gchar *roadmap = g_strdup_printf ("%s %d @ %s",
+                                              gettext ("Piste"),
+                                              piste,
+                                              start_time->GetImage ());
+
+            GooCanvasItem *item = Canvas::PutTextInTable (table,
+                                                          roadmap,
+                                                          row,
+                                                          column);
+            Canvas::SetTableItemAttribute (item, "x-align", 1.0);
+            Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+            g_object_set (item,
+                          "font", BP_FONT "Bold Italic 12px",
+                          NULL);
+
+            g_free (roadmap);
+          }
+
+          for (guint i = 1; current != NULL; i++)
           {
             Player *referee = (Player *) current->data;
 
@@ -94,6 +116,7 @@ namespace Table
 
             current = g_slist_next (current);
           }
+
           return;
         }
       }
