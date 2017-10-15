@@ -91,6 +91,9 @@ class Match : public Object
 
     void DiscloseWithIdChain (va_list chain_id);
 
+    void ChangeIdChain (guint batch_id,
+                        guint netid);
+
     guint GetNetID ();
 
     void CleanScore ();

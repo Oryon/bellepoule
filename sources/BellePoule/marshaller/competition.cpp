@@ -351,7 +351,6 @@ namespace Marshaller
     {
       Batch *batch = (Batch *) current->data;
 
-      printf ("%x == %x\n", batch->GetId (), id);
       if (batch->GetId () == id)
       {
         return batch;

@@ -399,6 +399,19 @@ namespace Table
           if (number)
           {
             GSList *current = _match_list;
+            guint   netid   = 0;
+
+            {
+              gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "NetID");
+
+              if (attr)
+              {
+                netid = g_ascii_strtoull (attr,
+                                          NULL,
+                                          16);
+                xmlFree (attr);
+              }
+            }
 
             while (current)
             {
@@ -411,6 +424,9 @@ namespace Table
                 id++;
                 if (g_strcmp0 (id, number) == 0)
                 {
+                  match->ChangeIdChain (_parcel->GetNetID (),
+                                        netid);
+
                   LoadMatch (n,
                              match);
                   break;

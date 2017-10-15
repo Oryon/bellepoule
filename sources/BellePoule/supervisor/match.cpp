@@ -393,9 +393,17 @@ void Match::Save (xmlTextWriter *xml_writer)
   {
     xmlTextWriterStartElement (xml_writer,
                                BAD_CAST "Match");
+
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "ID",
                                        "%d", _number);
+
+    if (_parcel)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "NetID",
+                                         "%x", _parcel->GetNetID ());
+    }
 
     {
       GSList *current = _referee_list;
@@ -544,6 +552,14 @@ void Match::DiscloseWithIdChain (va_list chain_id)
 
     _parcel->Set (key, value);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Match::ChangeIdChain (guint batch_id,
+                           guint netid)
+{
+  _parcel->Set ("batch", batch_id);
+  _parcel->SetNetID (netid);
 }
 
 // --------------------------------------------------------------------------------
