@@ -23,17 +23,20 @@
 #include "util/object.hpp"
 #include "network/advertiser.hpp"
 #include "../../match.hpp"
+#include "../../error.hpp"
 
 namespace Table
 {
   class TableSet;
 
   class Table : public Object,
-                public Net::Advertiser::Feeder
+                public Net::Advertiser::Feeder,
+                public Error
   {
     public:
       Table (TableSet    *table_set,
              const gchar *xml_player_tag,
+             guint        first_place,
              guint        size,
              guint        number,
              ...);
@@ -89,7 +92,7 @@ namespace Table
                         GSList **withdrawals,
                         GSList **blackcardeds);
 
-      Match         *_first_error;
+      Error         *_first_error;
       gboolean       _is_over;
       gboolean       _ready_to_fence;
       guint          _roadmap_count;
@@ -123,5 +126,9 @@ namespace Table
       void SimplifyLooserTree (GSList **list);
 
       gchar *GetAnnounce ();
+
+      gchar *GetGuiltyParty ();
+
+      const gchar *GetReason ();
   };
 }

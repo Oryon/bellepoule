@@ -29,6 +29,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   Table::Table (TableSet    *table_set,
                 const gchar *xml_player_tag,
+                guint        first_place,
                 guint        size,
                 guint        number,
                 ...)
@@ -71,12 +72,14 @@ namespace Table
       va_end (ap);
 
       {
-        gchar *image = g_strdup_printf ("%s\n%s",
-                                        _table_set->GetName (),
-                                        GetImage ());
+        gchar *image = GetImage ();
+        gchar *name  = g_strdup_printf ("T%d-%s",
+                                        first_place,
+                                        image);
 
-        _parcel->Set ("name", image);
+        _parcel->Set ("name", name);
 
+        g_free (name);
         g_free (image);
       }
     }
@@ -402,7 +405,7 @@ namespace Table
             guint   netid   = 0;
 
             {
-              gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "NetID");
+              gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "NetID");
 
               if (attr)
               {
@@ -657,12 +660,17 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Table::FeedParcel (Net::Message *parcel)
   {
-    parcel->Set ("done", _is_over);
+    parcel->Set ("done", _has_all_roadmap);
   }
 
   // --------------------------------------------------------------------------------
   void Table::Spread ()
   {
+    if (_parcel->GetInteger ("done") != (guint) _has_all_roadmap)
+    {
+      _parcel->ResetSpread ();
+    }
+
     if (_parcel->IsSpread () == FALSE)
     {
       Object::Spread ();
@@ -741,5 +749,17 @@ namespace Table
 
     g_free (image);
     return announce;
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Table::GetGuiltyParty ()
+  {
+    return GetImage ();
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Table::GetReason ()
+  {
+    return gettext (" Referees allocation \n ongoing ");
   }
 }

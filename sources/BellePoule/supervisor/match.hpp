@@ -23,12 +23,14 @@
 #include "util/object.hpp"
 #include "util/data.hpp"
 
+#include "error.hpp"
 #include "score.hpp"
 
 class Player;
 class FieTime;
 
-class Match : public Object
+class Match : public Object,
+              public Error
 {
   public:
     Match  (Data *max_score);
@@ -140,4 +142,8 @@ class Match : public Object
     void Init (Data *max_score);
 
     virtual ~Match ();
+
+    gchar *GetGuiltyParty ();
+
+    const gchar *GetReason ();
 };

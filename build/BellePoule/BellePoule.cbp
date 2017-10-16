@@ -347,6 +347,9 @@
 		<Unit filename="../../sources/BellePoule/supervisor/ecosystem.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/error.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/main.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

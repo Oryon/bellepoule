@@ -28,6 +28,7 @@
 #include "util/fie_time.hpp"
 #include "../../classification.hpp"
 #include "../../contest.hpp"
+#include "../../error.hpp"
 
 #include "table_supervisor.hpp"
 #include "table_zone.hpp"
@@ -366,7 +367,16 @@ namespace Table
         gchar *icon;
         Table *table = _tables[t];
 
-        if (table->_first_error)
+        icon = g_strdup (GTK_STOCK_EXECUTE);
+        _is_over = FALSE;
+
+        if (table->_has_all_roadmap == FALSE)
+        {
+          icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
+          _first_error = table;
+          _is_over     = FALSE;
+        }
+        else if (table->_first_error)
         {
           icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
           _first_error = table->_first_error;
@@ -376,15 +386,10 @@ namespace Table
         {
           icon = g_strdup (GTK_STOCK_APPLY);
         }
-        else
-        {
-          icon = g_strdup (GTK_STOCK_EXECUTE);
-          _is_over = FALSE;
 
-          if (_is_active && table->_ready_to_fence)
-          {
-            table->Spread ();
-          }
+        if (_is_active && table->_ready_to_fence)
+        {
+          table->Spread ();
         }
 
         if (quick == FALSE)
@@ -547,7 +552,7 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  Match *TableSet::GetFirstError ()
+  Error *TableSet::GetFirstError ()
   {
     return _first_error;
   }
@@ -780,6 +785,7 @@ namespace Table
       {
         _tables[t] = new Table (this,
                                 _supervisor->GetXmlPlayerTag (),
+                                _first_place,
                                 1 << t,
                                 _nb_tables - t-1,
                                 "competition", competition->GetNetID (),
@@ -983,8 +989,9 @@ namespace Table
           left_table->_ready_to_fence = FALSE;
         }
 
-        if (   (data->_match->GetPiste () == 0)
-            || (data->_match->GetStartTime () == NULL))
+        if (   table_set->_has_marshaller
+            && (   (data->_match->GetPiste () == 0)
+                || (data->_match->GetStartTime () == NULL)))
         {
           left_table->_has_all_roadmap = FALSE;
         }
@@ -1130,6 +1137,7 @@ namespace Table
         {
           data->_match_goo_table = goo_canvas_table_new (table_set->_main_table,
                                                          "column-spacing", table_set->_table_spacing,
+                                                         "fill-color",     "Grey95",
                                                          NULL);
           Canvas::PutInTable (table_set->_main_table,
                               data->_match_goo_table,
@@ -1170,10 +1178,10 @@ namespace Table
 
           if (zone)
           {
-            zone->PutInTable (table_set,
-                              data->_match_goo_table,
-                              0,
-                              0);
+            zone->PutRoadmapInTable (table_set,
+                                     data->_match_goo_table,
+                                     0,
+                                     0);
           }
         }
       }
@@ -1199,8 +1207,7 @@ namespace Table
 
       // _score_goo_table
       if (   parent
-          && (   (table_set->_has_marshaller == FALSE)
-              || data->_table->_is_over
+          && (   data->_table->_is_over
               || data->_table->_has_all_roadmap))
       {
         data->_score_goo_table = goo_canvas_table_new (data->_fencer_goo_table, NULL);
@@ -2015,36 +2022,34 @@ namespace Table
         Contest *contest     = _supervisor->GetContest ();
         Player  *referee     = contest->GetRefereeFromRef (referee_ref);
 
-        if (referee)
+        if (referee && (message->GetFitness () > 0))
         {
-          if (message->GetFitness () > 0)
-          {
-            gchar *start_time = message->GetString  ("start_time");
+          gchar *start_time = message->GetString  ("start_time");
 
-            match->SetStartTime (new FieTime (start_time));
-            g_free (start_time);
+          match->SetStartTime (new FieTime (start_time));
+          g_free (start_time);
 
-            match->SetPiste (message->GetInteger ("piste"));
-            match->AddReferee (referee);
-          }
-          else
-          {
-            match->SetPiste (0);
-            match->SetStartTime (NULL);
-            match->RemoveReferee (referee);
-          }
-
-          RefreshParcel ();
-          RefreshTableStatus (t == _nb_tables-1);
-
-          if (   ((message->GetFitness () > 0)  && (table->_has_all_roadmap))
-              || ((message->GetFitness () == 0) && (table->_roadmap_count == 0)))
-          {
-            Display (NULL);
-          }
-
-          return TRUE;
+          match->SetPiste (message->GetInteger ("piste"));
+          match->AddReferee (referee);
         }
+        else
+        {
+          match->SetPiste (0);
+          match->SetStartTime (NULL);
+          match->RemoveReferee (referee);
+        }
+
+        RefreshParcel ();
+        RefreshTableStatus (t == _nb_tables-1);
+
+        if (   ((message->GetFitness () > 0)  && (table->_has_all_roadmap))
+            || ((message->GetFitness () == 0) && (table->_roadmap_count == 0)))
+        {
+          table->Spread ();
+          Display (NULL);
+        }
+
+        return TRUE;
       }
     }
 
@@ -3468,6 +3473,8 @@ namespace Table
                                   gboolean      joined)
   {
     _has_marshaller = joined;
+
+    RefreshTableStatus ();
     Display (NULL);
   }
 

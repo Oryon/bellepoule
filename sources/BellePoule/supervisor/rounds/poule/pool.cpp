@@ -648,7 +648,7 @@ namespace Pool
 
         if (_piste)
         {
-          gchar *piste = g_strdup_printf ("#%02d @ %s", _piste, _start_time->GetImage ());
+          gchar *piste = g_strdup_printf ("%02d @ %s", _piste, _start_time->GetImage ());
 
           goo_canvas_text_new (piste_group,
                                piste,
@@ -818,7 +818,6 @@ namespace Pool
                                                 0,
                                                 1);
             g_object_set (G_OBJECT (text_item),
-                          "ellipsize", PANGO_ELLIPSIZE_NONE,
                           "wrap",      PANGO_WRAP_CHAR,
                           NULL);
             g_free (index);
@@ -1164,7 +1163,6 @@ namespace Pool
                                                   0);
               g_object_set (G_OBJECT (text_item),
                             "use-markup", TRUE,
-                            "ellipsize",  PANGO_ELLIPSIZE_NONE,
                             "wrap",       PANGO_WRAP_CHAR,
                             NULL);
               g_free (position);
@@ -1216,7 +1214,6 @@ namespace Pool
                                                   0);
               g_object_set (G_OBJECT (text_item),
                             "use-markup", TRUE,
-                            "ellipsize",  PANGO_ELLIPSIZE_NONE,
                             "wrap",       PANGO_WRAP_CHAR,
                             NULL);
               g_free (position);

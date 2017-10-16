@@ -25,6 +25,7 @@
 #include "util/player.hpp"
 #include "../../classification.hpp"
 #include "../../contest.hpp"
+#include "../../error.hpp"
 
 #include "table_supervisor.hpp"
 
@@ -251,12 +252,13 @@ namespace Table
   {
     if (_first_error)
     {
-      gchar *match_name = g_strdup_printf (gettext ("Match %s"), _first_error->GetName ());
+      gchar *guilty_party = _first_error->GetGuiltyParty ();
       gchar *error      = g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
                                            " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
-                                           match_name, gettext ("No winner!"));
+                                           guilty_party,
+                                           _first_error->GetReason ());
 
-      g_free (match_name);
+      g_free (guilty_party);
       return error;
     }
     else

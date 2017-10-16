@@ -140,6 +140,10 @@ namespace Oauth
                                              NULL,
                                              10);
       }
+      else
+      {
+        return;
+      }
 
       value = (const gchar *) g_hash_table_lookup (header,
                                                    "x-rate-limit-remaining");
@@ -148,6 +152,10 @@ namespace Oauth
         rate_limit_remaining = g_ascii_strtoull (value,
                                                  NULL,
                                                  10);
+      }
+      else
+      {
+        return;
       }
 
       value = (const gchar *) g_hash_table_lookup (header,

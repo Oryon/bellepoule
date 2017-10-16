@@ -26,6 +26,8 @@
 
 #include "table_set.hpp"
 
+class Error;
+
 namespace Table
 {
   class Table;
@@ -71,7 +73,7 @@ namespace Table
       xmlNode            *_xml_node;
       TableSet           *_displayed_table_set;
       gboolean            _is_over;
-      Match              *_first_error;
+      Error              *_first_error;
       GSList             *_result;
       GSList             *_blackcardeds;
       Data               *_fenced_places;

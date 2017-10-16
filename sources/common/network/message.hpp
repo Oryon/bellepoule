@@ -67,6 +67,8 @@ namespace Net
 
       void Spread ();
 
+      void ResetSpread ();
+
       gboolean IsSpread ();
 
     private:

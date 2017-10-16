@@ -54,10 +54,10 @@ namespace Table
 
       void AddNode (GNode *node);
 
-      void PutInTable (CanvasModule  *canvas_module,
-                       GooCanvasItem *table,
-                       guint          row,
-                       guint          column);
+      void PutRoadmapInTable (CanvasModule  *canvas_module,
+                              GooCanvasItem *table,
+                              guint          row,
+                              guint          column);
 
     private:
       GNode *_node;

@@ -30,9 +30,6 @@ Match::Match (Data *max_score)
   : Object ("Match")
 {
   Init (max_score);
-
-  _start_time = NULL;
-  _piste      = 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -48,8 +45,6 @@ Match::Match  (Player *A,
 
   _opponents[1]._fencer   = B;
   _opponents[1]._is_known = TRUE;
-
-  _start_time = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -68,6 +63,8 @@ Match::~Match ()
 void Match::Init (Data *max_score)
 {
   _referee_list = NULL;
+  _start_time   = NULL;
+  _piste        = 0;
 
   _max_score = max_score;
 
@@ -747,4 +744,16 @@ void Match::FeedParcel (Net::Message *parcel)
 
   parcel->Set ("xml", (const gchar *) xml_buffer->content);
   xmlBufferFree (xml_buffer);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Match::GetGuiltyParty ()
+{
+  return g_strdup_printf (gettext ("Match %s"), GetName ());
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Match::GetReason ()
+{
+  return gettext ("No winner!");
 }

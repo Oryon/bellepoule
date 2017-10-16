@@ -345,7 +345,6 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
                                                           a);
             g_object_set (G_OBJECT (item),
                           "use-markup", TRUE,
-                          "ellipsize",  PANGO_ELLIPSIZE_NONE,
                           "wrap",       PANGO_WRAP_CHAR,
                           NULL);
             g_string_free (image,

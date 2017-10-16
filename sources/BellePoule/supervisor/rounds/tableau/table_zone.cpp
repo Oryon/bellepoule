@@ -44,10 +44,10 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableZone::PutInTable (CanvasModule  *canvas_module,
-                              GooCanvasItem *table,
-                              guint          row,
-                              guint          column)
+  void TableZone::PutRoadmapInTable (CanvasModule  *canvas_module,
+                                     GooCanvasItem *table,
+                                     guint          row,
+                                     guint          column)
   {
     if (_node)
     {
@@ -66,55 +66,68 @@ namespace Table
                                               gettext ("Piste"),
                                               piste,
                                               start_time->GetImage ());
+            gchar *undivadable = GetUndivadableText (roadmap);
 
             GooCanvasItem *item = Canvas::PutTextInTable (table,
-                                                          roadmap,
+                                                          undivadable,
                                                           row,
                                                           column);
             Canvas::SetTableItemAttribute (item, "x-align", 1.0);
             Canvas::SetTableItemAttribute (item, "y-align", 0.5);
             g_object_set (item,
-                          "font", BP_FONT "Bold Italic 12px",
+                          "font",       BP_FONT "Bold Italic 12px",
+                          "fill-color", "blue",
                           NULL);
 
+            g_free (undivadable);
             g_free (roadmap);
           }
 
-          for (guint i = 1; current != NULL; i++)
           {
-            Player *referee = (Player *) current->data;
+            GooCanvasItem *referee_table = goo_canvas_table_new (table,
+                                                                 NULL);
+            Canvas::PutInTable (table,
+                                referee_table,
+                                row + 1,
+                                column);
 
+            for (guint i = 0; current != NULL; i++)
             {
-              static gchar *referee_icon = NULL;
+              Player *referee = (Player *) current->data;
 
-              if (referee_icon == NULL)
               {
-                referee_icon = g_build_filename (Global::_share_dir, "resources/glade/images/referee.png", NULL);
+                static gchar *referee_icon = NULL;
+
+                if (referee_icon == NULL)
+                {
+                  referee_icon = g_build_filename (Global::_share_dir, "resources/glade/images/referee.png", NULL);
+                }
+
+                Canvas::PutIconInTable (referee_table,
+                                        referee_icon,
+                                        i,
+                                        0);
               }
 
-              Canvas::PutIconInTable (table,
-                                      referee_icon,
-                                      row + i,
-                                      column);
+              {
+                gchar *name = referee->GetName ();
+
+                GooCanvasItem *item = Canvas::PutTextInTable (referee_table,
+                                                              name,
+                                                              i,
+                                                              1);
+                Canvas::SetTableItemAttribute (item, "x-align", 1.0);
+                Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+                g_object_set (item,
+                              "font",       BP_FONT "Bold Italic 12px",
+                              "fill-color", "blue",
+                              NULL);
+
+                g_free (name);
+              }
+
+              current = g_slist_next (current);
             }
-
-            {
-              gchar *name = referee->GetName ();
-
-              GooCanvasItem *item = Canvas::PutTextInTable (table,
-                                                            name,
-                                                            row + i,
-                                                            column+1);
-              Canvas::SetTableItemAttribute (item, "x-align", 1.0);
-              Canvas::SetTableItemAttribute (item, "y-align", 0.5);
-              g_object_set (item,
-                            "font", BP_FONT "Bold Italic 12px",
-                            NULL);
-
-              g_free (name);
-            }
-
-            current = g_slist_next (current);
           }
 
           return;
