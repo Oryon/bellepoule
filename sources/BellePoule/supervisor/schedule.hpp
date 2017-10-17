@@ -130,6 +130,10 @@ class Schedule : public Module,
 
     Stage *GetStage (guint index);
 
+    void LoadPeoples (Stage           *stage_host,
+                      xmlXPathContext *xml_context,
+                      const gchar     *contest_keyword);
+
     void LoadStage (Stage   *stage,
                     xmlNode *xml_node,
                     guint   *nb_stage,

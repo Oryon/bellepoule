@@ -14,8 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <gdk/gdkkeysyms.h>
-#include <ctype.h>
 #include <libxml/xmlwriter.h>
 
 #include "util/global.hpp"
@@ -72,6 +70,30 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  xmlNode *Checkin::GetXmlNode (xmlXPathContext *xml_context,
+                                const gchar     *from_node,
+                                const gchar     *player_class)
+  {
+    xmlNode        *node                  = NULL;
+    const gchar    *player_class_xml_tag  = PlayerFactory::GetXmlTag (player_class);
+    gchar          *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
+    gchar          *path                  = g_strdup_printf ("%s/%s", from_node, players_class_xml_tag);
+    xmlXPathObject *xml_object            = xmlXPathEval (BAD_CAST path, xml_context);
+    xmlNodeSet     *xml_nodeset           = xml_object->nodesetval;
+
+    if (xml_object->nodesetval->nodeNr)
+    {
+      node = xml_nodeset->nodeTab[0];
+    }
+
+    xmlXPathFreeObject (xml_object);
+    g_free (path);
+    g_free (players_class_xml_tag);
+
+    return node;
+  }
+
+  // --------------------------------------------------------------------------------
   void Checkin::LoadList (xmlXPathContext *xml_context,
                           const gchar     *from_node,
                           const gchar     *player_class)
@@ -81,23 +103,20 @@ namespace People
       player_class = _base_class;
     }
 
+    xmlNode *node = GetXmlNode (xml_context,
+                                from_node,
+                                player_class);
+
+    if (node)
     {
-      const gchar    *player_class_xml_tag  = PlayerFactory::GetXmlTag (player_class);
-      gchar          *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
-      gchar          *path                  = g_strdup_printf ("%s/%s", from_node, players_class_xml_tag);
-      xmlXPathObject *xml_object            = xmlXPathEval (BAD_CAST path, xml_context);
-      xmlNodeSet     *xml_nodeset           = xml_object->nodesetval;
+      const gchar *player_class_xml_tag  = PlayerFactory::GetXmlTag (player_class);
+      gchar       *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
 
-      if (xml_object->nodesetval->nodeNr)
-      {
-        LoadList (xml_nodeset->nodeTab[0],
-                  player_class,
-                  player_class_xml_tag,
-                  players_class_xml_tag);
-      }
+      LoadList (node,
+                player_class,
+                player_class_xml_tag,
+                players_class_xml_tag);
 
-      xmlXPathFreeObject (xml_object);
-      g_free (path);
       g_free (players_class_xml_tag);
     }
   }

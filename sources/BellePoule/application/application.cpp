@@ -387,19 +387,19 @@ void Application::Prepare ()
 
     // Not persistent data
     {
-      desc = AttributeDesc::Declare (G_TYPE_INT, "pool_nr", "pool_nr", gettext ("pool #"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "pool_nr", "PoolID", gettext ("pool #"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_count", "victories_count", gettext ("Victories"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_count", "Victoires", gettext ("Victories"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "bouts_count", "bouts_count", gettext ("Bouts"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "bouts_count", "Assauts", gettext ("Bouts"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "victories_ratio", gettext ("Vict./Bouts (‰)"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "RatioVictoires", gettext ("Vict./Bouts (‰)"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
@@ -407,7 +407,7 @@ void Application::Prepare ()
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "HS", "HS", gettext ("Hits scored"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "HS", "TD", gettext ("Hits scored"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
@@ -416,17 +416,17 @@ void Application::Prepare ()
       desc->_rights      = AttributeDesc::PRIVATE;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "stage_start_rank", "stage_start_rank", gettext ("Round start rank"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "stage_start_rank", "RangDeDepart", gettext ("Round start rank"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_rights      = AttributeDesc::PRIVATE;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "promoted", "promoted", gettext ("promoted"));
+      desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "promoted", "Promu", gettext ("promoted"));
       desc->_persistency   = AttributeDesc::NOT_PERSISTENT;
       desc->_scope         = AttributeDesc::LOCAL;
       desc->_favorite_look = AttributeDesc::GRAPHICAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_STRING, "connection", "Connection", gettext ("connection"));
+      desc = AttributeDesc::Declare (G_TYPE_STRING, "connection", "Connexion", gettext ("connection"));
       desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
       desc->_rights         = AttributeDesc::PRIVATE;
       desc->_scope          = AttributeDesc::GLOBAL;

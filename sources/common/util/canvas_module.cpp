@@ -219,7 +219,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
 
   if (player)
   {
-    GSList *layout_list = NULL;
+    GList *layout_list = NULL;
 
     if (_filter)
     {
@@ -355,7 +355,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
         }
       }
 
-      layout_list = g_slist_next (layout_list);
+      layout_list = g_list_next (layout_list);
     }
   }
 

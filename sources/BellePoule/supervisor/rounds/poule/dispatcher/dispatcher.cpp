@@ -76,10 +76,7 @@ namespace Pool
   void Dispatcher::Reset ()
   {
     FreeFullGList (Pair, _pair_list);
-    _pair_list = NULL;
-
     FreeFullGList (Opponent, _opponent_list);
-    _opponent_list = NULL;;
   }
 
   // --------------------------------------------------------------------------------

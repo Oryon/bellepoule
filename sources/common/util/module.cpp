@@ -348,6 +348,8 @@ void Module::SetFilter (Filter *filter)
 
   if (_filter)
   {
+    _filter->RestoreLast ();
+
     _filter->Retain ();
   }
 }

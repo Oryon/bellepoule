@@ -544,7 +544,7 @@ namespace People
 
     if (_filter)
     {
-      GSList *layout_list = _filter->GetLayoutList ();
+      GList *layout_list = _filter->GetLayoutList ();
 
       while (layout_list)
       {
@@ -553,7 +553,7 @@ namespace People
         SetColumn (_filter->GetAttributeId (attr_layout->_desc->_code_name),
                    attr_layout,
                    -1);
-        layout_list = g_slist_next (layout_list);
+        layout_list = g_list_next (layout_list);
       }
     }
 
@@ -1055,7 +1055,7 @@ namespace People
       gdouble canvas_w;
       gdouble canvas_h;
 
-      _column_width = (gdouble *) g_malloc0 (g_slist_length (_filter->GetLayoutList ()) * sizeof (gdouble));
+      _column_width = (gdouble *) g_malloc0 (g_list_length (_filter->GetLayoutList ()) * sizeof (gdouble));
 
       _flat_print = TRUE;
       GetPrintScale (operation,
@@ -1090,8 +1090,8 @@ namespace People
   void PlayersList::PrintHeader (GooCanvasItem *root_item,
                                  gboolean       update_column_width)
   {
-    GSList *layout_list = _filter->GetLayoutList ();
-    gdouble x           = 0.0;
+    GList   *layout_list = _filter->GetLayoutList ();
+    gdouble  x           = 0.0;
 
     for (guint i = 0; layout_list != NULL; i++)
     {
@@ -1134,7 +1134,7 @@ namespace People
         }
       }
       x += _column_width[i];
-      layout_list = g_slist_next (layout_list);
+      layout_list = g_list_next (layout_list);
     }
   }
 
@@ -1146,7 +1146,7 @@ namespace People
                                  guint            row,
                                  gboolean         update_column_width)
   {
-    GSList        *layout_list = _filter->GetLayoutList ();
+    GList         *layout_list = _filter->GetLayoutList ();
     gdouble        x           = 0.0;
     GooCanvasItem *bar         = NULL;
 
@@ -1279,7 +1279,7 @@ namespace People
                       NULL);
       }
 
-      layout_list = g_slist_next (layout_list);
+      layout_list = g_list_next (layout_list);
     }
   }
 
@@ -1365,7 +1365,7 @@ namespace People
       {
         *canvas_w = 0;
 
-        for (guint i = 0; i < g_slist_length (_filter->GetLayoutList ()); i++)
+        for (guint i = 0; i < g_list_length (_filter->GetLayoutList ()); i++)
         {
           *canvas_w += _column_width[i];
         }
@@ -1733,7 +1733,7 @@ namespace People
 
       // Header
       {
-        GSList *current_attr_desc = _filter->GetLayoutList ();
+        GList *current_attr_desc = _filter->GetLayoutList ();
 
         fprintf (file, "          <tr class=\"ListHeader\">\n");
         while (current_attr_desc)
@@ -1745,7 +1745,7 @@ namespace People
                    "            <th>%s</th>\n",
                    attr_desc->_user_name);
 
-          current_attr_desc = g_slist_next (current_attr_desc);
+          current_attr_desc = g_list_next (current_attr_desc);
         }
         fprintf (file, "          </tr>\n");
       }
@@ -1773,7 +1773,7 @@ namespace People
           }
 
           {
-            GSList *current_attr_desc = _filter->GetLayoutList ();
+            GList *current_attr_desc = _filter->GetLayoutList ();
 
             while (current_attr_desc)
             {
@@ -1806,7 +1806,7 @@ namespace People
                 fprintf (file, "            <td></td>\n");
               }
 
-              current_attr_desc = g_slist_next (current_attr_desc);
+              current_attr_desc = g_list_next (current_attr_desc);
             }
           }
           fprintf (file, "          </tr>\n");

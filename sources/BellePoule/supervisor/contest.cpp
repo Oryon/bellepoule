@@ -437,7 +437,7 @@ void Contest::LoadAskFred (AskFred::Event *askfred,
       Filter *filter = checkin->GetFilter ();
 
       filter->ShowAttribute ("rating");
-      filter->UpdateAttrList ();
+      filter->UpdateAttrList (FALSE);
       filter->Release ();
     }
 
@@ -894,7 +894,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       Filter                    *filter  = checkin->GetFilter ();
 
       filter->ShowAttribute ("rating");
-      filter->UpdateAttrList ();
+      filter->UpdateAttrList (FALSE);
       filter->Release ();
     }
   }

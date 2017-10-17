@@ -47,6 +47,10 @@ namespace People
 
       void AddListener (Listener *listener);
 
+      xmlNode *GetXmlNode (xmlXPathContext *xml_context,
+                           const gchar     *from_node,
+                           const gchar     *player_class);
+
       void LoadList (xmlXPathContext *xml_context,
                      const gchar     *from_node,
                      const gchar     *player_class = NULL);

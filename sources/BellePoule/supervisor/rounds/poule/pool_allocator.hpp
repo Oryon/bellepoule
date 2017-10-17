@@ -125,7 +125,7 @@ namespace Pool
       void RefreshDisplay ();
       void Garnish ();
       void FillPoolTable (PoolZone *zone);
-      void DisplayPlayer (Player *player, guint indice, GooCanvasItem *table, PoolZone *zone, GSList *layout_list);
+      void DisplayPlayer (Player *player, guint indice, GooCanvasItem *table, PoolZone *zone, GList *layout_list);
       void FixUpTablesBounds ();
       void RegisterConfig (Configuration *config);
       const gchar *GetInputProviderClient ();

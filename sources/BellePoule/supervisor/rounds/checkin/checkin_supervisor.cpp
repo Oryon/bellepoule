@@ -14,10 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <gdk/gdkkeysyms.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "util/global.hpp"
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
@@ -35,7 +31,7 @@
 namespace People
 {
   const gchar *CheckinSupervisor::_class_name     = N_("Check-in");
-  const gchar *CheckinSupervisor::_xml_class_name = "checkin_stage";
+  const gchar *CheckinSupervisor::_xml_class_name = "Pointage";
 
   // --------------------------------------------------------------------------------
   CheckinSupervisor::CheckinSupervisor (StageClass *stage_class)
@@ -179,7 +175,11 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::Load (xmlNode *xml_node)
   {
+    LoadConfiguration (xml_node);
+
+    _attendees = new Attendees ();
   }
+
 
   // --------------------------------------------------------------------------------
   gboolean CheckinSupervisor::PlayerIsPrintable (Player *player)
@@ -268,28 +268,6 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::LoadConfiguration (xmlNode *xml_node)
-  {
-  }
-
-  // --------------------------------------------------------------------------------
-  void CheckinSupervisor::Load (xmlXPathContext *xml_context,
-                                const gchar     *from_node)
-  {
-    LoadConfiguration (NULL);
-
-    LoadList (xml_context,
-              from_node,
-              "Team");
-
-    LoadList (xml_context,
-              from_node,
-              "Fencer");
-
-    _attendees = new Attendees ();
-  }
-
-  // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnPlayerLoaded (Player *player,
                                           Player *owner)
   {
@@ -315,10 +293,12 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::Save (xmlTextWriter *xml_writer)
   {
-    SaveList (xml_writer,
-              "Fencer");
-    SaveList (xml_writer,
-              "Team");
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST _xml_class_name);
+
+    SaveConfiguration (xml_writer);
+
+    xmlTextWriterEndElement (xml_writer);
   }
 
   // --------------------------------------------------------------------------------

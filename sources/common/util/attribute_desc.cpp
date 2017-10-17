@@ -124,7 +124,6 @@ AttributeDesc *AttributeDesc::Declare (GType        type,
 void AttributeDesc::Cleanup ()
 {
   FreeFullGList (AttributeDesc, _list);
-  _list = NULL;
 }
 
 // --------------------------------------------------------------------------------

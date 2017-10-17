@@ -169,10 +169,7 @@ namespace Net
       message->Release ();
     }
 
-    {
-      FreeFullGList (Partner, _partner_list);
-      _partner_list = NULL;
-    }
+    FreeFullGList (Partner, _partner_list);
 
     {
       g_free (_role);

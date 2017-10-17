@@ -479,7 +479,7 @@ namespace Pool
     if (floating_object)
     {
       Player *player        = (Player *) floating_object;
-      GSList *layout_list = NULL;
+      GList  *layout_list = NULL;
 
       if (_filter)
       {
@@ -506,7 +506,7 @@ namespace Pool
                                     "  ");
           g_free (image);
         }
-        layout_list = g_slist_next (layout_list);
+        layout_list = g_list_next (layout_list);
       }
     }
 
@@ -1419,7 +1419,7 @@ namespace Pool
 
     GooCanvasItem *item;
     GooCanvasItem *table       = (GooCanvasItem *) zone->GetPtrData (this, "table");
-    GSList        *layout_list = NULL;
+    GList         *layout_list = NULL;
     Pool          *pool        = zone->GetPool ();
 
     if (_filter)
@@ -1538,7 +1538,7 @@ namespace Pool
                           header_table,
                           0, 0);
       Canvas::SetTableItemAttribute (header_table,
-                                     "columns", g_slist_length (layout_list) + column_count);
+                                     "columns", g_list_length (layout_list) + column_count);
 
       //g_object_set (G_OBJECT (header_table),
                     //"horz-grid-line-width", 2.0,
@@ -1617,7 +1617,7 @@ namespace Pool
                                  guint          indice,
                                  GooCanvasItem *table,
                                  PoolZone      *zone,
-                                 GSList        *layout_list)
+                                 GList         *layout_list)
   {
     if (player)
     {
@@ -1733,7 +1733,7 @@ namespace Pool
           }
         }
 
-        layout_list = g_slist_next (layout_list);
+        layout_list = g_list_next (layout_list);
       }
     }
   }

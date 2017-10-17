@@ -86,12 +86,7 @@ namespace People
 
       GSList *GetCurrentClassification ();
 
-      void LoadConfiguration (xmlNode *xml_node);
-
       void Load (xmlNode *xml_node);
-
-      void Load (xmlXPathContext *xml_context,
-                 const gchar     *from_node);
 
       void OnPlayerLoaded (Player *player,
                            Player *owner);

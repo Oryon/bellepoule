@@ -126,7 +126,7 @@ Stage *Schedule::CreateStage (const gchar *class_name)
 {
   Stage *stage = Stage::CreateInstance (class_name);
 
-  if (stage && (g_ascii_strcasecmp (class_name, "checkin_stage") == 0))
+  if (stage && (g_ascii_strcasecmp (class_name, "Pointage") == 0))
   {
     {
       Module *module = dynamic_cast <Module *> (stage);
@@ -223,7 +223,7 @@ void Schedule::CreateDefault (gboolean without_pools)
   {
     Stage *stage;
 
-    stage = CreateStage ("checkin_stage");
+    stage = CreateStage ("Pointage");
     if (stage)
     {
       AddStage (stage);
@@ -880,15 +880,13 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
 void Schedule::SavePeoples (xmlTextWriter   *xml_writer,
                             People::Checkin *referees)
 {
-  Stage *stage = ((Stage *) g_list_nth_data (_stage_list,
-                                             0));
+  People::CheckinSupervisor *checkin = GetCheckinSupervisor ();
 
-  if (stage)
+  if (checkin)
   {
-    // Checkin - Player list
-    stage->Save (xml_writer);
+    checkin->SaveList (xml_writer, "Fencer");
+    checkin->SaveList (xml_writer, "Team");
 
-    // Referees
     referees->SaveList (xml_writer);
   }
 }
@@ -902,7 +900,7 @@ void Schedule::Save (xmlTextWriter *xml_writer)
                                      BAD_CAST "PhaseEnCours",
                                      "%d", _current_stage);
 
-  for (guint i = 1; i < g_list_length (_stage_list); i++)
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
   {
     Stage *stage = ((Stage *) g_list_nth_data (_stage_list,
                                                i));
@@ -992,8 +990,6 @@ void Schedule::Load (xmlDoc               *doc,
 {
   xmlXPathContext *xml_context         = xmlXPathNewContext (doc);
   gint             current_stage_index = -1;
-  gboolean         display_all         = FALSE;
-  Stage           *checkin_stage       = CreateStage ("checkin_stage");
 
   {
     xmlNodeSet     *xml_nodeset;
@@ -1013,10 +1009,6 @@ void Schedule::Load (xmlDoc               *doc,
         current_stage_index = atoi (attr);
         xmlFree (attr);
       }
-      else
-      {
-        display_all = TRUE;
-      }
     }
 
     xmlXPathFreeObject  (xml_object);
@@ -1030,45 +1022,51 @@ void Schedule::Load (xmlDoc               *doc,
   referees->Disclose ("Referee");
   referees->Spread ();
 
-  // Checkin - Player list
-  if (checkin_stage)
-  {
-    AddStage  (checkin_stage);
-    PlugStage (checkin_stage);
-
-    checkin_stage->Load (xml_context,
-                         contest_keyword);
-    checkin_stage->FillInConfig ();
-    checkin_stage->ApplyConfig ();
-    checkin_stage->Display ();
-
-    if (display_all || (current_stage_index > 0))
-    {
-      checkin_stage->Lock ();
-      DisplayLocks ();
-    }
-  }
-
   {
     gchar          *path        = g_strdup_printf ("/%s/Phases/*", contest_keyword);
     xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
-    guint           nb_stage    = 1;
+    guint           nb_stage    = 0;
 
     g_free (path);
-    for (guint i = 0; i < (guint) xml_nodeset->nodeNr; i++)
-    {
-      Stage *stage = Stage::CreateInstance (xml_nodeset->nodeTab[i]);
 
-      LoadStage (stage,
-                 xml_nodeset->nodeTab[i],
-                 &nb_stage,
-                 current_stage_index);
+    if (xml_nodeset->nodeNr == 0)
+    {
+      Stage *first_stage = CreateStage ("Pointage");
+
+      LoadPeoples (first_stage,
+                   xml_context,
+                   contest_keyword);
+
+      AddStage  (first_stage);
+      PlugStage (first_stage);
+      first_stage->Display ();
+
+      nb_stage = 1;
+    }
+    else
+    {
+      for (guint i = 0; i < (guint) xml_nodeset->nodeNr; i++)
+      {
+        Stage *stage = CreateStage ((gchar *) xml_nodeset->nodeTab[i]->name);
+
+        if (i == 0)
+        {
+          LoadPeoples (stage,
+                       xml_context,
+                       contest_keyword);
+        }
+
+        LoadStage (stage,
+                   xml_nodeset->nodeTab[i],
+                   &nb_stage,
+                   current_stage_index);
+      }
     }
 
     xmlXPathFreeObject (xml_object);
 
-    // Add a general classification stage
+    // Add additional stages
     // for xml files generated with other
     // tools than BellePoule
     if (nb_stage > 0)
@@ -1106,6 +1104,26 @@ void Schedule::Load (xmlDoc               *doc,
 
   SetCurrentStage (current_stage_index);
 }
+
+// --------------------------------------------------------------------------------
+void Schedule::LoadPeoples (Stage           *stage_host,
+                            xmlXPathContext *xml_context,
+                            const gchar     *contest_keyword)
+{
+  People::CheckinSupervisor *checkin_stage = dynamic_cast <People::CheckinSupervisor *> (stage_host);
+
+  if (checkin_stage)
+  {
+    checkin_stage->LoadList (xml_context,
+                             contest_keyword,
+                             "Team");
+
+    checkin_stage->LoadList (xml_context,
+                             contest_keyword,
+                             "Fencer");
+  }
+}
+
 
 // --------------------------------------------------------------------------------
 void Schedule::LoadStage (Stage   *stage,

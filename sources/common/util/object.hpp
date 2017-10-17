@@ -81,6 +81,7 @@ namespace Net
     _current_ = g_list_next (_current_);\
   }\
   g_list_free (_list_);\
+  _list_ = NULL;\
 }
 
 class Object
@@ -134,6 +135,8 @@ class Object
     virtual void Recall ();
 
     void RefreshParcel ();
+
+    const gchar *GetClassName ();
 
     virtual void FeedParcel (Net::Message *parcel);
 

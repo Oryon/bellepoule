@@ -17,6 +17,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
+#include <libxml/xmlwriter.h>
 
 #include "object.hpp"
 #include "attribute.hpp"
@@ -43,19 +44,25 @@ class Filter : public Object
 
     void ShowAttribute (const gchar *name);
 
-    void UpdateAttrList ();
+    void UpdateAttrList (gboolean save_it = TRUE);
 
     void SelectAttributes ();
 
+    void RestoreLast ();
+
     GSList *GetAttrList ();
 
-    GSList *GetLayoutList ();
+    GList *GetLayoutList ();
 
     guint GetAttributeId (const gchar *name);
 
     void SetOwner (Module *owner);
 
     void UnPlug ();
+
+    void Save (xmlTextWriter *xml_writer);
+
+    void Load (xmlNode *xml_node);
 
   private:
     typedef enum
@@ -79,12 +86,14 @@ class Filter : public Object
 
     Module       *_owner;
     GSList       *_attr_list;
-    GSList       *_selected_list;
+    GList        *_selected_list;
     GtkListStore *_attr_filter_store;
     GtkWidget    *_dialog;
     GtkListStore *_look_store;
 
     virtual ~Filter ();
+
+    void ApplyList (gchar **list);
 
     static void OnVisibilityToggled (GtkCellRendererToggle *cell,
                                      gchar                 *path_string,

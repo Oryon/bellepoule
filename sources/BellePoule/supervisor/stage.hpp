@@ -183,8 +183,6 @@ class Stage : public virtual Object,
 
     static StageClass *GetClass (guint index);
 
-    static Stage *CreateInstance (xmlNode *xml_node);
-
     static Stage *CreateInstance (const gchar *name);
 
   protected:

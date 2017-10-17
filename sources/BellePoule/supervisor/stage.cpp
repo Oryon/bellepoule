@@ -841,17 +841,6 @@ Contest *Stage::GetContest ()
 }
 
 // --------------------------------------------------------------------------------
-Stage *Stage::CreateInstance (xmlNode *xml_node)
-{
-  if (xml_node)
-  {
-    return CreateInstance ((gchar *) xml_node->name);
-  }
-
-  return NULL;
-}
-
-// --------------------------------------------------------------------------------
 Stage *Stage::CreateInstance (const gchar *name)
 {
   StageClass *stage_class = GetClass (name);
@@ -1240,6 +1229,17 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
     }
   }
 
+  {
+    Module *module = dynamic_cast <Module *> (this);
+
+    if (module)
+    {
+      Filter *filter = module->GetFilter ();
+
+      filter->Load (xml_node);
+    }
+  }
+
   InitQualifiedForm ();
 }
 
@@ -1283,6 +1283,17 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
   if (_nb_qualified->IsValid ())
   {
     _nb_qualified->Save (xml_writer);
+  }
+
+  {
+    Module *module = dynamic_cast <Module *> (this);
+
+    if (module)
+    {
+      Filter *filter = module->GetFilter ();
+
+      filter->Save (xml_writer);
+    }
   }
 }
 

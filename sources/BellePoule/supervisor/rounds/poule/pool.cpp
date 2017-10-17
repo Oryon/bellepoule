@@ -2642,10 +2642,7 @@ namespace Pool
   {
     CleanScores ();
 
-    {
-      FreeFullGList (Match, _match_list);
-      _match_list = NULL;
-    }
+    FreeFullGList (Match, _match_list);
 
     {
       GSList *current = _fencer_list;

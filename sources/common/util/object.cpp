@@ -47,6 +47,8 @@ Object::Object (const gchar *class_name)
   _concealed_parcel = NULL;
   _listener_list    = NULL;
 
+  _class_name = class_name;
+
 #ifdef DEBUG
   _nb_objects++;
 
@@ -54,8 +56,6 @@ Object::Object (const gchar *class_name)
   {
     g_error ("No class name defined!\n");
   }
-
-  _class_name = class_name;
 
   if (g_strcmp0 (_klass_to_track, _class_name) == 0)
   {
@@ -141,6 +141,12 @@ Object::~Object ()
   }
 
 #endif
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Object::GetClassName ()
+{
+  return _class_name;
 }
 
 // --------------------------------------------------------------------------------

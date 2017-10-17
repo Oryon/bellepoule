@@ -16,6 +16,7 @@
 
 #include "attribute.hpp"
 #include "module.hpp"
+#include "global.hpp"
 
 #include "filter.hpp"
 
@@ -92,8 +93,7 @@ Filter::~Filter ()
     gtk_widget_destroy (GTK_WIDGET (_dialog));
   }
 
-  g_slist_free_full (_selected_list,
-                     (GDestroyNotify) Object::TryToRelease);
+  FreeFullGList(Layout, _selected_list);
 
   g_slist_free   (_attr_list);
   g_object_unref (_attr_filter_store);
@@ -141,7 +141,7 @@ GSList *Filter::GetAttrList ()
 }
 
 // --------------------------------------------------------------------------------
-GSList *Filter::GetLayoutList ()
+GList *Filter::GetLayoutList ()
 {
   return _selected_list;
 }
@@ -189,8 +189,8 @@ void Filter::ShowAttribute (const gchar *name)
 
       attr_layout->_desc = AttributeDesc::GetDescFromCodeName (current_name);
       attr_layout->_look = attr_layout->_desc->_favorite_look;
-      _selected_list = g_slist_append (_selected_list,
-                                       attr_layout);
+      _selected_list = g_list_append (_selected_list,
+                                      attr_layout);
       break;
     }
 
@@ -201,6 +201,112 @@ void Filter::ShowAttribute (const gchar *name)
   if (sibling)
   {
     gtk_tree_iter_free (sibling);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Filter::RestoreLast ()
+{
+  gchar **last_selection;
+
+  last_selection = g_key_file_get_string_list (Global::_user_config->_key_file,
+                                               _owner->GetClassName (),
+                                               "data_filter",
+                                               NULL,
+                                               NULL);
+
+  if (last_selection)
+  {
+    ApplyList (last_selection);
+    UpdateAttrList ();
+
+    g_strfreev (last_selection);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Filter::ApplyList (gchar **list)
+{
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_attr_filter_store),
+                                                   &iter);
+
+    while (iter_is_valid)
+    {
+      gtk_list_store_set (GTK_LIST_STORE (_attr_filter_store),
+                          &iter,
+                          ATTR_VISIBILITY_bool, FALSE, -1);
+
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_attr_filter_store),
+                                                &iter);
+    }
+  }
+
+  FreeFullGList(Layout, _selected_list);
+
+  for (guint i = 0; list[i]; i++)
+  {
+    ShowAttribute (list[i]);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Filter::Save (xmlTextWriter *xml_writer)
+{
+  GList   *current = _selected_list;
+  GString *string  = g_string_new ("");
+
+  for (guint i = 0; current; i++)
+  {
+    Layout *attr_layout = (Layout *) current->data;
+
+    if (i > 0)
+    {
+      g_string_append_c (string, ',');
+    }
+    g_string_append (string, attr_layout->_desc->_xml_name);
+
+    current = g_list_next (current);
+  }
+
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "Affichage",
+                                     "%s", string->str);
+  g_string_free (string,
+                 TRUE);
+}
+
+// --------------------------------------------------------------------------------
+void Filter::Load (xmlNode *xml_node)
+{
+  gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Affichage");
+
+  if (attr)
+  {
+    gchar **selections = g_strsplit (attr,
+                                     ",",
+                                     -1);
+
+    if (selections)
+    {
+      for (guint i = 0; selections[i]; i++)
+      {
+        AttributeDesc *desc = AttributeDesc::GetDescFromXmlName (selections[i]);
+
+        g_free (selections[i]);
+        selections[i] = g_strdup (desc->_code_name);
+      }
+
+      ApplyList (selections);
+      UpdateAttrList (FALSE);
+
+      g_strfreev (selections);
+    }
+
+    xmlFree (attr);
   }
 }
 
@@ -294,13 +400,9 @@ void Filter::SelectAttributes ()
 }
 
 // --------------------------------------------------------------------------------
-void Filter::UpdateAttrList ()
+void Filter::UpdateAttrList (gboolean save_it)
 {
-  {
-    g_slist_free_full (_selected_list,
-                       (GDestroyNotify) Object::TryToRelease);
-    _selected_list = NULL;
-  }
+  FreeFullGList(Layout, _selected_list);
 
   {
     GtkTreeIter iter;
@@ -328,13 +430,37 @@ void Filter::UpdateAttrList ()
 
         attr_layout->_look = curent_look;
         attr_layout->_desc = AttributeDesc::GetDescFromCodeName (current_name);
-        _selected_list = g_slist_append (_selected_list,
-                                         attr_layout);
+        _selected_list = g_list_append (_selected_list,
+                                        attr_layout);
       }
 
       iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_attr_filter_store),
                                                 &iter);
     }
+  }
+
+  // Make the choice persistent
+  if (save_it)
+  {
+    GList  *current    = _selected_list;
+    gsize   length     = g_list_length (current);
+    gchar **value_list = g_new (gchar *, length);
+
+    for (guint i = 0; current; i++)
+    {
+      Layout *attr_layout = (Layout *) current->data;
+
+      value_list[i] = attr_layout->_desc->_code_name;
+
+      current = g_list_next (current);
+    }
+
+    g_key_file_set_string_list (Global::_user_config->_key_file,
+                                _owner->GetClassName (),
+                                "data_filter",
+                                value_list,
+                                length);
+    g_free (value_list);
   }
 
   if (_owner->IsPlugged ())
