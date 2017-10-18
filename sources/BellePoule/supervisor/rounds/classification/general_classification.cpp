@@ -62,8 +62,8 @@ namespace People
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
+      filter = new Filter (GetClassName (),
+                           attr_list);
 
       filter->ShowAttribute ("final_rank");
       filter->ShowAttribute ("name");

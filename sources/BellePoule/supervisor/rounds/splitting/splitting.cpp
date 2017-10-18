@@ -70,8 +70,8 @@ namespace People
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
+      filter = new Filter (GetClassName (),
+                           attr_list);
 
       filter->ShowAttribute ("exported");
       filter->ShowAttribute ("stage_start_rank");
@@ -231,7 +231,7 @@ namespace People
       Attribute *previous_rank = fencer->GetAttribute (&previous_rank_attr_id);
 
       fencer->SetAttributeValue (&rank_attr_id,
-                                 previous_rank->GetIntValue ());
+                                 previous_rank->GetUIntValue ());
       current = g_list_next (current);
     }
 

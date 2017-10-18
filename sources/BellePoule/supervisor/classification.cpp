@@ -25,15 +25,10 @@
 #include "classification.hpp"
 
 // --------------------------------------------------------------------------------
-Classification::Classification (Filter *filter)
+Classification::Classification ()
   : Object ("Classification"),
     PlayersList ("classification.glade", NO_RIGHT)
 {
-  if (filter)
-  {
-    filter->SetOwner (this);
-  }
-  SetFilter (filter);
 }
 
 // --------------------------------------------------------------------------------

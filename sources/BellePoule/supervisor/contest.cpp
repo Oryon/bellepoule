@@ -983,6 +983,7 @@ void Contest::SetFilename (gchar *filename)
   g_free (_filename);
   _filename = filename;
 
+  if (filename)
   {
     gchar *base_name = g_path_get_basename (_filename);
     gchar *suffix    = g_strrstr (base_name,

@@ -26,7 +26,7 @@ class Contest;
 class Classification : public People::PlayersList
 {
   public:
-    Classification (Filter *filter);
+    Classification ();
 
     void DumpToFFF (gchar   *filename,
                     Contest *contest);

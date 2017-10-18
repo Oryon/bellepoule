@@ -1010,7 +1010,7 @@ void Stage::SetClassificationFilter (Filter *filter)
   if (_classification == NULL)
   {
     Module    *module           = dynamic_cast <Module *> (this);
-    GtkWidget *classification_w = GTK_WIDGET (module->GetGObject ("classification_list_host"));
+    GtkWidget *classification_w = GTK_WIDGET (module->GetGObject ("coumpound_classification_hook"));
 
     if (classification_w == NULL)
     {
@@ -1019,7 +1019,8 @@ void Stage::SetClassificationFilter (Filter *filter)
 
     if (classification_w)
     {
-      _classification = new Classification (filter);
+      _classification = new Classification ();
+      _classification->SetFilter (filter);
       _classification->SetDataOwner (this);
       module->Plug (_classification,
                     classification_w);
@@ -1236,7 +1237,28 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
     {
       Filter *filter = module->GetFilter ();
 
-      filter->Load (xml_node);
+      if (_input_provider)
+      {
+        filter->Load (xml_node,
+                      "Scores");
+      }
+      else
+      {
+        filter->Load (xml_node);
+      }
+    }
+  }
+
+  if (_classification)
+  {
+    Module *module = dynamic_cast <Module *> (_classification);
+
+    if (module)
+    {
+      Filter *filter = module->GetFilter ();
+
+      filter->Load (xml_node,
+                    "Classement");
     }
   }
 
@@ -1285,6 +1307,13 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
     _nb_qualified->Save (xml_writer);
   }
 
+  SaveFilters (xml_writer);
+}
+
+// --------------------------------------------------------------------------------
+void Stage::SaveFilters (xmlTextWriter *xml_writer,
+                         const gchar   *as)
+{
   {
     Module *module = dynamic_cast <Module *> (this);
 
@@ -1292,8 +1321,28 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
     {
       Filter *filter = module->GetFilter ();
 
-      filter->Save (xml_writer);
+      filter->Save (xml_writer,
+                    as);
     }
+  }
+
+  if (_classification)
+  {
+    Module *module = dynamic_cast <Module *> (_classification);
+
+    if (module)
+    {
+      Filter *filter = module->GetFilter ();
+
+      filter->Save (xml_writer,
+                    "Classement");
+    }
+  }
+
+  if (_next && GetInputProviderClient ())
+  {
+    _next->SaveFilters (xml_writer,
+                        "Scores");
   }
 }
 

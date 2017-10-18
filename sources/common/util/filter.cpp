@@ -28,14 +28,15 @@ static const gchar *look_images[AttributeDesc::NB_LOOK] =
 };
 
 // --------------------------------------------------------------------------------
-Filter::Filter (GSList *attr_list,
-                Module *owner)
+Filter::Filter (const gchar *name,
+                GSList      *attr_list)
 : Object ("Filter")
 {
   _dialog        = NULL;
   _selected_list = NULL;
   _attr_list     = attr_list;
-  _owner         = owner;
+  _owners        = NULL;
+  _name          = g_strdup (name);
 
   {
     GtkTreeIter iter;
@@ -95,6 +96,8 @@ Filter::~Filter ()
 
   FreeFullGList(Layout, _selected_list);
 
+  g_free         (_name);
+  g_list_free    (_owners);
   g_slist_free   (_attr_list);
   g_object_unref (_attr_filter_store);
   g_object_unref (_look_store);
@@ -110,9 +113,20 @@ void Filter::UnPlug ()
 }
 
 // --------------------------------------------------------------------------------
-void Filter::SetOwner (Module *owner)
+void Filter::AddOwner (Module *owner)
 {
-  _owner = owner;
+  if (g_strstr_len (_name,
+                    -1,
+                    owner->GetClassName ()) == NULL)
+  {
+    gchar *name = g_strdup_printf ("%s::%s", _name, owner->GetClassName ());
+
+    g_free (_name);
+    _name = name;
+  }
+
+  _owners = g_list_prepend (_owners,
+                            owner);
 }
 
 // --------------------------------------------------------------------------------
@@ -210,8 +224,8 @@ void Filter::RestoreLast ()
   gchar **last_selection;
 
   last_selection = g_key_file_get_string_list (Global::_user_config->_key_file,
-                                               _owner->GetClassName (),
-                                               "data_filter",
+                                               _name,
+                                               "display",
                                                NULL,
                                                NULL);
 
@@ -254,7 +268,8 @@ void Filter::ApplyList (gchar **list)
 }
 
 // --------------------------------------------------------------------------------
-void Filter::Save (xmlTextWriter *xml_writer)
+void Filter::Save (xmlTextWriter *xml_writer,
+                   const gchar   *as)
 {
   GList   *current = _selected_list;
   GString *string  = g_string_new ("");
@@ -272,17 +287,26 @@ void Filter::Save (xmlTextWriter *xml_writer)
     current = g_list_next (current);
   }
 
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "Affichage",
-                                     "%s", string->str);
+  {
+    gchar *full_name = g_strdup_printf ("Affichage%s",
+                                        as);
+
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST full_name,
+                                       "%s", string->str);
+    g_free (full_name);
+  }
+
   g_string_free (string,
                  TRUE);
 }
 
 // --------------------------------------------------------------------------------
-void Filter::Load (xmlNode *xml_node)
+void Filter::Load (xmlNode     *xml_node,
+                   const gchar *as)
 {
-  gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Affichage");
+  gchar *full_name = g_strdup_printf ("Affichage%s", as);
+  gchar *attr      = (gchar *) xmlGetProp (xml_node, BAD_CAST full_name);
 
   if (attr)
   {
@@ -323,9 +347,9 @@ void Filter::SelectAttributes ()
                                            NULL);
 
     g_object_set (_dialog,
-                  "transient-for", gtk_widget_get_parent_window (_dialog),
+                  "transient-for",       gtk_widget_get_parent_window (_dialog),
                   "destroy-with-parent", TRUE,
-                  "modal", TRUE,
+                  "modal",               TRUE,
                   NULL);
 
     {
@@ -456,16 +480,26 @@ void Filter::UpdateAttrList (gboolean save_it)
     }
 
     g_key_file_set_string_list (Global::_user_config->_key_file,
-                                _owner->GetClassName (),
-                                "data_filter",
+                                _name,
+                                "display",
                                 value_list,
                                 length);
     g_free (value_list);
   }
 
-  if (_owner->IsPlugged ())
   {
-    _owner->OnAttrListUpdated ();
+    GList *current = _owners;
+
+    while (current)
+    {
+      Module *owner = (Module *) current->data;
+
+      if (owner->IsPlugged ())
+      {
+        owner->OnAttrListUpdated ();
+      }
+      current = g_list_next (current);
+    }
   }
 }
 

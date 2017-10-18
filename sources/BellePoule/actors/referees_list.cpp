@@ -66,20 +66,21 @@ namespace People
                                           NULL);
 
       {
-        _collapsed_filter = new Filter (attr_list,
-                                        this);
+        _collapsed_filter = new Filter (GetClassName (),
+                                        attr_list);
+
         _collapsed_filter->ShowAttribute ("name");
         _collapsed_filter->ShowAttribute ("workload_rate");
-        _collapsed_filter->ShowAttribute  ("club");
-        _collapsed_filter->ShowAttribute  ("league");
-        _collapsed_filter->ShowAttribute  ("country");
+        _collapsed_filter->ShowAttribute ("club");
+        _collapsed_filter->ShowAttribute ("league");
+        _collapsed_filter->ShowAttribute ("country");
 
         SetFilter (_collapsed_filter);
       }
 
       {
-        _expanded_filter = new Filter (g_slist_copy (attr_list),
-                                       this);
+        _expanded_filter = new Filter (GetClassName (),
+                                       g_slist_copy (attr_list));
 
         _expanded_filter->ShowAttribute ("attending");
         _expanded_filter->ShowAttribute ("name");

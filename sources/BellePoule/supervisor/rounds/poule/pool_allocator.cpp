@@ -122,8 +122,8 @@ namespace Pool
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
+      filter = new Filter (GetClassName (),
+                           attr_list);
 
       filter->ShowAttribute ("stage_start_rank");
       filter->ShowAttribute ("name");
@@ -193,8 +193,8 @@ namespace Pool
                                             "bouts_count",
                                             "victories_ratio",
                                             NULL);
-        filter = new Filter (attr_list,
-                             _fencer_list);
+        filter = new Filter (GetClassName (),
+                             attr_list);
 
         filter->ShowAttribute ("name");
         filter->ShowAttribute ("first_name");
@@ -703,6 +703,14 @@ namespace Pool
   {
     Stage::LoadConfiguration (xml_node);
 
+    {
+      Filter *filter = _fencer_list->GetFilter ();
+
+      filter->Load (xml_node,
+                    "Liste");
+      filter->Release ();
+    }
+
     if (_seeding_balanced)
     {
       _seeding_balanced->Load (xml_node);
@@ -798,6 +806,14 @@ namespace Pool
   void Allocator::SaveConfiguration (xmlTextWriter *xml_writer)
   {
     Stage::SaveConfiguration (xml_writer);
+
+    {
+      Filter *filter = _fencer_list->GetFilter ();
+
+      filter->Save (xml_writer,
+                    "Liste");
+      filter->Release ();
+    }
 
     if (_seeding_balanced)
     {

@@ -59,8 +59,8 @@ namespace People
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
+      filter = new Filter (GetClassName (),
+                           attr_list);
 
       filter->ShowAttribute ("promoted");
       filter->ShowAttribute ("name");
@@ -98,8 +98,8 @@ namespace People
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
+      filter = new Filter (GetClassName (),
+                           attr_list);
 
       filter->ShowAttribute ("rank");
       filter->ShowAttribute ("status");

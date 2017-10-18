@@ -103,8 +103,8 @@ namespace Table
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
+      filter = new Filter (GetClassName (),
+                           attr_list);
 
       filter->ShowAttribute ("stage_start_rank");
       filter->ShowAttribute ("name");
@@ -139,8 +139,8 @@ namespace Table
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
+      filter = new Filter (GetClassName (),
+                           attr_list);
 
       filter->ShowAttribute ("rank");
       filter->ShowAttribute ("status");

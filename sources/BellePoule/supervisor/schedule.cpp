@@ -1124,7 +1124,6 @@ void Schedule::LoadPeoples (Stage           *stage_host,
   }
 }
 
-
 // --------------------------------------------------------------------------------
 void Schedule::LoadStage (Stage   *stage,
                           xmlNode *xml_node,

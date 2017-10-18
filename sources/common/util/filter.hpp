@@ -39,8 +39,8 @@ class Filter : public Object
         AttributeDesc       *_desc;
     };
 
-    Filter (GSList *attr_list,
-            Module *owner = NULL);
+    Filter (const gchar *name,
+            GSList      *attr_list);
 
     void ShowAttribute (const gchar *name);
 
@@ -56,13 +56,15 @@ class Filter : public Object
 
     guint GetAttributeId (const gchar *name);
 
-    void SetOwner (Module *owner);
+    void AddOwner (Module *owner);
 
     void UnPlug ();
 
-    void Save (xmlTextWriter *xml_writer);
+    void Save (xmlTextWriter *xml_writer,
+               const gchar   *as = "");
 
-    void Load (xmlNode *xml_node);
+    void Load (xmlNode *xml_node,
+               const gchar   *as = "");
 
   private:
     typedef enum
@@ -84,7 +86,8 @@ class Filter : public Object
       NUM_LOOK_COLS
     } StoreLookColumn;
 
-    Module       *_owner;
+    GList        *_owners;
+    gchar        *_name;
     GSList       *_attr_list;
     GList        *_selected_list;
     GtkListStore *_attr_filter_store;

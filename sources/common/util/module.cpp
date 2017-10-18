@@ -341,16 +341,17 @@ void Module::SetFilter (Filter *filter)
 {
   if (_filter)
   {
-    _filter->Release ();
+    g_warning ("Module has already a Filter");
+    return;
   }
 
   _filter = filter;
 
   if (_filter)
   {
-    _filter->RestoreLast ();
-
     _filter->Retain ();
+    _filter->AddOwner (this);
+    _filter->RestoreLast ();
   }
 }
 
@@ -794,8 +795,8 @@ GtkTreeModel *Module::GetStatusModel ()
 
     if (desc)
     {
-      GtkTreeIter  iter;
-      gboolean     iter_is_valid;
+      GtkTreeIter iter;
+      gboolean    iter_is_valid;
 
       _status_model = GTK_TREE_MODEL (gtk_tree_store_new (5,
                                                           G_TYPE_UINT,

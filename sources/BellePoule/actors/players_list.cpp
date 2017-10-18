@@ -645,7 +645,7 @@ namespace People
     gboolean             attr_modifiable = desc->GetUIntData (this,
                                                               "modifiable");
 
-    if (   (desc->_type == G_TYPE_INT)
+    if (   (desc->_type == G_TYPE_UINT)
         && (look & AttributeDesc::GRAPHICAL))
     {
       renderer = gtk_cell_renderer_progress_new ();

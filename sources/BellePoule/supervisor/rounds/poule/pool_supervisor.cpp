@@ -88,8 +88,8 @@ namespace Pool
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
+      filter = new Filter (GetClassName (),
+                           attr_list);
 
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
@@ -101,6 +101,7 @@ namespace Pool
     // Classifications
     {
       Filter *filter;
+
       {
         GSList *attr_list;
 
@@ -118,7 +119,8 @@ namespace Pool
                                             "promoted",
                                             "team",
                                             NULL);
-        filter = new Filter (attr_list);
+        filter = new Filter (GetClassName (),
+                             attr_list);
 
         filter->ShowAttribute ("rank");
         filter->ShowAttribute ("status");
@@ -139,7 +141,8 @@ namespace Pool
       }
 
       {
-        _current_round_classification = new Classification (filter);
+        _current_round_classification = new Classification ();
+        _current_round_classification->SetFilter (filter);
         Plug (_current_round_classification,
               _glade->GetWidget ("current_round_classification_hook"));
       }

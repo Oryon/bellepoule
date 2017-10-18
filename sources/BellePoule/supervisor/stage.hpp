@@ -257,4 +257,7 @@ class Stage : public virtual Object,
     void InitQualifiedForm ();
 
     gchar *GetAnnounce ();
+
+    void SaveFilters (xmlTextWriter *xml_writer,
+                      const gchar   *as = "");
 };

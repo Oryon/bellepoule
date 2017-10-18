@@ -45,6 +45,8 @@ namespace People
     _minimum_team_size      = NULL;
     _default_classification = NULL;
 
+    _attendees = new Attendees ();
+
     // Sensitive widgets
     {
       AddSensitiveWidget (_glade->GetWidget ("add_player_button"));
@@ -84,8 +86,8 @@ namespace People
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
+      filter = new Filter (GetClassName (),
+                           attr_list);
 
       filter->ShowAttribute ("attending");
       filter->ShowAttribute ("name");
@@ -116,8 +118,8 @@ namespace People
                                           "name",
                                           "ranking",
                                           NULL);
-      filter = new Filter (attr_list,
-                           this);
+      filter = new Filter (GetClassName (),
+                           attr_list);
 
       _form->AddPage (filter,
                       "Team");
@@ -176,8 +178,6 @@ namespace People
   void CheckinSupervisor::Load (xmlNode *xml_node)
   {
     LoadConfiguration (xml_node);
-
-    _attendees = new Attendees ();
   }
 
 

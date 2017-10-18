@@ -8,6 +8,11 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">images/stock_combined_scores.png</property>
   </object>
+  <object class="GtkAdjustment" id="nb_qualified_adjustment">
+    <property name="upper">9999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkWindow" id="configuration_window">
     <property name="can_focus">False</property>
     <child>
@@ -79,7 +84,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
                         <signal name="toggled" handler="on_all_radiobutton_toggled" swapped="no"/>
@@ -91,7 +95,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">all_radiobutton</property>
@@ -210,7 +213,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
                       </object>
@@ -226,7 +228,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">balanced_radiobutton</property>
                       </object>
@@ -250,11 +251,6 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkAdjustment" id="nb_qualified_adjustment">
-    <property name="upper">9999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
   </object>
   <object class="GtkListStore" id="pool_liststore">
     <columns>
@@ -325,7 +321,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                           </object>
@@ -341,7 +336,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="draw_indicator">True</property>
                             <property name="group">all_pool_radiobutton</property>
                           </object>
@@ -393,7 +387,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="on_for_referees_radiobutton_clicked" swapped="no"/>
@@ -415,7 +408,6 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="image_position">right</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
@@ -440,7 +432,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="draw_indicator">True</property>
                             <property name="group">for_referees_radiobutton</property>
                           </object>
@@ -483,11 +474,6 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixbuf">images/stock_scores.png</property>
-  </object>
-  <object class="GtkImage" id="smartpool_image">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">images/smartphone.png</property>
   </object>
   <object class="GtkWindow" id="supervisor_window">
     <property name="can_focus">False</property>
@@ -548,7 +534,6 @@
                   <object class="GtkToolButton" id="pool_filter_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Data</property>
                     <property name="stock_id">gtk-index</property>
                     <signal name="clicked" handler="on_pool_filter_toolbutton_clicked" swapped="no"/>
@@ -562,7 +547,6 @@
                   <object class="GtkToolButton" id="print_pool_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="stock_id">gtk-print</property>
                     <signal name="clicked" handler="on_print_pool_toolbutton_clicked" swapped="no"/>
                   </object>
@@ -575,7 +559,6 @@
                   <object class="GtkSeparatorToolItem" id="toolbutton4">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -586,7 +569,6 @@
                   <object class="GtkToggleToolButton" id="pool_classification_toggletoolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Classification</property>
                     <property name="use_underline">True</property>
                     <property name="icon_widget">score_image4</property>
@@ -611,7 +593,6 @@
                   <object class="GtkToolButton" id="stuff_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Automatic stuffing</property>
                     <property name="use_underline">True</property>
                     <property name="icon_name">gnome-devel</property>
@@ -661,7 +642,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <child>
-                  <object class="GtkViewport" id="classification_list_host">
+                  <object class="GtkViewport" id="coumpound_classification_hook">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="resize_mode">queue</property>
@@ -720,5 +701,10 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkImage" id="smartpool_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">images/smartphone.png</property>
   </object>
 </interface>
