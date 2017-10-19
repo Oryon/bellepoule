@@ -1273,10 +1273,6 @@ void Contest::Init ()
   color = g_new (GdkColor, 1);
   gdk_color_parse ("#DF421E", color); // accent red
   _color_list = g_list_append (_color_list, color);
-
-  color = g_new (GdkColor, 1);
-  gdk_color_parse ("#826647", color); // Basic 3D hilight
-  _color_list = g_list_append (_color_list, color);
 }
 
 // --------------------------------------------------------------------------------
@@ -2051,16 +2047,14 @@ void Contest::DrawPage (GtkPrintOperation *operation,
     g_free (color);
   }
 
-  {
-    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                         _name,
-                         10.0, 0.8,
-                         20.0,
-                         GTK_ANCHOR_NORTH,
-                         "alignment", PANGO_ALIGN_CENTER,
-                         "fill-color", "black",
-                         "font", BP_FONT "Bold 2.5px", NULL);
-  }
+  goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                       _name,
+                       10.0, 0.8,
+                       20.0,
+                       GTK_ANCHOR_NORTH,
+                       "alignment", PANGO_ALIGN_CENTER,
+                       "fill-color", "black",
+                       "font", BP_FONT "Bold 2.5px", NULL);
 
   {
     char *text = g_strdup_printf ("%s - %s - %s", _weapon->GetImage (),
@@ -2083,15 +2077,13 @@ void Contest::DrawPage (GtkPrintOperation *operation,
     g_free (text);
   }
 
-  {
-    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                         (const char *) g_object_get_data (G_OBJECT (operation), "Print::PageName"),
-                         50.0, 7.5,
-                         -1.0,
-                         GTK_ANCHOR_CENTER,
-                         "fill-color", "black",
-                         "font", BP_FONT "Bold 4px", NULL);
-  }
+  goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                       (const char *) g_object_get_data (G_OBJECT (operation), "Print::PageName"),
+                       50.0, 7.5,
+                       -1.0,
+                       GTK_ANCHOR_CENTER,
+                       "fill-color", "black",
+                       "font", BP_FONT "Bold 4px", NULL);
 
   if (_organizer)
   {
@@ -2104,15 +2096,25 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          "font", BP_FONT "Bold 2.5px", NULL);
   }
 
-  {
-    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                         GetDate (),
-                         98.0, 5.0,
-                         -1.0,
-                         GTK_ANCHOR_EAST,
-                         "fill-color", "black",
-                         "font", BP_FONT "Bold 2.5px", NULL);
-  }
+  goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                       GetDate (),
+                       98.0, 5.0,
+                       -1.0,
+                       GTK_ANCHOR_EAST,
+                       "fill-color", "black",
+                       "font", BP_FONT "Bold 2.5px", NULL);
+
+  goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                       "BellePoule fencing software "
+                       "<span foreground=\"blue\" underline=\"single\">http://betton.escrime.free.fr</span> ",
+                       50.0, 145.5,
+                       100.0,
+                       GTK_ANCHOR_S,
+                       "alignment",  PANGO_ALIGN_CENTER,
+                       "fill-color", "black",
+                       "font",       BP_FONT "Bold 1.7px",
+                       "use-markup", TRUE,
+                       NULL);
 
   goo_canvas_render (canvas,
                      gtk_print_context_get_cairo_context (context),
