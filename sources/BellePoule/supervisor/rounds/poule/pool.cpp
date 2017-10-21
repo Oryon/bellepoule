@@ -798,11 +798,12 @@ namespace Pool
           image = GetPlayerImage (player_table,
                                   "font_desc=\"" BP_FONT "14.0px\"",
                                   GetPlayer (i, _sorted_fencer_list),
+                                  NULL,
                                   "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                   "first_name", "foreground=\"darkblue\"",
-                                  "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
-                                  "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
-                                  "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                  "club",       "style=\"italic\" foreground=\"dimgrey\"",
+                                  "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                  "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                   NULL);
           Canvas::PutInTable (player_table,
                               image,
@@ -1146,11 +1147,12 @@ namespace Pool
             GooCanvasItem *image = GetPlayerImage (player_table,
                                                    "font_desc=\"" BP_FONT "14.0px\"",
                                                    player,
+                                                   NULL,
                                                    "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                    "first_name", "foreground=\"darkblue\"",
-                                                   "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
-                                                   "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
-                                                   "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                   "club",       "style=\"italic\" foreground=\"dimgrey\"",
+                                                   "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                                   "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                                    NULL);
 
             {
@@ -1197,11 +1199,12 @@ namespace Pool
             GooCanvasItem *image        = GetPlayerImage (player_table,
                                                           "font_desc=\"" BP_FONT "14.0px\"",
                                                           player,
+                                                          NULL,
                                                           "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                           "first_name", "foreground=\"darkblue\"",
-                                                          "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
-                                                          "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
-                                                          "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                          "club",       "style=\"italic\" foreground=\"dimgrey\"",
+                                                          "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                                          "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                                           NULL);
 
             {

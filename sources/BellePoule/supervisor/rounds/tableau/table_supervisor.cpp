@@ -1061,6 +1061,18 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  void Supervisor::OnPreviousClicked ()
+  {
+    _displayed_table_set->OnDisplayPrevious ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Supervisor::OnNextClicked ()
+  {
+    _displayed_table_set->OnDisplayNext ();
+  }
+
+  // --------------------------------------------------------------------------------
   void Supervisor::OnInputToggled (GtkWidget *widget)
   {
     if (_displayed_table_set)
@@ -1220,12 +1232,8 @@ namespace Table
   guint Supervisor::PreparePrint (GtkPrintOperation *operation,
                                   GtkPrintContext   *context)
   {
-    if (GetStageView (operation) == STAGE_VIEW_RESULT)
-    {
-      return 0;
-    }
-    else if (   (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
-             || gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
+    if (   (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+        || gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
     {
       Classification *classification = GetClassification ();
 
@@ -1404,5 +1412,23 @@ namespace Table
     Supervisor *t = dynamic_cast <Supervisor *> (owner);
 
     t->OnTableSetTreeViewCursorChanged (treeview);
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_previous_button_clicked (GtkWidget *widget,
+                                                              Object    *owner)
+  {
+    Supervisor *t = dynamic_cast <Supervisor *> (owner);
+
+    t->OnPreviousClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_next_button_clicked (GtkWidget *widget,
+                                                          Object    *owner)
+  {
+    Supervisor *t = dynamic_cast <Supervisor *> (owner);
+
+    t->OnNextClicked ();
   }
 }

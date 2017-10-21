@@ -26,7 +26,6 @@
 
 #include "table.hpp"
 #include "html_table.hpp"
-#include "table_set_border.hpp"
 #include "table_print_session.hpp"
 
 class Error;
@@ -62,11 +61,13 @@ namespace Table
 
       gboolean HasAttendees ();
 
-      void OnFromToTableComboboxChanged ();
-
-      void OnCuttingCountComboboxChanged ();
+      void OnBoutSheetChanged ();
 
       void OnStuffClicked ();
+
+      void OnDisplayPrevious ();
+
+      void OnDisplayNext ();
 
       void OnInputToggled (GtkWidget *widget);
 
@@ -88,8 +89,6 @@ namespace Table
                      gint               page_nr);
 
       void DisplayPreview ();
-
-      void OnPrinScaleChanged (gdouble value);
 
       void Wipe ();
 
@@ -150,7 +149,8 @@ namespace Table
                            const gchar *data);
 
     private:
-      static const gdouble _score_rect_size;
+      static const gdouble _score_rect_w;
+      static const gdouble _score_rect_h;
 
       static const gdouble _table_spacing;
 
@@ -184,12 +184,13 @@ namespace Table
       guint                     _first_place;
       gboolean                  _is_active;
       GtkPageSetup             *_page_setup;
-      TableSetBorder           *_from_border;
-      TableSetBorder           *_to_border;
+      Table                    *_from_table;
+      Table                    *_to_table;
       gboolean                 *_row_filled;
       HtmlTable                *_html_table;
       GdkPixbuf                *_printer_pixbuf;
       gboolean                  _has_marshaller;
+      Filter                   *_right_filter;
 
       Listener *_listener;
 
@@ -270,6 +271,8 @@ namespace Table
                                 gboolean  all_sheet);
 
       gboolean PlaceIsFenced (guint place);
+
+      void ChangeFromTable (Table *table);
 
       static gint ComparePlayer (Player    *A,
                                  Player    *B,

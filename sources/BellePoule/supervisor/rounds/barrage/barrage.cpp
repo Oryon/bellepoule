@@ -26,7 +26,8 @@ namespace People
 
   // --------------------------------------------------------------------------------
   Barrage::Barrage (StageClass *stage_class)
-    : Stage (stage_class),
+    : Object ("Barrage"),
+    Stage (stage_class),
     PlayersList ("barrage.glade",
                  SORTABLE)
   {

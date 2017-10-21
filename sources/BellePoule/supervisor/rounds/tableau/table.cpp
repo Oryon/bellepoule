@@ -342,7 +342,12 @@ namespace Table
   // --------------------------------------------------------------------------------
   GNode *Table::GetNode (guint index)
   {
-    return _node_table[index];
+    if (index < _size)
+    {
+      return _node_table[index];
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------

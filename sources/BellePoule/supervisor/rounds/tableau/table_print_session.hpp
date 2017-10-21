@@ -30,8 +30,6 @@ namespace Table
 
       void Dump ();
 
-      void SetScale (gdouble scale);
-
       void SetResolutions (gdouble source_resolution,
                            gdouble target_resolution);
 
@@ -39,52 +37,45 @@ namespace Table
                          gdouble paper_h,
                          gdouble header_h_on_paper);
 
-      gdouble GetGlobalScale ();
+      gdouble GetScale ();
 
-      void SetCuttingBounds (guint            cutting,
-                             GooCanvasBounds *bounds);
+      void SetPageBounds (guint            page,
+                          GooCanvasBounds *bounds);
 
-      void Begin (guint cutting_count);
+      void Begin (guint nb_pages);
 
     public:
       void ProcessCurrentPage (guint page);
-
-      gboolean CurrentPageHasHeader ();
 
       GooCanvasBounds *GetMiniHeaderBoundsForCurrentPage ();
 
       GooCanvasBounds *GetCanvasBoundsForCurrentPage ();
 
-      gdouble GetPaperXShiftForCurrentPage ();
-
       gdouble GetPaperYShiftForCurrentPage ();
+
+      guint GetNbPages ();
 
     public:
       gboolean _full_table;
-      guint    _cutting_count;
-      guint    _nb_x_pages;
-      guint    _nb_y_pages;
 
     private:
       GooCanvasBounds *_bounds_table;
 
-      gdouble  _user_scale;
-      gdouble  _global_scale;
+      guint    _nb_pages;
+
+      gdouble  _dpi_adaptation;
+      gdouble  _scale;
       gdouble  _source_resolution;
       gdouble  _target_resolution;
 
-      gdouble  _header_h_on_canvas;
       gdouble  _page_w;
       gdouble  _page_h;
 
       gdouble  _cutting_w;
       gdouble  _cutting_h;
 
-      gboolean        _current_page_has_header;
       GooCanvasBounds _mini_header_bounds;
       GooCanvasBounds _canvas_bounds;
-      guint           _cutting_x_page;
-      guint           _cutting_y_page;
-      guint           _current_cutting;
+      guint           _current_page;
   };
 }

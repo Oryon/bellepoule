@@ -26,6 +26,7 @@
 #include "util/player.hpp"
 #include "util/dnd_config.hpp"
 #include "util/fie_time.hpp"
+#include "util/filter.hpp"
 #include "../../classification.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
@@ -37,8 +38,9 @@
 
 namespace Table
 {
-  const gdouble TableSet::_score_rect_size = 30.0;
-  const gdouble TableSet::_table_spacing   = 10.0;
+  const gdouble TableSet::_score_rect_w  = 45.0;
+  const gdouble TableSet::_score_rect_h  = 20.0;
+  const gdouble TableSet::_table_spacing = 10.0;
 
   typedef enum
   {
@@ -52,11 +54,6 @@ namespace Table
     QUICK_MATCH_PATH_COLUMN_str,
     QUICK_MATCH_VISIBILITY_COLUMN_bool
   } QuickSearchColumnId;
-
-  extern "C" G_MODULE_EXPORT void on_from_to_table_combobox_changed (GtkWidget *widget,
-                                                                     Object    *owner);
-  extern "C" G_MODULE_EXPORT void on_cutting_count_combobox_changed (GtkWidget *widget,
-                                                                     Object    *owner);
 
   // --------------------------------------------------------------------------------
   TableSet::TableSet (Supervisor *supervisor,
@@ -87,6 +84,8 @@ namespace Table
     _is_active      = FALSE;
     _html_table     = new HtmlTable (supervisor_module);
     _has_marshaller = FALSE;
+    _from_table     = NULL;
+    _to_table       = NULL;
 
     _listener       = NULL;
 
@@ -125,15 +124,6 @@ namespace Table
                                                       _quick_score_A);
     }
 
-    _from_border = new TableSetBorder (this,
-                                       G_CALLBACK (on_from_to_table_combobox_changed),
-                                       from_container,
-                                       _glade->GetWidget ("from_table_combobox"));
-    _to_border = new TableSetBorder (this,
-                                     G_CALLBACK (on_from_to_table_combobox_changed),
-                                     to_container,
-                                     _glade->GetWidget ("to_table_combobox"));
-
     _quick_search_treestore = GTK_TREE_STORE (_glade->GetGObject ("match_treestore"));
     _quick_search_filter    = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("match_treemodelfilter"));
 
@@ -151,6 +141,20 @@ namespace Table
     }
 
     _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+
+    {
+      GSList *attr_list;
+
+      AttributeDesc::CreateIncludingList (&attr_list,
+                                          "name",
+                                          "first_name",
+                                          NULL);
+      _right_filter = new Filter (GetClassName (),
+                                  attr_list);
+
+      _right_filter->ShowAttribute ("name");
+      _right_filter->ShowAttribute ("first_name");
+    }
 
     Net::Ring::_broker->RegisterListener (this);
   }
@@ -174,8 +178,7 @@ namespace Table
 
     g_free (_id);
 
-    _from_border->Release ();
-    _to_border->Release   ();
+    _right_filter->Release ();
 
     _html_table->Release ();
 
@@ -230,7 +233,7 @@ namespace Table
 
     Garnish ();
 
-    OnFromToTableComboboxChanged ();
+    ChangeFromTable (_tables[_nb_tables-1]);
 
     // Mask free match tables
     {
@@ -255,7 +258,7 @@ namespace Table
 
         if ((table->GetSize () / 2) < nb_active_players)
         {
-          _from_border->SelectTable (t);
+          ChangeFromTable (table);
           break;
         }
       }
@@ -312,17 +315,17 @@ namespace Table
 
     goo_rect = goo_canvas_rect_new (goo_canvas_get_root_item (canvas),
                                     0, 0,
-                                    _score_rect_size, _score_rect_size,
+                                    _score_rect_w, _score_rect_h,
                                     "stroke-pattern", NULL,
                                     "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
                                     NULL);
 
     score_text = goo_canvas_text_new (goo_canvas_item_get_parent (goo_rect),
                                       "",
-                                      _score_rect_size/2, _score_rect_size/2,
+                                      _score_rect_w/2, _score_rect_h/2,
                                       -1,
                                       GTK_ANCHOR_CENTER,
-                                      "font", BP_FONT "bold 18px",
+                                      "font", BP_FONT "bold 14px",
                                       NULL);
 
     _quick_score_collector->AddCollectingPoint (goo_rect,
@@ -367,9 +370,6 @@ namespace Table
         gchar *icon;
         Table *table = _tables[t];
 
-        icon = g_strdup (GTK_STOCK_EXECUTE);
-        _is_over = FALSE;
-
         if (table->_has_all_roadmap == FALSE)
         {
           icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
@@ -382,7 +382,12 @@ namespace Table
           _first_error = table->_first_error;
           _is_over     = FALSE;
         }
-        else if (table->_is_over == TRUE)
+        else if (table->_is_over == FALSE)
+        {
+          icon = g_strdup (GTK_STOCK_EXECUTE);
+          _is_over = FALSE;
+        }
+        else
         {
           icon = g_strdup (GTK_STOCK_APPLY);
         }
@@ -402,11 +407,6 @@ namespace Table
                                                                icon,
                                                                0, 0);
           }
-
-          _from_border->SetTableIcon (_nb_tables-t-1,
-                                      icon);
-          _to_border->SetTableIcon (_nb_tables-t-1,
-                                    icon);
         }
 
         g_free (icon);
@@ -444,8 +444,11 @@ namespace Table
       Wipe ();
 
       _main_table = goo_canvas_table_new (GetRootItem (),
-                                          "column-spacing",   _table_spacing,
-                                          //"homogeneous-rows", TRUE,
+                                          "column-spacing",       _table_spacing,
+                                          //"homogeneous-rows",     TRUE,
+                                          //"stroke-color",         "red",
+                                          //"horz-grid-line-width", 1.0,
+                                          //"vert-grid-line-width", 1.0,
                                           NULL);
 
       // Header
@@ -497,8 +500,7 @@ namespace Table
       }
 
       {
-        Table *from    = _from_border->GetSelectedTable ();
-        guint  nb_rows = from->GetSize () * 2 - 1;
+        guint nb_rows = _from_table->GetSize ()*2 - 1;
 
         _row_filled = g_new0 (gboolean,
                               nb_rows);
@@ -727,10 +729,6 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::DeleteTree ()
   {
-    __gcc_extension__ g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
-                                                            (void *) on_from_to_table_combobox_changed,
-                                                            (Object *) this);
-
     if (_tree_root)
     {
       g_node_traverse (_tree_root,
@@ -776,7 +774,7 @@ namespace Table
 
     gtk_tree_store_clear (_quick_search_treestore);
 
-    _tables = (Table **) g_malloc (_nb_tables * sizeof (Table *));
+    _tables = g_new (Table *, _nb_tables);
     for (guint t = 0; t < _nb_tables; t++)
     {
       Contest *competition = _supervisor->GetContest ();
@@ -827,24 +825,7 @@ namespace Table
                        this);
     }
 
-    {
-      _from_border->MuteCallbacks ();
-      _to_border->MuteCallbacks   ();
-
-      for (guint t = 0; t < _nb_tables; t++)
-      {
-        Table *table = _tables[t];
-
-        _from_border->AddTable (table);
-        _to_border->AddTable   (table);
-      }
-
-      _from_border->SelectTable (0);
-      _to_border->SelectTable   (-1);
-
-      _from_border->UnMuteCallbacks ();
-      _to_border->UnMuteCallbacks   ();
-    }
+    ChangeFromTable (_tables[_nb_tables-1]);
   }
 
   // --------------------------------------------------------------------------------
@@ -1109,10 +1090,12 @@ namespace Table
         guint column;
 
         data->_fencer_goo_table = goo_canvas_table_new (table_set->_main_table,
-                                                        "column-spacing", table_set->_table_spacing,
+                                                        "column-spacing",       table_set->_table_spacing,
+                                                        //"stroke-color",         "blue",
+                                                        //"horz-grid-line-width", 1.0,
+                                                        //"vert-grid-line-width", 1.0,
                                                         NULL);
         Canvas::SetTableItemAttribute (data->_fencer_goo_table, "x-fill", 1U);
-        //Canvas::SetTableItemAttribute (data->_fencer_goo_table, "x-expand", 1U);
 
         row    = data->_table->GetRow (data->_table_index);
         column = data->_table->GetColumn ();
@@ -1224,7 +1207,7 @@ namespace Table
           {
             data->_score_goo_rect = goo_canvas_rect_new (data->_score_goo_table,
                                                          0, 0,
-                                                         _score_rect_size, _score_rect_size,
+                                                         _score_rect_w, _score_rect_h,
                                                          "stroke-pattern", NULL,
                                                          "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
                                                          NULL);
@@ -1263,7 +1246,7 @@ namespace Table
                                                          0, 0,
                                                          -1,
                                                          GTK_ANCHOR_CENTER,
-                                                         "font", BP_FONT "bold 18px",
+                                                         "font", BP_FONT "bold 14px",
                                                          NULL);
 
             Canvas::PutInTable (data->_score_goo_table,
@@ -1271,7 +1254,7 @@ namespace Table
                                 0,
                                 0);
             Canvas::SetTableItemAttribute (data->_score_goo_text, "x-align", 0.5);
-            Canvas::SetTableItemAttribute (data->_score_goo_text, "y-align", 0.5);
+            Canvas::SetTableItemAttribute (data->_score_goo_text, "y-align", 1.0);
           }
 
           // Score collector
@@ -1381,12 +1364,12 @@ namespace Table
         }
         else
         {
-          // Workaround. Visibility make issues!
+          // Workaround. Visibility makes issues!
           GdkPixbuf *empty_pixbuf = gdk_pixbuf_new_subpixbuf (table_set->_printer_pixbuf,
-                                                      0,
-                                                      0,
-                                                      1,
-                                                      1);
+                                                              0,
+                                                              0,
+                                                              1,
+                                                              1);
           g_object_set (data->_print_goo_icon,
                         "pixbuf", empty_pixbuf,
                         NULL);
@@ -1401,22 +1384,31 @@ namespace Table
 
         if (winner)
         {
+          Filter *display_filter = NULL;
+          Table  *left_table     = data->_table->GetLeftTable ();
+
+          if (left_table && left_table->IsDisplayed ())
+          {
+            display_filter = table_set->_right_filter;
+          }
+
           data->_fencer_goo_image = table_set->GetPlayerImage (data->_fencer_goo_table,
                                                                "font_desc=\"" BP_FONT "14.0px\"",
                                                                winner,
+                                                               display_filter,
                                                                "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                                "first_name", "foreground=\"darkblue\"",
-                                                               "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
-                                                               "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
-                                                               "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                               "club",       "style=\"italic\" foreground=\"dimgrey\"",
+                                                               "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                                               "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                                                NULL);
           Canvas::PutInTable (data->_fencer_goo_table,
                               data->_fencer_goo_image,
                               0,
                               1);
-          Canvas::SetTableItemAttribute (data->_fencer_goo_image, "y-align", 1.0);
+          Canvas::SetTableItemAttribute (data->_fencer_goo_image, "y-align", 0.9);
           Canvas::SetTableItemAttribute (data->_fencer_goo_image, "x-align", 0.0);
-          Canvas::SetTableItemAttribute (data->_fencer_goo_image, "x-fill", 1u);
+          Canvas::SetTableItemAttribute (data->_fencer_goo_image, "x-fill",  1u);
         }
       }
 
@@ -1934,15 +1926,44 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::OnFromToTableComboboxChanged ()
+  void TableSet::OnDisplayPrevious ()
   {
-    Table *from_table = _from_border->GetSelectedTable ();
-    Table *to_table   = _to_border->GetSelectedTable   ();
-
-    if (from_table && to_table)
+    if (_from_table->GetLeftTable ())
     {
-      guint from = from_table->GetNumber ();
-      guint to   = to_table->GetNumber () + 1;
+      ChangeFromTable (_from_table->GetLeftTable ());
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSet::OnDisplayNext ()
+  {
+    if (_from_table->GetRightTable ())
+    {
+      ChangeFromTable (_from_table->GetRightTable ());
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSet::ChangeFromTable (Table *table)
+  {
+    _from_table = table;
+    _to_table   = _from_table;
+
+    for (guint i = 0; i < 2; i++)
+    {
+      Table *right_table = _to_table->GetRightTable ();
+
+      if (right_table == NULL)
+      {
+        break;
+      }
+      _to_table = right_table;
+    }
+
+    if (_from_table && _to_table)
+    {
+      guint from = _from_table->GetNumber ();
+      guint to   = _to_table->GetNumber () + 1;
 
       Wipe ();
 
@@ -1962,34 +1983,12 @@ namespace Table
         }
       }
 
-      {
-        GtkListStore *liststore = GTK_LIST_STORE (_glade->GetGObject ("cutting_count_liststore"));
-
-        gtk_list_store_clear (liststore);
-
-        for (guint i = 1; i <= from_table->GetSize () / 2; i *= 2)
-        {
-          gchar        *text;
-          GtkTreeIter   iter;
-
-          text = g_strdup_printf ("%d %s", i, gettext ("cutting"));
-          gtk_list_store_append (liststore,
-                                 &iter);
-          gtk_list_store_set (liststore, &iter,
-                              CUTTING_NAME_COLUMN, text,
-                              -1);
-          g_free (text);
-        }
-        gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox")),
-                                  0);
-      }
-
       Display (NULL);
     }
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::OnCuttingCountComboboxChanged ()
+  void TableSet::OnBoutSheetChanged ()
   {
     OnBeginPrint ((GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation"),
                   (GtkPrintContext   *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
@@ -2682,6 +2681,20 @@ namespace Table
 
     if (_print_session._full_table)
     {
+      guint nb_row = 32;
+
+      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("4_radiobutton"))))
+      {
+        nb_row = 8;
+      }
+      else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("8_radiobutton"))))
+      {
+        nb_row = 16;
+      }
+
+      nb_page = _from_table->GetSize ()/nb_row + (_from_table->GetSize()%nb_row != 0);
+      _print_session.Begin (nb_page);
+
       {
         gdouble canvas_dpi;
         gdouble printer_dpi;
@@ -2695,41 +2708,26 @@ namespace Table
                                        printer_dpi);
       }
 
-      _print_session.Begin (1 << gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox"))));
-
       // Get the source bounds on canvas cutting by cutting
       {
-        GooCanvasBounds  E_node_bounds;
-        Table           *from_table = _from_border->GetSelectedTable ();
-        guint            nb_row     = from_table->GetSize () / _print_session._cutting_count;
-        Table           *to_table   = _to_border->GetSelectedTable ();
+        GooCanvasBounds E_node_bounds;
 
-        if (to_table->GetSize () > from_table->GetSize ())
+        if (_to_table->GetSize () > _from_table->GetSize ())
         {
           return 0;
         }
 
         // Horizontally
         {
-          GNode *E_node;
+          GNode *E_node = _to_table->GetNode (0);
 
-          while (to_table && (to_table->GetSize () < _print_session._cutting_count))
-          {
-            if (to_table->GetSize () >= from_table->GetSize ())
-            {
-              break;
-            }
-            to_table = to_table->GetLeftTable ();
-          }
-
-          E_node = to_table->GetNode (0);
           GetBounds (E_node,
                      E_node,
                      &E_node_bounds);
         }
 
         // Vertically
-        for (guint i = 0; i < _print_session._cutting_count; i++)
+        for (guint i = 0; i < _print_session.GetNbPages (); i++)
         {
           GooCanvasBounds  W_node_bounds;
           GooCanvasBounds  bounds;
@@ -2738,9 +2736,9 @@ namespace Table
 
           for (guint n = i*nb_row; n < (i+1)*nb_row; n++)
           {
-            GNode *node = from_table->GetNode (n);
+            GNode *node = _from_table->GetNode (n);
 
-            if (Table::NodeHasGooTable (node))
+            if (node && Table::NodeHasGooTable (node))
             {
               if (NW_node == NULL)
               {
@@ -2758,8 +2756,8 @@ namespace Table
           bounds.x2 = E_node_bounds.x2;
           bounds.y2 = W_node_bounds.y2;
 
-          _print_session.SetCuttingBounds (i,
-                                           &bounds);
+          _print_session.SetPageBounds (i,
+                                        &bounds);
         }
       }
 
@@ -2770,8 +2768,6 @@ namespace Table
                                      paper_h,
                                      header_h);
       }
-
-      nb_page = _print_session._cutting_count * (_print_session._nb_x_pages*_print_session._nb_y_pages);
     }
     else
     {
@@ -3033,38 +3029,35 @@ namespace Table
                          drawing_layout);
 
       g_object_set (G_OBJECT (drawing_layout),
-                    "width",  _print_session._nb_x_pages * _print_session._cutting_count * (drawing_w+spacing),
-                    "height", _print_session._nb_y_pages * _print_session._cutting_count * (drawing_h+spacing),
+                    "width",  drawing_w,
+                    "height", _print_session.GetNbPages () * (drawing_h+spacing),
                     NULL);
     }
 
     // Draw a white rectangle for each page to print
-    for (guint x = 0; x < _print_session._nb_x_pages; x++)
+    for (guint y = 0; y < _print_session.GetNbPages (); y++)
     {
-      for (guint y = 0; y < _print_session._nb_y_pages * _print_session._cutting_count; y++)
-      {
-        GtkWidget *drawing_area = gtk_drawing_area_new ();
-        GdkColor   bg_color;
+      GtkWidget *drawing_area = gtk_drawing_area_new ();
+      GdkColor   bg_color;
 
-        gdk_color_parse ("white", &bg_color);
-        gtk_widget_modify_bg (drawing_area,
-                              GTK_STATE_NORMAL,
-                              &bg_color);
+      gdk_color_parse ("white", &bg_color);
+      gtk_widget_modify_bg (drawing_area,
+                            GTK_STATE_NORMAL,
+                            &bg_color);
 
-        gtk_widget_set_size_request (GTK_WIDGET (drawing_area),
-                                     drawing_w,
-                                     drawing_h);
+      gtk_widget_set_size_request (GTK_WIDGET (drawing_area),
+                                   drawing_w,
+                                   drawing_h);
 
-        gtk_layout_put (GTK_LAYOUT (drawing_layout),
-                        drawing_area,
-                        x*(drawing_w+spacing),
-                        y*(drawing_h+spacing));
+      gtk_layout_put (GTK_LAYOUT (drawing_layout),
+                      drawing_area,
+                      0,
+                      y*(drawing_h+spacing));
 
-        g_object_set_data (G_OBJECT (drawing_area), "page_number", (void *) (y*_print_session._nb_x_pages + (x+1)));
-        g_signal_connect (drawing_area, "expose_event",
-                          G_CALLBACK (on_preview_expose),
-                          this);
-      }
+      g_object_set_data (G_OBJECT (drawing_area), "page_number", (void *) (y + 1));
+      g_signal_connect (drawing_area, "expose_event",
+                        G_CALLBACK (on_preview_expose),
+                        this);
     }
 
     gtk_widget_show_all (drawing_layout);
@@ -3082,10 +3075,6 @@ namespace Table
 
     ConfigurePreviewBackground (context);
 
-    g_signal_connect (_glade->GetWidget ("cutting_count_combobox"), "changed",
-                      G_CALLBACK (on_cutting_count_combobox_changed),
-                      (Object *) this);
-
     dialog_response = RunDialog (GTK_DIALOG (preview_dialog));
 
     {
@@ -3094,10 +3083,6 @@ namespace Table
 
       gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
     }
-
-    __gcc_extension__ g_signal_handlers_disconnect_by_func (_glade->GetWidget ("cutting_count_combobox"),
-                                                            (void *) on_cutting_count_combobox_changed,
-                                                            (Object *) this);
 
     gtk_print_operation_preview_end_preview (preview);
     gtk_widget_hide (preview_dialog);
@@ -3171,24 +3156,28 @@ namespace Table
 
     if (_print_session._full_table)
     {
+      {
+        gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+
+        _print_session.SetPaperSize (paper_w,
+                                     paper_h,
+                                     header_h);
+      }
+
       _print_session.ProcessCurrentPage (page_nr);
 
-      if (_print_session.CurrentPageHasHeader ())
-      {
-        container->DrawContainerPage (operation,
-                                      context,
-                                      page_nr);
-      }
+      container->DrawContainerPage (operation,
+                                    context,
+                                    page_nr);
 
       cairo_save (cr);
       {
         GooCanvasBounds *mini_bounds = _print_session.GetMiniHeaderBoundsForCurrentPage ();
 
         cairo_scale (cr,
-                     _print_session.GetGlobalScale (),
-                     _print_session.GetGlobalScale ());
+                     _print_session.GetScale (),
+                     _print_session.GetScale ());
 
-        if (_print_session.CurrentPageHasHeader ())
         {
           cairo_save (cr);
           cairo_translate (cr,
@@ -3200,12 +3189,6 @@ namespace Table
                              1.0);
           cairo_restore (cr);
         }
-        else
-        {
-          cairo_translate (cr,
-                           0.0,
-                           mini_bounds->y2 - mini_bounds->y1);
-        }
 
         cairo_translate (cr,
                          0.0,
@@ -3213,7 +3196,7 @@ namespace Table
 
         {
           cairo_translate (cr,
-                           _print_session.GetPaperXShiftForCurrentPage (),
+                           0,
                            _print_session.GetPaperYShiftForCurrentPage ());
 
           goo_canvas_render (GetCanvas (),
@@ -3406,7 +3389,7 @@ namespace Table
             GooCanvasItem *match_table = goo_canvas_table_new (match_group,
                                                                "column-spacing", 1.0,
                                                                "row-spacing",    2.0,
-                                                               NULL);
+                                                                 NULL);
 
             DrawPlayerMatch (match_table,
                              match,
@@ -3493,11 +3476,12 @@ namespace Table
       GooCanvasItem *image = GetPlayerImage (table,
                                              common_markup,
                                              player,
+                                             NULL,
                                              "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                              "first_name", "foreground=\"darkblue\"",
-                                             "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
-                                             "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
-                                             "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                             "club",       "style=\"italic\" foreground=\"dimgrey\"",
+                                             "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                             "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                              NULL);
       Canvas::PutInTable (table,
                           image,
@@ -3568,9 +3552,6 @@ namespace Table
   {
     CanvasModule::OnPlugged ();
 
-    _from_border->Plug ();
-    _to_border->Plug   ();
-
     _dnd_config->SetOnAWidgetDest (GTK_WIDGET (GetCanvas ()),
                                    GDK_ACTION_COPY);
 
@@ -3581,9 +3562,6 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::OnUnPlugged ()
   {
-    _from_border->UnPlug ();
-    _to_border->UnPlug   ();
-
     Wipe ();
 
     CanvasModule::OnUnPlugged ();
@@ -3756,8 +3734,8 @@ namespace Table
                                combo,
                                event->x_root,
                                event->y_root,
-                               _score_rect_size*3.3/2.0,
-                               _score_rect_size,
+                               -1,
+                               -1,
                                NULL);
         gtk_widget_grab_focus (combo);
       }
@@ -3824,17 +3802,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::OnPrinScaleChanged (gdouble value)
-  {
-    _print_session.SetScale (value / 100.0);
-
-    OnBeginPrint ((GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation"),
-                  (GtkPrintContext   *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
-
-    ConfigurePreviewBackground ((GtkPrintContext *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean TableSet::on_status_key_press_event (GtkWidget   *widget,
                                                 GdkEventKey *event,
                                                 gpointer     user_data)
@@ -3857,21 +3824,12 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_from_to_table_combobox_changed (GtkWidget *widget,
-                                                                     Object    *owner)
+  extern "C" G_MODULE_EXPORT void on_bout_sheet_toggled (GtkToggleButton *togglebutton,
+                                                         Object          *owner)
   {
     TableSet *t = dynamic_cast <TableSet *> (owner);
 
-    t->OnFromToTableComboboxChanged ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_cutting_count_combobox_changed (GtkWidget *widget,
-                                                                     Object    *owner)
-  {
-    TableSet *t = dynamic_cast <TableSet *> (owner);
-
-    t->OnCuttingCountComboboxChanged ();
+    t->OnBoutSheetChanged ();
   }
 
   // --------------------------------------------------------------------------------
@@ -3881,14 +3839,5 @@ namespace Table
     TableSet *t = dynamic_cast <TableSet *> (owner);
 
     t->OnSearchMatch ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_print_hscale_value_changed (GtkRange *range,
-                                                                 Object   *owner)
-  {
-    TableSet *t = dynamic_cast <TableSet *> (owner);
-
-    t->OnPrinScaleChanged (gtk_range_get_value (range));
   }
 }

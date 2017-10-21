@@ -494,12 +494,6 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_set.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_set_border.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_set_border.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_supervisor.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

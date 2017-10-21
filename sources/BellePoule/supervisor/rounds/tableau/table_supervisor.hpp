@@ -42,6 +42,8 @@ namespace Table
       Supervisor (StageClass *stage_class);
 
       void OnStuffClicked ();
+      void OnPreviousClicked ();
+      void OnNextClicked ();
       void OnInputToggled (GtkWidget *widget);
       void OnDisplayToggled (GtkWidget *widget);
       void OnPrint ();

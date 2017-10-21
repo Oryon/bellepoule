@@ -212,18 +212,26 @@ void CanvasModule::RestoreZoomFactor ()
 GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
                                              const gchar   *common_markup,
                                              Player        *player,
+                                             Filter        *filter,
                                              ...)
 {
   GooCanvasItem *table_item = goo_canvas_table_new (parent_item,
+                                                    //"stroke-color",         "green",
+                                                    //"horz-grid-line-width", 1.0,
+                                                    //"vert-grid-line-width", 1.0,
                                                     NULL);
 
   if (player)
   {
     GList *layout_list = NULL;
 
-    if (_filter)
+    if (filter == NULL)
     {
-      layout_list = _filter->GetLayoutList ();
+      filter = _filter;
+    }
+    if (filter)
+    {
+      layout_list = filter->GetLayoutList ();
     }
 
     for (guint a = 0; layout_list != NULL; a++)
@@ -246,11 +254,38 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
 
       if (attr)
       {
-        GdkPixbuf *pixbuf = NULL;
+        gdouble    font_height = 14.0;
+        GdkPixbuf *pixbuf      = NULL;
 
         if (attr_layout->_look == AttributeDesc::GRAPHICAL)
         {
           pixbuf = attr->GetPixbuf ();
+        }
+
+        if (common_markup && (common_markup[0] != 0))
+        {
+          GRegex     *regex;
+          GMatchInfo *match_info;
+
+          regex = g_regex_new ("[0-9]+\\.[0-9]+px",
+                               GRegexCompileFlags (0),
+                               GRegexMatchFlags (0),
+                               NULL);
+          g_regex_match (regex,
+                         common_markup,
+                         GRegexMatchFlags (0),
+                         &match_info);
+
+          if (g_match_info_matches (match_info))
+          {
+            gchar   *word = g_match_info_fetch (match_info, 0);
+
+            font_height = g_ascii_strtod (word,
+                                          NULL);
+            g_free (word);
+          }
+          g_match_info_free (match_info);
+          g_regex_unref (regex);
         }
 
         if (pixbuf)
@@ -259,43 +294,17 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
                                                               pixbuf,
                                                               0,
                                                               a);
-          if (common_markup && (common_markup[0] != 0))
-          {
-            GRegex     *regex;
-            GMatchInfo *match_info;
 
-            regex = g_regex_new ("[0-9]+\\.[0-9]+px",
-                                 GRegexCompileFlags (0),
-                                 GRegexMatchFlags (0),
-                                 NULL);
-            g_regex_match (regex,
-                           common_markup,
-                           GRegexMatchFlags (0),
-                           &match_info);
+          gdouble  width = font_height *
+            (gdouble) gdk_pixbuf_get_width (attr->GetPixbuf ()) / (gdouble) gdk_pixbuf_get_height (attr->GetPixbuf ());
 
-            if (g_match_info_matches (match_info))
-            {
-              gchar   *word    = g_match_info_fetch (match_info, 0);
-              gdouble  width;
-              gdouble  height;
-
-              height = g_ascii_strtod (word,
-                                       NULL);
-              width = height *
-                (gdouble) gdk_pixbuf_get_width (attr->GetPixbuf ()) / (gdouble) gdk_pixbuf_get_height (attr->GetPixbuf ());
-
-              g_object_set (G_OBJECT (pix_item),
-                            "width",         width,
-                            "height",        height,
-                            "scale-to-fit",  TRUE,
-                            NULL);
-              Canvas::SetTableItemAttribute (pix_item,
-                                             "right-padding", height/2.0);
-              g_free (word);
-            }
-            g_match_info_free (match_info);
-            g_regex_unref (regex);
-          }
+          g_object_set (G_OBJECT (pix_item),
+                        "width",         width,
+                        "height",        font_height,
+                        "scale-to-fit",  TRUE,
+                        NULL);
+          Canvas::SetTableItemAttribute (pix_item,
+                                         "right-padding", font_height/2.0);
         }
         else
         {
@@ -310,7 +319,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
           {
             va_list ap;
 
-            va_start (ap, player);
+            va_start (ap, filter);
             while (gchar *pango_arg = va_arg (ap, char *))
             {
               if (g_strcmp0 (pango_arg, attr_layout->_desc->_code_name) == 0)
@@ -334,7 +343,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
           image = g_string_append (image,
                                    attr_image);
           image = g_string_append (image,
-                                   "\302\240\302\240");
+                                   "\302\240");
           image = g_string_append (image,
                                    "</span>");
 
@@ -343,9 +352,10 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
                                                           image->str,
                                                           0,
                                                           a);
+
             g_object_set (G_OBJECT (item),
                           "use-markup", TRUE,
-                          "wrap",       PANGO_WRAP_CHAR,
+                          //"height",     font_height,
                           NULL);
             g_string_free (image,
                            TRUE);

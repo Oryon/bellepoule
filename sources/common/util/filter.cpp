@@ -497,6 +497,7 @@ void Filter::UpdateAttrList (gboolean save_it)
       if (owner->IsPlugged ())
       {
         owner->OnAttrListUpdated ();
+        owner->MakeDirty ();
       }
       current = g_list_next (current);
     }

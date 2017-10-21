@@ -48,6 +48,7 @@ class CanvasModule : public Module
     GooCanvasItem *GetPlayerImage (GooCanvasItem *parent_item,
                                    const gchar   *common_markup,
                                    Player        *player,
+                                   Filter        *filter,
                                    ...);
 
     void SetZoomer (GtkRange *zoomer,

@@ -23,9 +23,8 @@ namespace Table
   {
     _bounds_table = NULL;
 
-    _target_resolution = 1.0;
-    _source_resolution = 1.0;
-    SetScale (1.0);
+    SetResolutions (1.0,
+                    1.0);
   }
 
   // --------------------------------------------------------------------------------
@@ -35,13 +34,22 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void PrintSession::Begin (guint cutting_count)
+  void PrintSession::Begin (guint nb_pages)
   {
-    _cutting_count = cutting_count;
+    _cutting_w = 0.0;
+    _cutting_h = 0.0;
+
+    _nb_pages = nb_pages;
 
     g_free (_bounds_table);
     _bounds_table = g_new (GooCanvasBounds,
-                           _cutting_count);
+                           _nb_pages);
+  }
+
+  // --------------------------------------------------------------------------------
+  guint PrintSession::GetNbPages ()
+  {
+    return _nb_pages;
   }
 
   // --------------------------------------------------------------------------------
@@ -51,31 +59,32 @@ namespace Table
     _source_resolution = source_resolution;
     _target_resolution = target_resolution;
 
-    SetScale (_user_scale);
+    _dpi_adaptation = _target_resolution / _source_resolution;
   }
 
   // --------------------------------------------------------------------------------
-  void PrintSession::SetScale (gdouble scale)
+  void PrintSession::SetPageBounds (guint            page,
+                                    GooCanvasBounds *bounds)
   {
-    gdouble dpi_adaptation = _target_resolution / _source_resolution;
-
-    _user_scale   = scale;
-    _global_scale = dpi_adaptation * _user_scale;
-  }
-
-  // --------------------------------------------------------------------------------
-  void PrintSession::SetCuttingBounds (guint            cutting,
-                                       GooCanvasBounds *bounds)
-  {
-    if (cutting < _cutting_count)
+    if (page < _nb_pages)
     {
-      _bounds_table[cutting] = *bounds;
+      _bounds_table[page] = *bounds;
+
+      {
+        if (_cutting_w < bounds->x2 - bounds->x1)
+        {
+          _cutting_w = bounds->x2 - bounds->x1;
+        }
+
+        if (_cutting_h < bounds->y2 - bounds->y1)
+        {
+          _cutting_h = bounds->y2 - bounds->y1;
+        }
+      }
     }
-
-    //if (cutting == 0)
+    else
     {
-      _cutting_w = bounds->x2 - bounds->x1;
-      _cutting_h = bounds->y2 - bounds->y1;
+      g_warning ("PrintSession::SetPageBounds ==> wrong page");
     }
   }
 
@@ -85,37 +94,26 @@ namespace Table
                                    gdouble header_h_on_paper)
   {
     gdouble mini_header_h = _bounds_table[0].y1;
+    gdouble max_scale     = (3.0 * paper_h) / (100 * mini_header_h);
+    gdouble x_scale       = paper_w*0.95 / _cutting_w;
+    gdouble y_scale       = (paper_h - header_h_on_paper) / (mini_header_h + _cutting_h);
 
-    _page_w = paper_w / _global_scale;
-    _page_h = paper_h / _global_scale;
+    _scale = MIN (x_scale, y_scale);
+    _scale = MIN (_scale, max_scale);
 
-    _header_h_on_canvas = header_h_on_paper / _global_scale;
+    _page_w = paper_w / _scale;
+    _page_h = paper_h / _scale;
 
-    {
-      _nb_x_pages = 1;
-      if (_cutting_w > _page_w)
-      {
-        _nb_x_pages += (guint) (_cutting_w / _page_w);
-      }
-
-      _nb_y_pages = 1;
-      if (_cutting_h > _page_h - _header_h_on_canvas - mini_header_h)
-      {
-        _nb_y_pages += (guint) ((_cutting_h + _header_h_on_canvas + mini_header_h) / _page_h);
-      }
-    }
+    _mini_header_bounds.x1 = 0;
+    _mini_header_bounds.x2 = _page_w;
+    _mini_header_bounds.y1 = 0.0;
+    _mini_header_bounds.y2 = _bounds_table[0].y1;
   }
 
   // --------------------------------------------------------------------------------
-  gdouble PrintSession::GetGlobalScale ()
+  gdouble PrintSession::GetScale ()
   {
-    return _global_scale;
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean PrintSession::CurrentPageHasHeader ()
-  {
-    return _current_page_has_header;
+    return _scale;
   }
 
   // --------------------------------------------------------------------------------
@@ -131,97 +129,22 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gdouble PrintSession::GetPaperXShiftForCurrentPage ()
-  {
-    return -_canvas_bounds.x1;
-  }
-
-  // --------------------------------------------------------------------------------
   gdouble PrintSession::GetPaperYShiftForCurrentPage ()
   {
-    gdouble shift_y = 0.0;
-
-    shift_y -= _bounds_table[_current_cutting].y1;
-    shift_y -= _cutting_y_page * _page_h;
-
-    return shift_y;
+    return -_bounds_table[_current_page].y1;
   }
 
   // --------------------------------------------------------------------------------
   void PrintSession::ProcessCurrentPage (guint page)
   {
-    guint x_page = page % _nb_x_pages;
-    guint y_page = page / _nb_x_pages;
+    _current_page = page;
 
-    _current_cutting = y_page / _nb_y_pages;
-
-    _cutting_x_page = x_page;
-    _cutting_y_page = y_page - (_current_cutting * _nb_y_pages);
-
-    _current_page_has_header = (_cutting_y_page % _nb_y_pages == 0);
-
-    // Mini header
+    // Canvas bounds adjustment
     {
-      _mini_header_bounds.x1 = x_page * _page_w;
-      _mini_header_bounds.x2 = _mini_header_bounds.x1 + _page_w;
-      _mini_header_bounds.y1 = 0.0;
-      _mini_header_bounds.y2 = _bounds_table[0].y1;
-    }
-
-    // Horizontal adjustement
-    {
-      _canvas_bounds.x1 = _page_w * (_cutting_x_page);
-      _canvas_bounds.x2 = _page_w * (_cutting_x_page+1);
-
-      // Clipping
-      {
-        gdouble total_page_w = (_cutting_x_page+1) * _page_w;
-
-        if (total_page_w > _cutting_w)
-        {
-          _canvas_bounds.x2      -= total_page_w - _cutting_w;
-          _mini_header_bounds.x2 -= total_page_w - _cutting_w;
-        }
-      }
-    }
-
-    // Vertical adjustement
-    {
-      gdouble mini_header_h     = _mini_header_bounds.y2 - _mini_header_bounds.y1;
-      gdouble current_cutting_h = _bounds_table[_current_cutting].y2 - _bounds_table[_current_cutting].y1;
-
-      // Move to the current cutting area
-      _canvas_bounds.y1 = _bounds_table[_current_cutting].y1;
-
-      // Move to the current position in the current cutting
-      if (current_cutting_h + _header_h_on_canvas + mini_header_h <= _page_h)
-      {
-        _canvas_bounds.y2 = _bounds_table[_current_cutting].y2;
-      }
-      else
-      {
-        _canvas_bounds.y1 += _page_h * _cutting_y_page;
-        _canvas_bounds.y2  = _canvas_bounds.y1 + _page_h;
-
-        if (_current_page_has_header)
-        {
-          _canvas_bounds.y2 -= (_header_h_on_canvas + mini_header_h);
-        }
-        else
-        {
-          _canvas_bounds.y1 -= (_header_h_on_canvas + mini_header_h);
-
-          // Clipping
-          {
-            gdouble total_page_h = (_cutting_y_page+1) * _page_h;
-
-            if (total_page_h > current_cutting_h)
-            {
-              _canvas_bounds.y2 -= total_page_h - current_cutting_h;
-            }
-          }
-        }
-      }
+      _canvas_bounds.x1 = 0;
+      _canvas_bounds.x2 = _page_w;
+      _canvas_bounds.y1 = _bounds_table[_current_page].y1;
+      _canvas_bounds.y2 = _bounds_table[_current_page].y2;
     }
   }
 

@@ -75,6 +75,8 @@ class Module : public virtual Object
 
     Filter *GetFilter ();
 
+    virtual void MakeDirty ();
+
     void DrawContainerPage (GtkPrintOperation *operation,
                             GtkPrintContext   *context,
                             gint               page_nr);
@@ -136,8 +138,6 @@ class Module : public virtual Object
     gint RunDialog (GtkDialog *dialog);
 
     GtkTreeModel *GetStatusModel ();
-
-    virtual void MakeDirty ();
 
     void ConnectDndSource (GtkWidget *widget);
 
