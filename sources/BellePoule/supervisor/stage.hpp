@@ -173,6 +173,8 @@ class Stage : public virtual Object,
                              GtkPrintContext   *context,
                              gint               page_nr);
 
+    virtual GList *GetBookSections (StageView view);
+
   public:
     static void RegisterStageClass (const gchar *name,
                                     const gchar *xml_name,

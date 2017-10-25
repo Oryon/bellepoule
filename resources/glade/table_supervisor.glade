@@ -303,6 +303,15 @@
   <object class="GtkTreeModelFilter" id="table_set_treemodelfilter">
     <property name="child_model">table_set_treestore</property>
   </object>
+  <object class="GtkSizeGroup" id="value_sizegroup"/>
+  <object class="GtkAdjustment" id="zoom_adjustment">
+    <property name="lower">0.10000000000000001</property>
+    <property name="upper">1.1000000000000001</property>
+    <property name="value">1</property>
+    <property name="step_increment">0.01</property>
+    <property name="page_increment">0.10000000000000001</property>
+    <property name="page_size">0.10000000000000001</property>
+  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <child>
@@ -318,29 +327,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="toolbar_style">both</property>
-                <child>
-                  <object class="GtkToggleToolButton" id="display_toolbutton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Table</property>
-                    <property name="stock_id">gtk-page-setup</property>
-                    <signal name="toggled" handler="on_display_toolbutton_toggled" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSeparatorToolItem" id="toolbutton2">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
                 <child>
                   <object class="GtkToolButton" id="table_filter_toolbutton">
                     <property name="visible">True</property>
@@ -440,53 +426,117 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolItem" id="toolbutton4">
+                  <object class="GtkToolItem" id="toolitem1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkButton" id="previous_button">
+                      <object class="GtkHBox" id="hbox5">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="on_previous_button_clicked" swapped="no"/>
+                        <property name="can_focus">False</property>
+                        <property name="homogeneous">True</property>
                         <child>
-                          <object class="GtkImage" id="image1">
+                          <object class="GtkButton" id="previous_button">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="stock">gtk-go-back</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="on_previous_button_clicked" swapped="no"/>
+                            <child>
+                              <object class="GtkHBox" id="hbox6">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkLabel" id="previous_label">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">T128</property>
+                                    <attributes>
+                                      <attribute name="weight" value="bold"/>
+                                      <attribute name="foreground" value="#ffffffffffff"/>
+                                      <attribute name="background" value="#421042104210"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="image1">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="stock">gtk-go-back</property>
+                                    <property name="icon-size">3</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="next_button">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <signal name="clicked" handler="on_next_button_clicked" swapped="no"/>
+                            <child>
+                              <object class="GtkHBox" id="hbox7">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkImage" id="image2">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="stock">gtk-go-forward</property>
+                                    <property name="icon-size">3</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="next_label">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">T128</property>
+                                    <attributes>
+                                      <attribute name="weight" value="bold"/>
+                                      <attribute name="foreground" value="#ffffffffffff"/>
+                                      <attribute name="background" value="#421042104210"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToolItem" id="toolbutton5">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkButton" id="next_button">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="on_next_button_clicked" swapped="no"/>
-                        <child>
-                          <object class="GtkImage" id="image2">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="stock">gtk-go-forward</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
               </object>
@@ -659,14 +709,5 @@ To activate/deactivate this button, go to the properties of the competition.</pr
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkSizeGroup" id="value_sizegroup"/>
-  <object class="GtkAdjustment" id="zoom_adjustment">
-    <property name="lower">0.10000000000000001</property>
-    <property name="upper">1.1000000000000001</property>
-    <property name="value">1</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
-    <property name="page_size">0.10000000000000001</property>
   </object>
 </interface>

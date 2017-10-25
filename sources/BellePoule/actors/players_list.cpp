@@ -524,40 +524,43 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::OnAttrListUpdated ()
   {
+    if (_tree_view)
     {
-      GList *column_list = gtk_tree_view_get_columns (_tree_view);
-      guint  nb_col      = g_list_length (column_list);
-
-      for (guint i = 0; i < nb_col; i++)
       {
-        GtkTreeViewColumn *column;
+        GList *column_list = gtk_tree_view_get_columns (_tree_view);
+        guint  nb_col      = g_list_length (column_list);
 
-        column = gtk_tree_view_get_column (_tree_view,
-                                           0);
-        if (column)
+        for (guint i = 0; i < nb_col; i++)
         {
-          gtk_tree_view_remove_column (_tree_view,
-                                       column);
+          GtkTreeViewColumn *column;
+
+          column = gtk_tree_view_get_column (_tree_view,
+                                             0);
+          if (column)
+          {
+            gtk_tree_view_remove_column (_tree_view,
+                                         column);
+          }
         }
       }
-    }
 
-    if (_filter)
-    {
-      GList *layout_list = _filter->GetLayoutList ();
-
-      while (layout_list)
+      if (_filter)
       {
-        Filter::Layout *attr_layout = (Filter::Layout *) layout_list->data;
+        GList *layout_list = _filter->GetLayoutList ();
 
-        SetColumn (_filter->GetAttributeId (attr_layout->_desc->_code_name),
-                   attr_layout,
-                   -1);
-        layout_list = g_list_next (layout_list);
+        while (layout_list)
+        {
+          Filter::Layout *attr_layout = (Filter::Layout *) layout_list->data;
+
+          SetColumn (_filter->GetAttributeId (attr_layout->_desc->_code_name),
+                     attr_layout,
+                     -1);
+          layout_list = g_list_next (layout_list);
+        }
       }
-    }
 
-    _store->Refilter ();
+      _store->Refilter ();
+    }
   }
 
   // --------------------------------------------------------------------------------

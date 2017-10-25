@@ -45,7 +45,6 @@ namespace Table
       void OnPreviousClicked ();
       void OnNextClicked ();
       void OnInputToggled (GtkWidget *widget);
-      void OnDisplayToggled (GtkWidget *widget);
       void OnPrint ();
       void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
       void OnTableOver (TableSet *table_set,
@@ -145,6 +144,8 @@ namespace Table
 
       gchar *GetPrintName ();
 
+      GList *GetBookSections (StageView view);
+
       guint PreparePrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context);
 
@@ -202,6 +203,10 @@ namespace Table
                                       Supervisor   *ts);
 
       void OnTableSetStatusUpdated (TableSet *table_set);
+
+      void OnTableSetNavigationBorders (TableSet *table_set,
+                                        Table    *previous,
+                                        Table    *next);
 
       virtual ~Supervisor ();
   };

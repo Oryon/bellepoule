@@ -54,6 +54,7 @@ namespace Table
     _node_table         = g_new (GNode *, _size);
     _free_node_index    = 0;
     _xml_player_tag     = xml_player_tag;
+    _mini_name          = g_strdup_printf ("T%d", _size);
 
     _match_list = NULL;
 
@@ -90,6 +91,7 @@ namespace Table
   {
     g_slist_free (_match_list);
     g_free (_node_table);
+    g_free (_mini_name);
   }
 
   // --------------------------------------------------------------------------------
@@ -715,6 +717,12 @@ namespace Table
         current = g_slist_next (current);
       }
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Table::GetMiniName ()
+  {
+    return _mini_name;
   }
 
   // --------------------------------------------------------------------------------

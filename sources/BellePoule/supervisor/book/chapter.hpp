@@ -20,18 +20,18 @@
 #include "util/module.hpp"
 #include "../stage.hpp"
 
+class BookSection;
+
 class Chapter : public Object
 {
   public:
     Chapter (Module           *module,
-             gchar            *name,
+             BookSection      *section,
              Stage::StageView  stage_view,
              guint             first_page,
              guint             page_count);
 
     Module *GetModule ();
-
-    Stage::StageView GetStageView ();
 
     guint GetFirstPage ();
 
@@ -40,12 +40,19 @@ class Chapter : public Object
     void DrawHeaderPage (GtkPrintOperation *operation,
                          GtkPrintContext   *context);
 
+    void DrawPage (GtkPrintOperation *operation,
+                   GtkPrintContext   *context,
+                   gint               page);
+
   private:
     Module           *_module;
+    BookSection      *_section;
     gchar            *_name;
     guint             _first_page;
     guint             _last_page;
     Stage::StageView  _stage_view;
 
     virtual ~Chapter ();
+
+    void ConfigurePrintOperation (GtkPrintOperation *operation);
 };

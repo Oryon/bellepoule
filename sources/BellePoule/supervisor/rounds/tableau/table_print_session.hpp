@@ -19,14 +19,26 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
+#include "../../book/section.hpp"
+
 namespace Table
 {
-  class PrintSession
+  class Table;
+
+  class PrintSession : public BookSection
   {
     public:
-      PrintSession ();
+      typedef enum
+      {
+        SCORE_SHEETS,
+        DISPLAYED_TABLES,
+        ALL_TABLES
+      } Type;
 
-      virtual ~PrintSession ();
+    public:
+      PrintSession (Type         type,
+                    const gchar *title      = NULL,
+                    Table       *from_table = NULL);
 
       void Dump ();
 
@@ -36,6 +48,8 @@ namespace Table
       void SetPaperSize (gdouble paper_w,
                          gdouble paper_h,
                          gdouble header_h_on_paper);
+
+      Table *GetFromTable ();
 
       gdouble GetScale ();
 
@@ -53,29 +67,32 @@ namespace Table
 
       gdouble GetPaperYShiftForCurrentPage ();
 
-      guint GetNbPages ();
+      Type GetType ();
 
-    public:
-      gboolean _full_table;
+      guint GetNbPages ();
 
     private:
       GooCanvasBounds *_bounds_table;
 
-      guint    _nb_pages;
+      Type             _type;
+      Table           *_from_table;
+      guint            _nb_pages;
 
-      gdouble  _dpi_adaptation;
-      gdouble  _scale;
-      gdouble  _source_resolution;
-      gdouble  _target_resolution;
+      gdouble          _dpi_adaptation;
+      gdouble          _scale;
+      gdouble          _source_resolution;
+      gdouble          _target_resolution;
 
-      gdouble  _page_w;
-      gdouble  _page_h;
+      gdouble          _page_w;
+      gdouble          _page_h;
 
-      gdouble  _cutting_w;
-      gdouble  _cutting_h;
+      gdouble          _cutting_w;
+      gdouble          _cutting_h;
 
-      GooCanvasBounds _mini_header_bounds;
-      GooCanvasBounds _canvas_bounds;
-      guint           _current_page;
+      GooCanvasBounds  _mini_header_bounds;
+      GooCanvasBounds  _canvas_bounds;
+      guint            _current_page;
+
+      virtual ~PrintSession ();
   };
 }

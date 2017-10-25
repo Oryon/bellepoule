@@ -46,14 +46,14 @@ class Module : public virtual Object
 
     void AddSensitiveWidget (GtkWidget *w);
 
-    void Print (const gchar  *job_name,
-                GtkPageSetup *page_setup = NULL);
+    void Print (const gchar *job_name,
+                Object      *data = NULL);
 
     void PrintPDF (const gchar  *job_name,
                    const gchar  *filename);
 
     void PrintPreview (const gchar  *job_name,
-                       GtkPageSetup *page_setup);
+                       Object      *data = NULL);
 
     void SelectAttributes ();
 
@@ -174,6 +174,7 @@ class Module : public virtual Object
 
     void Print (const gchar             *job_name,
                 const gchar             *filename,
+                Object                  *data,
                 GtkPageSetup            *page_setup,
                 GtkPrintOperationAction  action);
 

@@ -30,6 +30,7 @@
 #include "../../classification.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
+#include "../../book/section.hpp"
 
 #include "table_supervisor.hpp"
 #include "table_zone.hpp"
@@ -538,6 +539,19 @@ namespace Table
       RefilterQuickSearch ();
 
       RestoreZoomFactor ();
+    }
+
+    {
+      Table *right = NULL;
+
+      if (_to_table->GetRightTable ())
+      {
+        right = _from_table->GetRightTable ();
+      }
+
+      _listener->OnTableSetNavigationBorders (this,
+                                              _from_table->GetLeftTable (),
+                                              right);
     }
   }
 
@@ -1946,44 +1960,47 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::ChangeFromTable (Table *table)
   {
-    _from_table = table;
-    _to_table   = _from_table;
-
-    for (guint i = 0; i < 2; i++)
+    if (_from_table != table)
     {
-      Table *right_table = _to_table->GetRightTable ();
+      _from_table = table;
+      _to_table   = _from_table;
 
-      if (right_table == NULL)
+      for (guint i = 0; i < 2; i++)
       {
-        break;
-      }
-      _to_table = right_table;
-    }
+        Table *right_table = _to_table->GetRightTable ();
 
-    if (_from_table && _to_table)
-    {
-      guint from = _from_table->GetNumber ();
-      guint to   = _to_table->GetNumber () + 1;
-
-      Wipe ();
-
-      for (guint t = 0; t < _nb_tables; t++)
-      {
-        _tables[t]->Hide ();
-      }
-
-      if (to > from)
-      {
-        guint column = 0;
-
-        for (gint t = _nb_tables-from-1; t >= (gint) (_nb_tables-to); t--)
+        if (right_table == NULL)
         {
-          _tables[t]->Show (column);
-          column++;
+          break;
         }
+        _to_table = right_table;
       }
 
-      Display (NULL);
+      if (_from_table && _to_table)
+      {
+        guint from = _from_table->GetNumber ();
+        guint to   = _to_table->GetNumber () + 1;
+
+        Wipe ();
+
+        for (guint t = 0; t < _nb_tables; t++)
+        {
+          _tables[t]->Hide ();
+        }
+
+        if (to > from)
+        {
+          guint column = 0;
+
+          for (gint t = _nb_tables-from-1; t >= (gint) (_nb_tables-to); t--)
+          {
+            _tables[t]->Show (column);
+            column++;
+          }
+        }
+
+        Display (NULL);
+      }
     }
   }
 
@@ -1993,7 +2010,8 @@ namespace Table
     OnBeginPrint ((GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation"),
                   (GtkPrintContext   *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
 
-    ConfigurePreviewBackground ((GtkPrintContext *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
+    ConfigurePreviewBackground ((GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation"),
+                                (GtkPrintContext *)   g_object_get_data (G_OBJECT (_preview), "preview_context"));
   }
 
   // --------------------------------------------------------------------------------
@@ -2672,28 +2690,77 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  GList *TableSet::GetBookSections (Stage::StageView view)
+  {
+    if (view == Stage::STAGE_VIEW_RESULT)
+    {
+      GList *sections   = NULL;
+      guint  nb_section;
+
+      nb_section  = _nb_tables / 3;
+      nb_section += (_nb_tables % 3) != 0;
+
+      for (guint i = 0; i < nb_section; i++)
+      {
+        gchar        *title;
+        PrintSession *section;
+
+        title = _supervisor->GetFullName ();
+        section = new PrintSession (PrintSession::ALL_TABLES,
+                                    title,
+                                    _tables[(_nb_tables-1) - i*3]);
+
+        g_free (title);
+
+        sections = g_list_append (sections,
+                                  dynamic_cast <BookSection *> (section));
+      }
+      return sections;
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  PrintSession *TableSet::GetPrintSession (GtkPrintOperation *operation)
+  {
+    Object *data = (Object *) g_object_get_data (G_OBJECT (operation),
+                                                 "Print::Data");
+
+    return dynamic_cast <PrintSession *> (data);
+  }
+
+  // --------------------------------------------------------------------------------
   guint TableSet::PreparePrint (GtkPrintOperation *operation,
                                 GtkPrintContext   *context)
   {
-    gdouble paper_w = gtk_print_context_get_width  (context);
-    gdouble paper_h = gtk_print_context_get_height (context);
-    guint   nb_page;
+    PrintSession *print_session = GetPrintSession (operation);
+    gdouble       paper_w       = gtk_print_context_get_width (context);
+    gdouble       paper_h       = gtk_print_context_get_height (context);
+    guint         nb_page;
 
-    if (_print_session._full_table)
+    if (print_session->GetType () != PrintSession::SCORE_SHEETS)
     {
       guint nb_row = 32;
 
-      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("4_radiobutton"))))
+      if (print_session->GetType () == PrintSession::ALL_TABLES)
       {
-        nb_row = 8;
+        ChangeFromTable (print_session->GetFromTable ());
       }
-      else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("8_radiobutton"))))
+      else
       {
-        nb_row = 16;
+        if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("4_radiobutton"))))
+        {
+          nb_row = 8;
+        }
+        else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("8_radiobutton"))))
+        {
+          nb_row = 16;
+        }
       }
 
       nb_page = _from_table->GetSize ()/nb_row + (_from_table->GetSize()%nb_row != 0);
-      _print_session.Begin (nb_page);
+      print_session->Begin (nb_page);
 
       {
         gdouble canvas_dpi;
@@ -2704,7 +2771,7 @@ namespace Table
                       NULL);
         printer_dpi = gtk_print_context_get_dpi_x (context);
 
-        _print_session.SetResolutions (canvas_dpi,
+        print_session->SetResolutions (canvas_dpi,
                                        printer_dpi);
       }
 
@@ -2727,7 +2794,7 @@ namespace Table
         }
 
         // Vertically
-        for (guint i = 0; i < _print_session.GetNbPages (); i++)
+        for (guint i = 0; i < print_session->GetNbPages (); i++)
         {
           GooCanvasBounds  W_node_bounds;
           GooCanvasBounds  bounds;
@@ -2756,7 +2823,7 @@ namespace Table
           bounds.x2 = E_node_bounds.x2;
           bounds.y2 = W_node_bounds.y2;
 
-          _print_session.SetPageBounds (i,
+          print_session->SetPageBounds (i,
                                         &bounds);
         }
       }
@@ -2764,7 +2831,7 @@ namespace Table
       {
         gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
 
-        _print_session.SetPaperSize (paper_w,
+        print_session->SetPaperSize (paper_w,
                                      paper_h,
                                      header_h);
       }
@@ -2926,34 +2993,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::DisplayPreview ()
-  {
-    GtkWidget *w = _glade->GetWidget ("table_radiobutton");
-
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
-    {
-      _print_session._full_table = TRUE;
-    }
-    else
-    {
-      GtkWidget *all_w     = _glade->GetWidget ("all_radiobutton");
-      gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (all_w));
-
-      LookForMatchToPrint (NULL,
-                           all_sheet);
-      _print_session._full_table = FALSE;
-    }
-
-    {
-      gchar *print_name = GetPrintName ();
-
-      PrintPreview (print_name,
-                    _page_setup);
-      g_free (print_name);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean TableSet::PreparePreview (GtkPrintOperation        *operation,
                                      GtkPrintOperationPreview *preview,
                                      GtkPrintContext          *context,
@@ -2988,15 +3027,17 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::ConfigurePreviewBackground (GtkPrintContext *context)
+  void TableSet::ConfigurePreviewBackground (GtkPrintOperation *operation,
+                                             GtkPrintContext   *context)
   {
-    GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
-    GtkWidget *drawing_layout  = gtk_layout_new (NULL, NULL);
-    gdouble    paper_w         = gtk_print_context_get_width  (context);
-    gdouble    paper_h         = gtk_print_context_get_height (context);
-    guint      spacing         = 5;
-    guint      drawing_w;
-    guint      drawing_h;
+    PrintSession *print_session   = GetPrintSession (operation);
+    GtkWidget    *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
+    GtkWidget    *drawing_layout  = gtk_layout_new (NULL, NULL);
+    gdouble       paper_w         = gtk_print_context_get_width (context);
+    gdouble       paper_h         = gtk_print_context_get_height (context);
+    guint         spacing         = 5;
+    guint         drawing_w;
+    guint         drawing_h;
 
     // Evaluate the page dimensions
     {
@@ -3030,12 +3071,12 @@ namespace Table
 
       g_object_set (G_OBJECT (drawing_layout),
                     "width",  drawing_w,
-                    "height", _print_session.GetNbPages () * (drawing_h+spacing),
+                    "height", print_session->GetNbPages () * (drawing_h+spacing),
                     NULL);
     }
 
     // Draw a white rectangle for each page to print
-    for (guint y = 0; y < _print_session.GetNbPages (); y++)
+    for (guint y = 0; y < print_session->GetNbPages (); y++)
     {
       GtkWidget *drawing_area = gtk_drawing_area_new ();
       GdkColor   bg_color;
@@ -3067,13 +3108,15 @@ namespace Table
   void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
                                  GtkPrintContext          *context)
   {
-    gint       dialog_response;
-    GtkWidget *preview_dialog = _glade->GetWidget ("preview_dialog");
+    PrintSession *print_session   = GetPrintSession (GTK_PRINT_OPERATION (preview));
+    GtkWidget    *preview_dialog  = _glade->GetWidget ("preview_dialog");
+    gint          dialog_response;
 
     gtk_window_set_resizable (GTK_WINDOW (preview_dialog),
                               TRUE);
 
-    ConfigurePreviewBackground (context);
+    ConfigurePreviewBackground (GTK_PRINT_OPERATION (preview),
+                                context);
 
     dialog_response = RunDialog (GTK_DIALOG (preview_dialog));
 
@@ -3096,7 +3139,7 @@ namespace Table
 
       gtk_widget_hide (_glade->GetWidget ("print_dialog"));
       Print (print_name,
-             _page_setup);
+             print_session);
       g_free (print_name);
     }
   }
@@ -3106,8 +3149,9 @@ namespace Table
                                        GtkPrintContext          *context,
                                        GtkPageSetup             *page_setup)
   {
-    cairo_t      *cr         = gdk_cairo_create (gtk_widget_get_window (_current_preview_area));
-    GtkPaperSize *paper_size = gtk_page_setup_get_paper_size (page_setup);
+    PrintSession *print_session = GetPrintSession (GTK_PRINT_OPERATION (preview));
+    cairo_t      *cr            = gdk_cairo_create (gtk_widget_get_window (_current_preview_area));
+    GtkPaperSize *paper_size    = gtk_page_setup_get_paper_size (page_setup);
     gdouble       canvas_dpi;
     gdouble       drawing_dpi;
 
@@ -3133,7 +3177,7 @@ namespace Table
       drawing_dpi = PREVIEW_PAGE_SIZE * canvas_dpi / paper_w;
     }
 
-    _print_session.SetResolutions (canvas_dpi,
+    print_session->SetResolutions (canvas_dpi,
                                    drawing_dpi);
 
     gtk_print_context_set_cairo_context (context,
@@ -3149,22 +3193,28 @@ namespace Table
                            GtkPrintContext   *context,
                            gint               page_nr)
   {
-    gdouble  paper_w   = gtk_print_context_get_width  (context);
-    gdouble  paper_h   = gtk_print_context_get_height (context);
-    cairo_t *cr        = gtk_print_context_get_cairo_context (context);
-    Module  *container = dynamic_cast <Module *> (_supervisor);
+    PrintSession *print_session = GetPrintSession (operation);
+    gdouble       paper_w       = gtk_print_context_get_width (context);
+    gdouble       paper_h       = gtk_print_context_get_height (context);
+    cairo_t      *cr            = gtk_print_context_get_cairo_context (context);
+    Module       *container     = dynamic_cast <Module *> (_supervisor);
 
-    if (_print_session._full_table)
+    if (print_session->GetType () != PrintSession::SCORE_SHEETS)
     {
+      if (print_session->GetType () == PrintSession::ALL_TABLES)
+      {
+        ChangeFromTable (print_session->GetFromTable ());
+      }
+
       {
         gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
 
-        _print_session.SetPaperSize (paper_w,
+        print_session->SetPaperSize (paper_w,
                                      paper_h,
                                      header_h);
       }
 
-      _print_session.ProcessCurrentPage (page_nr);
+      print_session->ProcessCurrentPage (page_nr);
 
       container->DrawContainerPage (operation,
                                     context,
@@ -3172,11 +3222,11 @@ namespace Table
 
       cairo_save (cr);
       {
-        GooCanvasBounds *mini_bounds = _print_session.GetMiniHeaderBoundsForCurrentPage ();
+        GooCanvasBounds *mini_bounds = print_session->GetMiniHeaderBoundsForCurrentPage ();
 
         cairo_scale (cr,
-                     _print_session.GetScale (),
-                     _print_session.GetScale ());
+                     print_session->GetScale (),
+                     print_session->GetScale ());
 
         {
           cairo_save (cr);
@@ -3197,11 +3247,11 @@ namespace Table
         {
           cairo_translate (cr,
                            0,
-                           _print_session.GetPaperYShiftForCurrentPage ());
+                           print_session->GetPaperYShiftForCurrentPage ());
 
           goo_canvas_render (GetCanvas (),
                              cr,
-                             _print_session.GetCanvasBoundsForCurrentPage (),
+                             print_session->GetCanvasBoundsForCurrentPage (),
                              1.0);
         }
       }
@@ -3574,14 +3624,15 @@ namespace Table
 
     if (RunDialog (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
     {
-      GtkWidget *table_w    = _glade->GetWidget ("table_radiobutton");
-      gchar     *print_name = GetPrintName ();
+      GtkWidget    *table_w       = _glade->GetWidget ("table_radiobutton");
+      gchar        *print_name    = GetPrintName ();
+      PrintSession *print_session;
 
       if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (table_w)))
       {
-        _print_session._full_table = TRUE;
-
-        DisplayPreview ();
+        print_session = new PrintSession (PrintSession::DISPLAYED_TABLES);
+        PrintPreview (print_name,
+                      print_session);
       }
       else
       {
@@ -3590,9 +3641,13 @@ namespace Table
 
         LookForMatchToPrint (NULL,
                              all_sheet);
-        _print_session._full_table = FALSE;
-        Print (print_name);
+
+        print_session = new PrintSession (PrintSession::SCORE_SHEETS);
+        Print (print_name,
+               print_session);
       }
+
+      print_session->Release ();
       g_free (print_name);
     }
 
@@ -3618,14 +3673,17 @@ namespace Table
 
     if (table_set->RunDialog (GTK_DIALOG (score_sheet_dialog)) == GTK_RESPONSE_OK)
     {
-      GtkWidget *w          = table_set->_glade->GetWidget ("table_all_radiobutton");
-      gboolean   all_sheet  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
-      gchar     *print_name = table_set->GetPrintName ();
+      GtkWidget    *w             = table_set->_glade->GetWidget ("table_all_radiobutton");
+      gboolean      all_sheet     = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+      gchar        *print_name    = table_set->GetPrintName ();
+      PrintSession *print_session = new PrintSession (PrintSession::SCORE_SHEETS);
 
       table_set->LookForMatchToPrint (table_to_print,
                                       all_sheet);
-      table_set->_print_session._full_table = FALSE;
-      table_set->Print (print_name);
+      table_set->Print (print_name,
+                        print_session);
+
+      print_session->Release ();
       g_free (print_name);
     }
 
@@ -3640,15 +3698,19 @@ namespace Table
                                    GdkEventButton *event,
                                    TableSet       *table_set)
   {
-    gchar *print_name = table_set->GetPrintName ();
+    gchar        *print_name    = table_set->GetPrintName ();
+    PrintSession *print_session = new PrintSession (PrintSession::SCORE_SHEETS);
 
     g_slist_free (table_set->_match_to_print);
     table_set->_match_to_print = NULL;
 
     table_set->_match_to_print = g_slist_prepend (table_set->_match_to_print,
                                                   g_object_get_data (G_OBJECT (item), "match_to_print"));
-    table_set->_print_session._full_table = FALSE;
-    table_set->Print (print_name);
+
+    table_set->Print (print_name,
+                      print_session);
+
+    print_session->Release ();
     g_free (print_name);
 
     return TRUE;

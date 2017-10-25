@@ -14,23 +14,55 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "table.hpp"
 #include "table_print_session.hpp"
 
 namespace Table
 {
   // --------------------------------------------------------------------------------
-  PrintSession::PrintSession ()
+  PrintSession::PrintSession (Type         type,
+                              const gchar *title,
+                              Table       *from_table)
+    : Object ("PrintSession"),
+      BookSection (NULL)
   {
     _bounds_table = NULL;
+    _type         = type;
+    _from_table   = from_table;
 
     SetResolutions (1.0,
                     1.0);
+
+    {
+      Table *to = from_table;
+
+      for (guint i = 0; i < 2; i++)
+      {
+        if (to->GetRightTable () == NULL)
+        {
+          break;
+        }
+        to = to->GetRightTable ();
+      }
+
+      _title = g_strdup_printf ("%s\n\n"
+                                "<span size=\"xx-small\">%s\n...\n%s</span>",
+                                title,
+                                from_table->GetImage (),
+                                to->GetImage ());
+    }
   }
 
   // --------------------------------------------------------------------------------
   PrintSession::~PrintSession ()
   {
     g_free (_bounds_table);
+  }
+
+  // --------------------------------------------------------------------------------
+  Table *PrintSession::GetFromTable ()
+  {
+    return _from_table;
   }
 
   // --------------------------------------------------------------------------------
@@ -50,6 +82,12 @@ namespace Table
   guint PrintSession::GetNbPages ()
   {
     return _nb_pages;
+  }
+
+  // --------------------------------------------------------------------------------
+  PrintSession::Type PrintSession::GetType ()
+  {
+    return _type;
   }
 
   // --------------------------------------------------------------------------------
@@ -94,9 +132,10 @@ namespace Table
                                    gdouble header_h_on_paper)
   {
     gdouble mini_header_h = _bounds_table[0].y1;
-    gdouble max_scale     = (3.0 * paper_h) / (100 * mini_header_h);
     gdouble x_scale       = paper_w*0.95 / _cutting_w;
     gdouble y_scale       = (paper_h - header_h_on_paper) / (mini_header_h + _cutting_h);
+    // Mini header not be bigger than 3% of the paper height
+    gdouble max_scale     = (3.0 * paper_h) / (100 * mini_header_h);
 
     _scale = MIN (x_scale, y_scale);
     _scale = MIN (_scale, max_scale);

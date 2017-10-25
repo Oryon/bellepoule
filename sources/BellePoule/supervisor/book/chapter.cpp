@@ -17,11 +17,12 @@
 #include "util/canvas.hpp"
 #include "util/module.hpp"
 
+#include "section.hpp"
 #include "chapter.hpp"
 
 // --------------------------------------------------------------------------------
 Chapter::Chapter (Module           *module,
-                  gchar            *name,
+                  BookSection      *section,
                   Stage::StageView  stage_view,
                   guint             first_page,
                   guint             page_count)
@@ -32,20 +33,26 @@ Chapter::Chapter (Module           *module,
   _first_page = first_page;
   _last_page  = _first_page + page_count-1;
 
+  section->Retain ();
+  _section = section;
+
   if (stage_view == Stage::STAGE_VIEW_CLASSIFICATION)
   {
-    _name = g_strdup_printf ("%s\n\n%s", name, gettext ("Classification"));
+    _name = g_strdup_printf ("%s\n\n"
+                             "<span size=\"xx-small\">%s</span>",
+                             _section->_title,
+                             gettext ("Classification"));
   }
   else
   {
-    _name = g_strdup (name);
+    _name = g_strdup (_section->_title);
   }
-  g_free (name);
 }
 
 // --------------------------------------------------------------------------------
 Chapter::~Chapter ()
 {
+  _section->Release ();
   g_free (_name);
 }
 
@@ -68,58 +75,84 @@ Module *Chapter::GetModule ()
 }
 
 // --------------------------------------------------------------------------------
-Stage::StageView Chapter::GetStageView ()
+void Chapter::ConfigurePrintOperation (GtkPrintOperation *operation)
 {
-  return _stage_view;
+  g_object_set_data (G_OBJECT (operation),
+                     "PRINT_STAGE_VIEW",  GUINT_TO_POINTER (_stage_view));
+
+  _section->Retain ();
+  g_object_set_data_full (G_OBJECT (operation),
+                          "Print::Data",
+                          dynamic_cast <Object *> (_section),
+                          (GDestroyNotify) Object::TryToRelease);
+
+  g_object_set_data_full (G_OBJECT (operation),
+                          "Print::PageName",
+                          (void *) _module->GetPrintName (),
+                          g_free);
 }
 
 // --------------------------------------------------------------------------------
 void Chapter::DrawHeaderPage (GtkPrintOperation *operation,
                               GtkPrintContext   *context)
 {
-  cairo_t *cr = gtk_print_context_get_cairo_context (context);
-
-  //Module::DrawPage (operation,
-                    //context,
-                    //0);
-
-  cairo_save (cr);
+  ConfigurePrintOperation (operation);
 
   {
-    GooCanvas      *canvas           = Canvas::CreatePrinterCanvas (context);
-    cairo_matrix_t *operation_matrix = (cairo_matrix_t *) g_object_get_data (G_OBJECT (operation),
-                                                                             "operation_matrix");
+    cairo_t *cr = gtk_print_context_get_cairo_context (context);
 
-    if (operation_matrix)
+    cairo_save (cr);
+
     {
-      cairo_matrix_t own_matrix;
-      cairo_matrix_t result_matrix;
+      GooCanvas      *canvas           = Canvas::CreatePrinterCanvas (context);
+      cairo_matrix_t *operation_matrix = (cairo_matrix_t *) g_object_get_data (G_OBJECT (operation),
+                                                                               "operation_matrix");
 
-      goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
-                                     &own_matrix);
-      cairo_matrix_multiply (&result_matrix,
-                             operation_matrix,
-                             &own_matrix);
-      goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
-                                     &result_matrix);
+      if (operation_matrix)
+      {
+        cairo_matrix_t own_matrix;
+        cairo_matrix_t result_matrix;
+
+        goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
+                                       &own_matrix);
+        cairo_matrix_multiply (&result_matrix,
+                               operation_matrix,
+                               &own_matrix);
+        goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
+                                       &result_matrix);
+      }
+
+      goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                           _name,
+                           50.0, 50.0,
+                           100.0,
+                           GTK_ANCHOR_CENTER,
+                           "alignment",  PANGO_ALIGN_CENTER,
+                           "fill-color", "black",
+                           "font",       BP_FONT "Bold 10.0px",
+                           "use-markup", TRUE,
+                           NULL);
+
+      goo_canvas_render (canvas,
+                         gtk_print_context_get_cairo_context (context),
+                         NULL,
+                         1.0);
+
+      gtk_widget_destroy (GTK_WIDGET (canvas));
     }
 
-    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                         _name,
-                         50.0, 50.0,
-                         100.0,
-                         GTK_ANCHOR_CENTER,
-                         "alignment", PANGO_ALIGN_CENTER,
-                         "fill-color", "black",
-                         "font", BP_FONT "Bold 10.0px", NULL);
-
-    goo_canvas_render (canvas,
-                       gtk_print_context_get_cairo_context (context),
-                       NULL,
-                       1.0);
-
-    gtk_widget_destroy (GTK_WIDGET (canvas));
+    cairo_restore (cr);
   }
+}
 
-  cairo_restore (cr);
+// --------------------------------------------------------------------------------
+void Chapter::DrawPage (GtkPrintOperation *operation,
+                        GtkPrintContext   *context,
+                        gint               page)
+{
+  ConfigurePrintOperation (operation);
+
+  _module->DrawPage (operation,
+                     context,
+                     page);
 }

@@ -20,6 +20,7 @@
 #include "contest.hpp"
 #include "util/player.hpp"
 #include "util/canvas.hpp"
+#include "book/section.hpp"
 
 #include "stage.hpp"
 
@@ -28,18 +29,18 @@ GSList *Stage::_stage_base = NULL;
 // --------------------------------------------------------------------------------
 Stage::Stage (StageClass *stage_class)
 {
-  _name                  = g_strdup ("");
-  _locked                = FALSE;
-  _result                = NULL;
-  _output_short_list     = NULL;
-  _quota_exceedance      = 0;
-  _previous              = NULL;
-  _next                  = NULL;
-  _stage_class           = stage_class;
-  _attendees             = NULL;
-  _classification        = NULL;
-  _input_provider        = NULL;
-  _classification_on     = FALSE;
+  _name              = g_strdup ("");
+  _locked            = FALSE;
+  _result            = NULL;
+  _output_short_list = NULL;
+  _quota_exceedance  = 0;
+  _previous          = NULL;
+  _next              = NULL;
+  _stage_class       = stage_class;
+  _attendees         = NULL;
+  _classification    = NULL;
+  _input_provider    = NULL;
+  _classification_on = FALSE;
 
   _score_stuffing_trigger = NULL;
 
@@ -95,6 +96,19 @@ void Stage::SignalStatusUpdate ()
 const gchar *Stage::GetKlassName ()
 {
   return _class->_name;
+}
+
+// --------------------------------------------------------------------------------
+GList *Stage::GetBookSections (StageView view)
+{
+  GList       *sections = NULL;
+  gchar       *title    = GetFullName ();
+  BookSection *section  = new BookSection (title);
+
+  g_free (title);
+
+  return g_list_append (sections,
+                        section);
 }
 
 // --------------------------------------------------------------------------------

@@ -43,6 +43,8 @@ namespace Table
 
       gchar *GetImage ();
 
+      const gchar *GetMiniName ();
+
       void SetRightTable (Table *right);
 
       Table *GetRightTable ();
@@ -102,6 +104,7 @@ namespace Table
       TableSet      *_defeated_table_set;
 
     private:
+      gchar         *_mini_name;
       guint         _size;
       guint         _number;
       guint         _column;

@@ -323,6 +323,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/book/chapter.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/book/section.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/book/section.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/category.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

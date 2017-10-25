@@ -18,25 +18,13 @@
 
 #include "util/object.hpp"
 
-class Book : public Object
+class BookSection : public virtual Object
 {
   public:
-    Book ();
+    gchar *_title;
 
-    void Prepare (GtkPrintOperation *operation,
-                  GtkPrintContext   *context,
-                  GList             *stage_list);
+    BookSection (const gchar *title);
 
-    void Print (GtkPrintOperation *operation,
-                GtkPrintContext   *context,
-                gint               page_nr);
-
-    void Stop (GtkPrintOperation *operation,
-               GtkPrintContext   *context);
-
-  private:
-    guint  _page_count;
-    GList *_chapters;
-
-    virtual ~Book ();
+  protected:
+    virtual ~BookSection ();
 };

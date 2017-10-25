@@ -17,13 +17,14 @@
 #include "util/module.hpp"
 
 #include "../stage.hpp"
+#include "section.hpp"
 #include "chapter.hpp"
 
 #include "book.hpp"
 
 // --------------------------------------------------------------------------------
 Book::Book ()
-: Object ("Book")
+  : Object ("Book")
 {
 }
 
@@ -37,40 +38,57 @@ void Book::Prepare (GtkPrintOperation *operation,
                     GtkPrintContext   *context,
                     GList             *stage_list)
 {
+  GList *current_stage = stage_list;
+
   _chapters   = NULL;
   _page_count = 0;
 
-  GList *current = stage_list;
-
-  while (current)
+  while (current_stage)
   {
-    Stage  *stage  = (Stage *) current->data;
+    Stage  *stage  = (Stage *) current_stage->data;
     Module *module = dynamic_cast <Module *> (stage);
 
     for (guint view = 1; view < Stage::N_STAGE_VIEW; view++)
     {
-      guint module_page_count;
+      GList *sections        = stage->GetBookSections ((Stage::StageView) view);
+      GList *current_section = sections;
 
       g_object_set_data (G_OBJECT (operation),
                          "PRINT_STAGE_VIEW",  GUINT_TO_POINTER (view));
 
-      module_page_count = module->PreparePrint (operation,
-                                                context);
-      if (module_page_count)
+      while (current_section)
       {
-        Chapter *chapter = new Chapter (module,
-                                        stage->GetFullName (),
-                                        (Stage::StageView) view,
-                                        _page_count,
-                                        module_page_count+1);
+        BookSection *section            = (BookSection *) current_section->data;
+        guint        section_page_count;
 
-        _chapters = g_slist_append (_chapters,
-                                    chapter);
-        _page_count += module_page_count+1;
+        section->Retain ();
+        g_object_set_data_full (G_OBJECT (operation),
+                                "Print::Data", dynamic_cast <Object *> (section),
+                                (GDestroyNotify) Object::TryToRelease);
+
+        section_page_count = module->PreparePrint (operation,
+                                                   context);
+        if (section_page_count)
+        {
+          Chapter *chapter = new Chapter (module,
+                                          section,
+                                          (Stage::StageView) view,
+                                          _page_count,
+                                          section_page_count+1);
+
+          _chapters = g_list_append (_chapters,
+                                     chapter);
+          _page_count += section_page_count+1;
+        }
+
+        section->Release ();
+        current_section = g_list_next (current_section);
       }
+
+      g_list_free (sections);
     }
 
-    current = g_list_next (current);
+    current_stage = g_list_next (current_stage);
   }
 
   gtk_print_operation_set_n_pages (operation,
@@ -82,24 +100,16 @@ void Book::Print (GtkPrintOperation *operation,
                   GtkPrintContext   *context,
                   gint               page_nr)
 {
-  GSList *current = _chapters;
+  GList *current = _chapters;
 
   while (current)
   {
     Chapter *chapter    = (Chapter *) current->data;
-    Module  *module     = chapter->GetModule ();
     gint     first_page = chapter->GetFirstPage ();
     gint     last_page  = chapter->GetLastPage ();
 
     if ((first_page <= page_nr) && (last_page >= page_nr))
     {
-      g_object_set_data (G_OBJECT (operation),
-                         "PRINT_STAGE_VIEW",  GUINT_TO_POINTER (chapter->GetStageView ()));
-
-      g_object_set_data_full (G_OBJECT (operation),
-                              "Print::PageName",
-                              (void *) module->GetPrintName (),
-                              g_free);
       if (page_nr == first_page)
       {
         chapter->DrawHeaderPage (operation,
@@ -107,14 +117,14 @@ void Book::Print (GtkPrintOperation *operation,
       }
       else
       {
-        module->DrawPage (operation,
-                          context,
-                          page_nr - first_page-1);
+        chapter->DrawPage (operation,
+                           context,
+                           page_nr - first_page-1);
       }
       break;
     }
 
-    current = g_slist_next (current);
+    current = g_list_next (current);
   }
 }
 
@@ -122,7 +132,7 @@ void Book::Print (GtkPrintOperation *operation,
 void Book::Stop (GtkPrintOperation *operation,
                  GtkPrintContext   *context)
 {
-  GSList *current = _chapters;
+  GList *current = _chapters;
 
   while (current)
   {
@@ -132,8 +142,9 @@ void Book::Stop (GtkPrintOperation *operation,
     module->OnEndPrint (operation,
                         context);
 
-    current = g_slist_next (current);
+    chapter->Release ();
+    current = g_list_next (current);
   }
 
-  g_slist_free (_chapters);
+  g_list_free (_chapters);
 }

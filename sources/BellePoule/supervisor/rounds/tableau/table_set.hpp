@@ -23,6 +23,7 @@
 #include "network/ring.hpp"
 #include "../../match.hpp"
 #include "../../score_collector.hpp"
+#include "../../stage.hpp"
 
 #include "table.hpp"
 #include "html_table.hpp"
@@ -42,7 +43,10 @@ namespace Table
       class Listener
       {
         public:
-          virtual void OnTableSetStatusUpdated (TableSet *table_set) = 0;
+          virtual void OnTableSetStatusUpdated     (TableSet *table_set) = 0;
+          virtual void OnTableSetNavigationBorders (TableSet *table_set,
+                                                    Table    *previous,
+                                                    Table    *next) = 0;
       };
 
     public:
@@ -79,6 +83,8 @@ namespace Table
 
       void OnPrint ();
 
+      GList *GetBookSections (Stage::StageView view);
+
       gchar *GetPrintName ();
 
       guint PreparePrint (GtkPrintOperation *operation,
@@ -87,8 +93,6 @@ namespace Table
       void DrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
                      gint               page_nr);
-
-      void DisplayPreview ();
 
       void Wipe ();
 
@@ -172,7 +176,6 @@ namespace Table
       Table                    **_tables;
       GSList                   *_result_list;
       GSList                   *_match_to_print;
-      PrintSession              _print_session;
       GSList                   *_attendees;
       GSList                   *_withdrawals;
       gboolean                  _locked;
@@ -274,6 +277,8 @@ namespace Table
 
       void ChangeFromTable (Table *table);
 
+      PrintSession *GetPrintSession (GtkPrintOperation *operation);
+
       static gint ComparePlayer (Player    *A,
                                  Player    *B,
                                  TableSet  *table_set);
@@ -313,7 +318,8 @@ namespace Table
       GtkWidget                *_current_preview_area;
       static const guint        PREVIEW_PAGE_SIZE = 200;
 
-      void ConfigurePreviewBackground (GtkPrintContext *context);
+      void ConfigurePreviewBackground (GtkPrintOperation *operation,
+                                       GtkPrintContext   *context);
 
       gboolean PreparePreview (GtkPrintOperation        *operation,
                                GtkPrintOperationPreview *preview,

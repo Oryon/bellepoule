@@ -14,29 +14,17 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "section.hpp"
 
-#include "util/object.hpp"
-
-class Book : public Object
+// --------------------------------------------------------------------------------
+BookSection::BookSection (const gchar *title)
+  : Object ("Section")
 {
-  public:
-    Book ();
+  _title = g_strdup (title);
+}
 
-    void Prepare (GtkPrintOperation *operation,
-                  GtkPrintContext   *context,
-                  GList             *stage_list);
-
-    void Print (GtkPrintOperation *operation,
-                GtkPrintContext   *context,
-                gint               page_nr);
-
-    void Stop (GtkPrintOperation *operation,
-               GtkPrintContext   *context);
-
-  private:
-    guint  _page_count;
-    GList *_chapters;
-
-    virtual ~Book ();
-};
+// --------------------------------------------------------------------------------
+BookSection::~BookSection ()
+{
+  g_free (_title);
+}

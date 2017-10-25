@@ -23,6 +23,7 @@
 
 #include "util/attribute.hpp"
 #include "util/player.hpp"
+#include "../../book/section.hpp"
 #include "../../classification.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
@@ -824,6 +825,34 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  void Supervisor::OnTableSetNavigationBorders (TableSet *table_set,
+                                                Table    *previous,
+                                                Table    *next)
+  {
+    if ((_displayed_table_set == NULL) || (table_set == _displayed_table_set))
+    {
+      gtk_widget_set_sensitive (_glade->GetWidget ("previous_button"), previous != NULL);
+      gtk_widget_set_sensitive (_glade->GetWidget ("next_button"),     next     != NULL);
+
+      gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("previous_label")),
+                          "");
+      if (previous)
+      {
+        gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("previous_label")),
+                            previous->GetMiniName ());
+      }
+
+      gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("next_label")),
+                          "");
+      if (next)
+      {
+        gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("next_label")),
+                            next->GetMiniName ());
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Supervisor::OnTableOver (TableSet *table_set,
                                 Table    *table)
   {
@@ -1082,21 +1111,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnDisplayToggled (GtkWidget *widget)
-  {
-    GtkWidget *vbox = _glade->GetWidget ("display_vbox");
-
-    if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)))
-    {
-      gtk_widget_show (vbox);
-    }
-    else
-    {
-      gtk_widget_hide (vbox);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   GSList *Supervisor::GetCurrentClassification ()
   {
     _result       = NULL;
@@ -1226,6 +1240,21 @@ namespace Table
     }
 
     return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  GList *Supervisor::GetBookSections (StageView view)
+  {
+    if (view == STAGE_VIEW_RESULT)
+    {
+      if (_displayed_table_set)
+      {
+        return _displayed_table_set->GetBookSections (view);
+      }
+      return NULL;
+    }
+
+    return Stage::GetBookSections (view);
   }
 
   // --------------------------------------------------------------------------------
@@ -1394,15 +1423,6 @@ namespace Table
     Supervisor *t = dynamic_cast <Supervisor *> (owner);
 
     t->OnInputToggled (widget);
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_display_toolbutton_toggled (GtkWidget *widget,
-                                                                 Object    *owner)
-  {
-    Supervisor *t = dynamic_cast <Supervisor *> (owner);
-
-    t->OnDisplayToggled (widget);
   }
 
   // --------------------------------------------------------------------------------

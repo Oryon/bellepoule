@@ -498,12 +498,13 @@ void Module::ResetCursor ()
 }
 
 // --------------------------------------------------------------------------------
-void Module::Print (const gchar  *job_name,
-                    GtkPageSetup *page_setup)
+void Module::Print (const gchar *job_name,
+                    Object      *data)
 {
   Print (job_name,
          NULL,
-         page_setup,
+         data,
+         NULL,
          GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG);
 }
 
@@ -514,28 +515,39 @@ void Module::PrintPDF (const gchar  *job_name,
   Print (job_name,
          filename,
          NULL,
+         NULL,
          GTK_PRINT_OPERATION_ACTION_EXPORT);
 }
 
 // --------------------------------------------------------------------------------
-void Module::PrintPreview (const gchar  *job_name,
-                           GtkPageSetup *page_setup)
+void Module::PrintPreview (const gchar *job_name,
+                           Object      *data)
 {
   Print (job_name,
          NULL,
-         page_setup,
+         data,
+         NULL,
          GTK_PRINT_OPERATION_ACTION_PREVIEW);
 }
 
 // --------------------------------------------------------------------------------
 void Module::Print (const gchar             *job_name,
                     const gchar             *filename,
+                    Object                  *data,
                     GtkPageSetup            *page_setup,
                     GtkPrintOperationAction  action)
 {
   GtkPrintOperationResult  res;
   GError                  *error     = NULL;
   GtkPrintOperation       *operation = gtk_print_operation_new ();
+
+  if (data)
+  {
+    data->Retain ();
+    g_object_set_data_full (G_OBJECT (operation),
+                            "Print::Data", data,
+                            (GDestroyNotify) Object::TryToRelease);
+  }
 
   if (job_name)
   {
@@ -613,6 +625,8 @@ void Module::Print (const gchar             *job_name,
       }
     }
   }
+
+  g_object_unref (operation);
 
   if (error)
   {
