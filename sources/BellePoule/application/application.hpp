@@ -44,6 +44,7 @@ class Application :
     Module *_main_module;
 
     Application (const gchar   *role,
+                 const gchar   *public_name,
                  guint          http_port,
                  int           *argc,
                  char        ***argv);

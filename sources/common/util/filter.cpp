@@ -27,6 +27,8 @@ static const gchar *look_images[AttributeDesc::NB_LOOK] =
   N_ ("Graphic")
 };
 
+gboolean Filter::_no_persistence = FALSE;
+
 // --------------------------------------------------------------------------------
 Filter::Filter (const gchar *name,
                 GSList      *attr_list)
@@ -101,6 +103,12 @@ Filter::~Filter ()
   g_slist_free   (_attr_list);
   g_object_unref (_attr_filter_store);
   g_object_unref (_look_store);
+}
+
+// --------------------------------------------------------------------------------
+void Filter::PreventPersistence ()
+{
+  _no_persistence = TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -221,20 +229,23 @@ void Filter::ShowAttribute (const gchar *name)
 // --------------------------------------------------------------------------------
 void Filter::RestoreLast ()
 {
-  gchar **last_selection;
-
-  last_selection = g_key_file_get_string_list (Global::_user_config->_key_file,
-                                               _name,
-                                               "display",
-                                               NULL,
-                                               NULL);
-
-  if (last_selection)
+  if (_no_persistence == FALSE)
   {
-    ApplyList (last_selection);
-    UpdateAttrList ();
+    gchar **last_selection;
 
-    g_strfreev (last_selection);
+    last_selection = g_key_file_get_string_list (Global::_user_config->_key_file,
+                                                 _name,
+                                                 "display",
+                                                 NULL,
+                                                 NULL);
+
+    if (last_selection)
+    {
+      ApplyList (last_selection);
+      UpdateAttrList ();
+
+      g_strfreev (last_selection);
+    }
   }
 }
 
@@ -464,7 +475,7 @@ void Filter::UpdateAttrList (gboolean save_it)
   }
 
   // Make the choice persistent
-  if (save_it)
+  if (save_it && (_no_persistence == FALSE))
   {
     GList  *current    = _selected_list;
     gsize   length     = g_list_length (current);

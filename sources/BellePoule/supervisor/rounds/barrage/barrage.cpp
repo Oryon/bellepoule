@@ -44,6 +44,7 @@ namespace People
                                           "ref",
 #endif
                                           "IP",
+                                          "password",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -84,6 +85,7 @@ namespace People
                                           "ref",
 #endif
                                           "IP",
+                                          "password",
                                           "HS",
                                           "attending",
                                           "exported",

@@ -17,30 +17,24 @@
 #pragma once
 
 #include "util/object.hpp"
-#include "util/glade.hpp"
-#include "util/wifi_code.hpp"
-#include "network/wifi_network.hpp"
-#include "network/file_uploader.hpp"
 
-class EcoSystem : public Object
+namespace Net
+{
+  class FileUploader;
+}
+
+class Publication : public Object
 {
   public:
-    EcoSystem (Glade *glade);
+    Publication (Glade *glade);
 
     Net::FileUploader *GetUpLoader ();
 
-    WifiCode *GetAdminCode ();
-
   private:
-    Glade            *_glade;
-    Net::WifiNetwork *_wifi_network;
-    WifiCode         *_admin_wifi_code;
+    Glade *_glade;
 
-    virtual ~EcoSystem ();
-
-    static void RefreshScannerCode (GtkEditable *widget,
-                                    EcoSystem   *ecosystem);
+    virtual ~Publication ();
 
     static void OnRemoteHostChanged (GtkEditable *widget,
-                                     EcoSystem   *ecosystem);
+                                     Publication *publication);
 };

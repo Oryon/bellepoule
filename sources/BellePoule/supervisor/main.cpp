@@ -58,7 +58,7 @@ class BellPouleApp : public Application
 // --------------------------------------------------------------------------------
 BellPouleApp::BellPouleApp (int    *argc,
                             char ***argv)
-  : Application ("BellePoule", 35830, argc, argv)
+  : Application ("BellePoule", "BellePoule", 35830, argc, argv)
 {
 }
 

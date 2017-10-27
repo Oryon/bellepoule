@@ -79,7 +79,7 @@ namespace Marshaller
     }
 
     {
-      gchar *json = g_strdup_printf ("%s/BellePoule/hall.json", g_get_user_config_dir ());
+      gchar *json = g_strdup_printf ("%s/BellePoule2D/hall.json", g_get_user_config_dir ());
 
       _json_file = new JsonFile (this,
                                  json);

@@ -37,7 +37,8 @@ namespace Net
         gchar *url = g_strdup_printf ("http://%s:%d", ip, port);
 
         _uploader = new Net::MessageUploader (url);
-        _address  = g_strdup_printf ("%s:<b>%d</b>", ip, port);
+        _address  = g_strdup (ip);
+        _port     = port;
 
         g_free (url);
         g_free (ip);
@@ -77,5 +78,11 @@ namespace Net
   const gchar *Partner::GetAddress ()
   {
     return _address;
+  }
+
+  // --------------------------------------------------------------------------------
+  guint Partner::GetPort ()
+  {
+    return _port;
   }
 }

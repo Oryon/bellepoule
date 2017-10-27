@@ -37,12 +37,14 @@ namespace Marshaller
       void Start (int argc, char **argv);
 
       gboolean OnHttpPost (Net::Message *message);
+
+      gchar *GetSecretKey (const gchar *authentication_scheme);
   };
 
   // --------------------------------------------------------------------------------
   MarshallerApp::MarshallerApp (int    *argc,
                                 char ***argv)
-    : Application ("Marshaller", 35840, argc, argv)
+    : Application ("Marshaller", "BellePoule2D", 35840, argc, argv)
   {
   }
 
@@ -67,6 +69,8 @@ namespace Marshaller
   {
     _marshaller = new Marshaller ();
 
+    WifiCode::SetIpPort (35840);
+
     _main_module = _marshaller;
     _main_module->SetData (NULL,
                            "application",
@@ -89,6 +93,17 @@ namespace Marshaller
     }
 
     return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *MarshallerApp::GetSecretKey (const gchar *authentication_scheme)
+  {
+    if (_marshaller)
+    {
+      return _marshaller->GetSecretKey (authentication_scheme);
+    }
+
+    return NULL;
   }
 }
 

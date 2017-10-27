@@ -89,7 +89,7 @@ namespace Pool
 
         if (g_strcmp0 (key, "competition") == 0)
         {
-          gchar *ref = g_strdup_printf ("#%u/%d/%d",
+          gchar *ref = g_strdup_printf ("#%x/%x/%d",
                                         value,
                                         stage_id,
                                         _number);
@@ -2042,21 +2042,45 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Pool::OnHttpPost (const gchar **ressource,
-                             const gchar *data)
+  gboolean Pool::OnMessage (Net::Message *message)
   {
-    if (*ressource && data)
+    if (message->Is ("Roadmap"))
     {
-      guint match_index = atoi  (*ressource);
-
-      if (match_index > 0)
+      if (message->GetInteger ("source") == _parcel->GetNetID ())
       {
-        Match *match = GetMatch (match_index-1);
+        _piste = 0;
+
+        Object::TryToRelease (_start_time);
+        _start_time = NULL;
+
+        if (message->GetFitness () > 0)
+        {
+          gchar *start_time = message->GetString  ("start_time");
+
+          _piste      = message->GetInteger ("piste");
+          _start_time = new FieTime (start_time);
+          g_free (start_time);
+        }
+
+        RefreshParcel ();
+
+        return TRUE;
+      }
+    }
+    else if (message->Is ("Score"))
+    {
+      guint match_number = message->GetInteger ("bout");
+
+      if (match_number > 0)
+      {
+        Match *match = GetMatch (match_number-1);
 
         if (match)
         {
-          xmlDoc *doc = xmlReadMemory (data,
-                                       strlen (data),
+          gchar *xml_data = message->GetString ("xml");
+
+          xmlDoc *doc = xmlReadMemory (xml_data,
+                                       strlen (xml_data),
                                        "noname.xml",
                                        NULL,
                                        0);
@@ -2090,12 +2114,12 @@ namespace Pool
             }
             xmlFreeDoc (doc);
           }
+          g_free (xml_data);
+
           return TRUE;
         }
       }
     }
-
-    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -2148,33 +2172,6 @@ namespace Pool
 
     parcel->Set ("xml", (const gchar *) xml_buffer->content);
     xmlBufferFree (xml_buffer);
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Pool::OnMessage (Net::Message *message)
-  {
-    if (message->GetInteger ("source") == _parcel->GetNetID ())
-    {
-      _piste = 0;
-
-      Object::TryToRelease (_start_time);
-      _start_time = NULL;
-
-      if (message->GetFitness () > 0)
-      {
-        gchar *start_time = message->GetString  ("start_time");
-
-        _piste      = message->GetInteger ("piste");
-        _start_time = new FieTime (start_time);
-        g_free (start_time);
-      }
-
-      RefreshParcel ();
-
-      return TRUE;
-    }
-
-    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

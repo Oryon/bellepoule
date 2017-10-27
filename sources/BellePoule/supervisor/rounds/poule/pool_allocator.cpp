@@ -105,6 +105,7 @@ namespace Pool
                                           "ref",
 #endif
                                           "IP",
+                                          "password",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -177,6 +178,7 @@ namespace Pool
                                             "ref",
 #endif
                                             "IP",
+                                            "password",
                                             "HS",
                                             "attending",
                                             "exported",
@@ -343,11 +345,53 @@ namespace Pool
     {
       Pool *pool = GetPoolOf (current);
 
-      if (pool->OnMessage (message))
+      if (message->Is ("ScoreSheetCall"))
       {
-        OnPoolRoadmap (pool,
-                       message);
-        return TRUE;
+        if (pool->GetNumber () == message->GetInteger ("batch"))
+        {
+          Net::Message *response = new Net::Message ("ScoreSheet");
+          Player       *referee  = _contest->GetRefereeFromRef (message->GetInteger ("referee_id"));
+
+          {
+            xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+            {
+              xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+              _contest->SaveHeader (xml_writer);
+              SaveHeader (xml_writer);
+              pool->Save (xml_writer);
+
+              xmlTextWriterEndElement (xml_writer);
+              xmlTextWriterEndElement (xml_writer);
+
+              xmlTextWriterEndDocument (xml_writer);
+
+              xmlFreeTextWriter (xml_writer);
+            }
+
+            response->Set ("competition", _contest->GetNetID ());
+            response->Set ("stage",       GetNetID ());
+            response->Set ("batch",       pool->GetNumber ());
+            response->Set ("xml",         (const gchar *) xml_buffer->content);
+
+            xmlBufferFree (xml_buffer);
+          }
+
+          referee->SendMessage (response);
+          response->Release ();
+
+          return TRUE;
+        }
+      }
+      else if (message->Is ("Roadmap"))
+      {
+        if (pool->OnMessage (message))
+        {
+          OnPoolRoadmap (pool,
+                         message);
+          return TRUE;
+        }
       }
 
       current = g_slist_next (current);
@@ -891,7 +935,7 @@ namespace Pool
                                      number+1,
                                      GetXmlPlayerTag (),
                                      _rand_seed,
-                                     GetId ()+1,
+                                     GetNetID (),
                                      "competition", _contest->GetNetID (),
                                      "stage",       _parcel->GetNetID (),
                                      "batch",       _parcel->GetNetID (),

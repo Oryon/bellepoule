@@ -107,6 +107,8 @@ namespace Pool
       void OnEndPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
 
+      gboolean OnMessage (Net::Message *message);
+
       gboolean OnHttpPost (const gchar *command,
                            const gchar **ressource,
                            const gchar *data);

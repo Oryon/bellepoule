@@ -92,6 +92,8 @@ class Stage : public virtual Object,
 
     guint GetId ();
 
+    guint GetNetID ();
+
     guint32 GetRandSeed ();
 
     void SetRandSeed (guint32 rand_seed);

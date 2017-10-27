@@ -51,6 +51,7 @@
 
 // --------------------------------------------------------------------------------
 Application::Application (const gchar   *role,
+                          const gchar   *public_name,
                           guint          http_port,
                           int           *argc,
                           char        ***argv)
@@ -221,7 +222,7 @@ Application::Application (const gchar   *role,
 
   curl_global_init (CURL_GLOBAL_ALL);
 
-  Global::_user_config = new UserConfig ("BellePoule");
+  Global::_user_config = new UserConfig (public_name);
 
   {
     _version_downloader = new Net::Downloader ("_version_downloader",
@@ -333,9 +334,6 @@ void Application::Prepare ()
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "IP", "IP", gettext ("IP address"));
-    desc->_rights = AttributeDesc::PRIVATE;
-
     desc = AttributeDesc::Declare (G_TYPE_UINT, "workload_rate", "Activite", gettext ("rate"));
     desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
     desc->_favorite_look  = AttributeDesc::GRAPHICAL;
@@ -387,6 +385,14 @@ void Application::Prepare ()
 
     // Not persistent data
     {
+      desc = AttributeDesc::Declare (G_TYPE_STRING, "IP", "IP", gettext ("IP address"));
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_rights      = AttributeDesc::PRIVATE;
+
+      desc = AttributeDesc::Declare (G_TYPE_STRING, "password", "MotDePasse", gettext ("Password"));
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_rights      = AttributeDesc::PRIVATE;
+
       desc = AttributeDesc::Declare (G_TYPE_UINT, "pool_nr", "PoolID", gettext ("pool #"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;

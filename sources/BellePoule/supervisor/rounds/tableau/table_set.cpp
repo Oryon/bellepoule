@@ -541,6 +541,7 @@ namespace Table
       RestoreZoomFactor ();
     }
 
+    if (_to_table)
     {
       Table *right = NULL;
 
@@ -1671,9 +1672,9 @@ namespace Table
         {
           gchar *path_string = gtk_tree_path_to_string (path);
 
-          gchar *ref = g_strdup_printf ("#%u/%d/%s.%s",
+          gchar *ref = g_strdup_printf ("#%x/%x/%s.%s",
                                         contest->GetNetID (),
-                                        _supervisor->GetId (),
+                                        _supervisor->GetNetID (),
                                         _id,
                                         path_string);
           data->_match->SetFlashRef (ref);
@@ -2028,46 +2029,169 @@ namespace Table
   // --------------------------------------------------------------------------------
   gboolean TableSet::OnMessage (Net::Message *message)
   {
-    for (guint t = 1; t < _nb_tables; t++)
+    if (message->Is ("Roadmap"))
     {
-      Table *table = _tables[t];
-      Match *match = table->GetMatch (message);
-
-      if (match)
+      for (guint t = 1; t < _nb_tables; t++)
       {
-        guint    referee_ref = message->GetInteger ("referee");
-        Contest *contest     = _supervisor->GetContest ();
-        Player  *referee     = contest->GetRefereeFromRef (referee_ref);
+        Table *table = _tables[t];
+        Match *match = table->GetMatch (message);
 
-        if (referee && (message->GetFitness () > 0))
+        if (match)
         {
-          gchar *start_time = message->GetString  ("start_time");
+          guint    referee_ref = message->GetInteger ("referee");
+          Contest *contest     = _supervisor->GetContest ();
+          Player  *referee     = contest->GetRefereeFromRef (referee_ref);
 
-          match->SetStartTime (new FieTime (start_time));
-          g_free (start_time);
+          if (referee && (message->GetFitness () > 0))
+          {
+            gchar *start_time = message->GetString  ("start_time");
 
-          match->SetPiste (message->GetInteger ("piste"));
-          match->AddReferee (referee);
+            match->SetStartTime (new FieTime (start_time));
+            g_free (start_time);
+
+            match->SetPiste (message->GetInteger ("piste"));
+            match->AddReferee (referee);
+          }
+          else
+          {
+            match->SetPiste (0);
+            match->SetStartTime (NULL);
+            match->RemoveReferee (referee);
+          }
+
+          RefreshParcel ();
+          RefreshTableStatus (t == _nb_tables-1);
+
+          if (   ((message->GetFitness () > 0)  && (table->_has_all_roadmap))
+              || ((message->GetFitness () == 0) && (table->_roadmap_count == 0)))
+          {
+            table->Spread ();
+            Display (NULL);
+          }
+
+          return TRUE;
         }
-        else
-        {
-          match->SetPiste (0);
-          match->SetStartTime (NULL);
-          match->RemoveReferee (referee);
-        }
-
-        RefreshParcel ();
-        RefreshTableStatus (t == _nb_tables-1);
-
-        if (   ((message->GetFitness () > 0)  && (table->_has_all_roadmap))
-            || ((message->GetFitness () == 0) && (table->_roadmap_count == 0)))
-        {
-          table->Spread ();
-          Display (NULL);
-        }
-
-        return TRUE;
       }
+    }
+    else if (   message->Is ("ScoreSheetCall")
+             || message->Is ("Score"))
+    {
+      gchar       *bout = message->GetString ("bout");
+      GtkTreeIter  iter;
+
+      if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (_quick_search_treestore),
+                                               &iter,
+                                               bout))
+      {
+        Match *match;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_treestore),
+                            &iter,
+                            QUICK_MATCH_COLUMN_ptr, &match,
+                            -1);
+        if (match)
+        {
+          if (message->Is ("ScoreSheetCall"))
+          {
+            Contest   *contest    = _supervisor->GetContest ();
+            xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+            {
+              Table         *table      = (Table *) match->GetPtrData (this, "table");
+              xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+              contest->SaveHeader     (xml_writer);
+              _supervisor->SaveHeader (xml_writer);
+              SaveHeader              (xml_writer);
+
+              table->SaveHeader (xml_writer);
+              match->Save (xml_writer);
+
+              xmlTextWriterEndElement (xml_writer);
+              xmlTextWriterEndElement (xml_writer);
+              xmlTextWriterEndElement (xml_writer);
+
+              xmlTextWriterEndDocument (xml_writer);
+
+              xmlFreeTextWriter (xml_writer);
+            }
+
+            {
+              Net::Message *response = new Net::Message ("ScoreSheet");
+              Player       *referee  = contest->GetRefereeFromRef (message->GetInteger ("referee_id"));
+              gchar        *batch    = message->GetString ("batch");
+
+              response->Set ("competition", contest->GetNetID ());
+              response->Set ("stage",       _supervisor->GetNetID ());
+              response->Set ("batch",       batch);
+              response->Set ("bout",        bout);
+              response->Set ("xml",         (const gchar *) xml_buffer->content);
+
+              referee->SendMessage (response);
+              response->Release ();
+
+              g_free (batch);
+            }
+
+            xmlBufferFree (xml_buffer);
+          }
+          else if (message->Is ("Score"))
+          {
+            gchar *xml_data = message->GetString ("xml");
+
+            xmlDoc *doc = xmlReadMemory (xml_data,
+                                         strlen (xml_data),
+                                         "message.xml",
+                                         NULL,
+                                         0);
+
+            if (doc)
+            {
+              xmlXPathInit ();
+
+              {
+                xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+                xmlXPathObject  *xml_object;
+                xmlNodeSet      *xml_nodeset;
+
+                xml_object = xmlXPathEval (BAD_CAST "/Match/*", xml_context);
+                xml_nodeset = xml_object->nodesetval;
+
+                if (xml_nodeset->nodeNr == 2)
+                {
+                  for (guint i = 0; i < 2; i++)
+                  {
+                    match->Load (xml_nodeset->nodeTab[i],
+                                 match->GetOpponent (i));
+                  }
+
+                  _quick_score_collector->Refresh (match);
+
+                  if (match->IsOver ())
+                  {
+                    SpreadWinners ();
+                    RefreshNodes ();
+                    RefilterQuickSearch ();
+                  }
+                  else
+                  {
+                    _score_collector->Refresh (match);
+                    RefreshTableStatus ();
+                  }
+                }
+
+                xmlXPathFreeObject  (xml_object);
+                xmlXPathFreeContext (xml_context);
+              }
+              xmlFreeDoc (doc);
+            }
+            g_free (xml_data);
+          }
+        }
+      }
+      g_free (bout);
+
+      return TRUE;
     }
 
     return FALSE;
@@ -2099,65 +2223,6 @@ namespace Table
         {
           gtk_combo_box_set_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
                                          &filter_iter);
-          return TRUE;
-        }
-      }
-      else if (g_strcmp0 (command, "Score") == 0)
-      {
-        Match *match;
-
-        gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_treestore),
-                            &iter,
-                            QUICK_MATCH_COLUMN_ptr, &match,
-                            -1);
-        if (match)
-        {
-          xmlDoc *doc = xmlReadMemory (data,
-                                       strlen (data),
-                                       "noname.xml",
-                                       NULL,
-                                       0);
-
-          if (doc)
-          {
-            xmlXPathInit ();
-
-            {
-              xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-              xmlXPathObject  *xml_object;
-              xmlNodeSet      *xml_nodeset;
-
-              xml_object = xmlXPathEval (BAD_CAST "/Match/*", xml_context);
-              xml_nodeset = xml_object->nodesetval;
-
-              if (xml_nodeset->nodeNr == 2)
-              {
-                for (guint i = 0; i < 2; i++)
-                {
-                  match->Load (xml_nodeset->nodeTab[i],
-                               match->GetOpponent (i));
-                }
-
-                _quick_score_collector->Refresh (match);
-
-                if (match->IsOver ())
-                {
-                  SpreadWinners ();
-                  RefreshNodes ();
-                  RefilterQuickSearch ();
-                }
-                else
-                {
-                  _score_collector->Refresh (match);
-                  RefreshTableStatus ();
-                }
-              }
-
-              xmlXPathFreeObject  (xml_object);
-              xmlXPathFreeContext (xml_context);
-            }
-            xmlFreeDoc (doc);
-          }
           return TRUE;
         }
       }
@@ -2702,10 +2767,9 @@ namespace Table
 
       for (guint i = 0; i < nb_section; i++)
       {
-        gchar        *title;
+        gchar        *title = _supervisor->GetFullName ();
         PrintSession *section;
 
-        title = _supervisor->GetFullName ();
         section = new PrintSession (PrintSession::ALL_TABLES,
                                     title,
                                     _tables[(_nb_tables-1) - i*3]);
@@ -2855,119 +2919,6 @@ namespace Table
       if (nb_match%_nb_match_per_sheet != 0)
       {
         nb_page++;
-      }
-
-      // E-scoresheet
-      {
-        GHashTable *match_list_table = g_hash_table_new (NULL, NULL);
-
-        {
-          GSList *current_match = _match_to_print;
-
-          while (current_match)
-          {
-            Match  *match           = (Match *) current_match->data;
-            GSList *current_referee = match->GetRefereeList ();
-
-            while (current_referee)
-            {
-              GSList *match_list = (GSList *) g_hash_table_lookup (match_list_table,
-                                                                   (gconstpointer) current_referee->data);
-
-              match_list = g_slist_append (match_list,
-                                           match);
-              g_hash_table_insert (match_list_table,
-                                   (gpointer) current_referee->data,
-                                   match_list);
-
-              current_referee = g_slist_next (current_referee);
-            }
-
-            current_match = g_slist_next (current_match);
-          }
-        }
-
-        {
-          GHashTableIter  iter;
-          Player         *referee;
-          GSList         *match_list;
-
-          g_hash_table_iter_init (&iter,
-                                  match_list_table);
-
-          while (g_hash_table_iter_next (&iter,
-                                         (gpointer *) &referee,
-                                         (gpointer *) &match_list))
-          {
-            Player::AttributeId  attr_id ("IP");
-            Attribute           *ip_attr = referee->GetAttribute (&attr_id);
-
-            if (ip_attr)
-            {
-              gchar *ip = ip_attr->GetStrValue ();
-
-              if (ip && (ip[0] != 0))
-              {
-                // One message per table
-                for (guint t = 0; t < _nb_tables; t++)
-                {
-                  xmlBuffer *xml_buffer    = xmlBufferCreate ();
-                  GSList    *current_match = match_list;
-
-                  {
-                    Contest       *contest        = _supervisor->GetContest ();
-                    xmlTextWriter *xml_writer     = xmlNewTextWriterMemory (xml_buffer, 0);
-                    Table         *previous_table = NULL;
-
-                    contest->SaveHeader     (xml_writer);
-                    _supervisor->SaveHeader (xml_writer);
-                    SaveHeader              (xml_writer);
-
-                    while (current_match)
-                    {
-                      Match *match = (Match *) current_match->data;
-                      Table *table = (Table *) match->GetPtrData (this, "table");
-
-                      if (table->GetNumber () == t)
-                      {
-                        if ((previous_table == NULL) || (table != previous_table))
-                        {
-                          if (previous_table)
-                          {
-                            xmlTextWriterEndElement (xml_writer);
-                          }
-                          table->SaveHeader (xml_writer);
-                        }
-
-                        match->Save (xml_writer);
-
-                        previous_table = table;
-                      }
-
-                      current_match = g_slist_next (current_match);
-                    }
-
-                    xmlTextWriterEndElement (xml_writer);
-                    xmlTextWriterEndElement (xml_writer);
-                    xmlTextWriterEndElement (xml_writer);
-
-                    xmlTextWriterEndDocument (xml_writer);
-
-                    xmlFreeTextWriter (xml_writer);
-                  }
-
-                  referee->SendMessage ("/E-ScoreSheets",
-                                        (const gchar *) xml_buffer->content);
-
-                  xmlBufferFree (xml_buffer);
-                }
-                g_slist_free (match_list);
-              }
-            }
-          }
-        }
-
-        g_hash_table_destroy (match_list_table);
       }
     }
 
@@ -3630,9 +3581,14 @@ namespace Table
 
       if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (table_w)))
       {
-        print_session = new PrintSession (PrintSession::DISPLAYED_TABLES);
+        gchar *title = _supervisor->GetFullName ();
+
+        print_session = new PrintSession (PrintSession::DISPLAYED_TABLES,
+                                          title,
+                                          _from_table);
         PrintPreview (print_name,
                       print_session);
+        g_free (title);
       }
       else
       {

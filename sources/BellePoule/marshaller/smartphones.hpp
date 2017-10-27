@@ -18,32 +18,31 @@
 
 #include "util/object.hpp"
 
+class Glade;
+class WifiCode;
+
 namespace Net
 {
-  class Message;
-  class MessageUploader;
+  class WifiNetwork;
+}
 
-  class Partner : public Object
+namespace Marshaller
+{
+  class SmartPhones : public Object
   {
     public:
-      Partner (Message *message);
+      SmartPhones (Glade *glade);
 
-      void SendMessage (Message *message);
-
-      gboolean Is (Partner *partner);
-
-      gboolean HasRole (const gchar *role);
-
-      const gchar *GetAddress ();
-
-      guint GetPort ();
+      WifiCode *GetAdminCode ();
 
     private:
-      gchar           *_role;
-      gchar           *_address;
-      guint            _port;
-      MessageUploader *_uploader;
+      Glade            *_glade;
+      Net::WifiNetwork *_wifi_network;
+      WifiCode         *_admin_wifi_code;
 
-      ~Partner ();
+      virtual ~SmartPhones ();
+
+      static void RefreshScannerCode (GtkEditable *widget,
+                                      SmartPhones *smartphones);
   };
 }

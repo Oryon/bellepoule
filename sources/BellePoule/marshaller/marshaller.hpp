@@ -23,6 +23,8 @@
 
 namespace Marshaller
 {
+  class SmartPhones;
+
   class Marshaller :
     public Module,
     public People::RefereesList::Listener,
@@ -39,10 +41,15 @@ namespace Marshaller
 
       void OnRefereeListCollapse ();
 
+      gchar *GetSecretKey (const gchar *authentication_scheme);
+
+      void OnMenuDialog (const gchar *dialog);
+
     private:
       Hall        *_hall;
       RefereePool *_referee_pool;
       GtkNotebook *_referee_notebook;
+      SmartPhones *_smartphones;
 
       virtual ~Marshaller ();
 

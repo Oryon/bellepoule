@@ -293,6 +293,12 @@
 		<Unit filename="../../sources/BellePoule/marshaller/slot.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/smartphones.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/smartphones.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/timeline.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
@@ -347,10 +353,10 @@
 		<Unit filename="../../sources/BellePoule/supervisor/contest.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/ecosystem.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/publication.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/ecosystem.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/publication.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/error.hpp">

@@ -43,10 +43,10 @@ namespace Net
                            "sender",
                            Ring::_broker->GetRole ());
 
-    g_key_file_set_integer (_key_file,
-                            "Header",
-                            "netid",
-                            g_random_int ());
+    g_key_file_set_uint64 (_key_file,
+                           "Header",
+                           "netid",
+                           g_random_int ());
   }
 
   // --------------------------------------------------------------------------------
@@ -121,19 +121,19 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Message::SetNetID (guint id)
   {
-    g_key_file_set_integer (_key_file,
-                            "Header",
-                            "netid",
-                            id);
+    g_key_file_set_uint64 (_key_file,
+                           "Header",
+                           "netid",
+                           id);
   }
 
   // --------------------------------------------------------------------------------
   guint Message::GetNetID ()
   {
-    return g_key_file_get_integer (_key_file,
-                                   "Header",
-                                   "netid",
-                                   NULL);
+    return g_key_file_get_uint64 (_key_file,
+                                  "Header",
+                                  "netid",
+                                  NULL);
   }
 
   // --------------------------------------------------------------------------------
@@ -183,20 +183,20 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Message::SetFitness (const guint value)
   {
-    g_key_file_set_integer (_key_file,
-                            "Header",
-                            "fitness",
-                            value);
+    g_key_file_set_uint64 (_key_file,
+                           "Header",
+                           "fitness",
+                           value);
     _is_valid = TRUE;
   }
 
   // --------------------------------------------------------------------------------
   guint Message::GetFitness ()
   {
-    return g_key_file_get_integer (_key_file,
-                                   "Header",
-                                   "fitness",
-                                   NULL);
+    return g_key_file_get_uint64 (_key_file,
+                                  "Header",
+                                  "fitness",
+                                  NULL);
   }
 
   // --------------------------------------------------------------------------------
@@ -221,10 +221,10 @@ namespace Net
   void Message::Set (const gchar *field,
                      const guint  value)
   {
-    g_key_file_set_integer (_key_file,
-                            "Body",
-                            field,
-                            value);
+    g_key_file_set_uint64 (_key_file,
+                           "Body",
+                           field,
+                           value);
     _is_valid = TRUE;
   }
 
@@ -255,10 +255,10 @@ namespace Net
   // --------------------------------------------------------------------------------
   guint Message::GetInteger (const gchar *field)
   {
-    return g_key_file_get_integer (_key_file,
-                                   "Body",
-                                   field,
-                                   NULL);
+    return g_key_file_get_uint64 (_key_file,
+                                  "Body",
+                                  field,
+                                  NULL);
   }
 
   // --------------------------------------------------------------------------------

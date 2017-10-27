@@ -56,27 +56,27 @@ namespace Pool
             guint        stage_id,
             ...);
 
-      guint        GetPiste         ();
-      FieTime     *GetStartTime     ();
-      void         AddFencer        (Player *player, Object *rank_owner);
-      void         AddReferee       (Player *player);
-      void         CreateMatchs     (GSList *affinity_criteria_list);
-      void         RemoveFencer     (Player *player, Object *rank_owner);
-      void         RemoveReferee    (Player *player);
-      void         RemoveAllReferee ();
-      guint        GetNbPlayers     ();
-      guint        GetNbMatchs      ();
-      guint        GetNumber        ();
-      guint        GetStrength      ();
-      void         DropPlayer       (Player *player, gchar *reason);
-      void         RestorePlayer    (Player *player);
-      void         CleanScores      ();
-      void         DeleteMatchs     ();
-      void         Lock             ();
-      void         UnLock           ();
-      void         SetDataOwner     (Object *current_round_owner,
-                                     Object *combined_owner,
-                                     Object *combined_source_owner);
+      guint    GetPiste         ();
+      FieTime *GetStartTime     ();
+      void     AddFencer        (Player *player, Object *rank_owner);
+      void     AddReferee       (Player *player);
+      void     CreateMatchs     (GSList *affinity_criteria_list);
+      void     RemoveFencer     (Player *player, Object *rank_owner);
+      void     RemoveReferee    (Player *player);
+      void     RemoveAllReferee ();
+      guint    GetNbPlayers     ();
+      guint    GetNbMatchs      ();
+      guint    GetNumber        ();
+      guint    GetStrength      ();
+      void     DropPlayer       (Player *player, gchar *reason);
+      void     RestorePlayer    (Player *player);
+      void     CleanScores      ();
+      void     DeleteMatchs     ();
+      void     Lock             ();
+      void     UnLock           ();
+      void     SetDataOwner     (Object *current_round_owner,
+                                 Object *combined_owner,
+                                 Object *combined_source_owner);
 
       void OnStatusChanged   (GtkComboBox *combo_box);
       void CopyPlayersStatus (Object *from);
@@ -89,8 +89,6 @@ namespace Pool
       gboolean HasError ();
 
       gboolean OnMessage (Net::Message *message);
-      gboolean OnHttpPost (const gchar **ressource,
-                           const gchar *data);
 
       void RefreshScoreData ();
 

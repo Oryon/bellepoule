@@ -189,6 +189,17 @@ guint Stage::GetId ()
 }
 
 // --------------------------------------------------------------------------------
+guint Stage::GetNetID ()
+{
+  if (_parcel)
+  {
+    return _parcel->GetNetID ();
+  }
+
+  return 0;
+}
+
+// --------------------------------------------------------------------------------
 void Stage::FreeResult ()
 {
   g_slist_free (_result);

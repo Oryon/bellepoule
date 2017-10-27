@@ -20,9 +20,9 @@
 #include "util/glade.hpp"
 #include "network/downloader.hpp"
 #include "network/web_server.hpp"
-#include "ecosystem.hpp"
 
 class Contest;
+class Publication;
 
 class Tournament : public Module
 {
@@ -67,7 +67,7 @@ class Tournament : public Module
 
     void OpenUriContest (const gchar *uri);
 
-    EcoSystem *GetEcosystem ();
+    Publication *GetPublication ();
 
     gboolean OnHttpPost (Net::Message *message);
 
@@ -90,7 +90,7 @@ class Tournament : public Module
     GList           *_referee_list;
     Net::WebServer  *_web_server;
     gboolean         _print_meal_tickets;
-    EcoSystem       *_ecosystem;
+    Publication     *_publication;
     GList           *_advertisers;
 
     virtual ~Tournament ();

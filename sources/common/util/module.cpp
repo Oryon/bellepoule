@@ -341,8 +341,7 @@ void Module::SetFilter (Filter *filter)
 {
   if (_filter)
   {
-    g_warning ("Module has already a Filter");
-    return;
+    _filter->Release ();
   }
 
   _filter = filter;

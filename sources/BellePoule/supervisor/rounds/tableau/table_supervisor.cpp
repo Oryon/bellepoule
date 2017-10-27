@@ -87,6 +87,7 @@ namespace Table
                                           "ref",
 #endif
                                           "IP",
+                                          "password",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -125,6 +126,7 @@ namespace Table
                                           "ref",
 #endif
                                           "IP",
+                                          "password",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -224,15 +226,6 @@ namespace Table
 
       _displayed_table_set = table_set;
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Supervisor::OnMessage (Net::Message *message)
-  {
-    gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
-                            (GtkTreeModelForeachFunc) ProcessMessage,
-                            message);
-    return TRUE;
   }
 
   // --------------------------------------------------------------------------------
@@ -556,6 +549,50 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Supervisor::OnMessage (Net::Message *message)
+  {
+    if (message->Is ("Roadmap"))
+    {
+      gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
+                              (GtkTreeModelForeachFunc) ProcessMessage,
+                              message);
+      return TRUE;
+    }
+    else if (   message->Is ("ScoreSheetCall")
+             || message->Is ("Score"))
+    {
+      gchar       *batch = message->GetString ("batch");
+      GtkTreePath *path  = gtk_tree_path_new_from_string (batch);
+
+      if (path)
+      {
+        GtkTreeIter  iter;
+        TableSet    *table_set;
+
+        gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_filter),
+                                 &iter,
+                                 path);
+
+        gtk_tree_model_get (GTK_TREE_MODEL (_table_set_filter), &iter,
+                            TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                            -1);
+
+        if (table_set)
+        {
+          table_set->OnMessage (message);
+        }
+
+        gtk_tree_path_free (path);
+      }
+      g_free (batch);
+
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Supervisor::OnHttpPost (const gchar *command,
                                    const gchar **ressource,
                                    const gchar *data)
@@ -587,23 +624,6 @@ namespace Table
                                                        (const gchar**) &tokens[1],
                                                        data);
           }
-        }
-        else if (g_strcmp0 (command, "Score") == 0)
-        {
-          GtkTreeIter  iter;
-          TableSet    *table_set;
-
-          gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_filter),
-                                   &iter,
-                                   path);
-
-          gtk_tree_model_get (GTK_TREE_MODEL (_table_set_filter), &iter,
-                              TABLE_SET_TABLE_COLUMN_ptr, &table_set,
-                              -1);
-
-          result = table_set->OnHttpPost (command,
-                                          (const gchar**) &tokens[1],
-                                          data);
         }
 
         gtk_tree_path_free (path);

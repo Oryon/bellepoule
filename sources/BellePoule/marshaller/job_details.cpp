@@ -46,6 +46,7 @@ namespace Marshaller
                                           "ref",
 #endif
                                           "IP",
+                                          "password",
                                           "HS",
                                           "attending",
                                           "exported",

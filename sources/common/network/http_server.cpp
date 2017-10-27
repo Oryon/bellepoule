@@ -36,6 +36,14 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void HttpServer::RequestBody::ZeroTerminate ()
+  {
+    _data = (gchar *) g_realloc (_data,
+                                 _length + 1);
+    _data[_length] = '\0';
+  }
+
+  // --------------------------------------------------------------------------------
   void HttpServer::RequestBody::Append (const char *buf,
                                         size_t      len)
   {
@@ -206,9 +214,12 @@ namespace Net
 
           if (key)
           {
-            gchar *decrypted = _cryptor->Decrypt (request_body->_data,
-                                                  _iv,
-                                                  key);
+            gchar *decrypted;
+
+            request_body->ZeroTerminate ();
+            decrypted = _cryptor->Decrypt (request_body->_data,
+                                           _iv,
+                                           key);
             request_body->Replace (decrypted);
 
             g_free (decrypted);

@@ -54,6 +54,7 @@ namespace People
                                           "ref",
 #endif
                                           "IP",
+                                          "password",
                                           "HS",
                                           "attending",
                                           "final_rank",

@@ -46,8 +46,9 @@ namespace People
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
-#endif
                                           "IP",
+                                          "password",
+#endif
                                           "HS",
                                           "exported",
                                           "final_rank",
@@ -297,7 +298,7 @@ namespace People
   // --------------------------------------------------------------------------------
   gboolean RefereesList::IsCollapsed ()
   {
-    return (GetFilter () == _collapsed_filter);
+    return (_filter == _collapsed_filter);
   }
 
   // --------------------------------------------------------------------------------

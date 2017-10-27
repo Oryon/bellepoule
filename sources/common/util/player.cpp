@@ -503,7 +503,8 @@ void Player::SetPartner (Net::Partner *partner)
 }
 
 // --------------------------------------------------------------------------------
-void Player::SaveAttributes (xmlTextWriter *xml_writer)
+void Player::SaveAttributes (xmlTextWriter *xml_writer,
+                             gboolean       full_profile)
 {
   GSList *attr_list;
   GSList *current;
@@ -516,8 +517,9 @@ void Player::SaveAttributes (xmlTextWriter *xml_writer)
   {
     AttributeDesc *desc = (AttributeDesc *) current->data;
 
-    if (   (desc->_persistency == AttributeDesc::PERSISTENT)
-        && (desc->_scope       == AttributeDesc::GLOBAL))
+    if (   (desc->_scope == AttributeDesc::GLOBAL)
+        && (   full_profile
+            || (desc->_persistency == AttributeDesc::PERSISTENT)))
     {
       gboolean saving_allowed = TRUE;
 
@@ -587,12 +589,14 @@ void Player::SaveAttributes (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void Player::Save (xmlTextWriter *xml_writer)
+void Player::Save (xmlTextWriter *xml_writer,
+                   gboolean       full_profile)
 {
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST GetXmlTag ());
 
-  SaveAttributes (xml_writer);
+  SaveAttributes (xml_writer,
+                  full_profile);
 
   xmlTextWriterEndElement (xml_writer);
 }
@@ -610,91 +614,87 @@ void Player::Load (xmlNode *xml_node)
   current = attr_list;
   while (current)
   {
-    AttributeDesc *desc = (AttributeDesc *) current->data;
+    AttributeDesc *desc  = (AttributeDesc *) current->data;
+    gchar         *value = (gchar *) xmlGetProp (xml_node, BAD_CAST desc->_xml_name);
 
-    if (desc->_persistency == AttributeDesc::PERSISTENT)
+    if (value)
     {
-      gchar *value = (gchar *) xmlGetProp (xml_node, BAD_CAST desc->_xml_name);
+      AttributeId attr_id (desc->_code_name);
 
-      if (value)
+      SetAttributeValue (&attr_id,
+                         value);
+
+      if (g_strcmp0 (desc->_code_name, "ref") == 0)
       {
-        AttributeId attr_id (desc->_code_name);
+        Attribute *attr = GetAttribute (&attr_id);
 
-        SetAttributeValue (&attr_id,
-                           value);
-
-        if (g_strcmp0 (desc->_code_name, "ref") == 0)
+        if (attr)
         {
-          Attribute *attr = GetAttribute (&attr_id);
-
-          if (attr)
-          {
-            _ref = attr->GetUIntValue ();
-          }
+          _ref = attr->GetUIntValue ();
         }
-
-        if (g_strcmp0 (desc->_code_name, "birth_date") == 0)
-        {
-          Attribute *attr = GetAttribute (&attr_id);
-
-          if (attr)
-          {
-            gchar *french_date = attr->GetStrValue ();
-            gchar **splitted_date;
-
-            splitted_date = g_strsplit_set (french_date,
-                                            ".",
-                                            0);
-            if (   splitted_date
-                && splitted_date[0]
-                && splitted_date[1]
-                && splitted_date[2])
-            {
-              gchar buffer[50];
-
-              if (   (g_ascii_strcasecmp (splitted_date[0], "00") == 0)
-                  || (g_ascii_strcasecmp (splitted_date[1], "00") == 0))
-              {
-                // AskFred
-                g_strlcpy (buffer,
-                           splitted_date[2],
-                           sizeof (buffer));
-              }
-              else
-              {
-                GDate *date = g_date_new ();
-
-                g_date_set_day   (date, (GDateDay)   atoi (splitted_date[0]));
-                g_date_set_month (date, (GDateMonth) atoi (splitted_date[1]));
-                g_date_set_year  (date, (GDateYear)  atoi (splitted_date[2]));
-
-                g_date_strftime (buffer,
-                                 sizeof (buffer),
-                                 "%x",
-                                 date);
-                g_date_free (date);
-              }
-              attr->SetValue (buffer);
-            }
-            g_strfreev (splitted_date);
-          }
-        }
-
-        if (g_strcmp0 (desc->_code_name, "global_status") == 0)
-        {
-          if (value[0] == 'F')
-          {
-            SetAttributeValue (&attending_attr_id,
-                               (guint) FALSE);
-          }
-          else
-          {
-            SetAttributeValue (&attending_attr_id,
-                               TRUE);
-          }
-        }
-        xmlFree (value);
       }
+
+      if (g_strcmp0 (desc->_code_name, "birth_date") == 0)
+      {
+        Attribute *attr = GetAttribute (&attr_id);
+
+        if (attr)
+        {
+          gchar *french_date = attr->GetStrValue ();
+          gchar **splitted_date;
+
+          splitted_date = g_strsplit_set (french_date,
+                                          ".",
+                                          0);
+          if (   splitted_date
+              && splitted_date[0]
+              && splitted_date[1]
+              && splitted_date[2])
+          {
+            gchar buffer[50];
+
+            if (   (g_ascii_strcasecmp (splitted_date[0], "00") == 0)
+                || (g_ascii_strcasecmp (splitted_date[1], "00") == 0))
+            {
+              // AskFred
+              g_strlcpy (buffer,
+                         splitted_date[2],
+                         sizeof (buffer));
+            }
+            else
+            {
+              GDate *date = g_date_new ();
+
+              g_date_set_day   (date, (GDateDay)   atoi (splitted_date[0]));
+              g_date_set_month (date, (GDateMonth) atoi (splitted_date[1]));
+              g_date_set_year  (date, (GDateYear)  atoi (splitted_date[2]));
+
+              g_date_strftime (buffer,
+                               sizeof (buffer),
+                               "%x",
+                               date);
+              g_date_free (date);
+            }
+            attr->SetValue (buffer);
+          }
+          g_strfreev (splitted_date);
+        }
+      }
+
+      if (g_strcmp0 (desc->_code_name, "global_status") == 0)
+      {
+        if (value[0] == 'F')
+        {
+          SetAttributeValue (&attending_attr_id,
+                             (guint) FALSE);
+        }
+        else
+        {
+          SetAttributeValue (&attending_attr_id,
+                             TRUE);
+        }
+      }
+      xmlFree (value);
     }
     current = g_slist_next (current);
   }
@@ -752,7 +752,8 @@ void Player::FeedParcel (Net::Message *parcel)
                                 "UTF-8",
                                 NULL);
 
-    Save (xml_writer);
+    Save (xml_writer,
+          TRUE);
 
     xmlTextWriterEndDocument (xml_writer);
     xmlFreeTextWriter (xml_writer);
@@ -765,11 +766,10 @@ void Player::FeedParcel (Net::Message *parcel)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Player::SendMessage (const gchar *where,
-                              const gchar *msg)
+gboolean Player::SendMessage (Net::Message *message)
 {
-  Player::AttributeId  attr_id ("IP");
-  Attribute           *ip_attr = GetAttribute (&attr_id);
+  Player::AttributeId  ip_attr_id ("IP");
+  Attribute           *ip_attr = GetAttribute (&ip_attr_id);
 
   if (ip_attr)
   {
@@ -798,23 +798,12 @@ gboolean Player::SendMessage (const gchar *where,
       }
 
       {
-        Net::Message *message    = new Net::Message ("MessageUploader::raw_content");
-        WifiCode     *wifi_code  = (WifiCode *) GetFlashCode ();
-        gchar        *passphrase = wifi_code->GetKey ();
-        gchar        *content    = g_strdup_printf ("%s/%s?ref=%d\n"
-                                                    "%s",
-                                                    where, _player_class, GetRef (),
-                                                    msg);
+        Player::AttributeId pass_attr_id ("password");
+        Attribute           *attr       = GetAttribute (&pass_attr_id);
+        gchar               *passphrase = attr->GetStrValue ();
 
         message->SetPassPhrase (passphrase);
-        message->Set ("content",
-                      content);
-
         uploader->PushMessage (message);
-
-        message->Release ();
-        g_free (passphrase);
-        g_free (content);
       }
 
       uploader->Stop ();
@@ -846,11 +835,6 @@ void Player::OnUploadStatus (Net::MessageUploader::PeerStatus peer_status)
   {
     SetAttributeValue (&connection_attr_id,
                        "Broken");
-  }
-  else
-  {
-    SetAttributeValue (&connection_attr_id,
-                       "Waiting");
   }
 }
 

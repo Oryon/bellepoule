@@ -60,6 +60,7 @@ namespace Net
         void Append (const char *buf,
                      size_t      len);
         void Replace (const char *buf);
+        void ZeroTerminate ();
 
         gchar      *_data;
         guint       _length;

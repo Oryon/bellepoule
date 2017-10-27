@@ -41,6 +41,8 @@ namespace Marshaller
 
       void ManageReferee (Net::Message *message);
 
+      void ManageHandShake (Net::Message *message);
+
       EnlistedReferee *GetReferee (guint ref);
 
       gboolean WeaponHasReferees (const gchar *weapon);

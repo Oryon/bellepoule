@@ -681,8 +681,26 @@ gboolean Schedule::OnMessage (Net::Message *message)
   {
     Stage *stage = (Stage *) current->data;
 
+    if (stage->GetId () > _current_stage)
+    {
+      break;
+    }
+
     if (stage->GetNetID () == message->GetInteger ("stage"))
     {
+      if (message->Is ("Score"))
+      {
+        if (stage->GetInputProviderClient ())
+        {
+          stage = stage->GetNextStage ();
+        }
+
+        if (stage->Locked ())
+        {
+          return FALSE;
+        }
+      }
+
       return stage->OnMessage (message);
     }
 
@@ -712,13 +730,6 @@ gboolean Schedule::OnHttpPost (const gchar *command,
         {
           gtk_notebook_set_current_page  (GTK_NOTEBOOK (GetRootWidget ()),
                                           phase_id);
-        }
-        else if (g_strcmp0 (command, "Score") == 0)
-        {
-          if (stage->Locked ())
-          {
-            return FALSE;
-          }
         }
 
         return stage->OnHttpPost (command,

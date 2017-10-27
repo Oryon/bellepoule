@@ -315,9 +315,15 @@ namespace Net
 
     if (_partner_indicator)
     {
+      gchar *tooltip = g_strdup_printf ("%s:<b>%d</b>",
+                                        partner->GetAddress (),
+                                        partner->GetPort ());
+
       gtk_widget_set_sensitive (_partner_indicator, TRUE);
       gtk_widget_set_tooltip_markup (_partner_indicator,
-                                     partner->GetAddress ());
+                                     tooltip);
+
+      g_free (tooltip);
     }
 
     {
@@ -475,6 +481,24 @@ namespace Net
       _listeners = g_list_delete_link (_listeners,
                                        node);
     }
+  }
+
+  // -------------------------------------------------------------------------------
+  Partner *Ring::GetPartner (const gchar *role)
+  {
+    GList *current = _partner_list;
+
+    while (current)
+    {
+      Partner *partner = (Partner *) current->data;
+      if (partner->HasRole (role))
+      {
+        return partner;
+      }
+
+      current = g_list_next (current);
+    }
+    return NULL;
   }
 
   // -------------------------------------------------------------------------------

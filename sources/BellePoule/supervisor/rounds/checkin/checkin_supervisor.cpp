@@ -70,6 +70,7 @@ namespace People
                                           "ref",
 #endif
                                           "IP",
+                                          "password",
                                           "HS",
                                           "exported",
                                           "final_rank",
@@ -1274,21 +1275,24 @@ namespace People
   {
     if (_contest->IsTeamEvent ())
     {
-      GtkTreeIter parent_iter;
+      if (G_TYPE_CHECK_INSTANCE_TYPE (cell, GTK_TYPE_CELL_RENDERER_TEXT))
+      {
+        GtkTreeIter parent_iter;
 
-      if (gtk_tree_model_iter_parent (gtk_tree_view_get_model (_tree_view),
-                                      &parent_iter,
-                                      iter) == FALSE)
-      {
-        g_object_set (cell,
-                      "weight", PANGO_WEIGHT_BOLD,
-                      NULL);
-      }
-      else
-      {
-        g_object_set (cell,
-                      "weight", PANGO_WEIGHT_NORMAL,
-                      NULL);
+        if (gtk_tree_model_iter_parent (gtk_tree_view_get_model (_tree_view),
+                                        &parent_iter,
+                                        iter) == FALSE)
+        {
+          g_object_set (cell,
+                        "weight", PANGO_WEIGHT_BOLD,
+                        NULL);
+        }
+        else
+        {
+          g_object_set (cell,
+                        "weight", PANGO_WEIGHT_NORMAL,
+                        NULL);
+        }
       }
     }
   }

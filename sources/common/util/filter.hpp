@@ -66,6 +66,8 @@ class Filter : public Object
     void Load (xmlNode *xml_node,
                const gchar   *as = "");
 
+    static void PreventPersistence ();
+
   private:
     typedef enum
     {
@@ -85,6 +87,8 @@ class Filter : public Object
 
       NUM_LOOK_COLS
     } StoreLookColumn;
+
+    static gboolean _no_persistence;
 
     GList        *_owners;
     gchar        *_name;

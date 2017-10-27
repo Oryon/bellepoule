@@ -237,7 +237,8 @@ void Team::Load (xmlNode *xml_node)
     Player::AttributeId  name_attr_id ("name");
     Attribute           *name_attr = GetAttribute (&name_attr_id);
 
-    if (name_attr == NULL)
+    if (   (name_attr == NULL)
+        || (g_strcmp0 (name_attr->GetStrValue (), "???") == 0))
     {
       Player::AttributeId  ref_attr_id ("ref");
       Attribute           *ref_attr = GetAttribute (&ref_attr_id);

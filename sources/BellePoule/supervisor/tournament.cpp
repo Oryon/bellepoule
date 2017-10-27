@@ -35,6 +35,7 @@
 #include "twitter/twitter.hpp"
 #include "facebook/facebook.hpp"
 #include "contest.hpp"
+#include "publication.hpp"
 #include "ask_fred.hpp"
 
 #include "tournament.hpp"
@@ -105,7 +106,7 @@ Tournament::~Tournament ()
   FreeFullGList (Player, _referee_list);
 
   _web_server->Release  ();
-  _ecosystem->Release   ();
+  _publication->Release ();
   Contest::Cleanup ();
 
   FreeFullGList(Net::Advertiser, _advertisers);
@@ -114,7 +115,7 @@ Tournament::~Tournament ()
 // --------------------------------------------------------------------------------
 void Tournament::Start (gchar *filename)
 {
-  _ecosystem = new EcoSystem (_glade);
+  _publication = new Publication (_glade);
 
   gtk_widget_hide (_glade->GetWidget ("notebook"));
 
@@ -180,7 +181,7 @@ void Tournament::Start (gchar *filename)
 // --------------------------------------------------------------------------------
 gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
 {
-  WifiCode *wifi_code = NULL;
+  gchar *key = NULL;
 
   if (authentication_scheme)
   {
@@ -188,48 +189,48 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
                                      "/",
                                      0);
 
-    if (tokens && tokens[0] && tokens[1] && tokens[2])
+    if (tokens)
     {
-      if (g_strcmp0 (tokens[1], "ScoreSheet") == 0)
+      if (tokens[0] && tokens[1] && tokens[2])
       {
-        wifi_code = _ecosystem->GetAdminCode ();
-      }
-      else if (   (g_strcmp0 (tokens[1], "HandShake") == 0)
-               || (g_strcmp0 (tokens[1], "Score")     == 0))
-      {
-        GList *current = _referee_list;
-        guint  ref     = atoi (tokens[2]);
+        guint ref = atoi (tokens[2]);
 
         if (ref == 0)
         {
-          wifi_code = _ecosystem->GetAdminCode ();
+          g_warning ("Tournament::GetSecretKey");
+          //WifiCode *wifi_code = _publication->GetAdminCode ();
+
+          //key = wifi_code->GetKey ();
         }
         else
         {
+          GList *current = _contest_list;
+
           while (current)
           {
-            Player *referee = (Player *) current->data;
+            Contest *contest = (Contest *) current->data;
+            Player  *referee = contest->GetRefereeFromRef (ref);
 
-            if (referee->GetRef () == ref)
+            if (referee)
             {
-              wifi_code = (WifiCode *) referee->GetFlashCode ();
-              break;
-            }
+              Player::AttributeId  attr_id ("password");
+              Attribute           *attr   = referee->GetAttribute (&attr_id);
 
+              if (attr)
+              {
+                key = g_strdup (attr->GetStrValue ());
+                break;
+              }
+            }
             current = g_list_next (current);
           }
         }
+        g_strfreev (tokens);
       }
-      g_strfreev (tokens);
     }
   }
 
-  if (wifi_code)
-  {
-    return wifi_code->GetKey ();
-  }
-
-  return NULL;
+  return key;
 }
 
 // --------------------------------------------------------------------------------
@@ -579,7 +580,7 @@ Player *Tournament::UpdateConnectionStatus (GList       *player_list,
       Player::AttributeId ip_attr_id         ("IP");
 
       current_player->SetAttributeValue (&connection_attr_id,
-                                         "OK");
+                                         status);
       if (ip_address)
       {
         current_player->SetAttributeValue (&ip_attr_id,
@@ -596,7 +597,7 @@ Player *Tournament::UpdateConnectionStatus (GList       *player_list,
 // --------------------------------------------------------------------------------
 gboolean Tournament::OnHttpPost (Net::Message *message)
 {
-  gboolean  result = FALSE;
+  gboolean result = FALSE;
 
   if (message->Is ("RegisteredReferee"))
   {
@@ -622,6 +623,24 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
       result = contest->OnMessage (message);
     }
   }
+  else if (message->Is ("ScoreSheetCall"))
+  {
+    Contest *contest = GetContest (message->GetInteger ("competition"));
+
+    if (contest)
+    {
+      result = contest->OnMessage (message);
+    }
+  }
+  else if (message->Is ("Score"))
+  {
+    Contest *contest = GetContest (message->GetInteger ("competition"));
+
+    if (contest)
+    {
+      result = contest->OnMessage (message);
+    }
+  }
   else
   {
     gchar *data = message->GetString ("content");
@@ -636,22 +655,6 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
         const gchar *body = data;
 
         body = strstr (body, "\n"); if (body) body++;
-        // Source
-        {
-          gchar **tokens = g_strsplit_set (lines[0],
-                                           "/",
-                                           0);
-
-          if (tokens && tokens[0] && tokens[1] && tokens[2]) // ex: /10.12.74.121/1
-          {
-            // Status feedback
-            UpdateConnectionStatus (_referee_list,
-                                    atoi (tokens[2]),
-                                    tokens[1],
-                                    "OK");
-          }
-          g_strfreev (tokens);
-        }
 
         // Request type
         if (lines[1])
@@ -664,8 +667,7 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
           if (tokens && tokens[0] && tokens[1])
           {
             // Competition data
-            if (   (g_strcmp0 (tokens[1], "Score") == 0)       // ex: /Score/Competition/61/2/1/1
-                || (g_strcmp0 (tokens[1], "ScoreSheet") == 0)) // ex: /ScoreSheet/Competition/61/2/1
+            if (g_strcmp0 (tokens[1], "ScoreSheet") == 0) // ex: /ScoreSheet/Competition/61/2/1
             {
               if (tokens[2] && (g_strcmp0 (tokens[2], "Competition") == 0))
               {
@@ -674,16 +676,13 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
 
                 if (contest)
                 {
-                  if (g_strcmp0 (tokens[1], "ScoreSheet") == 0)
-                  {
-                    GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
-                    gint        page = gtk_notebook_page_num (nb,
-                                                              contest->GetRootWidget ());
+                  GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
+                  gint        page = gtk_notebook_page_num (nb,
+                                                            contest->GetRootWidget ());
 
-                    g_object_set (G_OBJECT (nb),
-                                  "page", page,
-                                  NULL);
-                  }
+                  g_object_set (G_OBJECT (nb),
+                                "page", page,
+                                NULL);
 
                   result = contest->OnHttpPost (tokens[1],
                                                 (const gchar**) &tokens[4],
@@ -1265,9 +1264,9 @@ void Tournament::OnVideoReleased ()
 }
 
 // --------------------------------------------------------------------------------
-EcoSystem *Tournament::GetEcosystem ()
+Publication *Tournament::GetPublication ()
 {
-  return _ecosystem;
+  return _publication;
 }
 
 // --------------------------------------------------------------------------------
@@ -1341,30 +1340,12 @@ extern "C" G_MODULE_EXPORT void on_recent_menuitem_activate (GtkWidget *w,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_network_config_menuitem_activate (GtkWidget *w,
-                                                                     Object    *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->OnMenuDialog ("network_dialog");
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_ftp_menuitem_activate (GtkWidget *w,
                                                           Object    *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnMenuDialog ("publication_dialog");
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_scanner_menuitem_activate (GtkWidget *w,
-                                                              Object    *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->OnMenuDialog ("scanner_dialog");
 }
 
 // --------------------------------------------------------------------------------
@@ -1433,25 +1414,6 @@ extern "C" G_MODULE_EXPORT void on_payment_menuitem_activate (GtkMenuItem *menui
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->PrintPaymentBook ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_SmartPoule_button_clicked (GtkButton *widget,
-                                                              gpointer   user_data)
-{
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecute (NULL,
-                "open",
-                "https://play.google.com/store/apps/details?id=betton.escrime.smartpoule",
-                NULL,
-                NULL,
-                SW_SHOWNORMAL);
-#else
-  gtk_show_uri (NULL,
-                "https://play.google.com/store/apps/details?id=betton.escrime.smartpoule",
-                GDK_CURRENT_TIME,
-                NULL);
-#endif
 }
 
 // --------------------------------------------------------------------------------

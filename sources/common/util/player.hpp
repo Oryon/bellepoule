@@ -114,11 +114,11 @@ class Player : public Object, Net::MessageUploader::Listener
   public:
     virtual void FeedParcel (Net::Message *parcel);
 
-    gboolean SendMessage (const gchar *where,
-                          const gchar *msg);
+    gboolean SendMessage (Net::Message *message);
 
   public:
-    virtual void Save (xmlTextWriter *xml_writer);
+    virtual void Save (xmlTextWriter *xml_writer,
+                       gboolean       full_profile = FALSE);
 
     virtual void Load (xmlNode *xml_node);
 
@@ -147,7 +147,8 @@ class Player : public Object, Net::MessageUploader::Listener
 
     virtual ~Player ();
 
-    void SaveAttributes (xmlTextWriter *xml_writer);
+    void SaveAttributes (xmlTextWriter *xml_writer,
+                         gboolean       full_profile = FALSE);
 
   private:
     struct Client : public Object

@@ -18,9 +18,12 @@
 #include "network/ring.hpp"
 #include "application/weapon.hpp"
 #include "actors/referees_list.hpp"
+#include "util/filter.hpp"
 
 #include "competition.hpp"
 #include "affinities.hpp"
+#include "enlisted_referee.hpp"
+#include "smartphones.hpp"
 
 #include "marshaller.hpp"
 
@@ -31,6 +34,8 @@ namespace Marshaller
     : Object ("Marshaller"),
       Module ("marshaller.glade")
   {
+    Filter::PreventPersistence ();
+
     {
       Affinities::Manage ("country", "#fff36c");
       Affinities::Manage ("league",  "#ffb245");
@@ -84,11 +89,13 @@ namespace Marshaller
   {
     _hall->Release         ();
     _referee_pool->Release ();
+    _smartphones->Release  ();
   }
 
   // --------------------------------------------------------------------------------
   void Marshaller::Start ()
   {
+    _smartphones = new SmartPhones (_glade);
   }
 
   // --------------------------------------------------------------------------------
@@ -122,6 +129,11 @@ namespace Marshaller
         _hall->ManageFencer (message);
         return TRUE;
       }
+      else if (message->Is ("RefereeHandshake"))
+      {
+        _referee_pool->ManageHandShake (message);
+        return TRUE;
+      }
     }
     else
     {
@@ -148,6 +160,41 @@ namespace Marshaller
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Marshaller::GetSecretKey (const gchar *authentication_scheme)
+  {
+    WifiCode *wifi_code = NULL;
+
+    if (authentication_scheme)
+    {
+      gchar **tokens = g_strsplit_set (authentication_scheme,
+                                       "/",
+                                       0);
+
+      if (tokens)
+      {
+        if (tokens[0] && tokens[1] && tokens[2])
+        {
+          guint            ref     = atoi (tokens[2]);
+          EnlistedReferee *referee = _referee_pool->GetReferee (ref);
+
+          if (referee)
+          {
+            wifi_code = (WifiCode *) referee->GetFlashCode ();
+          }
+          g_strfreev (tokens);
+        }
+      }
+    }
+
+    if (wifi_code)
+    {
+      return wifi_code->GetKey ();
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -239,6 +286,15 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Marshaller::OnMenuDialog (const gchar *dialog)
+  {
+    GtkWidget *w = _glade->GetWidget (dialog);
+
+    RunDialog (GTK_DIALOG (w));
+    gtk_widget_hide (w);
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_batch_notebook_switch_page (GtkNotebook *notebook,
                                                                  gpointer     page,
                                                                  guint        page_num,
@@ -251,11 +307,48 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_SmartPoule_button_clicked (GtkButton *widget,
+                                                                gpointer   user_data)
+  {
+#ifdef WINDOWS_TEMPORARY_PATCH
+    ShellExecute (NULL,
+                  "open",
+                  "https://play.google.com/store/apps/details?id=betton.escrime.smartpoule",
+                  NULL,
+                  NULL,
+                  SW_SHOWNORMAL);
+#else
+    gtk_show_uri (NULL,
+                  "https://play.google.com/store/apps/details?id=betton.escrime.smartpoule",
+                  GDK_CURRENT_TIME,
+                  NULL);
+#endif
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_collapse_clicked (GtkToolButton *widget,
                                                        Object        *owner)
   {
     Marshaller *m = dynamic_cast <Marshaller *> (owner);
 
     m->OnRefereeListCollapse ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_network_config_menuitem_activate (GtkWidget *w,
+                                                                       Object    *owner)
+  {
+    Marshaller *m = dynamic_cast <Marshaller *> (owner);
+
+    m->OnMenuDialog ("network_dialog");
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_scanner_menuitem_activate (GtkWidget *w,
+                                                                Object    *owner)
+  {
+    Marshaller *m = dynamic_cast <Marshaller *> (owner);
+
+    m->OnMenuDialog ("scanner_dialog");
   }
 }

@@ -41,7 +41,7 @@
 #include "actors/referees_list.hpp"
 #include "actors/player_factory.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
-#include "ecosystem.hpp"
+#include "publication.hpp"
 
 
 #include "application/version.h"
@@ -1555,8 +1555,8 @@ void Contest::Publish ()
 {
   if (_tournament)
   {
-    EcoSystem         *ecosystem = _tournament->GetEcosystem ();
-    Net::FileUploader *uploader  = ecosystem->GetUpLoader ();
+    Publication       *publication = _tournament->GetPublication ();
+    Net::FileUploader *uploader    = publication->GetUpLoader ();
 
     if (uploader)
     {

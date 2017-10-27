@@ -33,6 +33,7 @@ namespace Table
     SetResolutions (1.0,
                     1.0);
 
+    if (from_table)
     {
       Table *to = from_table;
 

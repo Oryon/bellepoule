@@ -15,6 +15,9 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/message.hpp"
+#include "message_uploader.hpp"
+#include "network/ring.hpp"
+#include "network/partner.hpp"
 #include "actors/checkin.hpp"
 #include "actors/player_factory.hpp"
 #include "actors/tally_counter.hpp"
@@ -235,6 +238,48 @@ namespace Marshaller
     People::TallyCounter *tally_counter = referee_list->GetTallyCounter ();
 
     return (tally_counter->GetPresentsCount () > 0);
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereePool::ManageHandShake (Net::Message *message)
+  {
+    EnlistedReferee *referee = GetReferee (message->GetInteger ("referee_id"));
+
+    if (referee)
+    {
+      gchar *referee_address = message->GetString ("address");
+
+      if (referee_address)
+      {
+        Player::AttributeId connection_attr_id ("connection");
+        Player::AttributeId ip_attr_id         ("IP");
+
+        referee->SetAttributeValue (&connection_attr_id,
+                                    "OK");
+        referee->SetAttributeValue (&ip_attr_id,
+                                    referee_address);
+
+        referee->Spread ();
+
+        // Send back the Supervisor address
+        {
+          Net::Partner *partner = Net::Ring::_broker->GetPartner ("BellePoule");
+
+          if (partner)
+          {
+            Net::Message *answer = new Net::Message ("ScoreRecipient");
+
+            answer->Set ("address", partner->GetAddress ());
+            answer->Set ("port",    partner->GetPort    ());
+
+            referee->SendMessage (answer);
+
+            answer->Release ();
+          }
+        }
+      }
+      g_free (referee_address);
+    }
   }
 
   // --------------------------------------------------------------------------------

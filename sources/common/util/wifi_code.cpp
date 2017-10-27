@@ -119,6 +119,14 @@ gchar *WifiCode::GetKey ()
     _key[data_length] = '\0';
 
     g_rand_free (random);
+
+    if (_player)
+    {
+      Player::AttributeId attr_id ("password");
+
+      _player->SetAttributeValue (&attr_id,
+                                  _key);
+    }
   }
 
   return g_strdup ((gchar *) _key);
@@ -137,11 +145,11 @@ gchar *WifiCode::GetText ()
   {
     gchar *name = _player->GetName ();
 
-    text = g_strdup_printf ("%s%s:%d-%s-%d-%s",
+    text = g_strdup_printf ("%s%s:%d-%s-%u-%s",
                             network,
                             ip,
                             _port,
-                            _player->GetName (),
+                            name,
                             _player->GetRef (),
                             key);
     g_free (name);

@@ -71,6 +71,7 @@ namespace Pool
                                           "ref",
 #endif
                                           "IP",
+                                          "password",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -110,6 +111,7 @@ namespace Pool
                                             "ref",
 #endif
                                             "IP",
+                                            "password",
                                             "attending",
                                             "exported",
                                             "final_rank",
@@ -230,6 +232,22 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Supervisor::OnMessage (Net::Message *message)
+  {
+    if (message->Is ("Score"))
+    {
+      Pool *pool = _allocator->GetPool (message->GetInteger ("batch")-1);
+
+      if (pool)
+      {
+        return pool->OnMessage (message);
+      }
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Supervisor::OnHttpPost (const gchar *command,
                                    const gchar **ressource,
                                    const gchar *data)
@@ -245,19 +263,6 @@ namespace Pool
         if (g_strcmp0 (command, "ScoreSheet") == 0)
         {
           OnPoolSelected (pool_index);
-        }
-        else if (g_strcmp0 (command, "Score") == 0)
-        {
-          for (guint i = 0; i < _allocator->GetNbPools (); i++)
-          {
-            if (i == pool_index)
-            {
-              Pool *pool = _allocator->GetPool (i);
-
-              return pool->OnHttpPost (&ressource[1],
-                                       data);
-            }
-          }
         }
       }
     }

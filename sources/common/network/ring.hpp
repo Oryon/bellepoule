@@ -20,11 +20,10 @@
 
 #include <util/object.hpp>
 
-class Partner;
-
 namespace Net
 {
   class Message;
+  class Partner;
 
   class Ring : public Object,
                public Object::Listener
@@ -60,6 +59,8 @@ namespace Net
 
       void NotifyPartnerStatus (Partner  *partner,
                                 gboolean  join);
+
+      Partner *GetPartner (const gchar *role);
 
       const gchar *GetIpV4Address ();
 
