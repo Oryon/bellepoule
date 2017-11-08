@@ -123,7 +123,7 @@ namespace Pool
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (GetClassName (),
+      filter = new Filter (GetKlassName (),
                            attr_list);
 
       filter->ShowAttribute ("stage_start_rank");
@@ -195,7 +195,7 @@ namespace Pool
                                             "bouts_count",
                                             "victories_ratio",
                                             NULL);
-        filter = new Filter (GetClassName (),
+        filter = new Filter (GetKlassName (),
                              attr_list);
 
         filter->ShowAttribute ("name");

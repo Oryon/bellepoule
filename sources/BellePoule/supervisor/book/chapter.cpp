@@ -93,10 +93,15 @@ void Chapter::ConfigurePrintOperation (GtkPrintOperation *operation)
 }
 
 // --------------------------------------------------------------------------------
-void Chapter::DrawHeaderPage (GtkPrintOperation *operation,
-                              GtkPrintContext   *context)
+void Chapter::DrawFrontPage (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             Module            *owner)
 {
   ConfigurePrintOperation (operation);
+
+  owner->DrawPage (operation,
+                   context,
+                   1);
 
   {
     cairo_t *cr = gtk_print_context_get_cairo_context (context);

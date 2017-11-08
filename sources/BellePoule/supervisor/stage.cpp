@@ -93,7 +93,7 @@ void Stage::SignalStatusUpdate ()
 }
 
 // --------------------------------------------------------------------------------
-const gchar *Stage::GetKlassName ()
+const gchar *Stage::GetPurpose ()
 {
   return _class->_name;
 }

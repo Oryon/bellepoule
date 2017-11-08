@@ -64,7 +64,7 @@ namespace Marshaller
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (GetClassName (),
+      filter = new Filter (GetKlassName (),
                            attr_list);
 
       filter->ShowAttribute ("name");

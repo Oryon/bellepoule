@@ -125,9 +125,9 @@ void Filter::AddOwner (Module *owner)
 {
   if (g_strstr_len (_name,
                     -1,
-                    owner->GetClassName ()) == NULL)
+                    owner->GetKlassName ()) == NULL)
   {
-    gchar *name = g_strdup_printf ("%s::%s", _name, owner->GetClassName ());
+    gchar *name = g_strdup_printf ("%s::%s", _name, owner->GetKlassName ());
 
     g_free (_name);
     _name = name;

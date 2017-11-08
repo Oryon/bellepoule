@@ -526,8 +526,8 @@ void Schedule::InsertStage (Stage *stage,
       }
 
       gtk_list_store_set (_list_store, &iter,
-                          NAME_str, stage->GetKlassName (),
-                          STAGE_ptr, stage,
+                          NAME_str,        stage->GetPurpose (),
+                          STAGE_ptr,       stage,
                           VISIBILITY_bool, (stage->GetRights () & Stage::EDITABLE) != 0,
                           -1);
 
@@ -768,121 +768,135 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
 
   if (g_strcmp0 ((const gchar *) g_object_get_data (G_OBJECT (operation), "Print::PageName"),
                  gettext ("Formula")) == 0)
-
   {
-    cairo_t *cr      = gtk_print_context_get_cairo_context (context);
-    gdouble  paper_w = gtk_print_context_get_width (context);
-    GList   *current = _stage_list;
-
-    while (current && g_list_next (current))
+    if (GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (operation), "Print::FormulaPrinted")) == FALSE)
     {
-      Stage *stage = (Stage *) current->data;
+      cairo_t *cr      = gtk_print_context_get_cairo_context (context);
+      gdouble  paper_w = gtk_print_context_get_width (context);
+      GList   *current = _stage_list;
 
-      if (stage->GetInputProvider () == NULL)
+      while (current && g_list_next (current))
       {
-        Stage::StageClass *stage_class = stage->GetClass ();
+        Stage *stage = (Stage *) current->data;
 
-        if (stage->GetInputProviderClient ())
+        if (stage->GetInputProvider () == NULL)
         {
-          stage_class = stage->GetNextStage()->GetClass();
+          Stage::StageClass *stage_class = stage->GetClass ();
+
+          if (stage->GetInputProviderClient ())
+          {
+            stage_class = stage->GetNextStage()->GetClass();
+          }
+
+          cairo_translate (cr,
+                           0.0,
+                           5.0 * paper_w / 100);
+
+          {
+            GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
+            char      *text;
+
+            text = g_strdup_printf ("%s %s",
+                                    stage_class->_name,
+                                    stage->GetName ());
+
+            goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                                 text,
+                                 0.0, 0.0,
+                                 -1.0,
+                                 GTK_ANCHOR_W,
+                                 "fill-color", "black",
+                                 "font", BP_FONT "Bold 2px", NULL);
+            g_free (text);
+
+            goo_canvas_render (canvas,
+                               gtk_print_context_get_cairo_context (context),
+                               NULL,
+                               1.0);
+            gtk_widget_destroy (GTK_WIDGET (canvas));
+          }
+
+          stage->DrawConfig (operation,
+                             context,
+                             page_nr);
+
+          cairo_translate (cr,
+                           0.0,
+                           2.0 * paper_w / 100);
         }
 
-        cairo_translate (cr,
-                         0.0,
-                         5.0 * paper_w / 100);
-
-        {
-          GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
-          char      *text;
-
-          text = g_strdup_printf ("%s %s",
-                                        stage_class->_name,
-                                        stage->GetName ());
-
-          goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                               text,
-                               0.0, 0.0,
-                               -1.0,
-                               GTK_ANCHOR_W,
-                               "fill-color", "black",
-                               "font", BP_FONT "Bold 2px", NULL);
-          g_free (text);
-
-          goo_canvas_render (canvas,
-                             gtk_print_context_get_cairo_context (context),
-                             NULL,
-                             1.0);
-          gtk_widget_destroy (GTK_WIDGET (canvas));
-        }
-
-        stage->DrawConfig (operation,
-                           context,
-                           page_nr);
-
-        cairo_translate (cr,
-                         0.0,
-                         2.0 * paper_w / 100);
+        current = g_list_next (current);
       }
 
-      current = g_list_next (current);
-    }
+      cairo_translate (cr,
+                       0.0,
+                       4.0 * paper_w / 100);
 
-    cairo_translate (cr,
-                     0.0,
-                     4.0 * paper_w / 100);
-
-    {
-      FlashCode *flash = _contest->GetFlashCode ();
-
-      if (flash)
       {
-        GooCanvas     *canvas = Canvas::CreatePrinterCanvas (context);
-        GooCanvasItem *item;
-        gdouble        image_w;
+        GValue gvalue = {0,{{0}}};
 
-        item = goo_canvas_image_new (goo_canvas_get_root_item (canvas),
-                                     flash->GetPixbuf (),
-                                     0.0,
-                                     0.0,
-                                     NULL);
+        g_value_init (&gvalue, G_TYPE_STRING);
+        g_object_get_property (G_OBJECT (operation), "export-filename", &gvalue);
 
+        // Do not print QRCode in PDF
+        if (g_value_get_string (&gvalue) == NULL)
         {
-          GooCanvasBounds bounds;
-          gdouble         h = 0.0;
+          FlashCode *flash = _contest->GetFlashCode ();
 
-          goo_canvas_item_get_bounds (item,
-                                      &bounds);
-          image_w = bounds.x2- bounds.x1;
+          if (flash)
+          {
+            GooCanvas     *canvas = Canvas::CreatePrinterCanvas (context);
+            GooCanvasItem *item;
+            gdouble        image_w;
 
-          goo_canvas_convert_to_item_space (canvas,
-                                            item,
-                                            &image_w,
-                                            &h);
+            item = goo_canvas_image_new (goo_canvas_get_root_item (canvas),
+                                         flash->GetPixbuf (),
+                                         0.0,
+                                         0.0,
+                                         NULL);
+
+            {
+              GooCanvasBounds bounds;
+              gdouble         h = 0.0;
+
+              goo_canvas_item_get_bounds (item,
+                                          &bounds);
+              image_w = bounds.x2- bounds.x1;
+
+              goo_canvas_convert_to_item_space (canvas,
+                                                item,
+                                                &image_w,
+                                                &h);
+            }
+
+            goo_canvas_item_scale (item,
+                                   20/image_w,   // 20% of paper_w
+                                   20/image_w);  // 20% of paper_w
+
+            {
+              gchar *url = flash->GetText ();
+
+              goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                                   url,
+                                   2.0, 21.0,
+                                   -1.0,
+                                   GTK_ANCHOR_W,
+                                   "fill-color", "blue",
+                                   "font", BP_FONT "Bold 2px", NULL);
+              g_free (url);
+            }
+
+            goo_canvas_render (canvas,
+                               gtk_print_context_get_cairo_context (context),
+                               NULL,
+                               1.0);
+            gtk_widget_destroy (GTK_WIDGET (canvas));
+          }
         }
-
-        goo_canvas_item_scale (item,
-                               20/image_w,   // 20% of paper_w
-                               20/image_w);  // 20% of paper_w
-
-        {
-          gchar *url = flash->GetText ();
-
-          goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                               url,
-                               2.0, 21.0,
-                               -1.0,
-                               GTK_ANCHOR_W,
-                               "fill-color", "blue",
-                               "font", BP_FONT "Bold 2px", NULL);
-          g_free (url);
-        }
-
-        goo_canvas_render (canvas,
-                           gtk_print_context_get_cairo_context (context),
-                           NULL,
-                           1.0);
-        gtk_widget_destroy (GTK_WIDGET (canvas));
       }
+
+      g_object_set_data (G_OBJECT (operation),
+                         "Print::FormulaPrinted", GUINT_TO_POINTER (TRUE));
     }
   }
 }
@@ -1667,7 +1681,7 @@ void Schedule::on_stage_removed ()
 void Schedule::PrepareBookPrint (GtkPrintOperation *operation,
                                  GtkPrintContext   *context)
 {
-  _book = new Book ();
+  _book = new Book (this);
   _book->Prepare (operation,
                   context,
                   _stage_list);

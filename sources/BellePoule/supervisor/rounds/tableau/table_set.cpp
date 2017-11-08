@@ -150,7 +150,7 @@ namespace Table
                                           "name",
                                           "first_name",
                                           NULL);
-      _right_filter = new Filter (GetClassName (),
+      _right_filter = new Filter (GetKlassName (),
                                   attr_list);
 
       _right_filter->ShowAttribute ("name");

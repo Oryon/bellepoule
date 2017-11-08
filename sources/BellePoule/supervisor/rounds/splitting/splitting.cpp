@@ -71,7 +71,7 @@ namespace People
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (GetClassName (),
+      filter = new Filter (GetKlassName (),
                            attr_list);
 
       filter->ShowAttribute ("exported");

@@ -23,9 +23,10 @@
 #include "book.hpp"
 
 // --------------------------------------------------------------------------------
-Book::Book ()
+Book::Book (Module *owner)
   : Object ("Book")
 {
+  _owner = owner;
 }
 
 // --------------------------------------------------------------------------------
@@ -41,7 +42,7 @@ void Book::Prepare (GtkPrintOperation *operation,
   GList *current_stage = stage_list;
 
   _chapters   = NULL;
-  _page_count = 0;
+  _page_count = 1;
 
   while (current_stage)
   {
@@ -100,31 +101,44 @@ void Book::Print (GtkPrintOperation *operation,
                   GtkPrintContext   *context,
                   gint               page_nr)
 {
-  GList *current = _chapters;
-
-  while (current)
+  if (page_nr == 0)
   {
-    Chapter *chapter    = (Chapter *) current->data;
-    gint     first_page = chapter->GetFirstPage ();
-    gint     last_page  = chapter->GetLastPage ();
+    g_object_set_data_full (G_OBJECT (operation),
+                            "Print::PageName", (void *) g_strdup (gettext ("Formula")),
+                            g_free);
+    _owner->DrawPage (operation,
+                      context,
+                      page_nr);
+  }
+  else
+  {
+    GList *current = _chapters;
 
-    if ((first_page <= page_nr) && (last_page >= page_nr))
+    while (current)
     {
-      if (page_nr == first_page)
-      {
-        chapter->DrawHeaderPage (operation,
-                                 context);
-      }
-      else
-      {
-        chapter->DrawPage (operation,
-                           context,
-                           page_nr - first_page-1);
-      }
-      break;
-    }
+      Chapter *chapter    = (Chapter *) current->data;
+      gint     first_page = chapter->GetFirstPage ();
+      gint     last_page  = chapter->GetLastPage ();
 
-    current = g_list_next (current);
+      if ((first_page <= page_nr) && (last_page >= page_nr))
+      {
+        if (page_nr == first_page)
+        {
+          chapter->DrawFrontPage (operation,
+                                  context,
+                                  _owner);
+        }
+        else
+        {
+          chapter->DrawPage (operation,
+                             context,
+                             page_nr - first_page-1);
+        }
+        break;
+      }
+
+      current = g_list_next (current);
+    }
   }
 }
 

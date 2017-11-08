@@ -87,7 +87,7 @@ namespace People
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (GetClassName (),
+      filter = new Filter (GetKlassName (),
                            attr_list);
 
       filter->ShowAttribute ("attending");
@@ -119,7 +119,7 @@ namespace People
                                           "name",
                                           "ranking",
                                           NULL);
-      filter = new Filter (GetClassName (),
+      filter = new Filter (GetKlassName (),
                            attr_list);
 
       _form->AddPage (filter,
@@ -434,7 +434,7 @@ namespace People
             {
               gchar *name = p->GetName ();
 
-              name[0] = toupper (name[0]);
+              name[0] = g_ascii_toupper (name[0]);
               g_checksum_update (checksum,
                                  (guchar *) name,
                                  1);

@@ -37,8 +37,9 @@ class Chapter : public Object
 
     guint GetLastPage ();
 
-    void DrawHeaderPage (GtkPrintOperation *operation,
-                         GtkPrintContext   *context);
+    void DrawFrontPage (GtkPrintOperation *operation,
+                        GtkPrintContext   *context,
+                        Module            *owner);
 
     void DrawPage (GtkPrintOperation *operation,
                    GtkPrintContext   *context,

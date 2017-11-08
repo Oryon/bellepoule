@@ -21,7 +21,7 @@
 class Book : public Object
 {
   public:
-    Book ();
+    Book (Module *owner);
 
     void Prepare (GtkPrintOperation *operation,
                   GtkPrintContext   *context,
@@ -35,8 +35,9 @@ class Book : public Object
                GtkPrintContext   *context);
 
   private:
-    guint  _page_count;
-    GList *_chapters;
+    Module *_owner;
+    guint   _page_count;
+    GList  *_chapters;
 
     virtual ~Book ();
 };

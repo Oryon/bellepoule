@@ -89,7 +89,7 @@ namespace Pool
                                           "bouts_count",
                                           "victories_ratio",
                                           NULL);
-      filter = new Filter (GetClassName (),
+      filter = new Filter (GetKlassName (),
                            attr_list);
 
       filter->ShowAttribute ("name");
@@ -121,7 +121,7 @@ namespace Pool
                                             "promoted",
                                             "team",
                                             NULL);
-        filter = new Filter (GetClassName (),
+        filter = new Filter (GetKlassName (),
                              attr_list);
 
         filter->ShowAttribute ("rank");

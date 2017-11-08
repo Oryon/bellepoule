@@ -144,7 +144,7 @@ Object::~Object ()
 }
 
 // --------------------------------------------------------------------------------
-const gchar *Object::GetClassName ()
+const gchar *Object::GetKlassName ()
 {
   return _class_name;
 }

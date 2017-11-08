@@ -67,7 +67,7 @@ namespace People
                                           NULL);
 
       {
-        _collapsed_filter = new Filter (GetClassName (),
+        _collapsed_filter = new Filter (GetKlassName (),
                                         attr_list);
 
         _collapsed_filter->ShowAttribute ("name");
@@ -80,7 +80,7 @@ namespace People
       }
 
       {
-        _expanded_filter = new Filter (GetClassName (),
+        _expanded_filter = new Filter (GetKlassName (),
                                        g_slist_copy (attr_list));
 
         _expanded_filter->ShowAttribute ("attending");
