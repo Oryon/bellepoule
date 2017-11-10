@@ -369,9 +369,11 @@ namespace Table
       for (guint t = 0; t < _nb_tables; t++)
       {
         gchar *icon;
-        Table *table = _tables[t];
+        Table *table      = _tables[t];
+        Table *left_table = table->GetLeftTable ();
 
-        if (table->_has_all_roadmap == FALSE)
+        if (   ((left_table == NULL) || left_table->_is_over)
+            && (table->_has_all_roadmap == FALSE))
         {
           icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
           _first_error = table;

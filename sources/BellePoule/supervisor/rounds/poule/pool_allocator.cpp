@@ -1565,7 +1565,10 @@ namespace Pool
 
         if (piste)
         {
-          gchar *label = g_strdup_printf ("%s %d", gettext ("Piste"), piste);
+          gchar *label = g_strdup_printf ("%s%c%c%d",
+                                          gettext ("Piste"),
+                                          0xC2, 0xA0, // non breaking space
+                                          piste);
 
           item = Canvas::PutTextInTable (header_table,
                                          label,

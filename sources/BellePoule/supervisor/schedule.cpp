@@ -1018,7 +1018,7 @@ void Schedule::Load (xmlDoc               *doc,
 
   {
     xmlNodeSet     *xml_nodeset;
-    gchar          *xml_object_path = g_strdup_printf ("/%s/Phases", contest_keyword);
+    gchar          *xml_object_path = g_strdup_printf ("%s/Phases", contest_keyword);
     xmlXPathObject *xml_object      = xmlXPathEval (BAD_CAST xml_object_path, xml_context);
 
     g_free (xml_object_path);
@@ -1048,7 +1048,7 @@ void Schedule::Load (xmlDoc               *doc,
   referees->Spread ();
 
   {
-    gchar          *path        = g_strdup_printf ("/%s/Phases/*", contest_keyword);
+    gchar          *path        = g_strdup_printf ("%s/Phases/*", contest_keyword);
     xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
     guint           nb_stage    = 0;

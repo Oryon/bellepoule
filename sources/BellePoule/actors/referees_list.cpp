@@ -83,6 +83,7 @@ namespace People
         _expanded_filter = new Filter (GetKlassName (),
                                        g_slist_copy (attr_list));
 
+        _expanded_filter->ShowAttribute ("connection");
         _expanded_filter->ShowAttribute ("attending");
         _expanded_filter->ShowAttribute ("name");
         _expanded_filter->ShowAttribute ("workload_rate");

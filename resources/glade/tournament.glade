@@ -39,16 +39,6 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-dialog-info</property>
   </object>
-  <object class="GtkImage" id="image12">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-print</property>
-  </object>
-  <object class="GtkImage" id="image13">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-print</property>
-  </object>
   <object class="GtkImage" id="image14">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -340,28 +330,6 @@
                   <object class="GtkMenu" id="menu5">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkImageMenuItem" id="tickets_menuitem">
-                        <property name="label" translatable="yes">Print meal tickets</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="image">image12</property>
-                        <property name="use_stock">False</property>
-                        <property name="always_show_image">True</property>
-                        <signal name="activate" handler="on_tickets_menuitem_activate" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="payment_menuitem">
-                        <property name="label" translatable="yes">Print payment book</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="image">image13</property>
-                        <property name="use_stock">False</property>
-                        <property name="always_show_image">True</property>
-                        <signal name="activate" handler="on_payment_menuitem_activate" swapped="no"/>
-                      </object>
-                    </child>
                   </object>
                 </child>
               </object>
@@ -1442,6 +1410,18 @@ Public License instead of this License.  But first, please read
                         <property name="can_focus">False</property>
                         <property name="n_rows">2</property>
                         <property name="n_columns">2</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
                         <child>
                           <placeholder/>
                         </child>

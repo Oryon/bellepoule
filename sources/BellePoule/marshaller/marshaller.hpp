@@ -45,11 +45,20 @@ namespace Marshaller
 
       void OnMenuDialog (const gchar *dialog);
 
+      void PrintMealTickets ();
+
+      void PrintPaymentBook ();
+
     private:
+      static const guint NB_TICKET_X_PER_SHEET = 2;
+      static const guint NB_TICKET_Y_PER_SHEET = 5;
+      static const guint NB_REFEREE_PER_SHEET  = 20;
+
       Hall        *_hall;
       RefereePool *_referee_pool;
       GtkNotebook *_referee_notebook;
       SmartPhones *_smartphones;
+      gboolean     _print_meal_tickets;
 
       virtual ~Marshaller ();
 
@@ -60,5 +69,14 @@ namespace Marshaller
       void OnUnBlur ();
 
       void OnOpenCheckin (People::RefereesList *referee_list);
+
+      guint PreparePrint (GtkPrintOperation *operation,
+                          GtkPrintContext   *context);
+
+      void DrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
+
+      GList *GetRefereeList ();
   };
 }
