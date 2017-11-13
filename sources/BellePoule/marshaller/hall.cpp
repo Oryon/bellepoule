@@ -16,6 +16,7 @@
 
 #include "util/fie_time.hpp"
 #include "actors/referees_list.hpp"
+#include "application/weapon.hpp"
 
 #include "enlisted_referee.hpp"
 #include "piste.hpp"
@@ -415,31 +416,36 @@ namespace Marshaller
                            &piste_id,
                            &referee_id,
                            &start_time);
-        if (job && start_time)
+        if (job)
         {
-          Piste *piste = GetPiste (piste_id);
+          job->SetWeapon (Weapon::GetFromXml (competition->GetWeaponCode ()));
 
-          if (piste)
+          if (start_time)
           {
-            GTimeSpan duration = job->GetRegularDuration ();
-            Slot *slot = piste->GetFreeSlot (start_time->GetGDateTime (),
-                                             duration);
+            Piste *piste = GetPiste (piste_id);
 
-            if (slot)
+            if (piste)
             {
-              EnlistedReferee *referee = _referee_pool->GetReferee (referee_id);
+              GTimeSpan duration = job->GetRegularDuration ();
+              Slot *slot = piste->GetFreeSlot (start_time->GetGDateTime (),
+                                               duration);
 
-              if (referee)
+              if (slot)
               {
-                slot->TailWith (NULL,
-                                duration);
-                slot->AddJob     (job);
-                slot->AddReferee (referee);
-                Redraw ();
-              }
-              else
-              {
-                slot->Release ();
+                EnlistedReferee *referee = _referee_pool->GetReferee (referee_id);
+
+                if (referee)
+                {
+                  slot->TailWith (NULL,
+                                  duration);
+                  slot->AddJob     (job);
+                  slot->AddReferee (referee);
+                  Redraw ();
+                }
+                else
+                {
+                  slot->Release ();
+                }
               }
             }
           }

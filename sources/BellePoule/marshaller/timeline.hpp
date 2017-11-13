@@ -25,6 +25,8 @@ namespace Marshaller
   class Timeline : public CanvasModule
   {
     public:
+      static const GTimeSpan STEP = 15*G_TIME_SPAN_MINUTE;
+
       struct Listener
       {
         virtual void OnTimelineCursorMoved () = 0;
@@ -45,7 +47,6 @@ namespace Marshaller
 
     private:
       static const guint     HOURS_MONITORED = 10;
-      static const GTimeSpan STEP            = 15*G_TIME_SPAN_MINUTE;
       static const GTimeSpan START_MARGING   = STEP;
 
       GList         *_competition_list;

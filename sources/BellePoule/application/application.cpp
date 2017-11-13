@@ -271,10 +271,10 @@ void Application::Prepare ()
 
   // Weapon
   {
-    new Weapon ("Educ",  "X", "S");
-    new Weapon ("Foil",  "F", "F");
-    new Weapon ("Epée",  "E", "E");
-    new Weapon ("Sabre", "S", "S");
+    new Weapon ("Educ",  "X", "S", 30);
+    new Weapon ("Foil",  "F", "F", 30);
+    new Weapon ("Epée",  "E", "E", 30);
+    new Weapon ("Sabre", "S", "S", 10);
   }
 
   // Attributes definition

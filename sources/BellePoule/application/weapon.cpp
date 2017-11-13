@@ -21,12 +21,15 @@ GList *Weapon::_list = NULL;
 // --------------------------------------------------------------------------------
 Weapon::Weapon (const gchar *image,
                 const gchar *xml_image,
-                const gchar *greg_image)
+                const gchar *greg_image,
+                guint        standard_duration_sec)
   : Object ("Weapon")
 {
   _image      = g_strdup (image);
   _xml_image  = g_strdup (xml_image);
   _greg_image = g_strdup (greg_image);
+
+  _standard_duration_sec = standard_duration_sec;
 
   _list = g_list_prepend (_list,
                           this);
@@ -45,6 +48,12 @@ Weapon::~Weapon ()
 
   g_free (_image);
   g_free (_xml_image);
+}
+
+// --------------------------------------------------------------------------------
+guint Weapon::GetStandardDuration ()
+{
+  return _standard_duration_sec;
 }
 
 // --------------------------------------------------------------------------------

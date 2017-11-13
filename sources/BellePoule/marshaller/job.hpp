@@ -19,6 +19,7 @@
 #include "util/object.hpp"
 
 class Player;
+class Weapon;
 
 namespace Marshaller
 {
@@ -40,6 +41,8 @@ namespace Marshaller
            GdkColor     *gdk_color);
 
       void SetName (const gchar *name);
+
+      void SetWeapon (Weapon *weapon);
 
       void SetListener (Listener *listener);
 
@@ -85,15 +88,17 @@ namespace Marshaller
       static void Dump (Job *what);
 
     private:
-      guint     _sibling_order;
-      gchar    *_name;
-      guint     _netid;
-      GdkColor *_gdk_color;
-      Batch    *_batch;
-      Slot     *_slot;
-      GList    *_fencer_list;
-      Listener *_listener;
-      guint     _kinship;
+      guint      _sibling_order;
+      gchar     *_name;
+      guint      _netid;
+      GdkColor  *_gdk_color;
+      Batch     *_batch;
+      Slot      *_slot;
+      GList     *_fencer_list;
+      Listener  *_listener;
+      guint      _kinship;
+      guint      _workload_units;
+      GTimeSpan  _regular_duration;
 
       ~Job ();
   };

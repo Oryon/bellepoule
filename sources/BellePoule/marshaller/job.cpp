@@ -16,7 +16,9 @@
 
 #include "util/player.hpp"
 #include "network/message.hpp"
+#include "application/weapon.hpp"
 #include "slot.hpp"
+#include "timeline.hpp"
 #include "competition.hpp"
 #include "affinities.hpp"
 #include "batch.hpp"
@@ -32,15 +34,17 @@ namespace Marshaller
             GdkColor     *gdk_color)
     : Object ("Job")
   {
-    _listener      = NULL;
-    _fencer_list   = NULL;
-    _gdk_color     = gdk_color_copy (gdk_color);
-    _name          = NULL;
-    _batch         = batch;
-    _netid         = message->GetNetID ();
-    _sibling_order = sibling_order;
-    _slot          = NULL;
-    _kinship       = 0;
+    _listener         = NULL;
+    _fencer_list      = NULL;
+    _gdk_color        = gdk_color_copy (gdk_color);
+    _name             = NULL;
+    _batch            = batch;
+    _netid            = message->GetNetID ();
+    _sibling_order    = sibling_order;
+    _slot             = NULL;
+    _kinship          = 0;
+    _regular_duration = 0;
+    _workload_units   = message->GetInteger ("workload_units");
 
     Disclose ("Roadmap");
     _parcel->Set ("competition", message->GetInteger ("competition"));
@@ -95,9 +99,16 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Job::SetWeapon (Weapon *weapon)
+  {
+    _regular_duration = _workload_units * weapon->GetStandardDuration () * G_TIME_SPAN_SECOND;
+    _regular_duration += Timeline::STEP - (_regular_duration % Timeline::STEP);
+  }
+
+  // --------------------------------------------------------------------------------
   GTimeSpan Job::GetRegularDuration ()
   {
-    return 30*G_TIME_SPAN_MINUTE;
+    return _regular_duration;
   }
 
   // --------------------------------------------------------------------------------

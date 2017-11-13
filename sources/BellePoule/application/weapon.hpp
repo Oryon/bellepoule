@@ -23,7 +23,8 @@ class Weapon : public Object
   public:
     Weapon (const gchar *image,
             const gchar *xml_image,
-            const gchar *greg_image);
+            const gchar *greg_image,
+            guint        standard_duration_sec);
 
   public:
     static GList *GetList ();
@@ -45,12 +46,15 @@ class Weapon : public Object
 
     guint GetIndex ();
 
+    guint GetStandardDuration ();
+
   private:
     static GList *_list;
 
     gchar *_image;
     gchar *_xml_image;
     gchar *_greg_image;
+    guint  _standard_duration_sec;
 
     virtual ~Weapon ();
 };

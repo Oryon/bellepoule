@@ -2173,6 +2173,9 @@ namespace Pool
 
     parcel->Set ("xml", (const gchar *) xml_buffer->content);
     xmlBufferFree (xml_buffer);
+
+    parcel->Set ("workload_units",
+                 _max_score->_value * GetNbMatchs ());
   }
 
   // --------------------------------------------------------------------------------
