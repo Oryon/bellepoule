@@ -111,7 +111,7 @@ namespace Pool
       gdouble              _page_h;
       guint                _nb_page;
       gboolean             _loaded;
-      SensitivityTrigger   _swapping_sensitivity_trigger;
+      SensitivityTrigger  *_swapping_sensitivity_trigger;
       People::PlayersList *_fencer_list;
       Swapper             *_swapper;
       gboolean             _has_marshaller;

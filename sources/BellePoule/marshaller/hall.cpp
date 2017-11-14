@@ -47,8 +47,8 @@ namespace Marshaller
 
     _dragging = FALSE;
 
-    SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")),
-               1.5);
+    SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")));
+    ZoomTo (1.5);
 
     _competition_list = NULL;
 

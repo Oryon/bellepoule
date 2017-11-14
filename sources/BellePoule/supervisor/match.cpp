@@ -720,6 +720,16 @@ void Match::RemoveReferee (Player *referee)
 }
 
 // --------------------------------------------------------------------------------
+void Match::RemoveAllReferees ()
+{
+  if (_referee_list)
+  {
+    g_slist_free (_referee_list);
+    _referee_list = NULL;
+  }
+}
+
+// --------------------------------------------------------------------------------
 GSList *Match::GetRefereeList ()
 {
   return _referee_list;

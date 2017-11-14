@@ -113,6 +113,8 @@ class Match : public Object,
 
     void RemoveReferee (Player *referee);
 
+    void RemoveAllReferees ();
+
     GSList *GetRefereeList ();
 
   private:

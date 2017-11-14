@@ -45,7 +45,9 @@ namespace Table
       void OnPreviousClicked ();
       void OnNextClicked ();
       void OnInputToggled (GtkWidget *widget);
-      void OnPrint ();
+      void OnRecallRoadmaps ();
+      void OnPrintTableSet ();
+      void OnPrintTableScoreSheets ();
       void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
       void OnTableOver (TableSet *table_set,
                         Table    *table);
@@ -177,11 +179,6 @@ namespace Table
                                       GtkTreeIter  *iter,
                                       gpointer      data);
 
-      static gboolean StuffTableSet (GtkTreeModel *model,
-                                     GtkTreePath  *path,
-                                     GtkTreeIter  *iter,
-                                     gpointer      data);
-
       static gboolean ToggleTableSetLock (GtkTreeModel *model,
                                           GtkTreePath  *path,
                                           GtkTreeIter  *iter,
@@ -204,9 +201,8 @@ namespace Table
 
       void OnTableSetStatusUpdated (TableSet *table_set);
 
-      void OnTableSetNavigationBorders (TableSet *table_set,
-                                        Table    *previous,
-                                        Table    *next);
+      void OnTableSetDisplayed (TableSet *table_set,
+                                Table    *from);
 
       virtual ~Supervisor ();
   };

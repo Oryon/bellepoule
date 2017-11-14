@@ -42,6 +42,7 @@ Stage::Stage (StageClass *stage_class)
   _input_provider    = NULL;
   _classification_on = FALSE;
 
+  _sensitivity_trigger    = new SensitivityTrigger ();
   _score_stuffing_trigger = NULL;
 
   _status_listener = NULL;
@@ -59,6 +60,7 @@ Stage::~Stage ()
   FreeResult ();
   g_free (_name);
 
+  TryToRelease (_sensitivity_trigger);
   TryToRelease (_score_stuffing_trigger);
   TryToRelease (_classification);
   TryToRelease (_attendees);
@@ -1002,7 +1004,7 @@ void Stage::ToggleClassification (gboolean classification_on)
 
       if (_classification_on == FALSE)
       {
-        _sensitivity_trigger.SwitchOff ();
+        _sensitivity_trigger->SwitchOff ();
       }
     }
     else
@@ -1015,7 +1017,7 @@ void Stage::ToggleClassification (gboolean classification_on)
 
       if (_classification_on == TRUE)
       {
-        _sensitivity_trigger.SwitchOn ();
+        _sensitivity_trigger->SwitchOn ();
       }
     }
   }
@@ -1180,7 +1182,7 @@ void Stage::SetResult ()
 // --------------------------------------------------------------------------------
 void Stage::LockOnClassification (GtkWidget *w)
 {
-  _sensitivity_trigger.AddWidget (w);
+  _sensitivity_trigger->AddWidget (w);
 }
 
 // --------------------------------------------------------------------------------

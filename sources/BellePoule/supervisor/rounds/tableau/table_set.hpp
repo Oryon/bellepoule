@@ -43,18 +43,16 @@ namespace Table
       class Listener
       {
         public:
-          virtual void OnTableSetStatusUpdated     (TableSet *table_set) = 0;
-          virtual void OnTableSetNavigationBorders (TableSet *table_set,
-                                                    Table    *previous,
-                                                    Table    *next) = 0;
+          virtual void OnTableSetStatusUpdated (TableSet *table_set) = 0;
+          virtual void OnTableSetDisplayed     (TableSet *table_set,
+                                                Table    *from) = 0;
       };
 
     public:
       TableSet (Supervisor *supervisor,
                 gchar      *id,
-                GtkWidget  *from_container,
-                GtkWidget  *to_container,
-                guint       first_place);
+                guint       first_place,
+                GtkRange   *zoomer);
 
       void SetListener (Listener *listener);
 
@@ -83,6 +81,8 @@ namespace Table
 
       void OnPrint ();
 
+      void OnPrintScoreSheets (Table *table = NULL);
+
       GList *GetBookSections (Stage::StageView view);
 
       gchar *GetPrintName ();
@@ -96,7 +96,7 @@ namespace Table
 
       void Wipe ();
 
-      void Display (GtkRange *zoomer);
+      void Display ();
 
       void Lock ();
 
@@ -146,6 +146,10 @@ namespace Table
 
       void Recall ();
 
+      gboolean RecallRoadmapAllowed (Table *for_table);
+
+      void RecallRoadmaps ();
+
       gboolean OnMessage (Net::Message *message);
 
       gboolean OnHttpPost (const gchar *command,
@@ -162,7 +166,6 @@ namespace Table
       Supervisor               *_supervisor;
       GNode                    *_tree_root;
       guint                     _nb_tables;
-      gint                      _table_to_stuff;
       GtkTreeStore             *_quick_search_treestore;
       GtkTreeModelFilter       *_quick_search_filter;
       GooCanvasItem            *_main_table;
@@ -289,10 +292,10 @@ namespace Table
                                                      GtkTreeIter     *iter,
                                                      TableSet        *table_set);
 
-      static gboolean OnPrintTable (GooCanvasItem  *item,
-                                    GooCanvasItem  *target_item,
-                                    GdkEventButton *event,
-                                    TableSet       *table_set);
+      static gboolean OnPrintItemClicked (GooCanvasItem  *item,
+                                          GooCanvasItem  *target_item,
+                                          GdkEventButton *event,
+                                          TableSet       *table_set);
 
       static gboolean OnPrintMatch (GooCanvasItem  *item,
                                     GooCanvasItem  *target_item,

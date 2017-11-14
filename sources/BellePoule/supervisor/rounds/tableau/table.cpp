@@ -703,8 +703,6 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Table::Recall ()
   {
-    Object::Recall ();
-
     {
       GSList *current = _match_list;
 
@@ -716,6 +714,25 @@ namespace Table
 
         current = g_slist_next (current);
       }
+    }
+
+    Object::Recall ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Table::ClearRoadmaps ()
+  {
+    GSList *current_match = _match_list;
+
+    while (current_match)
+    {
+      Match *match = (Match *) current_match->data;
+
+      match->SetPiste          (0);
+      match->SetStartTime      (NULL);
+      match->RemoveAllReferees ();
+
+      current_match = g_slist_next (current_match);
     }
   }
 

@@ -51,8 +51,9 @@ class CanvasModule : public Module
                                    Filter        *filter,
                                    ...);
 
-    void SetZoomer (GtkRange *zoomer,
-                    gdouble   default_value = 1.0);
+    void SetZoomer (GtkRange *zoomer);
+
+    void ZoomTo (gdouble scale);
 
     void FreezeZoomer ();
 

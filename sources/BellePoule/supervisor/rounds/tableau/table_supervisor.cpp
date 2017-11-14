@@ -72,9 +72,6 @@ namespace Table
       AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
       AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
 
-      LockOnClassification (_glade->GetWidget ("from_vbox"));
-      LockOnClassification (_glade->GetWidget ("to_vbox"));
-      LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
       LockOnClassification (_glade->GetWidget ("input_toolbutton"));
     }
 
@@ -222,7 +219,7 @@ namespace Table
     {
       Plug (table_set,
             _glade->GetWidget ("table_set_hook"));
-      table_set->Display (GTK_RANGE (_glade->GetWidget ("zoom_scale")));
+      table_set->Display ();
 
       _displayed_table_set = table_set;
     }
@@ -760,9 +757,8 @@ namespace Table
 
       table_set = new TableSet (this,
                                 gtk_tree_path_to_string (path),
-                                _glade->GetWidget ("from_vbox"),
-                                _glade->GetWidget ("to_vbox"),
-                                from_place);
+                                from_place,
+                                GTK_RANGE (_glade->GetWidget ("zoom_scale")));
 
       {
         GtkTreeRowReference *ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (_table_set_treestore),
@@ -845,30 +841,22 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnTableSetNavigationBorders (TableSet *table_set,
-                                                Table    *previous,
-                                                Table    *next)
+  void Supervisor::OnTableSetDisplayed (TableSet *table_set,
+                                        Table    *from)
   {
     if ((_displayed_table_set == NULL) || (table_set == _displayed_table_set))
     {
+      Table *previous = from->GetLeftTable ();
+      Table *next     = from->GetRightTable ();
+
       gtk_widget_set_sensitive (_glade->GetWidget ("previous_button"), previous != NULL);
       gtk_widget_set_sensitive (_glade->GetWidget ("next_button"),     next     != NULL);
 
-      gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("previous_label")),
-                          "");
-      if (previous)
-      {
-        gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("previous_label")),
-                            previous->GetMiniName ());
-      }
+      gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("from_label")),
+                          from->GetMiniName ());
 
-      gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("next_label")),
-                          "");
-      if (next)
-      {
-        gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("next_label")),
-                            next->GetMiniName ());
-      }
+      gtk_widget_set_sensitive (_glade->GetWidget ("redo_toolitem"),
+                                table_set->RecallRoadmapAllowed (from));
     }
   }
 
@@ -958,7 +946,7 @@ namespace Table
   {
     Supervisor *t = dynamic_cast <Supervisor *> (owner);
 
-    t->OnPrint ();
+    t->OnPrintTableSet ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1084,29 +1072,29 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Supervisor::StuffTableSet (GtkTreeModel *model,
-                                      GtkTreePath  *path,
-                                      GtkTreeIter  *iter,
-                                      gpointer      data)
+  void Supervisor::OnStuffClicked ()
   {
-    TableSet *table_set;
-
-    gtk_tree_model_get (model, iter,
-                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
-                        -1);
-
-    table_set->OnStuffClicked ();
-
-    return FALSE;
+    _displayed_table_set->OnStuffClicked ();
+    OnAttrListUpdated ();
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnStuffClicked ()
+  void Supervisor::OnRecallRoadmaps ()
   {
-    gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
-                            StuffTableSet,
-                            NULL);
-    OnAttrListUpdated ();
+    GtkWidget *dialog;
+
+    dialog = gtk_message_dialog_new (NULL,
+                                     GTK_DIALOG_DESTROY_WITH_PARENT,
+                                     GTK_MESSAGE_QUESTION,
+                                     GTK_BUTTONS_OK_CANCEL,
+                                     gettext ("Cancel the referee & strip assignments?"));
+
+    if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
+    {
+      _displayed_table_set->RecallRoadmaps ();
+    }
+
+    gtk_widget_destroy (dialog);
   }
 
   // --------------------------------------------------------------------------------
@@ -1230,7 +1218,7 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnPrint ()
+  void Supervisor::OnPrintTableSet ()
   {
     if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
     {
@@ -1248,6 +1236,15 @@ namespace Table
     else if (_displayed_table_set)
     {
       _displayed_table_set->OnPrint ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Supervisor::OnPrintTableScoreSheets ()
+  {
+    if (_displayed_table_set)
+    {
+      _displayed_table_set->OnPrintScoreSheets ();
     }
   }
 
@@ -1409,6 +1406,7 @@ namespace Table
       g_free (text);
     }
   }
+
   // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
                                                                       Object    *owner)
@@ -1470,5 +1468,23 @@ namespace Table
     Supervisor *t = dynamic_cast <Supervisor *> (owner);
 
     t->OnNextClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_redo_toolitem_clicked (GtkWidget *widget,
+                                                            Object    *owner)
+  {
+    Supervisor *t = dynamic_cast <Supervisor *> (owner);
+
+    t->OnRecallRoadmaps ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_print_score_sheets_clicked (GtkWidget *widget,
+                                                                 Object    *owner)
+  {
+    Supervisor *t = dynamic_cast <Supervisor *> (owner);
+
+    t->OnPrintTableScoreSheets ();
   }
 }

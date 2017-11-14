@@ -59,9 +59,8 @@ namespace Table
   // --------------------------------------------------------------------------------
   TableSet::TableSet (Supervisor *supervisor,
                       gchar      *id,
-                      GtkWidget  *from_container,
-                      GtkWidget  *to_container,
-                      guint       first_place)
+                      guint       first_place,
+                      GtkRange   *zoomer)
     : Object ("TableSet"),
       CanvasModule ("table.glade")
   {
@@ -89,6 +88,9 @@ namespace Table
     _to_table       = NULL;
 
     _listener       = NULL;
+
+    SetZoomer (zoomer);
+    ZoomTo (0.8);
 
     _page_setup = gtk_page_setup_new ();
 
@@ -435,13 +437,8 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::Display (GtkRange *zoomer)
+  void TableSet::Display ()
   {
-    if (zoomer)
-    {
-      SetZoomer (zoomer);
-    }
-
     if (_tree_root && GetCanvas ())
     {
       Wipe ();
@@ -490,7 +487,7 @@ namespace Table
 
             g_object_set_data (G_OBJECT (print_item), "table_to_print", table);
             g_signal_connect (print_item, "button-release-event",
-                              G_CALLBACK (OnPrintTable), this);
+                              G_CALLBACK (OnPrintItemClicked), this);
           }
 
           Canvas::PutInTable (_main_table,
@@ -545,16 +542,8 @@ namespace Table
 
     if (_to_table)
     {
-      Table *right = NULL;
-
-      if (_to_table->GetRightTable ())
-      {
-        right = _from_table->GetRightTable ();
-      }
-
-      _listener->OnTableSetNavigationBorders (this,
-                                              _from_table->GetLeftTable (),
-                                              right);
+      _listener->OnTableSetDisplayed (this,
+                                      _from_table);
     }
   }
 
@@ -1166,7 +1155,7 @@ namespace Table
             Canvas::SetTableItemAttribute (number_item, "y-align", 0.5);
             g_object_set (number_item,
                           "fill-color", "Grey",
-                          "font",       BP_FONT "Bold",
+                          "font",       BP_FONT "Bold 14px",
                           NULL);
           }
         }
@@ -1441,15 +1430,19 @@ namespace Table
           {
             // _score_goo_text
             {
-              gchar *score_image;
+              gchar *score_image = NULL;
 
               if (winner)
               {
                 Score *score = parent_data->_match->GetScore (winner);
 
-                score_image = score->GetImage ();
+                if (score)
+                {
+                  score_image = score->GetImage ();
+                }
               }
-              else
+
+              if (score_image == NULL)
               {
                 score_image = g_strdup ("");
               }
@@ -2002,7 +1995,7 @@ namespace Table
           }
         }
 
-        Display (NULL);
+        Display ();
       }
     }
   }
@@ -2068,7 +2061,7 @@ namespace Table
               || ((message->GetFitness () == 0) && (table->_roadmap_count == 0)))
           {
             table->Spread ();
-            Display (NULL);
+            Display ();
           }
 
           return TRUE;
@@ -2239,8 +2232,8 @@ namespace Table
   {
     NodeData *data = (NodeData *) node->data;
 
-    if (   (data->_table == table_set->_tables[table_set->_table_to_stuff])
-        && (data->_match))
+    if (   data->_match
+        && (data->_table == table_set->_from_table->GetRightTable ()))
     {
       Player *A      = data->_match->GetOpponent (0);
       Player *B      = data->_match->GetOpponent (1);
@@ -2270,17 +2263,15 @@ namespace Table
 
       if (winner)
       {
+        GNode *parent = node->parent;
+
+        if (parent)
         {
-          GNode *parent = node->parent;
+          NodeData *parent_data = (NodeData *) parent->data;
 
-          if (parent)
-          {
-            NodeData *parent_data = (NodeData *) parent->data;
-
-            table_set->SetPlayerToMatch (parent_data->_match,
-                                         winner,
-                                         g_node_child_position (parent, node));
-          }
+          table_set->SetPlayerToMatch (parent_data->_match,
+                                       winner,
+                                       g_node_child_position (parent, node));
         }
       }
     }
@@ -2406,15 +2397,12 @@ namespace Table
   {
     if (_tree_root)
     {
-      for (_table_to_stuff = _nb_tables-1; _table_to_stuff >= 0; _table_to_stuff--)
-      {
-        g_node_traverse (_tree_root,
-                         G_POST_ORDER,
-                         G_TRAVERSE_ALL,
-                         -1,
-                         (GNodeTraverseFunc) Stuff,
-                         this);
-      }
+      g_node_traverse (_tree_root,
+                       G_POST_ORDER,
+                       G_TRAVERSE_ALL,
+                       -1,
+                       (GNodeTraverseFunc) Stuff,
+                       this);
 
       RefreshTableStatus ();
       RefilterQuickSearch ();
@@ -3461,7 +3449,29 @@ namespace Table
     _has_marshaller = joined;
 
     RefreshTableStatus ();
-    Display (NULL);
+    Display ();
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean TableSet::RecallRoadmapAllowed (Table *for_table)
+  {
+    if (   (for_table->_is_over         == FALSE)
+        && (for_table->_ready_to_fence  == TRUE)
+        && (for_table->_has_all_roadmap == TRUE))
+    {
+      return _has_marshaller;
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSet::RecallRoadmaps ()
+  {
+    _from_table->Recall ();
+    _from_table->ClearRoadmaps ();
+    _from_table->Spread ();
+    Display ();
   }
 
   // --------------------------------------------------------------------------------
@@ -3573,79 +3583,68 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::OnPrint ()
   {
-    GtkWidget *print_dialog = _glade->GetWidget ("print_dialog");
+    gchar        *print_name    = GetPrintName ();
+    gchar        *title         = _supervisor->GetFullName ();
+    PrintSession *print_session;
 
-    if (RunDialog (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
-    {
-      GtkWidget    *table_w       = _glade->GetWidget ("table_radiobutton");
-      gchar        *print_name    = GetPrintName ();
-      PrintSession *print_session;
+    print_session = new PrintSession (PrintSession::DISPLAYED_TABLES,
+                                      title,
+                                      _from_table);
+    PrintPreview (print_name,
+                  print_session);
 
-      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (table_w)))
-      {
-        gchar *title = _supervisor->GetFullName ();
-
-        print_session = new PrintSession (PrintSession::DISPLAYED_TABLES,
-                                          title,
-                                          _from_table);
-        PrintPreview (print_name,
-                      print_session);
-        g_free (title);
-      }
-      else
-      {
-        GtkWidget *all_w     = _glade->GetWidget ("all_radiobutton");
-        gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (all_w));
-
-        LookForMatchToPrint (NULL,
-                             all_sheet);
-
-        print_session = new PrintSession (PrintSession::SCORE_SHEETS);
-        Print (print_name,
-               print_session);
-      }
-
-      print_session->Release ();
-      g_free (print_name);
-    }
-
-    gtk_widget_hide (print_dialog);
+    print_session->Release ();
+    g_free (title);
+    g_free (print_name);
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TableSet::OnPrintTable (GooCanvasItem  *item,
-                                   GooCanvasItem  *target_item,
-                                   GdkEventButton *event,
-                                   TableSet       *table_set)
+  void TableSet::OnPrintScoreSheets (Table *table)
   {
-    Table     *table_to_print     = (Table *) g_object_get_data (G_OBJECT (item), "table_to_print");
-    GtkWidget *score_sheet_dialog = table_set->_glade->GetWidget ("score_sheet_dialog");
+    GtkWidget *score_sheet_dialog = _glade->GetWidget ("score_sheet_dialog");
+
+    if (table == NULL)
+    {
+      table = _from_table;
+    }
 
     {
-      gchar *title = g_strdup_printf (gettext ("%s: score sheets printing"), table_to_print->GetImage ());
+      gchar *title = g_strdup_printf (gettext ("%s: score sheets printing"), table->GetImage ());
 
       gtk_window_set_title (GTK_WINDOW (score_sheet_dialog),
                             title);
       g_free (title);
     }
 
-    if (table_set->RunDialog (GTK_DIALOG (score_sheet_dialog)) == GTK_RESPONSE_OK)
+    if (RunDialog (GTK_DIALOG (score_sheet_dialog)) == GTK_RESPONSE_OK)
     {
-      GtkWidget    *w             = table_set->_glade->GetWidget ("table_all_radiobutton");
+      GtkWidget    *w             = _glade->GetWidget ("table_all_radiobutton");
       gboolean      all_sheet     = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
-      gchar        *print_name    = table_set->GetPrintName ();
+      gchar        *print_name    = GetPrintName ();
       PrintSession *print_session = new PrintSession (PrintSession::SCORE_SHEETS);
 
-      table_set->LookForMatchToPrint (table_to_print,
-                                      all_sheet);
-      table_set->Print (print_name,
-                        print_session);
+      LookForMatchToPrint (table,
+                           all_sheet);
+
+      Print (print_name,
+             print_session);
 
       print_session->Release ();
       g_free (print_name);
     }
 
     gtk_widget_hide (score_sheet_dialog);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean TableSet::OnPrintItemClicked (GooCanvasItem  *item,
+                                         GooCanvasItem  *target_item,
+                                         GdkEventButton *event,
+                                         TableSet       *table_set)
+  {
+    Table *table = (Table *) g_object_get_data (G_OBJECT (item), "table_to_print");
+
+    table_set->OnPrintScoreSheets (table);
 
     return TRUE;
   }

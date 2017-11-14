@@ -91,7 +91,8 @@ namespace Pool
       AddSensitiveWidget (_glade->GetWidget ("marshaller_toolbutton"));
       AddSensitiveWidget (_glade->GetWidget ("marshaller_toolitem"));
 
-      _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_criteria_hbox"));
+      _swapping_sensitivity_trigger = new SensitivityTrigger ();
+      _swapping_sensitivity_trigger->AddWidget (_glade->GetWidget ("swapping_criteria_hbox"));
     }
 
     _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
@@ -271,6 +272,8 @@ namespace Pool
     _seeding_balanced->Release ();
     _fencer_list->Release      ();
     _swapper->Delete           ();
+
+    _swapping_sensitivity_trigger->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -656,11 +659,11 @@ namespace Pool
 
           if (seeding_is_balanced)
           {
-            _swapping_sensitivity_trigger.SwitchOn ();
+            _swapping_sensitivity_trigger->SwitchOn ();
           }
           else
           {
-            _swapping_sensitivity_trigger.SwitchOff ();
+            _swapping_sensitivity_trigger->SwitchOff ();
 
             g_slist_free (_swapping_criteria_list);
             _swapping_criteria_list = NULL;
@@ -761,7 +764,7 @@ namespace Pool
 
       if (_seeding_balanced->_value == FALSE)
       {
-        _swapping_sensitivity_trigger.SwitchOff ();
+        _swapping_sensitivity_trigger->SwitchOff ();
       }
     }
 

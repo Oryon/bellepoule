@@ -69,6 +69,8 @@ namespace Table
 
       void Recall ();
 
+      void ClearRoadmaps ();
+
       void SaveHeader (xmlTextWriter *xml_writer);
 
       void Save (xmlTextWriter *xml_writer);

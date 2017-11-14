@@ -29,6 +29,7 @@ namespace Table
     _bounds_table = NULL;
     _type         = type;
     _from_table   = from_table;
+    _nb_pages     = 0;
 
     SetResolutions (1.0,
                     1.0);
