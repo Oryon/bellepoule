@@ -652,16 +652,25 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Table::Show (guint at_column)
+  gboolean Table::IsHeaderDisplayed ()
   {
-    _is_displayed = TRUE;
-    _column       = at_column;
+    return _is_header_displayed;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Table::Show (guint    at_column,
+                    gboolean display_header)
+  {
+    _is_displayed        = TRUE;
+    _is_header_displayed = display_header;
+    _column              = at_column;
   }
 
   // --------------------------------------------------------------------------------
   void Table::Hide ()
   {
-    _is_displayed = FALSE;
+    _is_displayed        = FALSE;
+    _is_header_displayed = FALSE;
   }
 
   // --------------------------------------------------------------------------------

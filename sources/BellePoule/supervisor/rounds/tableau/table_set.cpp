@@ -158,8 +158,6 @@ namespace Table
       _right_filter->ShowAttribute ("name");
       _right_filter->ShowAttribute ("first_name");
     }
-
-    Net::Ring::_broker->RegisterListener (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -405,7 +403,7 @@ namespace Table
         if (quick == FALSE)
         {
           if (    IsPlugged ()
-              && table->IsDisplayed ()
+              && table->IsHeaderDisplayed ()
               && (table->GetSize () > 1))
           {
             table->_status_item = Canvas::PutStockIconInTable (table->_header_item,
@@ -456,7 +454,7 @@ namespace Table
       {
         Table *table = _tables[t];
 
-        if (table->IsDisplayed ())
+        if (table->IsHeaderDisplayed ())
         {
           table->_header_item = goo_canvas_table_new (_main_table,
                                                       NULL);
@@ -1010,14 +1008,14 @@ namespace Table
       goo_canvas_item_get_bounds (data->_fencer_goo_table,
                                   &bounds);
 
-      if (G_NODE_IS_ROOT (node))
+      if (G_NODE_IS_ROOT (node) || (data->_table->IsHeaderDisplayed () == FALSE))
       {
         data->_connector = goo_canvas_polyline_new (table_set->GetRootItem (),
                                                     FALSE,
                                                     2,
                                                     bounds.x1 - _table_spacing/2, bounds.y2,
                                                     bounds.x2, bounds.y2,
-                                                    "line-width", 2.0,
+                                                    "line-width", 1.7,
                                                     NULL);
       }
       else if (   (G_NODE_IS_LEAF (node) == FALSE)
@@ -1039,7 +1037,7 @@ namespace Table
                                                       bounds.x1 - _table_spacing/2, bounds.y2,
                                                       parent_bounds.x1 - _table_spacing/2, bounds.y2,
                                                       parent_bounds.x1 - _table_spacing/2, parent_bounds.y2,
-                                                      "line-width", 2.0,
+                                                      "line-width", 1.7,
                                                       NULL);
           table_set->_html_table->Connect (data->_match,
                                            parent_data->_match);
@@ -1126,7 +1124,6 @@ namespace Table
         {
           data->_match_goo_table = goo_canvas_table_new (table_set->_main_table,
                                                          "column-spacing", table_set->_table_spacing,
-                                                         "fill-color",     "Grey95",
                                                          NULL);
           Canvas::PutInTable (table_set->_main_table,
                               data->_match_goo_table,
@@ -1141,18 +1138,20 @@ namespace Table
         {
           const gchar *match_name = data->_match->GetName ();
 
-          if (match_name == NULL)
+          if (   (match_name == NULL)
+              || data->_match->ExemptedMatch ())
           {
             match_name = (gchar *) "";
           }
 
           {
-            GooCanvasItem *number_item = Canvas::PutTextInTable (data->_fencer_goo_table,
+            GooCanvasItem *number_item = Canvas::PutTextInTable (data->_match_goo_table,
                                                                  match_name,
                                                                  0,
-                                                                 0);
+                                                                 1);
             Canvas::SetTableItemAttribute (number_item, "x-align", 0.0);
             Canvas::SetTableItemAttribute (number_item, "y-align", 0.5);
+            Canvas::SetTableItemAttribute (number_item, "rows",    2u);
             g_object_set (number_item,
                           "fill-color", "Grey",
                           "font",       BP_FONT "Bold 14px",
@@ -1197,7 +1196,8 @@ namespace Table
       // _score_goo_table
       if (   parent
           && (   data->_table->_is_over
-              || data->_table->_has_all_roadmap))
+              || data->_table->_has_all_roadmap)
+          && data->_table->IsHeaderDisplayed ())
       {
         data->_score_goo_table = goo_canvas_table_new (data->_fencer_goo_table, NULL);
         Canvas::PutInTable (data->_fencer_goo_table,
@@ -1419,7 +1419,7 @@ namespace Table
       }
 
       // score
-      if (data->_score_goo_table)
+      if (data->_score_goo_table && data->_table->IsHeaderDisplayed ())
       {
         NodeData *parent_data = (NodeData *) node->parent->data;
 
@@ -1961,7 +1961,7 @@ namespace Table
       _from_table = table;
       _to_table   = _from_table;
 
-      for (guint i = 0; i < 2; i++)
+      for (guint i = 0; i < 3; i++)
       {
         Table *right_table = _to_table->GetRightTable ();
 
@@ -1990,7 +1990,8 @@ namespace Table
 
           for (gint t = _nb_tables-from-1; t >= (gint) (_nb_tables-to); t--)
           {
-            _tables[t]->Show (column);
+            _tables[t]->Show (column,
+                              t > (gint) (_nb_tables-to));
             column++;
           }
         }
@@ -3448,8 +3449,11 @@ namespace Table
   {
     _has_marshaller = joined;
 
-    RefreshTableStatus ();
-    Display ();
+    if (_main_table)
+    {
+      RefreshTableStatus ();
+      Display ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -3570,6 +3574,7 @@ namespace Table
 
     ConnectDndDest (GTK_WIDGET (GetCanvas ()));
     EnableDndOnCanvas ();
+    Net::Ring::_broker->RegisterListener (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -3578,6 +3583,7 @@ namespace Table
     Wipe ();
 
     CanvasModule::OnUnPlugged ();
+    Net::Ring::_broker->UnregisterListener (this);
   }
 
   // --------------------------------------------------------------------------------

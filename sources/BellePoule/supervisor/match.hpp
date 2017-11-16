@@ -41,6 +41,8 @@ class Match : public Object,
 
     void SetNameSpace (const gchar *name_space);
 
+    gboolean ExemptedMatch ();
+
     Player *GetOpponent (guint position);
 
     Player *GetWinner  ();

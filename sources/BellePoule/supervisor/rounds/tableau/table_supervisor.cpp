@@ -1069,6 +1069,9 @@ namespace Table
 
     OnAttrListUpdated ();
     SetTableSetsState ();
+
+    gtk_widget_set_visible (_glade->GetWidget ("table_set_treeview"),
+                            _fenced_places->_value != NONE);
   }
 
   // --------------------------------------------------------------------------------

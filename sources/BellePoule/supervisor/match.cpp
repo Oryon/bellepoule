@@ -155,6 +155,21 @@ void Match::RestoreFencer (Player *fencer)
 }
 
 // --------------------------------------------------------------------------------
+gboolean Match::ExemptedMatch ()
+{
+  for (guint i = 0; i < 2; i++)
+  {
+    if (   (_opponents[i]._fencer == NULL)
+        && _opponents[i]._is_known)
+    {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 Player *Match::GetWinner ()
 {
   for (guint i = 0; i < 2; i++)

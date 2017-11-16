@@ -72,11 +72,13 @@ namespace Table
                                                           undivadable,
                                                           row,
                                                           column);
+            Canvas::SetTableItemAttribute (item, "top-padding",   5.0);
+            Canvas::SetTableItemAttribute (item, "right-padding", 2.0);
             Canvas::SetTableItemAttribute (item, "x-align", 1.0);
             Canvas::SetTableItemAttribute (item, "y-align", 0.5);
             g_object_set (item,
                           "font",       BP_FONT "Bold Italic 12px",
-                          "fill-color", "blue",
+                          "fill-color", "DarkGreen",
                           NULL);
 
             g_free (undivadable);
@@ -90,6 +92,7 @@ namespace Table
                                 referee_table,
                                 row + 1,
                                 column);
+            Canvas::SetTableItemAttribute (referee_table, "right-padding", 2.0);
 
             for (guint i = 0; current != NULL; i++)
             {
@@ -119,8 +122,8 @@ namespace Table
                 Canvas::SetTableItemAttribute (item, "x-align", 1.0);
                 Canvas::SetTableItemAttribute (item, "y-align", 0.5);
                 g_object_set (item,
-                              "font",       BP_FONT "Bold Italic 12px",
-                              "fill-color", "blue",
+                              "font",       BP_FONT "12px",
+                              "fill-color", "DarkGreen",
                               NULL);
 
                 g_free (name);

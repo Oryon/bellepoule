@@ -452,20 +452,24 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::RegisterListener (Listener *listener)
   {
-    _listeners = g_list_prepend (_listeners,
-                                 listener);
-
+    if (g_list_find (_listeners,
+                     listener) == NULL)
     {
-      GList *current = _partner_list;
+      _listeners = g_list_prepend (_listeners,
+                                   listener);
 
-      while (current)
       {
-        Partner *partner = (Partner *) current->data;
+        GList *current = _partner_list;
 
-        NotifyPartnerStatus (partner,
-                             TRUE);
+        while (current)
+        {
+          Partner *partner = (Partner *) current->data;
 
-        current = g_list_next (current);
+          NotifyPartnerStatus (partner,
+                               TRUE);
+
+          current = g_list_next (current);
+        }
       }
     }
   }

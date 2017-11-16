@@ -59,7 +59,8 @@ namespace Table
 
       guint GetNumber ();
 
-      void Show (guint at_column);
+      void Show (guint    at_column,
+                 gboolean display_header);
 
       void Hide ();
 
@@ -78,6 +79,8 @@ namespace Table
       void Load (xmlNode *xml_node);
 
       gboolean IsDisplayed ();
+
+      gboolean IsHeaderDisplayed ();
 
       void ManageMatch (Match *match,
                         ...);
@@ -111,6 +114,7 @@ namespace Table
       guint         _number;
       guint         _column;
       gboolean      _is_displayed;
+      gboolean      _is_header_displayed;
       gboolean      _loaded;
       Table        *_left_table;
       Table        *_right_table;
