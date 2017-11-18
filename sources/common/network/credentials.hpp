@@ -17,38 +17,28 @@
 #pragma once
 
 #include "util/object.hpp"
+#include "util/flash_code.hpp"
 
 namespace Net
 {
-  class Message;
-  class MessageUploader;
-
-  class Partner : public Object
+  class Credentials : public FlashCode
   {
     public:
-      Partner (Message *message);
+      Credentials (const gchar *name,
+                   const gchar *ip_address,
+                   guint        port,
+                   const gchar *key);
 
-      void SetPassPhrase256 (const gchar *passphrase256);
-
-      void SendMessage (Message *message);
-
-      gboolean Is (Partner *partner);
-
-      gboolean HasRole (const gchar *role);
-
-      const gchar *GetRole ();
-
-      const gchar *GetAddress ();
-
-      guint GetPort ();
+      gchar *GetKey ();
 
     private:
-      gchar           *_role;
-      gchar           *_address;
-      guint            _port;
-      MessageUploader *_uploader;
-      gchar           *_passphrase256;
+      guint  _port;
+      gchar *_ip;
+      gchar *_key;
+      gchar *_name;
 
-      ~Partner ();
+      virtual ~Credentials ();
+
+      gchar *GetText ();
   };
 }

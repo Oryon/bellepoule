@@ -73,7 +73,7 @@ namespace Net
       HttpPost           _http_POST_cbk;
       HttpGet            _http_GET_cbk;
       Cryptor           *_cryptor;
-      guchar            *_iv;
+      gchar             *_iv;
 
       virtual ~HttpServer ();
 

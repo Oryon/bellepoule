@@ -20,11 +20,13 @@
 #include "util/glade.hpp"
 #include "network/downloader.hpp"
 #include "network/web_server.hpp"
+#include "network/ring.hpp"
 
 class Contest;
 class Publication;
 
-class Tournament : public Module
+class Tournament : public Module,
+                   public Net::Ring::HandshakeListener
 {
   public:
     Tournament ();
@@ -63,6 +65,8 @@ class Tournament : public Module
 
     void OpenUriContest (const gchar *uri);
 
+    void OnShowAccessCode (gboolean with_steps);
+
     Publication *GetPublication ();
 
     gboolean OnHttpPost (Net::Message *message);
@@ -86,6 +90,8 @@ class Tournament : public Module
     Contest *GetContest (guint netid);
 
     void SetBackupLocation (gchar *location);
+
+    void OnHanshakeResult (gboolean passed);
 
     static gboolean RecentFileExists (const GtkRecentFilterInfo *filter_info,
                                       Tournament                *tournament);

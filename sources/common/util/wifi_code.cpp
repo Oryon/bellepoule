@@ -89,36 +89,7 @@ gchar *WifiCode::GetKey ()
 {
   if (_key == NULL)
   {
-    static const guint32  data_length = 256 / 8;
-    GRand                *random      = g_rand_new ();
-
-    _key = g_new (gchar, data_length+1);
-    for (guint i = 0; i < data_length; i++)
-    {
-      guint ascii_set = g_rand_int_range (random, 0, 3);
-
-      if (ascii_set == 0)
-      {
-        _key[i] = g_rand_int_range (random,
-                                    '0',
-                                    '9');
-      }
-      else if (ascii_set == 1)
-      {
-        _key[i] = g_rand_int_range (random,
-                                    'A',
-                                    'Z');
-      }
-      else
-      {
-        _key[i] = g_rand_int_range (random,
-                                    'a',
-                                    'z');
-      }
-    }
-    _key[data_length] = '\0';
-
-    g_rand_free (random);
+    _key = GetKey256 ();
 
     if (_player)
     {

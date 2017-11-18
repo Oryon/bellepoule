@@ -102,17 +102,11 @@ namespace Net
 
     if (passphrase)
     {
-      guchar *iv;
-      char   *crypted;
-
-      crypted = _cryptor->Encrypt (data_copy,
-                                   passphrase,
-                                   &iv);
+      char *crypted = _cryptor->Encrypt (data_copy,
+                                         passphrase,
+                                         &_iv);
       SetDataCopy (crypted);
       g_free (data_copy);
-
-      _iv = g_base64_encode (iv, 16);
-      g_free (iv);
     }
     else
     {
@@ -203,12 +197,12 @@ namespace Net
         else if (message->Is ("MessageUploader::raw_content"))
         {
           uploader->PrepareData (message->GetString ("content"),
-                                 message->GetPassPhrase ());
+                                 message->GetPassPhrase256 ());
         }
         else
         {
           uploader->PrepareData (message->GetParcel (),
-                                 message->GetPassPhrase ());
+                                 message->GetPassPhrase256 ());
         }
 
         g_idle_add ((GSourceFunc) OnMessageUsed,

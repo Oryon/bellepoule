@@ -22,7 +22,7 @@
 FlashCode::FlashCode (const gchar *text)
   : Object ("FlashCode")
 {
-  _text = g_strdup_printf ("%s", text);
+  _text = g_strdup (text);
 }
 
 // --------------------------------------------------------------------------------
@@ -108,4 +108,41 @@ GdkPixbuf *FlashCode::GetPixbuf (guint pixel_size)
   }
 
   return pixbuf;
+}
+
+// --------------------------------------------------------------------------------
+gchar *FlashCode::GetKey256 ()
+{
+  static const guint32  data_length = 256 / 8;
+  GRand                *random      = g_rand_new ();
+  gchar                *key         = g_new (gchar, data_length+1);
+
+  for (guint i = 0; i < data_length; i++)
+  {
+    guint ascii_set = g_rand_int_range (random, 0, 3);
+
+    if (ascii_set == 0)
+    {
+      key[i] = g_rand_int_range (random,
+                                 '0',
+                                 '9');
+    }
+    else if (ascii_set == 1)
+    {
+      key[i] = g_rand_int_range (random,
+                                 'A',
+                                 'Z');
+    }
+    else
+    {
+      key[i] = g_rand_int_range (random,
+                                 'a',
+                                 'z');
+    }
+  }
+  key[data_length] = '\0';
+
+  g_rand_free (random);
+
+  return key;
 }

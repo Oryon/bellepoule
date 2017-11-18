@@ -27,6 +27,8 @@ class FlashCode : public Object
 
     virtual gchar *GetText ();
 
+    static gchar *GetKey256 ();
+
   protected:
     gchar *_text;
 

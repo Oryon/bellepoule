@@ -353,12 +353,6 @@
 		<Unit filename="../../sources/BellePoule/supervisor/contest.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/publication.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/publication.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/error.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
@@ -369,6 +363,12 @@
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/match.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/publication.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/publication.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/barrage/barrage.cpp">
@@ -553,6 +553,12 @@
 		</Unit>
 		<Unit filename="../../sources/common/network/advertiser.hpp">
 			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/credentials.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/credentials.hpp">
+			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/cryptor.cpp">
 			<Option target="Lib_Debug" />

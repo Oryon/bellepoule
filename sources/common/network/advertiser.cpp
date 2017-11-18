@@ -35,7 +35,6 @@ namespace Net
     _pending_response = FALSE;
 
     {
-
       gchar    *png  = g_strdup_printf ("%s.png", name);
       GtkImage *logo = GTK_IMAGE (_glade->GetWidget ("logo"));
       gchar    *path = g_build_filename (Global::_share_dir, "resources", "glade", "images", png, NULL);

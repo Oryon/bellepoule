@@ -41,9 +41,9 @@ namespace Net
 
       void Recall ();
 
-      void SetPassPhrase (const gchar *passphrase);
+      void SetPassPhrase256 (const gchar *passphrase256);
 
-      const gchar *GetPassPhrase ();
+      const gchar *GetPassPhrase256 ();
 
       void SetFitness (const guint value);
 
@@ -75,7 +75,7 @@ namespace Net
       gboolean  _spread;
       gboolean  _is_valid;
       GKeyFile *_key_file;
-      gchar    *_passphrase;
+      gchar    *_passphrase256;
 
       Message ();
 

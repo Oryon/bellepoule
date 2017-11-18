@@ -40,24 +40,29 @@ namespace Net
   // ----------------------------------------------------------------------------------------------
   gchar *Cryptor::Encrypt (const gchar  *text,
                            const gchar  *key,
-                           guchar      **iv)
+                           gchar       **iv_b64)
   {
     gchar          *base64_text;
-    EVP_CIPHER_CTX *cipher = EVP_CIPHER_CTX_new ();
-    guint           text_len    = strlen ((gchar *) text) + 1;
+    EVP_CIPHER_CTX *cipher      = EVP_CIPHER_CTX_new ();
+    guint           text_len    = strlen (text) + 1;
     guchar         *cipher_txt  = g_new (guchar, text_len + AES_BLOCK_SIZE);
     gint            written_len;
     gint            cipher_len;
 
-    *iv = GetIv ();
+    {
+      guchar *iv = GetIv ();
 
-    EVP_CIPHER_CTX_init (cipher);
+      EVP_CIPHER_CTX_init (cipher);
 
-    EVP_EncryptInit_ex (cipher,
-                        EVP_aes_256_cbc (),
-                        NULL,
-                        (guchar *) key,
-                        *iv);
+      EVP_EncryptInit_ex (cipher,
+                          EVP_aes_256_cbc (),
+                          NULL,
+                          (guchar *) key,
+                          iv);
+
+      *iv_b64 = g_base64_encode (iv, 16);
+      g_free (iv);
+    }
 
     EVP_EncryptUpdate (cipher,
                        cipher_txt, &written_len,
@@ -80,20 +85,22 @@ namespace Net
   }
 
   // ----------------------------------------------------------------------------------------------
-  gchar *Cryptor::Decrypt (gchar        *data,
-                           const guchar *iv,
-                           const gchar  *key)
+  gchar *Cryptor::Decrypt (gchar       *data,
+                           const gchar *iv_b64,
+                           const gchar *key)
   {
-    if (iv && data)
+    if (iv_b64 && data)
     {
       gsize   cipher_len;
       guchar *cipher_bytes = g_base64_decode (data,
                                               &cipher_len);
 
-      if (iv && cipher_bytes)
+      if (cipher_bytes)
       {
-        EVP_CIPHER_CTX *cipher = EVP_CIPHER_CTX_new ();
+        EVP_CIPHER_CTX *cipher      = EVP_CIPHER_CTX_new ();
         gint            written_len;
+        gsize           iv_len;
+        guchar         *iv          = g_base64_decode (iv_b64, &iv_len);
         gint            plain_len;
         guchar         *plaintext   = g_new (guchar, cipher_len+1); // Including provision for
                                                                     // the missing NULL char
@@ -121,6 +128,7 @@ namespace Net
         EVP_CIPHER_CTX_free (cipher);
 
         g_free (cipher_bytes);
+        g_free (iv);
 
         return (gchar *) plaintext;
       }

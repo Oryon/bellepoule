@@ -605,17 +605,6 @@ void Application::OnDownloaderData (Net::Downloader  *downloader,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Application::OnHttpPost (Net::Message *message)
-{
-  if (message->Is ("Handshake"))
-  {
-    Net::Ring::_broker->Handshake (message);
-    return TRUE;
-  }
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
 gchar *Application::OnHttpGet (const gchar *url)
 {
   return NULL;

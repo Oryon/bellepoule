@@ -27,11 +27,11 @@ namespace Net
 
       gchar *Encrypt (const gchar  *text,
                       const gchar  *key,
-                      guchar      **iv);
+                      gchar       **iv_b64);
 
-      gchar *Decrypt (gchar        *data,
-                      const guchar *_iv,
-                      const gchar  *key);
+      gchar *Decrypt (gchar       *data,
+                      const gchar *iv_b64,
+                      const gchar *key);
 
     private:
       GRand *_rand;

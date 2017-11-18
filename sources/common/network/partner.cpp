@@ -28,13 +28,15 @@ namespace Net
   {
     _role = message->GetString ("role");
 
+    _passphrase256 = NULL;
+
     {
       gchar *ip   = message->GetString ("ip_address");
       guint  port = message->GetInteger ("unicast_port");
 
       if (ip)
       {
-        gchar *url = g_strdup_printf ("http://%s:%d", ip, port);
+        gchar *url = g_strdup_printf ("http://%s:%d/ring", ip, port);
 
         _uploader = new Net::MessageUploader (url);
         _address  = g_strdup (ip);
@@ -51,6 +53,7 @@ namespace Net
   {
     g_free (_role);
     g_free (_address);
+    g_free (_passphrase256);
 
     _uploader->Stop ();
   }
@@ -62,15 +65,30 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  const gchar *Partner::GetRole ()
+  {
+    return _role;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Partner::Is (Partner *partner)
   {
     return HasRole (partner->_role);
   }
 
   // --------------------------------------------------------------------------------
+  void Partner::SetPassPhrase256 (const gchar *passphrase256)
+  {
+    g_free (_passphrase256);
+    _passphrase256 = g_strdup (passphrase256);
+  }
+
+  // --------------------------------------------------------------------------------
   void Partner::SendMessage (Message *message)
   {
     message->Dump (FALSE);
+
+    message->SetPassPhrase256 (_passphrase256);
     _uploader->PushMessage (message);
   }
 

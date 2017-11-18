@@ -22,13 +22,17 @@
 #endif
 
 #include "util/object.hpp"
+#include "util/global.hpp"
+#include "credentials.hpp"
 #include "partner.hpp"
 #include "message.hpp"
+#include "cryptor.hpp"
 #include "ring.hpp"
 
 namespace Net
 {
   const gchar *Ring::ANNOUNCE_GROUP = "225.0.0.35";
+  const gchar *Ring::SECRET         = "tagada soinsoin";
 
   Ring *Ring::_broker = NULL;
 
@@ -38,19 +42,31 @@ namespace Net
               GtkWidget   *partner_indicator)
     : Object ("Ring")
   {
-    _ip_address        = NULL;
-    _partner_list      = NULL;
-    _message_list      = NULL;
-    _listeners         = NULL;
-    _multicast_address = NULL;
-    _role              = g_strdup (role);
-    _unicast_port      = unicast_port;
+    _ip_address         = NULL;
+    _partner_list       = NULL;
+    _message_list       = NULL;
+    _listeners          = NULL;
+    _handshake_listener = NULL;
+    _multicast_address  = NULL;
+    _role               = g_strdup (role);
+    _unicast_port       = unicast_port;
+    _credentials        = NULL;
 
     _partner_indicator = partner_indicator;
-    if (_partner_indicator)
+    DisplayIndicator (NULL);
+
     {
-      gtk_widget_set_sensitive (_partner_indicator, FALSE);
-      gtk_widget_set_tooltip_text (_partner_indicator, "");
+      gchar *passphrase = g_key_file_get_string (Global::_user_config->_key_file,
+                                                 "Ring", "passphrase",
+                                                 NULL);
+
+      if (passphrase == NULL)
+      {
+        passphrase = FlashCode::GetKey256 ();
+      }
+
+      ChangePassphrase (passphrase);
+      g_free (passphrase);
     }
 
     // Multicast listener
@@ -101,12 +117,55 @@ namespace Net
   // --------------------------------------------------------------------------------
   Ring::~Ring ()
   {
+    _credentials->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Ring::DisplayIndicator (Partner *partner)
+  {
+    if (_partner_indicator)
+    {
+      gchar *icon;
+
+      if (partner)
+      {
+        gchar *tooltip = g_strdup_printf ("%s:<b>%d</b>",
+                                          partner->GetAddress (),
+                                          partner->GetPort ());
+
+        icon = g_build_filename (Global::_share_dir, "resources", "glade", "images", "network.png", NULL);
+        gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (_partner_indicator));
+        gtk_widget_set_tooltip_markup (_partner_indicator,
+                                       tooltip);
+
+        g_free (tooltip);
+      }
+      else
+      {
+        icon = g_build_filename (Global::_share_dir, "resources", "glade", "images", "network-ko.png", NULL);
+        gtk_widget_set_tooltip_text (_partner_indicator, "");
+      }
+
+      {
+        GtkWidget *image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (_partner_indicator));
+
+        gtk_image_set_from_file (GTK_IMAGE (image),
+                                 icon);
+      }
+      g_free (icon);
+    }
   }
 
   // --------------------------------------------------------------------------------
   const gchar *Ring::GetRole ()
   {
     return _role;
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Ring::GetCryptorKey ()
+  {
+    return _credentials->GetKey ();
   }
 
   // --------------------------------------------------------------------------------
@@ -178,12 +237,24 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Ring::Handshake (Message *message)
+  void Ring::OnHandshake (Message           *message,
+                          HandshakeListener *listener)
   {
-    Partner *partner = new Partner (message);
+    _handshake_listener = listener;
 
-    Add (partner);
-    partner->Release ();
+    if (message->GetInteger ("unicast_port"))
+    {
+      Partner *partner = new Partner (message);
+
+      Add (partner);
+      partner->Release ();
+
+      _handshake_listener->OnHanshakeResult (TRUE);
+    }
+    else
+    {
+      _handshake_listener->OnHanshakeResult (FALSE);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -194,6 +265,26 @@ namespace Net
     message->Set ("role",         _role);
     message->Set ("ip_address",   _ip_address);
     message->Set ("unicast_port", _unicast_port);
+
+    // Add secret challenge to message
+    {
+      gchar   *iv;
+      char    *crypted;
+      char    *key     = _credentials->GetKey ();
+      Cryptor *cryptor = new Cryptor ();
+
+      crypted = cryptor->Encrypt (SECRET,
+                                  key,
+                                  &iv);
+      message->Set ("iv",     iv);
+      message->Set ("secret", crypted);
+
+      g_free (iv);
+      g_free (crypted);
+      g_free (key);
+
+      cryptor->Release ();
+    }
 
     Multicast (message);
     message->Release ();
@@ -273,14 +364,21 @@ namespace Net
         {
           if (message->Is ("Announcement"))
           {
-            ring->Remove (role);
+            Partner *partner = new Partner (message);
 
+            if (ring->DecryptSecret (message))
             {
-              Partner *partner = new Partner (message);
-
+              ring->SendHandshake (partner,
+                                   TRUE);
               ring->Add (partner);
-              partner->Release ();
             }
+            else
+            {
+              ring->SendHandshake (partner,
+                                   FALSE);
+            }
+
+            partner->Release ();
           }
           else if (message->Is ("Farewell"))
           {
@@ -297,45 +395,34 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  void Ring::Add (Partner *partner)
+  void Ring::SendHandshake (Partner  *partner,
+                            gboolean  authorized)
   {
+    Message *message = new Message ("Handshake");
+
+    if (authorized)
     {
-      GList *current = _partner_list;
-
-      while (current)
-      {
-        if (partner->Is ((Partner *) current->data))
-        {
-          return;
-        }
-
-        current = g_list_next (current);
-      }
-    }
-
-    if (_partner_indicator)
-    {
-      gchar *tooltip = g_strdup_printf ("%s:<b>%d</b>",
-                                        partner->GetAddress (),
-                                        partner->GetPort ());
-
-      gtk_widget_set_sensitive (_partner_indicator, TRUE);
-      gtk_widget_set_tooltip_markup (_partner_indicator,
-                                     tooltip);
-
-      g_free (tooltip);
-    }
-
-    {
-      Message *message = new Message ("Handshake");
+      char *key = _credentials->GetKey ();
 
       message->Set ("role",         _role);
       message->Set ("ip_address",   _ip_address);
       message->Set ("unicast_port", _unicast_port);
-      partner->SendMessage (message);
-      message->Release ();
+
+      partner->SetPassPhrase256 (key);
+      g_free (key);
     }
 
+    message->SetFitness (1);
+    partner->SendMessage (message);
+    message->Release ();
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::Add (Partner *partner)
+  {
+    DisplayIndicator (partner);
+
+    Remove (partner->GetRole ());
     partner->Retain ();
     _partner_list = g_list_prepend (_partner_list,
                                     partner);
@@ -355,11 +442,7 @@ namespace Net
 
       if (partner->HasRole (role))
       {
-        if (_partner_indicator)
-        {
-          gtk_widget_set_sensitive (_partner_indicator, FALSE);
-          gtk_widget_set_tooltip_text (_partner_indicator, "");
-        }
+        DisplayIndicator (NULL);
 
         _partner_list = g_list_delete_link (_partner_list,
                                             current);
@@ -520,6 +603,60 @@ namespace Net
 
       current = g_list_next (current);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Ring::ChangePassphrase (const gchar *passphrase)
+  {
+    gchar *ip_address = GuessIpV4Address ();
+
+    g_key_file_set_string (Global::_user_config->_key_file,
+                           "Ring", "passphrase", passphrase);
+
+    Object::TryToRelease (_credentials);
+    _credentials = new Credentials (_role,
+                                    ip_address,
+                                    _unicast_port,
+                                    passphrase);
+    g_free (ip_address);
+  }
+
+  // --------------------------------------------------------------------------------
+  FlashCode *Ring::GetFlashCode ()
+  {
+    return _credentials;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Ring::DecryptSecret (Message *message)
+  {
+    gboolean decoded = FALSE;
+    gchar   *crypted = message->GetString ("secret");
+    gchar   *iv      = message->GetString ("iv");
+
+    if (crypted && iv)
+    {
+      Cryptor *cryptor = new Cryptor ();
+      gchar   *key     = _credentials->GetKey ();
+      gchar   *secret;
+
+      secret = cryptor->Decrypt (crypted,
+                                 iv,
+                                 key);
+
+      if (g_ascii_strcasecmp (secret, SECRET) == 0)
+      {
+        decoded = TRUE;
+      }
+
+      g_free (key);
+      g_free (secret);
+      cryptor->Release ();
+    }
+    g_free (crypted);
+    g_free (iv);
+
+    return decoded;
   }
 
   // --------------------------------------------------------------------------------

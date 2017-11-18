@@ -17,6 +17,7 @@
 #pragma once
 
 #include "util/module.hpp"
+#include "network/ring.hpp"
 #include "actors/referees_list.hpp"
 #include "referee_pool.hpp"
 #include "hall.hpp"
@@ -28,7 +29,8 @@ namespace Marshaller
   class Marshaller :
     public Module,
     public People::RefereesList::Listener,
-    public Hall::Listener
+    public Hall::Listener,
+    public Net::Ring::HandshakeListener
   {
     public:
       Marshaller ();
@@ -44,6 +46,8 @@ namespace Marshaller
       gchar *GetSecretKey (const gchar *authentication_scheme);
 
       void OnMenuDialog (const gchar *dialog);
+
+      void OnShowAccessCode (gboolean with_steps);
 
       void PrintMealTickets ();
 
@@ -78,5 +82,7 @@ namespace Marshaller
                      gint               page_nr);
 
       GList *GetRefereeList ();
+
+      void OnHanshakeResult (gboolean passed);
   };
 }

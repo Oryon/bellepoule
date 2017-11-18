@@ -23,10 +23,10 @@ namespace Net
   Message::Message ()
     : Object ("Message")
   {
-    _spread     = FALSE;
-    _passphrase = NULL;
-    _is_valid   = TRUE;
-    _key_file   = g_key_file_new ();
+    _spread        = FALSE;
+    _passphrase256 = NULL;
+    _is_valid      = TRUE;
+    _key_file      = g_key_file_new ();
   }
 
   // --------------------------------------------------------------------------------
@@ -53,24 +53,27 @@ namespace Net
   Message::Message (const guint8 *data)
     : Message ()
   {
-    GError *error = NULL;
-
-    if (g_key_file_load_from_data (_key_file,
-                                   (const gchar *) data,
-                                   -1,
-                                   G_KEY_FILE_NONE,
-                                   &error) == FALSE)
+    if (data)
     {
-      g_warning ("Message::Message: %s", error->message);
-      _is_valid = FALSE;
-      g_clear_error (&error);
+      GError *error = NULL;
+
+      if (g_key_file_load_from_data (_key_file,
+                                     (const gchar *) data,
+                                     -1,
+                                     G_KEY_FILE_NONE,
+                                     &error) == FALSE)
+      {
+        g_warning ("Message::Message: %s", error->message);
+        _is_valid = FALSE;
+        g_clear_error (&error);
+      }
     }
   }
 
   // --------------------------------------------------------------------------------
   Message::~Message ()
   {
-    g_free (_passphrase);
+    g_free (_passphrase256);
     g_key_file_free (_key_file);
   }
 
@@ -80,7 +83,7 @@ namespace Net
     Message *clone = new Message ();
 
     clone->_is_valid = _is_valid;
-    clone->_passphrase = g_strdup (_passphrase);
+    clone->SetPassPhrase256 (_passphrase256);
 
     {
       gchar *data = g_key_file_to_data (_key_file,
@@ -168,16 +171,25 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Message::SetPassPhrase (const gchar *passphrase)
+  void Message::SetPassPhrase256 (const gchar *passphrase256)
   {
-    g_free (_passphrase);
-    _passphrase = g_strdup (passphrase);
+    g_free (_passphrase256);
+    _passphrase256 = NULL;
+
+    if (passphrase256)
+    {
+      _passphrase256 = g_new (gchar, 256/8 + 1);
+
+      memcpy (_passphrase256,
+              passphrase256,
+              (256/8) + 1);
+    }
   }
 
   // --------------------------------------------------------------------------------
-  const gchar *Message::GetPassPhrase ()
+  const gchar *Message::GetPassPhrase256 ()
   {
-    return _passphrase;
+    return _passphrase256;
   }
 
   // --------------------------------------------------------------------------------

@@ -99,6 +99,46 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Marshaller::OnShowAccessCode (gboolean with_steps)
+  {
+    {
+      GtkWidget *w;
+
+      w = _glade->GetWidget ("step1");
+      gtk_widget_set_visible (w, with_steps);
+
+      w = _glade->GetWidget ("step2");
+      gtk_widget_set_visible (w, with_steps);
+    }
+
+    {
+      GtkDialog *dialog = GTK_DIALOG (_glade->GetWidget ("pin_code_dialog"));
+
+      {
+        FlashCode *flash_code = Net::Ring::_broker->GetFlashCode ();
+        GdkPixbuf *pixbuf     = flash_code->GetPixbuf ();
+        GtkImage  *image      = GTK_IMAGE (_glade->GetWidget ("qrcode_image"));
+
+        gtk_image_set_from_pixbuf (image,
+                                   pixbuf);
+        g_object_unref (pixbuf);
+      }
+
+      RunDialog (dialog);
+      gtk_widget_hide (GTK_WIDGET (dialog));
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Marshaller::OnHanshakeResult (gboolean passed)
+  {
+    if (passed == FALSE)
+    {
+      OnShowAccessCode (TRUE);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Marshaller::OnHttpPost (Net::Message *message)
   {
     if (message->GetFitness () > 0)
@@ -133,6 +173,20 @@ namespace Marshaller
       {
         _referee_pool->ManageHandShake (message);
         return TRUE;
+      }
+      else if (message->Is ("Handshake"))
+      {
+        Net::Ring::_broker->OnHandshake (message,
+                                         this);
+      }
+      else if (message->Is ("MarshallerCredentials"))
+      {
+        GtkDialog *dialog = GTK_DIALOG (_glade->GetWidget ("pin_code_dialog"));
+
+        gtk_dialog_response (dialog,
+                             GTK_RESPONSE_OK);
+
+        Net::Ring::_broker->AnnounceAvailability ();
       }
     }
     else
@@ -169,22 +223,30 @@ namespace Marshaller
 
     if (authentication_scheme)
     {
-      gchar **tokens = g_strsplit_set (authentication_scheme,
-                                       "/",
-                                       0);
-
-      if (tokens)
+      if (   (g_strcmp0 (authentication_scheme, "/ring") == 0)
+          || (g_strcmp0 (authentication_scheme, "/MarshallerCredentials/0") == 0))
       {
-        if (tokens[0] && tokens[1] && tokens[2])
-        {
-          guint            ref     = atoi (tokens[2]);
-          EnlistedReferee *referee = _referee_pool->GetReferee (ref);
+        return Net::Ring::_broker->GetCryptorKey ();
+      }
+      else
+      {
+        gchar **tokens = g_strsplit_set (authentication_scheme,
+                                         "/",
+                                         0);
 
-          if (referee)
+        if (tokens)
+        {
+          if (tokens[0] && tokens[1] && tokens[2])
           {
-            wifi_code = (WifiCode *) referee->GetFlashCode ();
+            guint            ref     = atoi (tokens[2]);
+            EnlistedReferee *referee = _referee_pool->GetReferee (ref);
+
+            if (referee)
+            {
+              wifi_code = (WifiCode *) referee->GetFlashCode ();
+            }
+            g_strfreev (tokens);
           }
-          g_strfreev (tokens);
         }
       }
     }
@@ -737,5 +799,14 @@ namespace Marshaller
     Marshaller *m = dynamic_cast <Marshaller *> (owner);
 
     m->PrintPaymentBook ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_access_code_activate (GtkWidget *w,
+                                                           Object    *owner)
+  {
+    Marshaller *m = dynamic_cast <Marshaller *> (owner);
+
+    m->OnShowAccessCode (FALSE);
   }
 }

@@ -51,7 +51,7 @@ class Application :
 
     virtual ~Application ();
 
-    virtual gboolean OnHttpPost (Net::Message *message);
+    virtual gboolean OnHttpPost (Net::Message *message) = 0;
 
     virtual gchar *OnHttpGet (const gchar *url);
 

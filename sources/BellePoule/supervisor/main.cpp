@@ -58,7 +58,7 @@ class BellPouleApp : public Application
 // --------------------------------------------------------------------------------
 BellPouleApp::BellPouleApp (int    *argc,
                             char ***argv)
-  : Application ("BellePoule", "BellePoule", 35830, argc, argv)
+  : Application ("Supervisor", "BellePoule", 35830, argc, argv)
 {
 }
 
@@ -124,12 +124,7 @@ void BellPouleApp::Start (int    argc,
 // --------------------------------------------------------------------------------
 gboolean BellPouleApp::OnHttpPost (Net::Message *message)
 {
-  if (Application::OnHttpPost (message) == FALSE)
-  {
-    return _tournament->OnHttpPost (message);
-  }
-
-  return FALSE;
+  return _tournament->OnHttpPost (message);
 }
 
 // --------------------------------------------------------------------------------

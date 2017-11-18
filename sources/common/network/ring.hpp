@@ -24,16 +24,21 @@ namespace Net
 {
   class Message;
   class Partner;
+  class Credentials;
 
   class Ring : public Object,
                public Object::Listener
   {
     public:
-      class Listener
+      struct Listener
       {
-        public:
-          virtual void OnPartnerJoined (Partner  *partner,
-                                        gboolean  joined) = 0;
+        virtual void OnPartnerJoined (Partner  *partner,
+                                      gboolean  joined) = 0;
+      };
+
+      struct HandshakeListener
+      {
+        virtual void OnHanshakeResult (gboolean passed) = 0;
       };
 
     public:
@@ -45,13 +50,16 @@ namespace Net
 
       void Leave ();
 
-      void Handshake (Message *message);
+      void OnHandshake (Message           *message,
+                        HandshakeListener *listener);
 
       void SpreadMessage (Message *message);
 
       void RecallMessage (Message *message);
 
       const gchar *GetRole ();
+
+      gchar *GetCryptorKey ();
 
       void RegisterListener (Listener *listener);
 
@@ -62,7 +70,13 @@ namespace Net
 
       Partner *GetPartner (const gchar *role);
 
+      FlashCode *GetFlashCode ();
+
       const gchar *GetIpV4Address ();
+
+      void AnnounceAvailability ();
+
+      void ChangePassphrase (const gchar *passphrase);
 
     private:
       Ring (const gchar *role,
@@ -74,23 +88,24 @@ namespace Net
     private:
       static const gchar *ANNOUNCE_GROUP;
       static const guint  ANNOUNCE_PORT = 35000;
+      static const gchar *SECRET;
 
-      gchar          *_role;
-      gchar          *_ip_address;
-      guint           _unicast_port;
-      GList          *_partner_list;
-      GList          *_message_list;
-      GtkWidget      *_partner_indicator;
-      GList          *_listeners;
-      GSocketAddress *_multicast_address;
+      gchar             *_role;
+      gchar             *_ip_address;
+      guint              _unicast_port;
+      GList             *_partner_list;
+      GList             *_message_list;
+      GtkWidget         *_partner_indicator;
+      GList             *_listeners;
+      HandshakeListener *_handshake_listener;
+      GSocketAddress    *_multicast_address;
+      Credentials       *_credentials;
 
       void Add (Partner *partner);
 
       void Remove (const gchar *role);
 
       void Synchronize (Partner *partner);
-
-      void AnnounceAvailability ();
 
       void Multicast (Message *message);
 
@@ -105,5 +120,12 @@ namespace Net
       gchar *GuessIpV4Address ();
 
       void OnObjectDeleted (Object *object);
+
+      void DisplayIndicator (Partner *partner);
+
+      void SendHandshake (Partner  *partner,
+                          gboolean  authorized);
+
+      gboolean DecryptSecret (Message *message);
   };
 }

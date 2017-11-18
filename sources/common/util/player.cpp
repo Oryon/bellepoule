@@ -802,7 +802,7 @@ gboolean Player::SendMessage (Net::Message *message)
         Attribute           *attr       = GetAttribute (&pass_attr_id);
         gchar               *passphrase = attr->GetStrValue ();
 
-        message->SetPassPhrase (passphrase);
+        message->SetPassPhrase256 (passphrase);
         uploader->PushMessage (message);
       }
 

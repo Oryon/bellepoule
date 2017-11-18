@@ -180,47 +180,55 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
 
   if (authentication_scheme)
   {
-    gchar **tokens = g_strsplit_set (authentication_scheme,
-                                     "/",
-                                     0);
-
-    if (tokens)
+    if (   (g_strcmp0 (authentication_scheme, "/ring") == 0)
+        || (g_strcmp0 (authentication_scheme, "/MarshallerCredentials/0") == 0))
     {
-      if (tokens[0] && tokens[1] && tokens[2])
+      return Net::Ring::_broker->GetCryptorKey ();
+    }
+    else
+    {
+      gchar **tokens = g_strsplit_set (authentication_scheme,
+                                       "/",
+                                       0);
+
+      if (tokens)
       {
-        guint ref = atoi (tokens[2]);
-
-        if (ref == 0)
+        if (tokens[0] && tokens[1] && tokens[2])
         {
-          g_warning ("Tournament::GetSecretKey");
-          //WifiCode *wifi_code = _publication->GetAdminCode ();
+          guint ref = atoi (tokens[2]);
 
-          //key = wifi_code->GetKey ();
-        }
-        else
-        {
-          GList *current = _contest_list;
-
-          while (current)
+          if (ref == 0)
           {
-            Contest *contest = (Contest *) current->data;
-            Player  *referee = contest->GetRefereeFromRef (ref);
+            g_warning ("Tournament::GetSecretKey");
+            //WifiCode *wifi_code = _publication->GetAdminCode ();
 
-            if (referee)
-            {
-              Player::AttributeId  attr_id ("password");
-              Attribute           *attr   = referee->GetAttribute (&attr_id);
-
-              if (attr)
-              {
-                key = g_strdup (attr->GetStrValue ());
-                break;
-              }
-            }
-            current = g_list_next (current);
+            //key = wifi_code->GetKey ();
           }
+          else
+          {
+            GList *current = _contest_list;
+
+            while (current)
+            {
+              Contest *contest = (Contest *) current->data;
+              Player  *referee = contest->GetRefereeFromRef (ref);
+
+              if (referee)
+              {
+                Player::AttributeId  attr_id ("password");
+                Attribute           *attr   = referee->GetAttribute (&attr_id);
+
+                if (attr)
+                {
+                  key = g_strdup (attr->GetStrValue ());
+                  break;
+                }
+              }
+              current = g_list_next (current);
+            }
+          }
+          g_strfreev (tokens);
         }
-        g_strfreev (tokens);
       }
     }
   }
@@ -258,6 +266,46 @@ Player *Tournament::UpdateConnectionStatus (GList       *player_list,
   }
 
   return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnShowAccessCode (gboolean with_steps)
+{
+  {
+    GtkWidget *w;
+
+    w = _glade->GetWidget ("step1");
+    gtk_widget_set_visible (w, with_steps);
+
+    w = _glade->GetWidget ("step2");
+    gtk_widget_set_visible (w, with_steps);
+  }
+
+  {
+    GtkDialog *dialog = GTK_DIALOG (_glade->GetWidget ("pin_code_dialog"));
+
+    {
+      FlashCode *flash_code = Net::Ring::_broker->GetFlashCode ();
+      GdkPixbuf *pixbuf     = flash_code->GetPixbuf ();
+      GtkImage  *image      = GTK_IMAGE (_glade->GetWidget ("qrcode_image"));
+
+      gtk_image_set_from_pixbuf (image,
+                                 pixbuf);
+      g_object_unref (pixbuf);
+    }
+
+    RunDialog (dialog);
+    gtk_widget_hide (GTK_WIDGET (dialog));
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnHanshakeResult (gboolean passed)
+{
+  if (passed == FALSE)
+  {
+    OnShowAccessCode (TRUE);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -305,6 +353,25 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
     if (contest)
     {
       result = contest->OnMessage (message);
+    }
+  }
+  else if (message->Is ("Handshake"))
+  {
+    Net::Ring::_broker->OnHandshake (message,
+                                     this);
+  }
+  else if (message->Is ("MarshallerCredentials"))
+  {
+    GtkDialog *dialog = GTK_DIALOG (_glade->GetWidget ("pin_code_dialog"));
+
+    gtk_dialog_response (dialog,
+                         GTK_RESPONSE_OK);
+
+    {
+      gchar *passphrase = message->GetString ("marshaller_key");
+
+      Net::Ring::_broker->ChangePassphrase (passphrase);
+      g_free (passphrase);
     }
   }
   else
@@ -1058,3 +1125,13 @@ extern "C" G_MODULE_EXPORT void on_video_released (GtkWidget *widget,
 
   t->OnVideoReleased ();
 }
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_access_code_activate (GtkWidget *w,
+                                                         Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnShowAccessCode (FALSE);
+}
+

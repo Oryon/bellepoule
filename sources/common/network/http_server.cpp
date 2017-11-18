@@ -62,8 +62,11 @@ namespace Net
     _data   = NULL;
     _length = 0;
 
-    Append (buf,
-            strlen (buf) + 1);
+    if (buf)
+    {
+      Append (buf,
+              strlen (buf) + 1);
+    }
   }
 }
 
@@ -146,10 +149,7 @@ namespace Net
   {
     if (g_strcmp0 (key, "IV") == 0)
     {
-      gsize out_len;
-
-      server->_iv = g_base64_decode (value,
-                                     &out_len);
+      server->_iv = g_strdup (value);
       return MHD_NO;
     }
     return MHD_YES;
@@ -209,6 +209,8 @@ namespace Net
                                      this);
         }
 
+        if (g_strrstr (request_body->_data,
+                       "[Header]") == NULL)
         {
           gchar *key = _client->GetSecretKey (url);
 
