@@ -25,12 +25,11 @@ namespace Oauth
   class Uploader : public Net::Uploader
   {
     public:
-      class Listener
+      struct Listener
       {
-        public:
-          virtual void OnServerResponse (Request *request) = 0;
-          virtual void Use  () = 0;
-          virtual void Drop () = 0;
+        virtual void OnServerResponse (Request *request) = 0;
+        virtual void Use  () = 0;
+        virtual void Drop () = 0;
       };
 
     public:

@@ -34,10 +34,9 @@ namespace Pool
   class Pool : public CanvasModule
   {
     public:
-      class StatusListener
+      struct StatusListener
       {
-        public:
-          virtual void OnPoolStatus (Pool *pool) = 0;
+        virtual void OnPoolStatus (Pool *pool) = 0;
       };
 
     public:

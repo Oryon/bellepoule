@@ -34,11 +34,10 @@ namespace People
         NEW_PLAYER
       } FormEvent;
 
-      class Listener
+      struct Listener
       {
-        public:
-          virtual void OnFormEvent (Player    *player,
-                                    FormEvent  event) = 0;
+        virtual void OnFormEvent (Player    *player,
+                                  FormEvent  event) = 0;
       };
 
     public:

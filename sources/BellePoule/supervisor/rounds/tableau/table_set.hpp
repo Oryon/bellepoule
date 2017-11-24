@@ -40,12 +40,11 @@ namespace Table
     public Net::Ring::Listener
   {
     public:
-      class Listener
+      struct Listener
       {
-        public:
-          virtual void OnTableSetStatusUpdated (TableSet *table_set) = 0;
-          virtual void OnTableSetDisplayed     (TableSet *table_set,
-                                                Table    *from) = 0;
+        virtual void OnTableSetStatusUpdated (TableSet *table_set) = 0;
+        virtual void OnTableSetDisplayed     (TableSet *table_set,
+                                              Table    *from) = 0;
       };
 
     public:

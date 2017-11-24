@@ -32,12 +32,11 @@ namespace Net
         CONN_ERROR
       } PeerStatus;
 
-      class Listener
+      struct Listener
       {
-        public:
-          virtual void OnUploadStatus (PeerStatus peer_status) = 0;
-          virtual void Use  () = 0;
-          virtual void Drop () = 0;
+        virtual void OnUploadStatus (PeerStatus peer_status) = 0;
+        virtual void Use  () = 0;
+        virtual void Drop () = 0;
       };
 
     public:
