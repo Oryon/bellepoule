@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "util/attribute_desc.hpp"
 #include "dispatcher.hpp"
 
 void TestDispatcher (guint size)

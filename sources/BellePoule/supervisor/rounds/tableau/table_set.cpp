@@ -27,13 +27,23 @@
 #include "util/dnd_config.hpp"
 #include "util/fie_time.hpp"
 #include "util/filter.hpp"
+#include "util/flash_code.hpp"
+#include "util/glade.hpp"
+#include "util/data.hpp"
+#include "network/advertiser.hpp"
+#include "network/message.hpp"
 #include "../../classification.hpp"
+#include "../../score.hpp"
+#include "../../score_collector.hpp"
+#include "../../match.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
 #include "../../book/section.hpp"
 
 #include "table_supervisor.hpp"
 #include "table_zone.hpp"
+#include "table.hpp"
+#include "table_print_session.hpp"
 
 #include "table_set.hpp"
 

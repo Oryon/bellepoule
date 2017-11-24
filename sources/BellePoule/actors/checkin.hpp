@@ -19,11 +19,7 @@
 #include <gtk/gtk.h>
 #include <libxml/xpath.h>
 
-#include "util/data.hpp"
-#include "util/module.hpp"
-#include "util/attribute.hpp"
 #include "form.hpp"
-
 #include "players_list.hpp"
 
 namespace People

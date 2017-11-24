@@ -19,8 +19,11 @@
 
 #include "util/global.hpp"
 #include "util/player.hpp"
+#include "util/glade.hpp"
+#include "util/attribute_desc.hpp"
 #include "actors/player_factory.hpp"
 #include "affinities.hpp"
+#include "batch.hpp"
 
 #include "competition.hpp"
 

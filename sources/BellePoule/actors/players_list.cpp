@@ -21,7 +21,10 @@
 #include "util/canvas.hpp"
 #include "util/attribute.hpp"
 #include "util/player.hpp"
+#include "util/glade.hpp"
+#include "util/filter.hpp"
 
+#include "players_store.hpp"
 #include "players_list.hpp"
 
 namespace People

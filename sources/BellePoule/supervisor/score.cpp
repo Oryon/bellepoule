@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <goocanvas.h>
 
+#include "util/data.hpp"
+
 #include "score.hpp"
 
 // --------------------------------------------------------------------------------

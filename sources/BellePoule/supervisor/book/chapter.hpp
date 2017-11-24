@@ -17,10 +17,9 @@
 #pragma once
 
 #include "util/object.hpp"
-#include "util/module.hpp"
-#include "../stage.hpp"
 
 class BookSection;
+class Module;
 
 class Chapter : public Object
 {

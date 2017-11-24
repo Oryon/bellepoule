@@ -16,6 +16,7 @@
 
 #include <sys/types.h>
 
+#include "cryptor.hpp"
 #include "message.hpp"
 #include "http_server.hpp"
 

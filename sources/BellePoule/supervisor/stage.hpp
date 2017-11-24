@@ -23,15 +23,15 @@
 #include <gtk/gtk.h>
 
 #include "util/object.hpp"
-#include "util/data.hpp"
-#include "util/sensitivity_trigger.hpp"
 #include "network/advertiser.hpp"
-#include "attendees.hpp"
 
 class Player;
 class Classification;
 class Filter;
 class Contest;
+class Data;
+class SensitivityTrigger;
+class Attendees;
 
 class Stage : public virtual Object,
               public Net::Advertiser::Feeder

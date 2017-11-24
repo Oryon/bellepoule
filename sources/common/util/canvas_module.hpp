@@ -19,11 +19,11 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "canvas.hpp"
 #include "module.hpp"
-#include "drop_zone.hpp"
+#include "canvas.hpp"
 
 class Player;
+class DropZone;
 
 class CanvasModule : public Module
 {

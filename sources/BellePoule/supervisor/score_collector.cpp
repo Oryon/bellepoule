@@ -19,6 +19,10 @@
 #include <gdk/gdkkeysyms.h>
 #include <goocanvas.h>
 
+#include "util/canvas_module.hpp"
+#include "match.hpp"
+#include "util/player.hpp"
+#include "score.hpp"
 #include "score_collector.hpp"
 
 // --------------------------------------------------------------------------------

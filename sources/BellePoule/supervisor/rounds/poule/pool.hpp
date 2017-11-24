@@ -19,18 +19,18 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "util/data.hpp"
 #include "util/canvas_module.hpp"
-#include "util/player.hpp"
-#include "../../stage.hpp"
-#include "../../score_collector.hpp"
-
-#include "dispatcher/dispatcher.hpp"
 
 class FieTime;
+class Data;
+class Player;
+class ScoreCollector;
+class Match;
 
 namespace Pool
 {
+  class Dispatcher;
+
   class Pool : public CanvasModule
   {
     public:

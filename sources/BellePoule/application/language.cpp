@@ -17,6 +17,7 @@
 #include <locale.h>
 
 #include "util/global.hpp"
+#include "util/user_config.hpp"
 
 #include "language.hpp"
 

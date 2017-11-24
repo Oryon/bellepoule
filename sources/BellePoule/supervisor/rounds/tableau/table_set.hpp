@@ -18,22 +18,23 @@
 
 #include <gtk/gtk.h>
 
-#include "util/data.hpp"
 #include "util/canvas_module.hpp"
 #include "network/ring.hpp"
-#include "../../match.hpp"
-#include "../../score_collector.hpp"
 #include "../../stage.hpp"
 
-#include "table.hpp"
 #include "html_table.hpp"
-#include "table_print_session.hpp"
 
 class Error;
+class Data;
+class Match;
+class ScoreCollector;
 
 namespace Table
 {
   class Supervisor;
+  class Table;
+  class HtmlTable;
+  class PrintSession;
 
   class TableSet :
     public CanvasModule,

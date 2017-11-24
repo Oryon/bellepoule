@@ -18,6 +18,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <locale.h>
+#include <libxml/xpath.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -27,7 +28,14 @@
 
 #include "util/global.hpp"
 #include "util/canvas.hpp"
+#include "util/attribute.hpp"
+#include "util/flash_code.hpp"
+#include "util/user_config.hpp"
+#include "util/glade.hpp"
+#include "util/player.hpp"
 #include "network/ring.hpp"
+#include "network/web_server.hpp"
+#include "network/message.hpp"
 #include "application/version.h"
 #include "application/weapon.hpp"
 #include "actors/form.hpp"

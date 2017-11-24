@@ -19,14 +19,18 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
-#include "util/attribute.hpp"
-#include "util/wifi_code.hpp"
 #include "util/object.hpp"
-#include "network/partner.hpp"
 #include "network/message_uploader.hpp"
 
-class WifiCode;
 class Weapon;
+class WifiCode;
+class Attribute;
+class AttributeDesc;
+
+namespace Net
+{
+  class Partner;
+}
 
 class Player : public Object, Net::MessageUploader::Listener
 {

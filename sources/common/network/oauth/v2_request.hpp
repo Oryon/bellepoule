@@ -16,12 +16,7 @@
 
 #pragma once
 
-#include <json-glib/json-glib.h>
-
-#include "util/object.hpp"
 #include "request.hpp"
-
-struct curl_slist;
 
 namespace Oauth
 {

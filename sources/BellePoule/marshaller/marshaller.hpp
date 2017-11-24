@@ -19,12 +19,12 @@
 #include "util/module.hpp"
 #include "network/ring.hpp"
 #include "actors/referees_list.hpp"
-#include "referee_pool.hpp"
 #include "hall.hpp"
 
 namespace Marshaller
 {
   class SmartPhones;
+  class RefereePool;
 
   class Marshaller :
     public Module,

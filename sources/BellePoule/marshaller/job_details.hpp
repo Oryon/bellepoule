@@ -18,6 +18,8 @@
 
 #include "actors/players_list.hpp"
 
+class Player;
+
 namespace Marshaller
 {
   class RefereePool;

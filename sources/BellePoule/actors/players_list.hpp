@@ -20,13 +20,15 @@
 #include <goocanvas.h>
 
 #include "util/module.hpp"
-#include "util/attribute.hpp"
-#include "util/player.hpp"
 
-#include "players_store.hpp"
+class Filter;
+class Player;
+class Attribute;
 
 namespace People
 {
+  class PlayersStore;
+
   class PlayersList : public Module
   {
     public:

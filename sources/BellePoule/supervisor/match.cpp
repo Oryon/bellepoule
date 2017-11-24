@@ -21,7 +21,9 @@
 #include "util/canvas.hpp"
 #include "util/player.hpp"
 #include "util/fie_time.hpp"
+#include "util/data.hpp"
 #include "network/message.hpp"
+#include "score.hpp"
 
 #include "match.hpp"
 

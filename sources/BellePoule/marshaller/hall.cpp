@@ -15,14 +15,20 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/fie_time.hpp"
+#include "util/glade.hpp"
+#include "util/dnd_config.hpp"
+#include "util/attribute.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
+#include "util/player.hpp"
 #include "actors/referees_list.hpp"
 #include "application/weapon.hpp"
 
 #include "enlisted_referee.hpp"
 #include "piste.hpp"
 #include "job.hpp"
-#include "competition.hpp"
 #include "batch.hpp"
+#include "competition.hpp"
 #include "referee_pool.hpp"
 #include "timeline.hpp"
 #include "job_board.hpp"

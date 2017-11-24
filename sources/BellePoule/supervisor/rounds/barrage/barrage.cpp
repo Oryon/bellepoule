@@ -14,8 +14,17 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <libxml/xpath.h>
+
+#include "util/attribute.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
+#include "util/player.hpp"
+#include "util/glade.hpp"
+#include "network/advertiser.hpp"
 #include "../../contest.hpp"
 #include "../../classification.hpp"
+#include "../../attendees.hpp"
 
 #include "barrage.hpp"
 

@@ -18,6 +18,9 @@
 #include <ctype.h>
 
 #include "util/attribute.hpp"
+#include "util/glade.hpp"
+#include "util/flash_code.hpp"
+#include "util/filter.hpp"
 #include "player_factory.hpp"
 #include "form.hpp"
 

@@ -37,6 +37,7 @@
 #include <glib/gstdio.h>
 #include "locale"
 
+#include "util/user_config.hpp"
 #include "util/attribute.hpp"
 #include "util/global.hpp"
 #include "util/module.hpp"

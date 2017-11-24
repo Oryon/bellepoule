@@ -21,7 +21,13 @@
 #include <libxml/xpath.h>
 
 #include "util/player.hpp"
+#include "util/glade.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
+#include "util/attribute.hpp"
+#include "util/dnd_config.hpp"
 
+#include "drop_zone.hpp"
 #include "canvas_module.hpp"
 
 // --------------------------------------------------------------------------------

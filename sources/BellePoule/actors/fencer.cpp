@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "player_factory.hpp"
+#include "team.hpp"
 #include "fencer.hpp"
 
 const gchar *Fencer::_class_name = "Fencer";

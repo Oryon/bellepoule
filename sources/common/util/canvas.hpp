@@ -19,8 +19,6 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "object.hpp"
-
 class Canvas
 {
   public:

@@ -20,10 +20,9 @@
 #include <goocanvas.h>
 
 #include "util/object.hpp"
-#include "util/module.hpp"
-#include "util/canvas_module.hpp"
 
 class Match;
+class CanvasModule;
 
 namespace Table
 {

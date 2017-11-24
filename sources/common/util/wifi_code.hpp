@@ -17,10 +17,14 @@
 #pragma once
 
 #include "util/object.hpp"
-#include "network/wifi_network.hpp"
 #include "flash_code.hpp"
 
 class Player;
+
+namespace Net
+{
+  class WifiNetwork;
+}
 
 class WifiCode : public FlashCode
 {

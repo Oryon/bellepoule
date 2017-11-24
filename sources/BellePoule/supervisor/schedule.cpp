@@ -19,8 +19,14 @@
 #include <libxml/xpath.h>
 #include <gtk/gtk.h>
 
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
+#include "util/flash_code.hpp"
 #include "util/canvas.hpp"
+#include "util/player.hpp"
+#include "util/glade.hpp"
 #include "network/advertiser.hpp"
+#include "network/message.hpp"
 #include "actors/referees_list.hpp"
 #include "rounds/classification/general_classification.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"

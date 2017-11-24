@@ -18,7 +18,6 @@
 
 #include <gtk/gtk.h>
 
-#include "util/attribute.hpp"
 #include "actors/players_list.hpp"
 
 class Contest;

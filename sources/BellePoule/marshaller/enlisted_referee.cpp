@@ -14,6 +14,10 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/player.hpp"
+#include "util/attribute.hpp"
+#include "util/filter.hpp"
+
 #include "slot.hpp"
 #include "job_board.hpp"
 

@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/user_config.hpp"
+
 #include "global.hpp"
 
 UserConfig *Global::_user_config = NULL;

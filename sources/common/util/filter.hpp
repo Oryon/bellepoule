@@ -20,7 +20,6 @@
 #include <libxml/xmlwriter.h>
 
 #include "object.hpp"
-#include "attribute.hpp"
 
 class Module;
 

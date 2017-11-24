@@ -35,13 +35,22 @@
 
 #include "util/global.hpp"
 #include "util/canvas.hpp"
+#include "util/user_config.hpp"
+#include "util/attribute.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
+#include "util/glade.hpp"
+#include "util/data.hpp"
+#include "util/flash_code.hpp"
 #include "actors/player_factory.hpp"
 #include "network/greg_uploader.hpp"
+#include "network/message.hpp"
 #include "actors/checkin.hpp"
 #include "actors/referees_list.hpp"
 #include "actors/player_factory.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "publication.hpp"
+#include "schedule.hpp"
 
 
 #include "application/version.h"

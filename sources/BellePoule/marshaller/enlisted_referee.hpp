@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include "util/player.hpp"
 #include "actors/referee.hpp"
 
 namespace Marshaller

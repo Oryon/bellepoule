@@ -19,10 +19,11 @@
 #include <glib.h>
 
 #include "util/object.hpp"
-#include "opponent.hpp"
 
 namespace Pool
 {
+  class Opponent;
+
   class Pair : public Object
   {
     public:

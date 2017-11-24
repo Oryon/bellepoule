@@ -17,13 +17,16 @@
 #pragma once
 
 #include "util/module.hpp"
-#include "util/glade.hpp"
-#include "network/downloader.hpp"
-#include "network/web_server.hpp"
 #include "network/ring.hpp"
 
 class Contest;
 class Publication;
+class Glade;
+
+namespace Net
+{
+  class WebServer;
+}
 
 class Tournament : public Module,
                    public Net::Ring::HandshakeListener

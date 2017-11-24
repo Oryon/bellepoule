@@ -16,14 +16,10 @@
 
 #pragma once
 
-#include "util/module.hpp"
-
 #include "advertiser.hpp"
 
 namespace Net
 {
-  class Advertiser;
-
   class Facebook : public Advertiser
   {
     public:

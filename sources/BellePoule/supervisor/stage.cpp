@@ -15,11 +15,19 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdlib.h>
+#include <libxml/xpath.h>
 
-#include "classification.hpp"
-#include "contest.hpp"
 #include "util/player.hpp"
 #include "util/canvas.hpp"
+#include "util/attribute.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
+#include "util/data.hpp"
+#include "network/advertiser.hpp"
+#include "network/message.hpp"
+#include "attendees.hpp"
+#include "classification.hpp"
+#include "contest.hpp"
 #include "book/section.hpp"
 
 #include "stage.hpp"

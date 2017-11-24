@@ -19,18 +19,19 @@
 #include <gtk/gtk.h>
 
 #include "util/canvas_module.hpp"
-#include "util/data.hpp"
-#include "util/player.hpp"
 #include "network/ring.hpp"
-#include "actors/players_list.hpp"
 #include "../../stage.hpp"
 
-#include "pool.hpp"
-#include "swapper.hpp"
-#include "pool_zone.hpp"
+class Data;
+class Player;
+class PlayersList;
 
 namespace Pool
 {
+  class Pool;
+  class PoolZone;
+  class Swapper;
+
   class Allocator :
     public Stage,
     public CanvasModule,

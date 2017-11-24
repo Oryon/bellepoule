@@ -18,11 +18,10 @@
 
 #include <libxml/xpath.h>
 
-#include "network/message.hpp"
 #include "util/module.hpp"
-#include "batch.hpp"
 
 class Player;
+class Batch;
 
 namespace Marshaller
 {

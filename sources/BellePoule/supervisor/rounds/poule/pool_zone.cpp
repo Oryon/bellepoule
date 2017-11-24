@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/canvas.hpp"
+#include "util/attribute_desc.hpp"
 #include "util/player.hpp"
 #include "../../match.hpp"
 

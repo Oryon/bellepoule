@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include "util/object.hpp"
 #include "util/flash_code.hpp"
 
 namespace Net

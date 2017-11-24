@@ -19,11 +19,12 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
-#include "actors/team.hpp"
-#include "actors/fencer.hpp"
-#include "actors/null_team.hpp"
 #include "actors/checkin.hpp"
 #include "../../stage.hpp"
+
+class Data;
+class Team;
+class NullTeam;
 
 namespace People
 {

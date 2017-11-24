@@ -14,8 +14,18 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <libxml/xmlwriter.h>
+
 #include "util/object.hpp"
+#include "util/attribute.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/player.hpp"
 #include "../pool.hpp"
+#include "../pool_zone.hpp"
+#include "fencer_proxy.hpp"
+#include "pool_proxy.hpp"
+#include "criteria.hpp"
+#include "list_crawler.hpp"
 
 #include "neo_swapper.hpp"
 

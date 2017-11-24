@@ -14,12 +14,21 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/drop_zone.hpp"
+#include "util/dnd_config.hpp"
+#include "util/attribute.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
+#include "util/glade.hpp"
+#include "util/wifi_code.hpp"
+#include "util/player.hpp"
 #include "network/message.hpp"
 #include "network/ring.hpp"
 #include "application/weapon.hpp"
 #include "actors/referees_list.hpp"
-#include "util/filter.hpp"
 
+#include "referee_pool.hpp"
+#include "batch.hpp"
 #include "competition.hpp"
 #include "affinities.hpp"
 #include "enlisted_referee.hpp"

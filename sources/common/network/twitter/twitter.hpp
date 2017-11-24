@@ -16,13 +16,10 @@
 
 #pragma once
 
-#include "util/module.hpp"
-
 #include "advertiser.hpp"
 
 namespace Oauth
 {
-  class Session;
   class Request;
 }
 

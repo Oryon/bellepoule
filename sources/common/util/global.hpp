@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "util/user_config.hpp"
+#include <glib.h>
+
+class UserConfig;
 
 class Global
 {

@@ -14,6 +14,11 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/dnd_config.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
+#include "util/player.hpp"
+
 #include "job.hpp"
 #include "referee_pool.hpp"
 #include "enlisted_referee.hpp"

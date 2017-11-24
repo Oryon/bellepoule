@@ -17,10 +17,11 @@
 #pragma once
 
 #include <gtk/gtk.h>
-#include "pool_zone.hpp"
 
 namespace Pool
 {
+  class PoolZone;
+
   class Swapper
   {
     public:

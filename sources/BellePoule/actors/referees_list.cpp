@@ -24,6 +24,8 @@
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
 #include "util/player.hpp"
+#include "util/dnd_config.hpp"
+#include "util/glade.hpp"
 #include "application/weapon.hpp"
 #include "referee.hpp"
 #include "tally_counter.hpp"

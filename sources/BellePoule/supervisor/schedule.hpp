@@ -18,9 +18,7 @@
 
 #include <libxml/xmlwriter.h>
 
-#include "util/data.hpp"
 #include "util/module.hpp"
-#include "book/book.hpp"
 
 #include "stage.hpp"
 
@@ -32,6 +30,8 @@ namespace People
 }
 
 class Contest;
+class Data;
+class Book;
 
 class Schedule : public Module,
                  public Stage::Listener

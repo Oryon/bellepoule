@@ -14,6 +14,10 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/wifi_code.hpp"
+#include "util/player.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
 #include "network/ring.hpp"
 #include "rounds/barrage/barrage.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
@@ -25,7 +29,6 @@
 #include "actors/fencer.hpp"
 #include "actors/referee.hpp"
 #include "actors/team.hpp"
-#include "util/wifi_code.hpp"
 #include "application/application.hpp"
 
 #include "contest.hpp"

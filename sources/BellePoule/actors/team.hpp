@@ -17,7 +17,8 @@
 #pragma once
 
 #include "util/player.hpp"
-#include "util/data.hpp"
+
+class Data;
 
 class Team : public Player
 {

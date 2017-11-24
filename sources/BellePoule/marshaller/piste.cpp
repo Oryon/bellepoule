@@ -19,6 +19,8 @@
 #include "util/global.hpp"
 #include "util/module.hpp"
 #include "util/canvas.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
 #include "enlisted_referee.hpp"
 #include "job.hpp"
 #include "job_board.hpp"

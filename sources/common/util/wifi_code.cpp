@@ -18,6 +18,7 @@
 #include <qrencode.h>
 
 #include "network/ring.hpp"
+#include "network/wifi_network.hpp"
 
 #ifndef LIVE_POOL
 #include "util/player.hpp"

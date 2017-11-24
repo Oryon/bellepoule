@@ -20,6 +20,8 @@
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
 #include "util/player.hpp"
+#include "util/user_config.hpp"
+#include "util/glade.hpp"
 #include "actors/player_factory.hpp"
 #include "actors/tally_counter.hpp"
 #include "tally_counter.hpp"

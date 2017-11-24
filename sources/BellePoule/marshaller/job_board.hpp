@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include "util/object.hpp"
 #include "util/module.hpp"
 #include "job_details.hpp"
 #include "job.hpp"

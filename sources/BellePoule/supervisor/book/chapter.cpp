@@ -16,6 +16,7 @@
 
 #include "util/canvas.hpp"
 #include "util/module.hpp"
+#include "../stage.hpp"
 
 #include "section.hpp"
 #include "chapter.hpp"

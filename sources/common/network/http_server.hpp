@@ -20,10 +20,11 @@
 #include <microhttpd.h>
 
 #include "util/object.hpp"
-#include "cryptor.hpp"
 
 namespace Net
 {
+  class Cryptor;
+
   class HttpServer : public Object
   {
     public:

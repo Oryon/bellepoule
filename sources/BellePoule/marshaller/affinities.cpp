@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/player.hpp"
+#include "util/attribute.hpp"
 
 #include "affinities.hpp"
 

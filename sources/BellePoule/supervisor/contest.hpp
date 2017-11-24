@@ -19,13 +19,7 @@
 #include <libxml/xmlwriter.h>
 #include <gtk/gtk.h>
 
-#include "util/data.hpp"
 #include "util/module.hpp"
-#include "util/glade.hpp"
-#include "network/message.hpp"
-#include "network/advertiser.hpp"
-
-#include "schedule.hpp"
 
 namespace People
 {
@@ -37,9 +31,16 @@ namespace AskFred
   class Event;
 }
 
+namespace Net
+{
+  class Message;
+}
+
+class Data;
 class Tournament;
 class Weapon;
 class Category;
+class Schedule;
 
 class Contest : public Module
 {

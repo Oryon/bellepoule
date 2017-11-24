@@ -17,13 +17,11 @@
 #pragma once
 
 #include "util/object.hpp"
-#include "util/attribute.hpp"
-#include "util/player.hpp"
-
-#include "fencer_proxy.hpp"
 
 namespace NeoSwapper
 {
+  class FencerProxy;
+
   class Criteria : public Object
   {
     public:

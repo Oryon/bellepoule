@@ -18,6 +18,7 @@
 
 #include "util/canvas_module.hpp"
 #include "util/json_file.hpp"
+#include "util/dnd_config.hpp"
 #include "network/message.hpp"
 #include "piste.hpp"
 #include "batch.hpp"

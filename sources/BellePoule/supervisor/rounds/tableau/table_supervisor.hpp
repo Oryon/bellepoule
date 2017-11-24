@@ -18,15 +18,14 @@
 
 #include <gtk/gtk.h>
 
-#include "util/data.hpp"
 #include "util/module.hpp"
-#include "../../match.hpp"
-#include "../../score_collector.hpp"
 #include "../../stage.hpp"
-
 #include "table_set.hpp"
 
 class Error;
+class Data;
+class Match;
+class ScoreCollector;
 
 namespace Table
 {

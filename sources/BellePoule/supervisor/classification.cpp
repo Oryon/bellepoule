@@ -15,11 +15,15 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <glib/gstdio.h>
+#include <glib/gstdio.h>
+#include <libxml/xpath.h>
 
 #include "util/attribute.hpp"
+#include "util/player.hpp"
+#include "util/filter.hpp"
+#include "network/advertiser.hpp"
 
 #include "contest.hpp"
-#include "util/player.hpp"
 #include "application/weapon.hpp"
 
 #include "classification.hpp"

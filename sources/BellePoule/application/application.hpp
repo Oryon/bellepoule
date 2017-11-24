@@ -22,7 +22,6 @@
 
 class Attribute;
 class AttributeDesc;
-class Application;
 class Module;
 class Language;
 

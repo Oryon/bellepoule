@@ -19,7 +19,6 @@
 #include <glib.h>
 
 #include "util/object.hpp"
-#include "pair.hpp"
 
 namespace Pool
 {

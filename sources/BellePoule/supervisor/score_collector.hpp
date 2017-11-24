@@ -20,10 +20,10 @@
 #include <goocanvas.h>
 
 #include "util/object.hpp"
-#include "util/canvas_module.hpp"
 
-#include "match.hpp"
-#include "util/player.hpp"
+class Match;
+class Player;
+class CanvasModule;
 
 class ScoreCollector : public Object
 {

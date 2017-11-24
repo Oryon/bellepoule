@@ -19,8 +19,9 @@
 #include <gtk/gtk.h>
 
 #include "util/object.hpp"
-#include "util/player.hpp"
-#include "team.hpp"
+
+class Player;
+class Team;
 
 namespace People
 {

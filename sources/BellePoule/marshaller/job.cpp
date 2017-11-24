@@ -15,13 +15,14 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/player.hpp"
+#include "util/drop_zone.hpp"
 #include "network/message.hpp"
 #include "application/weapon.hpp"
 #include "slot.hpp"
 #include "timeline.hpp"
-#include "competition.hpp"
 #include "affinities.hpp"
 #include "batch.hpp"
+#include "competition.hpp"
 
 #include "job.hpp"
 

@@ -21,7 +21,14 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
+#include "util/attribute.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
 #include "util/player.hpp"
+#include "util/glade.hpp"
+#include "network/advertiser.hpp"
+#include "actors/team.hpp"
+#include "../../attendees.hpp"
 #include "../../tournament.hpp"
 #include "../../contest.hpp"
 

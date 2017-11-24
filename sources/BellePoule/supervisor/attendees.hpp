@@ -18,8 +18,6 @@
 
 #include "util/object.hpp"
 
-#include "util/player.hpp"
-
 class Attendees : public Object
 {
   public:

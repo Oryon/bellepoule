@@ -17,9 +17,9 @@
 #pragma once
 
 #include "util/object.hpp"
-#include "util/player.hpp"
-#include "util/filter.hpp"
-#include "../../match.hpp"
+
+class Player;
+class Match;
 
 namespace Table
 {

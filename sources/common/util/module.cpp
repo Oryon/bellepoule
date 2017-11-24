@@ -15,6 +15,9 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "attribute.hpp"
+#include "glade.hpp"
+#include "dnd_config.hpp"
+#include "filter.hpp"
 
 #include "module.hpp"
 

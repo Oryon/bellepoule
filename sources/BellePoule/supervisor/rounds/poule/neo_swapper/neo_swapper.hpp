@@ -17,16 +17,13 @@
 #pragma once
 
 #include "util/object.hpp"
-#include "util/player.hpp"
 #include "../swapper.hpp"
-
-#include "criteria.hpp"
-#include "fencer_proxy.hpp"
-#include "pool_proxy.hpp"
-#include "list_crawler.hpp"
 
 namespace NeoSwapper
 {
+  class PoolProxy;
+  class FencerProxy;
+
   class Swapper : public Object, public Pool::Swapper
   {
     public:

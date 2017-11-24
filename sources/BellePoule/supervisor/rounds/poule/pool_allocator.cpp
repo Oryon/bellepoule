@@ -22,10 +22,25 @@
 
 #include "util/global.hpp"
 #include "util/fie_time.hpp"
+#include "util/dnd_config.hpp"
+#include "util/attribute.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
+#include "util/player.hpp"
+#include "util/glade.hpp"
+#include "util/data.hpp"
+#include "network/message.hpp"
+#include "network/advertiser.hpp"
+#include "actors/players_list.hpp"
 
 #include "neo_swapper/neo_swapper.hpp"
 #include "dispatcher/dispatcher.hpp"
+#include "../../attendees.hpp"
 #include "../../contest.hpp"
+#include "../../match.hpp"
+
+#include "pool.hpp"
+#include "pool_zone.hpp"
 
 #include "pool_allocator.hpp"
 

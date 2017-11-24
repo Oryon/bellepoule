@@ -17,7 +17,13 @@
 #pragma once
 
 #include "util/object.hpp"
-#include "../pool.hpp"
+
+class Player;
+
+namespace Pool
+{
+  class Pool;
+}
 
 namespace NeoSwapper
 {

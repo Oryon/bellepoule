@@ -18,14 +18,15 @@
 
 #include <gtk/gtk.h>
 
-#include "util/object.hpp"
-#include "util/canvas_module.hpp"
 #include "util/drop_zone.hpp"
 
-#include "pool.hpp"
+
+class Module;
 
 namespace Pool
 {
+  class Pool;
+
   class PoolZone : public DropZone
   {
     public:

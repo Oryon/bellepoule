@@ -14,7 +14,10 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/attribute_desc.hpp"
+
 #include "fencer.hpp"
+#include "team.hpp"
 #include "players_store.hpp"
 
 namespace People

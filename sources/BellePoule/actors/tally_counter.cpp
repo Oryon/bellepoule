@@ -14,6 +14,9 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/attribute.hpp"
+#include "util/player.hpp"
+
 #include "tally_counter.hpp"
 
 namespace People

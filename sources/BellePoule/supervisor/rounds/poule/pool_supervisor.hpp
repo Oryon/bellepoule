@@ -18,10 +18,12 @@
 
 #include <gtk/gtk.h>
 
-#include "util/data.hpp"
 #include "util/module.hpp"
+#include "../../stage.hpp"
 
 #include "pool.hpp"
+
+class Data;
 
 namespace Pool
 {

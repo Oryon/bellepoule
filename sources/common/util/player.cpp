@@ -14,7 +14,9 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/wifi_code.hpp"
 #include "util/attribute.hpp"
+#include "network/partner.hpp"
 #include "network/message.hpp"
 
 #include "actors/player_factory.hpp" // !!

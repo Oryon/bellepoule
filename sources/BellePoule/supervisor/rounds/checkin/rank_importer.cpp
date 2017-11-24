@@ -18,6 +18,8 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xpath.h>
 
+#include "util/attribute.hpp"
+
 #include "rank_importer.hpp"
 
 namespace People

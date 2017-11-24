@@ -14,8 +14,11 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/attribute_desc.hpp"
+#include "util/player.hpp"
 #include "fencer_proxy.hpp"
 #include "criteria.hpp"
+#include "../pool.hpp"
 #include "pool_proxy.hpp"
 
 namespace NeoSwapper

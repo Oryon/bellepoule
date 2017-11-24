@@ -23,6 +23,7 @@
 
 #include "util/object.hpp"
 #include "util/global.hpp"
+#include "util/user_config.hpp"
 #include "credentials.hpp"
 #include "partner.hpp"
 #include "message.hpp"

@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include "util/object.hpp"
 #include "oauth/session.hpp"
 
 namespace Net

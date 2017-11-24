@@ -18,7 +18,6 @@
 
 #include <glib.h>
 
-#include "util/object.hpp"
 #include "session.hpp"
 
 namespace Oauth

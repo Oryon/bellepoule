@@ -23,10 +23,17 @@
 
 #include "util/attribute.hpp"
 #include "util/player.hpp"
+#include "util/filter.hpp"
+#include "util/glade.hpp"
+#include "util/data.hpp"
+#include "network/advertiser.hpp"
+#include "network/message.hpp"
 #include "../../book/section.hpp"
 #include "../../classification.hpp"
+#include "../../attendees.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
+#include "table.hpp"
 
 #include "table_supervisor.hpp"
 

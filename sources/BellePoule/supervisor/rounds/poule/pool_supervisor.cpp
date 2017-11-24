@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
+#include "util/glade.hpp"
+#include "util/player.hpp"
 #include "network/message.hpp"
 #include "../../classification.hpp"
 

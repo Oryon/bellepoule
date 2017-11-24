@@ -14,6 +14,12 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/attribute.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/player.hpp"
+#include "../../score.hpp"
+#include "../../match.hpp"
+
 #include "html_table.hpp"
 
 #define CONNECTOR ((void *) -1)

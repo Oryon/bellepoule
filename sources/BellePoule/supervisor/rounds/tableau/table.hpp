@@ -22,8 +22,9 @@
 
 #include "util/object.hpp"
 #include "network/advertiser.hpp"
-#include "../../match.hpp"
 #include "../../error.hpp"
+
+class Match;
 
 namespace Table
 {

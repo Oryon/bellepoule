@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/global.hpp"
+#include "util/user_config.hpp"
 
 #include "v1_session.hpp"
 

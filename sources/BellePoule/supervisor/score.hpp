@@ -17,7 +17,8 @@
 #pragma once
 
 #include "util/object.hpp"
-#include "util/data.hpp"
+
+class Data;
 
 class Score : public Object
 {

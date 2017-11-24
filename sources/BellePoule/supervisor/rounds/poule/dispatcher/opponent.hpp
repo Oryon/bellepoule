@@ -19,12 +19,11 @@
 #include <glib.h>
 
 #include "util/object.hpp"
-#include "actors/fencer.hpp"
+
+class Fencer;
 
 namespace Pool
 {
-  class Pair;
-
   class Opponent : public Object
   {
     public:

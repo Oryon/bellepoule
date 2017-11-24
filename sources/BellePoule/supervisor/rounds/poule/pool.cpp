@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdlib.h>
+#include <libxml/xpath.h>
 #include <gdk/gdkkeysyms.h>
 #include <goocanvas.h>
 #include <cairo.h>
@@ -22,8 +23,16 @@
 
 #include "util/global.hpp"
 #include "util/fie_time.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/attribute.hpp"
+#include "util/flash_code.hpp"
+#include "util/data.hpp"
+#include "util/player.hpp"
 #include "network/message.hpp"
+#include "dispatcher/dispatcher.hpp"
+#include "../../score.hpp"
 #include "../../match.hpp"
+#include "../../score_collector.hpp"
 
 #include "pool.hpp"
 

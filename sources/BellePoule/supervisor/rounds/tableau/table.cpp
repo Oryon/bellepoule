@@ -18,6 +18,7 @@
 #include "util/player.hpp"
 #include "util/fie_time.hpp"
 #include "network/message.hpp"
+#include "../../match.hpp"
 
 #include "table_set.hpp"
 #include "table_zone.hpp"

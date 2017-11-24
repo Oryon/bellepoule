@@ -14,6 +14,12 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/attribute.hpp"
+#include "util/player.hpp"
+#include "actors/fencer.hpp"
+
+#include "opponent.hpp"
+#include "pair.hpp"
 #include "dispatcher.hpp"
 #include "default_order.data"
 

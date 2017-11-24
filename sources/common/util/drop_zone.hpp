@@ -19,8 +19,9 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "module.hpp"
 #include "object.hpp"
+
+class Module;
 
 class DropZone : public Object
 {

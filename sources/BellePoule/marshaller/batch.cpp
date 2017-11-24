@@ -19,11 +19,15 @@
 
 #include "util/player.hpp"
 #include "util/fie_time.hpp"
+#include "util/glade.hpp"
+#include "util/dnd_config.hpp"
+#include "util/attribute_desc.hpp"
+#include "util/filter.hpp"
 
-#include "competition.hpp"
 #include "job.hpp"
 #include "job_board.hpp"
 #include "batch.hpp"
+#include "competition.hpp"
 #include "affinities.hpp"
 
 namespace Marshaller

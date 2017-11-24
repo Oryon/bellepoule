@@ -19,11 +19,11 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
-#include "dnd_config.hpp"
 #include "sensitivity_trigger.hpp"
-#include "filter.hpp"
-#include "glade.hpp"
-#include "user_config.hpp"
+
+class DndConfig;
+class Filter;
+class Glade;
 
 class Module : public virtual Object
 {

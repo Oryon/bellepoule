@@ -21,13 +21,13 @@
 #include <goocanvas.h>
 
 #include "util/object.hpp"
-#include "util/data.hpp"
 
 #include "error.hpp"
-#include "score.hpp"
 
 class Player;
 class FieTime;
+class Data;
+class Score;
 
 class Match : public Object,
               public Error

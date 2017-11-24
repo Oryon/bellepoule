@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/global.hpp"
+#include "util/glade.hpp"
 
 #include "oauth/v1_request.hpp"
 #include "oauth/session.hpp"

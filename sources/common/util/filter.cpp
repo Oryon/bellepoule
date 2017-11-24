@@ -17,6 +17,7 @@
 #include "attribute.hpp"
 #include "module.hpp"
 #include "global.hpp"
+#include "user_config.hpp"
 
 #include "filter.hpp"
 

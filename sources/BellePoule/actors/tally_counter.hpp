@@ -17,7 +17,6 @@
 #pragma once
 
 #include "util/object.hpp"
-#include "util/player.hpp"
 
 namespace People
 {

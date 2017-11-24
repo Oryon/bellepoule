@@ -20,7 +20,6 @@
 #include <libxml/xmlwriter.h>
 #include <libxml/xpath.h>
 
-#include "util/attribute.hpp"
 #include "actors/players_list.hpp"
 #include "../../stage.hpp"
 
