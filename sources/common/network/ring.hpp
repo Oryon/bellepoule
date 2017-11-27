@@ -127,5 +127,9 @@ namespace Net
                           gboolean  authorized);
 
       gboolean DecryptSecret (Message *message);
+
+      gboolean DecryptSecret (gchar       *crypted,
+                              gchar       *iv,
+                              Credentials *credentials);
   };
 }

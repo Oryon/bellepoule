@@ -471,6 +471,7 @@ void Application::Start (int    argc,
     gchar     *translators = g_strdup_printf ("Julien Diaz           (German)\n"
                                               "Tina Schliemann       (German)\n"
                                               "Michael Weber         (German)\n"
+                                              "Franz Lewin Wagner    (German)\n"
                                               "Dom Walden            (English\n"
                                               "Aureliano Martini     (Italian)\n"
                                               "Jihwan Cho            (Korean)\n"

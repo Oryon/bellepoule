@@ -579,6 +579,7 @@ namespace Net
     while (current)
     {
       Partner *partner = (Partner *) current->data;
+
       if (partner->HasRole (role))
       {
         return partner;
@@ -620,6 +621,8 @@ namespace Net
                                     _unicast_port,
                                     passphrase);
     g_free (ip_address);
+
+    Global::_user_config->Save ();
   }
 
   // --------------------------------------------------------------------------------
@@ -637,25 +640,81 @@ namespace Net
 
     if (crypted && iv)
     {
-      Cryptor *cryptor = new Cryptor ();
-      gchar   *key     = _credentials->GetKey ();
-      gchar   *secret;
+      decoded = DecryptSecret (crypted,
+                               iv,
+                               _credentials);
 
-      secret = cryptor->Decrypt (crypted,
-                                 iv,
-                                 key);
-
-      if (g_ascii_strcasecmp (secret, SECRET) == 0)
+      if (decoded == FALSE)
       {
-        decoded = TRUE;
-      }
+        UserConfig *partner_config;
+        gchar      *partner_pass;
 
-      g_free (key);
-      g_free (secret);
-      cryptor->Release ();
+        if (g_ascii_strcasecmp (_role, "Supervisor") == 0)
+        {
+          partner_config = new UserConfig ("BellePoule2D", TRUE);
+        }
+        else
+        {
+          partner_config = new UserConfig ("BellePoule", TRUE);
+        }
+
+        partner_pass = g_key_file_get_string (partner_config->_key_file,
+                                              "Ring", "passphrase",
+                                              NULL);
+
+        if (partner_pass)
+        {
+          gchar       *ip_address           = GuessIpV4Address ();
+          Credentials *partner_crendentials = new Credentials (_role,
+                                                               ip_address,
+                                                               _unicast_port,
+                                                               partner_pass);
+
+          decoded = DecryptSecret (crypted,
+                                   iv,
+                                   partner_crendentials);
+
+          if (decoded)
+          {
+            ChangePassphrase (partner_pass);
+          }
+
+          partner_crendentials->Release ();
+          g_free (partner_pass);
+          g_free (ip_address);
+        }
+
+        partner_config->Release ();
+      }
     }
     g_free (crypted);
     g_free (iv);
+
+    return decoded;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Ring::DecryptSecret (gchar       *crypted,
+                                gchar       *iv,
+                                Credentials *credentials)
+  {
+    gboolean decoded = FALSE;
+    Cryptor *cryptor = new Cryptor ();
+    gchar   *key     = credentials->GetKey ();
+    gchar   *secret;
+
+    secret = cryptor->Decrypt (crypted,
+                               iv,
+                               key);
+
+    if (g_ascii_strcasecmp (secret, SECRET) == 0)
+    {
+      decoded = TRUE;
+    }
+
+    g_free (key);
+    g_free (secret);
+    cryptor->Release ();
 
     return decoded;
   }

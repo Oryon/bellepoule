@@ -17,12 +17,15 @@
 #include "user_config.hpp"
 
 // --------------------------------------------------------------------------------
-UserConfig::UserConfig (const gchar *app_name)
+UserConfig::UserConfig (const gchar *app_name,
+                        gboolean     read_only)
   : Object ("UserConfig")
 {
   gchar *dir_path  = g_strdup_printf ("%s/%s", g_get_user_config_dir (), app_name);
 
   _file_path = g_strdup_printf ("%s/config.ini", dir_path);
+
+  _read_only = read_only;
 
   _key_file = g_key_file_new ();
 
@@ -41,14 +44,22 @@ UserConfig::UserConfig (const gchar *app_name)
 // --------------------------------------------------------------------------------
 UserConfig::~UserConfig ()
 {
-  GError *error = NULL;
+  Save ();
 
-  if (_key_file)
+  g_free (_file_path);
+  g_key_file_free (_key_file);
+}
+
+// --------------------------------------------------------------------------------
+void UserConfig::Save ()
+{
+  if (_read_only == FALSE)
   {
-    gsize  config_length;
-    gchar *config = g_key_file_to_data (_key_file,
-                                        &config_length,
-                                        &error);
+    GError *error = NULL;
+    gsize   config_length;
+    gchar  *config = g_key_file_to_data (_key_file,
+                                         &config_length,
+                                         &error);
 
     if (error)
     {
@@ -65,9 +76,6 @@ UserConfig::~UserConfig ()
     }
     g_free (config);
   }
-  g_free (_file_path);
-
-  g_key_file_free (_key_file);
 }
 
 // --------------------------------------------------------------------------------

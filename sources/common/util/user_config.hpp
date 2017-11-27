@@ -25,12 +25,16 @@ class UserConfig : public Object
   public:
     GKeyFile *_key_file;
 
-    UserConfig (const gchar *app_name);
+    UserConfig (const gchar *app_name,
+                gboolean     read_only = FALSE);
 
     gboolean IsEmpty ();
 
+    void Save ();
+
   private:
-    gchar *_file_path;
+    gboolean  _read_only;
+    gchar    *_file_path;
 
     virtual ~UserConfig ();
 };
