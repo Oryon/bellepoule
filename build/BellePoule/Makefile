@@ -279,6 +279,10 @@ EXAMPLES          = $(PACKAGE)/$(RELEASE)/Exemples
 RESOURCES         = $(PACKAGE)/$(RELEASE)/resources
 endif
 
+ifeq ($(UBUNTU), debian)
+publish_staging   = publish_debian
+endif
+
 ifeq ($(UBUNTU), fedora)
 prepare_linux     = prepare_fedora
 build_staging     = build_fedora
@@ -503,6 +507,9 @@ publish_ubuntu:
 	debuild -S -sa -k`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
 	dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes
 
+publish_debian:
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable ../$(PRODUCT)_$(VERSION_MAJOR).$(VERSION_MINOR)ubuntu1~stretch1_amd64.deb; quit"
+
 build_fedora:
 	cd .. && tar cf $(PRODUCT)_$(VERSION).tar.gz --exclude="$(PRODUCT)_$(VERSION).tar.gz" .
 	mv ../$(PRODUCT)_$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES
@@ -572,7 +579,7 @@ clean_sources:
 #-- Help --------------------------------------------
 #----------------------------------------------------
 help: vars
-	@echo "\033[1;43m**** Archlinux ****\033[0m"
+	@echo "\033[1;46m**** Archlinux ****\033[0m"
 	@echo "make -s UBUNTU=archlinux V=$(V) package"
 	@echo ""
 	@echo "cd $(PACKAGE)/$(RELEASE)"
@@ -601,10 +608,18 @@ help: vars
 	@echo "make -s UBUNTU=osx V=$(V) publish"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
+	@echo "make -s UBUNTU=precise V=$(V) package"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
 	@echo "make -s UBUNTU=xenial  V=$(V) package"
 	@echo ""
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "make build"
 	@echo "make publish"
+	@echo ""
+	@echo "\033[1;43m**** Debian ****\033[0m"
+	@echo "make -s UBUNTU=stretch V=$(V) package"
+	@echo ""
+	@echo "cd $(PACKAGE)/$(RELEASE)"
+	@echo "make build (VirtualBox)"
+	@echo "make -s UBUNTU=debian publish"
 	@#echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"
