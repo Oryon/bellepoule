@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <locale.h>
+
 #include "util/drop_zone.hpp"
 #include "util/dnd_config.hpp"
 #include "util/attribute.hpp"

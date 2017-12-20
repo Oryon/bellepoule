@@ -17,7 +17,6 @@
 #include <unistd.h>
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <locale.h>
 #include <libxml/xpath.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH

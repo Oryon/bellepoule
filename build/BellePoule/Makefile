@@ -286,10 +286,10 @@ publish_staging   = publish_fedora
 prepare_www       = 
 endif
 
-ifneq ("$(wildcard ./99-bellepoule.conf)","")
-	install_lighttpd = install_lighttpd
+ifneq ("$(wildcard ./99-$(PRODUCT).conf)","")
+install_lighttpd = install_lighttpd
 else
-	install_lighttpd = 
+install_lighttpd = 
 endif
 
 package: prepare_staging $(prepare_linux) $(prepare_osx) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www)
