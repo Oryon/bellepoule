@@ -1,6 +1,14 @@
 #----------------------------------------------------
 #-- Variables ---------------------------------------
 #----------------------------------------------------
+
+ifneq ($(wildcard ./.UBUNTU),"")
+UBUNTU = $(shell cat ./.UBUNTU)
+endif
+ifneq ($(wildcard ./.V),"")
+V = $(shell cat ./.V)
+endif
+
 ifeq (,$(wildcard ../../sources/BellePoule/application/version.h))
 	VERSION_FILE = "sources/BellePoule/application/version.h"
 else
@@ -20,17 +28,12 @@ endif
 PRODUCT      = bellepoulebeta
 #PRODUCT      = bellepoule
 OUTPUT       = Release
-V            = 1
 PACKAGE      = $(HOME)/Project/PPA/$(PRODUCT)
 VERSION      = $(VERSION_MAJOR).$(VERSION_MINOR)
 RELEASE      = $(PRODUCT)_$(VERSION)
 LONG_VERSION = $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)
 DATE         = $(shell date -R)
 OSX_CROSS    = $(HOME)/Project/Osxcross/target/macports/pkgs/opt/local
-
-ifeq ($(UBUNTU),)
-UBUNTU = $(shell grep "^ID=" /usr/lib/os-release | sed 's/.*=//')
-endif
 
 GTK = gtk+-2.0
 GOO = goocanvas
@@ -235,6 +238,7 @@ $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHAL
 vars:
 	@echo "\033[1;41m**** Variables ****\033[0m"
 	@echo "$(UBUNTU)"
+	@echo "$(V)"
 	@echo "$(VERSION)"
 	@echo "$(VERSION_MATURITY)"
 	@echo "$(VERSION_MICRO)"
@@ -279,7 +283,7 @@ EXAMPLES          = $(PACKAGE)/$(RELEASE)/Exemples
 RESOURCES         = $(PACKAGE)/$(RELEASE)/resources
 endif
 
-ifeq ($(UBUNTU), debian)
+ifeq ($(UBUNTU), stretch)
 publish_staging   = publish_debian
 endif
 
@@ -432,6 +436,8 @@ prepare_staging:
 	rm -rf $(PACKAGE)/*
 	mkdir -p $(PACKAGE)/$(RELEASE)
 	cp Makefile $(PACKAGE)/$(RELEASE)
+	@echo "$(UBUNTU)" > $(PACKAGE)/$(RELEASE)/.UBUNTU
+	@echo "$(V)"      > $(PACKAGE)/$(RELEASE)/.V
 
 prepare_debian:
 	cp -rf debian $(PACKAGE)/$(RELEASE)
@@ -580,46 +586,27 @@ clean_sources:
 #----------------------------------------------------
 help: vars
 	@echo "\033[1;46m**** Archlinux ****\033[0m"
-	@echo "make -s UBUNTU=archlinux V=$(V) package"
-	@echo ""
-	@echo "cd $(PACKAGE)/$(RELEASE)"
-	@echo "make -s UBUNTU=archlinux build"
-	@echo "make -s UBUNTU=archlinux publish"
+	@echo "make -s UBUNTU=archlinux V=1 package"
 	@echo ""
 	@echo "\033[1;42m**** Windows ****\033[0m"
-	@echo "make -s UBUNTU=windows V=$(V) package"
+	@echo "make -s UBUNTU=windows V=1 package"
 	@echo ""
-	@echo "cd $(PACKAGE)/$(RELEASE)"
-	@echo "make -s UBUNTU=windows build"
-	@echo "make -s UBUNTU=windows publish"
-	@echo ""
-	@echo "\033[1;41m**** Fedora ****\033[0m"
-	@echo "make -s UBUNTU=fedora V=$(V) package"
-	@echo ""
-	@echo "cd $(PACKAGE)/$(RELEASE)"
-	@echo "make -s UBUNTU=fedora V=$(V) build (VirtualBox)"
-	@echo "make -s UBUNTU=fedora V=$(V) publish"
+	@echo "\033[1;41m**** Fedora (VirtualBox) ****\033[0m"
+	@echo "make -s UBUNTU=fedora V=1 package"
 	@echo ""
 	@echo "\033[1;45m**** MacOs ****\033[0m"
-	@echo "make -s UBUNTU=osx V=$(V) package"
+	@echo "make -s UBUNTU=osx V=1 package"
 	@echo ""
-	@echo "cd $(PACKAGE)/$(RELEASE)"
-	@echo "make -s UBUNTU=osx V=$(V) build"
-	@echo "make -s UBUNTU=osx V=$(V) publish"
+	@echo "\033[1;43m**** Debian (VirtualBox) ****\033[0m"
+	@echo "make -s UBUNTU=stretch V=1 package"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
-	@echo "make -s UBUNTU=precise V=$(V) package"
-	@echo "make -s UBUNTU=trusty  V=$(V) package"
-	@echo "make -s UBUNTU=xenial  V=$(V) package"
+	@echo "make -s UBUNTU=precise V=1 package"
+	@echo "make -s UBUNTU=trusty  V=1 package"
+	@echo "make -s UBUNTU=xenial  V=1 package"
 	@echo ""
 	@echo "cd $(PACKAGE)/$(RELEASE)"
-	@echo "make build"
-	@echo "make publish"
+	@echo "make -s build"
+	@echo "make -s publish"
 	@echo ""
-	@echo "\033[1;43m**** Debian ****\033[0m"
-	@echo "make -s UBUNTU=stretch V=$(V) package"
-	@echo ""
-	@echo "cd $(PACKAGE)/$(RELEASE)"
-	@echo "make build (VirtualBox)"
-	@echo "make -s UBUNTU=debian publish"
 	@#echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"
