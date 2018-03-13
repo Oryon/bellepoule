@@ -481,43 +481,6 @@ void Stage::SetOutputShortlist ()
     Player::AttributeId classif_attr_id       ("status", GetPlayerDataOwner ());
     Player::AttributeId global_status_attr_id ("global_status");
 
-    // Reset status from N to Q before applying Quota
-    {
-      GSList *current = _output_short_list;
-
-      while (current)
-      {
-        Player    *player = (Player *) current->data;
-        Attribute *status;
-
-        status = player->GetAttribute (&classif_attr_id);
-        if (status)
-        {
-          gchar *value = status->GetStrValue ();
-
-          if (value && (value[0] == 'N'))
-          {
-            player->SetAttributeValue (&classif_attr_id,
-                                       "Q");
-          }
-        }
-
-        status = player->GetAttribute (&global_status_attr_id);
-        if (status)
-        {
-          gchar *value = status->GetStrValue ();
-
-          if (value && (value[0] == 'N'))
-          {
-            player->SetAttributeValue (&global_status_attr_id,
-                                       "Q");
-          }
-        }
-
-        current = g_slist_next (current);
-      }
-    }
-
     // Remove all of the withdrawalls and black cards
     {
       Player::AttributeId stage_status_attr_id ("status", GetPlayerDataOwner ());
@@ -1176,15 +1139,57 @@ void Stage::UpdateClassification (Classification *classification,
 // --------------------------------------------------------------------------------
 void Stage::SetResult ()
 {
-  GSList *result = GetCurrentClassification ();
+  // Reset status from N to Q before
+  {
+    Player::AttributeId classif_attr_id       ("status", GetPlayerDataOwner ());
+    Player::AttributeId global_status_attr_id ("global_status");
 
-  FreeResult ();
-  _result = result;
+    GSList *current = _output_short_list;
 
-  SetOutputShortlist ();
+    while (current)
+    {
+      Player    *player = (Player *) current->data;
+      Attribute *status;
 
-  UpdateClassification (_classification,
-                        result);
+      status = player->GetAttribute (&classif_attr_id);
+      if (status)
+      {
+        gchar *value = status->GetStrValue ();
+
+        if (value && (value[0] == 'N'))
+        {
+          player->SetAttributeValue (&classif_attr_id,
+                                     "Q");
+        }
+      }
+
+      status = player->GetAttribute (&global_status_attr_id);
+      if (status)
+      {
+        gchar *value = status->GetStrValue ();
+
+        if (value && (value[0] == 'N'))
+        {
+          player->SetAttributeValue (&global_status_attr_id,
+                                     "Q");
+        }
+      }
+
+      current = g_slist_next (current);
+    }
+  }
+
+  {
+    GSList *result = GetCurrentClassification ();
+
+    FreeResult ();
+    _result = result;
+
+    SetOutputShortlist ();
+
+    UpdateClassification (_classification,
+                          result);
+  }
 }
 
 // --------------------------------------------------------------------------------
