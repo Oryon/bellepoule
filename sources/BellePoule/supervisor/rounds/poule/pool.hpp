@@ -20,6 +20,7 @@
 #include <goocanvas.h>
 
 #include "util/canvas_module.hpp"
+#include "../../score_collector.hpp"
 
 class FieTime;
 class Data;
@@ -31,7 +32,8 @@ namespace Pool
 {
   class Dispatcher;
 
-  class Pool : public CanvasModule
+  class Pool : public CanvasModule,
+               public ScoreCollector::Listener
   {
     public:
       struct StatusListener
@@ -140,6 +142,7 @@ namespace Pool
     GSList          *_referee_list;
     guint            _piste;
     FieTime         *_start_time;
+    guint            _duration_sec;
     ScoreCollector  *_score_collector;
     GList           *_match_list;
     gchar           *_name;
@@ -206,10 +209,11 @@ namespace Pool
 
       Match *GetMatch (guint i);
 
-      static void OnNewScore (ScoreCollector *score_collector,
-                              CanvasModule   *client,
-                              Match          *match,
-                              Player         *player);
+      void OnNewScore (ScoreCollector *score_collector,
+                       Match          *match,
+                       Player         *player);
+
+      void Timestamp ();
 
       void RefreshDashBoard ();
 

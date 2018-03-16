@@ -58,6 +58,10 @@ namespace Marshaller
 
       GTimeSpan GetRegularDuration ();
 
+      gboolean IsOver ();
+
+      void SetRealDuration (GTimeSpan duration);
+
       Batch *GetBatch ();
 
       GdkColor *GetGdkColor ();
@@ -99,6 +103,7 @@ namespace Marshaller
       guint      _kinship;
       guint      _workload_units;
       GTimeSpan  _regular_duration;
+      gboolean   _over;
 
       ~Job ();
   };

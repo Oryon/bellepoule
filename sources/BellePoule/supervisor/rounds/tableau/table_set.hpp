@@ -21,6 +21,7 @@
 #include "util/canvas_module.hpp"
 #include "network/ring.hpp"
 #include "../../stage.hpp"
+#include "../../score_collector.hpp"
 
 #include "html_table.hpp"
 
@@ -38,6 +39,7 @@ namespace Table
 
   class TableSet :
     public CanvasModule,
+    public ScoreCollector::Listener,
     public Net::Ring::Listener
   {
     public:
@@ -258,10 +260,9 @@ namespace Table
       static gboolean DeleteDeadNode (GNode    *node,
                                       TableSet *table_set);
 
-      static void OnNewScore (ScoreCollector *score_collector,
-                              CanvasModule   *client,
-                              Match          *match,
-                              Player         *player);
+      void OnNewScore (ScoreCollector *score_collector,
+                       Match          *match,
+                       Player         *player);
 
       gint ComparePreviousRankPlayer (Player  *A,
                                       Player  *B,

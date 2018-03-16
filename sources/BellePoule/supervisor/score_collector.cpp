@@ -26,16 +26,14 @@
 #include "score_collector.hpp"
 
 // --------------------------------------------------------------------------------
-ScoreCollector::ScoreCollector (CanvasModule   *client,
-                                OnNewScore_cbk  on_new_score,
-                                gboolean        display_match_name)
+ScoreCollector::ScoreCollector (Listener  *listener,
+                                gboolean   display_match_name)
   : Object ("ScoreCollector")
 {
   _entry_item         = NULL;
   _gtk_entry          = NULL;
   _collecting_point   = NULL;
-  _client             = client;
-  _on_new_score       = on_new_score;
+  _listener           = listener;
   _is_locked          = FALSE;
   _display_match_name = display_match_name;
 
@@ -523,12 +521,11 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
                  _consistent_normal_color,
                  _unconsistent_normal_color);
 
-  if (_client && _on_new_score)
+  if (_listener)
   {
-    _on_new_score (this,
-                   _client,
-                   match,
-                   player);
+    _listener->OnNewScore (this,
+                           match,
+                           player);
   }
 
   return TRUE;

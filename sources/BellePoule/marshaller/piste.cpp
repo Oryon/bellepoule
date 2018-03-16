@@ -30,10 +30,10 @@
 
 namespace Marshaller
 {
-  const gdouble Piste::_W          = 160.0;
-  const gdouble Piste::_H          = 20.0;
-  const gdouble Piste::_BORDER_W   = 0.5;
-  const gdouble Piste::_RESOLUTION = 10.0;
+  const gdouble Piste::_W          = 240.0;
+  const gdouble Piste::_H          = 30.0;
+  const gdouble Piste::_BORDER_W   = 0.75;
+  const gdouble Piste::_RESOLUTION = 15.0;
 
   // --------------------------------------------------------------------------------
   Piste::Piste (GooCanvasItem *parent,
@@ -86,10 +86,10 @@ namespace Marshaller
     {
       _id_item = goo_canvas_text_new (_root_item,
                                       "",
-                                      1.0, 1.0,
+                                      1.5, 1.5,
                                       -1.0,
                                       GTK_ANCHOR_NW,
-                                      "font", BP_FONT "bold 10px",
+                                      "font", BP_FONT "bold 15px",
                                       NULL);
       MonitorEvent (_id_item);
     }
@@ -98,10 +98,10 @@ namespace Marshaller
     {
       _title_item = goo_canvas_text_new (_root_item,
                                          "",
-                                         _W/2.0, 1.0,
+                                         _W/2.0, 1.5,
                                          -1.0,
                                          GTK_ANCHOR_NORTH,
-                                         "font",       BP_FONT "8px",
+                                         "font",       BP_FONT "12px",
                                          "use-markup", TRUE,
                                          NULL);
       MonitorEvent (_title_item);
@@ -110,7 +110,7 @@ namespace Marshaller
     // Referee
     {
       _referee_table = goo_canvas_table_new (_root_item,
-                                             "x", (gdouble) 10.0,
+                                             "x", (gdouble) 15.0,
                                              "y", _H*0.5,
                                              "column-spacing", (gdouble) 4.0,
                                              NULL);
@@ -123,8 +123,8 @@ namespace Marshaller
                                                              0, 1);
 
         goo_canvas_item_scale (icon,
-                               0.5,
-                               0.5);
+                               0.8,
+                               0.8);
 
         g_object_unref (pixbuf);
         g_free (icon_file);
@@ -135,7 +135,7 @@ namespace Marshaller
                                                 "",
                                                 0, 2);
         g_object_set (G_OBJECT (_referee_name),
-                      "font", BP_FONT "bold 6px",
+                      "font", BP_FONT "bold 9px",
                       NULL);
         Canvas::SetTableItemAttribute (_referee_name, "y-align", 1.0);
       }
@@ -146,7 +146,7 @@ namespace Marshaller
     // Cone
     {
       gchar     *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "images", "VLC.png", NULL);
-      GdkPixbuf *pixbuf    = gdk_pixbuf_new_from_file_at_size (icon_file, 15, 17, NULL);
+      GdkPixbuf *pixbuf    = gdk_pixbuf_new_from_file (icon_file, NULL);
 
       _cone = goo_canvas_image_new (_root_item,
                                     pixbuf,
@@ -168,6 +168,36 @@ namespace Marshaller
       MonitorEvent (_cone);
 
       g_object_set (G_OBJECT (_cone),
+                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                    NULL);
+    }
+
+    // Finish
+    {
+      gchar     *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "images", "finish.png", NULL);
+      GdkPixbuf *pixbuf    = gdk_pixbuf_new_from_file (icon_file, NULL);
+
+      _finish = goo_canvas_image_new (_root_item,
+                                      pixbuf,
+                                      0.0,
+                                      0.0,
+                                      NULL);
+      g_object_unref (pixbuf);
+      g_free (icon_file);
+
+      Canvas::VAlign (_finish,
+                      Canvas::MIDDLE,
+                      _root_item,
+                      Canvas::END,
+                      -15.0);
+      Canvas::HAlign (_finish,
+                      Canvas::MIDDLE,
+                      _root_item,
+                      Canvas::MIDDLE);
+
+      MonitorEvent (_finish);
+
+      g_object_set (G_OBJECT (_finish),
                     "visibility", GOO_CANVAS_ITEM_INVISIBLE,
                     NULL);
     }
@@ -326,7 +356,6 @@ namespace Marshaller
     }
     _display_time = g_date_time_add (time, 0);
 
-    CleanDisplay  ();
     OnSlotUpdated (GetSlotAt (time));
   }
 
@@ -367,6 +396,10 @@ namespace Marshaller
     _color = g_strdup ("lightgrey");
     SetColor (_color);
 
+    g_object_set (G_OBJECT (_progress_item),
+                  "width", 0.0,
+                  NULL);
+
     g_object_set (G_OBJECT (_title_item),
                   "text", "",
                   NULL);
@@ -376,6 +409,10 @@ namespace Marshaller
                   NULL);
 
     g_object_set (G_OBJECT (_shutter),
+                  "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                  NULL);
+
+    g_object_set (G_OBJECT (_finish),
                   "visibility", GOO_CANVAS_ITEM_INVISIBLE,
                   NULL);
   }
@@ -412,9 +449,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Piste::OnSlotUpdated (Slot *slot)
   {
-    g_object_set (G_OBJECT (_progress_item),
-                  "width", 0.0,
-                  NULL);
+    CleanDisplay ();
 
     if (slot && slot->TimeIsInside (_display_time))
     {
@@ -422,7 +457,19 @@ namespace Marshaller
       const gchar *last_name    = NULL;
       GList       *referee_list = slot->GetRefereeList ();
 
-      CleanDisplay ();
+      if (slot->IsOver ())
+      {
+        g_object_set (G_OBJECT (_finish),
+                      "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                      NULL);
+      }
+      else
+      {
+        g_object_set (G_OBJECT (_finish),
+                      "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                      NULL);
+      }
+
 
       if (referee_list)
       {
@@ -522,7 +569,19 @@ namespace Marshaller
                     NULL);
       g_string_free (match_name, TRUE);
     }
+  }
 
+  // --------------------------------------------------------------------------------
+  void Piste::OnSlotAssigned (Slot *slot)
+  {
+    _slots = g_list_insert_sorted (_slots,
+                                   slot,
+                                   (GCompareFunc) Slot::CompareAvailbility);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Piste::OnSlotRetracted (Slot *slot)
+  {
     if (slot && (slot->GetJobList () == NULL))
     {
       GList *node = g_list_find (_slots,
@@ -535,14 +594,6 @@ namespace Marshaller
       }
       slot->Release ();
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Piste::OnSlotLocked (Slot *slot)
-  {
-    _slots = g_list_insert_sorted (_slots,
-                                   slot,
-                                   (GCompareFunc) Slot::CompareAvailbility);
   }
 
   // --------------------------------------------------------------------------------

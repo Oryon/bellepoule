@@ -81,6 +81,25 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Slot::IsOver ()
+  {
+    GList *current = _job_list;
+
+    while (current)
+    {
+      Job *job = (Job *) current->data;
+
+      if (job->IsOver () == FALSE)
+      {
+        return FALSE;
+      }
+      current = g_list_next (current);
+    }
+
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
   void Slot::SetStartTime (GDateTime *time)
   {
     if (_start)
@@ -111,8 +130,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Slot::TailWith (Slot      *what,
-                       GTimeSpan  duration)
+  void Slot::SetDuration (GTimeSpan duration)
   {
     GDateTime *end = g_date_time_add (_start, duration);
 
@@ -122,6 +140,16 @@ namespace Marshaller
       g_date_time_unref (_end);
     }
     _end = end;
+
+    _owner->OnSlotUpdated (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Slot::TailWith (Slot      *with,
+                       GTimeSpan  duration)
+  {
+    g_warning ("**** JobDetails::OnDragDrop ****");
+    SetDuration (duration);
   }
 
   // --------------------------------------------------------------------------------
@@ -177,6 +205,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Slot::AddJob (Job *job)
   {
+    gboolean has_owner = _job_list != NULL;
+
     _job_list = g_list_append (_job_list,
                                job);
 
@@ -197,37 +227,49 @@ namespace Marshaller
 
     RefreshJobStatus (job);
 
+    if (has_owner == FALSE)
+    {
+      _owner->OnSlotAssigned (this);
+    }
+
     _owner->OnSlotUpdated (this);
-    _owner->OnSlotLocked  (this);
   }
 
   // --------------------------------------------------------------------------------
   void Slot::RemoveJob (Job *job)
   {
+    if (job)
     {
-      GList *node = g_list_find (_job_list,
-                                 job);
+      {
+        GList *node = g_list_find (_job_list,
+                                   job);
 
-      _job_list = g_list_delete_link (_job_list,
-                                      node);
+        _job_list = g_list_delete_link (_job_list,
+                                        node);
+      }
+
+      {
+        g_list_foreach (_referee_list,
+                        (GFunc) EnlistedReferee::OnRemovedFromSlot,
+                        this);
+        g_list_free (_referee_list);
+        _referee_list = NULL;
+      }
+
+      RefreshJobStatus (job);
+
+      job->RemoveObjectListener (this);
+      job->SetSlot              (NULL);
+
+      _owner->OnSlotUpdated (this);
+
+      _duration = 0;
+
+      if (GetJobList () == NULL)
+      {
+        _owner->OnSlotRetracted (this);
+      }
     }
-
-    {
-      g_list_foreach (_referee_list,
-                      (GFunc) EnlistedReferee::OnRemovedFromSlot,
-                      this);
-      g_list_free (_referee_list);
-      _referee_list = NULL;
-    }
-
-    RefreshJobStatus (job);
-
-    job->RemoveObjectListener (this);
-    job->SetSlot              (NULL);
-
-    _owner->OnSlotUpdated (this);
-
-    _duration = 0;
   }
 
   // --------------------------------------------------------------------------------
@@ -289,21 +331,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Slot::OnObjectDeleted (Object *object)
   {
-    Job *job = (Job *) object;
-
-    if (job)
-    {
-      GList *node = g_list_find (_job_list,
-                                 job);
-
-      if (node)
-      {
-        _job_list = g_list_delete_link (_job_list,
-                                        node);
-      }
-
-      _owner->OnSlotUpdated (this);
-    }
+    RemoveJob ((Job *) object);
   }
 
   // --------------------------------------------------------------------------------

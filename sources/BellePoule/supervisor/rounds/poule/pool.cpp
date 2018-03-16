@@ -32,7 +32,6 @@
 #include "dispatcher/dispatcher.hpp"
 #include "../../score.hpp"
 #include "../../match.hpp"
-#include "../../score_collector.hpp"
 
 #include "pool.hpp"
 
@@ -55,6 +54,7 @@ namespace Pool
       _referee_list          = NULL;
       _piste                 = 0;
       _start_time            = NULL;
+      _duration_sec          = 0;
       _sorted_fencer_list    = NULL;
       _match_list            = NULL;
       _is_over               = FALSE;
@@ -223,6 +223,7 @@ namespace Pool
     }
 
     RefreshScoreData ();
+    Timestamp ();
   }
 
   // --------------------------------------------------------------------------------
@@ -539,15 +540,32 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Pool::Timestamp ()
+  {
+    GDateTime *start = _start_time->GetGDateTime ();
+    GDateTime *now   = g_date_time_new_now_local ();
+    GTimeSpan  span  = g_date_time_difference (now, start);
+
+    if (span > 0)
+    {
+      _duration_sec = (guint) (span / G_TIME_SPAN_SECOND);
+
+      Spread ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Pool::OnNewScore (ScoreCollector *score_collector,
-                         CanvasModule   *client,
                          Match          *match,
                          Player         *player)
   {
-    Pool *pool = dynamic_cast <Pool *> (client);
+    RefreshScoreData ();
+    RefreshDashBoard ();
 
-    pool->RefreshScoreData ();
-    pool->RefreshDashBoard ();
+    if (_is_over)
+    {
+      Timestamp ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -555,8 +573,7 @@ namespace Pool
                    gboolean   print_for_referees,
                    gboolean   print_matchs)
   {
-    _score_collector = new ScoreCollector (this,
-                                           (ScoreCollector::OnNewScore_cbk) &Pool::OnNewScore);
+    _score_collector = new ScoreCollector (this);
 
     {
       const guint    cell_w      = 45;
@@ -2183,6 +2200,9 @@ namespace Pool
     parcel->Set ("xml", (const gchar *) xml_buffer->content);
     xmlBufferFree (xml_buffer);
 
+    parcel->Set ("duration_sec",
+                 _duration_sec);
+
     parcel->Set ("workload_units",
                  _max_score->_value * GetNbMatchs ());
   }
@@ -2215,6 +2235,13 @@ namespace Pool
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "Date",
                                          "%s", _start_time->GetXmlImage ());
+    }
+
+    if (_duration_sec > 0)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Duree",
+                                         "%d", _duration_sec);
     }
 
     if (_sorted_fencer_list)
@@ -2345,6 +2372,16 @@ namespace Pool
         Object::TryToRelease (_start_time);
         _start_time = new FieTime (attr);
 
+        xmlFree (attr);
+      }
+    }
+
+    {
+      gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Duree");
+
+      if (attr)
+      {
+        _duration_sec = atoi (attr);
         xmlFree (attr);
       }
     }

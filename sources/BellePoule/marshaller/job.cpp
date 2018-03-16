@@ -45,6 +45,7 @@ namespace Marshaller
     _slot             = NULL;
     _kinship          = 0;
     _regular_duration = 0;
+    _over             = FALSE;
     _workload_units   = message->GetInteger ("workload_units");
 
     Disclose ("Roadmap");
@@ -110,6 +111,25 @@ namespace Marshaller
   GTimeSpan Job::GetRegularDuration ()
   {
     return _regular_duration;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Job::IsOver ()
+  {
+    return _over;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Job::SetRealDuration (GTimeSpan duration)
+  {
+    if (duration > 0)
+    {
+      if (_slot != NULL)
+      {
+        _over = TRUE;
+        _slot->SetDuration (MAX (duration, 15 * G_TIME_SPAN_MINUTE));
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

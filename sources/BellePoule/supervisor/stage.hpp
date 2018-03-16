@@ -204,8 +204,6 @@ class Stage : public virtual Object,
 
     Classification *GetClassification ();
 
-    virtual GSList *GetCurrentClassification () {return NULL;};
-
     void LockOnClassification (GtkWidget *w);
 
     virtual void LoadConfiguration (xmlNode *xml_node);
@@ -251,6 +249,8 @@ class Stage : public virtual Object,
     virtual void OnLocked () {};
     virtual void OnUnLocked () {};
     static StageClass *GetClass (const gchar *name);
+
+    virtual GSList *GetCurrentClassification () {return NULL;};
 
     virtual void SetOutputShortlist ();
 

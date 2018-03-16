@@ -33,8 +33,9 @@ namespace Marshaller
       class Owner
       {
         public:
-          virtual void  OnSlotUpdated (Slot *slot) = 0;
-          virtual void  OnSlotLocked  (Slot *slot) = 0;
+          virtual void  OnSlotUpdated   (Slot *slot) = 0;
+          virtual void  OnSlotAssigned  (Slot *slot) = 0;
+          virtual void  OnSlotRetracted (Slot *slot) = 0;
           virtual guint GetId () = 0;
       };
 
@@ -68,8 +69,12 @@ namespace Marshaller
 
       gboolean CanWrap (Slot *what);
 
-      void TailWith (Slot      *what,
+      void SetDuration (GTimeSpan duration);
+
+      void TailWith (Slot      *with,
                      GTimeSpan  duration);
+
+      gboolean IsOver ();
 
       gboolean TimeIsInside (GDateTime *time);
 

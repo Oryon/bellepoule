@@ -475,6 +475,7 @@ namespace Pool
     if (target_zone)
     {
       target_pool_zone = (PoolZone *) target_zone;
+      source_pool_zone = (PoolZone *) source_zone;
 
       if (floating_object->Is ("Fencer"))
       {
@@ -501,6 +502,8 @@ namespace Pool
         }
 
         _fencer_list->Update (floating_object);
+        RecallJobs ();
+        SpreadJobs ();
       }
     }
 
@@ -522,15 +525,21 @@ namespace Pool
     {
       if (player->Is ("Fencer"))
       {
-        return Locked ();
-      }
-      else
-      {
-        return TRUE;
+        if (Locked ())
+        {
+          return TRUE;
+        }
+        if (_has_marshaller)
+        {
+          Pool *pool = GetPool (0);
+
+          return pool->GetRefereeList () != NULL;
+        }
+        return FALSE;
       }
     }
 
-    return FALSE;
+    return TRUE;
   }
 
   // --------------------------------------------------------------------------------
@@ -2228,19 +2237,19 @@ namespace Pool
                                                     pool->GetNumber () - 1);
 
     {
-      guint   ref     = message->GetInteger ("referee");
-      Player *referee = (Player *) _contest->GetRefereeFromRef (ref);
-
-      if (referee)
+      if (message->GetFitness () > 0)
       {
-        if (message->GetFitness () > 0)
+        guint   ref     = message->GetInteger ("referee");
+        Player *referee = (Player *) _contest->GetRefereeFromRef (ref);
+
+        if (referee)
         {
-          pool->AddReferee (referee);
+            pool->AddReferee (referee);
         }
-        else
-        {
-          pool->RemoveReferee (referee);
-        }
+      }
+      else
+      {
+        pool->RemoveAllReferee ();
       }
     }
 

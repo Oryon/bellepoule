@@ -34,7 +34,6 @@
 #include "network/message.hpp"
 #include "../../classification.hpp"
 #include "../../score.hpp"
-#include "../../score_collector.hpp"
 #include "../../match.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
@@ -125,7 +124,6 @@ namespace Table
 
     {
       _quick_score_collector = new ScoreCollector (this,
-                                                   (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore,
                                                    FALSE);
 
       _quick_score_A = GetQuickScore ("fencerA_hook");
@@ -703,39 +701,36 @@ namespace Table
 
   // --------------------------------------------------------------------------------
   void TableSet::OnNewScore (ScoreCollector *score_collector,
-                             CanvasModule   *client,
                              Match          *match,
                              Player         *player)
   {
-    TableSet *table_set = dynamic_cast <TableSet *> (client);
-
-    if (score_collector == table_set->_quick_score_collector)
+    if (score_collector == _quick_score_collector)
     {
-      table_set->_score_collector->Refresh (match);
+      _score_collector->Refresh (match);
     }
     else
     {
-      table_set->_quick_score_collector->Refresh (match);
+      _quick_score_collector->Refresh (match);
     }
 
     if ((score_collector == NULL) || match->IsOver ())
     {
-      table_set->SpreadWinners ();
-      table_set->RefreshNodes ();
-      table_set->RefilterQuickSearch ();
+      SpreadWinners ();
+      RefreshNodes ();
+      RefilterQuickSearch ();
     }
     else
     {
-      table_set->RefreshTableStatus ();
+      RefreshTableStatus ();
     }
 
     {
-      Table *table = (Table *) match->GetPtrData (table_set, "table");
+      Table *table = (Table *) match->GetPtrData (this, "table");
 
       if (table->_is_over)
       {
-        table_set->_supervisor->OnTableOver (table_set,
-                                             table);
+        _supervisor->OnTableOver (this,
+                                  table);
       }
     }
   }
@@ -1798,7 +1793,6 @@ namespace Table
       Object::TryToRelease (_score_collector);
 
       _score_collector = new ScoreCollector (this,
-                                             (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore,
                                              FALSE);
 
       _score_collector->SetConsistentColors ("LightGrey",
@@ -3724,7 +3718,6 @@ namespace Table
     g_free (code);
 
     OnNewScore (NULL,
-                this,
                 match,
                 player);
   }

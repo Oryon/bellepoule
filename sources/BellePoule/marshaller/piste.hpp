@@ -124,6 +124,7 @@ namespace Marshaller
       GooCanvasItem   *_referee_table;
       GooCanvasItem   *_referee_name;
       GooCanvasItem   *_cone;
+      GooCanvasItem   *_finish;
       GooCanvasItem   *_shutter;
       guint            _id;
       gboolean         _horizontal;
@@ -152,7 +153,9 @@ namespace Marshaller
 
       void OnSlotUpdated (Slot *slot);
 
-      void  OnSlotLocked  (Slot *slot);
+      void  OnSlotAssigned (Slot *slot);
+
+      void  OnSlotRetracted (Slot *slot);
 
       GList *GetSlots ();
 

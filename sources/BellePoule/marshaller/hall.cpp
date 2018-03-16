@@ -54,7 +54,6 @@ namespace Marshaller
     _dragging = FALSE;
 
     SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")));
-    ZoomTo (1.5);
 
     _competition_list = NULL;
 
@@ -302,9 +301,8 @@ namespace Marshaller
         GList     *slots    = piste->GetFreeSlots (from, duration);
         Slot      *slot     = (Slot *) slots->data;
 
-        slot->TailWith (NULL,
-                        duration);
-        slot->AddJob (job);
+        slot->SetDuration (duration);
+        slot->AddJob      (job);
 
         g_date_time_unref (from);
 
@@ -413,51 +411,64 @@ namespace Marshaller
 
       if (batch)
       {
-        guint    piste_id;
-        guint    referee_id;
-        FieTime *start_time = NULL;
-        Job     *job;
+        GTimeSpan  real_duration = message->GetInteger ("duration_sec") * G_TIME_SPAN_SECOND;
+        Job       *job           = batch->GetJob (message->GetNetID ());
 
-        job = batch->Load (message,
-                           &piste_id,
-                           &referee_id,
-                           &start_time);
         if (job)
         {
-          job->SetWeapon (Weapon::GetFromXml (competition->GetWeaponCode ()));
+          job->SetRealDuration (real_duration);
+          Redraw ();
+        }
+        else
+        {
+          guint    piste_id;
+          guint    referee_id;
+          FieTime *start_time = NULL;
 
-          if (start_time)
+          job = batch->Load (message,
+                             &piste_id,
+                             &referee_id,
+                             &start_time);
+          if (job)
           {
-            Piste *piste = GetPiste (piste_id);
+            job->SetWeapon (Weapon::GetFromXml (competition->GetWeaponCode ()));
 
-            if (piste)
+            if (start_time)
             {
-              GTimeSpan duration = job->GetRegularDuration ();
-              Slot *slot = piste->GetFreeSlot (start_time->GetGDateTime (),
-                                               duration);
+              Piste *piste = GetPiste (piste_id);
 
-              if (slot)
+              if (piste)
               {
-                EnlistedReferee *referee = _referee_pool->GetReferee (referee_id);
+                GTimeSpan  duration = job->GetRegularDuration ();
+                Slot      *slot     = piste->GetFreeSlot (start_time->GetGDateTime (),
+                                                          duration);
 
-                if (referee)
+                if (slot)
                 {
-                  slot->TailWith (NULL,
-                                  duration);
-                  slot->AddJob     (job);
-                  slot->AddReferee (referee);
-                  Redraw ();
-                }
-                else
-                {
-                  slot->Release ();
+                  EnlistedReferee *referee = _referee_pool->GetReferee (referee_id);
+
+                  if (referee)
+                  {
+                    slot->SetDuration (duration);
+                    slot->AddJob      (job);
+                    slot->AddReferee  (referee);
+
+                    job->SetRealDuration (real_duration);
+
+                    Redraw ();
+                  }
+                  else
+                  {
+                    slot->Release ();
+                  }
                 }
               }
+              start_time->Release ();
             }
           }
+          batch->CloseLoading ();
+          _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
         }
-        batch->CloseLoading ();
-        _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
       }
     }
   }
@@ -838,9 +849,8 @@ namespace Marshaller
 
         if (slot)
         {
-          slot->TailWith (NULL,
-                          duration);
-          slot->AddJob (_floating_job);
+          slot->SetDuration (duration);
+          slot->AddJob      (_floating_job);
 
           while (current)
           {
@@ -1109,11 +1119,15 @@ namespace Marshaller
         }
 
         {
-          Job       *first = (Job *) job_list->data;
-          Slot      *slot  = first->GetSlot ();
-          GDateTime *start = slot->GetStartTime ();
+          Job  *first = (Job *) job_list->data;
+          Slot *slot  = first->GetSlot ();
 
-          _timeline->SetCursorTime (start);
+          if (slot)
+          {
+            GDateTime *start = slot->GetStartTime ();
+
+            _timeline->SetCursorTime (start);
+          }
         }
 
         g_list_free (job_list);

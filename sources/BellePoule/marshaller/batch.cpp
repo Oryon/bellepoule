@@ -417,7 +417,6 @@ namespace Marshaller
 
     _loading = TRUE;
 
-    if (GetJob (message->GetNetID ()) == NULL)
     {
       gchar     *xml = message->GetString ("xml");
       xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));

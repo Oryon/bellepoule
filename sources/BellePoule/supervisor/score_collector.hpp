@@ -28,15 +28,16 @@ class CanvasModule;
 class ScoreCollector : public Object
 {
   public:
-    typedef void (*OnNewScore_cbk) (ScoreCollector *score_collector,
-                                    CanvasModule   *client,
-                                    Match          *match,
-                                    Player         *player);
+    struct Listener
+    {
+      virtual void OnNewScore (ScoreCollector *score_collector,
+                               Match          *match,
+                               Player         *player) = 0;
+    };
 
   public:
-    ScoreCollector (CanvasModule   *client,
-                    OnNewScore_cbk  on_new_score,
-                    gboolean        display_match_name = TRUE);
+    ScoreCollector (Listener *client,
+                    gboolean  display_match_name = TRUE);
 
     void AddCollectingPoint (GooCanvasItem *point,
                              GooCanvasItem *score_text,
@@ -72,8 +73,7 @@ class ScoreCollector : public Object
     GooCanvasItem  *_entry_item;
     GooCanvasItem  *_collecting_point;
     GtkWidget      *_gtk_entry;
-    CanvasModule   *_client;
-    OnNewScore_cbk  _on_new_score;
+    Listener       *_listener;
     gboolean        _is_locked;
     gulong          _focus_out_handle;
     gchar          *_consistent_focus_color;
