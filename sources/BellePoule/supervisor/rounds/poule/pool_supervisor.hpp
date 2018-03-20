@@ -76,6 +76,7 @@ namespace Pool
       Pool           *_displayed_pool;
       gboolean        _print_all_pool;
       Classification *_current_round_classification;
+      guint           _pools_per_page;
 
       virtual ~Supervisor ();
 

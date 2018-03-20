@@ -21,10 +21,10 @@
 
 #include "module.hpp"
 
-const gdouble  Module::PRINT_HEADER_HEIGHT = 10.0; // % of paper width
-const gdouble  Module::PRINT_FONT_HEIGHT   = 2.0;  // % of paper width
-GtkTreeModel  *Module::_status_model       = NULL;
-GtkWindow     *Module::_main_window        = NULL;
+const gdouble  Module::PRINT_HEADER_FRAME_HEIGHT = 10.0; // % of paper width
+const gdouble  Module::PRINT_FONT_HEIGHT         = 2.0;  // % of paper width
+GtkTreeModel  *Module::_status_model             = NULL;
+GtkWindow     *Module::_main_window              = NULL;
 
 // --------------------------------------------------------------------------------
 Module::Module (const gchar *glade_file,
@@ -646,6 +646,47 @@ void Module::Print (const gchar             *job_name,
 
     gtk_widget_show (dialog);
   }
+}
+
+// --------------------------------------------------------------------------------
+gdouble Module::GetPrintHeaderSize (GtkPrintContext *context,
+                                    SizeReferential  referential)
+{
+  gdouble size = PRINT_HEADER_FRAME_HEIGHT + 2.0;
+
+  if (referential == ON_SHEET)
+  {
+    return GetSizeOnSheet (context,
+                           size);
+  }
+
+  return size;
+}
+
+// --------------------------------------------------------------------------------
+gdouble Module::GetPrintBodySize (GtkPrintContext *context,
+                                  SizeReferential  referential)
+{
+  gdouble paper_w = gtk_print_context_get_width  (context);
+  gdouble paper_h = gtk_print_context_get_height (context);
+  gdouble size    = paper_h*100.0/paper_w - GetPrintHeaderSize (context, referential);
+
+  if (referential == ON_SHEET)
+  {
+    return GetSizeOnSheet (context,
+                           size);
+  }
+
+  return size;
+}
+
+// --------------------------------------------------------------------------------
+gdouble Module::GetSizeOnSheet (GtkPrintContext *context,
+                                gdouble          normalized_size)
+{
+  gdouble paper_w = gtk_print_context_get_width  (context);
+
+  return normalized_size * paper_w  / 100;
 }
 
 // --------------------------------------------------------------------------------

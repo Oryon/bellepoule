@@ -542,15 +542,18 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::Timestamp ()
   {
-    GDateTime *start = _start_time->GetGDateTime ();
-    GDateTime *now   = g_date_time_new_now_local ();
-    GTimeSpan  span  = g_date_time_difference (now, start);
-
-    if (span > 0)
+    if (_start_time)
     {
-      _duration_sec = (guint) (span / G_TIME_SPAN_SECOND);
+      GDateTime *start = _start_time->GetGDateTime ();
+      GDateTime *now   = g_date_time_new_now_local ();
+      GTimeSpan  span  = g_date_time_difference (now, start);
 
-      Spread ();
+      if (span > 0)
+      {
+        _duration_sec = (guint) (span / G_TIME_SPAN_SECOND);
+
+        Spread ();
+      }
     }
   }
 
@@ -569,17 +572,19 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::Draw (GooCanvas *on_canvas,
-                   gboolean   print_for_referees,
-                   gboolean   print_matchs)
+  GooCanvasItem *Pool::Draw (GooCanvas *on_canvas,
+                             gboolean   print_for_referees,
+                             gboolean   print_matchs)
   {
+    GooCanvasItem *canvas_root = goo_canvas_get_root_item (on_canvas);
+    GooCanvasItem *root_item   = goo_canvas_group_new (canvas_root, NULL);
+
     _score_collector = new ScoreCollector (this);
 
     {
       const guint    cell_w      = 45;
       const guint    cell_h      = 45;
       guint          nb_players  = GetNbPlayers ();
-      GooCanvasItem *root_item   = goo_canvas_get_root_item (on_canvas);
       GooCanvasItem *title_group = goo_canvas_group_new (root_item, NULL);
       GooCanvasItem *grid_group  = goo_canvas_group_new (root_item, NULL);
       GooCanvasItem *grid_header = goo_canvas_group_new (grid_group, NULL);
@@ -639,7 +644,7 @@ namespace Pool
                                cell_h/2.0,
                                -1,
                                GTK_ANCHOR_W,
-                               "fill-color", "Black",
+                               "fill-color", "DarkGreen",
                                "font", BP_FONT "bold 25.0px",
                                NULL);
           g_free (name);
@@ -674,7 +679,11 @@ namespace Pool
 
         if (_piste)
         {
-          gchar *piste = g_strdup_printf ("%02d @ %s", _piste, _start_time->GetImage ());
+          gchar *piste = g_strdup_printf ("%02d%c%c@%c%c%s",
+                                          _piste,
+                                          0xC2, 0xA0, // non breaking space
+                                          0xC2, 0xA0, // non breaking space
+                                          _start_time->GetImage ());
 
           goo_canvas_text_new (piste_group,
                                piste,
@@ -682,7 +691,7 @@ namespace Pool
                                cell_h/2.0,
                                -1,
                                GTK_ANCHOR_W,
-                               "fill-color", "Black",
+                               "fill-color", "DarkGreen",
                                "font", BP_FONT "bold 25.0px",
                                NULL);
           g_free (piste);
@@ -1345,6 +1354,8 @@ namespace Pool
         }
       }
     }
+
+    return root_item;
   }
 
   // --------------------------------------------------------------------------------
@@ -1359,27 +1370,14 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::DrawPage (GtkPrintOperation *operation,
-                       GtkPrintContext   *context,
-                       gint               page_nr)
+  GooCanvasItem *Pool::DrawPage (GtkPrintOperation *operation,
+                                 GooCanvas         *canvas)
   {
-    GooCanvas *canvas = CreateCanvas ();
+    gboolean for_referees = (gboolean) GPOINTER_TO_INT(g_object_get_data (G_OBJECT (operation), "print_for_referees"));
 
-    {
-      gboolean for_referees = (gboolean) GPOINTER_TO_INT(g_object_get_data (G_OBJECT (operation), "print_for_referees"));
-
-      Draw (canvas,
-            for_referees,
-            for_referees);
-    }
-
-    g_object_set_data (G_OBJECT (operation), "operation_canvas", (void *) canvas);
-    CanvasModule::DrawPage (operation,
-                            context,
-                            page_nr);
-    Wipe ();
-
-    gtk_widget_destroy (GTK_WIDGET (canvas));
+    return Draw (canvas,
+                 for_referees,
+                 for_referees);
   }
 
   // --------------------------------------------------------------------------------

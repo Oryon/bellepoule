@@ -1072,9 +1072,7 @@ namespace People
                      &canvas_h);
 
       {
-        gdouble paper_w   = gtk_print_context_get_width (context);
-        gdouble paper_h   = gtk_print_context_get_height (context);
-        gdouble free_area = (paper_h*100.0/paper_w - PRINT_HEADER_HEIGHT+2.0);
+        gdouble free_area = GetPrintBodySize (context, NORMALIZED);
 
         _nb_player_per_page = guint (players_count * free_area/_print_scale / canvas_h) - 1;
       }
@@ -1448,7 +1446,7 @@ namespace People
         g_free (text);
 
         goo_canvas_render (canvas,
-                           gtk_print_context_get_cairo_context (context),
+                           cr,
                            NULL,
                            1.0);
 

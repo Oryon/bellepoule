@@ -2047,7 +2047,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
 
     goo_canvas_rect_new (goo_canvas_get_root_item (canvas),
                          0.0, 0.0,
-                         100.0, PRINT_HEADER_HEIGHT,
+                         100.0, PRINT_HEADER_FRAME_HEIGHT,
                          "stroke-color", "grey",
                          "fill-color", color,
                          "line-width", 0.3,
@@ -2134,12 +2134,11 @@ void Contest::DrawPage (GtkPrintOperation *operation,
 
   if (operation_matrix == NULL)
   {
-    gdouble  paper_w = gtk_print_context_get_width  (context);
-    cairo_t *cr      = gtk_print_context_get_cairo_context (context);
+    cairo_t *cr = gtk_print_context_get_cairo_context (context);
 
     cairo_translate (cr,
                      0.0,
-                     (PRINT_HEADER_HEIGHT+2) * paper_w  / 100);
+                     GetPrintHeaderSize (context, ON_SHEET));
   }
 }
 

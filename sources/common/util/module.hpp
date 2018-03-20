@@ -106,6 +106,12 @@ class Module : public virtual Object
     DndConfig *_dnd_config;
 
   protected:
+    typedef enum
+    {
+      ON_SHEET,
+      NORMALIZED,
+    } SizeReferential;
+
     Filter           *_filter;
     Glade            *_glade;
     Module           *_owner;
@@ -113,7 +119,7 @@ class Module : public virtual Object
     GtkPrintSettings *_page_setup_print_settings;
     GtkPageSetup     *_default_page_setup;
 
-    static const gdouble PRINT_HEADER_HEIGHT;
+    static const gdouble PRINT_HEADER_FRAME_HEIGHT;
     static const gdouble PRINT_FONT_HEIGHT;
 
     Module (const gchar *glade_file,
@@ -145,6 +151,15 @@ class Module : public virtual Object
 
     virtual void OnBeginPrint (GtkPrintOperation *operation,
                                GtkPrintContext   *context);
+
+    gdouble GetPrintHeaderSize (GtkPrintContext *context,
+                                SizeReferential  referential);
+
+    gdouble GetPrintBodySize (GtkPrintContext *context,
+                              SizeReferential  referential);
+
+    gdouble GetSizeOnSheet (GtkPrintContext *context,
+                            gdouble          normalized_size);
 
   private:
     virtual void OnDrawPage (GtkPrintOperation *operation,

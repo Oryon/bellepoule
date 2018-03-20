@@ -1601,7 +1601,8 @@ namespace Pool
                                          label,
                                          0, column_count++);
           g_object_set (G_OBJECT (item),
-                        "font", BP_FONT "bold italic 14px",
+                        "font",       BP_FONT "bold italic 14px",
+                        "fill-color", "DarkGreen",
                         NULL);
           Canvas::SetTableItemAttribute (item, "y-align", 1.0);
           g_free (label);
@@ -1618,7 +1619,8 @@ namespace Pool
                                          start_time->GetImage (),
                                          0, column_count++);
           g_object_set (G_OBJECT (item),
-                        "font", BP_FONT "bold italic 14px",
+                        "font",       BP_FONT "bold italic 14px",
+                        "fill-color", "DarkGreen",
                         NULL);
           Canvas::SetTableItemAttribute (item, "y-align", 1.0);
         }
@@ -1962,7 +1964,7 @@ namespace Pool
       gdouble canvas_w;
       gdouble paper_w  = gtk_print_context_get_width (context);
       gdouble paper_h  = gtk_print_context_get_height (context);
-      gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+      gdouble header_h = GetPrintHeaderSize (context, ON_SHEET);
 
       {
         GooCanvasBounds bounds;

@@ -62,9 +62,11 @@ namespace Table
         if (current && piste && start_time)
         {
           {
-            gchar *roadmap = g_strdup_printf ("%s %d @ %s",
+            gchar *roadmap = g_strdup_printf ("%s %d%c%c@%c%c%s",
                                               gettext ("Piste"),
                                               piste,
+                                              0xC2, 0xA0, // non breaking space
+                                              0xC2, 0xA0, // non breaking space
                                               start_time->GetImage ());
             gchar *undivadable = GetUndivadableText (roadmap);
 

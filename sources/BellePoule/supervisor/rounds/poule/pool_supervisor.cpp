@@ -50,6 +50,7 @@ namespace Pool
     _allocator      = NULL;
     _displayed_pool = NULL;
     _max_score      = NULL;
+    _pools_per_page = 1;
 
     _current_round_owner = new Object ("Pool::Supervisor.owner");
 
@@ -574,7 +575,9 @@ namespace Pool
 
     if (_print_all_pool)
     {
-      return _allocator->GetNbPools ();
+      guint page_count = _allocator->GetNbPools () / _pools_per_page;
+
+      return page_count + ((_allocator->GetNbPools () % _pools_per_page) != 0);
     }
     else
     {
@@ -605,20 +608,124 @@ namespace Pool
     else if (   (GetStageView (operation) == STAGE_VIEW_RESULT)
              || (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE))
     {
-      Pool *pool;
+      GList *pools = NULL;
 
       if (_print_all_pool)
       {
-        pool = _allocator->GetPool (page_nr);
+        for (guint i = 0; i < _pools_per_page; i ++)
+        {
+          Pool *pool = _allocator->GetPool (page_nr*_pools_per_page + i);
+
+          if (pool == NULL)
+          {
+            break;
+          }
+          pools = g_list_append (pools,
+                                 pool);
+        }
       }
       else
       {
-        pool = _displayed_pool;
+        pools = g_list_append (pools,
+                               _displayed_pool);
       }
 
-      pool->DrawPage (operation,
-                      context,
-                      page_nr);
+      {
+        GooCanvas *canvas  = Canvas::CreatePrinterCanvas (context);
+        cairo_t   *cr      = gtk_print_context_get_cairo_context (context);
+        gdouble    offset  = 0.0;
+        GList     *current = pools;
+
+        cairo_save (cr);
+
+        while (current)
+        {
+          GooCanvasBounds  bounds;
+          GooCanvasItem   *root_item;
+          Pool            *pool      = (Pool *) current->data;
+
+          root_item = pool->DrawPage (operation,
+                                      canvas);
+          goo_canvas_item_get_bounds (root_item,
+                                      &bounds);
+
+          goo_canvas_item_translate (root_item,
+                                     0.0,
+                                     offset);
+
+          goo_canvas_convert_to_item_space (canvas,
+                                            root_item,
+                                            &bounds.x1,
+                                            &bounds.y1);
+          goo_canvas_convert_to_item_space (canvas,
+                                            root_item,
+                                            &bounds.x2,
+                                            &bounds.y2);
+          offset += (bounds.y2 - bounds.y1) * 1.2;
+
+          pool->Wipe ();
+
+          current = g_list_next (current);
+        }
+
+        {
+          gdouble scale;
+          gdouble canvas_x;
+          gdouble canvas_y;
+          gdouble canvas_w;
+          gdouble canvas_h;
+          gdouble paper_w  = gtk_print_context_get_width (context);
+          gdouble paper_h  = gtk_print_context_get_height (context);
+          gdouble header_h = GetPrintHeaderSize (context, NORMALIZED);
+
+          {
+            GooCanvasBounds bounds;
+
+            goo_canvas_item_get_bounds (goo_canvas_get_root_item (canvas),
+                                        &bounds);
+            canvas_x = bounds.x1;
+            canvas_y = bounds.y1;
+            canvas_w = bounds.x2 - bounds.x1;
+            canvas_h = bounds.y2 - bounds.y1;
+          }
+
+          {
+            gdouble canvas_dpi;
+            gdouble printer_dpi;
+
+            g_object_get (G_OBJECT (canvas),
+                          "resolution-x", &canvas_dpi,
+                          NULL);
+            printer_dpi = gtk_print_context_get_dpi_x (context);
+
+            scale = printer_dpi/canvas_dpi;
+          }
+
+          if (   (canvas_w*scale > paper_w)
+              || (canvas_h*scale + header_h*paper_w/100 > paper_h))
+          {
+            gdouble x_scale = paper_w / canvas_w;
+            gdouble y_scale = (paper_h - header_h*paper_w/100) / canvas_h;
+
+            scale = MIN (x_scale, y_scale);
+          }
+
+          cairo_translate (cr,
+                           -canvas_x*scale,
+                           -canvas_y*scale);
+          cairo_scale (cr,
+                       scale,
+                       scale);
+        }
+
+        goo_canvas_render (canvas,
+                           cr,
+                           NULL,
+                           1.0);
+        cairo_restore (cr);
+      }
+
+      g_list_free (pools);
     }
   }
 
@@ -638,6 +745,12 @@ namespace Pool
       {
         Manage (_allocator->GetPool (p));
       }
+    }
+
+    {
+      guint size = _allocator->GetBiggestPoolSize ();
+
+      _pools_per_page = 3;
     }
   }
 

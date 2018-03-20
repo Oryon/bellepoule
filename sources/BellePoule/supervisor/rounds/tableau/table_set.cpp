@@ -2887,13 +2887,9 @@ namespace Table
         }
       }
 
-      {
-        gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
-
-        print_session->SetPaperSize (paper_w,
-                                     paper_h,
-                                     header_h);
-      }
+      print_session->SetPaperSize (paper_w,
+                                   paper_h,
+                                   GetPrintHeaderSize (context, ON_SHEET));
     }
     else
     {
@@ -3152,13 +3148,9 @@ namespace Table
         ChangeFromTable (print_session->GetFromTable ());
       }
 
-      {
-        gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
-
-        print_session->SetPaperSize (paper_w,
-                                     paper_h,
-                                     header_h);
-      }
+      print_session->SetPaperSize (paper_w,
+                                   paper_h,
+                                   GetPrintHeaderSize (context, ON_SHEET));
 
       print_session->ProcessCurrentPage (page_nr);
 
@@ -3248,7 +3240,7 @@ namespace Table
 
           // Flash code
           {
-            gdouble    offset     = i *((100.0/_nb_match_per_sheet) *paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 7.0);
+            gdouble    offset     = i *((100.0/_nb_match_per_sheet) *paper_h/paper_w) + (PRINT_HEADER_FRAME_HEIGHT + 7.0);
             FlashCode *flash_code = match->GetFlashCode ();
             GdkPixbuf *pixbuf     = flash_code->GetPixbuf ();
 
@@ -3311,7 +3303,7 @@ namespace Table
                                      3.2,
                                      -1,
                                      GTK_ANCHOR_W,
-                                     "fill-color", "Black",
+                                     "fill-color", "DarkGreen",
                                      "font", font,
                                      NULL);
                 g_free (name);
@@ -3354,8 +3346,10 @@ namespace Table
             {
               FieTime *start_time = match->GetStartTime ();
 
-              gchar *piste = g_strdup_printf ("#%02d @ %s",
+              gchar *piste = g_strdup_printf ("#%02d%c%c@%c%c%s",
                                               match->GetPiste (),
+                                              0xC2, 0xA0, // non breaking space
+                                              0xC2, 0xA0, // non breaking space
                                               start_time->GetImage ());
 
               goo_canvas_text_new (strip_group,
@@ -3364,7 +3358,7 @@ namespace Table
                                    4.0,
                                    -1,
                                    GTK_ANCHOR_W,
-                                   "fill-color", "Black",
+                                   "fill-color", "DarkGreen",
                                    "font", font,
                                    NULL);
               g_free (piste);

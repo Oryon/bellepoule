@@ -111,9 +111,8 @@ namespace Pool
 
       void Stuff ();
 
-      void DrawPage (GtkPrintOperation *operation,
-                     GtkPrintContext   *context,
-                     gint               page_nr);
+      GooCanvasItem *DrawPage (GtkPrintOperation *operation,
+                               GooCanvas         *canvas);
 
       GSList *GetFencerList ();
 
@@ -195,9 +194,9 @@ namespace Pool
                            const gchar *name,
                            void        *value);
 
-      void Draw (GooCanvas *on_canvas,
-                 gboolean   print_for_referees,
-                 gboolean   print_matchs);
+      GooCanvasItem *Draw (GooCanvas *on_canvas,
+                           gboolean   print_for_referees,
+                           gboolean   print_matchs);
 
       void DumpToHTML (FILE                *file,
                        Player              *fencer,
