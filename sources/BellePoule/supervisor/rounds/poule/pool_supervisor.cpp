@@ -27,6 +27,8 @@
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
 
+#define POOL_PAGE_DENSITY (_pool_v_density*_pool_h_density)
+
 namespace Pool
 {
   const gchar *Supervisor::_class_name     = N_ ("Pools");
@@ -50,7 +52,6 @@ namespace Pool
     _allocator      = NULL;
     _displayed_pool = NULL;
     _max_score      = NULL;
-    _pools_per_page = 1;
 
     _current_round_owner = new Object ("Pool::Supervisor.owner");
 
@@ -549,10 +550,18 @@ namespace Pool
       return 0;
     }
 
+    if (_displayed_pool)
+    {
+      _displayed_pool->Wipe ();
+    }
+
     if (GetStageView (operation) == STAGE_VIEW_RESULT)
     {
       _print_all_pool = TRUE;
     }
+
+    _pool_v_density = 1;
+    _pool_h_density = 1;
 
     {
       GtkWidget *w = _glade->GetWidget ("for_referees_radiobutton");
@@ -565,19 +574,15 @@ namespace Pool
       else
       {
         g_object_set_data (G_OBJECT (operation), "print_for_referees", (void *) FALSE);
+        SetPrintPoolDensity ();
       }
-    }
-
-    if (_displayed_pool)
-    {
-      _displayed_pool->Wipe ();
     }
 
     if (_print_all_pool)
     {
-      guint page_count = _allocator->GetNbPools () / _pools_per_page;
+      guint page_count = _allocator->GetNbPools () / POOL_PAGE_DENSITY;
 
-      return page_count + ((_allocator->GetNbPools () % _pools_per_page) != 0);
+      return page_count + ((_allocator->GetNbPools () % POOL_PAGE_DENSITY) != 0);
     }
     else
     {
@@ -612,9 +617,9 @@ namespace Pool
 
       if (_print_all_pool)
       {
-        for (guint i = 0; i < _pools_per_page; i ++)
+        for (guint i = 0; i < POOL_PAGE_DENSITY; i ++)
         {
-          Pool *pool = _allocator->GetPool (page_nr*_pools_per_page + i);
+          Pool *pool = _allocator->GetPool (page_nr*POOL_PAGE_DENSITY + i);
 
           if (pool == NULL)
           {
@@ -631,43 +636,51 @@ namespace Pool
       }
 
       {
-        GooCanvas *canvas  = Canvas::CreatePrinterCanvas (context);
-        cairo_t   *cr      = gtk_print_context_get_cairo_context (context);
-        gdouble    offset  = 0.0;
-        GList     *current = pools;
+        GooCanvas *canvas   = Canvas::CreatePrinterCanvas (context);
+        gdouble    offset_v = 0.0;
+        GList     *current  = pools;
 
-        cairo_save (cr);
-
-        while (current)
+        for (guint v = 0 ; v < _pool_v_density; v++)
         {
-          GooCanvasBounds  bounds;
-          GooCanvasItem   *root_item;
-          Pool            *pool      = (Pool *) current->data;
+          GooCanvasBounds bounds;
+          gdouble         offset_h = 0.0;
 
-          root_item = pool->DrawPage (operation,
-                                      canvas);
-          goo_canvas_item_get_bounds (root_item,
-                                      &bounds);
+          for (guint h = 0 ; h < _pool_h_density; h++)
+          {
+            GooCanvasItem *root_item;
+            Pool          *pool      = (Pool *) current->data;
 
-          goo_canvas_item_translate (root_item,
-                                     0.0,
-                                     offset);
+            root_item = pool->DrawPage (operation,
+                                        canvas);
+            goo_canvas_item_get_bounds (root_item,
+                                        &bounds);
 
-          goo_canvas_convert_to_item_space (canvas,
-                                            root_item,
-                                            &bounds.x1,
-                                            &bounds.y1);
-          goo_canvas_convert_to_item_space (canvas,
-                                            root_item,
-                                            &bounds.x2,
-                                            &bounds.y2);
-          offset += (bounds.y2 - bounds.y1) * 1.2;
+            goo_canvas_item_translate (root_item,
+                                       offset_h,
+                                       offset_v);
 
-          pool->Wipe ();
+            goo_canvas_convert_to_item_space (canvas,
+                                              root_item,
+                                              &bounds.x1,
+                                              &bounds.y1);
+            goo_canvas_convert_to_item_space (canvas,
+                                              root_item,
+                                              &bounds.x2,
+                                              &bounds.y2);
+            offset_h += (bounds.x2 - bounds.x1) * 1.0;
 
-          current = g_list_next (current);
+            pool->Wipe ();
+
+            current = g_list_next (current);
+            if (current == NULL)
+            {
+              goto rendering;
+            }
+          }
+          offset_v += (bounds.y2 - bounds.y1) * 1.2;
         }
 
+rendering:
         {
           gdouble scale;
           gdouble canvas_x;
@@ -710,19 +723,25 @@ namespace Pool
             scale = MIN (x_scale, y_scale);
           }
 
-          cairo_translate (cr,
-                           -canvas_x*scale,
-                           -canvas_y*scale);
-          cairo_scale (cr,
-                       scale,
-                       scale);
-        }
+          {
+            cairo_t *cr = gtk_print_context_get_cairo_context (context);
 
-        goo_canvas_render (canvas,
-                           cr,
-                           NULL,
-                           1.0);
-        cairo_restore (cr);
+            cairo_save (cr);
+
+            cairo_translate (cr,
+                             -canvas_x*scale,
+                             -canvas_y*scale);
+            cairo_scale (cr,
+                         scale,
+                         scale);
+
+            goo_canvas_render (canvas,
+                               cr,
+                               NULL,
+                               1.0);
+            cairo_restore (cr);
+          }
+        }
       }
 
       g_list_free (pools);
@@ -746,12 +765,15 @@ namespace Pool
         Manage (_allocator->GetPool (p));
       }
     }
+  }
 
-    {
-      guint size = _allocator->GetBiggestPoolSize ();
+  // --------------------------------------------------------------------------------
+  void Supervisor::SetPrintPoolDensity ()
+  {
+    guint size = _allocator->GetBiggestPoolSize ();
 
-      _pools_per_page = 3;
-    }
+    _pool_v_density = MIN (MAX (21 / size, 1), 4);
+    _pool_h_density = MIN (MAX (14 / size, 1), 2);
   }
 
   // --------------------------------------------------------------------------------
