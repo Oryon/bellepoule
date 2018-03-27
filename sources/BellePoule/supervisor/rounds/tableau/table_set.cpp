@@ -99,7 +99,7 @@ namespace Table
     _listener       = NULL;
 
     SetZoomer (zoomer);
-    ZoomTo (0.8);
+    ZoomTo (1.0);
 
     _page_setup = gtk_page_setup_new ();
 

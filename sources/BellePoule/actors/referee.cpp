@@ -26,12 +26,10 @@ const gchar *Referee::_xml_tag    = "Arbitre";
 Referee::Referee ()
 : Player (_class_name)
 {
-  {
-    Player::AttributeId attr_id ("");
+  Player::AttributeId attr_id ("");
 
-    attr_id._name = (gchar *) "connection";
-    SetAttributeValue (&attr_id, "Manual");
-  }
+  attr_id._name = (gchar *) "connection";
+  SetAttributeValue (&attr_id, "Manual");
 }
 
 // --------------------------------------------------------------------------------

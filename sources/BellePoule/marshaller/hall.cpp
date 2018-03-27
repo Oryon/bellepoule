@@ -192,7 +192,8 @@ namespace Marshaller
 
     if (json_reader_read_member (reader, "pistes"))
     {
-      guint count = json_reader_count_elements (reader);
+      GDateTime *cursor = _timeline->RetreiveCursorTime (TRUE);
+      guint      count  = json_reader_count_elements (reader);
 
       for (guint i = 0; i < count; i++)
       {
@@ -207,8 +208,11 @@ namespace Marshaller
         _piste_list = g_list_insert_sorted (_piste_list,
                                             piste,
                                             GCompareFunc (Piste::CompareId));
+
+        piste->DisplayAtTime (cursor);
       }
 
+      g_date_time_unref (cursor);
       result = TRUE;
     }
 
@@ -565,7 +569,7 @@ namespace Marshaller
     }
 
     {
-      GDateTime *cursor = _timeline->RetreiveCursorTime ();
+      GDateTime *cursor = _timeline->RetreiveCursorTime (TRUE);
 
       piste->DisplayAtTime (cursor);
       g_date_time_unref (cursor);
@@ -1189,47 +1193,51 @@ namespace Marshaller
 
     if (result == 0)
     {
-      Affinities *a_affinities   = (Affinities *) a->GetPtrData (NULL, "affinities");
-      Affinities *b_affinities   = (Affinities *) b->GetPtrData (NULL, "affinities");
-      guint       affinity_count = g_list_length (Affinities::GetTitles ());
-      guint      *a_kinship = g_new0 (guint, affinity_count);
-      guint      *b_kinship = g_new0 (guint, affinity_count);
+      Affinities *a_affinities = (Affinities *) a->GetPtrData (NULL, "affinities");
+      Affinities *b_affinities = (Affinities *) b->GetPtrData (NULL, "affinities");
 
-      while (fencer_list)
+      if (a_affinities && b_affinities)
       {
-        Player     *fencer       = (Player *) fencer_list->data;
-        Affinities *f_affinities = (Affinities *) fencer->GetPtrData (NULL, "affinities");
+        guint  affinity_count = g_list_length (Affinities::GetTitles ());
+        guint *a_kinship      = g_new0 (guint, affinity_count);
+        guint *b_kinship      = g_new0 (guint, affinity_count);
 
-        for (guint i = 1; i <= affinity_count; i = i<<1)
+        while (fencer_list)
         {
-          guint kinship;
+          Player     *fencer       = (Player *) fencer_list->data;
+          Affinities *f_affinities = (Affinities *) fencer->GetPtrData (NULL, "affinities");
 
-          kinship = a_affinities->KinshipWith (f_affinities);
-          if (kinship & i)
+          for (guint i = 1; i <= affinity_count; i = i<<1)
           {
-            a_kinship[i-1]++;
+            guint kinship;
+
+            kinship = a_affinities->KinshipWith (f_affinities);
+            if (kinship & i)
+            {
+              a_kinship[i-1]++;
+            }
+
+            kinship = b_affinities->KinshipWith (f_affinities);
+            if (kinship & i)
+            {
+              b_kinship[i-1]++;
+            }
           }
+          fencer_list = g_list_next (fencer_list);
+        }
 
-          kinship = b_affinities->KinshipWith (f_affinities);
-          if (kinship & i)
+        for (guint i = 0; i < affinity_count; i++)
+        {
+          if (a_kinship[i] != b_kinship[i])
           {
-            b_kinship[i-1]++;
+            result = a_kinship[i] - b_kinship[i];
+            break;
           }
         }
-        fencer_list = g_list_next (fencer_list);
-      }
 
-      for (guint i = 0; i < affinity_count; i++)
-      {
-        if (a_kinship[i] != b_kinship[i])
-        {
-          result = a_kinship[i] - b_kinship[i];
-          break;
-        }
+        g_free (a_kinship);
+        g_free (b_kinship);
       }
-
-      g_free (a_kinship);
-      g_free (b_kinship);
     }
 
     return result;

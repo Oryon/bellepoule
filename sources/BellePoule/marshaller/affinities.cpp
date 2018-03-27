@@ -125,25 +125,29 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   guint Affinities::KinshipWith (Affinities *with)
   {
-    GList *current_key  = _titles;
-    GList *current      = _checksums;
-    GList *with_current = with->_checksums;
-    guint  kinship      = 0;
+    guint  kinship = 0;
 
-    for (guint i = 0; current != NULL; i++)
+    if (with)
     {
-      if (current->data == with_current->data)
-      {
-        if (g_datalist_get_data (&_validities,
-                                 (const gchar *) current_key->data) != 0)
-        {
-          kinship |= 1<<i;
-        }
-      }
+      GList *current_key  = _titles;
+      GList *current      = _checksums;
+      GList *with_current = with->_checksums;
 
-      current_key  = g_list_next (current_key);
-      current      = g_list_next (current);
-      with_current = g_list_next (with_current);
+      for (guint i = 0; current != NULL; i++)
+      {
+        if (current->data == with_current->data)
+        {
+          if (g_datalist_get_data (&_validities,
+                                   (const gchar *) current_key->data) != 0)
+          {
+            kinship |= 1<<i;
+          }
+        }
+
+        current_key  = g_list_next (current_key);
+        current      = g_list_next (current);
+        with_current = g_list_next (with_current);
+      }
     }
 
     return kinship;

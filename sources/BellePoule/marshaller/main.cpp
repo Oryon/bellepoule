@@ -18,8 +18,8 @@
 #include "util/attribute_desc.hpp"
 #include "util/filter.hpp"
 #include "application/application.hpp"
-#include "actors/referee.hpp"
 #include "actors/fencer.hpp"
+#include "enlisted_referee.hpp"
 #include "marshaller.hpp"
 
 namespace Marshaller
@@ -60,8 +60,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void MarshallerApp::Prepare ()
   {
-    Referee::RegisterPlayerClass ();
-    Fencer::RegisterPlayerClass  ();
+    EnlistedReferee::RegisterPlayerClass ();
+    Fencer::RegisterPlayerClass          ();
 
     Application::Prepare ();
   }

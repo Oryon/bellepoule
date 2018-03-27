@@ -272,10 +272,13 @@ namespace Marshaller
         fencer_affinities = (Affinities *) fencer->GetPtrData (NULL,
                                                                "affinities");
 
-        kinship = fencer_affinities->KinshipWith (referee_affinities);
-        if (kinship > _kinship)
+        if (fencer_affinities)
         {
-          _kinship = kinship;
+          kinship = fencer_affinities->KinshipWith (referee_affinities);
+          if (kinship > _kinship)
+          {
+            _kinship = kinship;
+          }
         }
 
         fencers = g_list_next (fencers);

@@ -312,7 +312,7 @@
   <object class="GtkSizeGroup" id="value_sizegroup"/>
   <object class="GtkAdjustment" id="zoom_adjustment">
     <property name="lower">0.10000000000000001</property>
-    <property name="upper">0.80000000000000004</property>
+    <property name="upper">1</property>
     <property name="value">0.5</property>
     <property name="step_increment">0.01</property>
     <property name="page_increment">0.10000000000000001</property>

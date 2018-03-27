@@ -26,6 +26,11 @@ namespace Marshaller
   class EnlistedReferee : public Referee
   {
     public:
+      static void RegisterPlayerClass ();
+
+      static Player *CreateInstance ();
+
+    public:
       EnlistedReferee ();
 
       void AddSlot (Slot *slot);

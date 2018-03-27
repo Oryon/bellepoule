@@ -30,13 +30,13 @@ class Referee : public Player
     void GiveAnId ();
 
   protected:
+    static const gchar *_class_name;
+    static const gchar *_xml_tag;
+
     Referee ();
 
     virtual ~Referee ();
 
   private:
-    static const gchar *_class_name;
-    static const gchar *_xml_tag;
-
     Player *Clone ();
 };

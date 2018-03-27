@@ -17,6 +17,7 @@
 #include "util/player.hpp"
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
+#include "actors/player_factory.hpp"
 
 #include "slot.hpp"
 #include "job_board.hpp"
@@ -45,6 +46,20 @@ namespace Marshaller
     g_list_free (_slots);
     _job_board->Release ();
     _workload_rate_attr_id->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void EnlistedReferee::RegisterPlayerClass ()
+  {
+    PlayerFactory::AddPlayerClass ("Referee",
+                                   _xml_tag,
+                                   CreateInstance);
+  }
+
+  // --------------------------------------------------------------------------------
+  Player *EnlistedReferee::CreateInstance ()
+  {
+    return new EnlistedReferee ();
   }
 
   // --------------------------------------------------------------------------------
