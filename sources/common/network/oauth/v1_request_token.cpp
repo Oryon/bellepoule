@@ -25,12 +25,19 @@ namespace Oauth
   namespace V1
   {
     // --------------------------------------------------------------------------------
-    RequestToken::RequestToken (Oauth::Session *session)
+    RequestToken::RequestToken (Oauth::Session *session,
+                                gboolean        out_of_bound)
       : Object ("Oauth::V1::RequestToken"),
         Request (session, "oauth/request_token", HTTP_GET)
     {
-      //AddHeaderField ("oauth_callback", "oob");
-      AddHeaderField ("oauth_callback", "http://bellepoule.bzh");
+      if (out_of_bound)
+      {
+        AddHeaderField ("oauth_callback", "oob");
+      }
+      else
+      {
+        AddHeaderField ("oauth_callback", "http://bellepoule.bzh");
+      }
     }
 
     // --------------------------------------------------------------------------------

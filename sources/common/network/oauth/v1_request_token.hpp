@@ -25,7 +25,8 @@ namespace Oauth
     class RequestToken : public Request
     {
       public:
-        RequestToken (Oauth::Session *session);
+        RequestToken (Oauth::Session *session,
+                      gboolean        out_of_bound);
 
         gchar *GetPinCodeUrl ();
 

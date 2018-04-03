@@ -14,10 +14,15 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef WEBKIT
+#include <webkit/webkit.h>
+#endif
+
 #include "util/global.hpp"
 #include "util/glade.hpp"
 
 #include "oauth/v1_request.hpp"
+#include "oauth/v1_access_token.hpp"
 #include "oauth/session.hpp"
 
 #include "advertiser.hpp"
@@ -34,14 +39,21 @@ namespace Net
     _link             = NULL;
     _session          = NULL;
     _pending_response = FALSE;
+#ifdef WEBKIT
+    _oob_authentication = FALSE;
+#else
+    _oob_authentication = TRUE;
+#endif
 
     {
-      gchar    *png  = g_strdup_printf ("%s.png", name);
-      GtkImage *logo = GTK_IMAGE (_glade->GetWidget ("logo"));
-      gchar    *path = g_build_filename (Global::_share_dir, "resources", "glade", "images", png, NULL);
+      gchar *png  = g_strdup_printf ("%s.png", name);
+      gchar *path = g_build_filename (Global::_share_dir, "resources", "glade", "images", png, NULL);
 
-      gtk_image_set_from_file (logo,
+      gtk_image_set_from_file (GTK_IMAGE (_glade->GetWidget ("dialog_image")),
                                path);
+      gtk_image_set_from_file (GTK_IMAGE (_glade->GetWidget ("logo")),
+                               path);
+
       g_free (path);
       g_free (png);
     }
@@ -82,19 +94,35 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Advertiser::IsOopCapable ()
+  {
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
   void Advertiser::Plug (GtkTable *in)
   {
-    guint n_rows = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (in),
+    GtkWidget *header = _glade->GetWidget ("header");
+    GtkWidget *entry  = _glade->GetWidget ("entry");
+    guint      n_rows = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (in),
                                                         "n-advertisers"));
 
     gtk_table_attach_defaults (in,
-                               _glade->GetWidget ("header"),
+                               header,
                                0, 1,
                                n_rows, n_rows+1);
     gtk_table_attach_defaults (in,
-                               _glade->GetWidget ("entry"),
+                               entry,
                                1, 2,
                                n_rows, n_rows+1);
+
+#ifndef WEBKIT
+    if (IsOopCapable () == FALSE)
+    {
+      gtk_widget_set_sensitive (header, FALSE);
+      gtk_widget_set_sensitive (entry,  FALSE);
+    }
+#endif
 
     g_object_set_data (G_OBJECT (in),
                        "n-advertisers",
@@ -274,6 +302,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Advertiser::DisplayAuthorizationPage ()
   {
+#ifdef WEBKIT
     GtkWidget *web_view = webkit_web_view_new ();
 
     {
@@ -292,7 +321,7 @@ namespace Net
     }
 
     {
-      GtkWidget *dialog = _glade->GetWidget ("request_token_dialog");
+      GtkWidget *dialog = _glade->GetWidget ("webkit_dialog");
 
       RunDialog (GTK_DIALOG (dialog));
       gtk_widget_hide (dialog);
@@ -305,6 +334,37 @@ namespace Net
     {
       CheckAuthorization ();
     }
+#else
+    {
+      GtkWidget *link = _glade->GetWidget ("pin_url");
+
+      gtk_link_button_set_uri (GTK_LINK_BUTTON (link),
+                               _session->GetAuthorizationPage ());
+    }
+
+    {
+      GtkWidget *dialog = _glade->GetWidget ("request_token_dialog");
+      GtkEntry  *entry  = GTK_ENTRY (_glade->GetWidget ("pin_entry"));
+
+      if (entry)
+      {
+        gtk_entry_set_text (entry,
+                            "");
+      }
+
+      if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
+      {
+        SendRequest (new Oauth::V1::AccessToken (_session,
+                                                 gtk_entry_get_text (entry)));
+      }
+      else
+      {
+        DisplayId ("");
+      }
+
+      gtk_widget_hide (dialog);
+    }
+#endif
   }
 
   // --------------------------------------------------------------------------------

@@ -16,10 +16,16 @@
 
 #pragma once
 
-#include <webkit/webkit.h>
-
 #include "util/module.hpp"
 #include "oauth/uploader.hpp"
+
+class WebKitNetworkRequest;
+class WebKitWebPolicyDecision;
+class WebKitWebView;
+class WebKitWebFrame;
+class WebKitNetworkRequest;
+class WebKitWebNavigationAction;
+class WebKitWebPolicyDecision;
 
 namespace Oauth
 {
@@ -61,6 +67,7 @@ namespace Net
     protected:
       Oauth::Session *_session;
       gchar          *_name;
+      gboolean        _oob_authentication;
 
       ~Advertiser ();
 
@@ -96,6 +103,8 @@ namespace Net
       void Use ();
 
       void Drop ();
+
+      virtual gboolean IsOopCapable ();
 
       void OnServerResponse (Oauth::Request *request);
 

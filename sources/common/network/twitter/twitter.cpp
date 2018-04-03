@@ -56,6 +56,7 @@ namespace Net
   gboolean Twitter::OnRedirect (WebKitNetworkRequest    *request,
                                 WebKitWebPolicyDecision *policy_decision)
   {
+#ifdef WEBKIT
     const gchar *request_uri = webkit_network_request_get_uri (request);
 
     if (g_strrstr (request_uri, "http://bellepoule.bzh"))
@@ -92,6 +93,7 @@ namespace Net
       webkit_web_policy_decision_ignore (policy_decision);
       return TRUE;
     }
+#endif
 
     return FALSE;
   }
@@ -130,6 +132,6 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Twitter::ClaimForAuthorization ()
   {
-    SendRequest (new Oauth::V1::RequestToken (_session));
+    SendRequest (new Oauth::V1::RequestToken (_session, _oob_authentication));
   }
 }

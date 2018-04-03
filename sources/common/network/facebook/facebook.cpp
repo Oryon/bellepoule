@@ -83,9 +83,16 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Facebook::IsOopCapable ()
+  {
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Facebook::OnRedirect (WebKitNetworkRequest    *request,
                                  WebKitWebPolicyDecision *policy_decision)
   {
+#ifdef WEBKIT
     const gchar *request_uri = webkit_network_request_get_uri (request);
 
     if (   g_strrstr (request_uri, "https://www.facebook.com/connect/login_success.html#")
@@ -122,6 +129,7 @@ namespace Net
       webkit_web_policy_decision_ignore (policy_decision);
       return TRUE;
     }
+#endif
 
     return FALSE;
   }

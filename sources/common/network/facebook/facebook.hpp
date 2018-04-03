@@ -40,5 +40,7 @@ namespace Net
 
       gboolean OnRedirect (WebKitNetworkRequest    *request,
                            WebKitWebPolicyDecision *policy_decision);
+
+      gboolean IsOopCapable ();
   };
 }
