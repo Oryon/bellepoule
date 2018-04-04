@@ -52,11 +52,11 @@ namespace Net
                                      message));
   }
 
+#ifdef WEBKIT
   // --------------------------------------------------------------------------------
   gboolean Twitter::OnRedirect (WebKitNetworkRequest    *request,
                                 WebKitWebPolicyDecision *policy_decision)
   {
-#ifdef WEBKIT
     const gchar *request_uri = webkit_network_request_get_uri (request);
 
     if (g_strrstr (request_uri, "http://bellepoule.bzh"))
@@ -87,16 +87,16 @@ namespace Net
         g_strfreev (params);
       }
 
-      gtk_dialog_response (GTK_DIALOG (_glade->GetWidget ("request_token_dialog")),
+      gtk_dialog_response (GTK_DIALOG (_glade->GetWidget ("webkit_dialog")),
                            GTK_RESPONSE_CANCEL);
 
       webkit_web_policy_decision_ignore (policy_decision);
       return TRUE;
     }
-#endif
 
     return FALSE;
   }
+#endif
 
   // --------------------------------------------------------------------------------
   gboolean Twitter::HandleRequestResponse (Oauth::Request *request)

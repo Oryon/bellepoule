@@ -41,8 +41,9 @@ namespace Net
 
       void ClaimForAuthorization ();
 
+#ifdef WEBKIT
       gboolean OnRedirect (WebKitNetworkRequest    *request,
                            WebKitWebPolicyDecision *policy_decision);
-
+#endif
   };
 }

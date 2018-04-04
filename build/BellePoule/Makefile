@@ -41,6 +41,16 @@ GOO = goocanvas
 #GOO = goocanvas-2.0
 
 #----------------------------------------------------
+#-- WEBKIT  -----------------------------------------
+#----------------------------------------------------
+DWEBKIT    = -DWEBKIT
+WEBKIT_LIB = webkit-1.0
+ifeq ($(UBUNTU), osx)
+	undefine DWEBKIT
+	undefine WEBKIT_LIB
+endif
+
+#----------------------------------------------------
 #-- Compilers ---------------------------------------
 #----------------------------------------------------
 ifeq ($(UBUNTU), windows)
@@ -80,6 +90,7 @@ CFLAGS += -std=c++0x
 CFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGSEAL_ENABLE
+CFLAGS += $(DWEBKIT)
 #CFLAGS += -DGDK_DISABLE_DEPRECATED
 #CFLAGS += -DGTK_DISABLE_DEPRECATED
 
@@ -117,7 +128,7 @@ else
 CFLAGS += -fPIC
 endif
 
-CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 webkit-1.0)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 $(WEBKIT_LIB))
 
 CFLAGS += -Isources/common
 CFLAGS += -Isources/common/network
@@ -138,7 +149,7 @@ ifeq ($(OUTPUT), Release)
 LDFLAGS += -mwindows
 endif
 endif
-LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 webkit-1.0)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 $(WEBKIT_LIB))
 
 ifeq ($(UBUNTU), osx)
 LDFLAGS += -headerpad_max_install_names
@@ -586,8 +597,8 @@ clean_sources:
 #----------------------------------------------------
 help: vars
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
-	@echo "make -s UBUNTU=trusty  V=1 package"
 	@echo "make -s UBUNTU=xenial  V=1 package"
+	@echo "make -s UBUNTU=trusty  V=1 package"
 	@echo ""
 	@echo "\033[1;42m**** Windows ****\033[0m"
 	@echo "make -s UBUNTU=windows V=1 package"

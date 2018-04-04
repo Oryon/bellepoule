@@ -61,6 +61,7 @@
 			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGSEAL_ENABLE" />
+			<Add option="-DWEBKIT" />
 			<Add directory="/usr/include/libxml2" />
 			<Add directory="/usr/include/goocanvas-2.0" />
 			<Add directory="/usr/include/gtk-3.0" />

@@ -38,8 +38,10 @@ namespace Net
 
       gboolean HandleRequestResponse (Oauth::Request *request);
 
+#ifdef WEBKIT
       gboolean OnRedirect (WebKitNetworkRequest    *request,
                            WebKitWebPolicyDecision *policy_decision);
+#endif
 
       gboolean IsOopCapable ();
   };

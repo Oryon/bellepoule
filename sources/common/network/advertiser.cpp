@@ -14,10 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef WEBKIT
-#include <webkit/webkit.h>
-#endif
-
 #include "util/global.hpp"
 #include "util/glade.hpp"
 
@@ -367,6 +363,7 @@ namespace Net
 #endif
   }
 
+#ifdef WEBKIT
   // --------------------------------------------------------------------------------
   gboolean Advertiser::OnWebKitRedirect (WebKitWebView             *web_view,
                                          WebKitWebFrame            *frame,
@@ -378,6 +375,7 @@ namespace Net
     return a->OnRedirect (request,
                           policy_decision);
   }
+#endif
 
   // --------------------------------------------------------------------------------
   void Advertiser::PublishMessage (const gchar *message)

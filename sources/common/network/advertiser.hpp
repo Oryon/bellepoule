@@ -16,16 +16,12 @@
 
 #pragma once
 
+#ifdef WEBKIT
+#include <webkit/webkit.h>
+#endif
+
 #include "util/module.hpp"
 #include "oauth/uploader.hpp"
-
-class WebKitNetworkRequest;
-class WebKitWebPolicyDecision;
-class WebKitWebView;
-class WebKitWebFrame;
-class WebKitNetworkRequest;
-class WebKitWebNavigationAction;
-class WebKitWebPolicyDecision;
 
 namespace Oauth
 {
@@ -116,6 +112,7 @@ namespace Net
 
       virtual gboolean HandleRequestResponse (Oauth::Request *request) = 0;
 
+#ifdef WEBKIT
       virtual gboolean OnRedirect (WebKitNetworkRequest    *request,
                                    WebKitWebPolicyDecision *policy_decision) = 0;
 
@@ -125,5 +122,6 @@ namespace Net
                                         WebKitWebNavigationAction *navigation_action,
                                         WebKitWebPolicyDecision   *policy_decision,
                                         Advertiser                *t);
+#endif
   };
 }
