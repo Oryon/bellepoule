@@ -979,11 +979,11 @@ AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name,
 
     if (attr_desc->MatchCriteria (criteria))
     {
-      if (g_strcmp0 (user_name, attr_desc->_user_name) == 0)
+      if (g_ascii_strcasecmp (user_name, attr_desc->_user_name) == 0)
       {
         return attr_desc;
       }
-      else if (g_ascii_strcasecmp (user_name, attr_desc->_user_name) == 0)
+      else if (g_ascii_strcasecmp (user_name, attr_desc->_code_name) == 0)
       {
         return attr_desc;
       }

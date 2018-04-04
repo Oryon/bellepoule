@@ -634,11 +634,25 @@ void Tournament::OnOpenTemplate ()
 
       if (desc->MatchCriteria ("CSV ready"))
       {
-        gchar *locale_string = g_locale_from_utf8 (desc->_user_name,
-                                                   -1,
-                                                   NULL,
-                                                   NULL,
-                                                   NULL);
+        GError      *error         = NULL;
+        const gchar *to_codeset;
+        gchar       *locale_string;
+
+        g_get_charset (&to_codeset);
+        locale_string = g_convert_with_fallback (desc->_user_name,
+                                                 -1,
+                                                 to_codeset,
+                                                 "UTF-8",
+                                                 desc->_code_name,
+                                                 NULL,
+                                                 NULL,
+                                                 &error);
+        if (error)
+        {
+          g_warning ("g_convert_with_fallback: %s", error->message);
+          g_error_free (error);
+        }
+
         contents = g_string_append (contents,
                                     locale_string);
         contents = g_string_append_c (contents,
