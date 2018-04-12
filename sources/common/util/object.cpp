@@ -291,10 +291,19 @@ void Object::SetData (Object         *owner,
 {
   gchar *full_key = g_strdup_printf ("%p::%s", (void *) owner, key);
 
-  g_datalist_set_data_full (&_datalist,
-                            full_key,
-                            data,
-                            destroy_cbk);
+  if (data)
+  {
+    g_datalist_set_data_full (&_datalist,
+                              full_key,
+                              data,
+                              destroy_cbk);
+  }
+  else
+  {
+    g_datalist_set_data (&_datalist,
+                         full_key,
+                         data);
+  }
   g_free (full_key);
 }
 

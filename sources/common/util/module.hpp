@@ -77,9 +77,9 @@ class Module : public virtual Object
 
     virtual void MakeDirty ();
 
-    void DrawContainerPage (GtkPrintOperation *operation,
-                            GtkPrintContext   *context,
-                            gint               page_nr);
+    virtual void DrawContainerPage (GtkPrintOperation *operation,
+                                    GtkPrintContext   *context,
+                                    gint               page_nr);
 
     virtual void OnEndPrint (GtkPrintOperation *operation,
                              GtkPrintContext   *context) {};

@@ -94,5 +94,9 @@ namespace People
                           GtkSelectionData *data,
                           guint             key,
                           guint             time);
+
+      void DrawContainerPage (GtkPrintOperation *operation,
+                              GtkPrintContext   *context,
+                              gint               page_nr);
   };
 }

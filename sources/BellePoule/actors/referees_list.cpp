@@ -26,6 +26,7 @@
 #include "util/player.hpp"
 #include "util/dnd_config.hpp"
 #include "util/glade.hpp"
+#include "util/canvas.hpp"
 #include "application/weapon.hpp"
 #include "referee.hpp"
 #include "tally_counter.hpp"
@@ -347,6 +348,41 @@ namespace People
       gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("absent_tab")),
                           text);
       g_free (text);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::DrawContainerPage (GtkPrintOperation *operation,
+                                        GtkPrintContext   *context,
+                                        gint               page_nr)
+  {
+    if (_weapon)
+    {
+      GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
+
+      goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                           _weapon->GetImage (),
+                           10.0, 0.8,
+                           80.0,
+                           GTK_ANCHOR_NORTH,
+                           "alignment", PANGO_ALIGN_CENTER,
+                           "fill-color", "black",
+                           "font", BP_FONT "Bold 5px", NULL);
+
+      goo_canvas_render (canvas,
+                         gtk_print_context_get_cairo_context (context),
+                         NULL,
+                         1.0);
+
+      gtk_widget_destroy (GTK_WIDGET (canvas));
+    }
+
+    {
+      cairo_t *cr = gtk_print_context_get_cairo_context (context);
+
+      cairo_translate (cr,
+                       0.0,
+                       GetPrintHeaderSize (context, ON_SHEET));
     }
   }
 
