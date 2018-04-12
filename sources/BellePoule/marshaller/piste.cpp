@@ -775,6 +775,8 @@ namespace Marshaller
     {
       if (event->time == piste->_button_press_time)
       {
+        piste->_listener->OnPisteButtonEvent (piste,
+                                              NULL);
         piste->OnDoubleClick (piste,
                               event);
       }

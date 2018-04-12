@@ -899,7 +899,19 @@ namespace Marshaller
   void Hall::OnPisteButtonEvent (Piste          *piste,
                                  GdkEventButton *event)
   {
-    if (event->type == GDK_BUTTON_PRESS)
+    if ((event == NULL) || (event->type != GDK_BUTTON_PRESS))
+    {
+      ResetCursor ();
+      _lasso->Pull ();
+
+      if (_dragging)
+      {
+        _dragging = FALSE;
+
+        AlignSelectedOnGrid ();
+      }
+    }
+    else
     {
       if (g_list_find (_selected_list, piste))
       {
@@ -932,28 +944,16 @@ namespace Marshaller
                                    &_drag_y);
       }
     }
-    else
-    {
-      ResetCursor ();
-      _lasso->Pull ();
-
-      if (_dragging)
-      {
-        _dragging = FALSE;
-
-        AlignSelectedOnGrid ();
-      }
-    }
   }
 
   // --------------------------------------------------------------------------------
   void Hall::OnPisteMotionEvent (Piste          *piste,
                                  GdkEventMotion *event)
   {
-    SetCursor (GDK_FLEUR);
-
     if (_dragging)
     {
+      SetCursor (GDK_FLEUR);
+
       if (   (event->state & GDK_BUTTON1_MASK)
           && ((event->state & GDK_CONTROL_MASK) == 0))
       {
@@ -972,6 +972,18 @@ namespace Marshaller
       piste->ConvertFromPisteSpace (&event->x,
                                     &event->y);
       OnCursorMotion (event);
+
+      if (_floating_job)
+      {
+        if (piste->Blured ())
+        {
+          SetCursor (GDK_X_CURSOR);
+        }
+        else
+        {
+          SetCursor (GDK_PLUS);
+        }
+      }
     }
   }
 
