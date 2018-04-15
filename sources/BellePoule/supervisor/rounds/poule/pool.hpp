@@ -126,39 +126,39 @@ namespace Pool
                                  guint32   rand_seed,
                                  guint     comparison_policy);
 
-    static void SetWaterMarkingPolicy (gboolean enabled);
+      static void SetWaterMarkingPolicy (gboolean enabled);
 
-    static gboolean WaterMarkingEnabled ();
+      static gboolean WaterMarkingEnabled ();
 
     private:
-    static gboolean  _match_id_watermarked;
-    Object          *_combined_rounds_owner;
-    Object          *_previous_combined_round;
-    Data            *_max_score;
-    guint            _number;
-    GSList          *_fencer_list;
-    GSList          *_sorted_fencer_list;
-    GSList          *_referee_list;
-    guint            _piste;
-    FieTime         *_start_time;
-    guint            _duration_sec;
-    ScoreCollector  *_score_collector;
-    GList           *_match_list;
-    gchar           *_name;
-    gboolean         _is_over;
-    gboolean         _has_error;
-    GooCanvasItem   *_title_table;
-    GooCanvasItem   *_status_item;
-    GdkPixbuf       *_status_pixbuf;
-    gboolean         _locked;
-    GSList          *_display_data;
-    guint            _nb_drop;
-    const gchar     *_xml_player_tag;
-    guint            _strength;
-    guint            _strength_contributors;
-    Dispatcher      *_dispatcher;
+      static gboolean  _match_id_watermarked;
+      Object          *_combined_rounds_owner;
+      Object          *_previous_combined_round;
+      Data            *_max_score;
+      guint            _number;
+      GSList          *_fencer_list;
+      GSList          *_sorted_fencer_list;
+      GSList          *_referee_list;
+      guint            _piste;
+      FieTime         *_start_time;
+      guint            _duration_sec;
+      ScoreCollector  *_score_collector;
+      GList           *_match_list;
+      gchar           *_name;
+      gboolean         _is_over;
+      gboolean         _has_error;
+      GooCanvasItem   *_title_table;
+      GooCanvasItem   *_status_item;
+      GdkPixbuf       *_status_pixbuf;
+      gboolean         _locked;
+      GSList          *_display_data;
+      guint            _nb_drop;
+      const gchar     *_xml_player_tag;
+      guint            _strength;
+      guint            _strength_contributors;
+      Dispatcher      *_dispatcher;
 
-    StatusListener  *_status_listener;
+      StatusListener  *_status_listener;
 
     private:
       typedef enum

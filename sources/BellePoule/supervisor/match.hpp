@@ -71,6 +71,8 @@ class Match : public Object,
 
     void SetStartTime (FieTime *time);
 
+    void SetDuration (guint duration);
+
     guint GetPiste ();
 
     FieTime *GetStartTime ();
@@ -119,6 +121,8 @@ class Match : public Object,
 
     GSList *GetRefereeList ();
 
+    void Timestamp ();
+
   private:
     struct Opponent
     {
@@ -135,6 +139,7 @@ class Match : public Object,
     GSList   *_referee_list;
     guint     _piste;
     FieTime  *_start_time;
+    guint     _duration_sec;
 
     gboolean ScoreIsNumber (gchar *score);
 

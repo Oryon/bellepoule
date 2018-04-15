@@ -704,6 +704,8 @@ namespace Table
                              Match          *match,
                              Player         *player)
   {
+    match->Timestamp ();
+
     if (score_collector == _quick_score_collector)
     {
       _score_collector->Refresh (match);
@@ -1200,8 +1202,6 @@ namespace Table
 
       // _score_goo_table
       if (   parent
-          && (   data->_table->_is_over
-              || data->_table->_has_all_roadmap)
           && data->_table->IsHeaderDisplayed ())
       {
         data->_score_goo_table = goo_canvas_table_new (data->_fencer_goo_table, NULL);
@@ -2062,12 +2062,8 @@ namespace Table
           RefreshParcel ();
           RefreshTableStatus (t == _nb_tables-1);
 
-          if (   ((message->GetFitness () > 0)  && (table->_has_all_roadmap))
-              || ((message->GetFitness () == 0) && (table->_roadmap_count == 0)))
-          {
-            table->Spread ();
-            Display ();
-          }
+          table->Spread ();
+          Display ();
 
           return TRUE;
         }
@@ -2260,6 +2256,8 @@ namespace Table
           data->_match->SetScore (B, table_set->_max_score->_value, TRUE);
           winner = B;
         }
+
+        data->_match->Timestamp ();
       }
       else
       {

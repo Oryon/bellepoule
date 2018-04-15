@@ -471,38 +471,38 @@ namespace Table
 
         if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
-          {
-            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+          gchar *attr;
 
-            A = NULL;
-            B = NULL;
-            if ((attr == NULL) || (atoi (attr) != match->GetNumber ()))
-            {
-              xmlFree (attr);
-              return;
-            }
+          A = NULL;
+          B = NULL;
+
+          attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+          if ((attr == NULL) || (atoi (attr) != match->GetNumber ()))
+          {
+            xmlFree (attr);
+            return;
+          }
+          xmlFree (attr);
+
+          attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Piste");
+          if (attr)
+          {
+            match->SetPiste (atoi (attr));
             xmlFree (attr);
           }
 
+          attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
+          if (attr)
           {
-            gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Piste");
-
-            if (attr)
-            {
-              match->SetPiste (atoi (attr));
-              xmlFree (attr);
-            }
+            match->SetStartTime (new FieTime (attr));
+            xmlFree (attr);
           }
 
+          attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Duree");
+          if (attr)
           {
-            gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
-
-            if (attr)
-            {
-              match->SetStartTime (new FieTime (attr));
-
-              xmlFree (attr);
-            }
+            match->SetDuration (atoi (attr));
+            xmlFree (attr);
           }
         }
         else if (g_strcmp0 ((char *) n->name, "Arbitre") == 0)

@@ -613,6 +613,7 @@ void Schedule::RemoveStage (Stage *stage)
 
     RemoveFromNotebook (stage);
 
+    stage->Recall ();
     stage->Release ();
   }
 

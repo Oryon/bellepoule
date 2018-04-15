@@ -66,6 +66,7 @@ void Match::Init (Data *max_score)
 {
   _referee_list = NULL;
   _start_time   = NULL;
+  _duration_sec = 0;
   _piste        = 0;
 
   _max_score = max_score;
@@ -433,6 +434,13 @@ void Match::Save (xmlTextWriter *xml_writer)
                                          "%s", _start_time->GetXmlImage ());
     }
 
+    if (_duration_sec > 0)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Duree",
+                                         "%d", _duration_sec);
+    }
+
     {
       GSList *current = _referee_list;
 
@@ -587,6 +595,12 @@ void Match::SetStartTime (FieTime *time)
 {
   Object::TryToRelease (_start_time);
   _start_time = time;
+}
+
+// --------------------------------------------------------------------------------
+void Match::SetDuration (guint duration)
+{
+  _duration_sec = duration;
 }
 
 // --------------------------------------------------------------------------------
@@ -774,6 +788,9 @@ void Match::FeedParcel (Net::Message *parcel)
 
   parcel->Set ("workload_units",
                _max_score->_value);
+
+  parcel->Set ("duration_sec",
+               _duration_sec);
 }
 
 // --------------------------------------------------------------------------------
@@ -787,3 +804,24 @@ const gchar *Match::GetReason ()
 {
   return gettext ("No winner!");
 }
+
+// --------------------------------------------------------------------------------
+void Match::Timestamp ()
+{
+  if (_start_time && IsOver ())
+  {
+    GDateTime *start = _start_time->GetGDateTime ();
+    GDateTime *now   = g_date_time_new_now_local ();
+    GTimeSpan  span  = g_date_time_difference (now, start);
+
+    if (span < 0)
+    {
+      span = G_TIME_SPAN_SECOND;
+    }
+
+    _duration_sec = (guint) (span / G_TIME_SPAN_SECOND);
+
+    Spread ();
+  }
+}
+

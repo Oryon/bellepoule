@@ -548,12 +548,14 @@ namespace Pool
       GDateTime *now   = g_date_time_new_now_local ();
       GTimeSpan  span  = g_date_time_difference (now, start);
 
-      if (span > 0)
+      if (span < 0)
       {
-        _duration_sec = (guint) (span / G_TIME_SPAN_SECOND);
-
-        Spread ();
+        span = G_TIME_SPAN_SECOND;
       }
+
+      _duration_sec = (guint) (span / G_TIME_SPAN_SECOND);
+
+      Spread ();
     }
   }
 
@@ -2340,48 +2342,38 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::Load (xmlNode *xml_node)
   {
-    {
-      gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "NetID");
+    gchar *attr;
 
-      if (attr)
-      {
-        _parcel->SetNetID (g_ascii_strtoull (attr,
-                                             NULL,
-                                             16));
-        xmlFree (attr);
-      }
+    attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "NetID");
+    if (attr)
+    {
+      _parcel->SetNetID (g_ascii_strtoull (attr,
+                                           NULL,
+                                           16));
+      xmlFree (attr);
     }
 
+    attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Piste");
+    if (attr)
     {
-      gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Piste");
-
-      if (attr)
-      {
-        _piste = atoi (attr);
-        xmlFree (attr);
-      }
+      _piste = atoi (attr);
+      xmlFree (attr);
     }
 
+    attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
+    if (attr)
     {
-      gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
+      Object::TryToRelease (_start_time);
+      _start_time = new FieTime (attr);
 
-      if (attr)
-      {
-        Object::TryToRelease (_start_time);
-        _start_time = new FieTime (attr);
-
-        xmlFree (attr);
-      }
+      xmlFree (attr);
     }
 
+    attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Duree");
+    if (attr)
     {
-      gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Duree");
-
-      if (attr)
-      {
-        _duration_sec = atoi (attr);
-        xmlFree (attr);
-      }
+      _duration_sec = atoi (attr);
+      xmlFree (attr);
     }
   }
 
