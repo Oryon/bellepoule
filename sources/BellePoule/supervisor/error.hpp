@@ -21,9 +21,16 @@
 class Error
 {
   public:
+    typedef enum
+    {
+      LEVEL_ERROR,
+      LEVEL_WARNING
+    } Level;
+
+  public:
     virtual gchar *GetGuiltyParty () = 0;
 
-    virtual const gchar *GetReason () = 0;
+    virtual const gchar *GetReason (Level *level) = 0;
 
   protected:
     Error () {};

@@ -380,17 +380,17 @@ namespace Table
         Table *table      = _tables[t];
         Table *left_table = table->GetLeftTable ();
 
-        if (   ((left_table == NULL) || left_table->_is_over)
-            && (table->_has_all_roadmap == FALSE))
-        {
-          icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
-          _first_error = table;
-          _is_over     = FALSE;
-        }
-        else if (table->_first_error)
+        if (table->_first_error)
         {
           icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
           _first_error = table->_first_error;
+          _is_over     = FALSE;
+        }
+        else if (   ((left_table == NULL) || left_table->_is_over)
+                 && (table->_has_all_roadmap == FALSE))
+        {
+          icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
+          _first_error = table;
           _is_over     = FALSE;
         }
         else if (table->_is_over == FALSE)

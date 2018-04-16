@@ -71,18 +71,6 @@ Schedule::Schedule (Contest *contest,
                                               VISIBILITY_bool);
   }
 
-  // Error bg
-  {
-    GdkColor *color = g_new (GdkColor, 1);
-
-    gdk_color_parse ("#c52222", color);
-
-    gtk_widget_modify_bg (_glade->GetWidget ("error_viewport"),
-                          GTK_STATE_NORMAL,
-                          color);
-    g_free (color);
-  }
-
   // Formula dialog
   {
     GtkWidget *menu_pool = gtk_menu_new ();
@@ -1284,13 +1272,32 @@ void Schedule::RefreshSensitivity ()
     }
 
     {
-      gchar *error = stage->GetError ();
+      Error::Level  level;
+      gchar        *error = stage->GetError ( &level);
 
       if (error)
       {
         gtk_label_set_markup (GTK_LABEL (_glade->GetWidget ("error_label")),
                               error);
         gtk_widget_show (_glade->GetWidget ("error_toolbutton"));
+
+        {
+          GdkColor *color = g_new (GdkColor, 1);
+
+          if (level == Error::LEVEL_WARNING)
+          {
+            gdk_color_parse ("#e3d42b", color);
+          }
+          else
+          {
+            gdk_color_parse ("#d52323", color);
+          }
+
+          gtk_widget_modify_bg (_glade->GetWidget ("error_viewport"),
+                                GTK_STATE_NORMAL,
+                                color);
+          g_free (color);
+        }
 
         g_free (error);
       }

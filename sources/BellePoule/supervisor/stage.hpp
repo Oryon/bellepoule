@@ -24,6 +24,7 @@
 
 #include "util/object.hpp"
 #include "network/advertiser.hpp"
+#include "error.hpp"
 
 class Player;
 class Classification;
@@ -155,7 +156,7 @@ class Stage : public virtual Object,
 
     virtual gboolean IsOver ();
 
-    virtual gchar *GetError ();
+    virtual gchar *GetError (Error::Level *level);
 
     void ToggleClassification (gboolean classification_on);
 

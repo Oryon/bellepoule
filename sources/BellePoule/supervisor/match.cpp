@@ -800,9 +800,10 @@ gchar *Match::GetGuiltyParty ()
 }
 
 // --------------------------------------------------------------------------------
-const gchar *Match::GetReason ()
+const gchar *Match::GetReason (Error::Level *level)
 {
-  return gettext ("No winner!");
+  *level = Error::LEVEL_ERROR;
+  return gettext (" No winner! ");
 }
 
 // --------------------------------------------------------------------------------

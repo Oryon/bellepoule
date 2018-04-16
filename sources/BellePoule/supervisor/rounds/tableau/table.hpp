@@ -139,6 +139,6 @@ namespace Table
 
       gchar *GetGuiltyParty ();
 
-      const gchar *GetReason ();
+      const gchar *GetReason (Error::Level *level);
   };
 }

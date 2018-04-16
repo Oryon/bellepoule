@@ -246,15 +246,15 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Supervisor::GetError ()
+  gchar *Supervisor::GetError (Error::Level *level)
   {
     if (_first_error)
     {
       gchar *guilty_party = _first_error->GetGuiltyParty ();
-      gchar *error      = g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
-                                           " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
-                                           guilty_party,
-                                           _first_error->GetReason ());
+      gchar *error        = g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n"
+                                             "<span foreground=\"black\" weight=\"400\">%s</span>",
+                                             guilty_party,
+                                             _first_error->GetReason (level));
 
       g_free (guilty_party);
       return error;

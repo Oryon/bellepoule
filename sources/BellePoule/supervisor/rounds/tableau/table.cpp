@@ -798,8 +798,9 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  const gchar *Table::GetReason ()
+  const gchar *Table::GetReason (Error::Level *level)
   {
+    *level = Error::LEVEL_WARNING;
     return gettext (" Referees allocation \n ongoing ");
   }
 }

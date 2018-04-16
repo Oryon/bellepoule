@@ -102,7 +102,7 @@ namespace Table
 
       gboolean IsOver ();
 
-      gchar *GetError ();
+      gchar *GetError (Error::Level *level);
 
       GSList *GetCurrentClassification ();
 

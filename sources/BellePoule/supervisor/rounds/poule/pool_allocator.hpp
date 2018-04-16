@@ -150,7 +150,7 @@ namespace Pool
 
       gboolean IsOver ();
 
-      gchar *GetError ();
+      gchar *GetError (Error::Level *level);
 
       void OnPlugged ();
 
