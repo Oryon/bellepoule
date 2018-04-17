@@ -32,7 +32,7 @@ namespace Table
 
   class Table : public Object,
                 public Net::Advertiser::Feeder,
-                public Error
+                public Error::Provider
   {
     public:
       Table (TableSet    *table_set,
@@ -100,14 +100,14 @@ namespace Table
                         GSList **withdrawals,
                         GSList **blackcardeds);
 
-      Error         *_first_error;
-      gboolean       _is_over;
-      gboolean       _ready_to_fence;
-      guint          _roadmap_count;
-      gboolean       _has_all_roadmap;
-      GooCanvasItem *_status_item;
-      GooCanvasItem *_header_item;
-      TableSet      *_defeated_table_set;
+      Error::Provider *_first_error;
+      gboolean         _is_over;
+      gboolean         _ready_to_fence;
+      guint            _roadmap_count;
+      gboolean         _has_all_roadmap;
+      GooCanvasItem   *_status_item;
+      GooCanvasItem   *_header_item;
+      TableSet        *_defeated_table_set;
 
     private:
       gchar         *_mini_name;
@@ -137,8 +137,6 @@ namespace Table
 
       gchar *GetAnnounce ();
 
-      gchar *GetGuiltyParty ();
-
-      const gchar *GetReason (Error::Level *level);
+      Error *SpawnError ();
   };
 }

@@ -144,7 +144,7 @@ namespace Table
 
       GSList *GetBlackcardeds ();
 
-      Error *GetFirstError ();
+      Error::Provider *GetFirstError ();
 
       void Recall ();
 
@@ -186,7 +186,7 @@ namespace Table
       gboolean                  _locked;
       guint                     _nb_match_per_sheet;
       gchar                    *_id;
-      Error                    *_first_error;
+      Error::Provider          *_first_error;
       gboolean                  _is_over;
       gboolean                  _loaded;
       guint                     _first_place;

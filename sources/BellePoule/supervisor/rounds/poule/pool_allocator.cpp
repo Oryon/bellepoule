@@ -1915,7 +1915,7 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Allocator::GetError (Error::Level *level)
+  Error *Allocator::GetError ()
   {
     GSList *current = _drop_zones;
 
@@ -1925,19 +1925,18 @@ namespace Pool
 
       if (pool->GetUIntData (this, "is_balanced") == 0)
       {
-        *level = Error::LEVEL_ERROR;
-        return g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
-                                " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
-                                pool->GetName (), gettext ("Wrong fencers count!"));
+        return new Error (Error::LEVEL_ERROR,
+                          pool->GetName (),
+                          gettext ("Wrong fencers count!"));
       }
       else if (_has_marshaller)
       {
         if (   (pool->GetPiste ()       == 0)
             || (pool->GetRefereeList () == NULL))
         {
-          *level = Error::LEVEL_WARNING;
-          return g_strdup_printf ("<span foreground=\"black\" weight=\"400\">%s</span>",
-                                  gettext (" Referees allocation \n ongoing "));
+          return new Error (Error::LEVEL_WARNING,
+                            NULL,
+                            gettext ("Referees allocation \n ongoing"));
         }
       }
 

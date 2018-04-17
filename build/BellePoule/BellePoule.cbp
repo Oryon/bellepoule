@@ -354,6 +354,9 @@
 		<Unit filename="../../sources/BellePoule/supervisor/contest.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/error.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/error.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

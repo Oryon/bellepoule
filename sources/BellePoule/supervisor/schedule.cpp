@@ -1272,34 +1272,31 @@ void Schedule::RefreshSensitivity ()
     }
 
     {
-      Error::Level  level;
-      gchar        *error = stage->GetError ( &level);
+      Error *error = stage->GetError ();
 
       if (error)
       {
-        gtk_label_set_markup (GTK_LABEL (_glade->GetWidget ("error_label")),
-                              error);
         gtk_widget_show (_glade->GetWidget ("error_toolbutton"));
+
+        {
+          gchar *error_msg = error->GetMessage ();
+
+          gtk_label_set_markup (GTK_LABEL (_glade->GetWidget ("error_label")),
+                                error_msg);
+          g_free (error_msg);
+        }
 
         {
           GdkColor *color = g_new (GdkColor, 1);
 
-          if (level == Error::LEVEL_WARNING)
-          {
-            gdk_color_parse ("#e3d42b", color);
-          }
-          else
-          {
-            gdk_color_parse ("#d52323", color);
-          }
-
+          gdk_color_parse (error->GetColor (), color);
           gtk_widget_modify_bg (_glade->GetWidget ("error_viewport"),
                                 GTK_STATE_NORMAL,
                                 color);
           g_free (color);
         }
 
-        g_free (error);
+        error->Release ();
       }
     }
   }

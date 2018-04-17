@@ -18,7 +18,9 @@
 
 #include <gtk/gtk.h>
 
-class Error
+#include "util/object.hpp"
+
+class Error : public Object
 {
   public:
     typedef enum
@@ -27,13 +29,28 @@ class Error
       LEVEL_WARNING
     } Level;
 
+    class Provider
+    {
+      public:
+        virtual Error *SpawnError () = 0;
+
+      protected:
+        Provider () {};
+    };
+
   public:
-    virtual gchar *GetGuiltyParty () = 0;
+    Error (Level        level,
+           const gchar *guilty_party,
+           const gchar *reason);
 
-    virtual const gchar *GetReason (Level *level) = 0;
+    gchar *GetMessage ();
 
-  protected:
-    Error () {};
+    const gchar *GetColor ();
 
-    virtual ~Error () {};
+  private:
+    Level  _level;
+    gchar *_guilty_party;
+    gchar *_reason;
+
+    virtual ~Error ();
 };

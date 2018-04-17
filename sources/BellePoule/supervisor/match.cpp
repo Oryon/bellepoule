@@ -794,16 +794,18 @@ void Match::FeedParcel (Net::Message *parcel)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Match::GetGuiltyParty ()
+Error *Match::SpawnError ()
 {
-  return g_strdup_printf (gettext ("Match %s"), GetName ());
-}
+  gchar *guilty_party = g_strdup_printf (gettext ("Match %s"), GetName ());
+  Error *error;
 
-// --------------------------------------------------------------------------------
-const gchar *Match::GetReason (Error::Level *level)
-{
-  *level = Error::LEVEL_ERROR;
-  return gettext (" No winner! ");
+  error = new Error (Error::LEVEL_ERROR,
+                     guilty_party,
+                     gettext ("No winner!"));
+
+  g_free (guilty_party);
+
+  return error;
 }
 
 // --------------------------------------------------------------------------------

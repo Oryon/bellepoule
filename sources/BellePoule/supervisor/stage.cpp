@@ -290,7 +290,7 @@ gboolean Stage::IsOver ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *Stage::GetError (Error::Level *level)
+Error *Stage::GetError ()
 {
   return NULL;
 }

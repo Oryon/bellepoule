@@ -792,15 +792,17 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Table::GetGuiltyParty ()
+  Error *Table::SpawnError ()
   {
-    return GetImage ();
-  }
+    gchar *guilty_party = GetImage ();
+    Error *error;
 
-  // --------------------------------------------------------------------------------
-  const gchar *Table::GetReason (Error::Level *level)
-  {
-    *level = Error::LEVEL_WARNING;
-    return gettext (" Referees allocation \n ongoing ");
+    error = new Error (Error::LEVEL_WARNING,
+                       guilty_party,
+                       gettext ("Referees allocation \n ongoing"));
+
+    g_free (guilty_party);
+
+    return error;
   }
 }

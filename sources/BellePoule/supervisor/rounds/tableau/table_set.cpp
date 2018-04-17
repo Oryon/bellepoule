@@ -566,7 +566,7 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  Error *TableSet::GetFirstError ()
+  Error::Provider *TableSet::GetFirstError ()
   {
     return _first_error;
   }

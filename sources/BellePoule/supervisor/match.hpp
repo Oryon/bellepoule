@@ -30,7 +30,7 @@ class Data;
 class Score;
 
 class Match : public Object,
-              public Error
+              public Error::Provider
 {
   public:
     Match  (Data *max_score);
@@ -152,7 +152,5 @@ class Match : public Object,
 
     virtual ~Match ();
 
-    gchar *GetGuiltyParty ();
-
-    const gchar *GetReason (Error::Level *level);
+    Error *SpawnError ();
 };
