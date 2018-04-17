@@ -387,6 +387,33 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void RefereesList::CellDataFunc (GtkTreeViewColumn *tree_column,
+                                   GtkCellRenderer   *cell,
+                                   GtkTreeModel      *tree_model,
+                                   GtkTreeIter       *iter)
+  {
+    Player *referee = GetPlayer (tree_model,
+                                 iter);
+
+    GdkColor *color = (GdkColor *) referee->GetPtrData (NULL,
+                                                        "RefereesList::CellColor");
+
+    if (color)
+    {
+      g_object_set (cell,
+                    "cell-background-gdk", color,
+                    "cell-background-set", TRUE,
+                    NULL);
+    }
+    else
+    {
+      g_object_set (cell,
+                    "cell-background-set", FALSE,
+                    NULL);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_checkin_clicked (GtkToolButton *widget,
                                                       Object        *owner)
   {

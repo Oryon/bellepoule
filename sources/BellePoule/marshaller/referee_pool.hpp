@@ -30,6 +30,7 @@ namespace Marshaller
   class Job;
   class Slot;
   class EnlistedReferee;
+  class Timeline;
 
   class RefereePool : public Object,
                       public People::Checkin::Listener
@@ -47,7 +48,10 @@ namespace Marshaller
 
       gboolean WeaponHasReferees (const gchar *weapon);
 
-      void RefreshWorkload (const gchar *);
+      void RefreshWorkload (const gchar *weapon_code);
+
+      void RefreshAvailability (Timeline *timeline,
+                                GList    *pistes);
 
       void Spread ();
 
@@ -60,7 +64,10 @@ namespace Marshaller
       void SetDndPeerListener (DndConfig::Listener *listener);
 
     private:
-      GList *_list_by_weapon;
+      GList    *_list_by_weapon;
+      Timeline *_timeline;
+      GList    *_piste_list;
+      GdkColor *_free_color;
 
       ~RefereePool ();
 
@@ -71,5 +78,8 @@ namespace Marshaller
 
       static void SpreadWeapon (People::RefereesList *list,
                                 RefereePool          *rp);
+
+      static void RefreshWeaponAvailability (People::RefereesList *list,
+                                             RefereePool          *rp);
   };
 }

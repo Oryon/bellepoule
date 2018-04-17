@@ -32,6 +32,8 @@
 #include "slot.hpp"
 #include "affinities.hpp"
 #include "referee_pool.hpp"
+#include "timeline.hpp"
+#include "piste.hpp"
 
 namespace Marshaller
 {
@@ -40,6 +42,13 @@ namespace Marshaller
     : Object ("marshaller.glade")
   {
     _list_by_weapon = NULL;
+
+    {
+      _free_color = g_new (GdkColor, 1);
+
+      gdk_color_parse ("#bfffbd",
+                       _free_color);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -190,6 +199,18 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void RefereePool::RefreshAvailability (Timeline *timeline,
+                                         GList    *pistes)
+  {
+    _timeline   = timeline;
+    _piste_list = pistes;
+
+    g_list_foreach (_list_by_weapon,
+                    (GFunc) RefreshWeaponAvailability,
+                    this);
+  }
+
+  // --------------------------------------------------------------------------------
   void RefereePool::Spread ()
   {
     g_list_foreach (_list_by_weapon,
@@ -206,6 +227,56 @@ namespace Marshaller
       list->Disclose ("RegisteredReferee");
       list->Spread ();
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereePool::RefreshWeaponAvailability (People::RefereesList *list,
+                                               RefereePool          *rp)
+  {
+    GList     *current_referee;
+    GDateTime *cursor          = rp->_timeline->RetreiveCursorTime (FALSE);
+
+    current_referee = list->GetList ();
+    while (current_referee)
+    {
+      EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+
+      referee->RemoveData (NULL,
+                           "RefereesList::CellColor");
+
+      current_referee = g_list_next (current_referee);
+    }
+
+    current_referee = list->GetList ();
+    while (current_referee)
+    {
+      EnlistedReferee *referee       = (EnlistedReferee *) current_referee->data;
+      GList           *current_piste = rp->_piste_list;
+
+      while (current_piste)
+      {
+        Piste *piste = (Piste *) current_piste->data;
+        Slot  *slot  = piste->GetSlotAt (cursor);
+
+        if (slot)
+        {
+          if (referee->IsAvailableFor (slot,
+                                       slot->GetDuration ()))
+          {
+            referee->SetData (NULL,
+                              "RefereesList::CellColor",
+                              rp->_free_color);
+          }
+        }
+
+        current_piste = g_list_next (current_piste);
+      }
+      current_referee = g_list_next (current_referee);
+    }
+
+    g_date_time_unref (cursor);
+
+    list->OnAttrListUpdated ();
   }
 
   // --------------------------------------------------------------------------------

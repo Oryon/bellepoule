@@ -30,14 +30,14 @@ namespace Marshaller
   EnlistedReferee::EnlistedReferee ()
     : Referee ()
   {
-     _slots     = NULL;
-     _work_load = 0;
-     _job_board = new JobBoard ();
+    _slots     = NULL;
+    _work_load = 0;
+    _job_board = new JobBoard ();
 
-     {
-       _workload_rate_attr_id = new AttributeId ("workload_rate");
-       SetAttributeValue (_workload_rate_attr_id, 0u);
-     }
+    {
+      _workload_rate_attr_id = new AttributeId ("workload_rate");
+      SetAttributeValue (_workload_rate_attr_id, 0u);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -179,7 +179,7 @@ namespace Marshaller
 
     while (current_slot)
     {
-      Slot  *slot = (Slot *) current_slot->data;
+      Slot *slot = (Slot *) current_slot->data;
 
       _job_board->AddJobs (slot->GetJobList ());
 

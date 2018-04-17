@@ -281,6 +281,11 @@ namespace Marshaller
       tl->TranslateCursor (round * tl->_time_scale);
     }
 
+    if (tl->_listener)
+    {
+      tl->_listener->OnTimelineCursorChanged ();
+    }
+
     return TRUE;
   }
 
@@ -440,6 +445,11 @@ namespace Marshaller
     }
 
     tl->ResetCursor ();
+
+    if (tl->_listener)
+    {
+      tl->_listener->OnTimelineCursorChanged ();
+    }
 
     return TRUE;
   }

@@ -29,7 +29,8 @@ namespace Marshaller
 
       struct Listener
       {
-        virtual void OnTimelineCursorMoved () = 0;
+        virtual void OnTimelineCursorMoved   () = 0;
+        virtual void OnTimelineCursorChanged () = 0;
       };
 
     public:

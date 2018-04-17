@@ -1153,6 +1153,9 @@ namespace Marshaller
       }
 
       gtk_widget_hide (dialog);
+
+      _referee_pool->RefreshAvailability (_timeline,
+                                          _piste_list);
     }
 
     return done;
@@ -1296,6 +1299,13 @@ namespace Marshaller
 
     g_list_free (sorted_list);
     return result;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::OnTimelineCursorChanged ()
+  {
+    _referee_pool->RefreshAvailability (_timeline,
+                                        _piste_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -1545,6 +1555,8 @@ namespace Marshaller
     }
 
     ScheduleRedraw ();
+    _referee_pool->RefreshAvailability (_timeline,
+                                        _piste_list);
 
     return G_SOURCE_CONTINUE;
   }

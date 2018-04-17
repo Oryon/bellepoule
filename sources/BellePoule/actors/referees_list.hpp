@@ -98,5 +98,10 @@ namespace People
       void DrawContainerPage (GtkPrintOperation *operation,
                               GtkPrintContext   *context,
                               gint               page_nr);
+
+      void CellDataFunc (GtkTreeViewColumn *tree_column,
+                         GtkCellRenderer   *cell,
+                         GtkTreeModel      *tree_model,
+                         GtkTreeIter       *iter);
   };
 }
