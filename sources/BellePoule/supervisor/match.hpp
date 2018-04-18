@@ -79,7 +79,7 @@ class Match : public Object,
 
     void SetScore (Player *fencer, gint score, gboolean is_the_best);
 
-    gboolean SetScore (Player *fencer, gchar *score);
+    gboolean SetScore (Player *fencer, gchar *value);
 
     Score *GetScore (Player *fencer);
 

@@ -715,15 +715,10 @@ namespace Table
       _quick_score_collector->Refresh (match);
     }
 
-    if ((score_collector == NULL) || match->IsOver ())
     {
       SpreadWinners ();
       RefreshNodes ();
       RefilterQuickSearch ();
-    }
-    else
-    {
-      RefreshTableStatus ();
     }
 
     {

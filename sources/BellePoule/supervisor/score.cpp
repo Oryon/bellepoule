@@ -86,7 +86,7 @@ gchar *Score::GetImage ()
   }
   else
   {
-    image = g_strdup (" ");
+    image = g_strdup ("");
   }
 
   return image;

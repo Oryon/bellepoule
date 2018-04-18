@@ -325,14 +325,14 @@ gboolean Match::ScoreIsNumber (gchar *score)
 
 // --------------------------------------------------------------------------------
 gboolean Match::SetScore (Player *fencer,
-                          gchar  *score)
+                          gchar  *value)
 {
   gboolean result = FALSE;
 
-  if (score)
+  if (value)
   {
-    if (   (strlen (score) == 1)
-        && (g_ascii_toupper (score[0]) == 'V'))
+    if (   (strlen (value) == 1)
+        && (g_ascii_toupper (value[0]) == 'V'))
     {
       SetScore (fencer,
                 _max_score->_value,
@@ -341,14 +341,21 @@ gboolean Match::SetScore (Player *fencer,
     }
     else
     {
-      gchar    *score_value = score;
+      gchar    *score_value = value;
       gboolean  is_the_best = FALSE;
 
-      if (   (strlen (score) > 1)
-          && (g_ascii_toupper (score[0]) == 'W'))
+      if (   (strlen (value) > 1)
+          && (g_ascii_toupper (value[0]) == 'W'))
       {
-        score_value = &score[1];
+        score_value = &value[1];
         is_the_best = TRUE;
+      }
+
+      if (value[0] == 0)
+      {
+        Score *score = GetScore (fencer);
+
+        score->Clean ();
       }
 
       if (ScoreIsNumber (score_value))
