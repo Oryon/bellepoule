@@ -849,8 +849,11 @@ namespace Table
       Table *previous = from->GetLeftTable ();
       Table *next     = from->GetRightTable ();
 
-      gtk_widget_set_sensitive (_glade->GetWidget ("previous_button"), previous != NULL);
-      gtk_widget_set_sensitive (_glade->GetWidget ("next_button"),     next     != NULL);
+      gtk_widget_set_sensitive (_glade->GetWidget ("previous_button"),
+                                previous != NULL);
+
+      gtk_widget_set_sensitive (_glade->GetWidget ("next_button"),
+                                next && next->_ready_to_fence);
 
       gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("from_label")),
                           from->GetMiniName ());

@@ -1279,7 +1279,7 @@ void Schedule::RefreshSensitivity ()
         gtk_widget_show (_glade->GetWidget ("error_toolbutton"));
 
         {
-          gchar *error_msg = error->GetMessage ();
+          gchar *error_msg = error->GetText ();
 
           gtk_label_set_markup (GTK_LABEL (_glade->GetWidget ("error_label")),
                                 error_msg);

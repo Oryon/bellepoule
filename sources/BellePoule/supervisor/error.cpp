@@ -45,7 +45,7 @@ Error::~Error ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *Error::GetMessage ()
+gchar *Error::GetText ()
 {
   if (_guilty_party)
   {

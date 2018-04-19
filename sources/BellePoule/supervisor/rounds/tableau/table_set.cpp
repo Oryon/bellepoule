@@ -728,6 +728,8 @@ namespace Table
       {
         _supervisor->OnTableOver (this,
                                   table);
+        _listener->OnTableSetDisplayed (this,
+                                        table);
       }
     }
   }

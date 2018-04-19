@@ -249,7 +249,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::OnNewJobStatus (Job *job)
+  void Batch::OnNewAffinitiesRule (Job *job)
   {
     GtkTreeIter iter;
     gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
@@ -308,13 +308,19 @@ namespace Marshaller
                               -1);
         }
 
-        RefreshControlPanel ();
         break;
       }
 
       iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
                                                 &iter);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Batch::OnNewJobStatus (Job *job)
+  {
+    OnNewAffinitiesRule (job);
+    RefreshControlPanel ();
   }
 
   // --------------------------------------------------------------------------------

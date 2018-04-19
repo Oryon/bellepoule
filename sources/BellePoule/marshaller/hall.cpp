@@ -1642,7 +1642,7 @@ namespace Marshaller
             Job *job = (Job *) current_job->data;
 
             job->RefreshStatus ();
-            batch->OnNewJobStatus (job);
+            batch->OnNewAffinitiesRule (job);
 
             current_job = g_list_next (current_job);
           }

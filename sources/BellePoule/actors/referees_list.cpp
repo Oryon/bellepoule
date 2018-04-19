@@ -392,24 +392,30 @@ namespace People
                                    GtkTreeModel      *tree_model,
                                    GtkTreeIter       *iter)
   {
-    Player *referee = GetPlayer (tree_model,
-                                 iter);
-
-    GdkColor *color = (GdkColor *) referee->GetPtrData (NULL,
-                                                        "RefereesList::CellColor");
-
-    if (color)
+    if (GTK_IS_CELL_RENDERER_TEXT (cell))
     {
-      g_object_set (cell,
-                    "cell-background-gdk", color,
-                    "cell-background-set", TRUE,
-                    NULL);
-    }
-    else
-    {
-      g_object_set (cell,
-                    "cell-background-set", FALSE,
-                    NULL);
+      Player *referee = GetPlayer (tree_model,
+                                   iter);
+
+      GdkColor *color = (GdkColor *) referee->GetPtrData (NULL,
+                                                          "RefereesList::CellColor");
+
+      if (color)
+      {
+        g_object_set (cell,
+                      "weight",         600,
+                      "weight-set",     TRUE,
+                      "foreground-gdk", color,
+                      "foreground-set", TRUE,
+                      NULL);
+      }
+      else
+      {
+        g_object_set (cell,
+                      "weight-set",     FALSE,
+                      "foreground-set", FALSE,
+                      NULL);
+      }
     }
   }
 

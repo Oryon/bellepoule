@@ -46,7 +46,7 @@ namespace Marshaller
     {
       _free_color = g_new (GdkColor, 1);
 
-      gdk_color_parse ("#bfffbd",
+      gdk_color_parse ("darkgreen",
                        _free_color);
     }
   }
@@ -260,12 +260,30 @@ namespace Marshaller
 
         if (slot)
         {
-          if (referee->IsAvailableFor (slot,
-                                       slot->GetDuration ()))
+          GList *slot_referees = slot->GetRefereeList ();
+
+          while (slot_referees)
           {
-            referee->SetData (NULL,
-                              "RefereesList::CellColor",
-                              rp->_free_color);
+            if (referee == (EnlistedReferee *) slot_referees->data)
+            {
+              if (referee->IsAvailableFor (slot,
+                                           slot->GetDuration ()) == FALSE)
+              {
+                GList *jobs = slot->GetJobList ();
+
+                if (jobs)
+                {
+                  Job *job = (Job *) jobs->data;
+
+                  referee->SetData (NULL,
+                                    "RefereesList::CellColor",
+                                    gdk_color_copy (job->GetGdkColor ()),
+                                    (GDestroyNotify) gdk_color_free);
+                }
+              }
+              break;
+            }
+            slot_referees = g_list_next (slot_referees);
           }
         }
 

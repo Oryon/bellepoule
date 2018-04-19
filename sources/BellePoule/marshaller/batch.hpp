@@ -61,6 +61,8 @@ namespace Marshaller
 
       void OnNewJobStatus (Job *job);
 
+      void OnNewAffinitiesRule (Job *job);
+
       void RemoveJob (Net::Message *message);
 
       guint GetId ();

@@ -43,7 +43,7 @@ class Error : public Object
            const gchar *guilty_party,
            const gchar *reason);
 
-    gchar *GetMessage ();
+    gchar *GetText ();
 
     const gchar *GetColor ();
 
