@@ -1433,12 +1433,14 @@ namespace People
       cairo_t *cr = gtk_print_context_get_cairo_context (context);
 
       {
-        GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
-        char      *text   = g_strdup_printf ("%s %d/%d", gettext ("Page"), page_nr+1, _nb_pages);
+        gdouble    paper_w = gtk_print_context_get_width (context);
+        gdouble    paper_h = gtk_print_context_get_height (context);
+        GooCanvas *canvas  = Canvas::CreatePrinterCanvas (context);
+        char      *text    = g_strdup_printf ("%s %d/%d", gettext ("Page"), page_nr+1, _nb_pages);
 
         goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                              text,
-                             98.0, -2.0,
+                             99.0, 94.0*(paper_h/paper_w),
                              -1.0,
                              GTK_ANCHOR_SE,
                              "fill-color", "black",

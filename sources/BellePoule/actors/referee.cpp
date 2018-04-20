@@ -66,29 +66,35 @@ Player *Referee::CreateInstance ()
 // --------------------------------------------------------------------------------
 void Referee::GiveAnId ()
 {
-  Player::AttributeId name_attr_id      ("name");
-  Player::AttributeId firstname_attr_id ("first_name");
-  GChecksum *checksum = g_checksum_new (G_CHECKSUM_SHA1);
+  AttributeId  attr_id ("ref");
+  Attribute   *attr = GetAttribute (&attr_id);
 
+  if (attr == NULL)
   {
-    Attribute *name_attr      = GetAttribute (&name_attr_id);
-    Attribute *firstname_attr = GetAttribute (&firstname_attr_id);
-    gchar     *digest;
+    Player::AttributeId name_attr_id      ("name");
+    Player::AttributeId firstname_attr_id ("first_name");
+    GChecksum *checksum = g_checksum_new (G_CHECKSUM_SHA1);
 
-    g_checksum_update (checksum,
-                       (guchar *) name_attr->GetStrValue (),
-                       -1);
-    g_checksum_update (checksum,
-                       (guchar *) firstname_attr->GetStrValue (),
-                       -1);
+    {
+      Attribute *name_attr      = GetAttribute (&name_attr_id);
+      Attribute *firstname_attr = GetAttribute (&firstname_attr_id);
+      gchar     *digest;
 
-    digest = g_strdup (g_checksum_get_string (checksum));
-    digest[8] = 0;
-    SetRef (g_ascii_strtoll (digest,
-                             NULL,
-                             16));
-    g_free (digest);
+      g_checksum_update (checksum,
+                         (guchar *) name_attr->GetStrValue (),
+                         -1);
+      g_checksum_update (checksum,
+                         (guchar *) firstname_attr->GetStrValue (),
+                         -1);
+
+      digest = g_strdup (g_checksum_get_string (checksum));
+      digest[8] = 0;
+      SetRef (g_ascii_strtoll (digest,
+                               NULL,
+                               16));
+      g_free (digest);
+    }
+
+    g_checksum_free (checksum);
   }
-
-  g_checksum_free (checksum);
 }

@@ -1179,6 +1179,7 @@ void Contest::ManageReferee (Net::Message *message)
           {
             old->UpdateFrom (referee);
             old->RefreshParcel ();
+            MakeDirty ();
           }
           else
           {
@@ -2061,9 +2062,12 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                        10.0, 0.8,
                        20.0,
                        GTK_ANCHOR_NORTH,
-                       "alignment", PANGO_ALIGN_CENTER,
+                       "alignment",  PANGO_ALIGN_CENTER,
                        "fill-color", "black",
-                       "font", BP_FONT "Bold 2.5px", NULL);
+                       "font",       BP_FONT "Bold 2.5px",
+                       "height",     9.0,
+                       "wrap",       PANGO_WRAP_WORD_CHAR,
+                       NULL);
 
   {
     char *text = g_strdup_printf ("%s - %s - %s", _weapon->GetImage (),
@@ -2092,22 +2096,26 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                        -1.0,
                        GTK_ANCHOR_CENTER,
                        "fill-color", "black",
-                       "font", BP_FONT "Bold 4px", NULL);
+                       "font", BP_FONT "Bold 3px", NULL);
 
   if (_organizer)
   {
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                          _organizer,
-                         98.0, 2.0,
-                         -1.0,
+                         99.0, 4.0,
+                         20.0,
                          GTK_ANCHOR_EAST,
                          "fill-color", "black",
-                         "font", BP_FONT "Bold 2.5px", NULL);
+                         "font",       BP_FONT "Bold 2.5px",
+                         "height",     5.5,
+                         "wrap",       PANGO_WRAP_WORD_CHAR,
+                         "alignment",  PANGO_ALIGN_RIGHT,
+                         NULL);
   }
 
   goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                        GetDate (),
-                       98.0, 5.0,
+                       99.0, 8.0,
                        -1.0,
                        GTK_ANCHOR_EAST,
                        "fill-color", "black",
