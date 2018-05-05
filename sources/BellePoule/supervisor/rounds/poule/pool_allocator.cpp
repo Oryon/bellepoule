@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <libxml/encoding.h>
-#include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -29,6 +28,7 @@
 #include "util/player.hpp"
 #include "util/glade.hpp"
 #include "util/data.hpp"
+#include "util/xml_scheme.hpp"
 #include "network/message.hpp"
 #include "network/advertiser.hpp"
 #include "actors/players_list.hpp"
@@ -119,6 +119,7 @@ namespace Pool
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
 #endif
                                           "IP",
                                           "password",
@@ -374,18 +375,16 @@ namespace Pool
             xmlBuffer *xml_buffer = xmlBufferCreate ();
 
             {
-              xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+              XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
 
-              _contest->SaveHeader (xml_writer);
-              SaveHeader (xml_writer);
-              pool->Save (xml_writer);
+              _contest->SaveHeader (xml_scheme);
+              SaveHeader (xml_scheme);
+              pool->Save (xml_scheme);
 
-              xmlTextWriterEndElement (xml_writer);
-              xmlTextWriterEndElement (xml_writer);
+              xml_scheme->EndElement ();
+              xml_scheme->EndElement ();
 
-              xmlTextWriterEndDocument (xml_writer);
-
-              xmlFreeTextWriter (xml_writer);
+              xml_scheme->Release ();
             }
 
             response->Set ("competition", _contest->GetNetID ());
@@ -874,26 +873,26 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::SaveConfiguration (xmlTextWriter *xml_writer)
+  void Allocator::SaveConfiguration (XmlScheme *xml_scheme)
   {
-    Stage::SaveConfiguration (xml_writer);
+    Stage::SaveConfiguration (xml_scheme);
 
     {
       Filter *filter = _fencer_list->GetFilter ();
 
-      filter->Save (xml_writer,
+      filter->Save (xml_scheme,
                     "Liste");
       filter->Release ();
     }
 
     if (_seeding_balanced)
     {
-      _seeding_balanced->Save (xml_writer);
+      _seeding_balanced->Save (xml_scheme);
     }
 
     if (_swapping)
     {
-      _swapping->Save (xml_writer);
+      _swapping->Save (xml_scheme);
     }
   }
 
@@ -1044,33 +1043,30 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::SaveHeader (xmlTextWriter *xml_writer)
+  void Allocator::SaveHeader (XmlScheme *xml_scheme)
   {
     Stage      *next_stage       = GetNextStage ();
     StageClass *next_stage_class = next_stage->GetClass ();
 
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST next_stage_class->_xml_name);
+    xml_scheme->StartElement (next_stage_class->_xml_name);
 
-    SaveConfiguration (xml_writer);
+    SaveConfiguration (xml_scheme);
 
     if (_drop_zones)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "NbDePoules",
-                                         "%d", g_slist_length (_drop_zones));
+      xml_scheme->WriteFormatAttribute ("NbDePoules",
+                                        "%d", g_slist_length (_drop_zones));
     }
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "PhaseSuivanteDesQualifies",
-                                       "%d", GetId ()+2);
+    xml_scheme->WriteFormatAttribute ("PhaseSuivanteDesQualifies",
+                                      "%d", GetId ()+2);
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::Save (xmlTextWriter *xml_writer)
+  void Allocator::Save (XmlScheme *xml_scheme)
   {
-    SaveHeader (xml_writer);
+    SaveHeader (xml_scheme);
 
-    Stage::SaveAttendees (xml_writer);
+    Stage::SaveAttendees (xml_scheme);
 
     {
       GSList *current = _drop_zones;
@@ -1079,12 +1075,12 @@ namespace Pool
       {
         Pool *pool = GetPoolOf (current);
 
-        pool->Save (xml_writer);
+        pool->Save (xml_scheme);
         current = g_slist_next (current);
       }
     }
 
-    xmlTextWriterEndElement (xml_writer);
+    xml_scheme->EndElement ();
   }
 
   // --------------------------------------------------------------------------------

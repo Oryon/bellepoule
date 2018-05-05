@@ -17,7 +17,6 @@
 #include <gdk/gdkkeysyms.h>
 #include <ctype.h>
 
-#include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -49,6 +48,7 @@ namespace People
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
                                           "IP",
                                           "password",
 #endif

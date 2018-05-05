@@ -16,6 +16,7 @@
 
 #include "util/attribute.hpp"
 #include "util/data.hpp"
+#include "util/xml_scheme.hpp"
 
 #include "player_factory.hpp"
 #include "fencer.hpp"
@@ -168,24 +169,6 @@ void Team::SetManualClassification (Data *manual)
 }
 
 // --------------------------------------------------------------------------------
-void Team::UpdateMembers ()
-{
-  Player::AttributeId  team_attr_id ("team");
-  Player::AttributeId  name_attr_id ("name");
-  Attribute           *name_attr = GetAttribute (&name_attr_id);
-  GSList              *current = _member_list;
-
-  while (current)
-  {
-    Fencer *fencer = (Fencer *) current->data;
-
-    fencer->SetAttributeValue (&team_attr_id,
-                               name_attr->GetStrValue ());
-    current = g_slist_next (current);
-  }
-}
-
-// --------------------------------------------------------------------------------
 void Team::AddMember (Player *member)
 {
   _member_list = g_slist_prepend (_member_list,
@@ -262,7 +245,7 @@ void Team::Load (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-void Team::SaveMembers (xmlTextWriter *xml_writer)
+void Team::SaveMembers (XmlScheme *xml_scheme)
 {
   if (_enable_member_saving)
   {
@@ -272,7 +255,7 @@ void Team::SaveMembers (xmlTextWriter *xml_writer)
     {
       Player *player = (Player *) current_member->data;
 
-      player->Save (xml_writer);
+      player->Save (xml_scheme);
 
       current_member = g_slist_next (current_member);
     }
@@ -280,13 +263,13 @@ void Team::SaveMembers (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void Team::Save (xmlTextWriter *xml_writer)
+void Team::Save (XmlScheme *xml_scheme,
+                 gboolean   full_profile)
 {
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST GetXmlTag ());
+  xml_scheme->StartElement (GetXmlTag ());
 
-  SaveAttributes (xml_writer);
-  SaveMembers (xml_writer);
+  SaveAttributes (xml_scheme);
+  SaveMembers (xml_scheme);
 
-  xmlTextWriterEndElement (xml_writer);
+  xml_scheme->EndElement ();
 }

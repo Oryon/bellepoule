@@ -19,6 +19,7 @@
 #include "util/player.hpp"
 
 class Data;
+class XmlScheme;
 
 class Team : public Player
 {
@@ -30,8 +31,6 @@ class Team : public Player
     const gchar *GetXmlTag ();
 
     void AddMember (Player *member);
-
-    virtual void UpdateMembers ();
 
     void RemoveMember (Player *member);
 
@@ -68,7 +67,8 @@ class Team : public Player
 
     void Load (xmlNode *xml_node);
 
-    void Save (xmlTextWriter *xml_writer);
+    void Save (XmlScheme *xml_scheme,
+               gboolean   full_profile = FALSE);
 
-    void SaveMembers (xmlTextWriter *xml_writer);
+    void SaveMembers (XmlScheme *xml_scheme);
 };

@@ -16,8 +16,8 @@
 
 #pragma once
 
+#include <libxml/xmlschemas.h>
 #include <gtk/gtk.h>
-#include <libxml/xmlwriter.h>
 
 #include "util/object.hpp"
 #include "network/message_uploader.hpp"
@@ -26,6 +26,7 @@ class Weapon;
 class WifiCode;
 class Attribute;
 class AttributeDesc;
+class XmlScheme;
 
 namespace Net
 {
@@ -121,8 +122,8 @@ class Player : public Object, Net::MessageUploader::Listener
     gboolean SendMessage (Net::Message *message);
 
   public:
-    virtual void Save (xmlTextWriter *xml_writer,
-                       gboolean       full_profile = FALSE);
+    virtual void Save (XmlScheme *xml_scheme,
+                       gboolean   full_profile = FALSE);
 
     virtual void Load (xmlNode *xml_node);
 
@@ -151,8 +152,8 @@ class Player : public Object, Net::MessageUploader::Listener
 
     virtual ~Player ();
 
-    void SaveAttributes (xmlTextWriter *xml_writer,
-                         gboolean       full_profile = FALSE);
+    void SaveAttributes (XmlScheme *xml_scheme,
+                         gboolean   full_profile = FALSE);
 
   private:
     struct Client : public Object

@@ -50,7 +50,7 @@ namespace People
 
       GSList *GetCurrentClassification ();
 
-      void Save (xmlTextWriter *xml_writer);
+      void SaveAttendees (XmlScheme *xml_scheme);
 
       void Load (xmlNode *xml_node);
 

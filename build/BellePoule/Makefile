@@ -33,7 +33,7 @@ VERSION      = $(VERSION_MAJOR).$(VERSION_MINOR)
 RELEASE      = $(PRODUCT)_$(VERSION)
 LONG_VERSION = $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)
 DATE         = $(shell date -R)
-OSX_CROSS    = $(HOME)/Project/Osxcross/target/macports/pkgs/opt/local
+OSX_CROSS    = $(HOME)/Project/Cross/Osxcross/target/macports/pkgs/opt/local
 
 GTK = gtk+-2.0
 GOO = goocanvas
@@ -533,10 +533,10 @@ build_fedora:
 	mv ../$(PRODUCT)_$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES
 	cp rpm/$(PRODUCT).spec $(HOME)/rpmbuild/SPECS
 	cd $(HOME)/rpmbuild/SPECS && rpmbuild -ba $(PRODUCT).spec
-	cp $(HOME)/rpmbuild/SRPMS/$(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc25.src.rpm .
+	cp $(HOME)/rpmbuild/SRPMS/$(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc28.src.rpm .
 
 publish_fedora:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable $(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc25.src.rpm; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable $(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc28.src.rpm; quit"
 
 build_arch:
 	python arch/make_archlinux.py $(VERSION_MAJOR) $(VERSION_MINOR) $(V) $(VERSION_MICRO)

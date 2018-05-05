@@ -17,6 +17,7 @@
 #include "util/attribute.hpp"
 #include "util/player.hpp"
 #include "util/fie_time.hpp"
+#include "util/xml_scheme.hpp"
 #include "network/message.hpp"
 #include "../../match.hpp"
 
@@ -571,43 +572,37 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Table::SaveHeader (xmlTextWriter *xml_writer)
+  void Table::SaveHeader (XmlScheme *xml_scheme)
   {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "Tableau");
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "ID",
-                                       "A%d", _size);
+    xml_scheme->StartElement ("Tableau");
+    xml_scheme->WriteFormatAttribute ("ID",
+                                      "A%d", _size);
 
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "NetID",
-                                       "%x", _parcel->GetNetID ());
+    xml_scheme->WriteFormatAttribute ("NetID",
+                                      "%x", _parcel->GetNetID ());
 
     {
       gchar *image = GetImage ();
 
-      xmlTextWriterWriteAttribute (xml_writer,
-                                   BAD_CAST "Titre",
-                                   BAD_CAST image);
+      xml_scheme->WriteAttribute ("Titre",
+                                  image);
       g_free (image);
     }
 
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "Taille",
-                                       "%d", _size);
+    xml_scheme->WriteFormatAttribute ("Taille",
+                                      "%d", _size);
 
     if (_defeated_table_set)
     {
-      xmlTextWriterWriteAttribute (xml_writer,
-                                   BAD_CAST "DestinationDesElimines",
-                                   BAD_CAST _defeated_table_set->GetId ());
+      xml_scheme->WriteAttribute ("DestinationDesElimines",
+                                  _defeated_table_set->GetId ());
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Table::Save (xmlTextWriter *xml_writer)
+  void Table::Save (XmlScheme *xml_scheme)
   {
-    SaveHeader (xml_writer);
+    SaveHeader (xml_scheme);
 
     {
       GSList *current_match = _match_list;
@@ -616,13 +611,13 @@ namespace Table
       {
         Match *match = (Match *) current_match->data;
 
-        match->Save (xml_writer);
+        match->Save (xml_scheme);
 
         current_match = g_slist_next (current_match);
       }
     }
 
-    xmlTextWriterEndElement (xml_writer);
+    xml_scheme->EndElement ();
   }
 
   // --------------------------------------------------------------------------------

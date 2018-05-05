@@ -42,9 +42,9 @@ namespace Pool
 
       Allocator (StageClass *stage_class);
 
-      void Save (xmlTextWriter *xml_writer);
+      void Save (XmlScheme *xml_scheme);
 
-      void SaveHeader (xmlTextWriter *xml_writer);
+      void SaveHeader (XmlScheme *xml_scheme);
 
       guint GetNbPools ();
 
@@ -73,7 +73,7 @@ namespace Pool
       void Reset ();
       GSList *GetCurrentClassification ();
       void LoadConfiguration (xmlNode *xml_node);
-      void SaveConfiguration (xmlTextWriter *xml_writer);
+      void SaveConfiguration (XmlScheme *xml_scheme);
 
     private:
       guint PreparePrint (GtkPrintOperation *operation,

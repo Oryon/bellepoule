@@ -16,7 +16,6 @@
 
 #include <string.h>
 #include <libxml/encoding.h>
-#include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -59,6 +58,7 @@ namespace People
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
 #endif
                                           "IP",
                                           "password",
@@ -131,14 +131,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Splitting::Save (xmlTextWriter *xml_writer)
+  void Splitting::SaveAttendees (XmlScheme *xml_scheme)
   {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST _xml_class_name);
-
-    Stage::SaveConfiguration (xml_writer);
-
-    xmlTextWriterEndElement (xml_writer);
   }
 
   // --------------------------------------------------------------------------------

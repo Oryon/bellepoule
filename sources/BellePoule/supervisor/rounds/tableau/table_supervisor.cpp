@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <libxml/encoding.h>
-#include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -26,6 +25,7 @@
 #include "util/filter.hpp"
 #include "util/glade.hpp"
 #include "util/data.hpp"
+#include "util/xml_scheme.hpp"
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
 #include "../../book/section.hpp"
@@ -89,6 +89,7 @@ namespace Table
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
 #endif
                                           "IP",
                                           "password",
@@ -128,6 +129,7 @@ namespace Table
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
 #endif
                                           "IP",
                                           "password",
@@ -691,51 +693,50 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::SaveConfiguration (xmlTextWriter *xml_writer)
+  void Supervisor::SaveConfiguration (XmlScheme *xml_scheme)
   {
-    Stage::SaveConfiguration (xml_writer);
+    Stage::SaveConfiguration (xml_scheme);
 
     if (_fenced_places)
     {
-      _fenced_places->Save (xml_writer);
+      _fenced_places->Save (xml_scheme);
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::SaveHeader (xmlTextWriter *xml_writer)
+  void Supervisor::SaveHeader (XmlScheme *xml_scheme)
   {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST _xml_class_name);
+    xml_scheme->StartElement (_xml_class_name);
 
-    SaveConfiguration (xml_writer);
+    SaveConfiguration (xml_scheme);
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::Save (xmlTextWriter *xml_writer)
+  void Supervisor::Save (XmlScheme *xml_scheme)
   {
-    SaveHeader (xml_writer);
+    SaveHeader (xml_scheme);
 
-    SaveAttendees (xml_writer);
+    SaveAttendees (xml_scheme);
 
     gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                             (GtkTreeModelForeachFunc) SaveTableSet,
-                            xml_writer);
+                            xml_scheme);
 
-    xmlTextWriterEndElement (xml_writer);
+    xml_scheme->EndElement ();
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Supervisor::SaveTableSet (GtkTreeModel  *model,
-                                     GtkTreePath   *path,
-                                     GtkTreeIter   *iter,
-                                     xmlTextWriter *xml_writer)
+  gboolean Supervisor::SaveTableSet (GtkTreeModel *model,
+                                     GtkTreePath  *path,
+                                     GtkTreeIter  *iter,
+                                     XmlScheme    *xml_scheme)
   {
     TableSet *table_set;
 
     gtk_tree_model_get (model, iter,
                         TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                         -1);
-    table_set->Save (xml_writer);
+    table_set->Save (xml_scheme);
 
     return FALSE;
   }

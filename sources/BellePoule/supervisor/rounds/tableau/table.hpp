@@ -16,15 +16,16 @@
 
 #pragma once
 
+#include <libxml/xmlschemas.h>
 #include <gtk/gtk.h>
 #include <goocanvas.h>
-#include <libxml/xmlwriter.h>
 
 #include "util/object.hpp"
 #include "network/advertiser.hpp"
 #include "../../error.hpp"
 
 class Match;
+class XmlScheme;
 
 namespace Table
 {
@@ -73,9 +74,9 @@ namespace Table
 
       void ClearRoadmaps ();
 
-      void SaveHeader (xmlTextWriter *xml_writer);
+      void SaveHeader (XmlScheme *xml_scheme);
 
-      void Save (xmlTextWriter *xml_writer);
+      void Save (XmlScheme *xml_scheme);
 
       void Load (xmlNode *xml_node);
 

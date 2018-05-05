@@ -17,7 +17,6 @@
 #pragma once
 
 #include <gtk/gtk.h>
-#include <libxml/xmlwriter.h>
 #include <libxml/xpath.h>
 
 #include "actors/players_list.hpp"
@@ -32,7 +31,8 @@ namespace People
       {
         PDF,
         FFF,
-        HTML
+        HTML,
+        FRD
       } ExportType;
 
       static void Declare ();
@@ -51,7 +51,7 @@ namespace People
 
       void Load (xmlNode *xml_node);
 
-      void Save (xmlTextWriter *xml_writer);
+      void SaveAttendees (XmlScheme *xml_scheme);
 
       void Display ();
 

@@ -54,6 +54,7 @@ namespace Pool
       void OnUnLocked ();
       void RetrievePools ();
       void Manage (Pool *pool);
+      void Save (XmlScheme *xml_scheme);
 
     private:
       void OnPoolSelected (Pool *pool);

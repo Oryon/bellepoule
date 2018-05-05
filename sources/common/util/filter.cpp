@@ -18,6 +18,7 @@
 #include "module.hpp"
 #include "global.hpp"
 #include "user_config.hpp"
+#include "xml_scheme.hpp"
 
 #include "filter.hpp"
 
@@ -280,8 +281,8 @@ void Filter::ApplyList (gchar **list)
 }
 
 // --------------------------------------------------------------------------------
-void Filter::Save (xmlTextWriter *xml_writer,
-                   const gchar   *as)
+void Filter::Save (XmlScheme   *xml_scheme,
+                   const gchar *as)
 {
   GList   *current = _selected_list;
   GString *string  = g_string_new ("");
@@ -303,9 +304,8 @@ void Filter::Save (xmlTextWriter *xml_writer,
     gchar *full_name = g_strdup_printf ("Affichage%s",
                                         as);
 
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST full_name,
-                                       "%s", string->str);
+    xml_scheme->WriteFormatAttribute (full_name,
+                                      "%s", string->str);
     g_free (full_name);
   }
 

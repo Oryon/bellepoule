@@ -18,7 +18,6 @@
 
 #include <gtk/gtk.h>
 #include <libxml/xpath.h>
-#include <libxml/xmlwriter.h>
 
 #include "actors/checkin.hpp"
 

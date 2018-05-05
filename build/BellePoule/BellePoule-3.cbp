@@ -56,15 +56,14 @@
 			<Add option="-Wno-vla" />
 			<Add option="-fPIC" />
 			<Add option="-pthread" />
+			<Add option="-DDEBUG" />
 			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGSEAL_ENABLE" />
-			<Add option="-DDEBUG" />
+			<Add option="-DWEBKIT" />
 			<Add directory="/usr/include/libxml2" />
 			<Add directory="/usr/include/goocanvas-2.0" />
 			<Add directory="/usr/include/gtk-3.0" />
-			<Add directory="/usr/include/glib-2.0" />
-			<Add directory="/usr/lib/x86_64-linux-gnu/glib-2.0/include" />
 			<Add directory="/usr/include/at-spi2-atk/2.0" />
 			<Add directory="/usr/include/at-spi-2.0" />
 			<Add directory="/usr/include/dbus-1.0" />
@@ -79,20 +78,26 @@
 			<Add directory="/usr/include/atk-1.0" />
 			<Add directory="/usr/include/gdk-pixbuf-2.0" />
 			<Add directory="/usr/include/libpng12" />
+			<Add directory="/usr/include/glib-2.0" />
+			<Add directory="/usr/lib/x86_64-linux-gnu/glib-2.0/include" />
 			<Add directory="/usr/include/pixman-1" />
 			<Add directory="/usr/include/freetype2" />
 			<Add directory="/usr/include/p11-kit-1" />
-			<Add directory="../../sources/common" />
+			<Add directory="/usr/include/webkitgtk-1.0" />
+			<Add directory="/usr/include/libsoup-2.4" />
 			<Add directory="../../sources/BellePoule" />
+			<Add directory="../../sources/common" />
+			<Add directory="/usr/include/json-glib-1.0" />
+			<Add directory="../../sources/common/network" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--export-dynamic" />
+			<Add option="-pthread" />
 			<Add library="stdc++" />
 			<Add library="ssl" />
 			<Add library="crypto" />
 			<Add library="gthread-2.0" />
 			<Add library="gmodule-2.0" />
-			<Add library="pthread" />
 			<Add library="xml2" />
 			<Add library="goocanvas-2.0" />
 			<Add library="gtk-3" />
@@ -109,6 +114,8 @@
 			<Add library="curl" />
 			<Add library="microhttpd" />
 			<Add library="qrencode" />
+			<Add library="json-glib-1.0" />
+			<Add library="webkitgtk-1.0" />
 		</Linker>
 		<Unit filename="../../sources/BellePoule/actors/checkin.cpp">
 			<Option target="Lib_Debug" />
@@ -197,6 +204,12 @@
 		<Unit filename="../../sources/BellePoule/application/weapon.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/affinities.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/affinities.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/batch.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
@@ -207,6 +220,12 @@
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/clock.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/competition.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/competition.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/enlisted_referee.cpp">
@@ -225,6 +244,12 @@
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/job.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/job_board.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/job_board.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/job_details.cpp">
@@ -266,11 +291,23 @@
 		<Unit filename="../../sources/BellePoule/marshaller/slot.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/smartphones.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/smartphones.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/timeline.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/timeline.hpp">
 			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/ask_fred.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/ask_fred.hpp">
+			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/attendees.cpp">
 			<Option target="Supervisor_Debug" />
@@ -288,6 +325,12 @@
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/book/chapter.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/book/section.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/book/section.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/category.cpp">
@@ -308,10 +351,10 @@
 		<Unit filename="../../sources/BellePoule/supervisor/contest.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/ecosystem.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/error.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/ecosystem.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/error.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/main.cpp">
@@ -323,10 +366,10 @@
 		<Unit filename="../../sources/BellePoule/supervisor/match.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/referee_zone.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/publication.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/referee_zone.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/publication.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/barrage/barrage.cpp">
@@ -464,12 +507,6 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_set.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_set_border.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_set_border.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_supervisor.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
@@ -512,6 +549,18 @@
 		<Unit filename="../../sources/BellePoule/supervisor/tournament.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/advertiser.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/advertiser.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/credentials.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/credentials.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/cryptor.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
@@ -524,11 +573,53 @@
 		<Unit filename="../../sources/common/network/downloader.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/facebook/debug_token_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/debug_token_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/facebook.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/facebook.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/feed_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/feed_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/me_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/me_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/revoke_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/revoke_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/session.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/facebook/session.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/file_uploader.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/file_uploader.hpp">
 			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/greg_uploader.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/greg_uploader.hpp">
+			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/http_server.cpp">
 			<Option target="Lib_Debug" />
@@ -548,6 +639,60 @@
 		<Unit filename="../../sources/common/network/message_uploader.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/oauth/field.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/field.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/session.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/session.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/uploader.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/uploader.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_access_token.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_access_token.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_request_token.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_request_token.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_session.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v1_session.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v2_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/oauth/v2_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/partner.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
@@ -559,6 +704,24 @@
 		</Unit>
 		<Unit filename="../../sources/common/network/ring.hpp">
 			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/statuses_update_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/statuses_update_request.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/twitter.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/twitter.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/verify_credentials_request.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/twitter/verify_credentials_request.hpp">
+			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/uploader.cpp">
 			<Option target="Lib_Debug" />
@@ -656,6 +819,12 @@
 		<Unit filename="../../sources/common/util/global.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/util/json_file.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/json_file.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/util/module.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
@@ -696,6 +865,12 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/util/wifi_code.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/xml_scheme.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/xml_scheme.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Extensions>

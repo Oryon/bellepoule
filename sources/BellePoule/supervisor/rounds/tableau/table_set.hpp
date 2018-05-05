@@ -112,9 +112,9 @@ namespace Table
 
       void Load (xmlNode *xml_node);
 
-      void SaveHeader (xmlTextWriter *xmlwriter);
+      void SaveHeader (XmlScheme *xml_scheme);
 
-      void Save (xmlTextWriter *xmlwriter);
+      void Save (XmlScheme *xml_scheme);
 
       void DumpToHTML (FILE *file);
 
@@ -176,7 +176,6 @@ namespace Table
       Data                     *_max_score;
       ScoreCollector           *_score_collector;
       ScoreCollector           *_quick_score_collector;
-      xmlTextWriter            *_xml_writer;
       xmlNode                  *_xml_node;
       Table                    **_tables;
       GSList                   *_result_list;

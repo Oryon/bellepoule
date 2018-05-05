@@ -51,6 +51,7 @@ namespace People
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
 #endif
                                           "IP",
                                           "password",
@@ -92,6 +93,7 @@ namespace People
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
 #endif
                                           "IP",
                                           "password",
@@ -229,18 +231,6 @@ namespace People
     }
 
     return result;
-  }
-
-  // --------------------------------------------------------------------------------
-  void Barrage::Save (xmlTextWriter *xml_writer)
-  {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST _xml_class_name);
-
-    SaveConfiguration (xml_writer);
-    SaveAttendees     (xml_writer);
-
-    xmlTextWriterEndElement (xml_writer);
   }
 
   // --------------------------------------------------------------------------------

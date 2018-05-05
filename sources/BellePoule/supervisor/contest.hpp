@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include <libxml/xmlwriter.h>
 #include <gtk/gtk.h>
 
 #include "util/module.hpp"
@@ -28,7 +27,10 @@ namespace People
 
 namespace AskFred
 {
-  class Event;
+  namespace Reader
+  {
+    class Event;
+  }
 }
 
 namespace Net
@@ -41,6 +43,7 @@ class Tournament;
 class Weapon;
 class Category;
 class Schedule;
+class XmlScheme;
 
 class Contest : public Module
 {
@@ -58,8 +61,8 @@ class Contest : public Module
 
     Contest *Duplicate ();
 
-    void LoadAskFred (AskFred::Event *askfred,
-                      const gchar    *dirname);
+    void LoadAskFred (AskFred::Reader::Event *askfred,
+                      const gchar            *dirname);
 
     void LoadXml (const gchar *filename);
 
@@ -71,9 +74,11 @@ class Contest : public Module
 
     void Save ();
 
-    void SaveHeader (xmlTextWriter *xml_writer);
+    void SaveHeader (XmlScheme *xml_scheme);
 
     void DumpToHTML (gchar *filename);
+
+    void DumpToFRD (gchar *filename);
 
     void Publish ();
 
@@ -98,16 +103,17 @@ class Contest : public Module
 
     void TweetFeeder (Net::Advertiser::Feeder *feeder);
 
-    guint     GetNetID           ();
-    gchar    *GetOrganizer       ();
-    gchar    *GetDate            ();
-    Weapon   *GetWeapon          ();
-    gchar    *GetName            ();
-    gchar    *GetDefaultFileName ();
-    gchar    *GetGender          ();
-    gchar    *GetGenderCode      ();
-    const gchar *GetCategory ();
-    gboolean  IsTeamEvent        ();
+    guint        GetNetID           ();
+    gchar       *GetOrganizer       ();
+    gchar       *GetDate            ();
+    Weapon      *GetWeapon          ();
+    gchar       *GetName            ();
+    gchar       *GetDefaultFileName ();
+    gchar       *GetGender          ();
+    gchar       *GetGenderCode      ();
+    const gchar *GetCategory        ();
+    gboolean     IsTeamEvent        ();
+    gboolean     HasAskFredEntry    ();
 
   public:
     void ReadTeamProperty                 ();
@@ -125,8 +131,8 @@ class Contest : public Module
       virtual ~Time ();
 
       void Load (gchar *attr);
-      void Save (xmlTextWriter *xml_writer,
-                 const gchar   *attr_name);
+      void Save (XmlScheme   *xml_scheme,
+                 const gchar *attr_name);
       void ReadProperties (Glade *glade);
       void HideProperties (Glade *glade);
       void FillInProperties (Glade *glade);

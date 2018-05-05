@@ -42,8 +42,6 @@ namespace People
 
       GSList *GetCurrentClassification ();
 
-      void Save (xmlTextWriter *xml_writer);
-
       void Load (xmlNode *xml_node);
 
     private:

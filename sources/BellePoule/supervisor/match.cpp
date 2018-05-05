@@ -22,6 +22,7 @@
 #include "util/player.hpp"
 #include "util/fie_time.hpp"
 #include "util/data.hpp"
+#include "util/xml_scheme.hpp"
 #include "network/message.hpp"
 #include "score.hpp"
 
@@ -409,43 +410,37 @@ Score *Match::GetScore (guint fencer)
 }
 
 // --------------------------------------------------------------------------------
-void Match::Save (xmlTextWriter *xml_writer)
+void Match::Save (XmlScheme *xml_scheme)
 {
   if (_number)
   {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "Match");
+    xml_scheme->StartElement ("Match");
 
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "ID",
-                                       "%d", _number);
+    xml_scheme->WriteFormatAttribute ("ID",
+                                      "%d", _number);
 
     if (_parcel)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "NetID",
-                                         "%x", _parcel->GetNetID ());
+      xml_scheme->WriteFormatAttribute ("NetID",
+                                        "%x", _parcel->GetNetID ());
     }
 
     if (_piste)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Piste",
-                                         "%d", _piste);
+      xml_scheme->WriteFormatAttribute ("Piste",
+                                        "%d", _piste);
     }
 
     if (_start_time)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Date",
-                                         "%s", _start_time->GetXmlImage ());
+      xml_scheme->WriteFormatAttribute ("Date",
+                                        "%s", _start_time->GetXmlImage ());
     }
 
     if (_duration_sec > 0)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Duree",
-                                         "%d", _duration_sec);
+      xml_scheme->WriteFormatAttribute ("Duree",
+                                        "%d", _duration_sec);
     }
 
     {
@@ -455,12 +450,10 @@ void Match::Save (xmlTextWriter *xml_writer)
       {
         Player *referee = (Player *) current->data;
 
-        xmlTextWriterStartElement (xml_writer,
-                                   BAD_CAST referee->GetXmlTag ());
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "REF",
-                                           "%d", referee->GetRef ());
-        xmlTextWriterEndElement (xml_writer);
+        xml_scheme->StartElement (referee->GetXmlTag ());
+        xml_scheme->WriteFormatAttribute ("REF",
+                                          "%d", referee->GetRef ());
+        xml_scheme->EndElement ();
 
         current = g_slist_next (current);
       }
@@ -468,27 +461,25 @@ void Match::Save (xmlTextWriter *xml_writer)
 
     for (guint i = 0; i < 2; i++)
     {
-      Save (xml_writer,
+      Save (xml_scheme,
             _opponents[i]._fencer);
     }
 
-    xmlTextWriterEndElement (xml_writer);
+    xml_scheme->EndElement ();
   }
 }
 
 // --------------------------------------------------------------------------------
-void Match::Save (xmlTextWriter *xml_writer,
-                  Player        *fencer)
+void Match::Save (XmlScheme *xml_scheme,
+                  Player    *fencer)
 {
   if (fencer)
   {
     Score *score = GetScore (fencer);
 
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST fencer->GetXmlTag ());
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "REF",
-                                       "%d", fencer->GetRef ());
+    xml_scheme->StartElement (fencer->GetXmlTag ());
+    xml_scheme->WriteFormatAttribute ("REF",
+                                      "%d", fencer->GetRef ());
     {
       const gchar *status_image = score->GetStatusImage ();
 
@@ -496,17 +487,15 @@ void Match::Save (xmlTextWriter *xml_writer,
       {
         if ((status_image[0] == 'V') || (status_image[0] == 'D'))
         {
-          xmlTextWriterWriteFormatAttribute (xml_writer,
-                                             BAD_CAST "Score",
-                                             "%d", score->Get ());
+          xml_scheme->WriteFormatAttribute ("Score",
+                                            "%d", score->Get ());
         }
 
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "Statut",
-                                     BAD_CAST status_image);
+        xml_scheme->WriteAttribute ("Statut",
+                                    status_image);
       }
     }
-    xmlTextWriterEndElement (xml_writer);
+    xml_scheme->EndElement ();
   }
 }
 
@@ -779,15 +768,10 @@ void Match::FeedParcel (Net::Message *parcel)
   xmlBuffer *xml_buffer = xmlBufferCreate ();
 
   {
-    xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+    XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
 
-    xmlTextWriterStartDocument (xml_writer,
-                                NULL,
-                                "UTF-8",
-                                NULL);
-    Save (xml_writer);
-    xmlTextWriterEndDocument (xml_writer);
-    xmlFreeTextWriter (xml_writer);
+    Save (xml_scheme);
+    xml_scheme->Release ();
   }
 
   parcel->Set ("xml", (const gchar *) xml_buffer->content);

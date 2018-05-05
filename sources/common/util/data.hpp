@@ -16,10 +16,12 @@
 
 #pragma once
 
+#include <libxml/xmlschemas.h>
 #include <gtk/gtk.h>
-#include <libxml/xmlwriter.h>
 
 #include "object.hpp"
+
+class XmlScheme;
 
 class Data : public Object
 {
@@ -36,7 +38,7 @@ class Data : public Object
 
     const gchar *GetString ();
 
-    void Save (xmlTextWriter *xml_writer);
+    void Save (XmlScheme *xml_scheme);
 
     gboolean Load (xmlNode *xml_node);
 

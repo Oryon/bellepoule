@@ -22,6 +22,8 @@
 #include "form.hpp"
 #include "players_list.hpp"
 
+class XmlScheme;
+
 namespace People
 {
   class TallyCounter;
@@ -58,8 +60,8 @@ namespace People
       void RegisterPlayer (Player *player,
                            Player *owner);
 
-      void SaveList (xmlTextWriter *xml_writer,
-                     const gchar   *player_class = NULL);
+      void SaveList (XmlScheme   *xml_scheme,
+                     const gchar *player_class);
 
       void ImportCSV (gchar *filename);
 
@@ -98,9 +100,9 @@ namespace People
       void CreateForm (Filter      *filter,
                        const gchar *player_class);
 
-      virtual void SavePlayer (xmlTextWriter *xml_writer,
-                               const gchar   *player_class,
-                               Player        *player);
+      virtual void SavePlayer (XmlScheme   *xml_scheme,
+                               const gchar *player_class,
+                               Player      *player);
 
       virtual void OnFormEvent (Player          *player,
                                 Form::FormEvent  event);

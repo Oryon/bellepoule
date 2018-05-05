@@ -19,6 +19,7 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
+#include "xml_scheme.hpp"
 #include "data.hpp"
 
 // --------------------------------------------------------------------------------
@@ -99,21 +100,17 @@ gboolean Data::Load (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-void Data::Save (xmlTextWriter *xml_writer)
+void Data::Save (XmlScheme *xml_scheme)
 {
   if (_valid)
   {
     if (_is_integer)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST _xml_name,
-                                         "%d", _value);
+      xml_scheme->WriteFormatAttribute (_xml_name, "%d", _value);
     }
     else if (_string)
     {
-      xmlTextWriterWriteAttribute (xml_writer,
-                                   BAD_CAST _xml_name,
-                                   BAD_CAST _string);
+      xml_scheme->WriteAttribute (_xml_name, _string);
     }
   }
 }

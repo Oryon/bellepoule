@@ -43,7 +43,7 @@
 #include "facebook/facebook.hpp"
 #include "contest.hpp"
 #include "publication.hpp"
-#include "ask_fred.hpp"
+#include "askfred/reader.hpp"
 
 #include "tournament.hpp"
 
@@ -723,14 +723,14 @@ void Tournament::OpenUriContest (const gchar *uri)
     if (g_str_has_suffix (uri,
                           ".frd"))
     {
-      AskFred::Parser *askfred = new AskFred::Parser (uri);
-      GList           *events  = askfred->GetEvents ();
-      gchar           *dirname = g_path_get_dirname (uri);
+      AskFred::Reader::Parser *askfred = new AskFred::Reader::Parser (uri);
+      GList                   *events  = askfred->GetEvents ();
+      gchar                   *dirname = g_path_get_dirname (uri);
 
       while (events)
       {
-        AskFred::Event *event   = (AskFred::Event *) events->data;
-        Contest        *contest = new Contest (_advertisers);
+        AskFred::Reader::Event *event   = (AskFred::Reader::Event *) events->data;
+        Contest                *contest = new Contest (_advertisers);
 
         Plug (contest,
               NULL);

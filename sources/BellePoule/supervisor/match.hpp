@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <libxml/xmlwriter.h>
+#include <libxml/xmlschemas.h>
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
@@ -28,6 +28,7 @@ class Player;
 class FieTime;
 class Data;
 class Score;
+class XmlScheme;
 
 class Match : public Object,
               public Error::Provider
@@ -85,7 +86,7 @@ class Match : public Object,
 
     Score *GetScore (guint fencer);
 
-    void Save (xmlTextWriter *xml_writer);
+    void Save (XmlScheme *xml_scheme);
 
     void Load (xmlNode *node_a,
                Player  *fencer_a,
@@ -143,8 +144,8 @@ class Match : public Object,
 
     gboolean ScoreIsNumber (gchar *score);
 
-    void Save (xmlTextWriter *xml_writer,
-               Player        *fencer);
+    void Save (XmlScheme *xml_scheme,
+               Player    *fencer);
 
     void FeedParcel (Net::Message *parcel);
 

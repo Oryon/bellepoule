@@ -16,12 +16,13 @@
 
 #pragma once
 
+#include <libxml/xmlschemas.h>
 #include <gtk/gtk.h>
-#include <libxml/xmlwriter.h>
 
 #include "object.hpp"
 
 class Module;
+class XmlScheme;
 
 class Filter : public Object
 {
@@ -59,11 +60,11 @@ class Filter : public Object
 
     void UnPlug ();
 
-    void Save (xmlTextWriter *xml_writer,
-               const gchar   *as = "");
+    void Save (XmlScheme   *xml_scheme,
+               const gchar *as = "");
 
-    void Load (xmlNode *xml_node,
-               const gchar   *as = "");
+    void Load (xmlNode     *xml_node,
+               const gchar *as = "");
 
     static void PreventPersistence ();
 

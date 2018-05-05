@@ -25,6 +25,7 @@
 #include "util/data.hpp"
 #include "util/dnd_config.hpp"
 #include "util/user_config.hpp"
+#include "util/xml_scheme.hpp"
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
 #include "actors/null_team.hpp"
@@ -78,6 +79,7 @@ namespace People
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
 #endif
                                           "IP",
                                           "password",
@@ -125,6 +127,7 @@ namespace People
       AttributeDesc::CreateIncludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
 #endif
                                           "name",
                                           "ranking",
@@ -302,20 +305,14 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::Save (xmlTextWriter *xml_writer)
+  void CheckinSupervisor::SaveAttendees (XmlScheme *xml_scheme)
   {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST _xml_class_name);
-
-    SaveConfiguration (xml_writer);
-
-    xmlTextWriterEndElement (xml_writer);
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::SavePlayer (xmlTextWriter *xml_writer,
-                                      const gchar   *player_class,
-                                      Player        *player)
+  void CheckinSupervisor::SavePlayer (XmlScheme   *xml_scheme,
+                                      const gchar *player_class,
+                                      Player      *player)
   {
     if (player != _null_team)
     {
@@ -328,19 +325,22 @@ namespace People
 
       if (_contest->IsTeamEvent ())
       {
-        if ((g_strcmp0 (player_class, "Fencer") == 0) && player->Is ("Fencer"))
+        if (xml_scheme->SaveFencersAndTeamsSeparatly () == FALSE)
         {
-          Fencer *fencer = (Fencer *) player;
-          Team   *team   = fencer->GetTeam ();
-
-          if (team != _null_team)
+          if ((g_strcmp0 (player_class, "Fencer") == 0) && player->Is ("Fencer"))
           {
-            return;
+            Fencer *fencer = (Fencer *) player;
+            Team   *team   = fencer->GetTeam ();
+
+            if (team != _null_team)
+            {
+              return;
+            }
           }
         }
       }
 
-      Checkin::SavePlayer (xml_writer,
+      Checkin::SavePlayer (xml_scheme,
                            player_class,
                            player);
     }

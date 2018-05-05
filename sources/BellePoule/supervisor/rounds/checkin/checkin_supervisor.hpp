@@ -17,7 +17,6 @@
 #pragma once
 
 #include <gtk/gtk.h>
-#include <libxml/xmlwriter.h>
 
 #include "actors/checkin.hpp"
 #include "../../stage.hpp"
@@ -25,6 +24,7 @@
 class Data;
 class Team;
 class NullTeam;
+class XmlScheme;
 
 namespace People
 {
@@ -92,11 +92,11 @@ namespace People
       void OnPlayerLoaded (Player *player,
                            Player *owner);
 
-      void Save (xmlTextWriter *xml_writer);
+      void SaveAttendees (XmlScheme *xml_scheme);
 
-      void SavePlayer (xmlTextWriter *xml_writer,
-                       const gchar   *player_class,
-                       Player        *player);
+      void SavePlayer (XmlScheme   *xml_scheme,
+                       const gchar *player_class,
+                       Player      *player);
 
       void RegisterNewTeam (Team *team);
 

@@ -22,6 +22,7 @@
 #include "util/player.hpp"
 #include "util/filter.hpp"
 #include "util/user_config.hpp"
+#include "util/glade.hpp"
 #include "network/advertiser.hpp"
 #include "../../attendees.hpp"
 #include "../../contest.hpp"
@@ -48,6 +49,7 @@ namespace People
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
 #endif
                                           "IP",
                                           "password",
@@ -107,6 +109,9 @@ namespace People
   void GeneralClassification::Display ()
   {
     ToggleClassification (TRUE);
+
+    gtk_widget_set_sensitive (_glade->GetWidget ("export_frd_toolbutton"),
+                              _contest->HasAskFredEntry ());
   }
 
   // --------------------------------------------------------------------------------
@@ -219,14 +224,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void GeneralClassification::Save (xmlTextWriter *xml_writer)
+  void GeneralClassification::SaveAttendees (XmlScheme *xml_scheme)
   {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST _xml_class_name);
-
-    SaveConfiguration (xml_writer);
-
-    xmlTextWriterEndElement (xml_writer);
   }
 
   // --------------------------------------------------------------------------------
@@ -304,6 +303,12 @@ namespace People
                                     gettext ("All HTML files (.HTML)"));
           pattern_upper     = "*.HTML";
           filename_modifier = gettext (_class_name);
+        }
+        else if (export_type == FRD)
+        {
+          gtk_file_filter_set_name (filter,
+                                    gettext ("All AskFred files (.FRD)"));
+          pattern_upper = "*.FRD";
         }
         else
         {
@@ -398,6 +403,10 @@ namespace People
         else if (export_type == HTML)
         {
           _contest->DumpToHTML (filename);
+        }
+        else if (export_type == FRD)
+        {
+          _contest->DumpToFRD (filename);
         }
       }
       g_free (filename);
@@ -515,5 +524,14 @@ namespace People
     GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
     g->OnExportToolbuttonClicked (GeneralClassification::PDF);
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_export_frd_toolbutton_clicked (GtkWidget *widget,
+                                                                    Object    *owner)
+  {
+    GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+
+    g->OnExportToolbuttonClicked (GeneralClassification::FRD);
   }
 }

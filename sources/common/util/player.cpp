@@ -16,6 +16,7 @@
 
 #include "util/wifi_code.hpp"
 #include "util/attribute.hpp"
+#include "util/xml_scheme.hpp"
 #include "network/partner.hpp"
 #include "network/message.hpp"
 
@@ -354,30 +355,18 @@ void Player::NotifyChangesToPartners ()
     xmlBuffer *xml_buffer = xmlBufferCreate ();
 
     {
-      xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 1);
+      XmlScheme   *xml_scheme            = new XmlScheme (xml_buffer);
+      const gchar *player_class_xml_tag  = PlayerFactory::GetXmlTag (_player_class);
+      gchar       *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
 
-      xmlTextWriterSetIndent (xml_writer,
-                              TRUE);
-      xmlTextWriterStartDocument (xml_writer,
-                                  NULL,
-                                  "UTF-8",
-                                  NULL);
+      xml_scheme->StartElement (players_class_xml_tag);
 
-      {
-        const gchar *player_class_xml_tag  = PlayerFactory::GetXmlTag (_player_class);
-        gchar       *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
+      Save (xml_scheme);
 
-        xmlTextWriterStartElement (xml_writer,
-                                   BAD_CAST players_class_xml_tag);
+      xml_scheme->EndElement ();
 
-        Save (xml_writer);
-
-        xmlTextWriterEndElement (xml_writer);
-
-        g_free (players_class_xml_tag);
-      }
-
-      xmlFreeTextWriter (xml_writer);
+      g_free (players_class_xml_tag);
+      xml_scheme->Release ();
     }
 
     {
@@ -505,8 +494,8 @@ void Player::SetPartner (Net::Partner *partner)
 }
 
 // --------------------------------------------------------------------------------
-void Player::SaveAttributes (xmlTextWriter *xml_writer,
-                             gboolean       full_profile)
+void Player::SaveAttributes (XmlScheme *xml_scheme,
+                             gboolean   full_profile)
 {
   GSList *attr_list;
   GSList *current;
@@ -577,9 +566,8 @@ void Player::SaveAttributes (xmlTextWriter *xml_writer,
             }
           }
 
-          xmlTextWriterWriteAttribute (xml_writer,
-                                       BAD_CAST attr->GetXmlName (),
-                                       BAD_CAST xml_image);
+          xml_scheme->WriteAttribute (attr->GetXmlName (),
+                                      xml_image);
           g_free (xml_image);
         }
       }
@@ -591,16 +579,15 @@ void Player::SaveAttributes (xmlTextWriter *xml_writer,
 }
 
 // --------------------------------------------------------------------------------
-void Player::Save (xmlTextWriter *xml_writer,
-                   gboolean       full_profile)
+void Player::Save (XmlScheme *xml_scheme,
+                   gboolean   full_profile)
 {
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST GetXmlTag ());
+  xml_scheme->StartElement (GetXmlTag ());
 
-  SaveAttributes (xml_writer,
+  SaveAttributes (xml_scheme,
                   full_profile);
 
-  xmlTextWriterEndElement (xml_writer);
+  xml_scheme->EndElement ();
 }
 
 // --------------------------------------------------------------------------------
@@ -745,20 +732,12 @@ void Player::FeedParcel (Net::Message *parcel)
   xmlBuffer *xml_buffer = xmlBufferCreate ();
 
   {
-    xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+    XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
 
-    xmlTextWriterSetIndent     (xml_writer,
-                                TRUE);
-    xmlTextWriterStartDocument (xml_writer,
-                                NULL,
-                                "UTF-8",
-                                NULL);
-
-    Save (xml_writer,
+    Save (xml_scheme,
           TRUE);
 
-    xmlTextWriterEndDocument (xml_writer);
-    xmlFreeTextWriter (xml_writer);
+    xml_scheme->Release ();
   }
 
   parcel->Set ("xml",

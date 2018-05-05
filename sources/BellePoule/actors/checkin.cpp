@@ -14,14 +14,13 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <libxml/xmlwriter.h>
-
 #include "util/global.hpp"
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
 #include "util/player.hpp"
 #include "util/user_config.hpp"
 #include "util/glade.hpp"
+#include "util/xml_scheme.hpp"
 #include "actors/player_factory.hpp"
 #include "actors/tally_counter.hpp"
 #include "tally_counter.hpp"
@@ -277,19 +276,19 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::SavePlayer (xmlTextWriter *xml_writer,
-                            const gchar   *player_class,
-                            Player        *player)
+  void Checkin::SavePlayer (XmlScheme   *xml_scheme,
+                            const gchar *player_class,
+                            Player      *player)
   {
     if (player && player->Is (player_class))
     {
-      player->Save (xml_writer);
+      player->Save (xml_scheme);
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::SaveList (xmlTextWriter *xml_writer,
-                          const gchar   *player_class)
+  void Checkin::SaveList (XmlScheme   *xml_scheme,
+                          const gchar *player_class)
   {
     if (player_class == NULL)
     {
@@ -300,8 +299,7 @@ namespace People
       const gchar *player_class_xml_tag  = PlayerFactory::GetXmlTag (player_class);
       gchar       *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
 
-      xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST players_class_xml_tag);
+      xml_scheme->StartElement (players_class_xml_tag);
 
       {
         GList *current = _player_list;
@@ -310,7 +308,7 @@ namespace People
         {
           Player *p = (Player *) current->data;
 
-          SavePlayer (xml_writer,
+          SavePlayer (xml_scheme,
                       player_class,
                       p);
 
@@ -318,7 +316,7 @@ namespace People
         }
       }
 
-      xmlTextWriterEndElement (xml_writer);
+      xml_scheme->EndElement ();
 
       g_free (players_class_xml_tag);
     }

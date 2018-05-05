@@ -75,6 +75,7 @@ namespace Pool
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
+                                          "plugin_ID",
 #endif
                                           "IP",
                                           "password",
@@ -115,6 +116,7 @@ namespace Pool
         AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                             "ref",
+                                            "plugin_ID",
 #endif
                                             "IP",
                                             "password",
@@ -372,6 +374,11 @@ namespace Pool
 
     pool->SetFilter (_filter);
     pool->RegisterStatusListener (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Supervisor::Save (XmlScheme *xml_scheme)
+  {
   }
 
   // --------------------------------------------------------------------------------

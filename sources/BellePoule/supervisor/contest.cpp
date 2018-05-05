@@ -19,7 +19,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <libxml/encoding.h>
-#include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -42,22 +41,25 @@
 #include "util/glade.hpp"
 #include "util/data.hpp"
 #include "util/flash_code.hpp"
+#include "util/xml_scheme.hpp"
 #include "actors/player_factory.hpp"
 #include "network/greg_uploader.hpp"
 #include "network/message.hpp"
 #include "actors/checkin.hpp"
 #include "actors/referees_list.hpp"
 #include "actors/player_factory.hpp"
+#include "actors/team.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "publication.hpp"
 #include "schedule.hpp"
-
 
 #include "application/version.h"
 #include "application/weapon.hpp"
 #include "category.hpp"
 
-#include "ask_fred.hpp"
+#include "askfred/reader.hpp"
+#include "askfred/writer.hpp"
+
 #include "tournament.hpp"
 #include "contest.hpp"
 
@@ -122,12 +124,11 @@ Contest::Time::~Time ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::Time::Save (xmlTextWriter *xml_writer,
-                          const gchar   *attr_name)
+void Contest::Time::Save (XmlScheme   *xml_scheme,
+                          const gchar *attr_name)
 {
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST attr_name,
-                                     "%02d:%02d", _hour, _minute);
+  xml_scheme->WriteFormatAttribute (attr_name,
+                                    "%02d:%02d", _hour, _minute);
 }
 
 // --------------------------------------------------------------------------------
@@ -220,18 +221,18 @@ Contest::Contest (GList    *advertisers,
 
   _fie_id = g_strdup_printf ("%x", GetNetID ());
 
-   _read_only   = FALSE;
-   _authority   = NULL;
-   _filename    = NULL;
-   _tournament  = NULL;
-   _weapon      = Weapon::GetDefault ();
-   _category    = new Category (_glade->GetWidget ("category_combobox"));
-   _level       = 0;
-   _gender      = 0;
-   _team_event  = FALSE;
-   _derived     = FALSE;
-   _source      = NULL;
-   _advertisers = advertisers;
+  _read_only   = FALSE;
+  _authority   = NULL;
+  _filename    = NULL;
+  _tournament  = NULL;
+  _weapon      = Weapon::GetDefault ();
+  _category    = new Category (_glade->GetWidget ("category_combobox"));
+  _level       = 0;
+  _gender      = 0;
+  _team_event  = FALSE;
+  _derived     = FALSE;
+  _source      = NULL;
+  _advertisers = advertisers;
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
@@ -365,8 +366,8 @@ void Contest::GetUnknownAttributes (const gchar     *contest_keyword,
 }
 
 // --------------------------------------------------------------------------------
-void Contest::LoadAskFred (AskFred::Event *askfred,
-                           const gchar    *dirname)
+void Contest::LoadAskFred (AskFred::Reader::Event *askfred,
+                           const gchar            *dirname)
 {
   g_free (_name);
   _name = g_strdup (askfred->_name);
@@ -374,14 +375,14 @@ void Contest::LoadAskFred (AskFred::Event *askfred,
   g_free (_location);
   _location = g_strdup (askfred->_location);
 
-  g_free (_location);
-  _location = g_strdup (askfred->_location);
-
   g_free (_organizer);
   _organizer = g_strdup (askfred->_organizer);
 
+  g_free (_fie_id);
+  _fie_id = g_strdup (askfred->_event_id);
+
   g_free (_source);
-  _source = g_strdup ("AskFred");
+  _source = g_strdup_printf ("AskFred:%s", askfred->_tournament_id);
 
   for (guint i = 0; i < _nb_gender; i++)
   {
@@ -429,15 +430,17 @@ void Contest::LoadAskFred (AskFred::Event *askfred,
     g_date_time_unref (date);
   }
 
+  _team_event = askfred->_team_event;
+
   if (_schedule)
   {
     AttributeDesc             *league_desc = AttributeDesc::GetDescFromCodeName ("league");
     People::CheckinSupervisor *checkin;
-    GList                     *current  = askfred->_fencers;
+    GList                     *current  = askfred->_competitors;
 
     league_desc->_favorite_look = AttributeDesc::SHORT_TEXT;
     _schedule->CreateDefault ();
-    _schedule->SetTeamEvent (FALSE);
+    _schedule->SetTeamEvent (_team_event);
     league_desc->_favorite_look = AttributeDesc::GRAPHICAL;
 
     checkin = _schedule->GetCheckinSupervisor ();
@@ -452,38 +455,27 @@ void Contest::LoadAskFred (AskFred::Event *askfred,
 
     while (current)
     {
-      AskFred::Fencer     *fencer = (AskFred::Fencer *) current->data;
-      Player              *player = PlayerFactory::CreatePlayer ("Fencer");
-      Player::AttributeId  attr_id ("");
-
-      attr_id._name = (gchar *) "name";
-      player->SetAttributeValue (&attr_id, fencer->_last_name);
-
-      attr_id._name = (gchar *) "first_name";
-      player->SetAttributeValue (&attr_id, fencer->_first_name);
-
-      attr_id._name = (gchar *) "birth_date";
-      player->SetAttributeValue (&attr_id, fencer->_birth);
-
-      attr_id._name = (gchar *) "gender";
-      player->SetAttributeValue (&attr_id, fencer->_gender);
-
-      attr_id._name = (gchar *) "club";
-      player->SetAttributeValue (&attr_id, fencer->_club->_name);
-
-      attr_id._name = (gchar *) "league";
-      player->SetAttributeValue (&attr_id, fencer->_club->_division);
-
-      attr_id._name = (gchar *) "licence";
-      player->SetAttributeValue (&attr_id, fencer->_licence);
-
-      attr_id._name = (gchar *) "ranking";
-      player->SetAttributeValue (&attr_id, fencer->GetRanking (_weapon->GetXmlImage ()));
-
-      attr_id._name = (gchar *) "rating";
-      player->SetAttributeValue (&attr_id, fencer->GetRating (_weapon->GetXmlImage ()));
+      AskFred::Reader::Competitor *competitor = (AskFred::Reader::Competitor *) current->data;
+      Player                      *player     = competitor->CreatePlayer (askfred->_weapon);
 
       checkin->Add (player);
+
+      if (player->Is ("Team"))
+      {
+        Team   *team    = (Team *) player;
+        GSList *members = team->GetMemberList ();
+
+        while (members)
+        {
+          Player *member = (Player *) members->data;
+
+          checkin->Add (member);
+          member->Release ();
+
+          members = g_slist_next (members);
+        }
+      }
+
       player->Release ();
 
       current = g_list_next (current);
@@ -871,7 +863,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
     {
       AttributeDesc *league_desc = AttributeDesc::GetDescFromCodeName ("league");
 
-      if (_source && (g_strcmp0 (_source, "AskFred") == 0))
+      if (_source && (g_strstr_len (_source, -1, "AskFred") == _source))
       {
         league_desc->_favorite_look = AttributeDesc::SHORT_TEXT;
       }
@@ -897,7 +889,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       checkin->ConvertFromBaseToResult ();
     }
 
-    if (_source && (g_strcmp0 (_source, "AskFred") == 0))
+    if (_source && (g_strstr_len (_source, -1, "AskFred") == _source))
     {
       People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
       Filter                    *filter  = checkin->GetFilter ();
@@ -1636,49 +1628,33 @@ void Contest::Save ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::SaveHeader (xmlTextWriter *xml_writer)
+void Contest::SaveHeader (XmlScheme *xml_scheme)
 {
-  if (xml_writer)
   {
-    xmlTextWriterSetIndent     (xml_writer,
-                                TRUE);
-    xmlTextWriterStartDocument (xml_writer,
-                                NULL,
-                                "UTF-8",
-                                NULL);
-
     if (_team_event)
     {
-      xmlTextWriterStartDTD (xml_writer,
-                             BAD_CAST "CompetitionParEquipes",
-                             NULL,
-                             NULL);
+      xml_scheme->StartDTD ("CompetitionParEquipes");
     }
     else
     {
-      xmlTextWriterStartDTD (xml_writer,
-                             BAD_CAST "CompetitionIndividuelle",
-                             NULL,
-                             NULL);
+      xml_scheme->StartDTD ("CompetitionIndividuelle");
     }
-    xmlTextWriterEndDTD (xml_writer);
+    xml_scheme->EndDTD ();
 
-    xmlTextWriterStartComment (xml_writer);
-    xmlTextWriterWriteFormatString (xml_writer, "\n");
-    xmlTextWriterWriteFormatString (xml_writer, "           By BellePoule (V%s.%s%s)\n", VERSION, VERSION_REVISION, VERSION_MATURITY);
-    xmlTextWriterWriteFormatString (xml_writer, "\n");
-    xmlTextWriterWriteFormatString (xml_writer, "   http://betton.escrime.free.fr/index.php/bellepoule\n");
-    xmlTextWriterEndComment (xml_writer);
+    xml_scheme->StartComment ();
+    xml_scheme->WriteFormatString ("\n");
+    xml_scheme->WriteFormatString ("           By BellePoule (V%s.%s%s)\n", VERSION, VERSION_REVISION, VERSION_MATURITY);
+    xml_scheme->WriteFormatString ("\n");
+    xml_scheme->WriteFormatString ("   http://betton.escrime.free.fr/index.php/bellepoule\n");
+    xml_scheme->EndComment ();
 
     if (_team_event)
     {
-      xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "CompetitionParEquipes");
+      xml_scheme->StartElement ("CompetitionParEquipes");
     }
     else
     {
-      xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "CompetitionIndividuelle");
+      xml_scheme->StartElement ("CompetitionIndividuelle");
     }
 
     {
@@ -1692,95 +1668,79 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
         color[5] = color[9];
         color[6] = color[10];
         color[7] = 0;
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "Couleur",
-                                     BAD_CAST color);
+        xml_scheme->WriteAttribute ("Couleur",
+                                    color);
         g_free (color);
       }
     }
 
     if (_authority)
     {
-      xmlTextWriterWriteAttribute (xml_writer,
-                                   BAD_CAST "Championnat",
-                                   BAD_CAST _authority);
+      xml_scheme->WriteAttribute ("Championnat",
+                                  _authority);
     }
 
     if (_fie_id)
     {
-      xmlTextWriterWriteAttribute (xml_writer,
-                                   BAD_CAST "ID",
-                                   BAD_CAST _fie_id);
+      xml_scheme->WriteAttribute ("ID",
+                                  _fie_id);
     }
 
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "NetID",
-                                       "%x", GetNetID ());
+    xml_scheme->WriteFormatAttribute ("NetID",
+                                      "%x", GetNetID ());
 
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "Annee",
-                                       "%d", _year);
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST "Arme",
-                                 BAD_CAST _weapon->GetXmlImage ());
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST "Sexe",
-                                 BAD_CAST gender_xml_image[_gender]);
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST "Organisateur",
-                                 BAD_CAST _organizer);
+    xml_scheme->WriteFormatAttribute ("Annee",
+                                      "%d", _year);
+    xml_scheme->WriteAttribute ("Arme",
+                                _weapon->GetXmlImage ());
+    xml_scheme->WriteAttribute ("Sexe",
+                                gender_xml_image[_gender]);
+    xml_scheme->WriteAttribute ("Organisateur",
+                                _organizer);
     if (_source)
     {
-      xmlTextWriterWriteAttribute (xml_writer,
-                                   BAD_CAST "Source",
-                                   BAD_CAST _source);
+      xml_scheme->WriteAttribute ("Source",
+                                  _source);
     }
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST "Categorie",
-                                 BAD_CAST _category->GetXmlImage ());
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST "Niveau",
-                                 BAD_CAST level_xml_image[_level]);
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "Date",
-                                       "%02d.%02d.%d", _day, _month, _year);
+    xml_scheme->WriteAttribute ("Categorie",
+                                _category->GetXmlImage ());
+    xml_scheme->WriteAttribute ("Niveau",
+                                level_xml_image[_level]);
+    xml_scheme->WriteFormatAttribute ("Date",
+                                      "%02d.%02d.%d", _day, _month, _year);
     if (_checkin_time)
     {
-      _checkin_time->Save (xml_writer,
+      _checkin_time->Save (xml_scheme,
                            "Appel");
     }
     if (_scratch_time)
     {
-      _scratch_time->Save (xml_writer,
+      _scratch_time->Save (xml_scheme,
                            "Scratch");
     }
     if (_start_time)
     {
-      _start_time->Save   (xml_writer,
+      _start_time->Save   (xml_scheme,
                            "Debut");
     }
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST "TitreLong",
-                                 BAD_CAST _name);
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST "URLorganisateur",
-                                 BAD_CAST _web_site);
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "ScoreAleatoire",
-                                       "%d", _schedule->ScoreStuffingIsAllowed ());
+    xml_scheme->WriteAttribute ("TitreLong",
+                                _name);
+    xml_scheme->WriteAttribute ("URLorganisateur",
+                                _web_site);
+    xml_scheme->WriteFormatAttribute ("ScoreAleatoire",
+                                      "%d", _schedule->ScoreStuffingIsAllowed ());
     // Team configuration
     {
-      _minimum_team_size->Save      (xml_writer);
-      _default_classification->Save (xml_writer);
-      _manual_classification->Save  (xml_writer);
+      _minimum_team_size->Save      (xml_scheme);
+      _default_classification->Save (xml_scheme);
+      _manual_classification->Save  (xml_scheme);
     }
 
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST "Lieu",
-                                 BAD_CAST _location);
+    xml_scheme->WriteAttribute ("Lieu",
+                                _location);
   }
 
-  _schedule->SavePeoples (xml_writer,
+  _schedule->SavePeoples (xml_scheme,
                           _referees_list);
 }
 
@@ -1789,23 +1749,104 @@ void Contest::Save (gchar *filename)
 {
   if (filename)
   {
-    xmlTextWriter *xml_writer;
-
-    xml_writer = xmlNewTextWriterFilename (filename, 0);
-    if (xml_writer)
     {
-      SaveHeader (xml_writer);
+      XmlScheme *xml_scheme = new XmlScheme (filename);
 
-      _schedule->Save (xml_writer);
+      SaveHeader (xml_scheme);
+      _schedule->Save (xml_scheme);
 
-      xmlTextWriterEndElement (xml_writer);
-      xmlTextWriterEndDocument (xml_writer);
+      xml_scheme->EndElement (); // toto
 
-      xmlFreeTextWriter (xml_writer);
+      xml_scheme->Release ();
     }
 
     gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
                               FALSE);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::DumpToFRD (gchar *filename)
+{
+  if (filename)
+  {
+    XmlScheme *xml_scheme = new AskFred::Writer::Scheme (filename);
+
+    // FencingData
+    {
+      xml_scheme->StartElement ("FencingData");
+
+      xml_scheme->WriteAttribute ("Version",
+                                  "5.0");
+      xml_scheme->WriteAttribute ("Context",
+                                  "Results");
+      xml_scheme->WriteAttribute ("Source",
+                                  "BellePouleV5.0");
+      xml_scheme->WriteAttribute ("xmlns",
+                                  "http://www.askfred.net");
+
+      // Tournament
+      {
+        xml_scheme->StartElement ("Tournament");
+
+        {
+          const gchar *id = g_strrstr (_source, ":");
+
+          if (id)
+          {
+            xml_scheme->WriteAttribute ("TournamentID",
+                                        (id + 1));
+          }
+          xml_scheme->WriteAttribute ("Name",
+                                      _name);
+          xml_scheme->WriteAttribute ("Location",
+                                      _location);
+        }
+
+        // Event
+        {
+          xml_scheme->StartElement ("Event");
+
+          xml_scheme->WriteAttribute ("EventID",
+                                      _fie_id);
+          xml_scheme->WriteAttribute ("Weapon",
+                                      _weapon->GetImage ());
+          xml_scheme->WriteAttribute ("Gender",
+                                      gender_xml_image[_gender]);
+
+          if (_team_event)
+          {
+            xml_scheme->WriteAttribute ("IsTeam",
+                                        "True");
+          }
+          else
+          {
+            xml_scheme->WriteAttribute ("IsTeam",
+                                        "False");
+          }
+
+          _schedule->SaveFinalResults (xml_scheme);
+
+          _schedule->Save (xml_scheme);
+
+          xml_scheme->EndElement ();
+        }
+
+        xml_scheme->EndElement ();
+      }
+
+      // Databases
+      {
+        _schedule->SavePeoples (xml_scheme,
+                                _referees_list);
+
+        xml_scheme->WriteCustom ("ClubDatabase");
+      }
+
+      xml_scheme->EndElement ();
+    }
+
+    xml_scheme->Release ();
   }
 }
 
@@ -2290,6 +2331,12 @@ Weapon *Contest::GetWeapon ()
 gboolean Contest::IsTeamEvent ()
 {
   return _team_event;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Contest::HasAskFredEntry ()
+{
+  return _source != NULL;
 }
 
 // --------------------------------------------------------------------------------

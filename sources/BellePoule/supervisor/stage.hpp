@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -33,6 +32,7 @@ class Contest;
 class Data;
 class SensitivityTrigger;
 class Attendees;
+class XmlScheme;
 
 class Stage : public virtual Object,
               public Net::Advertiser::Feeder
@@ -146,7 +146,7 @@ class Stage : public virtual Object,
 
     virtual void OnLoadingCompleted () {};
 
-    virtual void Save (xmlTextWriter *xml_writer) {};
+    virtual void Save (XmlScheme *xml_scheme);
 
     virtual void Dump ();
 
@@ -209,9 +209,9 @@ class Stage : public virtual Object,
 
     virtual void LoadConfiguration (xmlNode *xml_node);
 
-    virtual void SaveConfiguration (xmlTextWriter *xml_writer);
+    virtual void SaveConfiguration (XmlScheme *xml_scheme);
 
-    virtual void SaveAttendees (xmlTextWriter *xml_writer);
+    virtual void SaveAttendees (XmlScheme *xml_scheme);
 
     void LoadAttendees (xmlNode *n);
 
@@ -263,6 +263,6 @@ class Stage : public virtual Object,
 
     gchar *GetAnnounce ();
 
-    void SaveFilters (xmlTextWriter *xml_writer,
-                      const gchar   *as = "");
+    void SaveFilters (XmlScheme   *xml_scheme,
+                      const gchar *as = "");
 };

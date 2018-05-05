@@ -16,8 +16,6 @@
 
 #pragma once
 
-#include <libxml/xmlwriter.h>
-
 #include "util/module.hpp"
 
 #include "stage.hpp"
@@ -32,6 +30,7 @@ namespace People
 class Contest;
 class Data;
 class Book;
+class XmlScheme;
 
 class Schedule : public Module,
                  public Stage::Listener
@@ -54,10 +53,12 @@ class Schedule : public Module,
 
     void CreateDefault (gboolean without_pools = FALSE);
 
-    void SavePeoples (xmlTextWriter   *xml_writer,
+    void SaveFinalResults (XmlScheme *xml_scheme);
+
+    void SavePeoples (XmlScheme       *xml_scheme,
                       People::Checkin *referees);
 
-    void Save (xmlTextWriter *xml_writer);
+    void Save (XmlScheme *xml_scheme);
 
     void DumpToHTML (FILE *file);
 

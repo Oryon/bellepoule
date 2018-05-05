@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <libxml/encoding.h>
-#include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -30,6 +29,7 @@
 #include "util/flash_code.hpp"
 #include "util/glade.hpp"
 #include "util/data.hpp"
+#include "util/xml_scheme.hpp"
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
 #include "../../classification.hpp"
@@ -664,28 +664,24 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::SaveHeader (xmlTextWriter *xml_writer)
+  void TableSet::SaveHeader (XmlScheme *xml_scheme)
   {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "SuiteDeTableaux");
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST "ID",
-                                 BAD_CAST _id);
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST "Titre",
-                                 BAD_CAST _short_name);
+    xml_scheme->StartElement ("SuiteDeTableaux");
+    xml_scheme->WriteAttribute ("ID",
+                                _id);
+    xml_scheme->WriteAttribute ("Titre",
+                                _short_name);
     if (_nb_tables)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "NbDeTableaux",
-                                         "%d", _nb_tables-1);
+      xml_scheme->WriteFormatAttribute ("NbDeTableaux",
+                                        "%d", _nb_tables-1);
     }
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::Save (xmlTextWriter *xml_writer)
+  void TableSet::Save (XmlScheme *xml_scheme)
   {
-    SaveHeader (xml_writer);
+    SaveHeader (xml_scheme);
 
     if (_tree_root)
     {
@@ -693,10 +689,10 @@ namespace Table
       {
         Table *table = _tables[t];
 
-        table->Save (xml_writer);
+        table->Save (xml_scheme);
       }
     }
-    xmlTextWriterEndElement (xml_writer);
+    xml_scheme->EndElement ();
   }
 
   // --------------------------------------------------------------------------------
@@ -2090,23 +2086,21 @@ namespace Table
             xmlBuffer *xml_buffer = xmlBufferCreate ();
 
             {
-              Table         *table      = (Table *) match->GetPtrData (this, "table");
-              xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+              XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
+              Table     *table      = (Table *) match->GetPtrData (this, "table");
 
-              contest->SaveHeader     (xml_writer);
-              _supervisor->SaveHeader (xml_writer);
-              SaveHeader              (xml_writer);
+              contest->SaveHeader     (xml_scheme);
+              _supervisor->SaveHeader (xml_scheme);
+              SaveHeader              (xml_scheme);
 
-              table->SaveHeader (xml_writer);
-              match->Save (xml_writer);
+              table->SaveHeader (xml_scheme);
+              match->Save (xml_scheme);
 
-              xmlTextWriterEndElement (xml_writer);
-              xmlTextWriterEndElement (xml_writer);
-              xmlTextWriterEndElement (xml_writer);
+              xml_scheme->EndElement ();
+              xml_scheme->EndElement ();
+              xml_scheme->EndElement ();
 
-              xmlTextWriterEndDocument (xml_writer);
-
-              xmlFreeTextWriter (xml_writer);
+              xml_scheme->Release ();
             }
 
             {

@@ -99,7 +99,7 @@ namespace Pool
 
       void Wipe ();
 
-      void Save (xmlTextWriter *xml_writer);
+      void Save (XmlScheme *xml_scheme);
 
       void Load (xmlNode *xml_node);
 

@@ -28,6 +28,7 @@
 #include "util/flash_code.hpp"
 #include "util/data.hpp"
 #include "util/player.hpp"
+#include "util/xml_scheme.hpp"
 #include "network/message.hpp"
 #include "dispatcher/dispatcher.hpp"
 #include "../../score.hpp"
@@ -2186,15 +2187,10 @@ namespace Pool
     xmlBuffer *xml_buffer = xmlBufferCreate ();
 
     {
-      xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+      XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
 
-      xmlTextWriterStartDocument (xml_writer,
-                                  NULL,
-                                  "UTF-8",
-                                  NULL);
-      Save (xml_writer);
-      xmlTextWriterEndDocument (xml_writer);
-      xmlFreeTextWriter (xml_writer);
+      Save (xml_scheme);
+      xml_scheme->Release ();
     }
 
     parcel->Set ("xml", (const gchar *) xml_buffer->content);
@@ -2208,40 +2204,34 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::Save (xmlTextWriter *xml_writer)
+  void Pool::Save (XmlScheme *xml_scheme)
   {
     GSList *working_list;
 
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "Poule");
+    xml_scheme->StartElement ("Poule");
 
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "ID",
-                                       "%d", _number);
+    xml_scheme->WriteFormatAttribute ("ID",
+                                      "%d", _number);
 
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "NetID",
-                                       "%x", _parcel->GetNetID ());
+    xml_scheme->WriteFormatAttribute ("NetID",
+                                      "%x", _parcel->GetNetID ());
 
     if (_piste)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Piste",
-                                         "%d", _piste);
+      xml_scheme->WriteFormatAttribute ("Piste",
+                                        "%d", _piste);
     }
 
     if (_start_time)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Date",
-                                         "%s", _start_time->GetXmlImage ());
+      xml_scheme->WriteFormatAttribute ("Date",
+                                        "%s", _start_time->GetXmlImage ());
     }
 
     if (_duration_sec > 0)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Duree",
-                                         "%d", _duration_sec);
+      xml_scheme->WriteFormatAttribute ("Duree",
+                                        "%d", _duration_sec);
     }
 
     if (_sorted_fencer_list)
@@ -2260,25 +2250,18 @@ namespace Pool
 
       for (guint i = 0; current != NULL; i++)
       {
-        Player *player;
+        Player *player = (Player *) current->data;
 
-        player = (Player *) current->data;
-
-        xmlTextWriterStartElement (xml_writer,
-                                   BAD_CAST player->GetXmlTag ());
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "REF",
+        xml_scheme->StartElement (player->GetXmlTag ());
+        xml_scheme->WriteFormatAttribute ("REF",
                                            "%d", player->GetRef ());
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "NoDansLaPoule",
+        xml_scheme->WriteFormatAttribute ("NoDansLaPoule",
                                            "%d", g_slist_index (working_list,
                                                                 player) + 1);
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "NbVictoires",
+        xml_scheme->WriteFormatAttribute ("NbVictoires",
                                            "%d", player->GetIntData (GetDataOwner (),
                                                                      "Victories"));
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "NbMatches",
+        xml_scheme->WriteFormatAttribute ("NbMatches",
                                            "%d", GetNbPlayers ()-1);
         attr_id._name = (gchar *) "HS";
         attr = player->GetAttribute (&attr_id);
@@ -2288,20 +2271,17 @@ namespace Pool
           guint HS;
 
           HS = player->GetAttribute (&attr_id)->GetUIntValue ();
-          xmlTextWriterWriteFormatAttribute (xml_writer,
-                                             BAD_CAST "TD",
+          xml_scheme->WriteFormatAttribute ("TD",
                                              "%d", HS);
           attr_id._name = (gchar *) "indice";
           indice = player->GetAttribute (&attr_id)->GetUIntValue ();
-          xmlTextWriterWriteFormatAttribute (xml_writer,
-                                             BAD_CAST "TR",
+          xml_scheme->WriteFormatAttribute ("TR",
                                              "%d", HS - indice);
         }
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "RangPoule",
+        xml_scheme->WriteFormatAttribute ("RangPoule",
                                            "%d", player->GetIntData (this,
                                                                      "Rank"));
-        xmlTextWriterEndElement (xml_writer);
+        xml_scheme->EndElement ();
         current = g_slist_next (current);
       }
     }
@@ -2313,12 +2293,10 @@ namespace Pool
       {
         Player *referee = (Player *) current->data;
 
-        xmlTextWriterStartElement (xml_writer,
-                                   BAD_CAST referee->GetXmlTag ());
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "REF",
-                                           "%d", referee->GetRef ());
-        xmlTextWriterEndElement (xml_writer);
+        xml_scheme->StartElement (referee->GetXmlTag ());
+        xml_scheme->WriteFormatAttribute ("REF",
+                                          "%d", referee->GetRef ());
+        xml_scheme->EndElement ();
 
         current = g_slist_next (current);
       }
@@ -2331,12 +2309,12 @@ namespace Pool
       {
         Match *match = (Match *) current->data;
 
-        match->Save (xml_writer);
+        match->Save (xml_scheme);
         current = g_list_next (current);
       }
     }
 
-    xmlTextWriterEndElement (xml_writer);
+    xml_scheme->EndElement ();
   }
 
   // --------------------------------------------------------------------------------

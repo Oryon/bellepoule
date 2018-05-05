@@ -282,7 +282,10 @@ void Application::Prepare ()
   {
     AttributeDesc *desc;
 
-    desc = AttributeDesc::Declare (G_TYPE_UINT, "ref", "ID", gettext ("ref"));
+    desc = AttributeDesc::Declare (G_TYPE_UINT, "ref", "ID", (gchar *) "ref");
+    desc->_rights = AttributeDesc::PRIVATE;
+
+    desc = AttributeDesc::Declare (G_TYPE_UINT, "plugin_ID", "PluginID", (gchar *) "PluginID");
     desc->_rights = AttributeDesc::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_UINT, "final_rank", "Classement", gettext ("place"));

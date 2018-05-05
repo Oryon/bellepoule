@@ -51,7 +51,7 @@ namespace Table
       void OnTableOver (TableSet *table_set,
                         Table    *table);
 
-      void SaveHeader (xmlTextWriter *xml_writer);
+      void SaveHeader (XmlScheme *xml_scheme);
 
     public:
       static const gchar *_class_name;
@@ -71,7 +71,6 @@ namespace Table
 
       GtkTreeStore       *_table_set_treestore;
       GtkTreeModelFilter *_table_set_filter;
-      xmlTextWriter      *_xml_writer;
       xmlNode            *_xml_node;
       TableSet           *_displayed_table_set;
       gboolean            _is_over;
@@ -112,14 +111,14 @@ namespace Table
 
       void Recall ();
 
-      void Save (xmlTextWriter *xml_writer);
+      void Save (XmlScheme *xml_scheme);
 
-      static gboolean SaveTableSet (GtkTreeModel  *model,
-                                    GtkTreePath   *path,
-                                    GtkTreeIter   *iter,
-                                    xmlTextWriter *xml_writer);
+      static gboolean SaveTableSet (GtkTreeModel *model,
+                                    GtkTreePath  *path,
+                                    GtkTreeIter  *iter,
+                                    XmlScheme    *xml_scheme);
 
-      void SaveConfiguration (xmlTextWriter *xml_writer);
+      void SaveConfiguration (XmlScheme *xml_scheme);
 
       void Load (xmlNode *xml_node);
 

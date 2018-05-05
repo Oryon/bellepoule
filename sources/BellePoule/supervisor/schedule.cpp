@@ -25,6 +25,7 @@
 #include "util/canvas.hpp"
 #include "util/player.hpp"
 #include "util/glade.hpp"
+#include "util/xml_scheme.hpp"
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
 #include "actors/referees_list.hpp"
@@ -897,37 +898,52 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::SavePeoples (xmlTextWriter   *xml_writer,
+void Schedule::SaveFinalResults (XmlScheme *xml_scheme)
+{
+  People::CheckinSupervisor *checkin = GetCheckinSupervisor ();
+
+  if (checkin)
+  {
+    if (_contest->IsTeamEvent ())
+    {
+      checkin->SaveList (xml_scheme, "Team");
+    }
+    else
+    {
+      checkin->SaveList (xml_scheme, "Fencer");
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Schedule::SavePeoples (XmlScheme       *xml_scheme,
                             People::Checkin *referees)
 {
   People::CheckinSupervisor *checkin = GetCheckinSupervisor ();
 
   if (checkin)
   {
-    checkin->SaveList (xml_writer, "Fencer");
-    checkin->SaveList (xml_writer, "Team");
+    checkin->SaveList (xml_scheme, "Fencer");
+    checkin->SaveList (xml_scheme, "Team");
 
-    referees->SaveList (xml_writer);
+    referees->SaveList (xml_scheme, NULL);
   }
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::Save (xmlTextWriter *xml_writer)
+void Schedule::Save (XmlScheme *xml_scheme)
 {
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST "Phases");
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "PhaseEnCours",
-                                     "%d", _current_stage);
+  xml_scheme->StartElement ("Phases");
+  xml_scheme->WriteFormatAttribute ("PhaseEnCours", "%d", _current_stage);
 
   for (guint i = 0; i < g_list_length (_stage_list); i++)
   {
     Stage *stage = ((Stage *) g_list_nth_data (_stage_list,
                                                i));
-    stage->Save (xml_writer);
+    stage->Save (xml_scheme);
   }
 
-  xmlTextWriterEndElement (xml_writer);
+  xml_scheme->EndElement ();
 }
 
 // --------------------------------------------------------------------------------

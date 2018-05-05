@@ -23,6 +23,7 @@
 #include "util/attribute_desc.hpp"
 #include "util/filter.hpp"
 #include "util/data.hpp"
+#include "util/xml_scheme.hpp"
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
 #include "attendees.hpp"
@@ -1306,7 +1307,7 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
+void Stage::SaveConfiguration (XmlScheme *xml_scheme)
 {
   if (GetInputProviderClient ())
   {
@@ -1314,45 +1315,41 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
 
     if (next_stage)
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "PhaseID",
-                                         "%d", next_stage->GetId ());
+      xml_scheme->WriteFormatAttribute ("PhaseID",
+                                        "%d", next_stage->GetId ());
     }
   }
   else
   {
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "PhaseID",
-                                       "%d", _id);
+    xml_scheme->WriteFormatAttribute ("PhaseID",
+                                      "%d", _id);
   }
 
-  xmlTextWriterWriteAttribute (xml_writer,
-                               BAD_CAST "ID",
-                               BAD_CAST GetName ());
+  xml_scheme->WriteAttribute ("ID",
+                              GetName ());
 
   if (_parcel)
   {
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "NetID",
-                                       "%x", _parcel->GetNetID ());
+    xml_scheme->WriteFormatAttribute ("NetID",
+                                      "%x", _parcel->GetNetID ());
   }
 
   if (_max_score)
   {
-    _max_score->Save (xml_writer);
+    _max_score->Save (xml_scheme);
   }
 
   if (_nb_qualified->IsValid ())
   {
-    _nb_qualified->Save (xml_writer);
+    _nb_qualified->Save (xml_scheme);
   }
 
-  SaveFilters (xml_writer);
+  SaveFilters (xml_scheme);
 }
 
 // --------------------------------------------------------------------------------
-void Stage::SaveFilters (xmlTextWriter *xml_writer,
-                         const gchar   *as)
+void Stage::SaveFilters (XmlScheme   *xml_scheme,
+                         const gchar *as)
 {
   {
     Module *module = dynamic_cast <Module *> (this);
@@ -1361,7 +1358,7 @@ void Stage::SaveFilters (xmlTextWriter *xml_writer,
     {
       Filter *filter = module->GetFilter ();
 
-      filter->Save (xml_writer,
+      filter->Save (xml_scheme,
                     as);
     }
   }
@@ -1374,14 +1371,14 @@ void Stage::SaveFilters (xmlTextWriter *xml_writer,
     {
       Filter *filter = module->GetFilter ();
 
-      filter->Save (xml_writer,
+      filter->Save (xml_scheme,
                     "Classement");
     }
   }
 
   if (_next && GetInputProviderClient ())
   {
-    _next->SaveFilters (xml_writer,
+    _next->SaveFilters (xml_scheme,
                         "Scores");
   }
 }
@@ -1393,7 +1390,18 @@ void Stage::Load (xmlNode *n)
 }
 
 // --------------------------------------------------------------------------------
-void Stage::SaveAttendees (xmlTextWriter *xml_writer)
+void Stage::Save (XmlScheme *xml_scheme)
+{
+  xml_scheme->StartElement (_class->_xml_name);
+
+  SaveConfiguration (xml_scheme);
+  SaveAttendees     (xml_scheme);
+
+  xml_scheme->EndElement ();
+}
+
+// --------------------------------------------------------------------------------
+void Stage::SaveAttendees (XmlScheme *xml_scheme)
 {
   if (_attendees)
   {
@@ -1432,33 +1440,28 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
         status_attr_id->Release ();
       }
 
-      xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST player->GetXmlTag ());
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "REF",
-                                         "%d", player->GetRef ());
+      xml_scheme->StartElement (player->GetXmlTag ());
+      xml_scheme->WriteFormatAttribute ("REF",
+                                        "%d", player->GetRef ());
       if (stage_start_rank)
       {
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "RangInitial",
-                                           "%d", stage_start_rank->GetUIntValue ());
+        xml_scheme->WriteFormatAttribute ("RangInitial",
+                                          "%d", stage_start_rank->GetUIntValue ());
       }
       if (rank)
       {
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "RangFinal",
-                                           "%d", rank->GetUIntValue ());
+        xml_scheme->WriteFormatAttribute ("RangFinal",
+                                          "%d", rank->GetUIntValue ());
       }
       if (status)
       {
         gchar *xml_image = status->GetXmlImage ();
 
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "Statut",
-                                     BAD_CAST xml_image);
+        xml_scheme->WriteAttribute ("Statut",
+                                    xml_image);
         g_free (xml_image);
       }
-      xmlTextWriterEndElement (xml_writer);
+      xml_scheme->EndElement ();
 
       current = g_slist_next (current);
     }
