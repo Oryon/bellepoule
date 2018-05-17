@@ -56,7 +56,7 @@ endif
 ifeq ($(UBUNTU), windows)
 CC_FAMILY = i686-w64-mingw32-
 EXE       = .exe
-MINGW=$(HOME)/.local/share/crossroad/roads/w32/$(PRODUCT)
+MINGW=$(HOME)/Project/Cross/Xroad/w32/$(PRODUCT)
 PKG_CONFIG = env PKG_CONFIG_PATH= PKG_CONFIG_LIBDIR=$(MINGW)/lib/pkgconfig $(CC_FAMILY)pkg-config
 else
 CC_FAMILY  =
@@ -118,6 +118,7 @@ endif
 ifeq ($(UBUNTU), windows)
 CFLAGS += -DWINDOWS_TEMPORARY_PATCH=1
 CFLAGS += -DWIN32
+CFLAGS += -I$(MINGW)/include
 else ifeq ($(UBUNTU), osx)
 CFLAGS += -DOSX
 CFLAGS += -Wno-cast-align
@@ -220,34 +221,34 @@ output:
 #--
 
 $(SHARED_LIB): $(OBJ_LIB)
-	@echo "\033[1;31m" $@ "\033[0m"
+	@echo -e "\e[1;31m" $@ "\e[0m"
 	@$(CC) $(SHARED_OPT) -o $@ $^ $(LDFLAGS)
 
 $(STATIC_LIB): $(OBJ_LIB)
-	@echo "\033[1;31m" $@ "\033[0m"
+	@echo -e "\e[1;31m" $@ "\e[0m"
 	@$(AR) rcs $@ $^
 
 $(OUTPUT)/$(PRODUCT)-supervisor$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_SUPERVISOR)
-	@echo "\033[1;31m" $@ "\033[0m"
+	@echo -e "\e[1;31m" $@ "\e[0m"
 	@$(CC) -o $@ $(OBJ_SUPERVISOR) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(LDFLAGS)
 
 $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHALLER)
-	@echo "\033[1;31m" $@ "\033[0m"
+	@echo -e "\e[1;31m" $@ "\e[0m"
 	@$(CC) -o $@ $(OBJ_MARSHALLER) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(LDFLAGS)
 
 #--
 
 %.o: %.cpp
-	@echo "\033[0;0m" $(notdir $@) "\033[0m"
+	@echo -e "\e[0;0m" $(notdir $@) "\e[0m"
 	@$(CC) -o $@ -c $< $(CFLAGS)
 
 %.o: %.rc
-	@echo "\033[1;33m" $@ "\033[0m"
+	@echo -e "\e[1;33m" $@ "\e[0m"
 	@$(WINDRES) --output=$@ --input=$<
 
 #--
 vars:
-	@echo "\033[1;41m**** Variables ****\033[0m"
+	@echo -e "\e[1;41m**** Variables ****\e[0m"
 	@echo "$(UBUNTU)"
 	@echo "$(V)"
 	@echo "$(VERSION)"
@@ -596,27 +597,27 @@ clean_sources:
 #-- Help --------------------------------------------
 #----------------------------------------------------
 help: vars
-	@echo "\033[1;44m**** Ubuntu ****\033[0m"
-	@echo "make -s UBUNTU=xenial  V=1 package"
-	@echo "make -s UBUNTU=trusty  V=1 package"
-	@echo ""
-	@echo "\033[1;42m**** Windows ****\033[0m"
-	@echo "make -s UBUNTU=windows V=1 package"
-	@echo ""
-	@echo "\033[1;45m**** MacOs ****\033[0m"
-	@echo "make -s UBUNTU=osx V=1 package"
-	@echo ""
-	@echo "\033[1;46m**** Archlinux ****\033[0m"
-	@echo "make -s UBUNTU=archlinux V=1 package"
-	@echo ""
-	@echo "\033[1;41m**** Fedora (VirtualBox) ****\033[0m"
-	@echo "make -s UBUNTU=fedora V=1 package"
-	@echo ""
-	@echo "\033[1;43m**** Debian (VirtualBox) ****\033[0m"
-	@echo "make -s UBUNTU=stretch V=1 package"
-	@echo ""
-	@echo "cd $(PACKAGE)/$(RELEASE)"
-	@echo "make -s build"
-	@echo "make -s publish"
-	@echo ""
+	@echo -e "\e[1;44m**** Ubuntu ****\e[0m"
+	@echo -e "make -s UBUNTU=xenial  V=1 package"
+	@echo -e "make -s UBUNTU=trusty  V=1 package"
+	@echo -e ""
+	@echo -e "\e[1;42m**** Windows ****\e[0m"
+	@echo -e "make -s UBUNTU=windows V=1 package"
+	@echo -e ""
+	@echo -e "\e[1;45m**** MacOs ****\e[0m"
+	@echo -e "make -s UBUNTU=osx V=1 package"
+	@echo -e ""
+	@echo -e "\e[1;46m**** Archlinux ****\e[0m"
+	@echo -e "make -s UBUNTU=archlinux V=1 package"
+	@echo -e ""
+	@echo -e "\e[1;41m**** Fedora (VirtualBox) ****\e[0m"
+	@echo -e "make -s UBUNTU=fedora V=1 package"
+	@echo -e ""
+	@echo -e "\e[1;43m**** Debian (VirtualBox) ****\e[0m"
+	@echo -e "make -s UBUNTU=stretch V=1 package"
+	@echo -e ""
+	@echo -e "cd $(PACKAGE)/$(RELEASE)"
+	@echo -e "make -s build"
+	@echo -e "make -s publish"
+	@echo -e ""
 	@#echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"

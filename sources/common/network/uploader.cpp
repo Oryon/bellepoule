@@ -200,6 +200,7 @@ namespace Net
 
     if (_body_out->GetSize () > 0)
     {
+      curl_easy_setopt (curl, CURLOPT_PROXY,            "");
       curl_easy_setopt (curl, CURLOPT_READFUNCTION,     ReadCallback);
       curl_easy_setopt (curl, CURLOPT_READDATA,         this);
       curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
