@@ -14,6 +14,12 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef WINDOWS_TEMPORARY_PATCH
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
 #include "util/global.hpp"
 #include "util/glade.hpp"
 

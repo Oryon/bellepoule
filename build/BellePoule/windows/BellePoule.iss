@@ -260,7 +260,6 @@ Source: "{#MINGW}\bin\libssh2-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libstdc++-6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libtiff-5.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libxml2-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libzmq.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\nss3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\nssutil3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\ssl3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -333,10 +332,6 @@ Source: "{#ICONS}\share\icons\hicolor\16x16\status\software-update-available.png
 Source: "{#ICONS}\share\icons\hicolor\24x24\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\24x24\status\"; Flags: ignoreversion
 Source: "{#ICONS}\share\icons\hicolor\32x32\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\32x32\status\"; Flags: ignoreversion
 #endif
-
-; Patches
-Source: "{#ICONS}\share\icons\hicolor\32x32\status\software-update-available.png"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "patches\libcairo-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
 ;
 #ifdef MINGW

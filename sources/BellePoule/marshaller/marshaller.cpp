@@ -16,6 +16,12 @@
 
 #include <locale.h>
 
+#ifdef WINDOWS_TEMPORARY_PATCH
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
 #include "util/drop_zone.hpp"
 #include "util/dnd_config.hpp"
 #include "util/attribute.hpp"
