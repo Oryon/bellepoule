@@ -46,6 +46,7 @@ namespace People
     private:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
+      gulong              _place_entry_handle;
 
       static Stage *CreateInstance (StageClass *stage_class);
 
@@ -76,5 +77,11 @@ namespace People
       void DumpToHTML (FILE *file);
 
       virtual ~GeneralClassification ();
+
+      static void on_place_entry_insert_text (GtkEntry              *entry,
+                                              const gchar           *text,
+                                              gint                   length,
+                                              gint                  *position,
+                                              GeneralClassification *owner);
   };
 }

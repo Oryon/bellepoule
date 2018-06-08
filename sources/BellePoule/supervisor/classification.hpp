@@ -28,7 +28,8 @@ class Classification : public People::PlayersList
     Classification ();
 
     void DumpToFFF (gchar   *filename,
-                    Contest *contest);
+                    Contest *contest,
+                    guint    place_shifting);
 
     void SortDisplay ();
 
@@ -36,6 +37,8 @@ class Classification : public People::PlayersList
                           gpointer               user_data);
 
   private:
+    guint _fff_place_shifting;
+
     void OnPlugged ();
 
     void WriteFFFString (FILE        *file,

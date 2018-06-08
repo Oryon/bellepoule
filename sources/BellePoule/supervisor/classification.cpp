@@ -33,6 +33,7 @@ Classification::Classification ()
   : Object ("Classification"),
     PlayersList ("classification.glade", NO_RIGHT)
 {
+  _fff_place_shifting = 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -67,7 +68,8 @@ void Classification::SetSortFunction (GtkTreeIterCompareFunc sort_func,
 
 // --------------------------------------------------------------------------------
 void Classification::DumpToFFF (gchar   *filename,
-                                Contest *contest)
+                                Contest *contest,
+                                guint    place_shifting)
 {
   FILE *file = g_fopen (filename, "w");
 
@@ -109,6 +111,8 @@ void Classification::DumpToFFF (gchar   *filename,
         g_free (utf8);
       }
     }
+
+    _fff_place_shifting = place_shifting;
 
     while (current_player)
     {
@@ -222,7 +226,14 @@ void Classification::WriteFFFString (FILE        *file,
       gsize  bytes_written;
       gchar *xml_image = attr->GetXmlImage ();
 
-      if (g_strcmp0 (attr_name, "birth_date") == 0)
+      if (strcmp (attr_name, "final_rank") == 0)
+      {
+        guint place = attr->GetIntValue ();
+
+        g_free (xml_image);
+        xml_image = g_strdup_printf ("%d", place + _fff_place_shifting);
+      }
+      else if (strcmp (attr_name, "birth_date") == 0)
       {
         GDate date;
 

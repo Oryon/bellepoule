@@ -84,6 +84,22 @@ namespace People
       SetClassificationFilter (filter);
       filter->Release ();
     }
+
+    {
+      GdkColor *color = g_new (GdkColor, 1);
+
+      gdk_color_parse ("#9DB8D2", color); // blue hilight
+
+      gtk_widget_modify_bg (_glade->GetWidget ("place_shifting"),
+                            GTK_STATE_NORMAL,
+                            color);
+      gdk_color_free (color);
+
+      _place_entry_handle = g_signal_connect (_glade->GetWidget ("place_entry"),
+                                              "insert-text",
+                                              G_CALLBACK (on_place_entry_insert_text),
+                                              this);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -246,18 +262,7 @@ namespace People
     gchar *filename_modifier = (gchar *) "";
 
     {
-      GtkWidget *chooser;
-
-      chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a target file..."),
-                                                         NULL,
-                                                         GTK_FILE_CHOOSER_ACTION_SAVE,
-                                                         GTK_STOCK_CANCEL,
-                                                         GTK_RESPONSE_CANCEL,
-                                                         GTK_STOCK_SAVE_AS,
-                                                         GTK_RESPONSE_ACCEPT,
-                                                         NULL));
-      gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
-                                                      TRUE);
+      GtkWidget *chooser = _glade->GetWidget ("filechooserdialog");
 
       {
         gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
@@ -280,6 +285,9 @@ namespace People
         }
       }
 
+      gtk_file_chooser_set_extra_widget (GTK_FILE_CHOOSER (chooser),
+                                         NULL);
+
       {
         GtkFileFilter *filter = gtk_file_filter_new ();
         const gchar   *pattern_upper;
@@ -290,6 +298,9 @@ namespace People
           gtk_file_filter_set_name (filter,
                                     gettext ("All FFF files (.FFF)"));
           pattern_upper = "*.FFF";
+
+          gtk_file_chooser_set_extra_widget (GTK_FILE_CHOOSER (chooser),
+                                             _glade->GetWidget ("place_shifting"));
         }
         else if (export_type == PDF)
         {
@@ -373,7 +384,7 @@ namespace People
         }
       }
 
-      gtk_widget_destroy (chooser);
+      gtk_widget_hide (chooser);
     }
 
     if (filename)
@@ -384,8 +395,19 @@ namespace People
       {
         if (export_type == FFF)
         {
+          GtkEntry *entry          = (GtkEntry *) _glade->GetWidget ("place_entry");
+          guint     place_shifting = g_ascii_strtoll (gtk_entry_get_text (entry),
+                                                      NULL,
+                                                      10);
+
+          if (place_shifting)
+          {
+            place_shifting--;
+          }
+
           classification->DumpToFFF (filename,
-                                     _contest);
+                                     _contest,
+                                     place_shifting);
         }
         else if (export_type == PDF)
         {
@@ -479,6 +501,44 @@ namespace People
       classification->OnEndPrint (operation,
                                   context);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::on_place_entry_insert_text (GtkEntry              *entry,
+                                                          const gchar           *text,
+                                                          gint                   length,
+                                                          gint                  *position,
+                                                          GeneralClassification *owner)
+  {
+    gchar *fixed_string = g_new (gchar, length);
+    guint  count        = 0;
+
+    for (gint i = 0; i < length; i++)
+    {
+      if (g_ascii_isdigit (text[i]))
+      {
+        fixed_string[count++] = text[i];
+      }
+    }
+
+    if (fixed_string)
+    {
+      g_signal_handler_disconnect (entry,
+                                   owner->_place_entry_handle);
+      gtk_editable_insert_text (GTK_EDITABLE (entry),
+                                fixed_string,
+                                count,
+                                position);
+      owner->_place_entry_handle = g_signal_connect (entry,
+                                                     "insert-text",
+                                                     G_CALLBACK (on_place_entry_insert_text),
+                                                     owner);
+    }
+
+    g_signal_stop_emission_by_name (G_OBJECT (entry),
+                                    "insert_text");
+
+    g_free (fixed_string);
   }
 
   // --------------------------------------------------------------------------------
