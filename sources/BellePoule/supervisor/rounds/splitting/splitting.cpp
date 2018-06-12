@@ -42,7 +42,8 @@ namespace People
 
   // --------------------------------------------------------------------------------
   Splitting::Splitting (StageClass *stage_class)
-    : Stage (stage_class),
+    : Object ("Splitting"),
+    Stage (stage_class),
     PlayersList ("splitting.glade",
                  SORTABLE)
   {
@@ -116,6 +117,24 @@ namespace People
   // --------------------------------------------------------------------------------
   void Splitting::Garnish ()
   {
+  }
+
+  // --------------------------------------------------------------------------------
+  void Splitting::Reset ()
+  {
+    GSList              *current = _attendees->GetShortList ();
+    Player::AttributeId  exported_attr ("exported");
+
+    while (current)
+    {
+      Player *player = (Player *) current->data;
+
+      player->SetAttributeValue (&exported_attr,
+                                 (guint) FALSE);
+      Update (player);
+
+      current = g_slist_next (current);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -275,21 +294,7 @@ namespace People
     EnableSensitiveWidgets ();
     SetSensitiveState (TRUE);
 
-    {
-      GSList              *current = _attendees->GetShortList ();
-      Player::AttributeId  exported_attr ("exported");
-
-      while (current)
-      {
-        Player *player = (Player *) current->data;
-
-        player->SetAttributeValue (&exported_attr,
-                                   (guint) FALSE);
-        Update (player);
-
-        current = g_slist_next (current);
-      }
-    }
+    Reset ();
 
     OnAttrListUpdated ();
     OnListChanged ();
