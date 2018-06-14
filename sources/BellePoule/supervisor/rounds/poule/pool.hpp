@@ -66,7 +66,6 @@ namespace Pool
       void     RemoveReferee    (Player *player);
       void     RemoveAllReferee ();
       guint    GetNbPlayers     ();
-      guint    GetNbMatchs      ();
       guint    GetNumber        ();
       guint    GetStrength      ();
       void     DropPlayer       (Player *player, gchar *reason);
@@ -202,6 +201,10 @@ namespace Pool
                        Player              *fencer,
                        const gchar         *attr_name,
                        AttributeDesc::Look  look);
+
+      guint GetNbMatchs ();
+
+      guint GetNbMatchs (Player *of);
 
       Match *GetMatch (Player *A,
                        Player *B);

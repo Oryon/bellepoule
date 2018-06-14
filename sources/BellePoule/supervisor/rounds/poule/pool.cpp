@@ -499,6 +499,41 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  guint Pool::GetNbMatchs (Player *of)
+  {
+    guint   nb_matchs = GetNbPlayers () - 1;
+    GSList *current   = _fencer_list;
+
+    while (current)
+    {
+      Player::AttributeId attr_id ("status", GetDataOwner ());
+      Player              *player      = (Player *) current->data;
+      Attribute           *status_attr = player->GetAttribute (&attr_id);
+
+      if (status_attr)
+      {
+        gchar *status = status_attr->GetStrValue ();
+
+        if (   (status[0] == 'A')
+            || (status[0] == 'F')
+            || (status[0] == 'E'))
+        {
+          nb_matchs--;
+
+          if (player == of)
+          {
+            return 0;
+          }
+        }
+      }
+
+      current = g_slist_next (current);
+    }
+
+    return nb_matchs;
+  }
+
+  // --------------------------------------------------------------------------------
   guint Pool::GetNbMatchs ()
   {
     guint nb_players = g_slist_length (_fencer_list);
@@ -2253,8 +2288,10 @@ namespace Pool
         Player *player = (Player *) current->data;
 
         xml_scheme->StartElement (player->GetXmlTag ());
+
         xml_scheme->WriteFormatAttribute ("REF",
                                            "%d", player->GetRef ());
+
         xml_scheme->WriteFormatAttribute ("NoDansLaPoule",
                                            "%d", g_slist_index (working_list,
                                                                 player) + 1);
@@ -2262,7 +2299,8 @@ namespace Pool
                                            "%d", player->GetIntData (GetDataOwner (),
                                                                      "Victories"));
         xml_scheme->WriteFormatAttribute ("NbMatches",
-                                           "%d", GetNbPlayers ()-1);
+                                           "%d", GetNbMatchs (player));
+
         attr_id._name = (gchar *) "HS";
         attr = player->GetAttribute (&attr_id);
         if (attr)
