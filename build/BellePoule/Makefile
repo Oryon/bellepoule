@@ -522,7 +522,7 @@ build_ubuntu:
 	debuild -us -uc --lintian-opts --color always
 
 publish_ubuntu:
-	debuild -S -sa -k`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
+	debuild -S -sa -k`gpg2 -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
 	dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes
 
 publish_debian:

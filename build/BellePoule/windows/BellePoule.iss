@@ -333,6 +333,10 @@ Source: "{#ICONS}\share\icons\hicolor\24x24\status\software-update-available.png
 Source: "{#ICONS}\share\icons\hicolor\32x32\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\32x32\status\"; Flags: ignoreversion
 #endif
 
+; Patches
+Source: "{#ICONS}\share\icons\hicolor\32x32\status\software-update-available.png"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "patches\libcairo-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+
 ;
 #ifdef MINGW
 ;Source: "{#MINGW}\etc\pango\pango.aliases"; Destdir: "{app}\etc\pango"
