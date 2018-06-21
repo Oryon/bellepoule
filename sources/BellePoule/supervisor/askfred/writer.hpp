@@ -32,16 +32,12 @@ namespace AskFred
                  gboolean     generate_primary_id);
 
         gboolean Knows (Element     *owner,
-                        const gchar *id);
+                        const gchar *name);
 
         void PushId (const gchar *name,
                      const gchar *value);
 
-        const gchar *PopId ();
-
         const gchar *GetId (const gchar *of);
-
-        const gchar *GetPrimaryTitle ();
 
         void Foreach (GDataForeachFunc  callback,
                       Object           *owner);
@@ -50,17 +46,38 @@ namespace AskFred
         gboolean     _generate_primary_id;
         const gchar *_primary_title;
         GData       *_populations;
-        gchar       *_current_id;
         guint        _population_count;
 
         ~IdFixer ();
+    };
+
+    class Round : public Object
+    {
+      public:
+        Round ();
+
+        void Withdraw (const gchar *id,
+                       gpointer     data);
+
+        gboolean IsWithdrawn (const gchar *id);
+
+        static void Delete (Round *round);
+
+      private:
+        GData *_table;
+
+        ~Round ();
     };
 
     class Element : public Object
     {
       public:
         Element (const gchar *name,
-                 GData       *scheme);
+                 GData       *scheme,
+                 Round       *round);
+
+        static gboolean DeleteNode (GNode    *node,
+                                    gpointer  data);
 
         const gchar *GetName ();
 
@@ -68,17 +85,31 @@ namespace AskFred
 
         void CountSeq ();
 
+        void CancelSeq ();
+
         guint GetSeq ();
 
-        void SetInvisible ();
+        void MakeInvisible ();
 
-        gboolean IsVisible ();
+        GList *GetOutline ();
+
+        void Withdraw ();
+
+        gboolean IsWithdrawn ();
+
+        void StartOutline (const gchar *name);
+
+        void AddToOutline (const gchar *name,
+                           const gchar *value);
 
       private:
-        const gchar *_name;
+        gchar       *_name;
+        const gchar *_ref;
         GData       *_scheme;
         guint        _seq;
         gboolean     _visible;
+        GList       *_outline;
+        Round       *_round;
 
         ~Element ();
     };
@@ -89,19 +120,40 @@ namespace AskFred
         Scheme (const gchar *filename);
 
       private:
-        static GList *_element_stack;
+        typedef enum
+        {
+          COLLECTING_MODE,
+          POST_COLLECTING_MODE,
+          FLUSHING_MODE
+        } Mode;
+
         static GData *_element_base;
+
+        GNode *_root_element;
+        GNode *_current_node;
+        GList *_rounds;
 
         IdFixer *_fencer_id_fixer;
         IdFixer *_club_id_fixer;
 
+        Mode _mode;
+
         virtual ~Scheme ();
 
-        void PushElement (const gchar *name);
+        gboolean FlushElement (Element *element,
+                               Element *parent);
+
+        gboolean FlushNode (GNode *node);
+
+        static gboolean CheckVisibilityNodeFunc (GNode  *node,
+                                                 Scheme *scheme);
+
+        static gboolean FlushNodeFunc (GNode  *node,
+                                       Scheme *scheme);
+
+        Element *PushElement (const gchar *name);
 
         gboolean SaveFencersAndTeamsSeparatly ();
-
-        gboolean CurrentElementIsVisible ();
 
         const gchar *Translate (const gchar *term);
 
@@ -116,11 +168,11 @@ namespace AskFred
 
         void StartElement (const gchar *name);
 
+        void Flush (GNode *from);
+
         void EndElement ();
 
         void EndElement (const char *name);
-
-        void WritePendingId (IdFixer *id_fixer);
 
         void WriteCustom (const gchar *what);
 

@@ -34,28 +34,25 @@ namespace AskFred
 
       _population_count = 0;
       g_datalist_init (&_populations);
-
-      _current_id = NULL;
     }
 
     // --------------------------------------------------------------------------------
     IdFixer::~IdFixer ()
     {
       g_datalist_clear (&_populations);
-      g_free (_current_id);
     }
 
     // --------------------------------------------------------------------------------
     gboolean IdFixer::Knows (Element     *owner,
-                             const gchar *id)
+                             const gchar *name)
     {
       if (g_strcmp0 (owner->GetName (), "Tireur") == 0)
       {
-        if (g_strcmp0 (id, _primary_title) == 0)
+        if (g_strcmp0 (name, _primary_title) == 0)
         {
           return TRUE;
         }
-        else if (_current_id && (g_strcmp0 (id, "PluginID") == 0))
+        else if (g_strcmp0 (name, "PluginID") == 0)
         {
           return TRUE;
         }
@@ -68,57 +65,42 @@ namespace AskFred
     void IdFixer::PushId (const gchar *name,
                           const gchar *value)
     {
-      if (g_strcmp0 (name, _primary_title) == 0)
+      if (GetId (value) == NULL)
       {
-        gchar *default_askfred_id;
-
-        _current_id = g_strdup (value);
-
-        if (_generate_primary_id)
+        if (g_strcmp0 (name, _primary_title) == 0)
         {
-          if (GetId (value))
+          gchar *default_askfred_id;
+
+          if (_generate_primary_id)
           {
-            return;
+            if (GetId (value))
+            {
+              return;
+            }
+            else
+            {
+              _population_count++;
+              default_askfred_id = g_strdup_printf ("-%d", _population_count);
+            }
           }
           else
           {
-            _population_count++;
-            default_askfred_id = g_strdup_printf ("-%d", _population_count);
+            default_askfred_id = g_strdup_printf ("-%s", value);
           }
+
+          g_datalist_set_data_full (&_populations,
+                                    value,
+                                    default_askfred_id,
+                                    g_free);
         }
-        else
+        else if (g_strcmp0 (name, "PluginID") == 0)
         {
-          default_askfred_id = g_strdup_printf ("-%s", value);
+          g_datalist_set_data_full (&_populations,
+                                    value,
+                                    g_strdup (value),
+                                    g_free);
         }
-
-        g_datalist_set_data_full (&_populations,
-                                  _current_id,
-                                  default_askfred_id,
-                                  g_free);
       }
-      else if (_current_id && (g_strcmp0 (name, "PluginID") == 0))
-      {
-        g_datalist_set_data_full (&_populations,
-                                  _current_id,
-                                  g_strdup (value),
-                                  g_free);
-      }
-    }
-
-    // --------------------------------------------------------------------------------
-    const gchar *IdFixer::PopId ()
-    {
-      const gchar *fixed_id = NULL;
-
-      if (_current_id)
-      {
-        fixed_id = (const gchar *) g_datalist_get_data (&_populations,
-                                                        _current_id);
-        g_free (_current_id);
-        _current_id = NULL;
-      }
-
-      return fixed_id;
     }
 
     // --------------------------------------------------------------------------------
@@ -126,12 +108,6 @@ namespace AskFred
     {
       return (const gchar *) g_datalist_get_data (&_populations,
                                                   of);
-    }
-
-    // --------------------------------------------------------------------------------
-    const gchar *IdFixer::GetPrimaryTitle ()
-    {
-      return _primary_title;
     }
 
     // --------------------------------------------------------------------------------
@@ -147,31 +123,103 @@ namespace AskFred
   namespace Writer
   {
     // --------------------------------------------------------------------------------
+    Round::Round ()
+      : Object ("Askfred::Round")
+    {
+      g_datalist_init (&_table);
+    }
+
+    // --------------------------------------------------------------------------------
+    Round::~Round ()
+    {
+      g_datalist_clear (&_table);
+    }
+
+    // --------------------------------------------------------------------------------
+    void Round::Delete (Round *round)
+    {
+      round->Release ();
+    }
+
+    // --------------------------------------------------------------------------------
+    void Round::Withdraw (const gchar *id,
+                          gpointer     data)
+    {
+      g_datalist_set_data (&_table,
+                           id,
+                           data);
+    }
+
+    // --------------------------------------------------------------------------------
+    gboolean Round::IsWithdrawn (const gchar *id)
+    {
+      return g_datalist_get_data (&_table,
+                                  id) != NULL;
+    }
+  }
+
+  namespace Writer
+  {
+    // --------------------------------------------------------------------------------
     Element::Element (const gchar *name,
-                      GData       *scheme)
+                      GData       *scheme,
+                      Round       *round)
       : Object ("AskFred::Element")
     {
-      _name    = name;
+      _name    = g_strdup (name);
+      _ref     = NULL;
       _scheme  = scheme;
       _seq     = 0;
       _visible = TRUE;
+      _outline = NULL;
+      _round   = NULL;
+
+      if (round)
+      {
+        round->Retain ();
+        _round = round;
+      }
     }
 
     // --------------------------------------------------------------------------------
     Element::~Element ()
     {
+      g_free (_name);
+
+      Object::TryToRelease (_round);
+
+      if (_outline)
+      {
+        g_list_free_full (_outline,
+                          g_free);
+      }
     }
 
     // --------------------------------------------------------------------------------
-    void Element::SetInvisible ()
+    gboolean Element::DeleteNode (GNode    *node,
+                                  gpointer  data)
+    {
+      Element *element = (Element *) node->data;
+
+      element->Release ();
+      return FALSE;
+    }
+
+    // --------------------------------------------------------------------------------
+    void Element::MakeInvisible ()
     {
       _visible = FALSE;
     }
 
     // --------------------------------------------------------------------------------
-    gboolean Element::IsVisible ()
+    GList *Element::GetOutline ()
     {
-      return _visible;
+      if (_visible)
+      {
+        return _outline;
+      }
+
+      return NULL;
     }
 
     // --------------------------------------------------------------------------------
@@ -193,22 +241,94 @@ namespace AskFred
     }
 
     // --------------------------------------------------------------------------------
+    void Element::CancelSeq ()
+    {
+      _seq--;
+    }
+
+    // --------------------------------------------------------------------------------
     guint Element::GetSeq ()
     {
       return _seq;
+    }
+
+    // --------------------------------------------------------------------------------
+    void Element::Withdraw ()
+    {
+      if (_round)
+      {
+        _round->Withdraw (_ref,
+                          this);
+      }
+    }
+
+    // --------------------------------------------------------------------------------
+    gboolean Element::IsWithdrawn ()
+    {
+      if (_round)
+      {
+        return _round->IsWithdrawn (_ref);
+      }
+
+      return FALSE;
+    }
+
+    // --------------------------------------------------------------------------------
+    void Element::StartOutline (const gchar *name)
+    {
+      _outline = g_list_append (_outline,
+                                g_strdup (name));
+    }
+
+    // --------------------------------------------------------------------------------
+    void Element::AddToOutline (const gchar *name,
+                                const gchar *value)
+    {
+      gchar *copied_value = g_strdup (value);
+      GList *new_name     = g_list_find_custom (_outline,
+                                                name,
+                                                (GCompareFunc) g_strcmp0);
+      if (new_name)
+      {
+        GList *old_value = g_list_next (new_name);
+
+        _outline = g_list_insert_before (_outline,
+                                         old_value,
+                                         copied_value);
+
+        _outline = g_list_remove_link (_outline,
+                                       old_value);
+        g_list_free_full (old_value,
+                          g_free);
+      }
+      else
+      {
+        _outline = g_list_append (_outline,
+                                  g_strdup (name));
+        _outline = g_list_append (_outline,
+                                  copied_value);
+      }
+
+      if (g_strcmp0 (name, "REF") == 0)
+      {
+        _ref = copied_value;
+      }
     }
   }
 
   namespace Writer
   {
-    GList *Scheme::_element_stack = NULL;
-    GData *Scheme::_element_base  = NULL;
+    GData *Scheme::_element_base = NULL;
 
     // --------------------------------------------------------------------------------
     Scheme::Scheme (const gchar *filename)
       : Object ("AskFred::XmlScheme"),
       XmlScheme (filename)
     {
+      _mode         = COLLECTING_MODE;
+      _current_node = NULL;
+      _rounds       = NULL;
+
       _fencer_id_fixer = new IdFixer ("ID",   FALSE);
       _club_id_fixer   = new IdFixer ("Club", TRUE);
 
@@ -297,6 +417,20 @@ namespace AskFred
                                scheme);
         }
 
+        // Tableau/Match/Tireur
+        {
+          GData *scheme;
+
+          g_datalist_init (&scheme);
+
+          g_datalist_set_data (&scheme, "A", (gpointer) "D");
+          g_datalist_set_data (&scheme, "E", (gpointer) "D");
+
+          g_datalist_set_data (&_element_base,
+                               "Tableau/Match/Tireur",
+                               scheme);
+        }
+
         // Event/Tireurs
         // Event/Equipes
         {
@@ -330,7 +464,7 @@ namespace AskFred
                                scheme);
         }
 
-        // Equipes/Tireurs
+        // Equipes/Tireur
         {
           GData *scheme;
 
@@ -389,19 +523,38 @@ namespace AskFred
     // --------------------------------------------------------------------------------
     Scheme::~Scheme ()
     {
+      g_list_free_full (_rounds,
+                        (GDestroyNotify) Round::Delete);
+
       _fencer_id_fixer->Release ();
-      _club_id_fixer->Release ();
+      _club_id_fixer->Release   ();
+
+      g_node_traverse (_root_element,
+                       G_PRE_ORDER,
+                       G_TRAVERSE_ALL,
+                       -1,
+                       Element::DeleteNode,
+                       NULL);
+
+      g_node_destroy (_root_element);
     }
 
     // --------------------------------------------------------------------------------
-    void Scheme::PushElement (const gchar *name)
+    Element *Scheme::PushElement (const gchar *name)
     {
-      GData *scheme = NULL;
+      GData   *scheme  = NULL;
+      Element *element;
 
+      // Get the proper scheme
       {
-        GList *from = g_list_last (_element_stack);
+        GList *chain = NULL;
 
-        while (from)
+        for (GNode *from = _current_node; from != NULL; from = from->parent)
+        {
+          chain = g_list_prepend (chain, from->data);
+        }
+
+        for (GList *from = chain; from != NULL; from = g_list_next (from))
         {
           GString *path    = g_string_new ("");
           GList   *current = from;
@@ -413,7 +566,7 @@ namespace AskFred
             g_string_append   (path, node->GetName ());
             g_string_append_c (path, '/');
 
-            current = g_list_previous (current);
+            current = g_list_next (current);
           }
           g_string_append (path, name);
 
@@ -426,9 +579,9 @@ namespace AskFred
           {
             break;
           }
-
-          from = g_list_previous (from);
         }
+
+        g_list_free (chain);
 
         if (scheme == NULL)
         {
@@ -437,36 +590,67 @@ namespace AskFred
         }
       }
 
+      // Creation & Stacking
       {
-        Element *element = new Element (name,
-                                        scheme);
-
-        _element_stack = g_list_prepend (_element_stack,
-                                         element);
-
+        if (_rounds)
         {
-          Element *parent       = (Element *) g_list_nth_data (_element_stack, 1);
-          Element *grand_parent = (Element *) g_list_nth_data (_element_stack, 2);
+          element = new Element (name,
+                                 scheme,
+                                 (Round *) _rounds->data);
+        }
+        else
+        {
+          element = new Element (name,
+                                 scheme,
+                                 NULL);
+        }
 
-          if (parent && grand_parent
-              && (g_strcmp0 (parent->GetName (),                   "Equipe")       == 0)
-              && (g_strcmp0 (Translate (grand_parent->GetName ()), "FinalResults") == 0))
+        if (_current_node)
+        {
+          _current_node = g_node_append_data (_current_node,
+                                              element);
+        }
+        else
+        {
+          _current_node = g_node_new (element);
+          _root_element = _current_node;
+        }
+      }
+
+
+      // Check visibility
+      if (   (g_strcmp0 (name, "SuiteDeTableaux")   == 0)
+          || (g_strcmp0 (name, "Pointage")          == 0)
+          || (g_strcmp0 (name, "ClassementGeneral") == 0))
+      {
+        element->MakeInvisible ();
+      }
+      else
+      {
+        GNode *parent = _current_node->parent;
+
+        if (parent)
+        {
+          GNode *grand_parent = parent->parent;
+
+          if (grand_parent)
           {
-            if (g_strcmp0 (name, "Tireur") == 0)
+            Element *parent_element       = (Element *) parent->data;
+            Element *grand_parent_element = (Element *) grand_parent->data;
+
+            if (   (g_strcmp0 (parent_element->GetName (),                   "Equipe")       == 0)
+                && (g_strcmp0 (Translate (grand_parent_element->GetName ()), "FinalResults") == 0))
             {
-              element->SetInvisible ();
-              return;
+              if (g_strcmp0 (name, "Tireur") == 0)
+              {
+                element->MakeInvisible ();
+              }
             }
           }
         }
-
-        if (   (g_strcmp0 (name, "SuiteDeTableaux")   == 0)
-            || (g_strcmp0 (name, "Pointage")          == 0)
-            || (g_strcmp0 (name, "ClassementGeneral") == 0))
-        {
-          element->SetInvisible ();
-        }
       }
+
+      return element;
     }
 
     // --------------------------------------------------------------------------------
@@ -476,17 +660,9 @@ namespace AskFred
     }
 
     // --------------------------------------------------------------------------------
-    gboolean Scheme::CurrentElementIsVisible ()
-    {
-      Element *current_element = (Element *) _element_stack->data;
-
-      return current_element->IsVisible ();
-    }
-
-    // --------------------------------------------------------------------------------
     const gchar *Scheme::Translate (const gchar *term)
     {
-      GList *current = _element_stack;
+      GNode *current = _current_node;
 
       while (current)
       {
@@ -503,7 +679,7 @@ namespace AskFred
           }
         }
 
-        current = g_list_next (current);
+        current = current->parent;
       }
 
       return term;
@@ -514,19 +690,17 @@ namespace AskFred
                                           const gchar *format_value,
                                           va_list      argptr)
     {
-      if (g_strcmp0 (term, "REF") == 0)
+      if (_mode == COLLECTING_MODE)
       {
-        const gchar *askfred_id;
-        gchar       *ref = g_strdup_vprintf (format_value,
+        Element *element = (Element *) _current_node->data;
+        gchar   *value   = g_strdup_vprintf (format_value,
                                              argptr);
 
-        askfred_id = _fencer_id_fixer->GetId (ref);
-        g_free (ref);
+        element->AddToOutline (term,
+                               value);
 
-        if (askfred_id)
-        {
-          return askfred_id;
-        }
+        g_free (value);
+        return NULL;
       }
 
       return format_value;
@@ -536,21 +710,69 @@ namespace AskFred
     const gchar *Scheme::TranslateValue (const gchar *term,
                                          const gchar *value)
     {
-      {
-        Element *owner= (Element *) g_list_nth_data (_element_stack, 0);
+      Element *owner  = (Element *) _current_node->data;
+      Element *parent = NULL;
 
-        if (_fencer_id_fixer->Knows (owner, term))
+      if (_current_node->parent)
+      {
+        parent = (Element *) _current_node->parent->data;
+      }
+
+      if (_mode == COLLECTING_MODE)
+      {
+        owner->AddToOutline (term,
+                             value);
+
+        if (parent)
         {
-          _fencer_id_fixer->PushId (term,
+          if (   (g_strcmp0 (Translate (parent->GetName ()), "FinalResults") == 0)
+              && (g_strcmp0 (term,  "Statut") == 0))
+          {
+            if (g_strcmp0 (value, "E") == 0)
+            {
+              owner->AddToOutline ("Excluded",
+                                   "True");
+            }
+            else
+            {
+              owner->AddToOutline ("Excluded",
+                                   "False");
+            }
+
+            if (g_strcmp0 (value, "A") == 0)
+            {
+              owner->AddToOutline ("DNF",
+                                   "True");
+            }
+            else
+            {
+              owner->AddToOutline ("DNF",
+                                   "False");
+            }
+          }
+          else if (   (g_strcmp0 (parent->GetName (), "RoundSeeding") == 0)
+                   && (g_strcmp0 (term, "Statut") == 0))
+          {
+            if (   (g_strcmp0 (value, "A") == 0)
+                || (g_strcmp0 (value, "E") == 0))
+            {
+              owner->Withdraw ();
+            }
+          }
+
+          if (_fencer_id_fixer->Knows (owner, term))
+          {
+            _fencer_id_fixer->PushId (term,
+                                      value);
+          }
+          else if (_club_id_fixer->Knows (owner, term))
+          {
+            _club_id_fixer->PushId (term,
                                     value);
-          return NULL;
+          }
         }
-        else if (_club_id_fixer->Knows (owner, term))
-        {
-          _club_id_fixer->PushId (term,
-                                  value);
-          return NULL;
-        }
+
+        return NULL;
       }
 
       if (g_strcmp0 (term, "DateNaissance") == 0)
@@ -561,6 +783,15 @@ namespace AskFred
         if (year)
         {
           return year+1;
+        }
+      }
+      else if (   parent
+               && (g_strcmp0 (parent->GetName (), "RoundSeeding") == 0)
+               && (g_strcmp0 (term, "Statut") == 0))
+      {
+        if (owner->IsWithdrawn ())
+        {
+          return "P";
         }
       }
 
@@ -611,118 +842,288 @@ namespace AskFred
     {
       Element *parent = NULL;
 
-      if (_element_stack)
+      // Round seeding
+      if (_current_node)
       {
-        // Round seeding
+        parent = (Element *) _current_node->data;
+
+        // Implicit start
+        if (   ((g_strcmp0 (name, "Tireur") == 0) || (g_strcmp0 (name, "Equipe") == 0))
+            && (g_strcmp0 (Translate (parent->GetName ()), "Round")  == 0))
         {
-          parent = (Element *) _element_stack->data;
+          _rounds = g_list_prepend (_rounds,
+                                    new Round ());
 
-          // Implicit start
-          if (   ((g_strcmp0 (name, "Tireur") == 0) || (g_strcmp0 (name, "Equipe") == 0))
-              && (g_strcmp0 (Translate (parent->GetName ()), "Round")  == 0))
-          {
-            StartElement ("RoundSeeding");
-          }
-
-          // Implicit close
-          if (   (g_strcmp0 (name, "Poule") == 0)
-              || (g_strcmp0 (name, "SuiteDeTableaux") == 0))
-          {
-            EndElement ("RoundSeeding");
-          }
+          StartElement ("RoundSeeding");
         }
 
-        parent = (Element *) _element_stack->data;
-
-        // Seq
-        if (   (g_strcmp0 (name, "Tireur")          == 0)
-            || (g_strcmp0 (name, "Equipe")          == 0)
-            || (g_strcmp0 (name, "TourDePoules")    == 0)
-            || (g_strcmp0 (name, "Poule")           == 0)
-            || (g_strcmp0 (name, "PhaseDeTableaux") == 0)
-            || (g_strcmp0 (name, "Tableau")         == 0))
+        // Implicit close
+        if (   (g_strcmp0 (name, "Poule") == 0)
+            || (g_strcmp0 (name, "SuiteDeTableaux") == 0))
         {
-          parent->CountSeq ();
+          EndElement ("RoundSeeding");
         }
       }
 
       PushElement (name);
-      XmlScheme::StartElement (name);
 
-      // Extra attributes
-      if (g_strcmp0 (name, "TourDePoules") == 0)
       {
-        WriteAttribute ("Type",
-                        "Pool");
-        WriteAttribute ("Desc",
-                        "Pools");
-        WriteFormatAttribute ("Seq",
-                              "%d", parent->GetSeq ());
-      }
-      else if (g_strcmp0 (name, "Poule") == 0)
-      {
-        WriteFormatAttribute ("Seq",
-                              "%d", parent->GetSeq ());
-      }
-      else if (g_strcmp0 (name, "PhaseDeTableaux") == 0)
-      {
-        WriteAttribute ("Type",
-                        "DE");
-        WriteAttribute ("Desc",
-                        "Tables");
-        WriteFormatAttribute ("Seq",
-                              "%d", parent->GetSeq ());
-      }
-      else if (g_strcmp0 (name, "Tableau") == 0)
-      {
-        WriteFormatAttribute ("Seq",
-                              "%d", parent->GetSeq ());
+        Element *owner = (Element *) _current_node->data;
+
+        owner->StartOutline (name);
+
+        if (parent && g_strcmp0 (parent->GetName (), "Match") == 0)
+        {
+          owner->AddToOutline ("Score",
+                               "0");
+          owner->AddToOutline ("Statut",
+                               "V");
+        }
       }
     }
 
+    // --------------------------------------------------------------------------------
+    gboolean Scheme::FlushElement (Element *element,
+                                   Element *parent)
+    {
+      GList *outline = element->GetOutline ();
+
+      if (outline)
+      {
+        XmlScheme::StartElement ((const gchar *) outline->data);
+
+        outline = g_list_next (outline);
+
+        while (outline)
+        {
+          const gchar *term;
+          const gchar *value;
+          gchar       *value_to_write = NULL;
+
+          term  = (const gchar *) outline->data;
+          outline = g_list_next (outline);
+
+          value = (const gchar *) outline->data;
+          outline = g_list_next (outline);
+
+          if (   (g_strcmp0 (term, "REF") == 0)
+              || (g_strcmp0 (term, "ID")  == 0))
+          {
+            value_to_write = g_strdup (_fencer_id_fixer->GetId (value));
+          }
+          else if (g_strcmp0 (term, "Club") == 0)
+          {
+            value_to_write = g_strdup (_club_id_fixer->GetId (value));
+          }
+          else if (g_strcmp0 (term, "NoDansLaPoule") == 0)
+          {
+            value_to_write = g_strdup_printf ("%d", parent->GetSeq ());
+          }
+
+          if (value_to_write == NULL)
+          {
+            value_to_write = g_strdup (value);
+          }
+
+          WriteAttribute (term,
+                          value_to_write);
+          g_free (value_to_write);
+        }
+        return TRUE;
+      }
+
+      return FALSE;
+    }
 
     // --------------------------------------------------------------------------------
-    void Scheme::WritePendingId (IdFixer *id_fixer)
+    gboolean Scheme::FlushNode (GNode *node)
     {
-      const gchar *pending_id = id_fixer->PopId ();
-
-      if (pending_id)
       {
-        WriteAttribute (Translate (id_fixer->GetPrimaryTitle ()),
-                        pending_id);
+        Element *element = (Element *) node->data;
+        Element *parent  = NULL;
+
+        _current_node = node;
+
+        if (node->parent)
+        {
+          parent = (Element *) node->parent->data;
+
+          if (element->GetOutline ())
+          {
+            if (   (g_strcmp0 (element->GetName (), "Tireur")          == 0)
+                || (g_strcmp0 (element->GetName (), "Equipe")          == 0)
+                || (g_strcmp0 (element->GetName (), "TourDePoules")    == 0)
+                || (g_strcmp0 (element->GetName (), "Poule")           == 0)
+                || (g_strcmp0 (element->GetName (), "PhaseDeTableaux") == 0)
+                || (g_strcmp0 (element->GetName (), "Tableau")         == 0))
+            {
+              parent->CountSeq ();
+            }
+          }
+        }
+
+        if (FlushElement (element,
+                          parent))
+        {
+          if (parent)
+          {
+            if (g_strcmp0 (element->GetName (), "TourDePoules") == 0)
+            {
+              WriteAttribute ("Type",
+                              "Pool");
+              WriteAttribute ("Desc",
+                              "Pools");
+              WriteFormatAttribute ("Seq",
+                                    "%d", parent->GetSeq ());
+            }
+            else if (g_strcmp0 (element->GetName (), "Poule") == 0)
+            {
+              WriteFormatAttribute ("Seq",
+                                    "%d", parent->GetSeq ());
+            }
+            else if (g_strcmp0 (element->GetName (), "PhaseDeTableaux") == 0)
+            {
+              WriteAttribute ("Type",
+                              "DE");
+              WriteAttribute ("Desc",
+                              "Tables");
+              WriteFormatAttribute ("Seq",
+                                    "%d", parent->GetSeq ());
+            }
+            else if (g_strcmp0 (element->GetName (), "Tableau") == 0)
+            {
+              WriteFormatAttribute ("Seq",
+                                    "%d", parent->GetSeq ());
+            }
+            else if (g_strcmp0 (parent->GetName (), "Match") == 0)
+            {
+              WriteFormatAttribute ("Called",
+                                    "%d", parent->GetSeq ());
+            }
+          }
+        }
       }
+
+      if (_current_node->children == NULL)
+      {
+        while (_current_node)
+        {
+          Element *element = (Element *) _current_node->data;
+
+          if (element->GetOutline ())
+          {
+            if (g_strcmp0 (element->GetName (), "Match") == 0)
+            {
+              if (element->GetSeq () < 2)
+              {
+                XmlScheme::StartElement ("Bye");
+                XmlScheme::EndElement ();
+              }
+            }
+
+            XmlScheme::EndElement ();
+          }
+
+          if (_current_node->next == NULL)
+          {
+            _current_node = _current_node->parent;
+          }
+          else
+          {
+            break;
+          }
+        }
+      }
+
+      return FALSE;
+    }
+
+    // --------------------------------------------------------------------------------
+    gboolean Scheme::CheckVisibilityNodeFunc (GNode  *node,
+                                              Scheme *scheme)
+    {
+      Element *element = (Element *) node->data;
+
+      if (element->IsWithdrawn ())
+      {
+        GNode   *parent_node = node->parent;
+        Element *parent      = (Element *) parent_node->data;
+
+        if (g_strcmp0 (parent->GetName (), "Poule") == 0)
+        {
+          element->MakeInvisible ();
+        }
+        else if (g_strcmp0 (parent->GetName (), "Match") == 0)
+        {
+          GNode   *grand_parent_node = parent_node->parent;
+          Element *grand_parent      = (Element *) grand_parent_node->data;
+
+          if (g_strcmp0 (grand_parent->GetName (), "Poule") == 0)
+          {
+            GNode *opponent_node = parent_node->children;
+
+            while (opponent_node)
+            {
+              Element *opponent = (Element *) opponent_node->data;
+
+              opponent->MakeInvisible ();
+
+              opponent_node = opponent_node->next;
+            }
+
+            parent->MakeInvisible ();
+          }
+        }
+      }
+
+      return FALSE;
+    }
+
+    // --------------------------------------------------------------------------------
+    gboolean Scheme::FlushNodeFunc (GNode  *node,
+                                    Scheme *scheme)
+    {
+      return scheme->FlushNode (node);
+    }
+
+    // --------------------------------------------------------------------------------
+    void Scheme::Flush (GNode *from)
+    {
+      _mode = POST_COLLECTING_MODE;
+      g_node_traverse (from,
+                       G_PRE_ORDER,
+                       G_TRAVERSE_LEAVES,
+                       -1,
+                       (GNodeTraverseFunc) CheckVisibilityNodeFunc,
+                       this);
+
+      _mode = FLUSHING_MODE;
+      g_node_traverse (from,
+                       G_PRE_ORDER,
+                       G_TRAVERSE_ALL,
+                       -1,
+                       (GNodeTraverseFunc) FlushNodeFunc,
+                       this);
     }
 
     // --------------------------------------------------------------------------------
     void Scheme::EndElement ()
     {
-      Element *element = (Element *) _element_stack->data;
-
-      if (g_strcmp0 (element->GetName (), "Match") == 0)
+      if (_mode == COLLECTING_MODE)
       {
-        if (element->GetSeq () < 2)
+        _current_node = _current_node->parent;
+
+        if (_current_node == NULL)
         {
-          StartElement ("Bye");
-          EndElement ();
+          Flush (_root_element);
         }
-      }
-
-      WritePendingId (_fencer_id_fixer);
-      WritePendingId (_club_id_fixer);
-
-      XmlScheme::EndElement ();
-
-      {
-        _element_stack = g_list_delete_link (_element_stack,
-                                             _element_stack);
-        element->Release ();
       }
     }
 
     // --------------------------------------------------------------------------------
     void Scheme::EndElement (const gchar *name)
     {
-      Element *element = (Element *) _element_stack->data;
+      Element *element = (Element *) _current_node->data;
 
       if (g_strcmp0 (element->GetName (), name) == 0)
       {
