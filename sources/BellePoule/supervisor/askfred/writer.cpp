@@ -46,7 +46,8 @@ namespace AskFred
     gboolean IdFixer::Knows (Element     *owner,
                              const gchar *name)
     {
-      if (g_strcmp0 (owner->GetName (), "Tireur") == 0)
+      if (   (g_strcmp0 (owner->GetName (), "Tireur") == 0)
+          || (g_strcmp0 (owner->GetName (), "Equipe") == 0))
       {
         if (g_strcmp0 (name, _primary_title) == 0)
         {
@@ -349,8 +350,8 @@ namespace AskFred
           g_datalist_set_data (&scheme, "Equipes",         (gpointer) "TeamDatabase");
           g_datalist_set_data (&scheme, "Equipe",          (gpointer) "Team");
 
-          g_datalist_set_data (&scheme, "Nom",             (gpointer) "FirstName");
-          g_datalist_set_data (&scheme, "Prenom",          (gpointer) "LastName");
+          g_datalist_set_data (&scheme, "Nom",             (gpointer) "LastName");
+          g_datalist_set_data (&scheme, "Prenom",          (gpointer) "FirstName");
           g_datalist_set_data (&scheme, "DateNaissance",   (gpointer) "BirthYear");
           g_datalist_set_data (&scheme, "Sexe",            (gpointer) "Gender");
           g_datalist_set_data (&scheme, "Club",            (gpointer) "ClubID");
@@ -472,6 +473,7 @@ namespace AskFred
 
           g_datalist_set_data (&scheme, "PluginID", (gpointer) "FencerID");
           g_datalist_set_data (&scheme, "ID",       (gpointer) "FencerID");
+          g_datalist_set_data (&scheme, "Nom",      (gpointer) "LastName");
 
           g_datalist_set_data (&_element_base,
                                "Equipe/Tireur",
@@ -486,6 +488,7 @@ namespace AskFred
 
           g_datalist_set_data (&scheme, "PluginID", (gpointer) "TeamID");
           g_datalist_set_data (&scheme, "ID",       (gpointer) "TeamID");
+          g_datalist_set_data (&scheme, "Nom",      (gpointer) "Name");
 
           g_datalist_set_data (&_element_base,
                                "FencingData/Equipes",
@@ -999,6 +1002,12 @@ namespace AskFred
             {
               WriteFormatAttribute ("Called",
                                     "%d", parent->GetSeq ());
+            }
+            else if (   (g_strcmp0 (element->GetName (), "Equipe")  == 0)
+                     && (g_strcmp0 (parent->GetName (),  "Equipes") == 0))
+            {
+              WriteAttribute ("DivisionID",
+                              "69");
             }
           }
         }

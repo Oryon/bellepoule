@@ -118,7 +118,7 @@ Application::Application (const gchar   *role,
                                  NULL);
 #endif
 
-#if defined(DEBUG) && defined(G_OS_UNIX)
+#ifdef CODE_BLOCKS
       Global::_share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);
 #else
       {

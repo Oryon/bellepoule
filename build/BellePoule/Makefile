@@ -28,6 +28,7 @@ endif
 PRODUCT      = bellepoulebeta
 #PRODUCT      = bellepoule
 OUTPUT       = Release
+#OUTPUT       = Debug
 PACKAGE      = $(HOME)/Project/PPA/$(PRODUCT)
 VERSION      = $(VERSION_MAJOR).$(VERSION_MINOR)
 RELEASE      = $(PRODUCT)_$(VERSION)
@@ -490,7 +491,7 @@ build:   $(build_staging)
 publish: $(publish_staging)
 
 build_windows: all
-	cp Release/$(PRODUCT)*.exe ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/exe
+	cp $(OUTPUT)/$(PRODUCT)*.exe ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/exe
 	#echo "cp Debug/$(PRODUCT)-*.exe ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/"
 	#cp ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/$(PRODUCT)/bin
 	env WINEPREFIX="$(HOME)/.wine" wine C:\\windows\\command\\start.exe /Unix $(HOME)/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Inno\ Setup\ 5/Inno\ Setup\ Compiler.lnk
@@ -499,10 +500,10 @@ publish_windows:
 	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/Output/$(PRODUCT)-$(VERSION_MAJOR)-$(VERSION_MINOR)-$(VERSION_MATURITY)-win.exe; quit"
 
 build_osx: all
-	cp Release/$(PRODUCT)-supervisor $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-supervisor
-	cp Release/$(PRODUCT)-marshaller $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-marshaller
+	cp $(OUTPUT)/$(PRODUCT)-supervisor $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-supervisor
+	cp $(OUTPUT)/$(PRODUCT)-marshaller $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-marshaller
 	mkdir $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)
-	cp Release/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
+	cp $(OUTPUT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
 	chmod a+x $(PRODUCT).app/Contents/MacOS/$(PRODUCT)*
 	find $(PRODUCT).app/Contents/Frameworks -type f -printf "%f\n" | while read lib;\
 		do \
@@ -511,8 +512,8 @@ build_osx: all
 		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib; \
 		done
 	install_name_tool -id @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
-	install_name_tool -change Release/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-supervisor
-	install_name_tool -change Release/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-marshaller
+	install_name_tool -change $(OUTPUT)/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-supervisor
+	install_name_tool -change $(OUTPUT)/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-marshaller
 	zip -qr $(PRODUCT)-$(subst .,-,$(LONG_VERSION))-osx.zip $(PRODUCT).app
 
 publish_osx:
@@ -522,7 +523,7 @@ build_ubuntu:
 	debuild -us -uc --lintian-opts --color always
 
 publish_ubuntu:
-	debuild -S -sa -k`gpg2 -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
+	debuild -S -sa -k`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
 	dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes
 
 publish_debian:

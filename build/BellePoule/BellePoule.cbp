@@ -58,6 +58,7 @@
 			<Add option="-fPIC" />
 			<Add option="-pthread" />
 			<Add option="-DDEBUG" />
+			<Add option="-DCODE_BLOCKS=1" />
 			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGSEAL_ENABLE" />
