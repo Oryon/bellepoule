@@ -78,8 +78,8 @@ namespace Marshaller
                                             _H-(2.0*_BORDER_W),
                                             "fill-color-rgba", 0xd3d3d360,
                                             "line-width",      0.0,
+                                            "pointer-events", GOO_CANVAS_EVENTS_NONE,
                                             NULL);
-      MonitorEvent (_progress_item);
     }
 
     // #
@@ -90,8 +90,8 @@ namespace Marshaller
                                       -1.0,
                                       GTK_ANCHOR_NW,
                                       "font", BP_FONT "bold 15px",
+                                      "pointer-events", GOO_CANVAS_EVENTS_NONE,
                                       NULL);
-      MonitorEvent (_id_item);
     }
 
     // Title
@@ -103,8 +103,8 @@ namespace Marshaller
                                          GTK_ANCHOR_NORTH,
                                          "font",       BP_FONT "12px",
                                          "use-markup", TRUE,
+                                         "pointer-events", GOO_CANVAS_EVENTS_NONE,
                                          NULL);
-      MonitorEvent (_title_item);
     }
 
     // Referee
@@ -113,6 +113,7 @@ namespace Marshaller
                                              "x", (gdouble) 15.0,
                                              "y", _H*0.5,
                                              "column-spacing", (gdouble) 4.0,
+                                             "visibility",     GOO_CANVAS_ITEM_INVISIBLE,
                                              NULL);
 
       {
@@ -136,11 +137,10 @@ namespace Marshaller
                                                 0, 2);
         g_object_set (G_OBJECT (_referee_name),
                       "font", BP_FONT "bold 9px",
+                      "pointer-events", GOO_CANVAS_EVENTS_NONE,
                       NULL);
         Canvas::SetTableItemAttribute (_referee_name, "y-align", 1.0);
       }
-
-      MonitorEvent (_referee_table);
     }
 
     // Cone
@@ -152,6 +152,8 @@ namespace Marshaller
                                     pixbuf,
                                     0.0,
                                     0.0,
+                                    "pointer-events", GOO_CANVAS_EVENTS_NONE,
+                                    "visibility",     GOO_CANVAS_ITEM_INVISIBLE,
                                     NULL);
       g_object_unref (pixbuf);
       g_free (icon_file);
@@ -164,12 +166,6 @@ namespace Marshaller
                       Canvas::MIDDLE,
                       _root_item,
                       Canvas::MIDDLE);
-
-      MonitorEvent (_cone);
-
-      g_object_set (G_OBJECT (_cone),
-                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
-                    NULL);
     }
 
     // Finish
@@ -181,6 +177,8 @@ namespace Marshaller
                                       pixbuf,
                                       0.0,
                                       0.0,
+                                      "pointer-events", GOO_CANVAS_EVENTS_NONE,
+                                      "visibility",     GOO_CANVAS_ITEM_INVISIBLE,
                                       NULL);
       g_object_unref (pixbuf);
       g_free (icon_file);
@@ -194,12 +192,6 @@ namespace Marshaller
                       Canvas::MIDDLE,
                       _root_item,
                       Canvas::MIDDLE);
-
-      MonitorEvent (_finish);
-
-      g_object_set (G_OBJECT (_finish),
-                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
-                    NULL);
     }
 
     // Shutter
@@ -209,21 +201,14 @@ namespace Marshaller
                                       _W, _H,
                                       "fill-color-rgba", 0xf3f3f3c0,
                                       "line-width",      0.0,
+                                      "pointer-events", GOO_CANVAS_EVENTS_NONE,
+                                      "visibility",     GOO_CANVAS_ITEM_INVISIBLE,
                                       NULL);
-      MonitorEvent (_shutter);
-
-      g_object_set (G_OBJECT (_shutter),
-                    "visibility", GOO_CANVAS_ITEM_INVISIBLE,
-                    NULL);
     }
 
     goo_canvas_item_translate (_root_item,
                                _RESOLUTION,
                                _RESOLUTION);
-
-    g_object_set (G_OBJECT (_referee_table),
-                  "visibility", GOO_CANVAS_ITEM_INVISIBLE,
-                  NULL);
 
     SetId (1);
 

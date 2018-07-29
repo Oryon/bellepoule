@@ -60,6 +60,8 @@ namespace Marshaller
       GooCanvasItem *_goo_cursor;
       GooCanvasItem *_goo_cursor_time;
       Listener      *_listener;
+      gdouble        _slideout_origin;
+      gboolean       _slideout_in_progress;
 
       ~Timeline ();
 
@@ -75,12 +77,20 @@ namespace Marshaller
 
       void RefreshCursorTime ();
 
-      GTimeSpan GetCursorRectification ();
+      GTimeSpan GetTimeRectification (GTimeSpan time);
+
+      void SlideOut (gdouble  position,
+                     gboolean one_shot = FALSE);
 
       static gboolean OnBgButtonPress (GooCanvasItem  *item,
                                        GooCanvasItem  *target,
                                        GdkEventButton *event,
                                        Timeline       *tl);
+
+      static gboolean OnBgButtonRelease (GooCanvasItem  *item,
+                                         GooCanvasItem  *target,
+                                         GdkEventButton *event,
+                                         Timeline       *tl);
 
       static gboolean OnBgMotion (GooCanvasItem  *item,
                                   GooCanvasItem  *target_item,

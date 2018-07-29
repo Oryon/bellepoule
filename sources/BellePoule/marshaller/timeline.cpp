@@ -27,8 +27,9 @@ namespace Marshaller
     : Object ("Timeline"),
     CanvasModule ("timeline.glade", "canvas_scrolled_window")
   {
-    _competition_list = NULL;
-    _listener         = listener;
+    _competition_list     = NULL;
+    _listener             = listener;
+    _slideout_in_progress = FALSE;
 
     {
       GDateTime *now = g_date_time_new_now_local ();
@@ -69,6 +70,8 @@ namespace Marshaller
 
     g_signal_connect (GetRootItem (), "button_press_event",
                       G_CALLBACK (OnBgButtonPress), this);
+    g_signal_connect (GetRootItem (), "button_release_event",
+                      G_CALLBACK (OnBgButtonRelease), this);
     g_signal_connect (GetRootItem (), "motion-notify-event",
                       G_CALLBACK (OnBgMotion), this);
   }
@@ -96,46 +99,62 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Timeline::DrawTimes ()
   {
-    for (guint h = 0; h <= HOURS_MONITORED; h++)
+    gint origin_hh  = g_date_time_get_hour (_origin);
+    gint origin_mm  = g_date_time_get_minute (_origin) + g_date_time_get_second (_origin)/60;
+    gint first_mark = origin_mm;
+    gint offset_mm;
+
+    if (origin_mm%15)
     {
-      GTimeSpan  x_span = h *G_TIME_SPAN_HOUR + START_MARGING;
-      guint      hh     = (g_date_time_get_hour (_origin) + h+1) % 24;
-      gchar     *time   = g_strdup_printf ("<span background=\"white\">%02d:00</span>", hh);
+      first_mark = origin_mm + 15 - origin_mm%15;
+    }
+    offset_mm = first_mark - origin_mm;
 
-      time = g_strdup_printf ("<span background=\"white\">%02d:00</span>", hh);
+    for (guint mark = 0; mark <= HOURS_MONITORED*4; mark++)
+    {
+      GTimeSpan x_span = (offset_mm + mark*15)*G_TIME_SPAN_MINUTE;
 
-      goo_canvas_rect_new (GetRootItem (),
-                           x_span * _time_scale,
-                           0.7 * _competition_scale,
-                           0.5,
-                           0.3 * _competition_scale,
-                           "fill-color",     "black",
-                           "stroke-pattern", NULL,
-                           NULL);
-      goo_canvas_text_new (GetRootItem (),
-                           time,
-                           x_span * _time_scale,
-                           _competition_scale,
-                           -1.0,
-                           GTK_ANCHOR_S,
-                           "fill-color", "grey",
-                           "font",       BP_FONT "10px",
-                           "use-markup", TRUE,
-                           NULL);
+      if ((mark*15 + first_mark) % 60 == 0)
+      {
+        guint  hh   = (origin_hh + (mark*15 + first_mark)/60) % 24;
+        gchar *time = g_strdup_printf ("<span background=\"white\">%02d:00</span>", hh);
 
-      for (guint q = 1; q <= 3; q++)
+        time = g_strdup_printf ("<span background=\"white\">%02d:00</span>", hh);
+
+        goo_canvas_rect_new (GetRootItem (),
+                             x_span * _time_scale,
+                             0.7 * _competition_scale,
+                             0.5,
+                             0.3 * _competition_scale,
+                             "fill-color",     "black",
+                             "stroke-pattern", NULL,
+                             "pointer-events", GOO_CANVAS_EVENTS_NONE,
+                             NULL);
+        goo_canvas_text_new (GetRootItem (),
+                             time,
+                             x_span * _time_scale,
+                             _competition_scale,
+                             -1.0,
+                             GTK_ANCHOR_S,
+                             "fill-color",     "grey",
+                             "font",           BP_FONT "10px",
+                             "use-markup",     TRUE,
+                             "pointer-events", GOO_CANVAS_EVENTS_NONE,
+                             NULL);
+        g_free (time);
+      }
+      else
       {
         goo_canvas_rect_new (GetRootItem (),
-                             (x_span + q*15*G_TIME_SPAN_MINUTE) * _time_scale,
+                             x_span * _time_scale,
                              0.95 * _competition_scale,
                              0.3,
                              0.05 * _competition_scale,
                              "fill-color",     "black",
                              "stroke-pattern", NULL,
+                             "pointer-events", GOO_CANVAS_EVENTS_NONE,
                              NULL);
       }
-
-      g_free (time);
     }
   }
 
@@ -153,6 +172,7 @@ namespace Marshaller
                            _competition_scale,
                            "fill-color-rgba", 0x0000000F,
                            "stroke-pattern", NULL,
+                           "pointer-events", GOO_CANVAS_EVENTS_NONE,
                            NULL);
       g_date_time_unref (now);
     }
@@ -205,8 +225,8 @@ namespace Marshaller
           Job       *job   = (Job *) current_job->data;
           Slot      *slot  = job->GetSlot ();
           GDateTime *start = slot->GetStartTime ();
-          gdouble    x     = g_date_time_difference (start, _origin) *_time_scale;
-          gdouble    w     = (slot->GetDuration () - 3 *G_TIME_SPAN_MINUTE) *_time_scale;
+          gdouble    x     = g_date_time_difference (start, _origin) * _time_scale;
+          gdouble    w     = (slot->GetDuration () - 3*G_TIME_SPAN_MINUTE) * _time_scale;
 
           goo_canvas_rect_new (GetRootItem (),
                                x,
@@ -215,6 +235,7 @@ namespace Marshaller
                                _competition_scale/10.0,
                                "fill-color",     color,
                                "stroke-pattern", NULL,
+                               "pointer-events", GOO_CANVAS_EVENTS_NONE,
                                NULL);
 
           current_job = g_list_next (current_job);
@@ -248,6 +269,52 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Timeline::SlideOut (gdouble  position,
+                           gboolean one_shot)
+  {
+    {
+      GDateTime *now = g_date_time_new_now_local ();
+      GDateTime *new_origin;
+      GTimeSpan  step;
+
+      new_origin = g_date_time_add_full (_origin,
+                                         0,
+                                         0,
+                                         0,
+                                         0,
+                                         0,
+                                         ((_slideout_origin - position) / _time_scale) / G_TIME_SPAN_SECOND);
+
+      step = g_date_time_difference (new_origin,
+                                     now);
+      //if (   ((step < 0) && (-step < 2*G_TIME_SPAN_HOUR))
+          //|| ((step > 0) && (step  < 5*G_TIME_SPAN_HOUR)))
+      {
+        if (one_shot)
+        {
+          _slideout_origin = 0;
+        }
+        else
+        {
+          _slideout_origin = position;
+        }
+
+        g_date_time_unref (_origin);
+        _origin = new_origin;
+
+        Redraw ();
+
+        if (_listener)
+        {
+          _listener->OnTimelineCursorMoved ();
+        }
+      }
+
+      g_date_time_unref (now);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Timeline::OnButtonPress (GooCanvasItem  *item,
                                     GooCanvasItem  *target,
                                     GdkEventButton *event,
@@ -271,19 +338,50 @@ namespace Marshaller
                                       GdkEventButton *event,
                                       Timeline       *tl)
   {
-    GTimeSpan new_cursor = event->x / tl->_time_scale;
+    tl->SetCursor (GDK_FLEUR);
 
-    tl->TranslateCursor ((new_cursor - tl->_cursor) * tl->_time_scale);
+    tl->_slideout_in_progress = TRUE;
+    tl->_slideout_origin      = event->x;
 
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Timeline::OnBgButtonRelease (GooCanvasItem  *item,
+                                        GooCanvasItem  *target,
+                                        GdkEventButton *event,
+                                        Timeline       *tl)
+  {
+    tl->SetCursor (GDK_ARROW);
+
+    if (tl->_slideout_in_progress)
     {
-      GTimeSpan round = tl->GetCursorRectification ();
+      tl->_slideout_in_progress = FALSE;
+      tl->_slideout_origin      = 0;
 
-      tl->TranslateCursor (round * tl->_time_scale);
-    }
+      {
+        GTimeSpan  rectification;
+        GDateTime *new_origin;
+        GTimeSpan  time_span = 0;
 
-    if (tl->_listener)
-    {
-      tl->_listener->OnTimelineCursorChanged ();
+        time_span += g_date_time_get_minute (tl->_origin) * G_TIME_SPAN_MINUTE;
+        time_span += g_date_time_get_second (tl->_origin) * G_TIME_SPAN_SECOND;
+
+        rectification = tl->GetTimeRectification (time_span);
+
+        new_origin = g_date_time_add (tl->_origin,
+                                      rectification);
+        g_date_time_unref (tl->_origin);
+        tl->_origin = new_origin;
+
+        tl->Redraw ();
+      }
+
+      if (tl->_listener)
+      {
+        tl->_listener->OnTimelineCursorMoved ();
+        tl->_listener->OnTimelineCursorChanged ();
+      }
     }
 
     return TRUE;
@@ -295,7 +393,14 @@ namespace Marshaller
                                  GdkEventMotion *event,
                                  Timeline       *tl)
   {
-    tl->SetCursor (GDK_ARROW);
+    if (tl->_slideout_in_progress)
+    {
+      tl->SlideOut (event->x);
+    }
+    else
+    {
+      tl->SetCursor (GDK_ARROW);
+    }
 
     return TRUE;
   }
@@ -307,7 +412,7 @@ namespace Marshaller
 
     if (rounded)
     {
-      cursor += GetCursorRectification ();
+      cursor += GetTimeRectification (_cursor);
     }
 
     return g_date_time_add (_origin,
@@ -315,9 +420,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GTimeSpan Timeline::GetCursorRectification ()
+  GTimeSpan Timeline::GetTimeRectification (GTimeSpan time)
   {
-    GTimeSpan round = _cursor % STEP;
+    GTimeSpan round = time % STEP;
 
     if (round > (STEP / 2))
     {
@@ -359,11 +464,27 @@ namespace Marshaller
   {
     _cursor = g_date_time_difference (time,
                                       _origin);
+
+    if (_cursor < 0)
+    {
+      SlideOut ((-_cursor + START_MARGING) * _time_scale,
+                TRUE);
+      _cursor = START_MARGING;
+    }
+    else if (_cursor > HOURS_MONITORED*G_TIME_SPAN_HOUR - START_MARGING)
+    {
+      SlideOut ((HOURS_MONITORED*G_TIME_SPAN_HOUR - START_MARGING - _cursor) * _time_scale,
+               TRUE);
+      _cursor = HOURS_MONITORED*G_TIME_SPAN_HOUR - START_MARGING;
+    }
+
+    Redraw ();
+
     if (_listener)
     {
-      _listener->OnTimelineCursorMoved ();
+      _listener->OnTimelineCursorMoved   ();
+      _listener->OnTimelineCursorChanged ();
     }
-    Redraw ();
   }
 
   // --------------------------------------------------------------------------------
@@ -439,7 +560,7 @@ namespace Marshaller
                                                             tl);
 
     {
-      GTimeSpan round = tl->GetCursorRectification ();
+      GTimeSpan round = tl->GetTimeRectification (tl->_cursor);
 
       tl->TranslateCursor (round * tl->_time_scale);
     }
