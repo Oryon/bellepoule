@@ -282,9 +282,9 @@ namespace Table
 
       PrintSession *GetPrintSession (GtkPrintOperation *operation);
 
-      static gint ComparePlayer (Player    *A,
-                                 Player    *B,
-                                 TableSet  *table_set);
+      static gint ComparePlayer (Player   *A,
+                                 Player   *B,
+                                 TableSet *table_set);
 
       static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
                                                      GtkCellRenderer *cell,

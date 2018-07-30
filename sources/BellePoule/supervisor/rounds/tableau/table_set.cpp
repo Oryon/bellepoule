@@ -1849,8 +1849,9 @@ namespace Table
 
               if (all_sheet || (already_printed != TRUE))
               {
-                _match_to_print = g_slist_prepend (_match_to_print,
-                                                   match);
+                _match_to_print = g_slist_insert_sorted (_match_to_print,
+                                                         match,
+                                                         (GCompareFunc) Match::Compare);
               }
             }
           }
@@ -1862,8 +1863,6 @@ namespace Table
                                                   &parent);
       }
     }
-
-    _match_to_print = g_slist_reverse (_match_to_print);
   }
 
   // --------------------------------------------------------------------------------

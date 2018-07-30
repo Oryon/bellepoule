@@ -124,6 +124,9 @@ class Match : public Object,
 
     void Timestamp ();
 
+    static gint Compare (Match *A,
+                         Match *B);
+
   private:
     struct Opponent
     {

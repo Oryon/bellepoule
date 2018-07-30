@@ -819,3 +819,23 @@ void Match::Timestamp ()
   }
 }
 
+// --------------------------------------------------------------------------------
+gint Match::Compare (Match *A,
+                     Match *B)
+{
+  gint result;
+
+  result = A->GetPiste () - B->GetPiste ();
+  if (result != 0)
+  {
+    return result;
+  }
+
+  result = g_strcmp0 (A->_name_space, B->_name_space);
+  if (result != 0)
+  {
+    return result;
+  }
+
+  return A->_number - B->_number;
+}
