@@ -92,5 +92,14 @@ namespace Marshaller
       GtkTreeIter *GetBatchIter (Batch *batch);
 
       Batch *GetCurrentBatch ();
+
+      gboolean LoadFencer (xmlXPathContext *xml_context,
+                           Net::Message    *message,
+                           const gchar     *path,
+                           const gchar     *code_name);
+
+      Player *LoadNode (xmlNode      *xml_node,
+                        Net::Message *message,
+                        const gchar  *code_name);
   };
 }

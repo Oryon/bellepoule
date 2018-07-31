@@ -22,6 +22,8 @@
 #include "util/glade.hpp"
 #include "util/attribute_desc.hpp"
 #include "actors/player_factory.hpp"
+#include "actors/fencer.hpp"
+#include "actors/team.hpp"
 #include "affinities.hpp"
 #include "batch.hpp"
 
@@ -392,43 +394,108 @@ namespace Marshaller
 
     if (doc)
     {
-      xmlXPathInit ();
+      xmlXPathContext *xml_context = xmlXPathNewContext (doc);
 
+      if (LoadFencer (xml_context,
+                      message,
+                      "/Tireur",
+                      "Fencer") == FALSE)
       {
-        xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-        xmlXPathObject  *xml_object;
-        xmlNodeSet      *xml_nodeset;
-
-        xml_object = xmlXPathEval (BAD_CAST "/Tireur", xml_context);
-        xml_nodeset = xml_object->nodesetval;
-
-        if (xml_nodeset->nodeNr == 1)
-        {
-          Player *fencer = PlayerFactory::CreatePlayer ("Fencer");
-
-          fencer->Load (xml_nodeset->nodeTab[0]);
-
-          fencer->SetData (this,
-                           "netid",
-                           GUINT_TO_POINTER (message->GetNetID ()));
-
-          fencer->SetData (NULL,
-                           "affinities",
-                           new Affinities (fencer),
-                           (GDestroyNotify) Affinities::Destroy);
-
-          DeleteFencer (message);
-          _fencer_list = g_list_prepend (_fencer_list,
-                                         fencer);
-        }
-
-        xmlXPathFreeObject  (xml_object);
-        xmlXPathFreeContext (xml_context);
+        LoadFencer (xml_context,
+                    message,
+                    "/Equipe",
+                    "Team");
       }
+
+      xmlXPathFreeContext (xml_context);
       xmlFreeDoc (doc);
     }
 
     g_free (xml);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Competition::LoadFencer (xmlXPathContext *xml_context,
+                                    Net::Message    *message,
+                                    const gchar     *path,
+                                    const gchar     *code_name)
+  {
+    gboolean result = FALSE;
+
+    xmlXPathInit ();
+
+    {
+      xmlXPathObject *xml_object = xmlXPathEval (BAD_CAST path, xml_context);
+      xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
+
+      if (xml_nodeset->nodeNr == 1)
+      {
+        xmlNode *xml_node = xml_nodeset->nodeTab[0];
+        Player  *player   = LoadNode (xml_node,
+                                      message,
+                                      code_name);
+
+        if (player && player->Is ("Team"))
+        {
+          Team       *team            = (Team *) player;
+          Affinities *team_affinities = (Affinities *) team->GetPtrData (NULL, "affinities");
+          xmlNode    *child           = xml_node->children;
+
+          _fencer_list = g_list_prepend (_fencer_list,
+                                         player);
+
+          while (child)
+          {
+            Fencer     *fencer     = (Fencer *) PlayerFactory::CreatePlayer ("Fencer");
+
+            fencer->Load (child);
+
+            fencer->SetTeam (team);
+
+            {
+              Affinities *affinities = new Affinities (fencer);
+
+              fencer->SetData (NULL,
+                               "affinities",
+                               affinities,
+                               (GDestroyNotify) Affinities::Destroy);
+              affinities->ShareWith (team_affinities);
+            }
+
+            child = child->next;
+          }
+        }
+
+        result = TRUE;
+      }
+
+      xmlXPathFreeObject  (xml_object);
+    }
+
+    return result;
+  }
+
+  // --------------------------------------------------------------------------------
+  Player *Competition::LoadNode (xmlNode      *xml_node,
+                                 Net::Message *message,
+                                 const gchar  *code_name)
+  {
+    Player *player = PlayerFactory::CreatePlayer (code_name);
+
+    player->Load (xml_node);
+
+    player->SetData (this,
+                     "netid",
+                     GUINT_TO_POINTER (message->GetNetID ()));
+
+    player->SetData (NULL,
+                     "affinities",
+                     new Affinities (player),
+                     (GDestroyNotify) Affinities::Destroy);
+
+    DeleteFencer (message);
+
+    return player;
   }
 
   // --------------------------------------------------------------------------------

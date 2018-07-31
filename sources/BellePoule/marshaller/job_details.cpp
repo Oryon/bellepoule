@@ -18,6 +18,7 @@
 #include "util/attribute_desc.hpp"
 #include "util/filter.hpp"
 #include "util/player.hpp"
+#include "actors/team.hpp"
 
 #include "job.hpp"
 #include "referee_pool.hpp"
@@ -82,6 +83,8 @@ namespace Marshaller
       filter->Release ();
     }
 
+    SelectTreeMode ();
+
     {
       GList *current = player_list;
 
@@ -90,6 +93,19 @@ namespace Marshaller
         Player *player= (Player *) current->data;
 
         Add (player);
+
+        if (player->Is ("Team"))
+        {
+          Team   *team    = (Team *) player;
+          GSList *members = team->GetMemberList ();
+
+          while (members)
+          {
+            Add ((Player *) members->data);
+
+            members = g_slist_next (members);
+          }
+        }
 
         current = g_list_next (current);
       }

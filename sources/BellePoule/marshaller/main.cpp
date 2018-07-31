@@ -19,6 +19,7 @@
 #include "util/filter.hpp"
 #include "application/application.hpp"
 #include "actors/fencer.hpp"
+#include "actors/team.hpp"
 #include "enlisted_referee.hpp"
 #include "marshaller.hpp"
 
@@ -62,6 +63,7 @@ namespace Marshaller
   {
     EnlistedReferee::RegisterPlayerClass ();
     Fencer::RegisterPlayerClass          ();
+    Team::RegisterPlayerClass            ();
 
     Application::Prepare ();
   }

@@ -12,6 +12,7 @@
           <object class="GtkTreeView" id="players_list">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="enable_tree_lines">True</property>
           </object>
           <packing>
             <property name="expand">True</property>

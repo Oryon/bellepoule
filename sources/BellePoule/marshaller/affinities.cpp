@@ -29,7 +29,8 @@ namespace Marshaller
   Affinities::Affinities (Player *player)
     : Object ("Affinities")
   {
-    _checksums = NULL;
+    _checksums    = NULL;
+    _shareholders = NULL;
 
     {
       GList *current = g_list_last (_titles);
@@ -47,6 +48,7 @@ namespace Marshaller
   Affinities::~Affinities ()
   {
     g_list_free (_checksums);
+    g_list_free (_shareholders);
   }
 
   // --------------------------------------------------------------------------------
@@ -125,32 +127,66 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   guint Affinities::KinshipWith (Affinities *with)
   {
-    guint  kinship = 0;
+    if (with && with->_shareholders)
+    {
+      return with->SimpleKinshipWith (this);
+    }
+
+    return SimpleKinshipWith (with);
+  }
+
+  // --------------------------------------------------------------------------------
+  guint Affinities::SimpleKinshipWith (Affinities *with)
+  {
+    guint kinship = 0;
 
     if (with)
     {
-      GList *current_key  = _titles;
-      GList *current      = _checksums;
-      GList *with_current = with->_checksums;
-
-      for (guint i = 0; current != NULL; i++)
+      if (_shareholders)
       {
-        if (current->data == with_current->data)
-        {
-          if (g_datalist_get_data (&_validities,
-                                   (const gchar *) current_key->data) != 0)
-          {
-            kinship |= 1<<i;
-          }
-        }
+        GList *current = _shareholders;
 
-        current_key  = g_list_next (current_key);
-        current      = g_list_next (current);
-        with_current = g_list_next (with_current);
+        while (current)
+        {
+          Affinities *shareholder = (Affinities *) current->data;
+
+          kinship |= shareholder->SimpleKinshipWith (with);
+
+          current = g_list_next (current);
+        }
+      }
+      else
+      {
+        GList *current_key  = _titles;
+        GList *current      = _checksums;
+        GList *with_current = with->_checksums;
+
+        for (guint i = 0; current != NULL; i++)
+        {
+          if (current->data && (current->data == with_current->data))
+          {
+            if (g_datalist_get_data (&_validities,
+                                     (const gchar *) current_key->data) != 0)
+            {
+              kinship |= 1<<i;
+            }
+          }
+
+          current_key  = g_list_next (current_key);
+          current      = g_list_next (current);
+          with_current = g_list_next (with_current);
+        }
       }
     }
 
     return kinship;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Affinities::ShareWith (Affinities *with)
+  {
+    with->_shareholders = g_list_prepend (with->_shareholders,
+                                          this);
   }
 
   // --------------------------------------------------------------------------------

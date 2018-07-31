@@ -31,6 +31,8 @@ namespace Marshaller
 
       guint KinshipWith (Affinities *with);
 
+      void ShareWith (Affinities *with);
+
       static void Manage (const gchar *title,
                           const gchar *color);
 
@@ -48,10 +50,13 @@ namespace Marshaller
       static GData *_colors;
       static GData *_validities;
       GList        *_checksums;
+      GList        *_shareholders;
 
       ~Affinities ();
 
       void SetAffinity (Player      *player,
                         const gchar *affinity);
+
+      guint SimpleKinshipWith (Affinities *with);
   };
 }

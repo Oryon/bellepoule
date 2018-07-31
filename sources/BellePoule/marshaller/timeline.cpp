@@ -27,9 +27,9 @@ namespace Marshaller
     : Object ("Timeline"),
     CanvasModule ("timeline.glade", "canvas_scrolled_window")
   {
-    _competition_list     = NULL;
-    _listener             = listener;
-    _slideout_in_progress = FALSE;
+    _competition_list = NULL;
+    _listener         = listener;
+    _button_pressed   = FALSE;
 
     {
       GDateTime *now = g_date_time_new_now_local ();
@@ -340,8 +340,9 @@ namespace Marshaller
   {
     tl->SetCursor (GDK_FLEUR);
 
-    tl->_slideout_in_progress = TRUE;
-    tl->_slideout_origin      = event->x;
+    tl->_button_pressed      = TRUE;
+    tl->_slideout_origin     = event->x;
+    tl->_button_press_origin = event->x;
 
     return TRUE;
   }
@@ -354,11 +355,21 @@ namespace Marshaller
   {
     tl->SetCursor (GDK_ARROW);
 
-    if (tl->_slideout_in_progress)
+    if (tl->_button_pressed)
     {
-      tl->_slideout_in_progress = FALSE;
-      tl->_slideout_origin      = 0;
+      if (tl->_button_press_origin == tl->_slideout_origin)
+      {
+        GTimeSpan new_cursor = event->x / tl->_time_scale;
 
+        tl->TranslateCursor ((new_cursor - tl->_cursor) * tl->_time_scale);
+
+        {
+          GTimeSpan round = tl->GetTimeRectification (tl->_cursor);
+
+          tl->TranslateCursor (round * tl->_time_scale);
+        }
+      }
+      else
       {
         GTimeSpan  rectification;
         GDateTime *new_origin;
@@ -377,6 +388,10 @@ namespace Marshaller
         tl->Redraw ();
       }
 
+      tl->_button_pressed      = FALSE;
+      tl->_slideout_origin     = 0;
+      tl->_button_press_origin = 0;
+
       if (tl->_listener)
       {
         tl->_listener->OnTimelineCursorMoved ();
@@ -393,7 +408,7 @@ namespace Marshaller
                                  GdkEventMotion *event,
                                  Timeline       *tl)
   {
-    if (tl->_slideout_in_progress)
+    if (tl->_button_pressed)
     {
       tl->SlideOut (event->x);
     }

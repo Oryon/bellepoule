@@ -507,7 +507,8 @@ namespace Marshaller
             {
               if (n->type == XML_ELEMENT_NODE)
               {
-                if (g_strcmp0 ((gchar *)n->name, "Tireur") == 0)
+                if (   (g_strcmp0 ((gchar *)n->name, "Tireur") == 0)
+                    || (g_strcmp0 ((gchar *)n->name, "Equipe") == 0))
                 {
                   attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
                   if (attr)

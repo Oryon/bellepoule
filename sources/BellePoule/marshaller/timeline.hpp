@@ -60,8 +60,9 @@ namespace Marshaller
       GooCanvasItem *_goo_cursor;
       GooCanvasItem *_goo_cursor_time;
       Listener      *_listener;
+      gdouble        _button_press_origin;
       gdouble        _slideout_origin;
-      gboolean       _slideout_in_progress;
+      gboolean       _button_pressed;
 
       ~Timeline ();
 
