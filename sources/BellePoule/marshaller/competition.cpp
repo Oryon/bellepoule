@@ -441,12 +441,9 @@ namespace Marshaller
           Affinities *team_affinities = (Affinities *) team->GetPtrData (NULL, "affinities");
           xmlNode    *child           = xml_node->children;
 
-          _fencer_list = g_list_prepend (_fencer_list,
-                                         player);
-
           while (child)
           {
-            Fencer     *fencer     = (Fencer *) PlayerFactory::CreatePlayer ("Fencer");
+            Fencer *fencer = (Fencer *) PlayerFactory::CreatePlayer ("Fencer");
 
             fencer->Load (child);
 
@@ -494,6 +491,8 @@ namespace Marshaller
                      (GDestroyNotify) Affinities::Destroy);
 
     DeleteFencer (message);
+    _fencer_list = g_list_prepend (_fencer_list,
+                                   player);
 
     return player;
   }

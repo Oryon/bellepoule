@@ -209,7 +209,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *Batch::GetCurrentSelection ()
+  GList *Batch::RetreiveCurrentSelection ()
   {
     GList            *result    = NULL;
     GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("competition_treeview"));
@@ -330,9 +330,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *Batch::GetPendingJobs ()
+  GList *Batch::RetreivePendingJobs ()
   {
-    return _pending_list;
+    return g_list_copy (_pending_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -559,7 +559,7 @@ namespace Marshaller
                              guint             key,
                              guint             time)
   {
-    GList   *selected = GetCurrentSelection ();
+    GList   *selected = RetreiveCurrentSelection ();
     Job     *job      = (Job *) selected->data;
     guint32  job_ref  = job->GetNetID ();
 
@@ -568,6 +568,8 @@ namespace Marshaller
                             32,
                             (guchar *) &job_ref,
                             sizeof (job_ref));
+
+    g_list_free (selected);
   }
 
   // --------------------------------------------------------------------------------

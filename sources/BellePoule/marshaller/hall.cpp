@@ -1073,11 +1073,11 @@ namespace Marshaller
 
           if (gtk_toggle_button_get_active (all_jobs))
           {
-            job_list = g_list_copy (batch->GetPendingJobs ());
+            job_list = batch->RetreivePendingJobs ();
           }
           else
           {
-            job_list = g_list_copy (batch->GetCurrentSelection ());
+            job_list = batch->RetreiveCurrentSelection ();
           }
         }
 

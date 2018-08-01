@@ -69,13 +69,13 @@ namespace Marshaller
 
       GList *GetScheduledJobs ();
 
-      GList *GetPendingJobs ();
+      GList *RetreivePendingJobs ();
 
       Job *GetJob (guint netid);
 
       const gchar *GetName ();
 
-      GList *GetCurrentSelection ();
+      GList *RetreiveCurrentSelection ();
 
       void OnAssign ();
 
