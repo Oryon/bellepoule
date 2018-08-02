@@ -118,7 +118,8 @@ namespace Marshaller
       Piste::Listener *_listener;
       GooCanvasItem   *_root_item;
       GooCanvasItem   *_rect_item;
-      GooCanvasItem   *_progress_item;
+      GooCanvasItem   *_progress_rect;
+      GooCanvasItem   *_progress_bar;
       GooCanvasItem   *_id_item;
       GooCanvasItem   *_title_item;
       GooCanvasItem   *_referee_table;

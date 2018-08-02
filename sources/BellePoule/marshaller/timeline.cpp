@@ -174,6 +174,15 @@ namespace Marshaller
                            "stroke-pattern", NULL,
                            "pointer-events", GOO_CANVAS_EVENTS_NONE,
                            NULL);
+      goo_canvas_rect_new (GetRootItem (),
+                           x * _time_scale,
+                           0.0,
+                           0.7,
+                           _competition_scale,
+                           "fill-color-rgba", 0x00000060,
+                           "stroke-pattern", NULL,
+                           "pointer-events", GOO_CANVAS_EVENTS_NONE,
+                           NULL);
       g_date_time_unref (now);
     }
 

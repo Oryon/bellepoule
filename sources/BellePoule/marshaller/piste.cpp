@@ -71,7 +71,7 @@ namespace Marshaller
 
     // Progression
     {
-      _progress_item = goo_canvas_rect_new (_root_item,
+      _progress_rect = goo_canvas_rect_new (_root_item,
                                             _BORDER_W,
                                             _BORDER_W,
                                             0.0,
@@ -80,6 +80,16 @@ namespace Marshaller
                                             "line-width",      0.0,
                                             "pointer-events", GOO_CANVAS_EVENTS_NONE,
                                             NULL);
+
+      _progress_bar = goo_canvas_rect_new (_root_item,
+                                           _BORDER_W,
+                                           _BORDER_W,
+                                           0.0,
+                                           _H-(2.0*_BORDER_W),
+                                           "fill-color-rgba", 0x00000060,
+                                           "line-width",      0.0,
+                                           "pointer-events", GOO_CANVAS_EVENTS_NONE,
+                                           NULL);
     }
 
     // #
@@ -381,7 +391,11 @@ namespace Marshaller
     _color = g_strdup ("lightgrey");
     SetColor (_color);
 
-    g_object_set (G_OBJECT (_progress_item),
+    g_object_set (G_OBJECT (_progress_rect),
+                  "width", 0.0,
+                  NULL);
+
+    g_object_set (G_OBJECT (_progress_bar),
                   "width", 0.0,
                   NULL);
 
@@ -525,13 +539,20 @@ namespace Marshaller
 
         if (elapsed > 0)
         {
-          g_object_set (G_OBJECT (_progress_item),
+          g_object_set (G_OBJECT (_progress_rect),
                         "width", MIN (progress, _W),
+                        NULL);
+          g_object_set (G_OBJECT (_progress_bar),
+                        "x",     MIN (progress, _W),
+                        "width", 0.7,
                         NULL);
         }
         else
         {
-          g_object_set (G_OBJECT (_progress_item),
+          g_object_set (G_OBJECT (_progress_rect),
+                        "width", 0.0,
+                        NULL);
+          g_object_set (G_OBJECT (_progress_bar),
                         "width", 0.0,
                         NULL);
         }
