@@ -433,7 +433,7 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  GList *PlayersList::GetSelectedPlayers ()
+  GList *PlayersList::RetreiveSelectedPlayers ()
   {
     GList            *result         = NULL;
     GtkTreeSelection *selection      = gtk_tree_view_get_selection (_tree_view);
@@ -490,7 +490,7 @@ namespace People
     if (gtk_tree_selection_path_is_selected (gtk_tree_view_get_selection (_tree_view),
                                              toggeled_path))
     {
-      GList *selected_players = GetSelectedPlayers ();
+      GList *selected_players = RetreiveSelectedPlayers ();
 
       if (selected_players)
       {
@@ -1583,7 +1583,7 @@ namespace People
     g_list_free_full (_clipboard,
                       (GDestroyNotify) Object::TryToRelease);
 
-    _clipboard = players_list->GetSelectedPlayers ();
+    _clipboard = players_list->RetreiveSelectedPlayers ();
 
     {
       GList *current = _clipboard;

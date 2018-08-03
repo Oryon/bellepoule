@@ -271,7 +271,7 @@ namespace People
                                     guint             key,
                                     guint             time)
   {
-    GList   *selected    = GetSelectedPlayers ();
+    GList   *selected    = RetreiveSelectedPlayers ();
     Player  *referee     = (Player *) selected->data;
     guint32  referee_ref = referee->GetRef ();
 
@@ -280,6 +280,8 @@ namespace People
                             32,
                             (guchar *) &referee_ref,
                             sizeof (referee_ref));
+
+    g_list_free (selected);
   }
 
   // --------------------------------------------------------------------------------

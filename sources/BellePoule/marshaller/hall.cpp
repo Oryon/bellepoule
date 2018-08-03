@@ -45,11 +45,11 @@ namespace Marshaller
     : Object ("Hall"),
     CanvasModule ("hall.glade")
   {
-    _listener       = listener;
-    _piste_list     = NULL;
-    _selected_list  = NULL;
-    _redraw_timeout = 0;
-    _floating_job   = NULL;
+    _listener            = listener;
+    _piste_list          = NULL;
+    _selected_piste_list = NULL;
+    _redraw_timeout      = 0;
+    _floating_job        = NULL;
 
     _dragging = FALSE;
 
@@ -621,7 +621,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::RemoveSelected ()
   {
-    GList *current = _selected_list;
+    GList *current = _selected_piste_list;
 
     while (current)
     {
@@ -632,8 +632,8 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    g_list_free (_selected_list);
-    _selected_list = NULL;
+    g_list_free (_selected_piste_list);
+    _selected_piste_list = NULL;
 
     Redraw ();
   }
@@ -641,7 +641,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::AlignSelectedOnGrid ()
   {
-    GList *current = _selected_list;
+    GList *current = _selected_piste_list;
 
     while (current)
     {
@@ -657,7 +657,7 @@ namespace Marshaller
   void Hall::TranslateSelected (gdouble tx,
                                 gdouble ty)
   {
-    GList *current = _selected_list;
+    GList *current = _selected_piste_list;
 
     while (current)
     {
@@ -673,7 +673,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::RotateSelected ()
   {
-    GList *current = _selected_list;
+    GList *current = _selected_piste_list;
 
     while (current)
     {
@@ -768,7 +768,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::CancelSelection ()
   {
-    GList *current = _selected_list;
+    GList *current = _selected_piste_list;
 
     while (current)
     {
@@ -779,8 +779,8 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    g_list_free (_selected_list);
-    _selected_list = NULL;
+    g_list_free (_selected_piste_list);
+    _selected_piste_list = NULL;
 
     SetToolBarSensitivity ();
   }
@@ -789,21 +789,21 @@ namespace Marshaller
   void Hall::SetToolBarSensitivity ()
   {
     gtk_widget_set_sensitive (_glade->GetWidget ("remove_piste_button"),
-                              _selected_list != NULL);
+                              _selected_piste_list != NULL);
     gtk_widget_set_sensitive (_glade->GetWidget ("rotate_piste_button"),
-                              _selected_list != NULL);
+                              _selected_piste_list != NULL);
     gtk_widget_set_sensitive (_glade->GetWidget ("cone_togglebutton"),
                               FALSE);
-    if (_selected_list)
+    if (_selected_piste_list)
     {
-      GList    *current = _selected_list;
+      GList    *current = _selected_piste_list;
       gboolean  first   = FALSE;
 
       while (current)
       {
         Piste *piste = (Piste *) current->data;
 
-        if (current == _selected_list)
+        if (current == _selected_piste_list)
         {
           first = piste->IsBlocked ();
         }
@@ -837,8 +837,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::SelectPiste (Piste *piste)
   {
-    _selected_list = g_list_prepend (_selected_list,
-                                     piste);
+    _selected_piste_list = g_list_prepend (_selected_piste_list,
+                                           piste);
 
     if (_floating_job && (piste->Blured () == FALSE))
     {
@@ -880,10 +880,10 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::UnSelectPiste (Piste *piste)
   {
-    GList *selected_node = g_list_find (_selected_list, piste);
+    GList *selected_node = g_list_find (_selected_piste_list, piste);
 
-    _selected_list = g_list_remove_link (_selected_list,
-                                         selected_node);
+    _selected_piste_list = g_list_remove_link (_selected_piste_list,
+                                               selected_node);
     piste->UnSelect ();
 
     SetToolBarSensitivity ();
@@ -913,7 +913,7 @@ namespace Marshaller
     }
     else
     {
-      if (g_list_find (_selected_list, piste))
+      if (g_list_find (_selected_piste_list, piste))
       {
         if (event->state & GDK_CONTROL_MASK)
         {
@@ -1092,7 +1092,7 @@ namespace Marshaller
           }
           else
           {
-            referee_list = checkin_list->GetSelectedPlayers ();
+            referee_list = checkin_list->RetreiveSelectedPlayers ();
           }
         }
 
@@ -1174,7 +1174,7 @@ namespace Marshaller
 
       if (gtk_toggle_button_get_active (all_pistes) == FALSE)
       {
-        current = _selected_list;
+        current = _selected_piste_list;
       }
     }
 
@@ -1504,7 +1504,7 @@ namespace Marshaller
   void Hall::OnConeToggled (GtkToggleToolButton *widget,
                             Hall                *hall)
   {
-    GList *current = hall->_selected_list;
+    GList *current = hall->_selected_piste_list;
 
     while (current)
     {

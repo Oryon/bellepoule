@@ -54,7 +54,7 @@ namespace People
 
       GList *GetList ();
 
-      GList *GetSelectedPlayers ();
+      GList *RetreiveSelectedPlayers ();
 
       virtual guint PreparePrint (GtkPrintOperation *operation,
                                   GtkPrintContext   *context);

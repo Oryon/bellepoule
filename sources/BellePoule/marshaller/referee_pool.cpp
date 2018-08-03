@@ -454,7 +454,7 @@ namespace Marshaller
   void RefereePool::OnDisplayJobs (GtkWidget            *w,
                                    People::RefereesList *referee_list)
   {
-    GList *selection = referee_list->GetSelectedPlayers ();
+    GList *selection = referee_list->RetreiveSelectedPlayers ();
 
     if (selection)
     {

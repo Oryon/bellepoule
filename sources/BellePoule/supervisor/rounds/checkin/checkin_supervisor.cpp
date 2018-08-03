@@ -1154,7 +1154,7 @@ namespace People
                                          guint             key,
                                          guint             time)
   {
-    GList   *selected   = GetSelectedPlayers ();
+    GList   *selected   = RetreiveSelectedPlayers ();
     Player  *fencer     = (Player *) selected->data;
     guint32  fencer_ref = fencer->GetRef ();
 
@@ -1163,6 +1163,8 @@ namespace People
                             32,
                             (guchar *) &fencer_ref,
                             sizeof (fencer_ref));
+
+    g_list_free (selected);
   }
 
   // --------------------------------------------------------------------------------

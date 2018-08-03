@@ -86,7 +86,7 @@ namespace Marshaller
 
     private:
       GList       *_piste_list;
-      GList       *_selected_list;
+      GList       *_selected_piste_list;
       gboolean     _dragging;
       gdouble      _drag_x;
       gdouble      _drag_y;
