@@ -208,5 +208,7 @@ namespace Marshaller
       gboolean ReadJson (JsonReader *reader);
 
       void SetWarningColors (const gchar *warning);
+
+      void RefreshBookDate ();
   };
 }

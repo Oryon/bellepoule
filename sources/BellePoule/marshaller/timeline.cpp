@@ -235,7 +235,7 @@ namespace Marshaller
           Slot      *slot  = job->GetSlot ();
           GDateTime *start = slot->GetStartTime ();
           gdouble    x     = g_date_time_difference (start, _origin) * _time_scale;
-          gdouble    w     = (slot->GetDuration () - 3*G_TIME_SPAN_MINUTE) * _time_scale;
+          gdouble    w     = (slot->GetDuration () - 30*G_TIME_SPAN_SECOND) * _time_scale;
 
           goo_canvas_rect_new (GetRootItem (),
                                x,
@@ -281,46 +281,37 @@ namespace Marshaller
   void Timeline::SlideOut (gdouble  position,
                            gboolean one_shot)
   {
+    GDateTime *now = g_date_time_new_now_local ();
+    GDateTime *new_origin;
+
+    new_origin = g_date_time_add_full (_origin,
+                                       0,
+                                       0,
+                                       0,
+                                       0,
+                                       0,
+                                       ((_slideout_origin - position) / _time_scale) / G_TIME_SPAN_SECOND);
+
+    if (one_shot)
     {
-      GDateTime *now = g_date_time_new_now_local ();
-      GDateTime *new_origin;
-      GTimeSpan  step;
-
-      new_origin = g_date_time_add_full (_origin,
-                                         0,
-                                         0,
-                                         0,
-                                         0,
-                                         0,
-                                         ((_slideout_origin - position) / _time_scale) / G_TIME_SPAN_SECOND);
-
-      step = g_date_time_difference (new_origin,
-                                     now);
-      //if (   ((step < 0) && (-step < 2*G_TIME_SPAN_HOUR))
-          //|| ((step > 0) && (step  < 5*G_TIME_SPAN_HOUR)))
-      {
-        if (one_shot)
-        {
-          _slideout_origin = 0;
-        }
-        else
-        {
-          _slideout_origin = position;
-        }
-
-        g_date_time_unref (_origin);
-        _origin = new_origin;
-
-        Redraw ();
-
-        if (_listener)
-        {
-          _listener->OnTimelineCursorMoved ();
-        }
-      }
-
-      g_date_time_unref (now);
+      _slideout_origin = 0;
     }
+    else
+    {
+      _slideout_origin = position;
+    }
+
+    g_date_time_unref (_origin);
+    _origin = new_origin;
+
+    Redraw ();
+
+    if (_listener)
+    {
+      _listener->OnTimelineCursorMoved ();
+    }
+
+    g_date_time_unref (now);
   }
 
   // --------------------------------------------------------------------------------
@@ -373,26 +364,37 @@ namespace Marshaller
         tl->TranslateCursor ((new_cursor - tl->_cursor) * tl->_time_scale);
 
         {
-          GTimeSpan round = tl->GetTimeRectification (tl->_cursor);
+          GTimeSpan rectification = tl->GetTimeRectification (tl->_cursor);
 
-          tl->TranslateCursor (round * tl->_time_scale);
+          tl->TranslateCursor (rectification * tl->_time_scale);
         }
       }
       else
       {
-        GTimeSpan  rectification;
-        GDateTime *new_origin;
-        GTimeSpan  time_span = 0;
+        // Round origin
+        {
+          GTimeSpan  rectification;
+          GDateTime *new_origin;
+          GTimeSpan  time_span = 0;
 
-        time_span += g_date_time_get_minute (tl->_origin) * G_TIME_SPAN_MINUTE;
-        time_span += g_date_time_get_second (tl->_origin) * G_TIME_SPAN_SECOND;
+          time_span += g_date_time_get_minute (tl->_origin) * G_TIME_SPAN_MINUTE;
+          time_span += g_date_time_get_second (tl->_origin) * G_TIME_SPAN_SECOND;
 
-        rectification = tl->GetTimeRectification (time_span);
+          rectification = tl->GetTimeRectification (time_span);
 
-        new_origin = g_date_time_add (tl->_origin,
-                                      rectification);
-        g_date_time_unref (tl->_origin);
-        tl->_origin = new_origin;
+          new_origin = g_date_time_add (tl->_origin,
+                                        rectification);
+          g_date_time_unref (tl->_origin);
+          tl->_origin = new_origin;
+        }
+
+        // Round cursor
+        {
+          GDateTime *rounded = tl->RetreiveCursorTime (TRUE);
+
+          tl->SetCursorTime (rounded);
+          g_date_time_unref (rounded);
+        }
 
         tl->Redraw ();
       }
@@ -514,43 +516,46 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Timeline::TranslateCursor (gdouble delta)
   {
-    // Translation
+    if (delta != 0)
     {
-      GooCanvasBounds bounds;
-
-      goo_canvas_item_get_bounds (_goo_cursor,
-                                  &bounds);
-      if (delta < 0.0)
+      // Translation
       {
-        delta = MAX (delta, -bounds.x1);
+        GooCanvasBounds bounds;
+
+        goo_canvas_item_get_bounds (_goo_cursor,
+                                    &bounds);
+        if (delta < 0.0)
+        {
+          delta = MAX (delta, -bounds.x1);
+        }
+        else
+        {
+          delta = MIN (delta, _allocation.width - (bounds.x2 * 1.04));
+        }
+
+        goo_canvas_item_translate (_goo_cursor,
+                                   delta,
+                                   0.0);
+        goo_canvas_item_translate (_goo_cursor_time,
+                                   delta,
+                                   0.0);
       }
-      else
+
+      // Update the cursor attribute
       {
-        delta = MIN (delta, _allocation.width - (bounds.x2 * 1.04));
+        GooCanvasBounds bounds;
+
+        goo_canvas_item_get_bounds (_goo_cursor,
+                                    &bounds);
+        _cursor = bounds.x1 / _time_scale;
       }
 
-      goo_canvas_item_translate (_goo_cursor,
-                                 delta,
-                                 0.0);
-      goo_canvas_item_translate (_goo_cursor_time,
-                                 delta,
-                                 0.0);
-    }
+      RefreshCursorTime ();
 
-    // Update the cursor attribute
-    {
-      GooCanvasBounds bounds;
-
-      goo_canvas_item_get_bounds (_goo_cursor,
-                                  &bounds);
-      _cursor = bounds.x1 / _time_scale;
-    }
-
-    RefreshCursorTime ();
-
-    if (_listener)
-    {
-      _listener->OnTimelineCursorMoved ();
+      if (_listener)
+      {
+        _listener->OnTimelineCursorMoved ();
+      }
     }
   }
 

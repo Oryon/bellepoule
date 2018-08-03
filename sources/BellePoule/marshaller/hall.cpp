@@ -1031,6 +1031,25 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::RefreshBookDate ()
+  {
+    GDateTime *new_date    = _timeline->RetreiveCursorTime (TRUE);
+    GtkLabel  *popup_clock = GTK_LABEL (_glade->GetWidget ("cursor_date"));
+    gchar     *text;
+
+    text = g_strdup_printf ("<span weight=\"bold\" background=\"black\" foreground=\"white\"> %02d:%02d </span>",
+                            g_date_time_get_hour   (new_date),
+                            g_date_time_get_minute (new_date));
+
+    gtk_label_set_markup (popup_clock,
+                          text);
+
+    g_free (text);
+    g_date_time_unref (new_date);
+  }
+
+
+  // --------------------------------------------------------------------------------
   gboolean Hall::OnBatchAssignmentRequest (Batch *batch)
   {
     Competition *competition = batch->GetCompetition ();
@@ -1058,6 +1077,14 @@ namespace Marshaller
         gtk_toggle_button_set_active (toggle, TRUE);
         toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_pistes"));
         gtk_toggle_button_set_active (toggle, TRUE);
+      }
+
+      {
+        GDateTime *cursor = _timeline->RetreiveCursorTime (TRUE);
+
+        _timeline->SetCursorTime (cursor);
+
+        g_date_time_unref (cursor);
       }
 
       done = gtk_dialog_run (GTK_DIALOG (dialog)) == 0;
@@ -1164,7 +1191,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   GList *Hall::GetFreePisteSlots (GTimeSpan duration)
   {
-    GDateTime *when       = _timeline->RetreiveCursorTime ();
+    GDateTime *when       = _timeline->RetreiveCursorTime (TRUE);
     GList     *free_slots = NULL;
     GList     *current    = _piste_list;
 
@@ -1306,79 +1333,61 @@ namespace Marshaller
   {
     _referee_pool->RefreshAvailability (_timeline,
                                         _piste_list);
+
+    RefreshBookDate ();
   }
 
   // --------------------------------------------------------------------------------
   void Hall::OnTimelineCursorMoved ()
   {
-    GDateTime *cursor         = _timeline->RetreiveCursorTime ();
-    GDateTime *rounded_cursor = _timeline->RetreiveCursorTime (TRUE);
+    GDateTime *cursor        = _timeline->RetreiveCursorTime ();
+    GList     *current_piste = _piste_list;
 
+    while (current_piste)
     {
-      GtkLabel *popup_clock = GTK_LABEL (_glade->GetWidget ("cursor_date"));
-      gchar    *text;
+      Piste *piste = (Piste *) current_piste->data;
 
-      text = g_strdup_printf ("<span weight=\"bold\" background=\"black\" foreground=\"white\"> %02d:%02d </span>",
-                              g_date_time_get_hour   (cursor),
-                              g_date_time_get_minute (cursor));
+      piste->DisplayAtTime (cursor);
 
-      gtk_label_set_markup (popup_clock,
-                            text);
-
-      g_free (text);
-    }
-
-    {
-      GList *current_piste = _piste_list;
-
-      while (current_piste)
+      if (_floating_job)
       {
-        Piste *piste = (Piste *) current_piste->data;
-
-        piste->DisplayAtTime (rounded_cursor);
-
-        if (_floating_job)
+        if (piste->GetSlotAt (cursor))
         {
-          if (piste->GetSlotAt (rounded_cursor))
+          piste->Blur ();
+        }
+        else
+        {
+          GList     *current_referee = (GList *) _floating_job->GetPtrData (this, "floating_referees");
+          GTimeSpan  duration        = _floating_job->GetRegularDuration ();
+          Slot      *dest_slot       = piste->GetFreeSlot (cursor, duration);
+
+          if (dest_slot == FALSE)
           {
             piste->Blur ();
           }
           else
           {
-            GList     *current_referee = (GList *) _floating_job->GetPtrData (this, "floating_referees");
-            GTimeSpan  duration        = _floating_job->GetRegularDuration ();
-            Slot      *dest_slot       = piste->GetFreeSlot (rounded_cursor, duration);
+            while (current_referee)
+            {
+              EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
 
-            if (dest_slot == FALSE)
-            {
-              piste->Blur ();
-            }
-            else
-            {
-              while (current_referee)
+              if (referee->IsAvailableFor (dest_slot,
+                                           duration) == FALSE)
               {
-                EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
-
-                if (referee->IsAvailableFor (dest_slot,
-                                             duration) == FALSE)
-                {
-                  piste->Blur ();
-                  break;
-                }
-
-                current_referee = g_list_next (current_referee);
+                piste->Blur ();
+                break;
               }
-              dest_slot->Release ();
+
+              current_referee = g_list_next (current_referee);
             }
+            dest_slot->Release ();
           }
         }
-
-        current_piste = g_list_next (current_piste);
       }
-    }
 
+      current_piste = g_list_next (current_piste);
+    }
     g_date_time_unref (cursor);
-    g_date_time_unref (rounded_cursor);
   }
 
   // --------------------------------------------------------------------------------

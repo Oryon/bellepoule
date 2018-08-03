@@ -785,13 +785,20 @@ namespace Table
 
       // Create the tables
       {
+        guint size = 1 << t;
+
         _tables[t] = new Table (this,
                                 _supervisor->GetXmlPlayerTag (),
                                 _first_place,
-                                1 << t,
+                                size,
                                 _nb_tables - t-1,
                                 "competition", competition->GetNetID (),
                                 NULL);
+
+        if (size <= nb_players)
+        {
+          _tables[t]->ConfigureExtensions ();
+        }
 
         if (t > 0)
         {
@@ -1319,6 +1326,12 @@ namespace Table
           table_set->SetPlayerToMatch (parent_data->_match,
                                        data->_match->GetWinner (),
                                        g_node_child_position (node->parent, node));
+
+          if (parent_data->_match->AdjustRoadmap (data->_match))
+          {
+            FillInNode (node->parent,
+                        table_set);
+          }
         }
         else
         {
@@ -2038,11 +2051,12 @@ namespace Table
           {
             gchar *start_time = message->GetString  ("start_time");
 
-            match->SetStartTime (new FieTime (start_time));
-            g_free (start_time);
+            match->SetStartTime    (new FieTime (start_time));
+            match->SetDurationSpan (message->GetInteger ("duration_span"));
+            match->SetPiste        (message->GetInteger ("piste"));
+            match->AddReferee      (referee);
 
-            match->SetPiste (message->GetInteger ("piste"));
-            match->AddReferee (referee);
+            g_free (start_time);
           }
           else
           {
@@ -2265,6 +2279,12 @@ namespace Table
           table_set->SetPlayerToMatch (parent_data->_match,
                                        winner,
                                        g_node_child_position (parent, node));
+
+          if (parent_data->_match->AdjustRoadmap (data->_match))
+          {
+            FillInNode (node->parent,
+                        table_set);
+          }
         }
       }
     }

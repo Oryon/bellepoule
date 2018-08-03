@@ -74,6 +74,10 @@ class Match : public Object,
 
     void SetDuration (guint duration);
 
+    void SetDurationSpan (guint span);
+
+    gboolean AdjustRoadmap (Match *according_to);
+
     guint GetPiste ();
 
     FieTime *GetStartTime ();
@@ -144,6 +148,7 @@ class Match : public Object,
     guint     _piste;
     FieTime  *_start_time;
     guint     _duration_sec;
+    guint     _duration_span;
 
     gboolean ScoreIsNumber (gchar *score);
 

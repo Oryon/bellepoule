@@ -85,6 +85,36 @@ namespace Marshaller
 
       ConnectDndSource (source);
     }
+
+    {
+      gchar *extension1 = message->GetString ("extension1");
+      gchar *extension2 = message->GetString ("extension2");
+
+      if (extension1)
+      {
+        gtk_button_set_label (GTK_BUTTON (_glade->GetWidget ("extension1")),
+                              extension1);
+        gtk_widget_show (_glade->GetWidget ("extension_viewport"));
+
+        if (extension2)
+        {
+          gtk_button_set_label (GTK_BUTTON (_glade->GetWidget ("extension2")),
+                                extension2);
+          gtk_widget_show (_glade->GetWidget ("extension2"));
+        }
+        else
+        {
+          gtk_widget_hide (_glade->GetWidget ("extension2"));
+        }
+      }
+      else
+      {
+        gtk_widget_hide (_glade->GetWidget ("extension_viewport"));
+      }
+
+      g_free (extension1);
+      g_free (extension2);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -573,6 +603,35 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Batch::OnExtension ()
+  {
+    OnCancelAssign ();
+
+    {
+      guint  factor  = 1;
+      GList *current = _pending_list;
+
+      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("extension1"))))
+      {
+        factor = 2;
+      }
+      else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("extension2"))))
+      {
+        factor = 3;
+      }
+
+      while (current)
+      {
+        Job *job = (Job *) current->data;
+
+        job->ExtendDuration (factor);
+
+        current = g_list_next (current);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Batch::OnAssign ()
   {
     _listener->OnBatchAssignmentRequest (this);
@@ -646,5 +705,17 @@ namespace Marshaller
     Batch *b = dynamic_cast <Batch *> (owner);
 
     b->OnCancelAssign ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_extension_toggled (GtkToggleButton *togglebutton,
+                                                        Object          *owner)
+  {
+    if (gtk_toggle_button_get_active (togglebutton))
+    {
+      Batch *b = dynamic_cast <Batch *> (owner);
+
+      b->OnExtension ();
+    }
   }
 }

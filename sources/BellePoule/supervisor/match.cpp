@@ -65,10 +65,11 @@ Match::~Match ()
 // --------------------------------------------------------------------------------
 void Match::Init (Data *max_score)
 {
-  _referee_list = NULL;
-  _start_time   = NULL;
-  _duration_sec = 0;
-  _piste        = 0;
+  _referee_list  = NULL;
+  _start_time    = NULL;
+  _duration_sec  = 0;
+  _duration_span = 1;
+  _piste         = 0;
 
   _max_score = max_score;
 
@@ -443,6 +444,12 @@ void Match::Save (XmlScheme *xml_scheme)
                                         "%d", _duration_sec);
     }
 
+    if ((_duration_sec == 0) && (_duration_span > 1))
+    {
+      xml_scheme->WriteFormatAttribute ("Portee",
+                                        "%d", _duration_span);
+    }
+
     {
       GSList *current = _referee_list;
 
@@ -597,6 +604,46 @@ void Match::SetStartTime (FieTime *time)
 void Match::SetDuration (guint duration)
 {
   _duration_sec = duration;
+}
+
+// --------------------------------------------------------------------------------
+void Match::SetDurationSpan (guint span)
+{
+  _duration_span = span;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Match::AdjustRoadmap (Match *according_to)
+{
+  if (_opponents[0]._is_known && _opponents[1]._is_known)
+  {
+    if ((_start_time == NULL) && (according_to->_duration_span > 1))
+    {
+      {
+        GDateTime *start = g_date_time_add_full (according_to->_start_time->GetGDateTime (),
+                                                 0,
+                                                 0,
+                                                 0,
+                                                 0,
+                                                 1,
+                                                 according_to->_duration_sec);
+
+        SetStartTime (new FieTime (start));
+        g_date_time_unref (start);
+      }
+
+      _duration_span = according_to->_duration_span - 1;
+
+      _piste = according_to->_piste;
+
+      g_slist_free (_referee_list);
+      _referee_list = g_slist_copy (according_to->_referee_list);
+
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -782,6 +829,9 @@ void Match::FeedParcel (Net::Message *parcel)
 
   parcel->Set ("duration_sec",
                _duration_sec);
+
+  parcel->Set ("duration_span",
+               _duration_span);
 }
 
 // --------------------------------------------------------------------------------
@@ -804,16 +854,33 @@ void Match::Timestamp ()
 {
   if (_start_time && IsOver ())
   {
-    GDateTime *start = _start_time->GetGDateTime ();
-    GDateTime *now   = g_date_time_new_now_local ();
-    GTimeSpan  span  = g_date_time_difference (now, start);
+    GDateTime *now_rounded;
 
-    if (span < 0)
     {
-      span = G_TIME_SPAN_SECOND;
+      GDateTime *now = g_date_time_new_now_local ();
+
+      now_rounded = g_date_time_add_full (now,
+                                          0,
+                                          0,
+                                          0,
+                                          0,
+                                          0,
+                                          -g_date_time_get_second (now));
+      g_date_time_unref (now);
     }
 
-    _duration_sec = (guint) (span / G_TIME_SPAN_SECOND);
+    {
+      GDateTime *start = _start_time->GetGDateTime ();
+      GTimeSpan  span  = g_date_time_difference (now_rounded, start);
+
+      if (span < 0)
+      {
+        span = G_TIME_SPAN_SECOND;
+      }
+      _duration_sec = (guint) (span / G_TIME_SPAN_SECOND);
+
+      g_date_time_unref (now_rounded);
+    }
 
     Spread ();
   }

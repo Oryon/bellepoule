@@ -48,11 +48,21 @@ namespace Marshaller
     _over             = FALSE;
     _workload_units   = message->GetInteger ("workload_units");
 
+    if (message->GetInteger ("duration_span"))
+    {
+      _duration_span = message->GetInteger ("duration_span");
+    }
+    else
+    {
+      _duration_span = 1;
+    }
+
     Disclose ("Roadmap");
-    _parcel->Set ("competition", message->GetInteger ("competition"));
-    _parcel->Set ("stage",       message->GetInteger ("stage"));
-    _parcel->Set ("batch",       message->GetInteger ("batch"));
-    _parcel->Set ("source",      _netid);
+    _parcel->Set ("competition",   message->GetInteger ("competition"));
+    _parcel->Set ("stage",         message->GetInteger ("stage"));
+    _parcel->Set ("batch",         message->GetInteger ("batch"));
+    _parcel->Set ("source",        _netid);
+    _parcel->Set ("duration_span", _duration_span);
     _parcel->SetFitness (1);
   }
 
@@ -110,7 +120,14 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   GTimeSpan Job::GetRegularDuration ()
   {
-    return _regular_duration;
+    return _regular_duration * _duration_span;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Job::ExtendDuration (guint span)
+  {
+    _duration_span = span;
+    _parcel->Set ("duration_span", _duration_span);
   }
 
   // --------------------------------------------------------------------------------
@@ -127,7 +144,7 @@ namespace Marshaller
       if (_slot != NULL)
       {
         _over = TRUE;
-        _slot->SetDuration (MAX (duration, 15 * G_TIME_SPAN_MINUTE));
+        _slot->SetDuration (duration);
       }
     }
   }
@@ -291,6 +308,6 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Job::Dump (Job *what)
   {
-    printf ("%s\n", what->_name);
+    printf ("%s::%s\n", what->_batch->GetName (), what->_name);
   }
 }

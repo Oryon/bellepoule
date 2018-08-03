@@ -58,6 +58,8 @@ namespace Marshaller
 
       GTimeSpan GetRegularDuration ();
 
+      void ExtendDuration (guint span);
+
       gboolean IsOver ();
 
       void SetRealDuration (GTimeSpan duration);
@@ -103,6 +105,7 @@ namespace Marshaller
       guint      _kinship;
       guint      _workload_units;
       GTimeSpan  _regular_duration;
+      guint      _duration_span;
       gboolean   _over;
 
       ~Job ();

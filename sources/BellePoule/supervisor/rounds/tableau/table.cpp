@@ -97,6 +97,25 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  void Table::ConfigureExtensions ()
+  {
+    if (_size >= 4)
+    {
+      gchar *extension = g_strdup_printf ("T%d", _size/2);
+
+      _parcel->Set ("extension1", extension);
+      g_free (extension);
+    }
+    if (_size >= 8)
+    {
+      gchar *extension = g_strdup_printf ("T%d", _size/4);
+
+      _parcel->Set ("extension2", extension);
+      g_free (extension);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   guint Table::GetSize ()
   {
     return _size;
@@ -505,6 +524,13 @@ namespace Table
             match->SetDuration (atoi (attr));
             xmlFree (attr);
           }
+
+          attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Portee");
+          if (attr)
+          {
+            match->SetDurationSpan (atoi (attr));
+            xmlFree (attr);
+          }
         }
         else if (g_strcmp0 ((char *) n->name, "Arbitre") == 0)
         {
@@ -735,6 +761,7 @@ namespace Table
 
       match->SetPiste          (0);
       match->SetStartTime      (NULL);
+      match->SetDurationSpan   (1);
       match->RemoveAllReferees ();
 
       current_match = g_slist_next (current_match);

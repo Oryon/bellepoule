@@ -79,6 +79,8 @@ namespace Marshaller
 
       void OnAssign ();
 
+      void OnExtension ();
+
       void OnCancelAssign ();
 
       void OnValidateAssign ();

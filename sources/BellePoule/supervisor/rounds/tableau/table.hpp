@@ -61,6 +61,8 @@ namespace Table
 
       guint GetNumber ();
 
+      void ConfigureExtensions ();
+
       void Show (guint    at_column,
                  gboolean display_header);
 
