@@ -277,6 +277,14 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Marshaller::OnRefereeUpdated (People::RefereesList *referee_list,
+                                     Player               *referee)
+  {
+    _referee_pool->UpdateAffinities (referee);
+    _hall->OnNewWarningPolicy ();
+  }
+
+  // --------------------------------------------------------------------------------
   void Marshaller::OnOpenCheckin (People::RefereesList *referee_list)
   {
     {

@@ -377,6 +377,15 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void RefereePool::UpdateAffinities (Player *referee)
+  {
+    referee->SetData (NULL,
+                      "affinities",
+                      new Affinities (referee),
+                      (GDestroyNotify) Affinities::Destroy);
+  }
+
+  // --------------------------------------------------------------------------------
   void RefereePool::ManageReferee (Net::Message *message)
   {
     gchar     *xml = message->GetString ("xml");
@@ -407,10 +416,7 @@ namespace Marshaller
 
             if (referee_list->GetPlayerFromRef (referee->GetRef ()) == NULL)
             {
-              referee->SetData (NULL,
-                                "affinities",
-                                new Affinities (referee),
-                                (GDestroyNotify) Affinities::Destroy);
+              UpdateAffinities (referee);
 
               referee_list->RegisterPlayer (referee,
                                             NULL);

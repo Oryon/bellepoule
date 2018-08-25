@@ -74,6 +74,9 @@ namespace Marshaller
 
       void OnOpenCheckin (People::RefereesList *referee_list);
 
+      void OnRefereeUpdated (People::RefereesList *referee_list,
+                             Player               *referee);
+
       guint PreparePrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context);
 

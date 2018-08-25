@@ -151,6 +151,12 @@ namespace People
 
     Checkin::OnFormEvent (referee,
                           event);
+
+    if (_listener)
+    {
+      _listener->OnRefereeUpdated (this,
+                                   referee);
+    }
   }
 
   // --------------------------------------------------------------------------------

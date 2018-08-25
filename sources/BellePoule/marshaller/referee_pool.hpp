@@ -63,6 +63,8 @@ namespace Marshaller
 
       void SetDndPeerListener (DndConfig::Listener *listener);
 
+      void UpdateAffinities (Player *referee);
+
     private:
       GList    *_list_by_weapon;
       Timeline *_timeline;

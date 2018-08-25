@@ -32,6 +32,8 @@ namespace People
       struct Listener
       {
         virtual void OnOpenCheckin (RefereesList *referee_list) = 0;
+        virtual void OnRefereeUpdated (RefereesList *referee_list,
+                                       Player       *referee)   = 0;
       };
 
     public:
