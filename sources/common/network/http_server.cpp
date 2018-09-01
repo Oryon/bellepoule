@@ -210,8 +210,6 @@ namespace Net
                                      this);
         }
 
-        if (g_strrstr (request_body->_data,
-                       "[Header]") == NULL)
         {
           gchar *key = _client->GetSecretKey (url);
 

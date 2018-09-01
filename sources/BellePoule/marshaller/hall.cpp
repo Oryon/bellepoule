@@ -837,8 +837,9 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::SelectPiste (Piste *piste)
   {
-    _selected_piste_list = g_list_prepend (_selected_piste_list,
-                                           piste);
+    _selected_piste_list = g_list_insert_sorted (_selected_piste_list,
+                                                 piste,
+                                                 GCompareFunc (Piste::CompareId));
 
     if (_floating_job && (piste->Blured () == FALSE))
     {

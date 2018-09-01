@@ -384,6 +384,9 @@ namespace Marshaller
     gtk_notebook_append_page (to,
                               root,
                               _glade->GetWidget ("notebook_title"));
+    gtk_notebook_set_tab_reorderable (to,
+                                      GetRootWidget (),
+                                      TRUE);
   }
 
   // --------------------------------------------------------------------------------
