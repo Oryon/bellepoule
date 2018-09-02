@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "network/message.hpp"
+
 #include "clock.hpp"
 
 namespace Marshaller
@@ -24,6 +26,8 @@ namespace Marshaller
   {
     _listener = listener;
     _tag      = 0;
+    _offset   = 0;
+    _absolute = NULL;
 
     OnTimeout (this);
   }
@@ -35,6 +39,28 @@ namespace Marshaller
     {
       g_source_remove (_tag);
     }
+
+    if (_absolute)
+    {
+      g_date_time_unref (_absolute);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Clock::Set (GDateTime *to)
+  {
+    _offset = g_date_time_difference (to,
+                                      _absolute);
+    OnTimeout (this);
+
+    Disclose ("ClockOffset");
+    Spread ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Clock::FeedParcel (Net::Message *parcel)
+  {
+    parcel->Set ("offset", (gint) (_offset/G_TIME_SPAN_SECOND));
   }
 
   // --------------------------------------------------------------------------------
@@ -52,14 +78,24 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   gboolean Clock::OnTimeout (Clock *clock)
   {
-    GDateTime *now  = g_date_time_new_now_local ();
-    gchar     *time = g_strdup_printf ("%02d:%02d",
-                                       g_date_time_get_hour   (now),
-                                       g_date_time_get_minute (now));
+    if (clock->_absolute)
+    {
+      g_date_time_unref (clock->_absolute);
+    }
+    clock->_absolute = g_date_time_new_now_local ();
 
-    clock->_listener->OnNewTime (time);
+    {
+      GDateTime *adjusted = g_date_time_add (clock->_absolute, clock->_offset);
+      gchar     *time     = g_strdup_printf ("%02d:%02d",
+                                             g_date_time_get_hour   (adjusted),
+                                             g_date_time_get_minute (adjusted));
+
+      clock->_listener->OnNewTime (time);
+      g_free (time);
+      g_date_time_unref (adjusted);
+    }
+
     clock->SetupTimeout ();
-    g_date_time_unref (now);
 
     return G_SOURCE_REMOVE;
   }

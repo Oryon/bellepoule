@@ -241,6 +241,17 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void Message::Set (const gchar *field,
+                     const gint   value)
+  {
+    g_key_file_set_int64 (_key_file,
+                          "Body",
+                          field,
+                          value);
+    _is_valid = TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
   void Message::Remove (const gchar *field)
   {
     GError *error = NULL;
@@ -266,6 +277,15 @@ namespace Net
 
   // --------------------------------------------------------------------------------
   guint Message::GetInteger (const gchar *field)
+  {
+    return g_key_file_get_uint64 (_key_file,
+                                  "Body",
+                                  field,
+                                  NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  gint Message::GetSignedInteger (const gchar *field)
   {
     return g_key_file_get_uint64 (_key_file,
                                   "Body",

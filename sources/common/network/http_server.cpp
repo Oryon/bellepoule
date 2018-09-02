@@ -210,6 +210,7 @@ namespace Net
                                      this);
         }
 
+        if (_iv)
         {
           gchar *key = _client->GetSecretKey (url);
 

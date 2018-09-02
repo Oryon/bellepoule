@@ -654,6 +654,18 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::AlterCurrentTime ()
+  {
+#if defined(DEBUG)
+    GDateTime *cursor = _timeline->RetreiveCursorTime (TRUE);
+
+    _clock->Set (cursor);
+
+    g_date_time_unref (cursor);
+#endif
+  }
+
+  // --------------------------------------------------------------------------------
   void Hall::TranslateSelected (gdouble tx,
                                 gdouble ty)
   {
@@ -1692,6 +1704,15 @@ namespace Marshaller
     Hall *h = dynamic_cast <Hall *> (owner);
 
     h->RemoveSelected ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_clock_button_clicked (GtkButton *widget,
+                                                           Object    *owner)
+  {
+    Hall *h = dynamic_cast <Hall *> (owner);
+
+    h->AlterCurrentTime ();
   }
 
   // --------------------------------------------------------------------------------

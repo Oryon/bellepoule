@@ -67,7 +67,7 @@ namespace Marshaller
 
       void RemoveSelected ();
 
-      void AlignSelectedOnGrid ();
+      void AlterCurrentTime ();
 
       void ManageCompetition (Net::Message *message,
                               GtkNotebook  *notebook);
@@ -210,5 +210,7 @@ namespace Marshaller
       void SetWarningColors (const gchar *warning);
 
       void RefreshBookDate ();
+
+      void AlignSelectedOnGrid ();
   };
 }

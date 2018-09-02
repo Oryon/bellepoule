@@ -18,6 +18,11 @@
 
 #include "util/object.hpp"
 
+namespace Net
+{
+  class Message;
+}
+
 namespace Marshaller
 {
   class Clock : public Object
@@ -31,14 +36,20 @@ namespace Marshaller
     public:
       Clock (Listener *listener);
 
+      void Set (GDateTime *to);
+
     private:
-      Listener *_listener;
-      guint     _tag;
+      Listener  *_listener;
+      guint      _tag;
+      GTimeSpan  _offset;
+      GDateTime *_absolute;
 
       ~Clock ();
 
       void SetupTimeout ();
 
       static gboolean OnTimeout (Clock *clock);
+
+      void FeedParcel (Net::Message *parcel);
   };
 }

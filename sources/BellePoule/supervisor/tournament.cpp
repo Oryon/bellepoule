@@ -43,6 +43,7 @@
 #include "facebook/facebook.hpp"
 #include "contest.hpp"
 #include "publication.hpp"
+#include "match.hpp"
 #include "askfred/reader.hpp"
 
 #include "tournament.hpp"
@@ -366,6 +367,10 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
   {
     Net::Ring::_broker->OnHandshake (message,
                                      this);
+  }
+  else if (message->Is ("ClockOffset"))
+  {
+    Match::OnClockOffset (message);
   }
   else if (message->Is ("MarshallerCredentials"))
   {

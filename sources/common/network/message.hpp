@@ -55,11 +55,16 @@ namespace Net
       void Set (const gchar *field,
                 const guint  value);
 
+      void Set (const gchar *field,
+                const gint   value);
+
       void Remove (const gchar *field);
 
       gchar *GetString (const gchar *field);
 
       guint GetInteger (const gchar *field);
+
+      gint GetSignedInteger (const gchar *field);
 
       gchar *GetParcel ();
 

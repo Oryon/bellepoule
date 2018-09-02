@@ -580,17 +580,7 @@ namespace Pool
   {
     if (_start_time)
     {
-      GDateTime *start = _start_time->GetGDateTime ();
-      GDateTime *now   = g_date_time_new_now_local ();
-      GTimeSpan  span  = g_date_time_difference (now, start);
-
-      if (span < 0)
-      {
-        span = G_TIME_SPAN_SECOND;
-      }
-
-      _duration_sec = (guint) (span / G_TIME_SPAN_SECOND);
-
+      _duration_sec = Match::GetDuration (_start_time->GetGDateTime ());
       Spread ();
     }
   }

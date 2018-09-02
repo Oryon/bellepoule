@@ -28,6 +28,8 @@
 
 #include "match.hpp"
 
+GTimeSpan Match::_clock_offset = 0;
+
 // --------------------------------------------------------------------------------
 Match::Match (Data *max_score)
   : Object ("Match")
@@ -854,36 +856,50 @@ void Match::Timestamp ()
 {
   if (_start_time && IsOver ())
   {
-    GDateTime *now_rounded;
-
-    {
-      GDateTime *now = g_date_time_new_now_local ();
-
-      now_rounded = g_date_time_add_full (now,
-                                          0,
-                                          0,
-                                          0,
-                                          0,
-                                          0,
-                                          -g_date_time_get_second (now));
-      g_date_time_unref (now);
-    }
-
-    {
-      GDateTime *start = _start_time->GetGDateTime ();
-      GTimeSpan  span  = g_date_time_difference (now_rounded, start);
-
-      if (span < 0)
-      {
-        span = G_TIME_SPAN_SECOND;
-      }
-      _duration_sec = (guint) (span / G_TIME_SPAN_SECOND);
-
-      g_date_time_unref (now_rounded);
-    }
-
+    _duration_sec = GetDuration (_start_time->GetGDateTime ());
     Spread ();
   }
+}
+
+// --------------------------------------------------------------------------------
+void Match::OnClockOffset (Net::Message *message)
+{
+  _clock_offset = message->GetSignedInteger ("offset");
+}
+
+// --------------------------------------------------------------------------------
+guint Match::GetDuration (GDateTime *start_time)
+{
+  guint      duration;
+  GDateTime *now_rounded;
+
+  {
+    GDateTime *now = g_date_time_new_now_local ();
+
+    now_rounded = g_date_time_add_full (now,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        -g_date_time_get_second (now) + _clock_offset);
+    g_date_time_unref (now);
+  }
+
+  {
+    GTimeSpan span = g_date_time_difference (now_rounded,
+                                             start_time);
+
+    if (span < 0)
+    {
+      span = G_TIME_SPAN_SECOND;
+    }
+    duration = (guint) (span / G_TIME_SPAN_SECOND);
+
+    g_date_time_unref (now_rounded);
+  }
+
+  return duration;
 }
 
 // --------------------------------------------------------------------------------

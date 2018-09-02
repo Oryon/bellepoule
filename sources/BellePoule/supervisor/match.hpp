@@ -131,6 +131,10 @@ class Match : public Object,
     static gint Compare (Match *A,
                          Match *B);
 
+    static void OnClockOffset (Net::Message *message);
+
+    static guint GetDuration (GDateTime *start_time);
+
   private:
     struct Opponent
     {
@@ -149,6 +153,8 @@ class Match : public Object,
     FieTime  *_start_time;
     guint     _duration_sec;
     guint     _duration_span;
+
+    static GTimeSpan _clock_offset;
 
     gboolean ScoreIsNumber (gchar *score);
 
