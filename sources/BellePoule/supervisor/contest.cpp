@@ -909,6 +909,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 // --------------------------------------------------------------------------------
 Contest::~Contest ()
 {
+  Recall ();
+
   _state = LEAVING;
 
   // www

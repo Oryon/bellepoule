@@ -363,7 +363,7 @@ namespace Marshaller
     guint        id          = message->GetNetID ();
     Competition *competition = GetCompetition (id);
 
-    if (competition)
+    if (competition && (competition->GetBatches () == NULL))
     {
       GList *node = g_list_find (_competition_list,
                                  competition);

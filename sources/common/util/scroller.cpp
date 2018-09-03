@@ -56,7 +56,6 @@ gboolean Scroller::Scroll (Scroller *scroller)
 {
   gdouble adjy = gtk_adjustment_get_value (scroller->_vadj);
 
-  printf ("%f\n", scroller->_step);
   gtk_adjustment_set_value (scroller->_vadj,
                             adjy + scroller->_step);
 
