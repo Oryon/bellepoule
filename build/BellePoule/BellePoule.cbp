@@ -307,16 +307,16 @@
 		<Unit filename="../../sources/BellePoule/marshaller/timeline.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
-    <Unit filename="../../sources/BellePoule/supervisor/askfred/reader.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/askfred/reader.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-    <Unit filename="../../sources/BellePoule/supervisor/askfred/reader.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/askfred/reader.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-    <Unit filename="../../sources/BellePoule/supervisor/askfred/writer.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/askfred/writer.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-    <Unit filename="../../sources/BellePoule/supervisor/askfred/writer.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/askfred/writer.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/attendees.cpp">
@@ -851,6 +851,12 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/util/player.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/scroller.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/scroller.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/util/sensitivity_trigger.cpp">

@@ -26,6 +26,7 @@
 #include "util/attribute.hpp"
 #include "util/dnd_config.hpp"
 
+#include "scroller.hpp"
 #include "drop_zone.hpp"
 #include "canvas_module.hpp"
 
@@ -44,13 +45,14 @@ CanvasModule::CanvasModule (const gchar *glade_file,
   _zoom_factor      = 1.0;
   _h_adj            = 0.0;
   _v_adj            = 0.0;
+  _scroller         = NULL;
 }
 
 // --------------------------------------------------------------------------------
 CanvasModule::~CanvasModule ()
 {
   Wipe ();
-
+  Object::TryToRelease (_scroller);
   UnPlug ();
 }
 
@@ -65,6 +67,8 @@ void CanvasModule::OnPlugged ()
 
     gtk_container_add (GTK_CONTAINER (_scrolled_window), GTK_WIDGET (_canvas));
     gtk_widget_show_all (GTK_WIDGET (_canvas));
+
+    _scroller = new Scroller (_scrolled_window);
   }
 }
 
@@ -107,8 +111,9 @@ GooCanvas *CanvasModule::CreateCanvas ()
   GooCanvas *canvas = GOO_CANVAS (goo_canvas_new ());
 
   g_object_set (G_OBJECT (canvas),
-                "automatic-bounds", TRUE,
-                "bounds-padding",   10.0,
+                "automatic-bounds",     TRUE,
+                "bounds-padding",       10.0,
+                //"redraw-when-scrolled", TRUE,
                 NULL);
 
   return canvas;
@@ -756,6 +761,8 @@ gboolean CanvasModule::OnButtonPress (GooCanvasItem  *item,
 
     }
 
+    _scroller->Activate ();
+
     SetCursor (GDK_FLEUR);
 
     _dragging = TRUE;
@@ -802,6 +809,7 @@ gboolean CanvasModule::OnButtonRelease (GooCanvasItem  *item,
       _target_drop_zone->Unfocus ();
     }
 
+    _scroller->Deactivate ();
     _dragging = FALSE;
 
     goo_canvas_item_remove (_drag_text);
@@ -886,6 +894,9 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
         _target_drop_zone = drop_zone;
       }
     }
+
+    _scroller->OnNewCursorPosition (_drag_x,
+                                    _drag_y);
 
     SetCursor (GDK_FLEUR);
   }

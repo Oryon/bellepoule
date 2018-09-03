@@ -24,6 +24,7 @@
 
 class Player;
 class DropZone;
+class Scroller;
 
 class CanvasModule : public Module
 {
@@ -110,6 +111,7 @@ class CanvasModule : public Module
     DropZone          *_target_drop_zone;
     gdouble            _drag_x;
     gdouble            _drag_y;
+    Scroller          *_scroller;
 
     void OnZoom (gdouble value);
 
