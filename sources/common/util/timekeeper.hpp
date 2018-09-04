@@ -18,17 +18,17 @@
 
 #include "object.hpp"
 
-class Clock : public Object
+class Timekeeper : public Object
 {
   public:
-    Clock ();
+    Timekeeper ();
 
     void PrintElapsed (const gchar *tag);
 
   private:
     GTimeVal _last_timeval;
 
-    virtual ~Clock ();
+    virtual ~Timekeeper ();
 
     void GetTimevalDiff (GTimeVal *result,
                          GTimeVal *x,

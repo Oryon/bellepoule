@@ -30,6 +30,7 @@ namespace Marshaller
   class Batch;
   class EnlistedReferee;
   class JobBoard;
+  class Clock;
 
   class Piste :
     public DropZone,
@@ -46,7 +47,8 @@ namespace Marshaller
       };
 
     public:
-      Piste (GooCanvasItem *parent,
+      Piste (Clock         *clock,
+             GooCanvasItem *parent,
              Module        *container,
              Listener      *listener);
 
@@ -135,6 +137,7 @@ namespace Marshaller
       GDateTime       *_display_time;
       JobBoard        *_job_board;
       gboolean         _blocked;
+      Clock           *_clock;
 
       ~Piste ();
 

@@ -18,12 +18,14 @@
 #include "competition.hpp"
 #include "slot.hpp"
 #include "job.hpp"
+#include "clock.hpp"
 #include "timeline.hpp"
 
 namespace Marshaller
 {
   // --------------------------------------------------------------------------------
-  Timeline::Timeline (Listener *listener)
+  Timeline::Timeline (Clock    *clock,
+                      Listener *listener)
     : Object ("Timeline"),
     CanvasModule ("timeline.glade", "canvas_scrolled_window")
   {
@@ -31,8 +33,11 @@ namespace Marshaller
     _listener         = listener;
     _button_pressed   = FALSE;
 
+    _clock = clock;
+    _clock->Retain ();
+
     {
-      GDateTime *now = g_date_time_new_now_local ();
+      GDateTime *now = _clock->RetreiveNow ();
 
       _origin = g_date_time_add_full (now,
                                       0,
@@ -56,6 +61,7 @@ namespace Marshaller
   {
     g_list_free       (_competition_list);
     g_date_time_unref (_origin);
+    _clock->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -128,6 +134,7 @@ namespace Marshaller
                              0.3 * _competition_scale,
                              "fill-color",     "black",
                              "stroke-pattern", NULL,
+                             "line-width",     0.0,
                              "pointer-events", GOO_CANVAS_EVENTS_NONE,
                              NULL);
         goo_canvas_text_new (GetRootItem (),
@@ -152,6 +159,7 @@ namespace Marshaller
                              0.05 * _competition_scale,
                              "fill-color",     "black",
                              "stroke-pattern", NULL,
+                             "line-width",     0.0,
                              "pointer-events", GOO_CANVAS_EVENTS_NONE,
                              NULL);
       }
@@ -162,7 +170,7 @@ namespace Marshaller
   void Timeline::DrawCursors ()
   {
     {
-      GDateTime *now = g_date_time_new_now_local ();
+      GDateTime *now = _clock->RetreiveNow ();
       GTimeSpan  x   = g_date_time_difference (now, _origin);
 
       goo_canvas_rect_new (GetRootItem (),
@@ -172,6 +180,7 @@ namespace Marshaller
                            _competition_scale,
                            "fill-color-rgba", 0x0000000F,
                            "stroke-pattern", NULL,
+                           "line-width",     0.0,
                            "pointer-events", GOO_CANVAS_EVENTS_NONE,
                            NULL);
       goo_canvas_rect_new (GetRootItem (),
@@ -181,6 +190,7 @@ namespace Marshaller
                            _competition_scale,
                            "fill-color-rgba", 0x00000060,
                            "stroke-pattern", NULL,
+                           "line-width",     0.0,
                            "pointer-events", GOO_CANVAS_EVENTS_NONE,
                            NULL);
       g_date_time_unref (now);
@@ -194,6 +204,7 @@ namespace Marshaller
                                          _competition_scale,
                                          "fill-color",     "black",
                                          "stroke-pattern", NULL,
+                                         "line-width",     0.0,
                                          NULL);
       g_signal_connect (_goo_cursor, "button_press_event",
                         G_CALLBACK (OnButtonPress), this);
@@ -216,45 +227,66 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Timeline::DrawSlots ()
   {
-    GList *current_competition = _competition_list;
-
-    for (guint i = 0; current_competition != NULL; i++)
+    for (guint layer = 0; layer < 2; layer++)
     {
-      Competition *competition   = (Competition *) current_competition->data;
-      gchar       *color         = gdk_color_to_string (competition->GetColor ());
-      GList       *current_batch = competition->GetBatches ();
+      GList *current_competition = _competition_list;
 
-      while (current_batch)
+      for (guint i = 0; current_competition != NULL; i++)
       {
-        Batch *batch       = (Batch *) current_batch->data;
-        GList *current_job = batch->GetScheduledJobs ();
+        Competition *competition   = (Competition *) current_competition->data;
+        gchar       *color         = gdk_color_to_string (competition->GetColor ());
+        GList       *current_batch = competition->GetBatches ();
 
-        while (current_job != NULL)
+        while (current_batch)
         {
-          Job       *job   = (Job *) current_job->data;
-          Slot      *slot  = job->GetSlot ();
-          GDateTime *start = slot->GetStartTime ();
-          gdouble    x     = g_date_time_difference (start, _origin) * _time_scale;
-          gdouble    w     = (slot->GetDuration () - 30*G_TIME_SPAN_SECOND) * _time_scale;
+          Batch *batch       = (Batch *) current_batch->data;
+          GList *current_job = batch->GetScheduledJobs ();
 
-          goo_canvas_rect_new (GetRootItem (),
-                               x,
-                               i*_competition_scale/10.0,
-                               w,
-                               _competition_scale/10.0,
-                               "fill-color",     color,
-                               "stroke-pattern", NULL,
-                               "pointer-events", GOO_CANVAS_EVENTS_NONE,
-                               NULL);
+          while (current_job != NULL)
+          {
+            Job       *job   = (Job *) current_job->data;
+            Slot      *slot  = job->GetSlot ();
+            GDateTime *start = slot->GetStartTime ();
+            gdouble    x     = g_date_time_difference (start, _origin) * _time_scale;
+            gdouble    w     = (slot->GetDuration () - 30*G_TIME_SPAN_SECOND) * _time_scale;
 
-          current_job = g_list_next (current_job);
+            if (layer == 0)
+            {
+              goo_canvas_rect_new (GetRootItem (),
+                                   x,
+                                   i*_competition_scale/10.0,
+                                   w,
+                                   _competition_scale/10.0,
+                                   "fill-color",     color,
+                                   "stroke-pattern", NULL,
+                                   "line-width",     1.0,
+                                   "pointer-events", GOO_CANVAS_EVENTS_NONE,
+                                   NULL);
+            }
+            else
+            {
+              const gdouble line_width = 1.0;
+
+              goo_canvas_rect_new (GetRootItem (),
+                                   x + line_width/2,
+                                   i*_competition_scale/10.0 + line_width/2,
+                                   w - line_width,
+                                   _competition_scale/10.0 - line_width,
+                                   "fill-pattern",   NULL,
+                                   "line-width",     1.0,
+                                   "pointer-events", GOO_CANVAS_EVENTS_NONE,
+                                   NULL);
+            }
+
+            current_job = g_list_next (current_job);
+          }
+          current_batch = g_list_next (current_batch);
         }
-        current_batch = g_list_next (current_batch);
+
+        g_free (color);
+
+        current_competition = g_list_next (current_competition);
       }
-
-      g_free (color);
-
-      current_competition = g_list_next (current_competition);
     }
   }
 
@@ -281,7 +313,7 @@ namespace Marshaller
   void Timeline::SlideOut (gdouble  position,
                            gboolean one_shot)
   {
-    GDateTime *now = g_date_time_new_now_local ();
+    GDateTime *now = _clock->RetreiveNow ();
     GDateTime *new_origin;
 
     new_origin = g_date_time_add_full (_origin,

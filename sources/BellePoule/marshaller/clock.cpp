@@ -58,6 +58,17 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  GDateTime *Clock::RetreiveNow ()
+  {
+    GDateTime *now      = g_date_time_new_now_local ();
+    GDateTime *adjusted = g_date_time_add (now, _offset);
+
+    g_date_time_unref (now);
+
+    return adjusted;
+  }
+
+  // --------------------------------------------------------------------------------
   void Clock::FeedParcel (Net::Message *parcel)
   {
     parcel->Set ("offset", (gint) (_offset/G_TIME_SPAN_SECOND));

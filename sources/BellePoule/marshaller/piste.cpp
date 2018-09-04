@@ -25,6 +25,7 @@
 #include "job.hpp"
 #include "job_board.hpp"
 #include "batch.hpp"
+#include "clock.hpp"
 
 #include "piste.hpp"
 
@@ -36,7 +37,8 @@ namespace Marshaller
   const gdouble Piste::_RESOLUTION = 15.0;
 
   // --------------------------------------------------------------------------------
-  Piste::Piste (GooCanvasItem *parent,
+  Piste::Piste (Clock         *clock,
+                GooCanvasItem *parent,
                 Module        *container,
                 Listener      *listener)
     : DropZone (container)
@@ -49,11 +51,14 @@ namespace Marshaller
     _listener   = NULL;
     _slots      = NULL;
 
+    _clock = clock;
+    _clock->Retain ();
+
     _listener = listener;
 
     _job_board = new JobBoard ();
 
-    _display_time = g_date_time_new_now_local ();
+    _display_time = _clock->RetreiveNow ();
 
     _root_item = goo_canvas_group_new (parent,
                                        NULL);
@@ -242,6 +247,7 @@ namespace Marshaller
     }
 
     _job_board->Release ();
+    _clock->Release ();
 
     _listener->OnPisteDirty ();
   }
@@ -533,7 +539,7 @@ namespace Marshaller
       {
         GDateTime *start_time = slot->GetStartTime ();
         GTimeSpan  duration   = slot->GetDuration ();
-        GDateTime *now        = g_date_time_new_now_local ();
+        GDateTime *now        = _clock->RetreiveNow ();
         GTimeSpan  elapsed    = g_date_time_difference (now, start_time);
         gdouble    progress   = (elapsed * _W) / duration;
 

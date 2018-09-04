@@ -38,6 +38,8 @@ namespace Marshaller
 
       void Set (GDateTime *to);
 
+      GDateTime *RetreiveNow ();
+
     private:
       Listener  *_listener;
       guint      _tag;

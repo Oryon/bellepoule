@@ -14,22 +14,22 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "clock.hpp"
+#include "timekeeper.hpp"
 
 // --------------------------------------------------------------------------------
-Clock::Clock ()
-  : Object ("Clock")
+Timekeeper::Timekeeper ()
+  : Object ("Timekeeper")
 {
   g_get_current_time (&_last_timeval);
 }
 
 // --------------------------------------------------------------------------------
-Clock::~Clock ()
+Timekeeper::~Timekeeper ()
 {
 }
 
 // --------------------------------------------------------------------------------
-void Clock::PrintElapsed (const gchar *tag)
+void Timekeeper::PrintElapsed (const gchar *tag)
 {
   GTimeVal current_timeval;
   GTimeVal diff_timeval;
@@ -50,7 +50,7 @@ void Clock::PrintElapsed (const gchar *tag)
 }
 
 // --------------------------------------------------------------------------------
-void Clock::GetTimevalDiff (GTimeVal *result,
+void Timekeeper::GetTimevalDiff (GTimeVal *result,
                             GTimeVal *x,
                             GTimeVal *y)
 {

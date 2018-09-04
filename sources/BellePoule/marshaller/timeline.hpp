@@ -21,6 +21,7 @@
 namespace Marshaller
 {
   class Competition;
+  class Clock;
 
   class Timeline : public CanvasModule
   {
@@ -34,7 +35,8 @@ namespace Marshaller
       };
 
     public:
-      Timeline (Listener *listener);
+      Timeline (Clock    *clock,
+                Listener *listener);
 
       void AddCompetition (Competition *competition);
 
@@ -50,6 +52,7 @@ namespace Marshaller
       static const guint     HOURS_MONITORED = 10;
       static const GTimeSpan START_MARGING   = STEP;
 
+      Clock         *_clock;
       GList         *_competition_list;
       GTimeSpan      _cursor;
       gdouble        _drag_start;

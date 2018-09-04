@@ -60,8 +60,12 @@ namespace Marshaller
     _referee_pool = referee_pool;
     _referee_pool->SetDndPeerListener (this);
 
+    _lasso = new Lasso ();
+    _clock = new Clock (this);
+
     {
-      _timeline = new Timeline (this);
+      _timeline = new Timeline (_clock,
+                                this);
 
       Plug (_timeline,
             _glade->GetWidget ("timeline_viewport"));
@@ -69,9 +73,6 @@ namespace Marshaller
       JobBoard::SetTimeLine (_timeline,
                              this);
     }
-
-    _lasso = new Lasso ();
-    _clock = new Clock (this);
 
     {
       GList *warnings = Affinities::GetTitles ();
@@ -197,7 +198,7 @@ namespace Marshaller
 
       for (guint i = 0; i < count; i++)
       {
-        Piste *piste  = new Piste (GetRootItem (), this, this);
+        Piste *piste  = new Piste (_clock, GetRootItem (), this, this);
 
         json_reader_read_element (reader, i);
         piste->ReadJson (reader);
@@ -524,7 +525,7 @@ namespace Marshaller
   Piste *Hall::AddPiste (gdouble tx, gdouble ty)
   {
     GList *anchor = g_list_last (_piste_list);
-    Piste *piste  = new Piste (GetRootItem (), this, this);
+    Piste *piste  = new Piste (_clock, GetRootItem (), this, this);
 
     _drop_zones = g_slist_append (_drop_zones,
                                   piste);
@@ -662,6 +663,8 @@ namespace Marshaller
     _clock->Set (cursor);
 
     g_date_time_unref (cursor);
+
+    Redraw ();
 #endif
   }
 
