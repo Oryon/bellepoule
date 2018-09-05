@@ -18,12 +18,14 @@
 #include "enlisted_referee.hpp"
 #include "job.hpp"
 #include "batch.hpp"
+#include "piste.hpp"
 #include "slot.hpp"
+#include "resource.hpp"
 
 namespace Marshaller
 {
   // --------------------------------------------------------------------------------
-  Slot::Slot (Owner     *owner,
+  Slot::Slot (Piste     *piste,
               GDateTime *start_time,
               GDateTime *end_time,
               GTimeSpan  duration)
@@ -31,7 +33,7 @@ namespace Marshaller
   {
     _job_list     = NULL;
     _referee_list = NULL;
-    _owner        = owner;
+    _piste        = piste;
 
     _duration = duration;
 
@@ -96,7 +98,7 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    return TRUE;
+    return _job_list != NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -130,18 +132,73 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Slot::SetDuration (GTimeSpan duration)
+  void Slot::SetDuration (GTimeSpan duration,
+                          gboolean  fix_overlaps)
   {
-    GDateTime *end = g_date_time_add (_start, duration);
-
-    _duration = duration;
-    if (_end)
+    if (IsOver () == FALSE)
     {
-      g_date_time_unref (_end);
-    }
-    _end = end;
+      {
+        GDateTime *end = g_date_time_add (_start, duration);
 
-    _owner->OnSlotUpdated (this);
+        _duration = duration;
+        if (_end)
+        {
+          g_date_time_unref (_end);
+        }
+        _end = end;
+      }
+
+      FixOverlaps (!fix_overlaps);
+
+      _piste->OnSlotUpdated (this);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Slot::FixOverlaps (gboolean dry_run)
+  {
+    GList *resources = NULL;
+
+    if (_referee_list)
+    {
+      resources = g_list_prepend (resources, dynamic_cast <Resource *> ((EnlistedReferee *) _referee_list->data));
+    }
+    resources = g_list_prepend (resources, dynamic_cast <Resource *> (_piste));
+
+    for (GList *current = resources; current != NULL; current = g_list_next (current))
+    {
+      Resource *resource = (Resource *) current->data;
+      Slot     *slot     = resource->GetSlotAfter (this);
+
+      if (slot)
+      {
+        Job *dependent_job = (Job *) slot->_job_list->data;
+
+        if (g_date_time_difference (_end, slot->_start) > 5*G_TIME_SPAN_MINUTE)
+        {
+          if (dry_run)
+          {
+            Job   *job   = (Job *) _job_list->data;
+            Batch *batch = job->GetBatch ();
+
+            batch->RaiseOverlapWarning ();
+          }
+          else
+          {
+            slot->SetStartTime (_end);
+
+            slot->SetDuration (slot->_duration,
+                               TRUE);
+
+            dependent_job->SetPiste (_piste->GetId (),
+                           slot->_fie_time->GetXmlImage ());
+            dependent_job->Spread ();
+          }
+        }
+      }
+    }
+
+    g_list_free (resources);
   }
 
   // --------------------------------------------------------------------------------
@@ -214,7 +271,7 @@ namespace Marshaller
     job->SetSlot           (this);
 
     {
-      job->SetPiste (_owner->GetId (),
+      job->SetPiste (_piste->GetId (),
                      _fie_time->GetXmlImage ());
 
       if (_referee_list)
@@ -229,10 +286,10 @@ namespace Marshaller
 
     if (has_owner == FALSE)
     {
-      _owner->OnSlotAssigned (this);
+      _piste->OnSlotAssigned (this);
     }
 
-    _owner->OnSlotUpdated (this);
+    _piste->OnSlotUpdated (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -261,13 +318,13 @@ namespace Marshaller
       job->RemoveObjectListener (this);
       job->SetSlot              (NULL);
 
-      _owner->OnSlotUpdated (this);
+      _piste->OnSlotUpdated (this);
 
       _duration = 0;
 
       if (GetJobList () == NULL)
       {
-        _owner->OnSlotRetracted (this);
+        _piste->OnSlotRetracted (this);
       }
     }
   }
@@ -294,7 +351,7 @@ namespace Marshaller
       }
     }
 
-    _owner->OnSlotUpdated (this);
+    _piste->OnSlotUpdated (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -325,7 +382,7 @@ namespace Marshaller
       }
     }
 
-    _owner->OnSlotUpdated (this);
+    _piste->OnSlotUpdated (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -417,13 +474,13 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Slot *Slot::GetFreeSlot (Owner     *owner,
+  Slot *Slot::GetFreeSlot (Piste     *piste,
                            GList     *booked_slots,
                            GDateTime *from,
                            GTimeSpan  duration)
   {
     Slot  *slot  = NULL;
-    GList *slots = GetFreeSlots (owner,
+    GList *slots = GetFreeSlots (piste,
                                  booked_slots,
                                  from,
                                  duration);
@@ -450,7 +507,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *Slot::GetFreeSlots (Owner     *owner,
+  GList *Slot::GetFreeSlots (Piste     *piste,
                              GList     *booked_slots,
                              GDateTime *from,
                              GTimeSpan  duration)
@@ -460,7 +517,7 @@ namespace Marshaller
     // Before the booked slots
     if (booked_slots == NULL)
     {
-      Slot *free_slot = new Slot (owner,
+      Slot *free_slot = new Slot (piste,
                                   from,
                                   NULL,
                                   duration);
@@ -474,7 +531,7 @@ namespace Marshaller
 
       if (g_date_time_compare (first_slot->_start, end_time) >= 0)
       {
-        Slot *free_slot = new Slot (owner,
+        Slot *free_slot = new Slot (piste,
                                     from,
                                     first_slot->_start,
                                     duration);
@@ -496,7 +553,7 @@ namespace Marshaller
         if (next == NULL)
         {
           // After the booked slots
-          free_slot = new Slot (owner,
+          free_slot = new Slot (piste,
                                 GetLatestDate (from, current_slot->_end),
                                 NULL,
                                 duration);
@@ -518,7 +575,7 @@ namespace Marshaller
           if (   (g_date_time_compare (max_start_time, current_slot->_end) >= 0)
               && (g_date_time_compare (max_start_time, from) >= 0))
           {
-            free_slot = new Slot (owner,
+            free_slot = new Slot (piste,
                                   GetLatestDate (from, current_slot->_end),
                                   next_slot->_start,
                                   duration);
@@ -540,9 +597,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  Slot::Owner *Slot::GetOwner ()
+  Piste *Slot::GetPiste ()
   {
-    return _owner;
+    return _piste;
   }
 
   // --------------------------------------------------------------------------------

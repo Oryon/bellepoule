@@ -26,6 +26,7 @@
 #include "job_board.hpp"
 #include "batch.hpp"
 #include "clock.hpp"
+#include "slot.hpp"
 
 #include "piste.hpp"
 
@@ -349,6 +350,25 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  Slot *Piste::GetSlotAfter (Slot *slot)
+  {
+    GList *node = g_list_find (_slots,
+                               slot);
+
+    if (node)
+    {
+      node = g_list_next (node);
+
+      if (node)
+      {
+        return (Slot *) node->data;
+      }
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   void Piste::DisplayAtTime (GDateTime *time)
   {
     if (_display_time)
@@ -358,6 +378,16 @@ namespace Marshaller
     _display_time = g_date_time_add (time, 0);
 
     OnSlotUpdated (GetSlotAt (time));
+  }
+
+  // --------------------------------------------------------------------------------
+  Slot *Piste::CreateSlot (GDateTime *from,
+                           GTimeSpan  duration)
+  {
+    return new Slot (this,
+                     from,
+                     NULL,
+                     duration);
   }
 
   // --------------------------------------------------------------------------------

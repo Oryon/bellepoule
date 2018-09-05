@@ -24,23 +24,14 @@ namespace Marshaller
 {
   class Job;
   class EnlistedReferee;
+  class Piste;
 
   class Slot :
     public Object,
     public Object::Listener
   {
     public:
-      class Owner
-      {
-        public:
-          virtual void  OnSlotUpdated   (Slot *slot) = 0;
-          virtual void  OnSlotAssigned  (Slot *slot) = 0;
-          virtual void  OnSlotRetracted (Slot *slot) = 0;
-          virtual guint GetId () = 0;
-      };
-
-    public:
-      Slot (Owner     *owner,
+      Slot (Piste     *piste,
             GDateTime *start_time,
             GDateTime *end_time,
             GTimeSpan  duration);
@@ -57,7 +48,7 @@ namespace Marshaller
 
       GList *GetRefereeList ();
 
-      Owner *GetOwner ();
+      Piste *GetPiste ();
 
       void Cancel ();
 
@@ -69,7 +60,8 @@ namespace Marshaller
 
       gboolean CanWrap (Slot *what);
 
-      void SetDuration (GTimeSpan duration);
+      void SetDuration (GTimeSpan duration,
+                        gboolean  fix_overlaps = FALSE);
 
       void TailWith (Slot      *with,
                      GTimeSpan  duration);
@@ -78,17 +70,19 @@ namespace Marshaller
 
       gboolean TimeIsInside (GDateTime *time);
 
+      void FixOverlaps (gboolean dry_run);
+
       static void Dump (Slot *what);
 
       static gint CompareAvailbility (Slot *a,
                                       Slot *b);
 
-      static Slot *GetFreeSlot (Owner     *owner,
+      static Slot *GetFreeSlot (Piste     *piste,
                                 GList     *busy_slots,
                                 GDateTime *from,
                                 GTimeSpan  duration);
 
-      static GList *GetFreeSlots (Owner     *owner,
+      static GList *GetFreeSlots (Piste     *piste,
                                   GList     *busy_slots,
                                   GDateTime *from,
                                   GTimeSpan  duration);
@@ -97,7 +91,7 @@ namespace Marshaller
                               GList     *slots);
 
     private:
-      Owner     *_owner;
+      Piste     *_piste;
       GList     *_job_list;
       GList     *_referee_list;
       FieTime   *_fie_time;

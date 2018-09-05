@@ -84,6 +84,8 @@ namespace Marshaller
 
       void OnNewWarningPolicy ();
 
+      void OnOverlapWarningActivated (GtkTreePath *path);
+
     private:
       GList       *_piste_list;
       GList       *_selected_piste_list;
@@ -166,6 +168,8 @@ namespace Marshaller
       gboolean OnBatchAssignmentRequest (Batch *batch);
 
       void OnBatchAssignmentCancel (Batch *batch);
+
+      void OnJobOverlapWarning (Batch *batch);
 
       void OnTimelineCursorMoved ();
 

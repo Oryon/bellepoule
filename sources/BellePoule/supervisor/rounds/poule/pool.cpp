@@ -2689,6 +2689,8 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::DeleteMatchs ()
   {
+    _duration_sec = 0;
+
     CleanScores ();
 
     FreeFullGList (Match, _match_list);

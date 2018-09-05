@@ -34,11 +34,20 @@
 #include "job_board.hpp"
 #include "lasso.hpp"
 #include "affinities.hpp"
+#include "slot.hpp"
 
 #include "hall.hpp"
 
 namespace Marshaller
 {
+  typedef enum
+  {
+    ICON_id,
+    MESSAGE_ptr,
+    BATCH_ptr,
+    COLOR_str
+  } OverlapColumnId;
+
   // --------------------------------------------------------------------------------
   Hall::Hall (RefereePool *referee_pool,
               Listener    *listener)
@@ -400,6 +409,31 @@ namespace Marshaller
 
     if (competition)
     {
+      Batch        *batch         = competition->GetBatch (message->GetNetID ());
+      GtkListStore *overlap_store = GTK_LIST_STORE (_glade->GetGObject ("overlap_liststore"));
+      GtkTreeIter   iter;
+      gboolean      iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (overlap_store),
+                                                                   &iter);
+
+      while (iter_is_valid)
+      {
+        Batch *current_batch;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (overlap_store),
+                            &iter,
+                            BATCH_ptr, &current_batch,
+                            -1);
+
+        if (current_batch == batch)
+        {
+          gtk_list_store_remove (overlap_store,
+                                 &iter);
+        }
+
+        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (overlap_store),
+                                                  &iter);
+      }
+
       competition->DeleteBatch (message);
     }
   }
@@ -445,8 +479,8 @@ namespace Marshaller
               if (piste)
               {
                 GTimeSpan  duration = job->GetRegularDuration ();
-                Slot      *slot     = piste->GetFreeSlot (start_time->GetGDateTime (),
-                                                          duration);
+                Slot      *slot     = piste->CreateSlot (start_time->GetGDateTime (),
+                                                         duration);
 
                 if (slot)
                 {
@@ -657,7 +691,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::AlterCurrentTime ()
   {
-#if defined(DEBUG)
+//#if defined(DEBUG)
     GDateTime *cursor = _timeline->RetreiveCursorTime (TRUE);
 
     _clock->Set (cursor);
@@ -665,7 +699,7 @@ namespace Marshaller
     g_date_time_unref (cursor);
 
     Redraw ();
-#endif
+//#endif
   }
 
   // --------------------------------------------------------------------------------
@@ -1472,6 +1506,59 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::OnJobOverlapWarning (Batch *batch)
+  {
+    GtkListStore *overlap_store = GTK_LIST_STORE (_glade->GetGObject ("overlap_liststore"));
+    GtkTreeIter   iter;
+    gboolean      iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (overlap_store),
+                                                                 &iter);
+
+    while (iter_is_valid)
+    {
+      Batch *current_batch;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (overlap_store),
+                          &iter,
+                          BATCH_ptr, &current_batch,
+                          -1);
+
+      if (current_batch == batch)
+      {
+        break;
+      }
+
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (overlap_store),
+                                                &iter);
+    }
+
+    if (iter_is_valid == FALSE)
+    {
+      gtk_list_store_append (overlap_store,
+                             &iter);
+    }
+
+    {
+      Competition *competition = batch->GetCompetition ();
+      gchar       *color       = gdk_color_to_string (competition->GetColor ());
+      GData       *properties  = competition->GetProperties ();
+      gchar       *name        = g_strdup_printf ("%s-%s-%s %s",
+                                                  (gchar *) g_datalist_get_data (&properties, "gender"),
+                                                  (gchar *) g_datalist_get_data (&properties, "weapon"),
+                                                  (gchar *) g_datalist_get_data (&properties, "category"),
+                                                  batch->GetName ());
+
+      gtk_list_store_set (overlap_store, &iter,
+                          MESSAGE_ptr,   name,
+                          COLOR_str,     color,
+                          BATCH_ptr,     batch,
+                          -1);
+
+      g_free (name);
+      g_free (color);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Hall::DroppingIsAllowed (Object   *floating_object,
                                     DropZone *in_zone)
   {
@@ -1683,6 +1770,46 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Hall::OnOverlapWarningActivated (GtkTreePath *path)
+  {
+    GtkListStore *overlap_store = GTK_LIST_STORE (_glade->GetGObject ("overlap_liststore"));
+    GtkTreeModel *model         = GTK_TREE_MODEL (overlap_store);
+    gchar        *message;
+    Batch        *batch;
+    GtkTreeIter   iter;
+
+    gtk_tree_model_get_iter (model,
+                             &iter,
+                             path);
+    gtk_tree_model_get (model, &iter,
+                        MESSAGE_ptr, &message,
+                        BATCH_ptr,   &batch,
+                        -1);
+
+    {
+      GtkWidget *error_dialog = _glade->GetWidget ("slot_overlap_dialog");
+
+      gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (error_dialog),
+                                                  gettext ("<b>%s</b> is delayed.\nDo you want to postpone the next bouts?\n"),
+                                                  message);
+
+      if (RunDialog (GTK_DIALOG (error_dialog)) == GTK_RESPONSE_YES)
+      {
+        batch->FixOverlapWarnings ();
+
+        gtk_list_store_remove (overlap_store,
+                               &iter);
+
+        _timeline->Redraw ();
+      }
+
+      gtk_widget_hide (error_dialog);
+    }
+
+    g_free (message);
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_add_piste_button_clicked (GtkWidget *widget,
                                                                Object    *owner)
   {
@@ -1732,5 +1859,16 @@ namespace Marshaller
                                                               gdouble   value)
   {
     return g_strdup_printf ("T0+%02d\'", (guint) value);
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_overlap_treeview_row_activated (GtkTreeView       *tree_view,
+                                                                     GtkTreePath       *path,
+                                                                     GtkTreeViewColumn *column,
+                                                                     Object            *owner)
+  {
+    Hall *h = dynamic_cast <Hall *> (owner);
+
+    h->OnOverlapWarningActivated (path);
   }
 }

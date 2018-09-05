@@ -36,6 +36,7 @@ namespace Marshaller
       {
         virtual gboolean OnBatchAssignmentRequest (Batch *batch) = 0;
         virtual void     OnBatchAssignmentCancel  (Batch *batch) = 0;
+        virtual void     OnJobOverlapWarning      (Batch *batch) = 0;
       };
 
       enum Status
@@ -86,6 +87,10 @@ namespace Marshaller
       void OnValidateAssign ();
 
       gboolean IsModifiable ();
+
+      void RaiseOverlapWarning ();
+
+      void FixOverlapWarnings ();
 
       void on_competition_treeview_row_activated (GtkTreePath *path);
 

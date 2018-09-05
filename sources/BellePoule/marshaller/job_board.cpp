@@ -25,6 +25,7 @@
 #include "job_details.hpp"
 #include "timeline.hpp"
 #include "competition.hpp"
+#include "piste.hpp"
 
 #include "job_board.hpp"
 
@@ -329,7 +330,7 @@ namespace Marshaller
           if (slot)
           {
             GDateTime *start_time = slot->GetStartTime ();
-            guint      piste_id   = slot->GetOwner()->GetId ();
+            guint      piste_id   = slot->GetPiste ()->GetId ();
 
             _timeline->SetCursorTime (start_time);
             _listener->OnJobBoardFocus (piste_id);

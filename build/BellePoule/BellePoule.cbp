@@ -289,6 +289,9 @@
 		<Unit filename="../../sources/BellePoule/marshaller/referee_pool.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/resource.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/slot.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
@@ -775,12 +778,6 @@
 		<Unit filename="../../sources/common/util/canvas_module.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/util/timekeeper.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/util/timekeeper.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
 		<Unit filename="../../sources/common/util/data.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
@@ -863,6 +860,12 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/util/sensitivity_trigger.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/timekeeper.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/timekeeper.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/util/tree_model_index.cpp">

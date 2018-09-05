@@ -366,6 +366,18 @@
       <widget name="label11"/>
     </widgets>
   </object>
+  <object class="GtkListStore" id="overlap_liststore">
+    <columns>
+      <!-- column-name icon -->
+      <column type="gchararray"/>
+      <!-- column-name message -->
+      <column type="gchararray"/>
+      <!-- column-name batch -->
+      <column type="gpointer"/>
+      <!-- column-name color -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkMessageDialog" id="referee_error_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -384,6 +396,41 @@
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkHButtonBox" id="dialog-action_area">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkMessageDialog" id="slot_overlap_dialog">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="message_type">warning</property>
+    <property name="buttons">yes-no</property>
+    <property name="text" translatable="yes">Overlap of time slots</property>
+    <property name="secondary_text" translatable="yes">Secondary text</property>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
@@ -750,6 +797,48 @@
                     <property name="expand">True</property>
                     <property name="fill">False</property>
                     <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="scrolledwindow1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">automatic</property>
+                    <property name="vscrollbar_policy">automatic</property>
+                    <child>
+                      <object class="GtkTreeView" id="overlap_treeview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="model">overlap_liststore</property>
+                        <property name="headers_visible">False</property>
+                        <signal name="row-activated" handler="on_overlap_treeview_row_activated" swapped="no"/>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                            <property name="title" translatable="yes">column</property>
+                            <child>
+                              <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf1">
+                                <property name="stock_id">gtk-dialog-warning</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext1">
+                                <property name="weight">800</property>
+                              </object>
+                              <attributes>
+                                <attribute name="foreground">3</attribute>
+                                <attribute name="text">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="pack_type">end</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>

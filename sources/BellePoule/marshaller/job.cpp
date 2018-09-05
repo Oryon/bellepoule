@@ -139,12 +139,17 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Job::SetRealDuration (GTimeSpan duration)
   {
-    if (duration > 0)
+    if (_slot != NULL)
     {
-      if (_slot != NULL)
+      if (duration > 0)
       {
-        _over = TRUE;
         _slot->SetDuration (duration);
+        _over = TRUE;
+      }
+      else if (_over == TRUE)
+      {
+        _over = FALSE;
+        _slot->SetDuration (_regular_duration);
       }
     }
   }

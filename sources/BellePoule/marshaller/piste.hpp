@@ -20,7 +20,7 @@
 #include <json-glib/json-glib.h>
 
 #include "util/drop_zone.hpp"
-#include "slot.hpp"
+#include "resource.hpp"
 
 class Module;
 
@@ -31,10 +31,11 @@ namespace Marshaller
   class EnlistedReferee;
   class JobBoard;
   class Clock;
+  class Slot;
 
   class Piste :
     public DropZone,
-    public Slot::Owner
+    public Resource
   {
     public:
       struct Listener
@@ -58,6 +59,9 @@ namespace Marshaller
 
       void ConvertFromPisteSpace (gdouble *x,
                                   gdouble *y);
+
+      Slot *CreateSlot (GDateTime *from,
+                        GTimeSpan  duration);
 
       Slot *GetFreeSlot (GDateTime *from,
                          GTimeSpan  duration);
@@ -89,6 +93,8 @@ namespace Marshaller
 
       Slot *GetSlotAt (GDateTime *time);
 
+      Slot *GetSlotAfter (Slot *from);
+
       void DisplayAtTime (GDateTime *time);
 
       void Translate (gdouble tx,
@@ -106,6 +112,12 @@ namespace Marshaller
 
       void GetHorizontalCoord (gdouble *x,
                                gdouble *y);
+
+      void OnSlotUpdated (Slot *slot);
+
+      void  OnSlotAssigned (Slot *slot);
+
+      void  OnSlotRetracted (Slot *slot);
 
       static const gdouble _W;
       static const gdouble _H;
@@ -154,12 +166,6 @@ namespace Marshaller
       void OnObjectDeleted (Object *object);
 
       void CleanDisplay ();
-
-      void OnSlotUpdated (Slot *slot);
-
-      void  OnSlotAssigned (Slot *slot);
-
-      void  OnSlotRetracted (Slot *slot);
 
       GList *GetSlots ();
 

@@ -173,6 +173,25 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  Slot *EnlistedReferee::GetSlotAfter (Slot *slot)
+  {
+    GList *node = g_list_find (_slots,
+                               slot);
+
+    if (node)
+    {
+      node = g_list_next (node);
+
+      if (node)
+      {
+        return (Slot *) node->data;
+      }
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   void EnlistedReferee::DisplayJobs ()
   {
     GList *current_slot = _slots;

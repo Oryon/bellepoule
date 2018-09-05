@@ -29,6 +29,7 @@
 #include "batch.hpp"
 #include "competition.hpp"
 #include "affinities.hpp"
+#include "slot.hpp"
 
 namespace Marshaller
 {
@@ -182,6 +183,24 @@ namespace Marshaller
   gboolean Batch::IsModifiable ()
   {
     return _competition->BatchIsModifiable (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Batch::RaiseOverlapWarning ()
+  {
+    _listener->OnJobOverlapWarning (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Batch::FixOverlapWarnings ()
+  {
+    for (GList *current = _scheduled_list; current; current = g_list_next (current))
+    {
+      Job  *job  = (Job *) current->data;
+      Slot *slot = job->GetSlot ();
+
+      slot->FixOverlaps (FALSE);
+    }
   }
 
   // --------------------------------------------------------------------------------

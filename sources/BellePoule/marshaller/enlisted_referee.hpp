@@ -17,13 +17,16 @@
 #pragma once
 
 #include "actors/referee.hpp"
+#include "resource.hpp"
 
 namespace Marshaller
 {
   class JobBoard;
   class Slot;
 
-  class EnlistedReferee : public Referee
+  class EnlistedReferee :
+    public Referee,
+    public Resource
   {
     public:
       static void RegisterPlayerClass ();
@@ -52,6 +55,8 @@ namespace Marshaller
                                    EnlistedReferee *b);
 
       void DisplayJobs ();
+
+      Slot *GetSlotAfter (Slot *from);
 
     private:
       GList       *_slots;
