@@ -325,6 +325,12 @@ void Application::Prepare ()
     desc->AddDiscreteValueSelector ("countries");
     AttributeDesc::AddSwappable (desc);
 
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "region", "Region", gettext ("region"));
+    desc->_favorite_look = AttributeDesc::GRAPHICAL;
+    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->AddLocalizedDiscreteValues ("regions");
+    AttributeDesc::AddSwappable (desc);
+
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
