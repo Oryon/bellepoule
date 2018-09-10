@@ -145,6 +145,7 @@ namespace People
 
       gchar *GetPrintName ();
 
-      void GuessPlayerLeague (Player *player);
+      void GuessPlayerOrganization (Player      *player,
+                                    const gchar *organization);
   };
 }

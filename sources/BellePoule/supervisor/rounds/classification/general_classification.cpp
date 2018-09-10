@@ -78,6 +78,7 @@ namespace People
       filter->ShowAttribute ("first_name");
       filter->ShowAttribute ("club");
       filter->ShowAttribute ("league");
+      filter->ShowAttribute ("region");
       filter->ShowAttribute ("country");
 
       SetFilter (filter);

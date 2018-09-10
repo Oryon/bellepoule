@@ -866,6 +866,7 @@ namespace Pool
                                   "first_name", "foreground=\"darkblue\"",
                                   "club",       "style=\"italic\" foreground=\"dimgrey\"",
                                   "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                  "region",     "style=\"italic\" foreground=\"dimgrey\"",
                                   "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                   NULL);
           Canvas::PutInTable (player_table,
@@ -1215,6 +1216,7 @@ namespace Pool
                                                    "first_name", "foreground=\"darkblue\"",
                                                    "club",       "style=\"italic\" foreground=\"dimgrey\"",
                                                    "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                                   "region",     "style=\"italic\" foreground=\"dimgrey\"",
                                                    "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                                    NULL);
 
@@ -1267,6 +1269,7 @@ namespace Pool
                                                           "first_name", "foreground=\"darkblue\"",
                                                           "club",       "style=\"italic\" foreground=\"dimgrey\"",
                                                           "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                                          "region",     "style=\"italic\" foreground=\"dimgrey\"",
                                                           "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                                           NULL);
 

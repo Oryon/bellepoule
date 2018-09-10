@@ -184,7 +184,10 @@ namespace People
                                 Player *owner)
   {
     // FFE issue
-    GuessPlayerLeague (player);
+    GuessPlayerOrganization (player,
+                             "league");
+    GuessPlayerOrganization (player,
+                             "region");
 
     OnPlayerLoaded (player,
                     owner);
@@ -193,84 +196,37 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::GuessPlayerLeague (Player *player)
+  void Checkin::GuessPlayerOrganization (Player      *player,
+                                         const gchar *organization)
   {
     Player::AttributeId  country_attr_id ("country");
     Attribute           *country_attr = player->GetAttribute (&country_attr_id);
 
     if (country_attr && (g_ascii_strcasecmp  (country_attr->GetStrValue (), "FRA") == 0))
     {
-      Player::AttributeId  league_attr_id ("league");
-      Attribute           *league_attr = player->GetAttribute (&league_attr_id);
+      Player::AttributeId  licence_attr_id ("licence");
+      Attribute           *licence_attr = player->GetAttribute (&licence_attr_id);
 
-      if ((league_attr == NULL) || (strlen (league_attr->GetStrValue ()) == 0))
+      if (licence_attr)
       {
-        Player::AttributeId  licence_attr_id ("licence");
-        Attribute           *licence_attr = player->GetAttribute (&licence_attr_id);
+        gchar *licence_string = g_strdup (licence_attr->GetStrValue ());
 
-        if (licence_attr)
+        if (strlen (licence_string) == 12)
         {
-          gchar *licence_string = g_strdup (licence_attr->GetStrValue ());
+          licence_string[2] = 0;
 
-          if (strlen (licence_string) == 12)
+          AttributeDesc *organization_desc   = AttributeDesc::GetDescFromCodeName (organization);
+          gchar         *player_organization = organization_desc->GetDiscreteUserImage (atoi (licence_string));
+
+          if (organization)
           {
-            licence_string[2] = 0;
+            Player::AttributeId  organization_attr_id (organization);
 
-            AttributeDesc *league_desc = AttributeDesc::GetDescFromCodeName ("league");
-            gchar         *league      = league_desc->GetDiscreteUserImage (atoi (licence_string));
-
-            if (league)
-            {
-              player->SetAttributeValue (&league_attr_id, league);
-              g_free (league);
-            }
+            player->SetAttributeValue (&organization_attr_id, player_organization);
+            g_free (player_organization);
           }
-          g_free (licence_string);
         }
-      }
-      else // FFE provides Ref's leagues in UPPER CASE :-(
-      {
-        AttributeDesc *desc = AttributeDesc::GetDescFromCodeName ("league");
-
-        if (desc)
-        {
-          GtkTreeIter  iter;
-          gboolean     iter_is_valid;
-          gchar       *casefold      = g_utf8_casefold (league_attr->GetStrValue (), -1);
-
-          iter_is_valid = gtk_tree_model_get_iter_first (desc->_discrete_model,
-                                                         &iter);
-          for (guint i = 0; iter_is_valid; i++)
-          {
-            gchar *xml_image;
-            gchar *xml_casefold;
-
-            gtk_tree_model_get (desc->_discrete_model,
-                                &iter,
-                                AttributeDesc::DISCRETE_XML_IMAGE_str, &xml_image, -1);
-            xml_casefold = g_utf8_casefold (xml_image, -1);
-
-            if (g_utf8_collate (casefold, xml_casefold) == 0)
-            {
-              Player::AttributeId attr_id ("league");
-
-              player->SetAttributeValue (&attr_id, xml_image);
-              g_free (xml_casefold);
-              g_free (xml_image);
-              break;
-            }
-            else
-            {
-              g_free (xml_casefold);
-              g_free (xml_image);
-            }
-
-            iter_is_valid = gtk_tree_model_iter_next (desc->_discrete_model,
-                                                      &iter);
-          }
-
-          g_free (casefold);
-        }
+        g_free (licence_string);
       }
     }
   }
@@ -688,7 +644,10 @@ namespace People
               g_strfreev (tokens);
             }
 
-            GuessPlayerLeague (player);
+            GuessPlayerOrganization (player,
+                                     "league");
+            GuessPlayerOrganization (player,
+                                     "region");
           }
 
           if (line)

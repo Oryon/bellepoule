@@ -79,21 +79,24 @@ void TreeModelIndex::SetIterToKey (GtkTreeIter *iter,
 gboolean TreeModelIndex::GetIterFromKey (const void  *key,
                                          GtkTreeIter *iter)
 {
-  GtkTreeRowReference *row_ref = (GtkTreeRowReference *) g_hash_table_lookup (_hash_table,
-                                                                              key);
-
-  if (row_ref)
+  if (key)
   {
-    GtkTreePath *path = gtk_tree_row_reference_get_path (row_ref);
+    GtkTreeRowReference *row_ref = (GtkTreeRowReference *) g_hash_table_lookup (_hash_table,
+                                                                                key);
 
-    if (path)
+    if (row_ref)
     {
-      gboolean result = gtk_tree_model_get_iter (_model,
-                                                 iter,
-                                                 path);
-      gtk_tree_path_free (path);
+      GtkTreePath *path = gtk_tree_row_reference_get_path (row_ref);
 
-      return result;
+      if (path)
+      {
+        gboolean result = gtk_tree_model_get_iter (_model,
+                                                   iter,
+                                                   path);
+        gtk_tree_path_free (path);
+
+        return result;
+      }
     }
   }
 

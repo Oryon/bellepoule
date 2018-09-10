@@ -1417,6 +1417,7 @@ namespace Table
                                                                "first_name", "foreground=\"darkblue\"",
                                                                "club",       "style=\"italic\" foreground=\"dimgrey\"",
                                                                "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                                               "region",     "style=\"italic\" foreground=\"dimgrey\"",
                                                                "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                                                NULL);
           Canvas::PutInTable (data->_fencer_goo_table,
@@ -3504,6 +3505,7 @@ namespace Table
                                              "first_name", "foreground=\"darkblue\"",
                                              "club",       "style=\"italic\" foreground=\"dimgrey\"",
                                              "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                             "region",     "style=\"italic\" foreground=\"dimgrey\"",
                                              "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                              NULL);
       Canvas::PutInTable (table,

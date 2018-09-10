@@ -730,7 +730,12 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
                            NULL,
                            &error) == FALSE)
   {
-    g_print ("AttributeDesc::AddDiscreteValues -> %s\n", error->message);
+    if (g_error_matches (error,
+                         G_FILE_ERROR,
+                         G_FILE_ERROR_NOENT) == FALSE)
+    {
+      g_print ("AttributeDesc::AddDiscreteValues -> %s\n", error->message);
+    }
     g_error_free (error);
   }
   else
@@ -842,12 +847,26 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
             g_free (undivadable_text);
           }
 
-          // Internal code (French federation issue)
-          gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                              DISCRETE_CODE_uint, atoi (tokens[i+3]),
-                              -1);
-          _discrete_code_index->SetIterToKey (&iter,
-                                              GUINT_TO_POINTER (atoi (tokens[i+3])));
+          // Internal code (French federation)
+          if (tokens[i+3][0])
+          {
+            gchar **subtokens = g_strsplit_set (tokens[i+3],
+                                                 "-",
+                                                 0);
+
+            if (subtokens)
+            {
+              for (guint s = 0; subtokens[s] != NULL; s++)
+              {
+                gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
+                                    DISCRETE_CODE_uint, atoi (subtokens[s]),
+                                    -1);
+                _discrete_code_index->SetIterToKey (&iter,
+                                                    GUINT_TO_POINTER (atoi (subtokens[s])));
+              }
+              g_strfreev (subtokens);
+            }
+          }
         }
         g_strfreev (tokens);
         g_free (textdomain);

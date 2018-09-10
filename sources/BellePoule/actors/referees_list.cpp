@@ -77,6 +77,7 @@ namespace People
         _collapsed_filter->ShowAttribute ("workload_rate");
         _collapsed_filter->ShowAttribute ("club");
         _collapsed_filter->ShowAttribute ("league");
+        _collapsed_filter->ShowAttribute ("region");
         _collapsed_filter->ShowAttribute ("country");
 
         SetFilter (_collapsed_filter);

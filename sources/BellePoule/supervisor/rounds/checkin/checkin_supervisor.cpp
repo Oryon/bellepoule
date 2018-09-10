@@ -109,6 +109,7 @@ namespace People
       filter->ShowAttribute ("gender");
       filter->ShowAttribute ("club");
       filter->ShowAttribute ("league");
+      filter->ShowAttribute ("region");
       filter->ShowAttribute ("country");
       filter->ShowAttribute ("ranking");
       filter->ShowAttribute ("licence");
