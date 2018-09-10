@@ -51,7 +51,7 @@ namespace NeoSwapper
   {
     if (_criterias[at_depth])
     {
-    return _criterias[at_depth]->HasQuark (quark);
+      return _criterias[at_depth]->HasQuark (quark);
     }
 
     return FALSE;
@@ -68,6 +68,21 @@ namespace NeoSwapper
   Criteria *FencerProxy::GetCriteria (guint at_depth)
   {
     return _criterias[at_depth];
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean FencerProxy::HasSameCriteriaThan (FencerProxy *than,
+                                             guint        depth)
+  {
+    Criteria *criteria      = GetCriteria (depth);
+    Criteria *than_criteria = than->GetCriteria (depth);
+
+    if (criteria && than_criteria)
+    {
+      return criteria->GetQuark () == than_criteria->GetQuark ();
+    }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

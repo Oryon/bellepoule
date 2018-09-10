@@ -116,7 +116,7 @@ namespace NeoSwapper
         _distributions[i] = g_hash_table_new_full (NULL,
                                                    NULL,
                                                    NULL,
-                                                   (GDestroyNotify) Object::TryToRelease);
+                                                   (GDestroyNotify) Criteria::Delete);
       }
     }
 
@@ -222,48 +222,17 @@ namespace NeoSwapper
     }
 #endif
 
-    // Error processing
-    for (guint deep = 1; deep <= _criteria_count; deep++)
+    for (guint trial = 0; trial < 2; trial++)
     {
-      guint remaining_errors = 0;
-
-      FindErrors (deep);
-
-      while (_error_list && (g_list_length (_error_list) != remaining_errors))
+      // Error processing
+      for (guint depth = 1; depth <= _criteria_count; depth++)
       {
-        remaining_errors = g_list_length (_error_list);
-        DispatchErrors (deep);
-      }
-    }
-
-    // Remove errors that have been silently fixed
-    {
-      GList *remaining = NULL;
-      GList *current   = _error_list;
-
-      while (current)
-      {
-        FencerProxy *error = (FencerProxy *) current->data;
-
-        if (error->_original_pool == error->_new_pool)
-        {
-          remaining = g_list_prepend (remaining,
-                                      error);
-        }
-
-        current = g_list_next (current);
+        FindErrors (depth);
+        DispatchErrors (depth);
       }
 
-      g_list_free (_error_list);
-      _error_list = remaining;
-    }
-
-    // Dispatch remaining errors without swapping
-    {
-      GList *remaining = NULL;
-      GList *current   = _error_list;
-
-      while (current)
+      // Dispatch remaining errors without swapping
+      for (GList *current = _error_list; current; current = g_list_next (current))
       {
         FencerProxy *error      = (FencerProxy *) current->data;
         PoolProxy   *error_pool = error->_new_pool;
@@ -284,18 +253,22 @@ namespace NeoSwapper
           if (i == (_nb_pools - 1))
           {
             error_pool->InsertFencer (error);
-            remaining = g_list_prepend (remaining,
-                                        error);
           }
         }
-
-        current = g_list_next (current);
       }
+      FindErrors (_criteria_count);
 
-      g_list_free (_error_list);
-      _error_list = remaining;
+      // Ultimate chance to fix the remaining errors
+      if (_error_list)
+      {
+        // Break the current layout by forcing a fencer to move
+        DispatchFencer ((FencerProxy *) _error_list->data,
+                        _criteria_count,
+                        TRUE);
+      }
     }
 
+    FindErrors (_criteria_count);
     StoreSwapping ();
 
     g_list_free (_fencer_list);
@@ -453,14 +426,14 @@ namespace NeoSwapper
   }
 
   // --------------------------------------------------------------------------------
-  void Swapper::FindErrors (guint deep)
+  void Swapper::FindErrors (guint depth)
   {
     PRINT (GREEN "\n\nFind ERRORS" ESC);
 
     g_list_free (_error_list);
     _error_list = NULL;
 
-    for (guint i = 0; i < deep; i++)
+    for (guint i = 0; i < depth; i++)
     {
       GHashTableIter  iter;
       gpointer        key;
@@ -480,19 +453,6 @@ namespace NeoSwapper
 
     _error_list = g_list_sort (_error_list,
                                (GCompareFunc) FencerProxy::CompareRank);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Swapper::DispatchErrors (guint deep)
-  {
-    GList *remaining;
-
-    PRINT (GREEN "\n\nDispatch ERRORS" ESC);
-
-    remaining = DispatchFencers (_error_list,
-                                 deep);
-    g_list_free (_error_list);
-    _error_list = remaining;
 
 #ifdef DEBUG_SWAPPING
     {
@@ -511,80 +471,90 @@ namespace NeoSwapper
   }
 
   // --------------------------------------------------------------------------------
-  GList *Swapper::DispatchFencers (GList *list,
-                                   guint  deep)
+  void Swapper::DispatchErrors (guint depth)
   {
-    GList       *remaining = g_list_copy (list);
-    ListCrawler *crawler   = new ListCrawler (_fencer_list);
+    PRINT (GREEN "\n\nDispatch ERRORS" ESC);
 
-    while (list)
     {
-      FencerProxy *error      = (FencerProxy *) list->data;
-      PoolProxy   *error_pool = error->_new_pool;
-      GList       *next;
+      GList *error = _error_list;
 
-      PRINT ("  %s", error->_player->GetName ());
-      error_pool->RemoveFencer (error);
-
-      crawler->Reset (error->_rank-1);
-      next = crawler->GetNext ();
-      while (next)
+      while (error)
       {
-        FencerProxy *x_fencer = (FencerProxy *) next->data;
-        PoolProxy   *x_pool   = x_fencer->_new_pool;
-
-        if (   (error_pool      != x_pool)
-            && (x_fencer->_rank != x_pool->_id)) // Prevent pool leader from being moved
+        if (DispatchFencer ((FencerProxy *) error->data,
+                            depth))
         {
-          x_pool->RemoveFencer (x_fencer);
-
-          if (FencerCanGoTo (error,
-                             x_pool,
-                             deep-1))
-          {
-            if (FencerCanGoTo (x_fencer,
-                               error_pool,
-                               deep-1))
-            {
-              //PRINT (GREEN "     %s" ESC, x_fencer->_player->GetName ());
-              error_pool->InsertFencer (x_fencer);
-              x_pool->InsertFencer     (error);
-
-              {
-                GList *fixed = g_list_find (remaining,
-                                            error);
-
-                remaining = g_list_remove_link (remaining,
-                                                fixed);
-              }
-
-              error = NULL;
-
-              break;
-            }
-            PRINT (RED "     %s" ESC, x_fencer->_player->GetName ());
-          }
-          else
-          {
-            PRINT (RED "   %s" ESC, x_fencer->_player->GetName ());
-          }
-
-          x_pool->InsertFencer (x_fencer);
+          FindErrors (depth);
+          error = _error_list;
         }
-        next = crawler->GetNext ();
+        else
+        {
+          error = g_list_next (error);
+        }
       }
+    }
+  }
 
-      if (error)
+  // --------------------------------------------------------------------------------
+  gboolean Swapper::DispatchFencer (FencerProxy *error,
+                                    guint        depth,
+                                    gboolean     force)
+  {
+    ListCrawler *crawler    = new ListCrawler (_fencer_list);
+    PoolProxy   *error_pool = error->_new_pool;
+    GList       *next;
+
+    PRINT ("  %s (%s)", error->_player->GetName (), Criteria::GetImage (error->GetCriteria (depth-1)));
+    error_pool->RemoveFencer (error);
+
+    crawler->Reset (error->_rank-1);
+    next = crawler->GetNext ();
+    while (next)
+    {
+      FencerProxy *x_fencer = (FencerProxy *) next->data;
+      PoolProxy   *x_pool   = x_fencer->_new_pool;
+
+      if (   (error_pool != x_pool)
+          && (error->HasSameCriteriaThan (x_fencer, depth-1) == FALSE)
+          && (x_fencer->_rank != x_pool->_id)) // Prevent pool leader from being moved
       {
-        error_pool->InsertFencer (error);
-      }
+        x_pool->RemoveFencer (x_fencer);
 
-      list = g_list_next (list);
+        if (FencerCanGoTo (error,
+                           x_pool,
+                           depth-1))
+        {
+          if (   force
+              || FencerCanGoTo (x_fencer,
+                                error_pool,
+                                depth-1))
+          {
+            PRINT (BLUE "     %s (%s)" ESC, x_fencer->_player->GetName (), Criteria::GetImage (x_fencer->GetCriteria (depth-1)));
+            error_pool->InsertFencer (x_fencer);
+            x_pool->InsertFencer     (error);
+
+            error = NULL;
+            break;
+          }
+          PRINT (RED "     %s (%s)" ESC, x_fencer->_player->GetName (), Criteria::GetImage (x_fencer->GetCriteria (depth-1)));
+        }
+        else
+        {
+          PRINT (RED "   %s (%s)" ESC, x_fencer->_player->GetName (), Criteria::GetImage (x_fencer->GetCriteria (depth-1)));
+        }
+
+        x_pool->InsertFencer (x_fencer);
+      }
+      next = crawler->GetNext ();
+    }
+
+    if (error)
+    {
+      error_pool->InsertFencer (error);
     }
 
     crawler->Release ();
 
-    return remaining;
+    return error == NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -609,6 +579,7 @@ namespace NeoSwapper
       {
         return TRUE;
       }
+
       return criteria->FreePlaceIn (pool_proxy);
     }
   }

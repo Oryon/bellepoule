@@ -89,6 +89,17 @@ namespace NeoSwapper
   }
 
   // --------------------------------------------------------------------------------
+  const gchar *Criteria::GetImage (Criteria *criteria)
+  {
+    if (criteria)
+    {
+      return criteria->_image;
+    }
+
+    return "";
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Criteria::HasQuark (GQuark quark)
   {
     return _quark == quark;
@@ -189,6 +200,8 @@ namespace NeoSwapper
 
     //printf (GREEN "  big  ==> %dx%d\n", _big_profile._pool_count, _big_profile._score);
     //printf (RED   "  over ==> %d\n" ESC, g_list_length (over_populated_list));
+    printf (GREEN "  big  ==> %dx%d\n", _big_profile._pool_count, _big_profile._score);
+    printf (RED   "  over ==> %d\n" ESC, g_list_length (over_populated_list));
 
     {
       guint  remaining_errors = 0;
@@ -246,7 +259,13 @@ namespace NeoSwapper
   }
 
   // --------------------------------------------------------------------------------
-  void Criteria::Dump (GQuark         quark,
+  void Criteria::Delete (Criteria *criteria)
+  {
+    Object::TryToRelease (criteria);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Criteria::Dump (GQuark    quark,
                        Criteria *criteria_value)
   {
     PRINT ("%d x %30s >> " GREEN "%dx%d" ESC " + " RED "%dx%d" ESC,

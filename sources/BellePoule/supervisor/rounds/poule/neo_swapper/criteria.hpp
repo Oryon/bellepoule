@@ -36,12 +36,16 @@ namespace NeoSwapper
 
       GQuark GetQuark ();
 
+      static const gchar *GetImage (Criteria *criteria);
+
       gboolean HasQuark (GQuark quark);
 
       void ChangeScore (gint       delta,
                         PoolProxy *for_pool);
 
       gboolean FreePlaceIn (PoolProxy *pool);
+
+      static void Delete (Criteria *criteria);
 
       static void Dump (GQuark         quark,
                         Criteria *criteria_value);

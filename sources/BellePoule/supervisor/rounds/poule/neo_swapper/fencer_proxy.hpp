@@ -44,6 +44,9 @@ namespace NeoSwapper
 
       Criteria *GetCriteria (guint at_depth);
 
+      gboolean HasSameCriteriaThan (FencerProxy *than,
+                                    guint        depth);
+
       static gint CompareRank (FencerProxy *a,
                                FencerProxy *b);
 

@@ -74,12 +74,13 @@ namespace NeoSwapper
                            guint                depth);
 
     private:
-      void FindErrors (guint deep);
+      void FindErrors (guint depth);
 
-      void DispatchErrors (guint deep);
+      void DispatchErrors (guint depth);
 
-      GList *DispatchFencers (GList *list,
-                              guint  deep);
+      gboolean DispatchFencer (FencerProxy *fencer,
+                               guint        depth,
+                               gboolean     force = FALSE);
 
       gboolean FencerCanGoTo (FencerProxy *fencer,
                               PoolProxy   *pool_proxy,

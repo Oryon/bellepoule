@@ -147,6 +147,7 @@ namespace Pool
       filter->ShowAttribute ("name");
 #ifdef DEBUG
       filter->ShowAttribute ("country");
+      filter->ShowAttribute ("region");
       filter->ShowAttribute ("league");
 #else
       filter->ShowAttribute ("first_name");
@@ -1314,7 +1315,7 @@ namespace Pool
     {
       GdkColor *gdk_color = g_new (GdkColor, 1);
 
-      gdk_color_parse ("#c52222", gdk_color);
+      gdk_color_parse ("#ffb245", gdk_color);
 
       gtk_widget_modify_bg (_glade->GetWidget ("swapping_box"),
                             GTK_STATE_NORMAL,
@@ -2321,6 +2322,7 @@ namespace Pool
   void Allocator::OnUnLocked ()
   {
     EnableSensitiveWidgets ();
+    SpreadJobs ();
   }
 
   // --------------------------------------------------------------------------------
