@@ -94,7 +94,7 @@ namespace People
       gtk_widget_modify_bg (_glade->GetWidget ("place_shifting"),
                             GTK_STATE_NORMAL,
                             color);
-      gdk_color_free (color);
+      g_free (color);
 
       _place_entry_handle = g_signal_connect (_glade->GetWidget ("place_entry"),
                                               "insert-text",
