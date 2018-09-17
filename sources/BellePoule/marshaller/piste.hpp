@@ -119,6 +119,8 @@ namespace Marshaller
 
       void  OnSlotRetracted (Slot *slot);
 
+      GList *GetSlots ();
+
       static const gdouble _W;
       static const gdouble _H;
 
@@ -166,8 +168,6 @@ namespace Marshaller
       void OnObjectDeleted (Object *object);
 
       void CleanDisplay ();
-
-      GList *GetSlots ();
 
       void MakeDirty ();
 

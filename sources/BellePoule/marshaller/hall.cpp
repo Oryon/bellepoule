@@ -315,8 +315,7 @@ namespace Marshaller
         GList     *slots    = piste->GetFreeSlots (from, duration);
         Slot      *slot     = (Slot *) slots->data;
 
-        slot->SetDuration (duration);
-        slot->AddJob      (job);
+        slot->AddJob (job);
 
         g_date_time_unref (from);
 
@@ -488,9 +487,8 @@ namespace Marshaller
 
                   if (referee)
                   {
-                    slot->SetDuration (duration);
-                    slot->AddJob      (job);
-                    slot->AddReferee  (referee);
+                    slot->AddJob     (job);
+                    slot->AddReferee (referee);
 
                     job->SetRealDuration (real_duration);
 
@@ -903,8 +901,7 @@ namespace Marshaller
 
         if (slot)
         {
-          slot->SetDuration (duration);
-          slot->AddJob      (_floating_job);
+          slot->AddJob (_floating_job);
 
           while (current)
           {
@@ -1346,7 +1343,6 @@ namespace Marshaller
     gboolean   result          = FALSE;
 
     sorted_list = g_list_sort_with_data (g_list_copy (referee_list),
-                                         //(GCompareDataFunc) EnlistedReferee::CompareWorkload,
                                          (GCompareDataFunc) CompareReferee,
                                          job->GetFencerList ());
 

@@ -148,7 +148,7 @@ namespace Marshaller
         _end = end;
       }
 
-      FixOverlaps (!fix_overlaps);
+      // FixOverlaps (!fix_overlaps);
 
       _piste->OnSlotUpdated (this);
     }
@@ -262,34 +262,38 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Slot::AddJob (Job *job)
   {
-    gboolean has_owner = _job_list != NULL;
-
-    _job_list = g_list_append (_job_list,
-                               job);
-
-    job->AddObjectListener (this);
-    job->SetSlot           (this);
+    SetDuration (job->GetRegularDuration ());
 
     {
-      job->SetPiste (_piste->GetId (),
-                     _fie_time->GetXmlImage ());
+      gboolean assigned_to_piste = (_job_list != NULL);
 
-      if (_referee_list)
+      _job_list = g_list_append (_job_list,
+                                 job);
+
+      job->AddObjectListener (this);
+      job->SetSlot           (this);
+
       {
-        EnlistedReferee *referee = (EnlistedReferee *) _referee_list->data;
+        job->SetPiste (_piste->GetId (),
+                       _fie_time->GetXmlImage ());
 
-        job->SetReferee (referee->GetRef ());
+        if (_referee_list)
+        {
+          EnlistedReferee *referee = (EnlistedReferee *) _referee_list->data;
+
+          job->SetReferee (referee->GetRef ());
+        }
       }
+
+      RefreshJobStatus (job);
+
+      if (assigned_to_piste == FALSE)
+      {
+        _piste->OnSlotAssigned (this);
+      }
+
+      _piste->OnSlotUpdated (this);
     }
-
-    RefreshJobStatus (job);
-
-    if (has_owner == FALSE)
-    {
-      _piste->OnSlotAssigned (this);
-    }
-
-    _piste->OnSlotUpdated (this);
   }
 
   // --------------------------------------------------------------------------------
