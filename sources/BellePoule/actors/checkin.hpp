@@ -71,6 +71,9 @@ namespace People
 
       TallyCounter *GetTallyCounter ();
 
+      Form *CreateForm (Filter      *filter,
+                        const gchar *player_class);
+
     public:
       void on_add_player_button_clicked ();
 
@@ -96,9 +99,6 @@ namespace People
                                            PlayersList *owner);
 
       virtual void Monitor (Player *player);
-
-      void CreateForm (Filter      *filter,
-                       const gchar *player_class);
 
       virtual void SavePlayer (XmlScheme   *xml_scheme,
                                const gchar *player_class,

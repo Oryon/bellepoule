@@ -403,7 +403,8 @@ void Schedule::AddStage (Stage *stage,
     after = (Stage *) (g_list_last (_stage_list)->data);
   }
 
-  stage->SetContest (_contest);
+  stage->SetContest     (_contest);
+  stage->ShareAttendees (after);
 
   {
     Stage *input_provider = stage->GetInputProvider ();

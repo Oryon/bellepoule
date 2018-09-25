@@ -65,6 +65,8 @@ namespace People
 
       void OnUnmap ();
 
+      void CloseOnAdd ();
+
     private:
       struct Page
       {
@@ -77,6 +79,7 @@ namespace People
         GtkImage  *_flash_code_image;
       };
 
+      gboolean   _close_on_add;
       Module    *_client;
       Player    *_player_to_update;
       gboolean   _locked;

@@ -33,6 +33,8 @@ namespace People
     : Object ("Form"),
       Module ("form.glade", "FillInForm")
   {
+    _close_on_add = FALSE;
+
     _pages      = NULL;
     _page_count = 0;
 
@@ -46,6 +48,12 @@ namespace People
   // --------------------------------------------------------------------------------
   Form::~Form ()
   {
+  }
+
+  // --------------------------------------------------------------------------------
+  void Form::CloseOnAdd ()
+  {
+    _close_on_add = TRUE;
   }
 
   // --------------------------------------------------------------------------------
@@ -404,6 +412,10 @@ namespace People
         {
           listener->OnFormEvent (player,
                                  NEW_PLAYER);
+          if (_close_on_add)
+          {
+            OnCloseButtonClicked ();
+          }
         }
       }
     }

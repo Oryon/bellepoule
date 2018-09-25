@@ -20,9 +20,9 @@
 #include <goocanvas.h>
 
 #include "util/module.hpp"
+#include "util/player.hpp"
+#include "util/filter.hpp"
 
-class Filter;
-class Player;
 class Attribute;
 
 namespace People

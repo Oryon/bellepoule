@@ -27,7 +27,6 @@
 #include "util/glade.hpp"
 #include "network/advertiser.hpp"
 #include "actors/team.hpp"
-#include "../../attendees.hpp"
 #include "../../tournament.hpp"
 #include "../../contest.hpp"
 
@@ -122,7 +121,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void Splitting::Reset ()
   {
-    GSList              *current = _attendees->GetShortList ();
+    GSList              *current = GetShortList ();
     Player::AttributeId  exported_attr ("exported");
 
     while (current)
@@ -171,15 +170,11 @@ namespace People
   // --------------------------------------------------------------------------------
   void Splitting::Display ()
   {
-    GSList *shortlist = _attendees->GetShortList ();
-
-    while (shortlist)
+    for (GSList *current = GetShortList (); current; current = g_slist_next (current))
     {
-      Player *player = (Player *) shortlist->data;
-
-      Add (player);
-      shortlist = g_slist_next (shortlist);
+      Add ((Player *) current->data);
     }
+
     OnAttrListUpdated ();
   }
 
@@ -192,7 +187,7 @@ namespace People
     if (GetState () == OPERATIONAL)
     {
       Contest             *contest = _contest->Duplicate ();
-      GSList              *current = _attendees->GetShortList ();
+      GSList              *current = GetShortList ();
       Player::AttributeId  exported_attr ("exported");
 
       _tournament->Plug (contest,

@@ -22,6 +22,8 @@
 #include "network/ring.hpp"
 #include "../../stage.hpp"
 
+#include "pillow_dialog.hpp"
+
 class Data;
 class Player;
 class PlayersList;
@@ -35,7 +37,8 @@ namespace Pool
   class Allocator :
     public Stage,
     public CanvasModule,
-    public Net::Ring::Listener
+    public Net::Ring::Listener,
+    public PillowDialog::Listener
   {
     public:
       static void Declare ();
@@ -64,6 +67,9 @@ namespace Pool
 
       void OnComboboxChanged (GtkComboBox *cb);
       void OnFencerListToggled (gboolean toggled);
+      void OnLatecomerClicked ();
+      void OnNewLatecomerClicked ();
+      void OnAbsentClicked ();
       void OnFilterClicked ();
       void OnPrintClicked ();
 
@@ -71,6 +77,7 @@ namespace Pool
       void OnLocked ();
       void OnUnLocked ();
       void Reset ();
+      void ClearConfigurations ();
       GSList *GetCurrentClassification ();
       void LoadConfiguration (xmlNode *xml_node);
       void SaveConfiguration (XmlScheme *xml_scheme);
@@ -116,6 +123,8 @@ namespace Pool
       People::PlayersList *_fencer_list;
       Swapper             *_swapper;
       gboolean             _has_marshaller;
+      PillowDialog        *_latecomer_dialog;
+      PillowDialog        *_absent_dialog;
 
       void Setup ();
       void PopulateFencerList ();
@@ -160,15 +169,20 @@ namespace Pool
                             gboolean      joined);
 
       void DisplaySwapperError ();
+
       static Stage *CreateInstance (StageClass *stage_class);
 
       void Load (xmlNode *xml_node);
+
+      void SelectConfig (guint nb_pool);
 
       void ApplyConfig ();
 
       void FillInConfig ();
 
       Pool *GetPoolOf (GSList *drop_zone);
+
+      PoolZone *GetPoolOf (Player *of);
 
       void DropObject (Object   *object,
                        DropZone *source_zone,
@@ -185,6 +199,11 @@ namespace Pool
 
       static void OnSwappingToggled (GtkToggleButton *togglebutton,
                                      Allocator       *allocator);
+
+      gboolean OnAttendeeToggled (PillowDialog *from,
+                                  Player       *attendee,
+                                  gboolean      attending);
+
       virtual ~Allocator ();
   };
 }

@@ -463,6 +463,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/neo_swapper/pool_proxy.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pillow_dialog.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pillow_dialog.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

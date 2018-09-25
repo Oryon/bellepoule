@@ -85,6 +85,8 @@ class Stage : public virtual Object,
 
     Contest *GetContest ();
 
+    void ShareAttendees (Stage *with);
+
     gchar *GetFullName ();
 
     void SetName (gchar *name);
@@ -202,6 +204,8 @@ class Stage : public virtual Object,
     virtual ~Stage ();
 
     void SignalStatusUpdate ();
+
+    GSList *GetShortList ();
 
     Classification *GetClassification ();
 

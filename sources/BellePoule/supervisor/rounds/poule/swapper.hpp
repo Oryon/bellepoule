@@ -44,6 +44,9 @@ namespace Pool
 
       virtual gboolean IsAnError (Player *fencer) = 0;
 
+      virtual void InjectFencer (Player *player,
+                                 guint   pool_id = 0) = 0;
+
     protected:
       Swapper () {};
 

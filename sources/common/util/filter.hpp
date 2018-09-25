@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
+#include "attribute_desc.hpp"
 
 class Module;
 class XmlScheme;

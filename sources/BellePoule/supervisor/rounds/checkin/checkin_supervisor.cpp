@@ -29,7 +29,6 @@
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
 #include "actors/null_team.hpp"
-#include "../../attendees.hpp"
 #include "../../contest.hpp"
 #include "../../schedule.hpp"
 
@@ -56,7 +55,7 @@ namespace People
     _minimum_team_size      = NULL;
     _default_classification = NULL;
 
-    _attendees = new Attendees ();
+    _attendees = new Attendees (this);
 
     // Sensitive widgets
     {
@@ -761,6 +760,27 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::AbsentPlayerFilter (Player      *player,
+                                                  PlayersList *owner)
+  {
+    if (PresentPlayerFilter (player, owner) == FALSE)
+    {
+      CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+      if (player->Is ("team"))
+      {
+        return (supervisor->_contest->IsTeamEvent () == TRUE);
+      }
+      else
+      {
+        return (supervisor->_contest->IsTeamEvent () == FALSE);
+      }
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean CheckinSupervisor::PresentPlayerFilter (Player      *player,
                                                    PlayersList *owner)
   {
@@ -784,20 +804,24 @@ namespace People
   // --------------------------------------------------------------------------------
   GSList *CheckinSupervisor::GetCurrentClassification ()
   {
-    GSList *result = CreateCustomList (PresentPlayerFilter, this);
+    GSList *presents = CreateCustomList (PresentPlayerFilter, this);
 
-    if (result)
+    if (presents)
     {
       Player::AttributeId attr_id ("rank", this);
 
       attr_id.MakeRandomReady (_rand_seed);
-      result = g_slist_sort_with_data (result,
+      presents = g_slist_sort_with_data (presents,
                                        (GCompareDataFunc) Player::Compare,
                                        &attr_id);
 
-      _attendees->SetGlobalList (result);
+      _attendees->SetPresents (presents);
     }
-    return result;
+
+    _attendees->SetAbsents (CreateCustomList (AbsentPlayerFilter,
+                                              this));
+
+    return presents;
   }
 
   // --------------------------------------------------------------------------------
@@ -915,6 +939,28 @@ namespace People
                             Player::BEFORE_CHANGE | Player::AFTER_CHANGE);
       player->NotifyChange ("team");
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnAttendeeToggled (Player *attendee)
+  {
+    if (g_list_find (_player_list,
+                     attendee) == NULL)
+    {
+      Add (attendee);
+    }
+
+    {
+      // TODO:
+      // Remove the call to EnableSensitiveWidgets and
+      // switch Stage::_locked to TRUE only after OnLocked call.
+      // but pay attention to potential side effects.
+      EnableSensitiveWidgets ();
+
+      Lock ();
+    }
+
+    Update (attendee);
   }
 
   // --------------------------------------------------------------------------------

@@ -20,9 +20,7 @@
 
 #include "util/canvas.hpp"
 #include "util/attribute.hpp"
-#include "util/player.hpp"
 #include "util/glade.hpp"
-#include "util/filter.hpp"
 
 #include "players_store.hpp"
 #include "players_list.hpp"
@@ -401,7 +399,7 @@ namespace People
                                          PlayersList *owner)
   {
     GSList *custom_list = NULL;
-    GList *current     = _player_list;
+    GList  *current     = _player_list;
 
     while (current)
     {

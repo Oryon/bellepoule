@@ -141,7 +141,7 @@ namespace People
   GSList *GeneralClassification::GetCurrentClassification ()
   {
     Player::AttributeId final_rank_attr_id ("final_rank");
-    GSList *full_result = g_slist_copy (_attendees->GetGlobalList ());
+    GSList *full_result = g_slist_copy (_attendees->GetPresents ());
     GSList *result      = NULL;
 
     GiveShortListAFinalRank ();
@@ -218,17 +218,14 @@ namespace People
   {
     Player::AttributeId rank_attr_id       ("rank",   GetPreviousStage ());
     Player::AttributeId final_rank_attr_id ("final_rank");
-    GSList *current = _attendees->GetShortList ();
 
-    while (current)
+    for (GSList *current = GetShortList (); current; current = g_slist_next (current))
     {
       Player    *player    = (Player *) current->data;
       Attribute *rank_attr = player->GetAttribute ( &rank_attr_id);
 
       player->SetAttributeValue (&final_rank_attr_id,
                                  rank_attr->GetUIntValue ());
-
-      current = g_slist_next (current);
     }
   }
 

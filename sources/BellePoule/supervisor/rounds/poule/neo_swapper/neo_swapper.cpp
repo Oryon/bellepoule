@@ -288,7 +288,7 @@ namespace NeoSwapper
         FencerProxy *fencer = (FencerProxy *) current->data;
 
 #ifdef DEBUG
-        if (fencer->_original_pool->_id != (i+1))
+        if (fencer->_original_pool && (fencer->_original_pool->_id != (i+1)))
         {
           fencer->_player->SetData (_owner,
                                     "swapped_from",
@@ -340,17 +340,73 @@ namespace NeoSwapper
   }
 
   // --------------------------------------------------------------------------------
-  void Swapper::ManageFencer (Player    *player,
-                              PoolProxy *pool_proxy)
+  void Swapper::InjectFencer (Player *fencer,
+                              guint   pool_id)
   {
-    Player::AttributeId stage_start_rank_attr_id ("stage_start_rank", _owner);
-    Attribute *stage_start_rank = player->GetAttribute (&stage_start_rank_attr_id);
+    FencerProxy *shadow_fencer = ManageFencer (fencer,
+                                               NULL);
+
+    if (pool_id)
+    {
+      PoolProxy *pool = _pool_table[pool_id-1];
+
+      pool->InsertFencer (shadow_fencer);
+    }
+    else
+    {
+      GList *pools_by_size = NULL;
+
+      for (guint i = 0; i < _nb_pools; i++)
+      {
+        pools_by_size = g_list_insert_sorted (pools_by_size,
+                                              _pool_table[i],
+                                              GCompareFunc (PoolProxy::CompareSize));
+      }
+
+      for (GList *current = pools_by_size; current; current = g_list_next (current))
+      {
+        PoolProxy *pool = (PoolProxy *) current->data;
+
+        if (FencerCanGoTo (shadow_fencer,
+                           pool,
+                           _criteria_count))
+        {
+          PoolProxy *smallest = (PoolProxy *) pools_by_size->data;
+
+          if (pool->_size == smallest->_size)
+          {
+            pool->InsertFencer (shadow_fencer);
+          }
+          else
+          {
+            smallest->InsertFencer (shadow_fencer);
+          }
+          break;
+        }
+      }
+
+      g_list_free (pools_by_size);
+    }
+
+    StoreSwapping ();
+  }
+
+  // --------------------------------------------------------------------------------
+  FencerProxy *Swapper::ManageFencer (Player    *player,
+                                      PoolProxy *pool_proxy)
+  {
+    Player::AttributeId  stage_start_rank_attr_id ("stage_start_rank", _owner);
+    Attribute           *stage_start_rank = player->GetAttribute (&stage_start_rank_attr_id);
 
     if (stage_start_rank == NULL)
     {
-      g_print (RED "===>> E R R O R\n" ESC);
+#ifdef DEBUG
+      g_error ("Swapper: %s no start rank !!!", player->GetName ());
+#else
+      g_warning ("Swapper: %s no start rank !!!", player->GetName ());
+#endif
     }
-    else
+
     {
       FencerProxy *fencer = new FencerProxy (player,
                                              stage_start_rank->GetUIntValue (),
@@ -378,8 +434,15 @@ namespace NeoSwapper
         criteria_id->Release ();
       }
 
-      fencer->_original_pool->AddFencer (fencer);
+      if (fencer->_original_pool)
+      {
+        fencer->_original_pool->AddFencer (fencer);
+      }
+
+      return fencer;
     }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------

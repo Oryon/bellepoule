@@ -67,7 +67,12 @@ namespace NeoSwapper
   // --------------------------------------------------------------------------------
   Criteria *FencerProxy::GetCriteria (guint at_depth)
   {
-    return _criterias[at_depth];
+    if (_criterias)
+    {
+      return _criterias[at_depth];
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------

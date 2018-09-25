@@ -59,6 +59,9 @@ namespace NeoSwapper
                               guint  criteria_depth,
                               GQuark criteria_quark);
 
+      static gint CompareSize (PoolProxy *a,
+                               PoolProxy *b);
+
     private:
       guint _criteria_count;
 

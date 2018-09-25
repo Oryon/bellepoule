@@ -33,7 +33,8 @@ namespace People
   Checkin::Checkin (const gchar *glade,
                     const gchar *base_class,
                     const gchar *gathering_class)
-    : PlayersList (glade)
+    : Object ("Checkin"),
+    PlayersList (glade)
   {
     _form            = NULL;
     _tally_counter   = new TallyCounter ();
@@ -47,13 +48,13 @@ namespace People
   // --------------------------------------------------------------------------------
   Checkin::~Checkin ()
   {
-    _form->Release          ();
+    Object::TryToRelease (_form);
     _tally_counter->Release ();
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::CreateForm (Filter      *filter,
-                            const gchar *player_class)
+  Form *Checkin::CreateForm (Filter      *filter,
+                             const gchar *player_class)
   {
     if (_form == NULL)
     {
@@ -61,6 +62,8 @@ namespace People
                         filter,
                         player_class);
     }
+
+    return _form;
   }
 
   // --------------------------------------------------------------------------------
@@ -911,17 +914,27 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::RefreshAttendingDisplay ()
   {
-    gchar *text;
+    GtkLabel *label;
 
-    text = g_strdup_printf ("%d", _tally_counter->GetPresentsCount ());
-    gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("attending_label")),
-                        text);
-    g_free (text);
+    label = GTK_LABEL (_glade->GetWidget ("attending_label"));
+    if (label)
+    {
+      gchar *text = g_strdup_printf ("%d", _tally_counter->GetPresentsCount ());
 
-    text = g_strdup_printf ("%d", _tally_counter->GetAbsentsCount ());
-    gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("absent_label")),
-                        text);
-    g_free (text);
+      gtk_label_set_text (label,
+                          text);
+      g_free (text);
+    }
+
+    label = GTK_LABEL (_glade->GetWidget ("absent_label"));
+    if (label)
+    {
+      gchar *text = g_strdup_printf ("%d", _tally_counter->GetAbsentsCount ());
+
+      gtk_label_set_text (label,
+                          text);
+      g_free (text);
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -24,7 +24,6 @@
 #include "network/advertiser.hpp"
 #include "../../contest.hpp"
 #include "../../classification.hpp"
-#include "../../attendees.hpp"
 
 #include "barrage.hpp"
 
@@ -179,7 +178,7 @@ namespace People
     GSList              *result = NULL;
 
     {
-      GSList *current = _attendees->GetShortList ();
+      GSList *current = GetShortList ();
 
       for (guint i = 0; i < _short_list_length - _ties_count; i++)
       {
@@ -252,7 +251,7 @@ namespace People
           LoadAttendees (n);
           if (_short_list_length == 0)
           {
-            _short_list_length = g_slist_length (_attendees->GetShortList ());
+            _short_list_length = g_slist_length (GetShortList ());
           }
           _loaded_so_far++;
 
@@ -310,12 +309,13 @@ namespace People
   void Barrage::Garnish ()
   {
     Player::AttributeId  promoted_attr_id ("promoted", this);
+    GSList              *short_list = GetShortList ();
     GSList              *current;
 
-    _short_list_length = g_slist_length (_attendees->GetShortList ());
+    _short_list_length = g_slist_length (short_list);
     _promoted_count    = 0;
 
-    current = g_slist_nth (_attendees->GetShortList (),
+    current = g_slist_nth (short_list,
                            _short_list_length - _ties_count);
     while (current)
     {

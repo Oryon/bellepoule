@@ -19,48 +19,51 @@
 #include "attendees.hpp"
 
 // --------------------------------------------------------------------------------
-Attendees::Attendees ()
+Attendees::Attendees (Listener *listener)
   : Object ("Attendees")
 {
-  _global_list = NULL;
-  _shortlist   = NULL;
-}
-
-// --------------------------------------------------------------------------------
-Attendees::Attendees  (Attendees *from,
-                       GSList    *shortlist)
-: Object ("Attendees")
-{
-  if (from)
-  {
-    _global_list = from->_global_list;
-  }
-  else
-  {
-    _global_list = NULL;
-  }
-  _shortlist = shortlist;
+  _listener = listener;
 }
 
 // --------------------------------------------------------------------------------
 Attendees::~Attendees ()
 {
+  g_slist_free (_absents);
+  g_slist_free (_presents);
 }
 
 // --------------------------------------------------------------------------------
-void Attendees::SetGlobalList (GSList *global_list)
+void Attendees::SetPresents (GSList *presents)
 {
-  _global_list = global_list;
+  g_slist_free (_presents);
+  _presents = NULL;
+
+  _presents = g_slist_copy (presents);
 }
 
 // --------------------------------------------------------------------------------
-GSList *Attendees::GetGlobalList ()
+void Attendees::SetAbsents (GSList *absents)
 {
-  return _global_list;
+  g_slist_free (_absents);
+  _absents = NULL;
+
+  _absents = g_slist_copy (absents);
 }
 
 // --------------------------------------------------------------------------------
-GSList *Attendees::GetShortList ()
+GSList *Attendees::GetPresents ()
 {
-  return _shortlist;
+  return _presents;
+}
+
+// --------------------------------------------------------------------------------
+GSList *Attendees::GetAbsents ()
+{
+  return _absents;
+}
+
+// --------------------------------------------------------------------------------
+void Attendees::Toggle (Player *fencer)
+{
+  _listener->OnAttendeeToggled (fencer);
 }

@@ -65,8 +65,11 @@ namespace NeoSwapper
 
       void DeletePoolTable ();
 
-      void ManageFencer (Player    *player,
-                         PoolProxy *pool_proxy);
+      void InjectFencer (Player *fencer,
+                         guint   pool_id);
+
+      FencerProxy *ManageFencer (Player    *player,
+                                 PoolProxy *pool_proxy);
 
       void InsertCriteria (FencerProxy         *fencer,
                            GHashTable          *criteria_distribution,

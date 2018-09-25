@@ -19,6 +19,7 @@
 #include <gtk/gtk.h>
 
 #include "actors/checkin.hpp"
+#include "../../attendees.hpp"
 #include "../../stage.hpp"
 
 class Data;
@@ -28,7 +29,9 @@ class XmlScheme;
 
 namespace People
 {
-  class CheckinSupervisor : public Checkin, public Stage
+  class CheckinSupervisor : public Checkin,
+                            public Stage,
+                            public Attendees::Listener
   {
     public:
       static void Declare ();
@@ -80,6 +83,8 @@ namespace People
       static Stage *CreateInstance (StageClass *stage_class);
 
       void Monitor (Player *player);
+
+      void OnAttendeeToggled (Player *attendee);
 
       gboolean IsOver ();
 
@@ -138,6 +143,9 @@ namespace People
                            gint            x,
                            gint            y,
                            guint           time);
+
+      static gboolean AbsentPlayerFilter (Player      *player,
+                                          PlayersList *owner);
 
       static gboolean PresentPlayerFilter (Player      *player,
                                            PlayersList *owner);

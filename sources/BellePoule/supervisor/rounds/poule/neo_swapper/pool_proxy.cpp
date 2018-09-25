@@ -182,4 +182,11 @@ namespace NeoSwapper
 
     return NULL;
   }
+
+  // --------------------------------------------------------------------------------
+  gint PoolProxy::CompareSize (PoolProxy *a,
+                               PoolProxy *b)
+  {
+    return a->_size - b->_size;
+  }
 }

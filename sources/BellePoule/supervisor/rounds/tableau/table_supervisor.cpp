@@ -30,7 +30,6 @@
 #include "network/message.hpp"
 #include "../../book/section.hpp"
 #include "../../classification.hpp"
-#include "../../attendees.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
 #include "table.hpp"
@@ -302,9 +301,11 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Supervisor::CreateTableSets ()
   {
-    if (_attendees)
+    GSList *short_list = GetShortList ();
+
+    if (short_list)
     {
-      guint nb_players = g_slist_length (_attendees->GetShortList ());
+      guint nb_players = g_slist_length (short_list);
       guint nb_tables  = 0;
 
       for (guint i = 0; i < 32; i++)
@@ -342,7 +343,7 @@ namespace Table
 
           if (first_table_set)
           {
-            first_table_set->SetAttendees (g_slist_copy (_attendees->GetShortList ()));
+            first_table_set->SetAttendees (g_slist_copy (short_list));
             _displayed_table_set = first_table_set;
           }
         }
@@ -782,7 +783,7 @@ namespace Table
     }
 
     {
-      guint nb_players   = g_slist_length (_attendees->GetShortList ());
+      guint nb_players   = g_slist_length (GetShortList ());
       guint place_offset = 1;
 
       for (guint i = 0; i < nb_tables-1; i++)

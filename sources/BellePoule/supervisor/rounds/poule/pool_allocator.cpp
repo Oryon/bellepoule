@@ -98,13 +98,20 @@ namespace Pool
 
     _combobox_store = GTK_LIST_STORE (_glade->GetGObject ("combo_liststore"));
 
+    _latecomer_dialog = new PillowDialog (this,
+                                          this,
+                                          "latecomer");
+    _absent_dialog    = new PillowDialog (this,
+                                          this,
+                                          "absent");
+
     // Sensitive widgets
     {
       AddSensitiveWidget (_glade->GetWidget ("nb_pools_combobox"));
       AddSensitiveWidget (_glade->GetWidget ("pool_size_combobox"));
       AddSensitiveWidget (_glade->GetWidget ("swapping_criteria_hbox"));
-      AddSensitiveWidget (_glade->GetWidget ("marshaller_toolbutton"));
-      AddSensitiveWidget (_glade->GetWidget ("marshaller_toolitem"));
+      AddSensitiveWidget (_glade->GetWidget ("latecomer_toolbutton"));
+      AddSensitiveWidget (_glade->GetWidget ("absent_toolbutton"));
 
       _swapping_sensitivity_trigger = new SensitivityTrigger ();
       _swapping_sensitivity_trigger->AddWidget (_glade->GetWidget ("swapping_criteria_hbox"));
@@ -289,6 +296,8 @@ namespace Pool
     _seeding_balanced->Release ();
     _fencer_list->Release      ();
     _swapper->Delete           ();
+    _latecomer_dialog->Release ();
+    _absent_dialog->Release    ();
 
     _swapping_sensitivity_trigger->Release ();
   }
@@ -609,6 +618,13 @@ namespace Pool
     SetUpCombobox ();
 
     {
+      gboolean adjustement_allowed = (_contest->IsTeamEvent () == FALSE) && (GetId () == 1);
+
+      gtk_widget_set_visible (_glade->GetWidget ("latecomer_toolbutton"), adjustement_allowed);
+      gtk_widget_set_visible (_glade->GetWidget ("absent_toolbutton"),    adjustement_allowed);
+    }
+
+    {
       OnFencerListToggled (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("fencer_list"))));
 
       PopulateFencerList ();
@@ -662,6 +678,23 @@ namespace Pool
         CreatePools ();
       }
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::SelectConfig (guint nb_pool)
+  {
+    for (GSList *c = _config_list; c; c = g_slist_next (c))
+    {
+      Configuration *config = (Configuration *) c->data;
+
+      if (config->_nb_pool == nb_pool)
+      {
+        _selected_config = config;
+        break;
+      }
+    }
+
+    SetUpCombobox ();
   }
 
   // --------------------------------------------------------------------------------
@@ -930,22 +963,10 @@ namespace Pool
         {
           if (_config_list == NULL)
           {
-            Setup ();
-
             // Get the configuration
             {
-              GSList *current = _config_list;
-
-              while (current)
-              {
-                _selected_config = (Configuration *) current->data;
-
-                if (_selected_config->_nb_pool == nb_pool)
-                {
-                  break;
-                }
-                current = g_slist_next (current);
-              }
+              Setup ();
+              SelectConfig (nb_pool);
             }
 
             // Assign players an original pool
@@ -1024,7 +1045,7 @@ namespace Pool
         {
           current_pool->CreateMatchs (_swapping_criteria_list);
           current_pool->Load (n,
-                              _attendees->GetShortList ());
+                              GetShortList ());
           current_pool = NULL;
           return;
         }
@@ -1135,41 +1156,45 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::Setup ()
   {
-    guint           nb_players    = g_slist_length (_attendees->GetShortList ());
-    Configuration  *config        = NULL;
-    guint           max_pool_size = Dispatcher::_MAX_POOL_SIZE;
+    ClearConfigurations ();
 
-    if (nb_players % Dispatcher::_MAX_POOL_SIZE)
     {
-      max_pool_size = Dispatcher::_MAX_POOL_SIZE -1;
-    }
+      guint           nb_players    = g_slist_length (GetShortList ());
+      Configuration  *config        = NULL;
+      guint           max_pool_size = Dispatcher::_MAX_POOL_SIZE;
 
-    _best_config = NULL;
-    for (guint size = 2; size <= MIN (max_pool_size, nb_players); size++)
-    {
-      if (nb_players%size == 0)
+      if (nb_players % Dispatcher::_MAX_POOL_SIZE)
       {
-        config = (Configuration *) g_malloc (sizeof (Configuration));
-
-        config->_nb_pool       = nb_players/size;
-        config->_size          = size;
-        config->_nb_overloaded = 0;
-
-        RegisterConfig (config);
+        max_pool_size = Dispatcher::_MAX_POOL_SIZE -1;
       }
 
-      for (guint p = 1; p < nb_players/size; p++)
+      _best_config = NULL;
+      for (guint size = 2; size <= MIN (max_pool_size, nb_players); size++)
       {
-        if ((nb_players - size*p) % (size + 1) == 0)
+        if (nb_players%size == 0)
         {
           config = (Configuration *) g_malloc (sizeof (Configuration));
 
-          config->_nb_pool       = p + (nb_players - size*p) / (size + 1);
+          config->_nb_pool       = nb_players/size;
           config->_size          = size;
-          config->_nb_overloaded = (nb_players - size*p) / (size+1);
+          config->_nb_overloaded = 0;
 
           RegisterConfig (config);
-          break;
+        }
+
+        for (guint p = 1; p < nb_players/size; p++)
+        {
+          if ((nb_players - size*p) % (size + 1) == 0)
+          {
+            config = (Configuration *) g_malloc (sizeof (Configuration));
+
+            config->_nb_pool       = p + (nb_players - size*p) / (size + 1);
+            config->_size          = size;
+            config->_nb_overloaded = (nb_players - size*p) / (size+1);
+
+            RegisterConfig (config);
+            break;
+          }
         }
       }
     }
@@ -1197,18 +1222,15 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::PopulateFencerList ()
   {
-    if (_attendees)
-    {
-      GSList *current_player = _attendees->GetShortList ();
+    GSList *current_player = GetShortList ();
 
-      _fencer_list->Wipe ();
-      while (current_player)
-      {
-        _fencer_list->Add ((Player *) current_player->data);
-        current_player = g_slist_next (current_player);
-      }
-      _fencer_list->OnAttrListUpdated ();
+    _fencer_list->Wipe ();
+    while (current_player)
+    {
+      _fencer_list->Add ((Player *) current_player->data);
+      current_player = g_slist_next (current_player);
     }
+    _fencer_list->OnAttrListUpdated ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1222,8 +1244,8 @@ namespace Pool
     if (_selected_config)
     {
       Pool   **pool_table;
-      GSList  *shortlist  = _attendees->GetShortList ();
-      guint    nb_fencer  = g_slist_length (shortlist);
+      GSList  *short_list = GetShortList ();
+      guint    nb_fencer  = g_slist_length (short_list);
       guint    nb_pool    = _selected_config->_nb_pool;
 
       pool_table = g_new (Pool *, nb_pool);
@@ -1253,7 +1275,7 @@ namespace Pool
                            _swapping_criteria_list);
       if (_seeding_balanced->_value)
       {
-        _swapper->Swap (shortlist);
+        _swapper->Swap (short_list);
       }
       else
       {
@@ -1261,7 +1283,7 @@ namespace Pool
 
         for (guint i = 0; i < nb_fencer; i++)
         {
-          Player *player = (Player *) g_slist_nth_data (shortlist,
+          Player *player = (Player *) g_slist_nth_data (short_list,
                                                         i);
 
           if (_selected_config->_nb_overloaded)
@@ -1375,7 +1397,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::SetUpCombobox ()
   {
-    if (_best_config)
+    if (_selected_config)
     {
       GtkWidget *w;
       gint       config_index;
@@ -1724,12 +1746,6 @@ namespace Pool
       }
       else
       {
-        GooCanvasItem *status_item = Canvas::PutPixbufInTable (table,
-                                                               _moved_pixbuf,
-                                                               indice+1, 0);
-        player->SetData (this,
-                         "status_item",
-                         status_item);
 #ifdef DEBUG
         {
           guint swapped_from = player->GetUIntData (this, "swapped_from");
@@ -1741,7 +1757,7 @@ namespace Pool
 
             item = Canvas::PutTextInTable (table,
                                            swapped_from_text,
-                                           indice+1, 1);
+                                           indice+1, 0);
             g_object_set (G_OBJECT (item),
                           "font", BP_FONT "Bold Italic 14px",
                           "fill_color", "blue",
@@ -1750,6 +1766,28 @@ namespace Pool
           }
         }
 #endif
+
+        {
+          GooCanvasItem *status_item = Canvas::PutPixbufInTable (table,
+                                                                 _moved_pixbuf,
+                                                                 indice+1, 1);
+          player->SetData (this,
+                           "status_item",
+                           status_item);
+        }
+
+        if (player->GetUIntData (this, "injected"))
+        {
+          static gchar  *injected_icon = NULL;
+
+          if (injected_icon == NULL)
+          {
+            injected_icon = g_build_filename (Global::_share_dir, "resources/glade/images/plus.png", NULL);
+          }
+          Canvas::PutIconInTable (table,
+                                  injected_icon,
+                                  indice+1, 2);
+        }
       }
 
       for (guint i = 0; layout_list != NULL; i++)
@@ -1777,7 +1815,7 @@ namespace Pool
           {
             item = Canvas::PutPixbufInTable (table,
                                              pixbuf,
-                                             indice+1, i+2);
+                                             indice+1, i+3);
           }
           else
           {
@@ -1787,7 +1825,7 @@ namespace Pool
             {
               item = Canvas::PutTextInTable (table,
                                              image,
-                                             indice+1, i+2);
+                                             indice+1, i+3);
               g_free (image);
             }
           }
@@ -1797,7 +1835,7 @@ namespace Pool
         {
           item = Canvas::PutTextInTable (table,
                                          " ",
-                                         indice+1, i+2);
+                                         indice+1, i+3);
         }
 
         if (item)
@@ -1855,7 +1893,12 @@ namespace Pool
   void Allocator::Reset ()
   {
     DeletePools ();
+    ClearConfigurations ();
+  }
 
+  // --------------------------------------------------------------------------------
+  void Allocator::ClearConfigurations ()
+  {
     {
       __gcc_extension__ g_signal_handlers_disconnect_by_func (_glade->GetWidget ("pool_size_combobox"),
                                                               (void *) on_pool_size_combobox_changed,
@@ -1881,6 +1924,23 @@ namespace Pool
       _config_list     = NULL;
       _selected_config = NULL;
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  PoolZone *Allocator::GetPoolOf (Player *of)
+  {
+    for (GSList *current = _drop_zones; current; current = g_slist_next (current))
+    {
+      Pool   *pool    = GetPoolOf (current);
+      GSList *fencers = pool->GetFencerList ();
+
+      if (g_slist_find (fencers, of))
+      {
+        return (PoolZone *) current->data;
+      }
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -1914,19 +1974,24 @@ namespace Pool
   // --------------------------------------------------------------------------------
   Error *Allocator::GetError ()
   {
-    GSList *current = _drop_zones;
-
-    while (current)
+    for (GSList *current = _drop_zones; current; current = g_slist_next (current))
     {
       Pool *pool = GetPoolOf (current);
 
       if (pool->GetUIntData (this, "is_balanced") == 0)
       {
+        RecallJobs ();
         return new Error (Error::LEVEL_ERROR,
                           pool->GetName (),
                           gettext ("Wrong fencers count!"));
       }
-      else if (_has_marshaller)
+    }
+
+    for (GSList *current = _drop_zones; current; current = g_slist_next (current))
+    {
+      Pool *pool = GetPoolOf (current);
+
+      if (_has_marshaller)
       {
         if (   (pool->GetPiste ()       == 0)
             || (pool->GetRefereeList () == NULL))
@@ -1936,8 +2001,6 @@ namespace Pool
                             gettext ("Referees allocation \n ongoing"));
         }
       }
-
-      current = g_slist_next (current);
     }
 
     return NULL;
@@ -2277,6 +2340,46 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Allocator::OnNewLatecomerClicked ()
+  {
+    _latecomer_dialog->DisplayForm ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::OnLatecomerClicked ()
+  {
+    GtkWidget *dialog = _glade->GetWidget ("latecomer_dialog");
+
+    _latecomer_dialog->Populate (_attendees->GetAbsents (),
+                                 _selected_config->_nb_pool);
+
+    if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_CANCEL)
+    {
+      _latecomer_dialog->RevertAll ();
+    }
+    gtk_widget_hide (dialog);
+
+    _latecomer_dialog->Clear ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::OnAbsentClicked ()
+  {
+    GtkWidget *dialog = _glade->GetWidget ("absent_dialog");
+
+    _absent_dialog->Populate (_attendees->GetPresents (),
+                              _selected_config->_nb_pool);
+
+    if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_CANCEL)
+    {
+      _absent_dialog->RevertAll ();
+    }
+    gtk_widget_hide (dialog);
+
+    _absent_dialog->Clear ();
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
                                                                 Object    *owner)
   {
@@ -2315,7 +2418,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   GSList *Allocator::GetCurrentClassification ()
   {
-    return g_slist_copy (_attendees->GetShortList ());
+    return g_slist_copy (GetShortList ());
   }
 
   // --------------------------------------------------------------------------------
@@ -2430,6 +2533,101 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Allocator::OnAttendeeToggled (PillowDialog *from,
+                                         Player       *attendee,
+                                         gboolean      attending)
+  {
+    PoolZone *zone;
+
+    if (attending == FALSE)
+    {
+      zone = GetPoolOf (attendee);
+
+      if (zone)
+      {
+        Pool *pool = zone->GetPool ();
+
+        if (pool)
+        {
+          _attendees->Toggle (attendee);
+
+          _fencer_list->Remove (attendee);
+
+          pool->RemoveFencer (attendee,
+                              this);
+
+          attendee->RemoveData (this,
+                                "injected");
+
+          if (from == _absent_dialog)
+          {
+            attendee->SetData (from,
+                               from->GetRevertContext (),
+                               (void *) pool->GetNumber ());
+          }
+        }
+      }
+      else
+      {
+        return FALSE;
+      }
+    }
+    else
+    {
+      _attendees->Toggle (attendee);
+      RetrieveAttendees ();
+
+      _fencer_list->Add (attendee);
+
+      if (from == _latecomer_dialog)
+      {
+        _swapper->InjectFencer (attendee);
+        attendee->SetData (this,
+                           "injected",
+                           (void *) TRUE);
+      }
+      else
+      {
+        _swapper->InjectFencer (attendee,
+                                attendee->GetUIntData (from,
+                                                       from->GetRevertContext ()));
+      }
+
+      zone = GetPoolOf (attendee);
+    }
+
+    {
+      _swapper->Configure (_drop_zones,
+                           _swapping_criteria_list);
+      _swapper->CheckCurrentDistribution ();
+
+      DisplaySwapperError ();
+    }
+
+    {
+      Setup ();
+      SelectConfig (from->GetNbPools ());
+
+      if (_selected_config == NULL)
+      {
+        return FALSE;
+      }
+    }
+
+    RecallJobs ();
+    SpreadJobs ();
+
+    {
+      FillPoolTable (zone);
+      FixUpTablesBounds ();
+      SignalStatusUpdate ();
+      MakeDirty ();
+    }
+
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
   void Allocator::DumpToHTML (FILE *file)
   {
     _fencer_list->DumpToHTML (file);
@@ -2475,5 +2673,32 @@ namespace Pool
     Allocator *p = dynamic_cast <Allocator *> (owner);
 
     p->OnFencerListToggled (gtk_toggle_tool_button_get_active (widget));
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_latecomer_toolbutton_clicked (GtkToolButton *widget,
+                                                                   Object        *owner)
+  {
+    Allocator *pa = dynamic_cast <Allocator *> (owner);
+
+    pa->OnLatecomerClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_absent_toolbutton_clicked (GtkToolButton *widget,
+                                                                Object        *owner)
+  {
+    Allocator *pa = dynamic_cast <Allocator *> (owner);
+
+    pa->OnAbsentClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_new_latecomer_clicked (GtkToolButton *widget,
+                                                            Object        *owner)
+  {
+    Allocator *pa = dynamic_cast <Allocator *> (owner);
+
+    pa->OnNewLatecomerClicked ();
   }
 }

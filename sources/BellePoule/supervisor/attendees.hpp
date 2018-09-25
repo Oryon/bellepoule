@@ -18,23 +18,33 @@
 
 #include "util/object.hpp"
 
+class Player;
+
 class Attendees : public Object
 {
   public:
-    Attendees ();
+    struct Listener
+    {
+      virtual void OnAttendeeToggled (Player *attendee) = 0;
+    };
 
-    Attendees (Attendees *from,
-               GSList    *shortlist);
+  public:
+    Attendees (Listener *listener);
 
-    void SetGlobalList (GSList *global_list);
+    void SetPresents (GSList *presents);
 
-    GSList *GetGlobalList ();
+    void SetAbsents (GSList *absents);
 
-    GSList *GetShortList ();
+    GSList *GetPresents ();
+
+    GSList *GetAbsents ();
+
+    void Toggle (Player *fencer);
 
   private:
-    GSList *_global_list;
-    GSList *_shortlist;
+    Listener *_listener = NULL;
+    GSList   *_presents = NULL;
+    GSList   *_absents  = NULL;
 
     virtual ~Attendees ();
 };
