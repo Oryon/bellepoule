@@ -232,6 +232,12 @@
 		<Unit filename="../../sources/BellePoule/marshaller/competition.hpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/end_of_burst.cpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/end_of_burst.hpp">
+			<Option target="Marshaller_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/enlisted_referee.cpp">
 			<Option target="Marshaller_Debug" />
 		</Unit>

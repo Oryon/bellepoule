@@ -29,6 +29,7 @@
 #include "batch.hpp"
 #include "competition.hpp"
 #include "affinities.hpp"
+#include "end_of_burst.hpp"
 #include "slot.hpp"
 
 namespace Marshaller
@@ -62,7 +63,9 @@ namespace Marshaller
     _competition->SetBatchStatus (this,
                                   DISCLOSED);
 
-    _id = message->GetNetID ();
+    _id        = message->GetNetID ();
+    _stage     = message->GetInteger ("stage");
+    _batch_ref = message->GetString  ("batch");
 
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
@@ -153,6 +156,8 @@ namespace Marshaller
     g_free (_name);
 
     _job_board->Release ();
+
+    g_free (_batch_ref);
   }
 
   // --------------------------------------------------------------------------------
@@ -665,15 +670,20 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Batch::OnValidateAssign ()
   {
-    GList *current = _scheduled_list;
-
-    while (current)
+    for (GList *current = _scheduled_list; current; current = g_list_next (current))
     {
       Job *job = (Job *) current->data;
 
       job->Spread ();
+    }
 
-      current = g_list_next (current);
+    {
+      Object *eob = new EndOfBurst (_competition->GetId (),
+                                    _stage,
+                                    _batch_ref);
+
+      eob->Spread ();
+      eob->Release ();
     }
 
     _competition->SetBatchStatus (this,

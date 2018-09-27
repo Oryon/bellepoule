@@ -96,6 +96,8 @@ namespace Marshaller
 
     private:
       guint         _id;
+      guint         _stage;
+      gchar        *_batch_ref;
       Competition  *_competition;
       GtkListStore *_job_store;
       gchar        *_name;

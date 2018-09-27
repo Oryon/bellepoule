@@ -792,7 +792,9 @@ namespace Table
                                 _first_place,
                                 size,
                                 _nb_tables - t-1,
-                                "competition", competition->GetNetID (),
+                                "I", "competition", competition->GetNetID (),
+                                "I", "stage",       _supervisor->GetNetID (),
+                                "S", "batch",       _id,
                                 NULL);
 
         if (size <= nb_players)
@@ -2035,7 +2037,11 @@ namespace Table
   // --------------------------------------------------------------------------------
   gboolean TableSet::OnMessage (Net::Message *message)
   {
-    if (message->Is ("Roadmap"))
+    if (message->Is ("EndOfBurst"))
+    {
+      Display ();
+    }
+    else if (message->Is ("Roadmap"))
     {
       for (guint t = 1; t < _nb_tables; t++)
       {
@@ -2070,7 +2076,6 @@ namespace Table
           RefreshTableStatus (t == _nb_tables-1);
 
           table->Spread ();
-          Display ();
 
           return TRUE;
         }

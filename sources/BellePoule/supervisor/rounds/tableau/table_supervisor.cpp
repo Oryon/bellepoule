@@ -559,30 +559,15 @@ namespace Table
       return TRUE;
     }
     else if (   message->Is ("ScoreSheetCall")
-             || message->Is ("Score"))
+             || message->Is ("Score")
+             || message->Is ("EndOfBurst"))
     {
-      gchar       *batch = message->GetString ("batch");
-      GtkTreePath *path  = gtk_tree_path_new_from_string (batch);
+      gchar    *batch     = message->GetString ("batch");
+      TableSet *table_set = GetTableSet (batch);
 
-      if (path)
+      if (table_set)
       {
-        GtkTreeIter  iter;
-        TableSet    *table_set;
-
-        gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_filter),
-                                 &iter,
-                                 path);
-
-        gtk_tree_model_get (GTK_TREE_MODEL (_table_set_filter), &iter,
-                            TABLE_SET_TABLE_COLUMN_ptr, &table_set,
-                            -1);
-
-        if (table_set)
-        {
-          table_set->OnMessage (message);
-        }
-
-        gtk_tree_path_free (path);
+        table_set->OnMessage (message);
       }
       g_free (batch);
 

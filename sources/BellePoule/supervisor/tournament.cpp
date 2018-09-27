@@ -345,6 +345,15 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
       result = contest->OnMessage (message);
     }
   }
+  else if (message->Is ("EndOfBurst"))
+  {
+    Contest *contest = GetContest (message->GetInteger ("competition"));
+
+    if (contest)
+    {
+      result = contest->OnMessage (message);
+    }
+  }
   else if (message->Is ("ScoreSheetCall"))
   {
     Contest *contest = GetContest (message->GetInteger ("competition"));

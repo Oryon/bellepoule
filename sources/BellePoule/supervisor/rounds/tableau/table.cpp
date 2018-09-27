@@ -66,11 +66,24 @@ namespace Table
       va_list ap;
 
       va_start (ap, number);
-      while (gchar *key = va_arg (ap, gchar *))
+      while (gchar *type = va_arg (ap, gchar *))
       {
-        guint value = va_arg (ap, guint);
+        gchar *key = va_arg (ap, gchar *);
 
-        _parcel->Set (key, value);
+        if (type[0] == 'I')
+        {
+          guint value = va_arg (ap, guint);
+
+          _parcel->Set (key,
+                        value);
+        }
+        else if (type[0] == 'S')
+        {
+          gchar *value = va_arg (ap, gchar *);
+
+          _parcel->Set (key,
+                        value);
+        }
       }
       va_end (ap);
 
