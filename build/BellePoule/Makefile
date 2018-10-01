@@ -87,7 +87,7 @@ endif
 #----------------------------------------------------
 CFLAGS  =
 CFLAGS += -pedantic
-CFLAGS += -std=c++0x
+CFLAGS += -std=c++11
 CFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGSEAL_ENABLE

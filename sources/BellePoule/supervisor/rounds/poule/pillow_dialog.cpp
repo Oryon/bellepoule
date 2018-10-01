@@ -30,6 +30,7 @@ namespace Pool
                               const gchar *name)
     : Object ("PillowDialog")
   {
+     _parent_window    = NULL;
      _postponed_revert = NULL;
      _listener         = listener;
 
@@ -77,13 +78,6 @@ namespace Pool
 
       _checkin->SetFilter (filter);
 
-      {
-        People::Form *form = _checkin->CreateForm (filter,
-                                                   "Fencer");
-
-        form->CloseOnAdd ();
-      }
-
       filter->Release ();
     }
 
@@ -126,6 +120,50 @@ namespace Pool
   PillowDialog::~PillowDialog ()
   {
     _checkin->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void PillowDialog::AddFormButton (Module *player_owner)
+  {
+    Filter *checkin_filter = _checkin->GetFilter ();
+    GSList *attr_list      = g_slist_copy (checkin_filter->GetAttrList ());
+
+    for (GSList *current = attr_list; current; current = g_slist_next (current))
+    {
+      AttributeDesc *attr = (AttributeDesc *) current->data;
+
+      if (g_strcmp0 (attr->_code_name, "attending") == 0)
+      {
+        attr_list = g_slist_delete_link (attr_list,
+                                         current);
+        break;
+      }
+    }
+
+    {
+      Filter       *form_filter;
+      People::Form *form;
+
+      form_filter = new Filter (GetKlassName (),
+                                attr_list);
+
+      form = _checkin->CreateForm (form_filter,
+                                   "Fencer",
+                                   player_owner);
+
+      form->AddListener (this);
+      form->CloseOnAdd ();
+
+      form_filter->Release ();
+    }
+
+    checkin_filter->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void PillowDialog::SetParentWindow (GtkWindow *parent)
+  {
+    _parent_window = parent;
   }
 
   // --------------------------------------------------------------------------------
@@ -190,7 +228,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void PillowDialog::DisplayForm ()
   {
-    _checkin->on_add_player_button_clicked ();
+    _checkin->RaiseForm (_parent_window);
   }
 
   // --------------------------------------------------------------------------------
@@ -258,5 +296,17 @@ namespace Pool
   const gchar *PillowDialog::GetRevertContext ()
   {
     return _revert_context;
+  }
+
+  // --------------------------------------------------------------------------------
+  void PillowDialog::OnFormEvent (Player                  *player,
+                                  People::Form::FormEvent  event)
+  {
+    if (event == People::Form::NEW_PLAYER)
+    {
+      player->SetChangeCbk ("attending",
+                            (Player::OnChange) OnAttendingChanged,
+                            this);
+    }
   }
 }

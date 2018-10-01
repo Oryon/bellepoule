@@ -101,9 +101,10 @@ namespace Pool
     _latecomer_dialog = new PillowDialog (this,
                                           this,
                                           "latecomer");
-    _absent_dialog    = new PillowDialog (this,
-                                          this,
-                                          "absent");
+
+    _absent_dialog = new PillowDialog (this,
+                                       this,
+                                       "absent");
 
     // Sensitive widgets
     {
@@ -340,6 +341,14 @@ namespace Pool
   const gchar *Allocator::GetInputProviderClient ()
   {
     return "pool_stage";
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::ShareAttendees (Stage *with)
+  {
+    Stage::ShareAttendees (with);
+
+    _latecomer_dialog->AddFormButton (_attendees->GetOwner ());
   }
 
   // --------------------------------------------------------------------------------
@@ -2352,6 +2361,8 @@ namespace Pool
 
     _latecomer_dialog->Populate (_attendees->GetAbsents (),
                                  _selected_config->_nb_pool);
+
+    _latecomer_dialog->SetParentWindow (GTK_WINDOW (dialog));
 
     if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_CANCEL)
     {

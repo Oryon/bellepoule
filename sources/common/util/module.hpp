@@ -141,6 +141,9 @@ class Module : public virtual Object
 
     virtual ~Module ();
 
+    void Raise (GtkDialog *dialog,
+                GtkWindow *over);
+
     gint RunDialog (GtkDialog *dialog);
 
     GtkTreeModel *GetStatusModel ();

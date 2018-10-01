@@ -19,10 +19,12 @@
 #include "attendees.hpp"
 
 // --------------------------------------------------------------------------------
-Attendees::Attendees (Listener *listener)
+Attendees::Attendees (Listener *listener,
+                      Module   *owner)
   : Object ("Attendees")
 {
   _listener = listener;
+  _owner    = owner;
 }
 
 // --------------------------------------------------------------------------------
@@ -30,6 +32,12 @@ Attendees::~Attendees ()
 {
   g_slist_free (_absents);
   g_slist_free (_presents);
+}
+
+// --------------------------------------------------------------------------------
+Module *Attendees::GetOwner ()
+{
+  return _owner;
 }
 
 // --------------------------------------------------------------------------------

@@ -204,6 +204,8 @@ namespace Pool
                                   Player       *attendee,
                                   gboolean      attending);
 
+      void ShareAttendees (Stage *with);
+
       virtual ~Allocator ();
   };
 }

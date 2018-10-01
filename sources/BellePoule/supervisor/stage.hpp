@@ -85,7 +85,7 @@ class Stage : public virtual Object,
 
     Contest *GetContest ();
 
-    void ShareAttendees (Stage *with);
+    virtual void ShareAttendees (Stage *with);
 
     gchar *GetFullName ();
 

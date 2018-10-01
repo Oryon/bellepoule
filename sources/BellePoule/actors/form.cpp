@@ -27,19 +27,20 @@
 namespace People
 {
   // --------------------------------------------------------------------------------
-  Form::Form (Module      *client,
+  Form::Form (Module      *player_owner,
               Filter      *filter,
               const gchar *player_class)
     : Object ("Form"),
       Module ("form.glade", "FillInForm")
   {
+    _listeners    = NULL;
     _close_on_add = FALSE;
 
     _pages      = NULL;
     _page_count = 0;
 
-    _client = client;
-    _locked = FALSE;
+    _player_owner = player_owner;
+    _locked       = FALSE;
 
     AddPage (filter,
              player_class);
@@ -54,6 +55,16 @@ namespace People
   void Form::CloseOnAdd ()
   {
     _close_on_add = TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Form::AddListener (Listener *listener)
+  {
+    if (listener)
+    {
+      _listeners = g_list_prepend (_listeners,
+                                   listener);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -156,7 +167,7 @@ namespace People
         if (attr_desc->_rights == AttributeDesc::PUBLIC)
         {
           {
-            GtkWidget *w   = gtk_label_new (attr_desc->_user_name);
+            GtkWidget *w = gtk_label_new (attr_desc->_user_name);
 
             gtk_box_pack_start (GTK_BOX (page->_title_vbox),
                                 w,
@@ -397,25 +408,23 @@ namespace People
     gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
                                                           0));
 
+    for (GList *current = _listeners; current; current = g_list_next (current))
     {
-      Listener *listener = dynamic_cast <Listener *> (_client);
+      Listener *listener = (Listener *) current->data;
 
-      if (listener)
+      if (_player_to_update)
       {
-        if (_player_to_update)
+        listener->OnFormEvent (player,
+                               UPDATE_PLAYER);
+        OnCloseButtonClicked ();
+      }
+      else
+      {
+        listener->OnFormEvent (player,
+                               NEW_PLAYER);
+        if (_close_on_add)
         {
-          listener->OnFormEvent (player,
-                                 UPDATE_PLAYER);
           OnCloseButtonClicked ();
-        }
-        else
-        {
-          listener->OnFormEvent (player,
-                                 NEW_PLAYER);
-          if (_close_on_add)
-          {
-            OnCloseButtonClicked ();
-          }
         }
       }
     }
@@ -452,7 +461,7 @@ namespace People
       if (player)
       {
         attr_id = Player::AttributeId::Create (attr_desc,
-                                               _client);
+                                               _player_owner);
       }
 
       if (attr_desc->_type == G_TYPE_BOOLEAN)
@@ -618,9 +627,11 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Form::Show (Player *player)
+  void Form::Show (GtkWindow *over,
+                   Player    *player)
   {
-    gtk_widget_show_all (_glade->GetWidget ("FillInForm"));
+    Raise (GTK_DIALOG (_glade->GetWidget ("FillInForm")),
+           over);
 
     if (player)
     {
@@ -671,7 +682,7 @@ namespace People
                                            i);
         attr_name = (gchar *) g_object_get_data (G_OBJECT (w), "attribute_name");
         attr_desc = AttributeDesc::GetDescFromCodeName (attr_name);
-        attr_id   = Player::AttributeId::Create (attr_desc, _client);
+        attr_id   = Player::AttributeId::Create (attr_desc, _player_owner);
         attr      = player->GetAttribute (attr_id);
 
         if (   (attr == NULL)

@@ -47,7 +47,8 @@ namespace People
       void AddPage (Filter      *filter,
                     const gchar *player_class);
 
-      void Show (Player *player = NULL);
+      void Show (GtkWindow *over,
+                 Player    *player = NULL);
 
       void Hide ();
 
@@ -67,6 +68,8 @@ namespace People
 
       void CloseOnAdd ();
 
+      void AddListener (Listener *listener);
+
     private:
       struct Page
       {
@@ -80,11 +83,11 @@ namespace People
       };
 
       gboolean   _close_on_add;
-      Module    *_client;
+      Module    *_player_owner;
+      GList     *_listeners;
       Player    *_player_to_update;
       gboolean   _locked;
       guint      _page_count;
-      Filter    *_filter;
       Page      *_pages;
 
       virtual ~Form ();

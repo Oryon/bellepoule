@@ -72,10 +72,11 @@ namespace People
       TallyCounter *GetTallyCounter ();
 
       Form *CreateForm (Filter      *filter,
-                        const gchar *player_class);
+                        const gchar *player_class,
+                        Module      *player_owner = NULL);
 
     public:
-      void on_add_player_button_clicked ();
+      void RaiseForm (GtkWindow *over = NULL);
 
       void on_players_list_row_activated (GtkTreePath *path);
 

@@ -54,13 +54,26 @@ namespace People
 
   // --------------------------------------------------------------------------------
   Form *Checkin::CreateForm (Filter      *filter,
-                             const gchar *player_class)
+                             const gchar *player_class,
+                             Module      *player_owner)
   {
     if (_form == NULL)
     {
-      _form = new Form (this,
-                        filter,
-                        player_class);
+      if (player_owner)
+      {
+        _form = new Form (player_owner,
+                          filter,
+                          player_class);
+        _form->AddListener (dynamic_cast <Form::Listener *> (player_owner));
+      }
+      else
+      {
+        _form = new Form (this,
+                          filter,
+                          player_class);
+      }
+
+      _form->AddListener (this);
     }
 
     return _form;
@@ -943,13 +956,13 @@ namespace People
   {
     Checkin *p = dynamic_cast <Checkin *> (owner);
 
-    p->on_add_player_button_clicked ();
+    p->RaiseForm ();
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::on_add_player_button_clicked ()
+  void Checkin::RaiseForm (GtkWindow *over)
   {
-    _form->Show ();
+    _form->Show (over);
   }
 
   // --------------------------------------------------------------------------------
@@ -991,7 +1004,8 @@ namespace People
 
       if (player && (player->IsSticky () == FALSE))
       {
-        _form->Show (player);
+        _form->Show (NULL,
+                     player);
       }
     }
   }

@@ -844,6 +844,27 @@ gint Module::RunDialog (GtkDialog *dialog)
 }
 
 // --------------------------------------------------------------------------------
+void Module::Raise (GtkDialog *dialog,
+                    GtkWindow *over)
+{
+  if (over == NULL)
+  {
+    gtk_window_set_transient_for (GTK_WINDOW (dialog),
+                                  _main_window);
+  }
+  else
+  {
+    gtk_window_set_modal (GTK_WINDOW (dialog),
+                          TRUE);
+    gtk_window_set_transient_for (GTK_WINDOW (dialog),
+                                  over);
+  }
+
+  gtk_widget_show_all (GTK_WIDGET (dialog));
+  gtk_widget_grab_focus (GTK_WIDGET (dialog));
+}
+
+// --------------------------------------------------------------------------------
 GtkTreeModel *Module::GetStatusModel ()
 {
   if (_status_model == NULL)

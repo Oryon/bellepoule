@@ -19,6 +19,7 @@
 #include "util/object.hpp"
 
 class Player;
+class Module;
 
 class Attendees : public Object
 {
@@ -29,7 +30,8 @@ class Attendees : public Object
     };
 
   public:
-    Attendees (Listener *listener);
+    Attendees (Listener *listener,
+               Module   *owner);
 
     void SetPresents (GSList *presents);
 
@@ -39,9 +41,12 @@ class Attendees : public Object
 
     GSList *GetAbsents ();
 
+    Module *GetOwner ();
+
     void Toggle (Player *fencer);
 
   private:
+    Module   *_owner    = NULL;
     Listener *_listener = NULL;
     GSList   *_presents = NULL;
     GSList   *_absents  = NULL;

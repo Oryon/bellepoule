@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 
+#include "actors/form.hpp"
 #include "util/object.hpp"
 
 class Module;
@@ -29,7 +30,8 @@ namespace People
 
 namespace Pool
 {
-  class PillowDialog : public Object
+  class PillowDialog : public Object,
+                       public People::Form::Listener
   {
     public:
     struct Listener
@@ -44,6 +46,8 @@ namespace Pool
                     Listener    *listener,
                     const gchar *name);
 
+      void SetParentWindow (GtkWindow *parent);
+
       void Populate (GSList *fencers,
                      guint   nb_pool);
 
@@ -54,6 +58,8 @@ namespace Pool
       void DisplayForm ();
 
       guint GetNbPools ();
+
+      void AddFormButton (Module *player_owner);
 
       static const gchar *GetRevertContext ();
 
@@ -67,8 +73,12 @@ namespace Pool
       GtkWidget       *_warning_box;
       GtkLabel        *_warning_label;
       GList           *_postponed_revert;
+      GtkWindow       *_parent_window;
 
       virtual ~PillowDialog ();
+
+      void OnFormEvent (Player                  *player,
+                        People::Form::FormEvent  event);
 
       static void OnAttendingChanged (Player    *player,
                                       Attribute *attr,

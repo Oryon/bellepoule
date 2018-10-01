@@ -55,7 +55,8 @@ namespace People
     _minimum_team_size      = NULL;
     _default_classification = NULL;
 
-    _attendees = new Attendees (this);
+    _attendees = new Attendees (this,
+                                this);
 
     // Sensitive widgets
     {
