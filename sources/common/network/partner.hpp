@@ -17,38 +17,52 @@
 #pragma once
 
 #include "util/object.hpp"
+#include "message_uploader.hpp"
 
 namespace Net
 {
   class Message;
-  class MessageUploader;
 
-  class Partner : public Object
+  class Partner : public Object,
+                  public Net::MessageUploader::Listener
   {
     public:
-      Partner (Message *message);
+      struct Listener
+      {
+        virtual void OnPartnerKilled (Partner *partener) = 0;
+      };
+
+    public:
+      Partner (Message  *message,
+               Listener *listener);
 
       void SetPassPhrase256 (const gchar *passphrase256);
 
       void SendMessage (Message *message);
 
-      gboolean Is (Partner *partner);
+      gboolean Is (gint32 partner_id);
 
-      gboolean HasRole (const gchar *role);
-
-      const gchar *GetRole ();
+      gboolean HasRole (guint role);
 
       const gchar *GetAddress ();
 
       guint GetPort ();
 
     private:
-      gchar           *_role;
+      guint            _role;
+      gint32           _partner_id;
       gchar           *_address;
       guint            _port;
       MessageUploader *_uploader;
       gchar           *_passphrase256;
+      Listener        *_listener;
 
       ~Partner ();
+
+      void OnUploadStatus (MessageUploader::PeerStatus peer_status);
+
+      void Use ();
+
+      void Drop ();
   };
 }

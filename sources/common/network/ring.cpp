@@ -25,7 +25,6 @@
 #include "util/global.hpp"
 #include "util/user_config.hpp"
 #include "credentials.hpp"
-#include "partner.hpp"
 #include "message.hpp"
 #include "cryptor.hpp"
 #include "ring.hpp"
@@ -38,9 +37,9 @@ namespace Net
   Ring *Ring::_broker = NULL;
 
   // --------------------------------------------------------------------------------
-  Ring::Ring (const gchar *role,
-              guint        unicast_port,
-              GtkWidget   *partner_indicator)
+  Ring::Ring (Role       role,
+              guint      unicast_port,
+              GtkWidget *partner_indicator)
     : Object ("Ring")
   {
     _ip_address         = NULL;
@@ -49,12 +48,12 @@ namespace Net
     _listeners          = NULL;
     _handshake_listener = NULL;
     _multicast_address  = NULL;
-    _role               = g_strdup (role);
+    _role               = role;
     _unicast_port       = unicast_port;
     _credentials        = NULL;
+    _partner_id         = g_random_int ();
 
     _partner_indicator = partner_indicator;
-    DisplayIndicator (NULL);
 
     {
       gchar *passphrase = g_key_file_get_string (Global::_user_config->_key_file,
@@ -113,33 +112,51 @@ namespace Net
 
       g_object_unref (socket);
     }
+
+    _heartbeat_timer = g_timeout_add_seconds (5,
+                                              (GSourceFunc) SendHeartbeat,
+                                              this);
   }
 
   // --------------------------------------------------------------------------------
   Ring::~Ring ()
   {
+    if (_heartbeat_timer)
+    {
+      g_source_remove (_heartbeat_timer);
+    }
+
     _credentials->Release ();
   }
 
   // --------------------------------------------------------------------------------
-  void Ring::DisplayIndicator (Partner *partner)
+  void Ring::DisplayIndicator ()
   {
     if (_partner_indicator)
     {
-      gchar *icon;
+      gchar   *icon;
+      GString *tooltip = g_string_new ("");
 
-      if (partner)
+      for (GList *current = _partner_list; current; current = g_list_next (current))
       {
-        gchar *tooltip = g_strdup_printf ("%s:<b>%d</b>",
-                                          partner->GetAddress (),
-                                          partner->GetPort ());
+        Partner *partner = (Partner *) current->data;
 
+        if (current != _partner_list)
+        {
+          g_string_append_c (tooltip, '\n');
+        }
+
+        g_string_append_printf (tooltip, "%s:<b>%d</b>",
+                                partner->GetAddress (),
+                                partner->GetPort ());
+      }
+
+      if (_partner_list)
+      {
         icon = g_build_filename (Global::_share_dir, "resources", "glade", "images", "network.png", NULL);
         gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (_partner_indicator));
         gtk_widget_set_tooltip_markup (_partner_indicator,
-                                       tooltip);
-
-        g_free (tooltip);
+                                       tooltip->str);
       }
       else
       {
@@ -153,14 +170,11 @@ namespace Net
         gtk_image_set_from_file (GTK_IMAGE (image),
                                  icon);
       }
+
+      g_string_free (tooltip,
+                     TRUE);
       g_free (icon);
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  const gchar *Ring::GetRole ()
-  {
-    return _role;
   }
 
   // --------------------------------------------------------------------------------
@@ -170,9 +184,9 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Ring::Join (const gchar *role,
-                   guint        unicast_port,
-                   GtkWidget   *partner_indicator)
+  void Ring::Join (Role       role,
+                   guint      unicast_port,
+                   GtkWidget *partner_indicator)
   {
     if (_broker)
     {
@@ -223,39 +237,38 @@ namespace Net
     {
       Message *message = new Message ("Farewell");
 
-      message->Set ("role", _role);
+      message->Set ("partner", _partner_id);
+      message->Set ("role",    _role);
 
       Multicast (message);
       message->Release ();
     }
 
     FreeFullGList (Partner, _partner_list);
-
-    {
-      g_free (_role);
-      _role = NULL;
-    }
   }
 
   // --------------------------------------------------------------------------------
   void Ring::OnHandshake (Message           *message,
                           HandshakeListener *listener)
   {
+    HandshakeResult response = (HandshakeResult) message->GetInteger ("response");
+
     _handshake_listener = listener;
 
-    if (message->GetInteger ("unicast_port"))
+    if (response == GRANTED)
     {
-      Partner *partner = new Partner (message);
+      Partner *partner = new Partner (message,
+                                      this);
 
-      Add (partner);
+      if (Add (partner) == FALSE)
+      {
+        g_error ("Ring::OnHandshake");
+      }
+
       partner->Release ();
+    }
 
-      _handshake_listener->OnHanshakeResult (TRUE);
-    }
-    else
-    {
-      _handshake_listener->OnHanshakeResult (FALSE);
-    }
+    _handshake_listener->OnHanshakeResult (response);
   }
 
   // --------------------------------------------------------------------------------
@@ -266,6 +279,7 @@ namespace Net
     message->Set ("role",         _role);
     message->Set ("ip_address",   _ip_address);
     message->Set ("unicast_port", _unicast_port);
+    message->Set ("partner",      _partner_id);
 
     // Add secret challenge to message
     {
@@ -359,35 +373,57 @@ namespace Net
       else
       {
         Message *message = new Message ((guint8 *) buffer);
-        gchar   *role    = message->GetString ("role");
+        gint32   id      = (Role) message->GetSignedInteger ("partner");
 
-        if (g_strcmp0 (role, ring->_role) != 0)
+        if (ring->_partner_id != id)
         {
           if (message->Is ("Announcement"))
           {
-            Partner *partner = new Partner (message);
+            Role     role    = (Role) message->GetInteger ("role");
+            Partner *partner = new Partner (message, ring);
 
-            if (ring->DecryptSecret (message))
+            if ((ring->_role == role) && (role == RESOURCE_MANAGER))
             {
               ring->SendHandshake (partner,
-                                   TRUE);
-              ring->Add (partner);
+                                   ROLE_REJECTED);
             }
-            else
+            else if (role != ring->_role)
             {
-              ring->SendHandshake (partner,
-                                   FALSE);
+              if (ring->DecryptSecret (message))
+              {
+                if (ring->Add (partner))
+                {
+                  ring->SendHandshake (partner,
+                                       GRANTED);
+                }
+                else
+                {
+                  ring->SendHandshake (partner,
+                                       ROLE_REJECTED);
+                }
+              }
+              else
+              {
+                ring->SendHandshake (partner,
+                                     AUTHENTICATION_FAILED);
+              }
             }
-
             partner->Release ();
           }
           else if (message->Is ("Farewell"))
           {
-            ring->Remove (role);
+            for (GList *current = ring->_partner_list; current; current = g_list_next (current))
+            {
+              Partner *partner = (Partner *) current->data;
+
+              if (partner->Is (message->GetSignedInteger ("partner")))
+              {
+                ring->Remove (partner);
+                break;
+              }
+            }
           }
         }
-
-        g_free (role);
         message->Release ();
       }
     }
@@ -396,17 +432,20 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  void Ring::SendHandshake (Partner  *partner,
-                            gboolean  authorized)
+  void Ring::SendHandshake (Partner         *partner,
+                            HandshakeResult  result)
   {
     Message *message = new Message ("Handshake");
 
-    if (authorized)
+    if (result == GRANTED)
     {
       message->Set ("role",         _role);
       message->Set ("ip_address",   _ip_address);
       message->Set ("unicast_port", _unicast_port);
+      message->Set ("partner",      _partner_id);
     }
+
+    message->Set ("response", result);
 
     message->SetFitness (1);
     partner->SendMessage (message);
@@ -414,8 +453,21 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  void Ring::Add (Partner *partner)
+  gboolean Ring::Add (Partner *partner)
   {
+    if (partner->HasRole (RESOURCE_MANAGER))
+    {
+      for (GList *current = _partner_list; current; current = g_list_next (current))
+      {
+        Partner *p = (Partner *) current->data;
+
+        if (p->HasRole (RESOURCE_MANAGER))
+        {
+          return FALSE;
+        }
+      }
+    }
+
     {
       char *key = _credentials->GetKey ();
 
@@ -423,39 +475,33 @@ namespace Net
       g_free (key);
     }
 
-    DisplayIndicator (partner);
-
-    Remove (partner->GetRole ());
     partner->Retain ();
     _partner_list = g_list_prepend (_partner_list,
                                     partner);
     NotifyPartnerStatus (partner,
                          TRUE);
     Synchronize (partner);
+
+    DisplayIndicator ();
+
+    return TRUE;
   }
 
   // -------------------------------------------------------------------------------
-  void Ring::Remove (const gchar *role)
+  void Ring::Remove (Partner *partner)
   {
-    GList *current = _partner_list;
+    GList *node = g_list_find (_partner_list,
+                               partner);
 
-    while (current)
+    if (node)
     {
-      Partner *partner = (Partner *) current->data;
+      _partner_list = g_list_delete_link (_partner_list,
+                                          node);
+      NotifyPartnerStatus (partner,
+                           FALSE);
+      partner->Release ();
 
-      if (partner->HasRole (role))
-      {
-        DisplayIndicator (NULL);
-
-        _partner_list = g_list_delete_link (_partner_list,
-                                            current);
-        NotifyPartnerStatus (partner,
-                             FALSE);
-        partner->Release ();
-        break;
-      }
-
-      current = g_list_next (current);
+      DisplayIndicator ();
     }
   }
 
@@ -476,14 +522,11 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::Send (Message *message)
   {
-    GList *current = _partner_list;
-
-    while (current)
+    for (GList *current = _partner_list; current; current = g_list_next (current))
     {
       Partner *partner = (Partner *) current->data;
 
       partner->SendMessage (message);
-      current = g_list_next (current);
     }
   }
 
@@ -544,18 +587,12 @@ namespace Net
       _listeners = g_list_prepend (_listeners,
                                    listener);
 
+      for (GList *current = _partner_list; current; current = g_list_next (current))
       {
-        GList *current = _partner_list;
+        Partner *partner = (Partner *) current->data;
 
-        while (current)
-        {
-          Partner *partner = (Partner *) current->data;
-
-          NotifyPartnerStatus (partner,
-                               TRUE);
-
-          current = g_list_next (current);
-        }
+        NotifyPartnerStatus (partner,
+                             TRUE);
       }
     }
   }
@@ -574,20 +611,12 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  Partner *Ring::GetPartner (const gchar *role)
+  Partner *Ring::GetPartner ()
   {
-    GList *current = _partner_list;
-
-    while (current)
+    g_warning ("Ring::GetPartner: STUB");
+    if (_partner_list)
     {
-      Partner *partner = (Partner *) current->data;
-
-      if (partner->HasRole (role))
-      {
-        return partner;
-      }
-
-      current = g_list_next (current);
+      return (Partner *) _partner_list->data;
     }
     return NULL;
   }
@@ -618,10 +647,11 @@ namespace Net
                            "Ring", "passphrase", passphrase);
 
     Object::TryToRelease (_credentials);
-    _credentials = new Credentials (_role,
+    _credentials = new Credentials (GetRoleImage (),
                                     ip_address,
                                     _unicast_port,
                                     passphrase);
+
     g_free (ip_address);
 
     Global::_user_config->Save ();
@@ -651,7 +681,7 @@ namespace Net
         UserConfig *partner_config;
         gchar      *partner_pass;
 
-        if (g_ascii_strcasecmp (_role, "Supervisor") == 0)
+        if (_role == RESOURCE_USER)
         {
           partner_config = new UserConfig ("BellePoule2D", TRUE);
         }
@@ -667,7 +697,7 @@ namespace Net
         if (partner_pass)
         {
           gchar       *ip_address           = GuessIpV4Address ();
-          Credentials *partner_crendentials = new Credentials (_role,
+          Credentials *partner_crendentials = new Credentials (GetRoleImage (),
                                                                ip_address,
                                                                _unicast_port,
                                                                partner_pass);
@@ -719,6 +749,27 @@ namespace Net
     cryptor->Release ();
 
     return decoded;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Ring::OnPartnerKilled (Partner *partener)
+  {
+    Remove (partener);
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Ring::GetRoleImage ()
+  {
+    if (_role == RESOURCE_MANAGER)
+    {
+      return "RESOURCE_MANAGER";
+    }
+    else if (_role == RESOURCE_USER)
+    {
+      return "RESOURCE_USER";
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -819,5 +870,22 @@ namespace Net
 #endif
 
     return ip_address;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Ring::SendHeartbeat (Ring *ring)
+  {
+    Message *heartbeat = new Message ("Heartbeat");
+
+    heartbeat->Set ("partner", ring->_partner_id);
+
+    for (GList *current = ring->_partner_list; current; current = g_list_next (current))
+    {
+      Partner *partner = (Partner *) current->data;
+
+      partner->SendMessage (heartbeat);
+    }
+
+    return G_SOURCE_CONTINUE;
   }
 }

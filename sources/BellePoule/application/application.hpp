@@ -17,6 +17,7 @@
 #pragma once
 
 #include "util/object.hpp"
+#include "network/ring.hpp"
 #include "network/downloader.hpp"
 #include "network/http_server.hpp"
 
@@ -42,11 +43,10 @@ class Application :
   protected:
     Module *_main_module;
 
-    Application (const gchar   *role,
-                 const gchar   *public_name,
-                 guint          http_port,
-                 int           *argc,
-                 char        ***argv);
+    Application (Net::Ring::Role     role,
+                 const gchar        *public_name,
+                 int                *argc,
+                 char            ***argv);
 
     virtual ~Application ();
 
@@ -55,7 +55,7 @@ class Application :
     virtual gchar *OnHttpGet (const gchar *url);
 
   private:
-    gchar           *_role;
+    Net::Ring::Role  _role;
     Language        *_language;
     Net::Downloader *_version_downloader;
     Net::HttpServer *_http_server;

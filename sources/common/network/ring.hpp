@@ -19,17 +19,31 @@
 #include <gtk/gtk.h>
 
 #include <util/object.hpp>
+#include <partner.hpp>
 
 namespace Net
 {
   class Message;
-  class Partner;
   class Credentials;
 
   class Ring : public Object,
-               public Object::Listener
+               public Object::Listener,
+               public Partner::Listener
   {
     public:
+      typedef enum
+      {
+        GRANTED,
+        AUTHENTICATION_FAILED,
+        ROLE_REJECTED
+      } HandshakeResult;
+
+      typedef enum
+      {
+        RESOURCE_MANAGER,
+        RESOURCE_USER
+      } Role;
+
       struct Listener
       {
         virtual void OnPartnerJoined (Partner  *partner,
@@ -38,15 +52,15 @@ namespace Net
 
       struct HandshakeListener
       {
-        virtual void OnHanshakeResult (gboolean passed) = 0;
+        virtual void OnHanshakeResult (HandshakeResult result) = 0;
       };
 
     public:
       static Ring *_broker;
 
-      static void Join (const gchar *role,
-                        guint        unicast_port,
-                        GtkWidget   *partner_indicator);
+      static void Join (Role       role,
+                        guint      unicast_port,
+                        GtkWidget *partner_indicator);
 
       void Leave ();
 
@@ -57,8 +71,6 @@ namespace Net
 
       void RecallMessage (Message *message);
 
-      const gchar *GetRole ();
-
       gchar *GetCryptorKey ();
 
       void RegisterListener (Listener *listener);
@@ -68,7 +80,7 @@ namespace Net
       void NotifyPartnerStatus (Partner  *partner,
                                 gboolean  join);
 
-      Partner *GetPartner (const gchar *role);
+      Partner *GetPartner ();
 
       FlashCode *GetFlashCode ();
 
@@ -79,9 +91,9 @@ namespace Net
       void ChangePassphrase (const gchar *passphrase);
 
     private:
-      Ring (const gchar *role,
-            guint        unicast_port,
-            GtkWidget   *partner_indicator);
+      Ring (Role       role,
+            guint      unicast_port,
+            GtkWidget *partner_indicator);
 
       virtual ~Ring ();
 
@@ -90,7 +102,9 @@ namespace Net
       static const guint  ANNOUNCE_PORT = 35000;
       static const gchar *SECRET;
 
-      gchar             *_role;
+      Role               _role;
+      guint              _heartbeat_timer;
+      gint32             _partner_id;
       gchar             *_ip_address;
       guint              _unicast_port;
       GList             *_partner_list;
@@ -101,9 +115,9 @@ namespace Net
       GSocketAddress    *_multicast_address;
       Credentials       *_credentials;
 
-      void Add (Partner *partner);
+      gboolean Add (Partner *partner);
 
-      void Remove (const gchar *role);
+      void Remove (Partner *partner);
 
       void Synchronize (Partner *partner);
 
@@ -121,15 +135,21 @@ namespace Net
 
       void OnObjectDeleted (Object *object);
 
-      void DisplayIndicator (Partner *partner);
+      void DisplayIndicator ();
 
-      void SendHandshake (Partner  *partner,
-                          gboolean  authorized);
+      void SendHandshake (Partner         *partner,
+                          HandshakeResult  result);
 
       gboolean DecryptSecret (Message *message);
 
       gboolean DecryptSecret (gchar       *crypted,
                               gchar       *iv,
                               Credentials *credentials);
+
+      const gchar *GetRoleImage ();
+
+      void OnPartnerKilled (Partner *partener);
+
+      static gboolean SendHeartbeat (Ring *ring);
   };
 }

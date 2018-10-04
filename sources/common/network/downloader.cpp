@@ -108,7 +108,7 @@ namespace Net
       curl_handle = curl_easy_init ();
 
       curl_easy_setopt (curl_handle, CURLOPT_URL,           downloader->_address);
-      curl_easy_setopt (curl_handle, CURLOPT_NOPROXY,       "127.0.0.1");
+      curl_easy_setopt (curl_handle, CURLOPT_PROXY,         "");
       curl_easy_setopt (curl_handle, CURLOPT_WRITEFUNCTION, AddText);
       curl_easy_setopt (curl_handle, CURLOPT_WRITEDATA,     downloader);
       curl_easy_setopt (curl_handle, CURLOPT_USERAGENT,     "libcurl-agent/1.0");

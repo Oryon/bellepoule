@@ -357,7 +357,7 @@ namespace Marshaller
 
         // Send back the Supervisor address
         {
-          Net::Partner *partner = Net::Ring::_broker->GetPartner ("BellePoule");
+          Net::Partner *partner = Net::Ring::_broker->GetPartner ();
 
           if (partner)
           {

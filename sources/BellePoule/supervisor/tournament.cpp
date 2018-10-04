@@ -308,9 +308,9 @@ void Tournament::OnShowAccessCode (gboolean with_steps)
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnHanshakeResult (gboolean passed)
+void Tournament::OnHanshakeResult (Net::Ring::HandshakeResult result)
 {
-  if (passed == FALSE)
+  if (result == Net::Ring::AUTHENTICATION_FAILED)
   {
     OnShowAccessCode (TRUE);
   }

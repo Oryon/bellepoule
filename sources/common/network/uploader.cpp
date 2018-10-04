@@ -196,7 +196,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Uploader::SetCurlOptions (CURL *curl)
   {
-    curl_easy_setopt (_curl, CURLOPT_URL,  GetUrl ());
+    curl_easy_setopt (curl, CURLOPT_URL,  GetUrl ());
     curl_easy_setopt (curl, CURLOPT_PROXY, "");
 
     if (_body_out->GetSize () > 0)

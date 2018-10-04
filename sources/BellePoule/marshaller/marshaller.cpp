@@ -147,11 +147,22 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Marshaller::OnHanshakeResult (gboolean passed)
+  void Marshaller::OnHanshakeResult (Net::Ring::HandshakeResult result)
   {
-    if (passed == FALSE)
+    if (result == Net::Ring::AUTHENTICATION_FAILED)
     {
       OnShowAccessCode (TRUE);
+    }
+    else if (result == Net::Ring::ROLE_REJECTED)
+    {
+      GtkWidget *dialog = _glade->GetWidget ("join_rejected_dialog");
+
+      if (gtk_window_is_active (GTK_WINDOW (dialog)) == FALSE)
+      {
+        RunDialog (GTK_DIALOG (dialog));
+
+        gtk_main_quit ();
+      }
     }
   }
 

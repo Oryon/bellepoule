@@ -33,8 +33,6 @@ namespace Net
 
       gboolean IsValid ();
 
-      gchar *GetSender ();
-
       void SetNetID (guint id);
 
       guint GetNetID ();

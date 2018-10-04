@@ -14,11 +14,9 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "util/wifi_code.hpp"
 #include "util/player.hpp"
 #include "util/attribute_desc.hpp"
 #include "util/filter.hpp"
-#include "network/ring.hpp"
 #include "rounds/barrage/barrage.hpp"
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "rounds/classification/general_classification.hpp"
@@ -51,8 +49,6 @@ class BellPouleApp : public Application
 
     gboolean OnHttpPost (Net::Message *message);
 
-    gchar *OnHttpGet (const gchar *url);
-
     gchar *GetSecretKey (const gchar *authentication_scheme);
 
     void OnQuit (GtkWindow *window);
@@ -61,7 +57,7 @@ class BellPouleApp : public Application
 // --------------------------------------------------------------------------------
 BellPouleApp::BellPouleApp (int    *argc,
                             char ***argv)
-  : Application ("Supervisor", "BellePoule", 35830, argc, argv)
+  : Application (Net::Ring::RESOURCE_USER, "BellePoule", argc, argv)
 {
 }
 
@@ -102,7 +98,6 @@ void BellPouleApp::Start (int    argc,
 {
   _tournament = new Tournament ();
 
-  WifiCode::SetIpPort (35830);
   People::Splitting::SetHostTournament (_tournament);
 
   _main_module = _tournament;
@@ -128,12 +123,6 @@ void BellPouleApp::Start (int    argc,
 gboolean BellPouleApp::OnHttpPost (Net::Message *message)
 {
   return _tournament->OnHttpPost (message);
-}
-
-// --------------------------------------------------------------------------------
-gchar *BellPouleApp::OnHttpGet (const gchar *url)
-{
-  return NULL;
 }
 
 // --------------------------------------------------------------------------------

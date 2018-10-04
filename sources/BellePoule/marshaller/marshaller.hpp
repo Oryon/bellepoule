@@ -86,6 +86,6 @@ namespace Marshaller
 
       GList *GetRefereeList ();
 
-      void OnHanshakeResult (gboolean passed);
+      void OnHanshakeResult (Net::Ring::HandshakeResult result);
   };
 }

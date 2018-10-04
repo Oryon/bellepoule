@@ -200,8 +200,6 @@ namespace NeoSwapper
 
     //printf (GREEN "  big  ==> %dx%d\n", _big_profile._pool_count, _big_profile._score);
     //printf (RED   "  over ==> %d\n" ESC, g_list_length (over_populated_list));
-    printf (GREEN "  big  ==> %dx%d\n", _big_profile._pool_count, _big_profile._score);
-    printf (RED   "  over ==> %d\n" ESC, g_list_length (over_populated_list));
 
     {
       guint  remaining_errors = 0;

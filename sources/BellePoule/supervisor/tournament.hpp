@@ -94,7 +94,7 @@ class Tournament : public Module,
 
     void SetBackupLocation (gchar *location);
 
-    void OnHanshakeResult (gboolean passed);
+    void OnHanshakeResult (Net::Ring::HandshakeResult result);
 
     static gboolean RecentFileExists (const GtkRecentFilterInfo *filter_info,
                                       Tournament                *tournament);

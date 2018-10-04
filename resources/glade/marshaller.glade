@@ -32,7 +32,7 @@
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">images/network.png</property>
+    <property name="pixbuf">images/network-ko.png</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
@@ -1590,6 +1590,42 @@ a score sheet scanner.</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-harddisk</property>
+  </object>
+  <object class="GtkMessageDialog" id="join_rejected_dialog">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Connection rejected</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="message_type">error</property>
+    <property name="buttons">ok</property>
+    <property name="text" translatable="yes">Connection rejected</property>
+    <property name="secondary_text" translatable="yes">BellePoule2D is already operating on the network.</property>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkMessageDialog" id="pin_code_dialog">
     <property name="can_focus">False</property>

@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "util/wifi_code.hpp"
 #include "util/attribute_desc.hpp"
 #include "util/filter.hpp"
 #include "application/application.hpp"
@@ -48,7 +47,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   MarshallerApp::MarshallerApp (int    *argc,
                                 char ***argv)
-    : Application ("Marshaller", "BellePoule2D", 35840, argc, argv)
+    : Application (Net::Ring::RESOURCE_MANAGER, "BellePoule2D", argc, argv)
   {
   }
 
@@ -73,8 +72,6 @@ namespace Marshaller
                              char **argv)
   {
     _marshaller = new Marshaller ();
-
-    WifiCode::SetIpPort (35840);
 
     _main_module = _marshaller;
     _main_module->SetData (NULL,

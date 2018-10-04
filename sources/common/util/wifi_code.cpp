@@ -16,6 +16,7 @@
 
 #include <sys/types.h>
 #include <qrencode.h>
+#include <gio/gnetworking.h>
 
 #include "network/ring.hpp"
 #include "network/wifi_network.hpp"
@@ -57,9 +58,45 @@ void WifiCode::SetWifiNetwork (Net::WifiNetwork *network)
 }
 
 // --------------------------------------------------------------------------------
-void WifiCode::SetIpPort (guint port)
+guint WifiCode::ClaimIpPort ()
 {
-  _port = port;
+  GInetAddress *any_ip = g_inet_address_new_any (G_SOCKET_FAMILY_IPV4);
+  GSocket      *socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
+                                       G_SOCKET_TYPE_STREAM,
+                                       G_SOCKET_PROTOCOL_DEFAULT,
+                                       NULL);
+
+  for (guint port = 35840; port < 35850; port++)
+  {
+    GError         *error         = NULL;
+    GSocketAddress *bound_address = g_inet_socket_address_new (any_ip, port);
+
+    g_socket_bind (socket,
+                   bound_address,
+                   TRUE,
+                   &error);
+
+    g_object_unref (bound_address);
+
+    if (error)
+    {
+      if (error->code != G_IO_ERROR_ADDRESS_IN_USE)
+      {
+        g_warning ("g_socket_bind: %s\n", error->message);
+      }
+      g_clear_error (&error);
+    }
+    else
+    {
+      _port = port;
+      break;
+    }
+  }
+
+  g_object_unref (socket);
+  g_object_unref (any_ip);
+
+  return _port;
 }
 
 // --------------------------------------------------------------------------------

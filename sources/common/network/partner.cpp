@@ -23,12 +23,16 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  Partner::Partner (Message *message)
+  Partner::Partner (Message  *message,
+                    Listener *listener)
     : Object ("Partner")
   {
-    _role = message->GetString ("role");
+    _role  = message->GetInteger       ("role");
+    _partner_id = message->GetSignedInteger ("partner");
 
     _passphrase256 = NULL;
+    _uploader      = NULL;
+    _listener      = listener;
 
     {
       gchar *ip   = message->GetString ("ip_address");
@@ -38,7 +42,8 @@ namespace Net
       {
         gchar *url = g_strdup_printf ("http://%s:%d/ring", ip, port);
 
-        _uploader = new Net::MessageUploader (url);
+        _uploader = new Net::MessageUploader (url,
+                                              this);
         _address  = g_strdup (ip);
         _port     = port;
 
@@ -51,29 +56,25 @@ namespace Net
   // --------------------------------------------------------------------------------
   Partner::~Partner ()
   {
-    g_free (_role);
     g_free (_address);
     g_free (_passphrase256);
 
-    _uploader->Stop ();
+    if (_uploader)
+    {
+      _uploader->Stop ();
+    }
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Partner::HasRole (const gchar *role)
+  gboolean Partner::HasRole (guint role)
   {
-    return (g_strcmp0 (_role, _role) == 0);
+    return _role == role;
   }
 
   // --------------------------------------------------------------------------------
-  const gchar *Partner::GetRole ()
+  gboolean Partner::Is (gint32 partner_id)
   {
-    return _role;
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Partner::Is (Partner *partner)
-  {
-    return HasRole (partner->_role);
+    return _partner_id == partner_id;
   }
 
   // --------------------------------------------------------------------------------
@@ -102,5 +103,26 @@ namespace Net
   guint Partner::GetPort ()
   {
     return _port;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Partner::OnUploadStatus (MessageUploader::PeerStatus peer_status)
+  {
+    if (peer_status == MessageUploader::CONN_ERROR)
+    {
+      _listener->OnPartnerKilled (this);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Partner::Use ()
+  {
+    Retain ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Partner::Drop ()
+  {
+    Release ();
   }
 }

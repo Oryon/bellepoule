@@ -37,6 +37,7 @@
 #include <glib/gstdio.h>
 #include "locale"
 
+#include "util/wifi_code.hpp"
 #include "util/user_config.hpp"
 #include "util/attribute.hpp"
 #include "util/global.hpp"
@@ -51,11 +52,10 @@
 #include "application.hpp"
 
 // --------------------------------------------------------------------------------
-Application::Application (const gchar   *role,
-                          const gchar   *public_name,
-                          guint          http_port,
-                          int           *argc,
-                          char        ***argv)
+Application::Application (Net::Ring::Role     role,
+                          const gchar        *public_name,
+                          int                *argc,
+                          char             ***argv)
   : Object ("Application")
 {
   _language    = NULL;
@@ -69,7 +69,7 @@ Application::Application (const gchar   *role,
             "0",
             TRUE);
 
-  _role = g_strdup (role);
+  _role = role;
 
   // g_mem_set_vtable (glib_mem_profiler_table);
 
@@ -231,10 +231,14 @@ Application::Application (const gchar   *role,
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
   }
 
-  _http_server = new Net::HttpServer (this,
-                                      HttpPostCbk,
-                                      HttpGetCbk,
-                                      http_port);
+  {
+    guint port = WifiCode::ClaimIpPort ();
+
+    _http_server = new Net::HttpServer (this,
+                                        HttpPostCbk,
+                                        HttpGetCbk,
+                                        port);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -257,8 +261,6 @@ Application::~Application ()
   Weapon::FreeList ();
 
   g_free (Global::_share_dir);
-
-  g_free (_role);
 
   Global::_user_config->Release ();
 

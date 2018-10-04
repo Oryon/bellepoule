@@ -38,11 +38,6 @@ namespace Net
                            "name",
                            name);
 
-    g_key_file_set_string (_key_file,
-                           "Header",
-                           "sender",
-                           Ring::_broker->GetRole ());
-
     g_key_file_set_uint64 (_key_file,
                            "Header",
                            "netid",
@@ -136,15 +131,6 @@ namespace Net
     return g_key_file_get_uint64 (_key_file,
                                   "Header",
                                   "netid",
-                                  NULL);
-  }
-
-  // --------------------------------------------------------------------------------
-  gchar *Message::GetSender ()
-  {
-    return g_key_file_get_string (_key_file,
-                                  "Header",
-                                  "sender",
                                   NULL);
   }
 
