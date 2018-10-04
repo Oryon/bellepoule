@@ -403,14 +403,9 @@ namespace Net
 
     if (authorized)
     {
-      char *key = _credentials->GetKey ();
-
       message->Set ("role",         _role);
       message->Set ("ip_address",   _ip_address);
       message->Set ("unicast_port", _unicast_port);
-
-      partner->SetPassPhrase256 (key);
-      g_free (key);
     }
 
     message->SetFitness (1);
@@ -421,6 +416,13 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::Add (Partner *partner)
   {
+    {
+      char *key = _credentials->GetKey ();
+
+      partner->SetPassPhrase256 (key);
+      g_free (key);
+    }
+
     DisplayIndicator (partner);
 
     Remove (partner->GetRole ());
