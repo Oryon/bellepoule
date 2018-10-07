@@ -29,10 +29,11 @@
 #include "cryptor.hpp"
 #include "ring.hpp"
 
+//#define MULTICAST_ANNOUNCE
+
 namespace Net
 {
-  const gchar *Ring::ANNOUNCE_GROUP = "225.0.0.35";
-  const gchar *Ring::SECRET         = "tagada soinsoin";
+  const gchar *Ring::SECRET = "tagada soinsoin";
 
   Ring *Ring::_broker = NULL;
 
@@ -42,16 +43,15 @@ namespace Net
               GtkWidget *partner_indicator)
     : Object ("Ring")
   {
-    _ip_address         = NULL;
-    _partner_list       = NULL;
-    _message_list       = NULL;
-    _listeners          = NULL;
-    _handshake_listener = NULL;
-    _multicast_address  = NULL;
-    _role               = role;
-    _unicast_port       = unicast_port;
-    _credentials        = NULL;
-    _partner_id         = g_random_int ();
+    _ip_address       = NULL;
+    _partner_list     = NULL;
+    _message_list     = NULL;
+    _listeners        = NULL;
+    _announce_address = NULL;
+    _role             = role;
+    _unicast_port     = unicast_port;
+    _credentials      = NULL;
+    _partner_id       = g_random_int ();
 
     _partner_indicator = partner_indicator;
 
@@ -180,7 +180,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   gchar *Ring::GetCryptorKey ()
   {
-    return _credentials->GetKey ();
+    return g_strdup (_credentials->GetKey ());
   }
 
   // --------------------------------------------------------------------------------
@@ -203,20 +203,28 @@ namespace Net
   // --------------------------------------------------------------------------------
   gboolean Ring::JoinMulticast (GSocket *socket)
   {
-    GInetAddress *address = g_inet_address_new_from_string (ANNOUNCE_GROUP);
+    GInetAddress *address;
     GError       *error   = NULL;
+
+#if defined MULTICAST_ANNOUNCE
+    address = g_inet_address_new_from_string ("225.0.0.35");
 
     g_socket_join_multicast_group (socket,
                                    address,
                                    FALSE,
                                    NULL,
                                    &error);
+#else
+    address = g_inet_address_new_from_string ("255.255.255.255");
+#endif
+
     if (error == NULL)
     {
       _ip_address = GuessIpV4Address ();
     }
     else
     {
+      g_warning ("Ring::JoinMulticast: %s", error->message);
       g_clear_error (&error);
 
       g_object_unref (address);
@@ -224,10 +232,10 @@ namespace Net
       _ip_address = g_inet_address_to_string (address);
     }
 
-    _multicast_address = g_inet_socket_address_new (address,
-                                                    ANNOUNCE_PORT);
-    g_object_unref (address);
+    _announce_address = g_inet_socket_address_new (address,
+                                                   ANNOUNCE_PORT);
 
+    g_object_unref (address);
     return TRUE;
   }
 
@@ -253,22 +261,28 @@ namespace Net
   {
     HandshakeResult response = (HandshakeResult) message->GetInteger ("response");
 
-    _handshake_listener = listener;
-
-    if (response == GRANTED)
+    if (response == UNSETTLED)
     {
-      Partner *partner = new Partner (message,
-                                      this);
+      Credentials *credentials = RetreiveBackupCredentials ();
 
-      if (Add (partner) == FALSE)
+      ChangePassphrase (credentials->GetKey ());
+      AnnounceAvailability ();
+      credentials->Release ();
+    }
+    else
+    {
+      if (response == GRANTED)
       {
-        g_error ("Ring::OnHandshake");
+        Partner *partner = new Partner (message,
+                                        this);
+
+        Add (partner);
+
+        partner->Release ();
       }
 
-      partner->Release ();
+      listener->OnHanshakeResult (response);
     }
-
-    _handshake_listener->OnHanshakeResult (response);
   }
 
   // --------------------------------------------------------------------------------
@@ -285,18 +299,16 @@ namespace Net
     {
       gchar   *iv;
       char    *crypted;
-      char    *key     = _credentials->GetKey ();
       Cryptor *cryptor = new Cryptor ();
 
       crypted = cryptor->Encrypt (SECRET,
-                                  key,
+                                  _credentials->GetKey (),
                                   &iv);
       message->Set ("iv",     iv);
       message->Set ("secret", crypted);
 
       g_free (iv);
       g_free (crypted);
-      g_free (key);
 
       cryptor->Release ();
     }
@@ -324,10 +336,11 @@ namespace Net
     {
       gchar *parcel = message->GetParcel ();
 
-      g_socket_set_blocking (socket, FALSE);
+      g_socket_set_blocking  (socket, FALSE);
+      g_socket_set_broadcast (socket, TRUE);
 
       g_socket_send_to (socket,
-                        _multicast_address,
+                        _announce_address,
                         parcel,
                         strlen (parcel) + 1,
                         NULL,
@@ -339,6 +352,7 @@ namespace Net
       }
 
       g_free (parcel);
+      g_object_unref (socket);
     }
   }
 
@@ -382,32 +396,51 @@ namespace Net
             Role     role    = (Role) message->GetInteger ("role");
             Partner *partner = new Partner (message, ring);
 
-            if ((ring->_role == role) && (role == RESOURCE_MANAGER))
+            if (ring->RoleIsAcceptable (role))
             {
-              ring->SendHandshake (partner,
-                                   ROLE_REJECTED);
-            }
-            else if (role != ring->_role)
-            {
-              if (ring->DecryptSecret (message))
+              if (role != ring->_role)
               {
-                if (ring->Add (partner))
+                gchar *crypted = message->GetString ("secret");
+                gchar *iv      = message->GetString ("iv");
+
+                if (ring->DecryptSecret (crypted,
+                                         iv,
+                                         ring->_credentials))
                 {
+                  ring->Add (partner);
                   ring->SendHandshake (partner,
                                        GRANTED);
                 }
                 else
                 {
-                  ring->SendHandshake (partner,
-                                       ROLE_REJECTED);
+                  Credentials *credentials = ring->RetreiveBackupCredentials ();
+
+                  if (ring->DecryptSecret (crypted,
+                                           iv,
+                                           credentials))
+                  {
+                    ring->SendHandshake (partner,
+                                         UNSETTLED);
+                  }
+                  else
+                  {
+                    ring->SendHandshake (partner,
+                                         AUTHENTICATION_FAILED);
+                  }
+
+                  credentials->Release ();
                 }
-              }
-              else
-              {
-                ring->SendHandshake (partner,
-                                     AUTHENTICATION_FAILED);
+
+                g_free (crypted);
+                g_free (iv);
               }
             }
+            else
+            {
+              ring->SendHandshake (partner,
+                                   ROLE_REJECTED);
+            }
+
             partner->Release ();
           }
           else if (message->Is ("Farewell"))
@@ -432,6 +465,46 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
+  Credentials *Ring::RetreiveBackupCredentials ()
+  {
+    Credentials *crendentials = NULL;
+    gchar       *partner_pass;
+
+    {
+      UserConfig *partner_config;
+
+      if (_role == RESOURCE_USER)
+      {
+        partner_config = new UserConfig ("BellePoule2D", TRUE);
+      }
+      else
+      {
+        partner_config = new UserConfig ("BellePoule", TRUE);
+      }
+
+      partner_pass = g_key_file_get_string (partner_config->_key_file,
+                                            "Ring", "passphrase",
+                                            NULL);
+      partner_config->Release ();
+    }
+
+    if (partner_pass)
+    {
+      gchar *ip_address = GuessIpV4Address ();
+
+      crendentials = new Credentials (GetRoleImage (),
+                                      ip_address,
+                                      _unicast_port,
+                                      partner_pass);
+
+      g_free (partner_pass);
+      g_free (ip_address);
+    }
+
+    return crendentials;
+  }
+
+  // -------------------------------------------------------------------------------
   void Ring::SendHandshake (Partner         *partner,
                             HandshakeResult  result)
   {
@@ -453,10 +526,15 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  gboolean Ring::Add (Partner *partner)
+  gboolean Ring::RoleIsAcceptable (Role partner_role)
   {
-    if (partner->HasRole (RESOURCE_MANAGER))
+    if (partner_role == RESOURCE_MANAGER)
     {
+      if (_role == RESOURCE_MANAGER)
+      {
+        return FALSE;
+      }
+
       for (GList *current = _partner_list; current; current = g_list_next (current))
       {
         Partner *p = (Partner *) current->data;
@@ -467,13 +545,13 @@ namespace Net
         }
       }
     }
+    return TRUE;
+  }
 
-    {
-      char *key = _credentials->GetKey ();
-
-      partner->SetPassPhrase256 (key);
-      g_free (key);
-    }
+  // -------------------------------------------------------------------------------
+  void Ring::Add (Partner *partner)
+  {
+    partner->SetPassPhrase256 (_credentials->GetKey ());
 
     partner->Retain ();
     _partner_list = g_list_prepend (_partner_list,
@@ -483,8 +561,6 @@ namespace Net
     Synchronize (partner);
 
     DisplayIndicator ();
-
-    return TRUE;
   }
 
   // -------------------------------------------------------------------------------
@@ -664,87 +740,23 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Ring::DecryptSecret (Message *message)
-  {
-    gboolean decoded = FALSE;
-    gchar   *crypted = message->GetString ("secret");
-    gchar   *iv      = message->GetString ("iv");
-
-    if (crypted && iv)
-    {
-      decoded = DecryptSecret (crypted,
-                               iv,
-                               _credentials);
-
-      if (decoded == FALSE)
-      {
-        UserConfig *partner_config;
-        gchar      *partner_pass;
-
-        if (_role == RESOURCE_USER)
-        {
-          partner_config = new UserConfig ("BellePoule2D", TRUE);
-        }
-        else
-        {
-          partner_config = new UserConfig ("BellePoule", TRUE);
-        }
-
-        partner_pass = g_key_file_get_string (partner_config->_key_file,
-                                              "Ring", "passphrase",
-                                              NULL);
-
-        if (partner_pass)
-        {
-          gchar       *ip_address           = GuessIpV4Address ();
-          Credentials *partner_crendentials = new Credentials (GetRoleImage (),
-                                                               ip_address,
-                                                               _unicast_port,
-                                                               partner_pass);
-
-          decoded = DecryptSecret (crypted,
-                                   iv,
-                                   partner_crendentials);
-
-          if (decoded)
-          {
-            ChangePassphrase (partner_pass);
-          }
-
-          partner_crendentials->Release ();
-          g_free (partner_pass);
-          g_free (ip_address);
-        }
-
-        partner_config->Release ();
-      }
-    }
-    g_free (crypted);
-    g_free (iv);
-
-    return decoded;
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean Ring::DecryptSecret (gchar       *crypted,
                                 gchar       *iv,
                                 Credentials *credentials)
   {
     gboolean decoded = FALSE;
     Cryptor *cryptor = new Cryptor ();
-    gchar   *key     = credentials->GetKey ();
     gchar   *secret;
 
     secret = cryptor->Decrypt (crypted,
                                iv,
-                               key);
+                               credentials->GetKey ());
 
     if (g_ascii_strcasecmp (secret, SECRET) == 0)
     {
       decoded = TRUE;
     }
 
-    g_free (key);
     g_free (secret);
     cryptor->Release ();
 

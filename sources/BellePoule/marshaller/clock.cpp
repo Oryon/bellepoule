@@ -49,12 +49,14 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Clock::Set (GDateTime *to)
   {
+#if 0
     _offset = g_date_time_difference (to,
                                       _absolute);
     OnTimeout (this);
 
     Disclose ("ClockOffset");
     Spread ();
+#endif
   }
 
   // --------------------------------------------------------------------------------

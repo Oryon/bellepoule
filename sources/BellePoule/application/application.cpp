@@ -69,6 +69,9 @@ Application::Application (Net::Ring::Role     role,
             "0",
             TRUE);
 
+  g_unsetenv ("http_proxy");
+  g_unsetenv ("https_proxy");
+
   _role = role;
 
   // g_mem_set_vtable (glib_mem_profiler_table);

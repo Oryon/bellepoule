@@ -189,7 +189,7 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
   if (authentication_scheme)
   {
     if (   (g_strcmp0 (authentication_scheme, "/ring") == 0)
-        || (g_strcmp0 (authentication_scheme, "/MarshallerCredentials/0") == 0))
+        || (g_strcmp0 (authentication_scheme, "/PartnerAppCredentials/0") == 0))
     {
       return Net::Ring::_broker->GetCryptorKey ();
     }
@@ -381,18 +381,20 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
   {
     Match::OnClockOffset (message);
   }
-  else if (message->Is ("MarshallerCredentials"))
+  else if (message->Is ("PartnerAppCredentials"))
   {
-    GtkDialog *dialog = GTK_DIALOG (_glade->GetWidget ("pin_code_dialog"));
+    GtkDialog *dialog     = GTK_DIALOG (_glade->GetWidget ("pin_code_dialog"));
+    gchar     *passphrase = message->GetString ("manager_app_key");
 
     gtk_dialog_response (dialog,
                          GTK_RESPONSE_OK);
 
+    if (passphrase)
     {
-      gchar *passphrase = message->GetString ("marshaller_key");
-
       Net::Ring::_broker->ChangePassphrase (passphrase);
       g_free (passphrase);
+
+      Net::Ring::_broker->AnnounceAvailability ();
     }
   }
   else

@@ -207,14 +207,21 @@ namespace Marshaller
         Net::Ring::_broker->OnHandshake (message,
                                          this);
       }
-      else if (message->Is ("MarshallerCredentials"))
+      else if (message->Is ("PartnerAppCredentials"))
       {
-        GtkDialog *dialog = GTK_DIALOG (_glade->GetWidget ("pin_code_dialog"));
+        GtkDialog *dialog     = GTK_DIALOG (_glade->GetWidget ("pin_code_dialog"));
+        gchar     *passphrase = message->GetString ("user_app_key");
 
         gtk_dialog_response (dialog,
                              GTK_RESPONSE_OK);
 
-        Net::Ring::_broker->AnnounceAvailability ();
+        if (passphrase)
+        {
+          Net::Ring::_broker->ChangePassphrase (passphrase);
+          g_free (passphrase);
+
+          Net::Ring::_broker->AnnounceAvailability ();
+        }
       }
     }
     else
@@ -252,7 +259,7 @@ namespace Marshaller
     if (authentication_scheme)
     {
       if (   (g_strcmp0 (authentication_scheme, "/ring") == 0)
-          || (g_strcmp0 (authentication_scheme, "/MarshallerCredentials/0") == 0))
+          || (g_strcmp0 (authentication_scheme, "/PartnerAppCredentials/0") == 0))
       {
         return Net::Ring::_broker->GetCryptorKey ();
       }

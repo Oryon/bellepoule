@@ -28,7 +28,7 @@ namespace Net
                    guint        port,
                    const gchar *key);
 
-      gchar *GetKey ();
+      const gchar *GetKey ();
 
     private:
       guint  _port;

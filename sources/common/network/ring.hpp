@@ -34,6 +34,7 @@ namespace Net
       typedef enum
       {
         GRANTED,
+        UNSETTLED,
         AUTHENTICATION_FAILED,
         ROLE_REJECTED
       } HandshakeResult;
@@ -90,6 +91,8 @@ namespace Net
 
       void ChangePassphrase (const gchar *passphrase);
 
+      Credentials *RetreiveBackupCredentials ();
+
     private:
       Ring (Role       role,
             guint      unicast_port,
@@ -98,24 +101,24 @@ namespace Net
       virtual ~Ring ();
 
     private:
-      static const gchar *ANNOUNCE_GROUP;
       static const guint  ANNOUNCE_PORT = 35000;
       static const gchar *SECRET;
 
-      Role               _role;
-      guint              _heartbeat_timer;
-      gint32             _partner_id;
-      gchar             *_ip_address;
-      guint              _unicast_port;
-      GList             *_partner_list;
-      GList             *_message_list;
-      GtkWidget         *_partner_indicator;
-      GList             *_listeners;
-      HandshakeListener *_handshake_listener;
-      GSocketAddress    *_multicast_address;
-      Credentials       *_credentials;
+      Role            _role;
+      guint           _heartbeat_timer;
+      gint32          _partner_id;
+      gchar          *_ip_address;
+      guint           _unicast_port;
+      GList          *_partner_list;
+      GList          *_message_list;
+      GtkWidget      *_partner_indicator;
+      GList          *_listeners;
+      GSocketAddress *_announce_address;
+      Credentials    *_credentials;
 
-      gboolean Add (Partner *partner);
+      void Add (Partner *partner);
+
+      gboolean RoleIsAcceptable (Role partner_role);
 
       void Remove (Partner *partner);
 
@@ -139,8 +142,6 @@ namespace Net
 
       void SendHandshake (Partner         *partner,
                           HandshakeResult  result);
-
-      gboolean DecryptSecret (Message *message);
 
       gboolean DecryptSecret (gchar       *crypted,
                               gchar       *iv,

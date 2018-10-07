@@ -46,9 +46,9 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Credentials::GetKey ()
+  const gchar *Credentials::GetKey ()
   {
-    return g_strdup ((gchar *) _key);
+    return _key;
   }
 
   // --------------------------------------------------------------------------------
