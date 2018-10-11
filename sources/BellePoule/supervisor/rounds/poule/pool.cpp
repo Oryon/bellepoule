@@ -85,7 +85,7 @@ namespace Pool
 
     _dispatcher = new Dispatcher (_name);
 
-    Disclose ("Job");
+    Disclose ("BellePoule::Job");
 
     {
       va_list ap;
@@ -2099,7 +2099,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gboolean Pool::OnMessage (Net::Message *message)
   {
-    if (message->Is ("Roadmap"))
+    if (message->Is ("BellePoule2D::Roadmap"))
     {
       if (message->GetInteger ("source") == _parcel->GetNetID ())
       {
@@ -2122,7 +2122,7 @@ namespace Pool
         return TRUE;
       }
     }
-    else if (message->Is ("Score"))
+    else if (message->Is ("SmartPoule::Score"))
     {
       guint match_number = message->GetInteger ("bout");
 

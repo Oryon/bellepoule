@@ -37,11 +37,9 @@ namespace Marshaller
 
       void Prepare ();
 
-      void Start (int argc, char **argv);
-
-      gboolean OnHttpPost (Net::Message *message);
-
-      gchar *GetSecretKey (const gchar *authentication_scheme);
+      void Start (int                   argc,
+                  char                **argv,
+                  Net::Ring::Listener  *ring_listener);
   };
 
   // --------------------------------------------------------------------------------
@@ -54,7 +52,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   MarshallerApp::~MarshallerApp ()
   {
-    _main_module->Release ();
+    _marshaller->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -68,8 +66,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void MarshallerApp::Start (int    argc,
-                             char **argv)
+  void MarshallerApp::Start (int                   argc,
+                             char                **argv,
+                             Net::Ring::Listener  *ring_listener)
   {
     _marshaller = new Marshaller ();
 
@@ -79,28 +78,12 @@ namespace Marshaller
                            this);
 
     Application::Start (argc,
-                        argv);
+                        argv,
+                        _marshaller);
 
     _marshaller->Start ();
 
     gtk_main ();
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean MarshallerApp::OnHttpPost (Net::Message *message)
-  {
-    return _marshaller->OnHttpPost (message);
-  }
-
-  // --------------------------------------------------------------------------------
-  gchar *MarshallerApp::GetSecretKey (const gchar *authentication_scheme)
-  {
-    if (_marshaller)
-    {
-      return _marshaller->GetSecretKey (authentication_scheme);
-    }
-
-    return NULL;
   }
 }
 
@@ -112,7 +95,8 @@ int main (int argc, char **argv)
   application->Prepare ();
 
   application->Start (argc,
-                      argv);
+                      argv,
+                      NULL);
 
   application->Release ();
 

@@ -53,6 +53,7 @@ namespace People
 #endif
                                           "IP",
                                           "password",
+                                          "cyphered_password",
                                           "HS",
                                           "attending",
                                           "exported",

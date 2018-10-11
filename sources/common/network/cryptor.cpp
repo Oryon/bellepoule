@@ -25,16 +25,16 @@
 namespace Net
 {
   // ----------------------------------------------------------------------------------------------
-  Cryptor::Cryptor ()
+  Cryptor::Cryptor (const gchar *iv_b64)
     : Object ("Cryptor")
   {
-    _rand = g_rand_new ();
+    _iv = g_strdup (iv_b64);
   }
 
   // ----------------------------------------------------------------------------------------------
   Cryptor::~Cryptor ()
   {
-    g_rand_free (_rand);
+    g_free (_iv);
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -50,7 +50,18 @@ namespace Net
     gint            cipher_len;
 
     {
-      guchar *iv = GetIv ();
+      guchar *iv;
+
+      if (_iv)
+      {
+        gsize len;
+
+        iv = g_base64_decode (_iv, &len);
+      }
+      else
+      {
+        iv = GenerateIv ();
+      }
 
       EVP_CIPHER_CTX_init (cipher);
 
@@ -60,7 +71,11 @@ namespace Net
                           (guchar *) key,
                           iv);
 
-      *iv_b64 = g_base64_encode (iv, 16);
+      if (iv_b64)
+      {
+        *iv_b64 = g_base64_encode (iv, 16);
+      }
+
       g_free (iv);
     }
 
@@ -85,44 +100,64 @@ namespace Net
   }
 
   // ----------------------------------------------------------------------------------------------
-  gchar *Cryptor::Decrypt (gchar       *data,
+  gchar *Cryptor::Decrypt (gchar       *data_b64,
                            const gchar *iv_b64,
                            const gchar *key)
   {
-    if (iv_b64 && data)
+    if (iv_b64 && data_b64 && key)
     {
       gsize   cipher_len;
-      guchar *cipher_bytes = g_base64_decode (data,
+      guchar *cipher_bytes = g_base64_decode (data_b64,
                                               &cipher_len);
 
       if (cipher_bytes)
       {
         EVP_CIPHER_CTX *cipher      = EVP_CIPHER_CTX_new ();
-        gint            written_len;
         gsize           iv_len;
         guchar         *iv          = g_base64_decode (iv_b64, &iv_len);
-        gint            plain_len;
         guchar         *plaintext   = g_new (guchar, cipher_len+1); // Including provision for
                                                                     // the missing NULL char
 
         EVP_CIPHER_CTX_init (cipher);
 
-        EVP_DecryptInit_ex  (cipher,
-                             EVP_aes_256_cbc (),
-                             NULL,
-                             (guchar *) key,
-                             iv);
+        if (EVP_DecryptInit_ex  (cipher,
+                                 EVP_aes_256_cbc (),
+                                 NULL,
+                                 (guchar *) key,
+                                 iv) == -1)
+        {
+          g_free (plaintext);
+          plaintext = NULL;
+        }
+        else
+        {
+          gint written_len;
 
-        EVP_DecryptUpdate (cipher,
-                           plaintext, &written_len,
-                           cipher_bytes, cipher_len);
-        plain_len = written_len;
+          if (EVP_DecryptUpdate (cipher,
+                                 plaintext,    &written_len,
+                                 cipher_bytes,  cipher_len) == -1)
+          {
+            g_free (plaintext);
+            plaintext = NULL;
+          }
+          else
+          {
+            gint plain_len = written_len;
 
-        EVP_DecryptFinal_ex (cipher,
-                             plaintext + written_len,
-                             &written_len);
-        plain_len += written_len;
-        plaintext[plain_len] = '\0';
+            if (EVP_DecryptFinal_ex (cipher,
+                                 plaintext + written_len,
+                                 &written_len) == -1)
+            {
+              g_free (plaintext);
+              plaintext = NULL;
+            }
+            else
+            {
+              plain_len += written_len;
+              plaintext[plain_len] = '\0';
+            }
+          }
+        }
 
         EVP_CIPHER_CTX_cleanup (cipher);
         EVP_CIPHER_CTX_free (cipher);
@@ -138,15 +173,17 @@ namespace Net
   }
 
   // ----------------------------------------------------------------------------------------------
-  guchar *Cryptor::GetIv ()
+  guchar *Cryptor::GenerateIv ()
   {
-    guchar *iv = g_new (guchar, 16);
+    guchar *iv   = g_new (guchar, 16);
+    GRand  *rand = g_rand_new ();
 
     for (guint i = 0; i < 16; i++)
     {
-      iv[i] = (guchar) g_rand_int (_rand);
+      iv[i] = (guchar) g_rand_int (rand);
     }
 
+    g_rand_free (rand);
     return iv;
   }
 }

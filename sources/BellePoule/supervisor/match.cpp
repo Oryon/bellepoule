@@ -571,7 +571,7 @@ void Match::Load (xmlNode *node,
 // --------------------------------------------------------------------------------
 void Match::DiscloseWithIdChain (va_list chain_id)
 {
-  Disclose ("Job");
+  Disclose ("BellePoule::Job");
 
   while (gchar *key = va_arg (chain_id, gchar *))
   {

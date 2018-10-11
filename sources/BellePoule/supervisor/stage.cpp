@@ -1443,14 +1443,6 @@ void Stage::SaveAttendees (XmlScheme *xml_scheme)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Stage::OnHttpPost (const gchar *command,
-                            const gchar **ressource,
-                            const gchar *data)
-{
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
 void Stage::Dump ()
 {
   if (_result)

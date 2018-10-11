@@ -215,7 +215,7 @@ Contest::Contest (GList    *advertisers,
   : Object ("Contest"),
     Module ("contest.glade")
 {
-  Disclose ("Competition");
+  Disclose ("BellePoule::Competition");
 
   _save_timeout_id = 0;
 
@@ -2010,16 +2010,6 @@ void Contest::AddFileToRecentManager (const gchar *filename)
 gboolean Contest::OnMessage (Net::Message *message)
 {
   return _schedule->OnMessage (message);
-}
-
-// --------------------------------------------------------------------------------
-gboolean Contest::OnHttpPost (const gchar *command,
-                              const gchar **resource,
-                              const gchar *data)
-{
-  return _schedule->OnHttpPost (command,
-                                resource,
-                                data);
 }
 
 // --------------------------------------------------------------------------------

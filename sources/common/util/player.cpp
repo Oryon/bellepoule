@@ -19,6 +19,7 @@
 #include "util/xml_scheme.hpp"
 #include "network/partner.hpp"
 #include "network/message.hpp"
+#include "network/ring.hpp"
 
 #include "actors/player_factory.hpp" // !!
 
@@ -747,49 +748,29 @@ void Player::FeedParcel (Net::Message *parcel)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Player::SendMessage (Net::Message *message)
+gboolean Player::SendMessage (Net::Message *message,
+                              const gchar  *address)
 {
-  Player::AttributeId  ip_attr_id ("IP");
-  Attribute           *ip_attr = GetAttribute (&ip_attr_id);
-
-  if (ip_attr)
+  if (address && (address[0] != 0))
   {
-    gchar *ip = ip_attr->GetStrValue ();
+    Net::MessageUploader *uploader;
 
-    if (ip && (ip[0] != 0))
+    uploader = new Net::MessageUploader (address,
+                                         this);
+
     {
-      Net::MessageUploader *uploader;
+      Player::AttributeId pass_attr_id ("password");
+      Attribute           *attr       = GetAttribute (&pass_attr_id);
+      gchar               *passphrase = attr->GetStrValue ();
 
-      {
-        gchar *url;
+      Net::Ring::_broker->StampSender (message);
 
-        if (strchr (ip, ':'))
-        {
-          url = g_strdup_printf ("http://%s", ip);
-        }
-        else
-        {
-          url = g_strdup_printf ("http://%s:35831", ip);
-        }
-
-        uploader = new Net::MessageUploader (url,
-                                             this);
-
-        g_free (url);
-      }
-
-      {
-        Player::AttributeId pass_attr_id ("password");
-        Attribute           *attr       = GetAttribute (&pass_attr_id);
-        gchar               *passphrase = attr->GetStrValue ();
-
-        message->SetPassPhrase256 (passphrase);
-        uploader->PushMessage (message);
-      }
-
-      uploader->Stop ();
-      return TRUE;
+      message->SetPassPhrase256 (passphrase);
+      uploader->PushMessage (message);
     }
+
+    uploader->Stop ();
+    return TRUE;
   }
 
   return FALSE;

@@ -37,7 +37,6 @@
 #include <glib/gstdio.h>
 #include "locale"
 
-#include "util/wifi_code.hpp"
 #include "util/user_config.hpp"
 #include "util/attribute.hpp"
 #include "util/global.hpp"
@@ -233,15 +232,6 @@ Application::Application (Net::Ring::Role     role,
                                                this);
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
   }
-
-  {
-    guint port = WifiCode::ClaimIpPort ();
-
-    _http_server = new Net::HttpServer (this,
-                                        HttpPostCbk,
-                                        HttpGetCbk,
-                                        port);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -250,8 +240,6 @@ Application::~Application ()
   Net::Ring::_broker->Leave ();
 
   AttributeDesc::Cleanup ();
-
-  _http_server->Release ();
 
   _language->Release ();
 
@@ -398,6 +386,9 @@ void Application::Prepare ()
     desc = AttributeDesc::Declare (G_TYPE_STRING, "custom4", "Divers4", (gchar *) "♦");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "cyphered_password", "MotDePasseChiffre", gettext ("cyphered password"));
+    desc->_rights = AttributeDesc::PRIVATE;
+
     // Not persistent data
     {
       desc = AttributeDesc::Declare (G_TYPE_STRING, "IP", "IP", gettext ("IP address"));
@@ -465,8 +456,9 @@ void Application::Prepare ()
 }
 
 // --------------------------------------------------------------------------------
-void Application::Start (int    argc,
-                         char **argv)
+void Application::Start (int                   argc,
+                         char                **argv,
+                         Net::Ring::Listener  *ring_listener)
 {
   _language->Populate (GTK_MENU_ITEM  (_main_module->GetGObject ("locale_menuitem")),
                        GTK_MENU_SHELL (_main_module->GetGObject ("locale_menu")));
@@ -525,7 +517,7 @@ void Application::Start (int    argc,
   gtk_widget_hide (GTK_WIDGET (_main_module->GetGObject ("update_menuitem")));
 
   Net::Ring::Join (_role,
-                   _http_server->GetPort (),
+                   ring_listener,
                    GTK_WIDGET (_main_module->GetGObject ("ring_menuitem")));
 }
 
@@ -621,33 +613,9 @@ void Application::OnDownloaderData (Net::Downloader  *downloader,
 }
 
 // --------------------------------------------------------------------------------
-gchar *Application::OnHttpGet (const gchar *url)
+const gchar *Application::GetSecretKey (const gchar *authentication_scheme)
 {
   return NULL;
-}
-
-// --------------------------------------------------------------------------------
-gchar *Application::GetSecretKey (const gchar *authentication_scheme)
-{
-  return NULL;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Application::HttpPostCbk (Net::HttpServer::Client *client,
-                                   Net::Message            *message)
-{
-  Application *app = (Application *) client;
-
-  return app->OnHttpPost (message);
-}
-
-// --------------------------------------------------------------------------------
-gchar *Application::HttpGetCbk (Net::HttpServer::Client *client,
-                                const gchar             *url)
-{
-  Application *app = (Application *) client;
-
-  return app->OnHttpGet (url);
 }
 
 // --------------------------------------------------------------------------------

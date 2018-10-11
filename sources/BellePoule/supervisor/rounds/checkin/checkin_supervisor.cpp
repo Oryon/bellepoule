@@ -83,6 +83,7 @@ namespace People
 #endif
                                           "IP",
                                           "password",
+                                          "cyphered_password",
                                           "HS",
                                           "exported",
                                           "final_rank",
@@ -748,7 +749,7 @@ namespace People
 
     DisableDragAndDrop ();
 
-    Disclose ("Fencer", this);
+    Disclose ("BellePoule::Fencer", this);
     Spread   ();
     Conceal  ();
   }

@@ -57,7 +57,7 @@ namespace Marshaller
       _duration_span = 1;
     }
 
-    Disclose ("Roadmap");
+    Disclose ("BellePoule2D::Roadmap");
     _parcel->Set ("competition",   message->GetInteger ("competition"));
     _parcel->Set ("stage",         message->GetInteger ("stage"));
     _parcel->Set ("batch",         message->GetInteger ("batch"));

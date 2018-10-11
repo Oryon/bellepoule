@@ -19,6 +19,7 @@
 #include <gtk/gtk.h>
 
 #include <util/object.hpp>
+#include <http_server.hpp>
 #include <partner.hpp>
 
 namespace Net
@@ -28,6 +29,7 @@ namespace Net
 
   class Ring : public Object,
                public Object::Listener,
+               public HttpServer::Listener,
                public Partner::Listener
   {
     public:
@@ -45,38 +47,37 @@ namespace Net
         RESOURCE_USER
       } Role;
 
-      struct Listener
+      struct PartnerListener
       {
         virtual void OnPartnerJoined (Partner  *partner,
                                       gboolean  joined) = 0;
       };
 
-      struct HandshakeListener
+      struct Listener
       {
-        virtual void OnHanshakeResult (HandshakeResult result) = 0;
+        virtual gboolean     OnMessage        (Net::Message *message)              = 0;
+        virtual const gchar *GetSecretKey     (const gchar *authentication_scheme) = 0;
+        virtual void         OnHanshakeResult (HandshakeResult result)             = 0;
       };
 
     public:
       static Ring *_broker;
 
       static void Join (Role       role,
-                        guint      unicast_port,
+                        Listener  *listener,
                         GtkWidget *partner_indicator);
 
       void Leave ();
-
-      void OnHandshake (Message           *message,
-                        HandshakeListener *listener);
 
       void SpreadMessage (Message *message);
 
       void RecallMessage (Message *message);
 
-      gchar *GetCryptorKey ();
+      const gchar *GetCryptorKey ();
 
-      void RegisterListener (Listener *listener);
+      void RegisterPartnerListener (PartnerListener *listener);
 
-      void UnregisterListener (Listener *listener);
+      void UnregisterPartnerListener (PartnerListener *listener);
 
       void NotifyPartnerStatus (Partner  *partner,
                                 gboolean  join);
@@ -93,32 +94,40 @@ namespace Net
 
       Credentials *RetreiveBackupCredentials ();
 
+      void StampSender (Message *message);
+
     private:
       Ring (Role       role,
-            guint      unicast_port,
-            GtkWidget *partner_indicator);
+            Listener  *listener,
+            GtkWidget  *partner_indicator);
 
       virtual ~Ring ();
 
     private:
-      static const guint  ANNOUNCE_PORT = 35000;
+      static const guint  ANNOUNCE_PORT = 35830;
       static const gchar *SECRET;
 
-      Role            _role;
-      guint           _heartbeat_timer;
-      gint32          _partner_id;
-      gchar          *_ip_address;
-      guint           _unicast_port;
-      GList          *_partner_list;
-      GList          *_message_list;
-      GtkWidget      *_partner_indicator;
-      GList          *_listeners;
-      GSocketAddress *_announce_address;
-      Credentials    *_credentials;
+      Role             _role;
+      guint            _heartbeat_timer;
+      gint32           _partner_id;
+      gchar           *_ip_address;
+      guint            _unicast_port;
+      GList           *_partner_list;
+      GList           *_message_list;
+      GtkWidget       *_partner_indicator;
+      GList           *_partner_listeners;
+      Listener        *_listener;
+      GSocketAddress  *_announce_address;
+      Credentials     *_credentials;
+      HttpServer      *_http_server;
 
       void Add (Partner *partner);
 
       gboolean RoleIsAcceptable (Role partner_role);
+
+      const gchar *GetSecretKey (const gchar *authentication_scheme);
+
+      gboolean OnMessage (Net::Message *message);
 
       void Remove (Partner *partner);
 

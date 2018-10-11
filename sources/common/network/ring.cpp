@@ -18,18 +18,20 @@
 
 #include <gio/gnetworking.h>
 #ifndef WIN32
-  #include <ifaddrs.h>
+#include <ifaddrs.h>
 #endif
 
 #include "util/object.hpp"
 #include "util/global.hpp"
 #include "util/user_config.hpp"
+#include "util/wifi_code.hpp"
 #include "credentials.hpp"
 #include "message.hpp"
 #include "cryptor.hpp"
 #include "ring.hpp"
 
 //#define MULTICAST_ANNOUNCE
+#define WITH_BACKUP_CREDENTIALS
 
 namespace Net
 {
@@ -39,19 +41,20 @@ namespace Net
 
   // --------------------------------------------------------------------------------
   Ring::Ring (Role       role,
-              guint      unicast_port,
+              Listener  *listener,
               GtkWidget *partner_indicator)
     : Object ("Ring")
   {
-    _ip_address       = NULL;
-    _partner_list     = NULL;
-    _message_list     = NULL;
-    _listeners        = NULL;
-    _announce_address = NULL;
-    _role             = role;
-    _unicast_port     = unicast_port;
-    _credentials      = NULL;
-    _partner_id       = g_random_int ();
+    _ip_address        = NULL;
+    _partner_list      = NULL;
+    _message_list      = NULL;
+    _partner_listeners = NULL;
+    _listener          = listener;
+    _announce_address  = NULL;
+    _role              = role;
+    _unicast_port      = WifiCode::ClaimIpPort ();
+    _credentials       = NULL;
+    _partner_id        = g_random_int ();
 
     _partner_indicator = partner_indicator;
 
@@ -68,6 +71,10 @@ namespace Net
       ChangePassphrase (passphrase);
       g_free (passphrase);
     }
+
+    // Unicast listener
+    _http_server = new Net::HttpServer (this,
+                                        _unicast_port);
 
     // Multicast listener
     {
@@ -178,15 +185,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Ring::GetCryptorKey ()
+  const gchar *Ring::GetCryptorKey ()
   {
-    return g_strdup (_credentials->GetKey ());
+    return _credentials->GetKey ();
   }
 
   // --------------------------------------------------------------------------------
   void Ring::Join (Role       role,
-                   guint      unicast_port,
-                   GtkWidget *partner_indicator)
+                   Listener  *listener,
+                   GtkWidget  *partner_indicator)
   {
     if (_broker)
     {
@@ -194,7 +201,7 @@ namespace Net
     }
 
     _broker = new Ring (role,
-                        unicast_port,
+                        listener,
                         partner_indicator);
 
     _broker->AnnounceAvailability ();
@@ -243,7 +250,7 @@ namespace Net
   void Ring::Leave ()
   {
     {
-      Message *message = new Message ("Farewell");
+      Message *message = new Message ("Ring::Farewell");
 
       message->Set ("partner", _partner_id);
       message->Set ("role",    _role);
@@ -252,43 +259,15 @@ namespace Net
       message->Release ();
     }
 
+    _http_server->Release ();
+
     FreeFullGList (Partner, _partner_list);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Ring::OnHandshake (Message           *message,
-                          HandshakeListener *listener)
-  {
-    HandshakeResult response = (HandshakeResult) message->GetInteger ("response");
-
-    if (response == UNSETTLED)
-    {
-      Credentials *credentials = RetreiveBackupCredentials ();
-
-      ChangePassphrase (credentials->GetKey ());
-      AnnounceAvailability ();
-      credentials->Release ();
-    }
-    else
-    {
-      if (response == GRANTED)
-      {
-        Partner *partner = new Partner (message,
-                                        this);
-
-        Add (partner);
-
-        partner->Release ();
-      }
-
-      listener->OnHanshakeResult (response);
-    }
   }
 
   // --------------------------------------------------------------------------------
   void Ring::AnnounceAvailability ()
   {
-    Message *message = new Message ("Announcement");
+    Message *message = new Message ("Ring::Announcement");
 
     message->Set ("role",         _role);
     message->Set ("ip_address",   _ip_address);
@@ -371,14 +350,16 @@ namespace Net
     }
     else if (condition == G_IO_IN)
     {
-      GError *error       = NULL;
-      gchar   buffer[500];
+      GError             *error       = NULL;
+      static const guint  buffer_size = 2048;
+      gchar              *buffer      = g_new0 (gchar, buffer_size-1);
 
       g_socket_receive (socket,
                         buffer,
-                        sizeof (buffer),
+                        buffer_size,
                         NULL,
                         &error);
+
       if (error)
       {
         g_warning ("g_socket_receive: %s", error->message);
@@ -389,9 +370,9 @@ namespace Net
         Message *message = new Message ((guint8 *) buffer);
         gint32   id      = (Role) message->GetSignedInteger ("partner");
 
-        if (ring->_partner_id != id)
+        if (message->Is ("Ring::Announcement"))
         {
-          if (message->Is ("Announcement"))
+          if (ring->_partner_id != id)
           {
             Role     role    = (Role) message->GetInteger ("role");
             Partner *partner = new Partner (message, ring);
@@ -413,6 +394,7 @@ namespace Net
                 }
                 else
                 {
+#ifdef WITH_BACKUP_CREDENTIALS
                   Credentials *credentials = ring->RetreiveBackupCredentials ();
 
                   if (ring->DecryptSecret (crypted,
@@ -429,6 +411,10 @@ namespace Net
                   }
 
                   credentials->Release ();
+#else
+                  ring->SendHandshake (partner,
+                                       AUTHENTICATION_FAILED);
+#endif
                 }
 
                 g_free (crypted);
@@ -443,7 +429,10 @@ namespace Net
 
             partner->Release ();
           }
-          else if (message->Is ("Farewell"))
+        }
+        else if (message->Is ("Ring::Farewell"))
+        {
+          if (ring->_partner_id != id)
           {
             for (GList *current = ring->_partner_list; current; current = g_list_next (current))
             {
@@ -457,8 +446,38 @@ namespace Net
             }
           }
         }
+        else if (message->Is ("SmartPoule::ScoreSheetCall"))
+        {
+          gchar   *hidden_text;
+          Message *hidden_message;
+
+          {
+            Cryptor     *cryptor = new Cryptor ();
+            gchar       *b64_iv  = message->GetString ("IV");
+            gchar       *cypher  = message->GetString ("cypher");
+            gchar       *sender  = message->GetString ("sender");
+            const gchar *key     = ring->_listener->GetSecretKey (sender);
+
+            hidden_text = cryptor->Decrypt (cypher,
+                                            b64_iv,
+                                            key);
+
+            g_free (cypher);
+            g_free (sender);
+            g_free (b64_iv);
+            cryptor->Release ();
+          }
+
+          hidden_message = new Message ((const guint8*) hidden_text);
+          ring->_listener->OnMessage (hidden_message);
+
+          hidden_message->Release ();
+          g_free (hidden_text);
+        }
+
         message->Release ();
       }
+      g_free (buffer);
     }
 
     return G_SOURCE_CONTINUE;
@@ -467,7 +486,7 @@ namespace Net
   // -------------------------------------------------------------------------------
   Credentials *Ring::RetreiveBackupCredentials ()
   {
-    Credentials *crendentials = NULL;
+    Credentials *credentials = NULL;
     gchar       *partner_pass;
 
     {
@@ -492,7 +511,7 @@ namespace Net
     {
       gchar *ip_address = GuessIpV4Address ();
 
-      crendentials = new Credentials (GetRoleImage (),
+      credentials = new Credentials (GetRoleImage (),
                                       ip_address,
                                       _unicast_port,
                                       partner_pass);
@@ -501,14 +520,23 @@ namespace Net
       g_free (ip_address);
     }
 
-    return crendentials;
+    return credentials;
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::StampSender (Message *message)
+  {
+    gchar *url = g_strdup_printf ("http://%s:%d", _ip_address, _unicast_port);
+
+    message->Set ("address", url);
+    g_free (url);
   }
 
   // -------------------------------------------------------------------------------
   void Ring::SendHandshake (Partner         *partner,
                             HandshakeResult  result)
   {
-    Message *message = new Message ("Handshake");
+    Message *message = new Message ("Ring::Handshake");
 
     if (result == GRANTED)
     {
@@ -655,13 +683,13 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  void Ring::RegisterListener (Listener *listener)
+  void Ring::RegisterPartnerListener (PartnerListener *listener)
   {
-    if (g_list_find (_listeners,
+    if (g_list_find (_partner_listeners,
                      listener) == NULL)
     {
-      _listeners = g_list_prepend (_listeners,
-                                   listener);
+      _partner_listeners = g_list_prepend (_partner_listeners,
+                                           listener);
 
       for (GList *current = _partner_list; current; current = g_list_next (current))
       {
@@ -674,15 +702,15 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  void Ring::UnregisterListener (Listener *listener)
+  void Ring::UnregisterPartnerListener (PartnerListener *listener)
   {
-    GList *node = g_list_find (_listeners,
+    GList *node = g_list_find (_partner_listeners,
                                listener);
 
     if (node)
     {
-      _listeners = g_list_delete_link (_listeners,
-                                       node);
+      _partner_listeners = g_list_delete_link (_partner_listeners,
+                                               node);
     }
   }
 
@@ -701,11 +729,11 @@ namespace Net
   void Ring::NotifyPartnerStatus (Partner  *partner,
                                   gboolean  joined)
   {
-    GList *current = _listeners;
+    GList *current = _partner_listeners;
 
     while (current)
     {
-      Listener *listener = (Listener *) current->data;
+      PartnerListener *listener = (PartnerListener *) current->data;
 
       listener->OnPartnerJoined (partner,
                                  joined);
@@ -785,6 +813,62 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  const gchar *Ring::GetSecretKey (const gchar *authentication_scheme)
+  {
+    if (authentication_scheme)
+    {
+      if (   (g_strcmp0 (authentication_scheme, "/ring") == 0)
+          || (g_strcmp0 (authentication_scheme, "/sender/0") == 0))
+      {
+        return GetCryptorKey ();
+      }
+      else
+      {
+        return _listener->GetSecretKey (authentication_scheme);
+      }
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Ring::OnMessage (Net::Message *message)
+  {
+    if (message->Is ("Ring::Handshake"))
+    {
+      HandshakeResult response = (HandshakeResult) message->GetInteger ("response");
+
+      if (response == UNSETTLED)
+      {
+        Credentials *credentials = RetreiveBackupCredentials ();
+
+        ChangePassphrase (credentials->GetKey ());
+        AnnounceAvailability ();
+        credentials->Release ();
+      }
+      else
+      {
+        if (response == GRANTED)
+        {
+          Partner *partner = new Partner (message,
+                                          this);
+
+          Add (partner);
+
+          partner->Release ();
+        }
+
+        _listener->OnHanshakeResult (response);
+      }
+      return TRUE;
+    }
+    else
+    {
+      return _listener->OnMessage (message);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   const gchar *Ring::GetIpV4Address ()
   {
     return _ip_address;
@@ -856,7 +940,8 @@ namespace Net
       for (struct ifaddrs *ifa = ifa_list; ifa != NULL; ifa = ifa->ifa_next)
       {
         if (   ifa->ifa_addr
-            && (ifa->ifa_flags & IFF_UP)
+            && (ifa->ifa_flags  & IFF_UP)
+            && (ifa->ifa_flags  & IFF_RUNNING)
             && ((ifa->ifa_flags & IFF_LOOPBACK) == 0))
         {
           int family = ifa->ifa_addr->sa_family;
@@ -887,7 +972,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   gboolean Ring::SendHeartbeat (Ring *ring)
   {
-    Message *heartbeat = new Message ("Heartbeat");
+    Message *heartbeat = new Message ("Ring::Heartbeat");
 
     heartbeat->Set ("partner", ring->_partner_id);
 

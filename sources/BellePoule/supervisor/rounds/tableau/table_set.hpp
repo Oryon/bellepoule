@@ -40,7 +40,7 @@ namespace Table
   class TableSet :
     public CanvasModule,
     public ScoreCollector::Listener,
-    public Net::Ring::Listener
+    public Net::Ring::PartnerListener
   {
     public:
       struct Listener

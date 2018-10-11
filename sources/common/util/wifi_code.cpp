@@ -66,7 +66,7 @@ guint WifiCode::ClaimIpPort ()
                                        G_SOCKET_PROTOCOL_DEFAULT,
                                        NULL);
 
-  for (guint port = 35840; port < 35850; port++)
+  for (guint port = 35830; port < 35840; port++)
   {
     GError         *error         = NULL;
     GSocketAddress *bound_address = g_inet_socket_address_new (any_ip, port);
@@ -123,7 +123,7 @@ void WifiCode::ResetKey ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *WifiCode::GetKey ()
+const gchar *WifiCode::GetKey ()
 {
   if (_key == NULL)
   {
@@ -138,7 +138,7 @@ gchar *WifiCode::GetKey ()
     }
   }
 
-  return g_strdup ((gchar *) _key);
+  return _key;
 }
 
 // --------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ gchar *WifiCode::GetText ()
 {
   gchar       *network = GetNetwork ();
   const gchar *ip      = Net::Ring::_broker->GetIpV4Address ();
-  gchar       *key     = GetKey ();
+  const gchar *key     = GetKey ();
   gchar       *text;
 
 #ifndef LIVE_POOL
@@ -174,7 +174,6 @@ gchar *WifiCode::GetText ()
                             key);
   }
 
-  g_free (key);
   g_free (network);
 
   return text;

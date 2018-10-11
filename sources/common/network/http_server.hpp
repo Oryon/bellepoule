@@ -28,26 +28,14 @@ namespace Net
   class HttpServer : public Object
   {
     public:
-      class Client
+      struct Listener
       {
-        public:
-          Client () {};
-
-          virtual gchar *GetSecretKey (const gchar *authentication_scheme) = 0;
-
-        protected:
-          virtual ~Client () {};
+          virtual const gchar *GetSecretKey (const gchar *authentication_scheme) = 0;
+          virtual gboolean     OnMessage    (Message     *message)               = 0;
       };
 
     public:
-      typedef gboolean (*HttpPost) (Client  *client,
-                                    Message *message);
-      typedef gchar *(*HttpGet) (Client      *client,
-                                 const gchar *url);
-
-      HttpServer (Client   *client,
-                  HttpPost  http_post,
-                  HttpGet   http_get,
+      HttpServer (Listener *listener,
                   guint     port);
 
       guint GetPort ();
@@ -70,9 +58,7 @@ namespace Net
 
       struct MHD_Daemon *_daemon;
       guint              _port;
-      Client            *_client;
-      HttpPost           _http_POST_cbk;
-      HttpGet            _http_GET_cbk;
+      Listener          *_listener;
       Cryptor           *_cryptor;
       gchar             *_iv;
 

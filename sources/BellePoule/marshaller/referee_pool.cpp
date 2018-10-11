@@ -224,7 +224,7 @@ namespace Marshaller
   {
     if (list)
     {
-      list->Disclose ("RegisteredReferee");
+      list->Disclose ("BellePoule2D::Referee");
       list->Spread ();
     }
   }
@@ -354,23 +354,6 @@ namespace Marshaller
                                     referee_address);
 
         referee->Spread ();
-
-        // Send back the Supervisor address
-        {
-          Net::Partner *partner = Net::Ring::_broker->GetPartner ();
-
-          if (partner)
-          {
-            Net::Message *answer = new Net::Message ("ScoreRecipient");
-
-            answer->Set ("address", partner->GetAddress ());
-            answer->Set ("port",    partner->GetPort    ());
-
-            referee->SendMessage (answer);
-
-            answer->Release ();
-          }
-        }
       }
       g_free (referee_address);
     }

@@ -168,10 +168,6 @@ class Stage : public virtual Object,
 
     const gchar *GetXmlPlayerTag ();
 
-    virtual gboolean OnHttpPost (const gchar *command,
-                                 const gchar **ressource,
-                                 const gchar *data);
-
     void OnFilterClicked (const gchar *classification_toggle_button);
 
     virtual void DrawConfig (GtkPrintOperation *operation,

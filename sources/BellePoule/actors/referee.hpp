@@ -38,5 +38,10 @@ class Referee : public Player
     virtual ~Referee ();
 
   private:
+    static const gchar *_iv;
+
     Player *Clone ();
+
+    void SaveAttributes (XmlScheme *xml_scheme,
+                         gboolean   full_profile);
 };

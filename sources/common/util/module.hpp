@@ -109,7 +109,7 @@ class Module : public virtual Object
     typedef enum
     {
       ON_SHEET,
-      NORMALIZED,
+      NORMALIZED
     } SizeReferential;
 
     Filter           *_filter;

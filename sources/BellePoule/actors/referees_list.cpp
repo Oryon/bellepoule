@@ -49,6 +49,7 @@ namespace People
 #ifndef DEBUG
                                           "ref",
                                           "plugin_ID",
+                                          "cyphered_password",
                                           "IP",
                                           "password",
 #endif
@@ -157,22 +158,6 @@ namespace People
     {
       _listener->OnRefereeUpdated (this,
                                    referee);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void RefereesList::GiveRefereesAnId ()
-  {
-    GList *current = GetList ();
-
-    while (current)
-    {
-      Player  *player  = (Player *) current->data;
-      Referee *referee = dynamic_cast <Referee *> (player);
-
-      GiveRefereeAnId (referee);
-
-      current = g_list_next (current);
     }
   }
 

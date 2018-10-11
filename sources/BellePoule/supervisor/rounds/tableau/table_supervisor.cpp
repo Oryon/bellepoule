@@ -92,6 +92,7 @@ namespace Table
 #endif
                                           "IP",
                                           "password",
+                                          "cyphered_password",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -132,6 +133,7 @@ namespace Table
 #endif
                                           "IP",
                                           "password",
+                                          "cyphered_password",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -551,16 +553,16 @@ namespace Table
   // --------------------------------------------------------------------------------
   gboolean Supervisor::OnMessage (Net::Message *message)
   {
-    if (message->Is ("Roadmap"))
+    if (message->Is ("BellePoule2D::Roadmap"))
     {
       gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                               (GtkTreeModelForeachFunc) ProcessMessage,
                               message);
       return TRUE;
     }
-    else if (   message->Is ("ScoreSheetCall")
-             || message->Is ("Score")
-             || message->Is ("EndOfBurst"))
+    else if (   message->Is ("SmartPoule::ScoreSheetCall")
+             || message->Is ("SmartPoule::Score")
+             || message->Is ("BellePoule2D::EndOfBurst"))
     {
       gchar    *batch     = message->GetString ("batch");
       TableSet *table_set = GetTableSet (batch);

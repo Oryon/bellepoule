@@ -49,6 +49,7 @@ namespace Pool
 #endif
                                           "IP",
                                           "password",
+                                          "cyphered_password",
                                           "HS",
                                           "exported",
                                           "final_rank",

@@ -37,7 +37,7 @@ namespace Pool
   class Allocator :
     public Stage,
     public CanvasModule,
-    public Net::Ring::Listener,
+    public Net::Ring::PartnerListener,
     public PillowDialog::Listener
   {
     public:

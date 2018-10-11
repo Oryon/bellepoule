@@ -29,7 +29,7 @@ namespace Net
 }
 
 class Tournament : public Module,
-                   public Net::Ring::HandshakeListener
+                   public Net::Ring::Listener
 {
   public:
     Tournament ();
@@ -72,9 +72,9 @@ class Tournament : public Module,
 
     Publication *GetPublication ();
 
-    gboolean OnHttpPost (Net::Message *message);
+    gboolean OnMessage (Net::Message *message);
 
-    gchar *GetSecretKey (const gchar *authentication_scheme);
+    const gchar *GetSecretKey (const gchar *authentication_scheme);
 
   public:
     const Player *GetPlayer (guint CompetitionId,
@@ -98,11 +98,6 @@ class Tournament : public Module,
 
     static gboolean RecentFileExists (const GtkRecentFilterInfo *filter_info,
                                       Tournament                *tournament);
-
-    Player *UpdateConnectionStatus (GList       *player_list,
-                                    guint        ref,
-                                    const gchar *ip_address,
-                                    const gchar *status);
 
     static void OnWebServerState (gboolean  in_progress,
                                   gboolean  on,

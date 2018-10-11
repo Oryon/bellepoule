@@ -25,7 +25,7 @@ namespace Marshaller
                           gchar *batch)
     : Object ("EndOfBurst")
   {
-    Disclose ("EndOfBurst");
+    Disclose ("BellePoule2D::EndOfBurst");
 
     _parcel->Set ("competition", competition_id);
     _parcel->Set ("stage",       stage);

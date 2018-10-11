@@ -43,8 +43,6 @@ namespace People
 
       const gchar *GetWeaponCode ();
 
-      void GiveRefereesAnId ();
-
       void Expand ();
 
       void Collapse ();

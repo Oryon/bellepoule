@@ -78,7 +78,7 @@ namespace Pool
       Stage (stage_class),
       CanvasModule ("pool_allocator.glade")
   {
-    Disclose ("Batch");
+    Disclose ("BellePoule::Batch");
 
     _has_marshaller         = FALSE;
     _config_list            = NULL;
@@ -131,6 +131,7 @@ namespace Pool
 #endif
                                           "IP",
                                           "password",
+                                          "cyphered_password",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -282,13 +283,13 @@ namespace Pool
       }
     }
 
-    Net::Ring::_broker->RegisterListener (this);
+    Net::Ring::_broker->RegisterPartnerListener (this);
   }
 
   // --------------------------------------------------------------------------------
   Allocator::~Allocator ()
   {
-    Net::Ring::_broker->UnregisterListener (this);
+    Net::Ring::_broker->UnregisterPartnerListener (this);
 
     DeletePools ();
 
@@ -383,12 +384,13 @@ namespace Pool
     {
       Pool *pool = GetPoolOf (current);
 
-      if (message->Is ("ScoreSheetCall"))
+      if (message->Is ("SmartPoule::ScoreSheetCall"))
       {
         if (pool->GetNumber () == message->GetInteger ("batch"))
         {
-          Net::Message *response = new Net::Message ("ScoreSheet");
+          Net::Message *response = new Net::Message ("BellePoule::ScoreSheet");
           Player       *referee  = _contest->GetRefereeFromRef (message->GetInteger ("referee_id"));
+          gchar        *address  = message->GetString ("address");
 
           {
             xmlBuffer *xml_buffer = xmlBufferCreate ();
@@ -414,13 +416,16 @@ namespace Pool
             xmlBufferFree (xml_buffer);
           }
 
-          referee->SendMessage (response);
+          referee->SendMessage (response,
+                                address);
+          g_free (address);
+
           response->Release ();
 
           return TRUE;
         }
       }
-      else if (message->Is ("Roadmap"))
+      else if (message->Is ("BellePoule2D::Roadmap"))
       {
         if (pool->OnMessage (message))
         {
@@ -1264,7 +1269,7 @@ namespace Pool
                                   i+1,
                                   GetXmlPlayerTag (),
                                   _rand_seed,
-                                  GetId ()+1,
+                                  GetNetID (),
                                   "competition", _contest->GetNetID (),
                                   "stage",       _parcel->GetNetID (),
                                   "batch",       _parcel->GetNetID (),

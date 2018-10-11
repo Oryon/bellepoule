@@ -62,6 +62,7 @@ namespace People
 #endif
                                           "IP",
                                           "password",
+                                          "cyphered_password",
                                           "HS",
                                           "attending",
                                           "final_rank",

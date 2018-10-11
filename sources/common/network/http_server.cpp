@@ -74,21 +74,15 @@ namespace Net
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  HttpServer::HttpServer (Client   *client,
-                          HttpPost  http_post,
-                          HttpGet   http_get,
+  HttpServer::HttpServer (Listener *listener,
                           guint     port)
     : Object ("HttpServer")
   {
-    _port = port;
+    _port     = port;
+    _listener = listener;
+    _iv       = NULL;
 
     _cryptor = new Cryptor ();
-
-    _client        = client;
-    _http_POST_cbk = http_post;
-    _http_GET_cbk  = http_get;
-
-    _iv = NULL;
 
     _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
                                 port,
@@ -124,17 +118,17 @@ namespace Net
 
       message = new Message ((const guint8 *) content);
 
-      if (message->IsValid () == FALSE)
-      {
-        message->Set ("content",
-                      content);
-      }
-
       g_free (content);
     }
 
-    request_body->_server->_http_POST_cbk (request_body->_server->_client,
-                                           message);
+    if (message->IsValid () == FALSE)
+    {
+      g_warning ("HttpServer::DeferedPost");
+    }
+    else
+    {
+      request_body->_server->_listener->OnMessage (message);
+    }
 
     message->Release ();
     delete (request_body);
@@ -166,30 +160,7 @@ namespace Net
   {
     int ret = MHD_NO;
 
-    if (_http_GET_cbk && (g_strcmp0 (method, "GET") == 0))
-    {
-      if (*upload_data_size == 0)
-      {
-        gchar *client_response = _http_GET_cbk (_client,
-                                                url);
-
-        if (client_response)
-        {
-          struct MHD_Response *response;
-
-          response = MHD_create_response_from_buffer (strlen (client_response),
-                                                      (void *) client_response,
-                                                      MHD_RESPMEM_MUST_COPY);
-          ret = MHD_queue_response (connection,
-                                    MHD_HTTP_OK,
-                                    response);
-
-          MHD_destroy_response (response);
-          g_free (client_response);
-        }
-      }
-    }
-    else if (_http_POST_cbk && ((g_strcmp0 (method, "POST") == 0) || (g_strcmp0 (method, "PUT") == 0)))
+    if ((g_strcmp0 (method, "POST") == 0) || (g_strcmp0 (method, "PUT") == 0))
     {
       if (*upload_data_size)
       {
@@ -212,7 +183,7 @@ namespace Net
 
         if (_iv)
         {
-          gchar *key = _client->GetSecretKey (url);
+          const gchar *key = _listener->GetSecretKey (url);
 
           if (key)
           {
@@ -225,7 +196,6 @@ namespace Net
             request_body->Replace (decrypted);
 
             g_free (decrypted);
-            g_free (key);
           }
         }
 
@@ -242,6 +212,19 @@ namespace Net
           MHD_destroy_response (response);
         }
       }
+    }
+    else
+    {
+      struct MHD_Response *response;
+
+      response = MHD_create_response_from_buffer (0,
+                                                  NULL,
+                                                  MHD_RESPMEM_PERSISTENT);
+      ret = MHD_queue_response (connection,
+                                MHD_HTTP_METHOD_NOT_ALLOWED,
+                                response);
+
+      MHD_destroy_response (response);
     }
 
     return ret;

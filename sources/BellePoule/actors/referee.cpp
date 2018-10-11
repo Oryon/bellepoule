@@ -15,12 +15,15 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/attribute.hpp"
+#include "network/cryptor.hpp"
+#include "network/ring.hpp"
 
 #include "player_factory.hpp"
 #include "referee.hpp"
 
 const gchar *Referee::_class_name = "Referee";
 const gchar *Referee::_xml_tag    = "Arbitre";
+const gchar *Referee::_iv         = NULL;
 
 // --------------------------------------------------------------------------------
 Referee::Referee ()
@@ -30,6 +33,14 @@ Referee::Referee ()
 
   attr_id._name = (gchar *) "connection";
   SetAttributeValue (&attr_id, "Manual");
+
+  if (_iv == NULL)
+  {
+    guchar *zero = g_new0 (guchar, 16);
+
+    _iv = g_base64_encode (zero, 16);
+    g_free (zero);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -64,37 +75,101 @@ Player *Referee::CreateInstance ()
 }
 
 // --------------------------------------------------------------------------------
+void Referee::SaveAttributes (XmlScheme *xml_scheme,
+                              gboolean   full_profile)
+{
+  {
+    AttributeId  attr_id ("password");
+    Attribute   *password = GetAttribute (&attr_id);
+
+    if (password)
+    {
+      const gchar *key = Net::Ring::_broker->GetCryptorKey ();
+
+      if (key)
+      {
+        AttributeId   cyphered_attr_id ("cyphered_password");
+        Net::Cryptor *cryptor = new Net::Cryptor (_iv);
+        gchar        *cypher  = cryptor->Encrypt (password->GetStrValue (),
+                                                  key,
+                                                  NULL);
+
+        SetAttributeValue (&cyphered_attr_id,
+                           cypher);
+
+        g_free (cypher);
+        cryptor->Release ();
+      }
+    }
+    else
+    {
+      RemoveAttribute (&attr_id);
+    }
+  }
+
+  Player::SaveAttributes (xml_scheme,
+                          full_profile);
+}
+
+// --------------------------------------------------------------------------------
 void Referee::GiveAnId ()
 {
-  AttributeId  attr_id ("ref");
-  Attribute   *attr = GetAttribute (&attr_id);
-
-  if (attr == NULL)
   {
-    Player::AttributeId name_attr_id      ("name");
-    Player::AttributeId firstname_attr_id ("first_name");
-    GChecksum *checksum = g_checksum_new (G_CHECKSUM_SHA1);
+    AttributeId  attr_id ("ref");
+    Attribute   *attr = GetAttribute (&attr_id);
 
+    if (attr == NULL)
     {
-      Attribute *name_attr      = GetAttribute (&name_attr_id);
-      Attribute *firstname_attr = GetAttribute (&firstname_attr_id);
-      gchar     *digest;
+      Player::AttributeId name_attr_id      ("name");
+      Player::AttributeId firstname_attr_id ("first_name");
+      GChecksum *checksum = g_checksum_new (G_CHECKSUM_SHA1);
 
-      g_checksum_update (checksum,
-                         (guchar *) name_attr->GetStrValue (),
-                         -1);
-      g_checksum_update (checksum,
-                         (guchar *) firstname_attr->GetStrValue (),
-                         -1);
+      {
+        Attribute *name_attr      = GetAttribute (&name_attr_id);
+        Attribute *firstname_attr = GetAttribute (&firstname_attr_id);
+        gchar     *digest;
 
-      digest = g_strdup (g_checksum_get_string (checksum));
-      digest[8] = 0;
-      SetRef (g_ascii_strtoll (digest,
-                               NULL,
-                               16));
-      g_free (digest);
+        g_checksum_update (checksum,
+                           (guchar *) name_attr->GetStrValue (),
+                           -1);
+        g_checksum_update (checksum,
+                           (guchar *) firstname_attr->GetStrValue (),
+                           -1);
+
+        digest = g_strdup (g_checksum_get_string (checksum));
+        digest[8] = 0;
+        SetRef (g_ascii_strtoll (digest,
+                                 NULL,
+                                 16));
+        g_free (digest);
+      }
+
+      g_checksum_free (checksum);
     }
+  }
 
-    g_checksum_free (checksum);
+  {
+    AttributeId  attr_id ("cyphered_password");
+    Attribute   *cypher = GetAttribute (&attr_id);
+
+    if (cypher)
+    {
+      const gchar *key = Net::Ring::_broker->GetCryptorKey ();
+
+      if (key)
+      {
+        AttributeId   clear_attr_id ("password");
+        Net::Cryptor *cryptor  = new Net::Cryptor ();
+        gchar        *password = cryptor->Decrypt (cypher->GetStrValue (),
+                                                   _iv,
+                                                   key);
+
+        SetAttributeValue (&clear_attr_id,
+                           password);
+
+        g_free (password);
+        cryptor->Release ();
+      }
+    }
   }
 }

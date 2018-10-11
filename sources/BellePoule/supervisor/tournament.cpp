@@ -182,98 +182,58 @@ void Tournament::Start (gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
+const gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
 {
   gchar *key = NULL;
 
   if (authentication_scheme)
   {
-    if (   (g_strcmp0 (authentication_scheme, "/ring") == 0)
-        || (g_strcmp0 (authentication_scheme, "/PartnerAppCredentials/0") == 0))
-    {
-      return Net::Ring::_broker->GetCryptorKey ();
-    }
-    else
-    {
-      gchar **tokens = g_strsplit_set (authentication_scheme,
-                                       "/",
-                                       0);
+    gchar **tokens = g_strsplit_set (authentication_scheme,
+                                     "/",
+                                     0);
 
-      if (tokens)
+    if (tokens)
+    {
+      if (tokens[0] && tokens[1] && tokens[2])
       {
-        if (tokens[0] && tokens[1] && tokens[2])
+        guint ref = atoi (tokens[2]);
+
+        if (ref == 0)
         {
-          guint ref = atoi (tokens[2]);
+          g_warning ("Tournament::GetSecretKey");
+          //WifiCode *wifi_code = _publication->GetAdminCode ();
 
-          if (ref == 0)
-          {
-            g_warning ("Tournament::GetSecretKey");
-            //WifiCode *wifi_code = _publication->GetAdminCode ();
-
-            //key = wifi_code->GetKey ();
-          }
-          else
-          {
-            GList *current = _contest_list;
-
-            while (current)
-            {
-              Contest *contest = (Contest *) current->data;
-              Player  *referee = contest->GetRefereeFromRef (ref);
-
-              if (referee)
-              {
-                Player::AttributeId  attr_id ("password");
-                Attribute           *attr   = referee->GetAttribute (&attr_id);
-
-                if (attr)
-                {
-                  key = g_strdup (attr->GetStrValue ());
-                  break;
-                }
-              }
-              current = g_list_next (current);
-            }
-          }
-          g_strfreev (tokens);
+          //key = wifi_code->GetKey ();
         }
+        else
+        {
+          GList *current = _contest_list;
+
+          while (current)
+          {
+            Contest *contest = (Contest *) current->data;
+            Player  *referee = contest->GetRefereeFromRef (ref);
+
+            if (referee)
+            {
+              Player::AttributeId  attr_id ("password");
+              Attribute           *attr   = referee->GetAttribute (&attr_id);
+
+              if (attr)
+              {
+                key = attr->GetStrValue ();
+                break;
+              }
+            }
+            current = g_list_next (current);
+          }
+        }
+        g_strfreev (tokens);
       }
     }
   }
 
   return key;
-}
-
-// --------------------------------------------------------------------------------
-Player *Tournament::UpdateConnectionStatus (GList       *player_list,
-                                            guint        ref,
-                                            const gchar *ip_address,
-                                            const gchar *status)
-{
-  GList *current = player_list;
-
-  while (current)
-  {
-    Player *current_player = (Player *) current->data;
-
-    if (current_player->GetRef () == ref)
-    {
-      Player::AttributeId connection_attr_id ("connection");
-      Player::AttributeId ip_attr_id         ("IP");
-
-      current_player->SetAttributeValue (&connection_attr_id,
-                                         status);
-      if (ip_address)
-      {
-        current_player->SetAttributeValue (&ip_attr_id,
-                                           ip_address);
-      }
-      return current_player;
-    }
-    current = g_list_next (current);
-  }
-
-  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -317,11 +277,11 @@ void Tournament::OnHanshakeResult (Net::Ring::HandshakeResult result)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Tournament::OnHttpPost (Net::Message *message)
+gboolean Tournament::OnMessage (Net::Message *message)
 {
   gboolean result = FALSE;
 
-  if (message->Is ("RegisteredReferee"))
+  if (message->Is ("BellePoule2D::Referee"))
   {
     GList *current = _contest_list;
 
@@ -336,7 +296,7 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
 
     result = TRUE;
   }
-  else if (message->Is ("Roadmap"))
+  else if (message->Is ("BellePoule2D::Roadmap"))
   {
     Contest *contest = GetContest (message->GetInteger ("competition"));
 
@@ -345,7 +305,7 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
       result = contest->OnMessage (message);
     }
   }
-  else if (message->Is ("EndOfBurst"))
+  else if (message->Is ("BellePoule2D::EndOfBurst"))
   {
     Contest *contest = GetContest (message->GetInteger ("competition"));
 
@@ -354,7 +314,7 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
       result = contest->OnMessage (message);
     }
   }
-  else if (message->Is ("ScoreSheetCall"))
+  else if (message->Is ("SmartPoule::ScoreSheetCall"))
   {
     Contest *contest = GetContest (message->GetInteger ("competition"));
 
@@ -363,7 +323,7 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
       result = contest->OnMessage (message);
     }
   }
-  else if (message->Is ("Score"))
+  else if (message->Is ("SmartPoule::Score"))
   {
     Contest *contest = GetContest (message->GetInteger ("competition"));
 
@@ -372,16 +332,11 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
       result = contest->OnMessage (message);
     }
   }
-  else if (message->Is ("Handshake"))
-  {
-    Net::Ring::_broker->OnHandshake (message,
-                                     this);
-  }
-  else if (message->Is ("ClockOffset"))
+  else if (message->Is ("BellePoule2D::ClockOffset"))
   {
     Match::OnClockOffset (message);
   }
-  else if (message->Is ("PartnerAppCredentials"))
+  else if (message->Is ("SmartPoule::PartnerAppCredentials"))
   {
     GtkDialog *dialog     = GTK_DIALOG (_glade->GetWidget ("pin_code_dialog"));
     gchar     *passphrase = message->GetString ("manager_app_key");
@@ -440,9 +395,7 @@ gboolean Tournament::OnHttpPost (Net::Message *message)
                                 "page", page,
                                 NULL);
 
-                  result = contest->OnHttpPost (tokens[1],
-                                                (const gchar**) &tokens[4],
-                                                body);
+                  g_warning ("TODO: OnHttpPost");
                 }
               }
             }

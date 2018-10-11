@@ -167,47 +167,42 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Marshaller::OnHttpPost (Net::Message *message)
+  gboolean Marshaller::OnMessage (Net::Message *message)
   {
     if (message->GetFitness () > 0)
     {
-      if (message->Is ("Competition"))
+      if (message->Is ("BellePoule::Competition"))
       {
         _hall->ManageCompetition (message,
                                   GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
         return TRUE;
       }
-      else if (message->Is ("Batch"))
+      else if (message->Is ("BellePoule::Batch"))
       {
         _hall->ManageBatch (message);
         return TRUE;
       }
-      else if (message->Is ("Job"))
+      else if (message->Is ("BellePoule::Job"))
       {
         _hall->ManageJob (message);
         return TRUE;
       }
-      else if (message->Is ("Referee"))
+      else if (message->Is ("BellePoule::Referee"))
       {
         _referee_pool->ManageReferee (message);
         return TRUE;
       }
-      else if (message->Is ("Fencer"))
+      else if (message->Is ("BellePoule::Fencer"))
       {
         _hall->ManageFencer (message);
         return TRUE;
       }
-      else if (message->Is ("RefereeHandshake"))
+      else if (message->Is ("SmartPoule::RefereeHandshake"))
       {
         _referee_pool->ManageHandShake (message);
         return TRUE;
       }
-      else if (message->Is ("Handshake"))
-      {
-        Net::Ring::_broker->OnHandshake (message,
-                                         this);
-      }
-      else if (message->Is ("PartnerAppCredentials"))
+      else if (message->Is ("SmartPoule::PartnerAppCredentials"))
       {
         GtkDialog *dialog     = GTK_DIALOG (_glade->GetWidget ("pin_code_dialog"));
         gchar     *passphrase = message->GetString ("user_app_key");
@@ -226,22 +221,22 @@ namespace Marshaller
     }
     else
     {
-      if (message->Is ("Competition"))
+      if (message->Is ("BellePoule::Competition"))
       {
         _hall->DeleteCompetition (message);
         return TRUE;
       }
-      else if (message->Is ("Batch"))
+      else if (message->Is ("BellePoule::Batch"))
       {
         _hall->DeleteBatch (message);
         return TRUE;
       }
-      else if (message->Is ("Job"))
+      else if (message->Is ("BellePoule::Job"))
       {
         _hall->DeleteJob (message);
         return TRUE;
       }
-      else if (message->Is ("Fencer"))
+      else if (message->Is ("BellePoule::Fencer"))
       {
         _hall->DeleteFencer (message);
         return TRUE;
@@ -252,43 +247,34 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Marshaller::GetSecretKey (const gchar *authentication_scheme)
+  const gchar *Marshaller::GetSecretKey (const gchar *authentication_scheme)
   {
-    WifiCode *wifi_code = NULL;
-
     if (authentication_scheme)
     {
-      if (   (g_strcmp0 (authentication_scheme, "/ring") == 0)
-          || (g_strcmp0 (authentication_scheme, "/PartnerAppCredentials/0") == 0))
-      {
-        return Net::Ring::_broker->GetCryptorKey ();
-      }
-      else
-      {
-        gchar **tokens = g_strsplit_set (authentication_scheme,
-                                         "/",
-                                         0);
+      gchar **tokens = g_strsplit_set (authentication_scheme,
+                                       "/",
+                                       0);
 
-        if (tokens)
+      if (tokens)
+      {
+        if (tokens[0] && tokens[1] && tokens[2])
         {
-          if (tokens[0] && tokens[1] && tokens[2])
-          {
-            guint            ref     = atoi (tokens[2]);
-            EnlistedReferee *referee = _referee_pool->GetReferee (ref);
+          WifiCode        *wifi_code = NULL;
+          guint            ref       = atoi (tokens[2]);
+          EnlistedReferee *referee   = _referee_pool->GetReferee (ref);
 
-            if (referee)
-            {
-              wifi_code = (WifiCode *) referee->GetFlashCode ();
-            }
-            g_strfreev (tokens);
+          if (referee)
+          {
+            wifi_code = (WifiCode *) referee->GetFlashCode ();
+          }
+          g_strfreev (tokens);
+
+          if (wifi_code)
+          {
+            return wifi_code->GetKey ();
           }
         }
       }
-    }
-
-    if (wifi_code)
-    {
-      return wifi_code->GetKey ();
     }
 
     return NULL;

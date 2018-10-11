@@ -79,6 +79,7 @@ namespace Pool
 #endif
                                           "IP",
                                           "password",
+                                          "cyphered_password",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -120,6 +121,7 @@ namespace Pool
 #endif
                                             "IP",
                                             "password",
+                                            "cyphered_password",
                                             "attending",
                                             "exported",
                                             "final_rank",
@@ -242,7 +244,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gboolean Supervisor::OnMessage (Net::Message *message)
   {
-    if (message->Is ("Score"))
+    if (message->Is ("SmartPoule::Score"))
     {
       Pool *pool = _allocator->GetPool (message->GetInteger ("batch")-1);
 

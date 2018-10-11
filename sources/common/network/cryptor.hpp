@@ -23,21 +23,21 @@ namespace Net
   class Cryptor : public Object
   {
     public:
-      Cryptor ();
+      Cryptor (const gchar *iv_b64 = NULL);
 
       gchar *Encrypt (const gchar  *text,
                       const gchar  *key,
                       gchar       **iv_b64);
 
-      gchar *Decrypt (gchar       *data,
+      gchar *Decrypt (gchar       *data_b64,
                       const gchar *iv_b64,
                       const gchar *key);
 
     private:
-      GRand *_rand;
+      gchar *_iv;
 
       virtual ~Cryptor ();
 
-      guchar *GetIv ();
+      guchar *GenerateIv ();
   };
 }

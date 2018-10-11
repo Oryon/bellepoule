@@ -54,7 +54,7 @@ namespace Marshaller
                                       _absolute);
     OnTimeout (this);
 
-    Disclose ("ClockOffset");
+    Disclose ("BellePoule2D::ClockOffset");
     Spread ();
 #endif
   }

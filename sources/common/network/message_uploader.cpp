@@ -194,11 +194,6 @@ namespace Net
                       message);
           break;
         }
-        else if (message->Is ("MessageUploader::raw_content"))
-        {
-          uploader->PrepareData (message->GetString ("content"),
-                                 message->GetPassPhrase256 ());
-        }
         else
         {
           uploader->PrepareData (message->GetParcel (),

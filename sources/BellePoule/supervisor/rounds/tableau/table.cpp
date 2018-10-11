@@ -60,7 +60,7 @@ namespace Table
 
     _match_list = NULL;
 
-    Disclose ("Batch");
+    Disclose ("BellePoule::Batch");
 
     {
       va_list ap;

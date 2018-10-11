@@ -171,7 +171,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   TableSet::~TableSet ()
   {
-    Net::Ring::_broker->UnregisterListener (this);
+    Net::Ring::_broker->UnregisterPartnerListener (this);
 
     DeleteTree ();
 
@@ -2037,11 +2037,11 @@ namespace Table
   // --------------------------------------------------------------------------------
   gboolean TableSet::OnMessage (Net::Message *message)
   {
-    if (message->Is ("EndOfBurst"))
+    if (message->Is ("BellePoule2D::EndOfBurst"))
     {
       Display ();
     }
-    else if (message->Is ("Roadmap"))
+    else if (message->Is ("BellePoule2D::Roadmap"))
     {
       for (guint t = 1; t < _nb_tables; t++)
       {
@@ -2081,8 +2081,8 @@ namespace Table
         }
       }
     }
-    else if (   message->Is ("ScoreSheetCall")
-             || message->Is ("Score"))
+    else if (   message->Is ("SmartPoule::ScoreSheetCall")
+             || message->Is ("SmartPoule::Score"))
     {
       gchar       *bout = message->GetString ("bout");
       GtkTreeIter  iter;
@@ -2099,7 +2099,7 @@ namespace Table
                             -1);
         if (match)
         {
-          if (message->Is ("ScoreSheetCall"))
+          if (message->Is ("SmartPoule::ScoreSheetCall"))
           {
             Contest   *contest    = _supervisor->GetContest ();
             xmlBuffer *xml_buffer = xmlBufferCreate ();
@@ -2123,9 +2123,10 @@ namespace Table
             }
 
             {
-              Net::Message *response = new Net::Message ("ScoreSheet");
+              Net::Message *response = new Net::Message ("BellePoule::ScoreSheet");
               Player       *referee  = contest->GetRefereeFromRef (message->GetInteger ("referee_id"));
               gchar        *batch    = message->GetString ("batch");
+              gchar        *address  = message->GetString ("address");
 
               response->Set ("competition", contest->GetNetID ());
               response->Set ("stage",       _supervisor->GetNetID ());
@@ -2133,15 +2134,17 @@ namespace Table
               response->Set ("bout",        bout);
               response->Set ("xml",         (const gchar *) xml_buffer->content);
 
-              referee->SendMessage (response);
+              referee->SendMessage (response,
+                                    address);
               response->Release ();
 
+              g_free (address);
               g_free (batch);
             }
 
             xmlBufferFree (xml_buffer);
           }
-          else if (message->Is ("Score"))
+          else if (message->Is ("SmartPoule::Score"))
           {
             gchar *xml_data = message->GetString ("xml");
 
@@ -3587,7 +3590,7 @@ namespace Table
 
     ConnectDndDest (GTK_WIDGET (GetCanvas ()));
     EnableDndOnCanvas ();
-    Net::Ring::_broker->RegisterListener (this);
+    Net::Ring::_broker->RegisterPartnerListener (this);
   }
 
   // --------------------------------------------------------------------------------
@@ -3596,7 +3599,7 @@ namespace Table
     Wipe ();
 
     CanvasModule::OnUnPlugged ();
-    Net::Ring::_broker->UnregisterListener (this);
+    Net::Ring::_broker->UnregisterPartnerListener (this);
   }
 
   // --------------------------------------------------------------------------------

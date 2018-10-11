@@ -685,7 +685,7 @@ gboolean Schedule::OnMessage (Net::Message *message)
 
     if (stage->GetNetID () == message->GetInteger ("stage"))
     {
-      if (message->Is ("Score"))
+      if (message->Is ("SmartPoule::Score"))
       {
         if (stage->GetInputProviderClient ())
         {
@@ -702,40 +702,6 @@ gboolean Schedule::OnMessage (Net::Message *message)
     }
 
     current = g_list_next (current);
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Schedule::OnHttpPost (const gchar *command,
-                               const gchar **ressource,
-                               const gchar *data)
-{
-  if (ressource[0])
-  {
-    guint  phase_id = atoi (ressource[0]);
-    GList *current  = _stage_list;
-
-    while (current)
-    {
-      Stage *stage = (Stage *) current->data;
-
-      if (stage->GetId () == phase_id)
-      {
-        if (g_strcmp0 (command, "ScoreSheet") == 0)
-        {
-          gtk_notebook_set_current_page  (GTK_NOTEBOOK (GetRootWidget ()),
-                                          phase_id);
-        }
-
-        return stage->OnHttpPost (command,
-                                  &ressource[1],
-                                  data);
-      }
-
-      current = g_list_next (current);
-    }
   }
 
   return FALSE;
@@ -1055,8 +1021,7 @@ void Schedule::Load (xmlDoc               *doc,
 
   referees->LoadList (xml_context,
                       contest_keyword);
-  referees->GiveRefereesAnId ();
-  referees->Disclose ("Referee");
+  referees->Disclose ("BellePoule::Referee");
   referees->Spread ();
 
   {

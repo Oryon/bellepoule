@@ -30,20 +30,20 @@ namespace Marshaller
     public Module,
     public People::RefereesList::Listener,
     public Hall::Listener,
-    public Net::Ring::HandshakeListener
+    public Net::Ring::Listener
   {
     public:
       Marshaller ();
 
       void Start ();
 
-      gboolean OnHttpPost (Net::Message *message);
+      gboolean OnMessage (Net::Message *message);
 
       void OnExposeWeapon (const gchar *weapon_code);
 
       void OnRefereeListCollapse ();
 
-      gchar *GetSecretKey (const gchar *authentication_scheme);
+      const gchar *GetSecretKey (const gchar *authentication_scheme);
 
       void OnMenuDialog (const gchar *dialog);
 

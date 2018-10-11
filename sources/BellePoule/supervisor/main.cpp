@@ -45,11 +45,9 @@ class BellPouleApp : public Application
 
     void Prepare ();
 
-    void Start (int argc, char **argv);
-
-    gboolean OnHttpPost (Net::Message *message);
-
-    gchar *GetSecretKey (const gchar *authentication_scheme);
+    void Start (int                   argc,
+                char                **argv,
+                Net::Ring::Listener  *ring_listener);
 
     void OnQuit (GtkWindow *window);
 };
@@ -93,8 +91,9 @@ void BellPouleApp::Prepare ()
 }
 
 // --------------------------------------------------------------------------------
-void BellPouleApp::Start (int    argc,
-                          char **argv)
+void BellPouleApp::Start (int                   argc,
+                          char                **argv,
+                          Net::Ring::Listener  *ring_listener)
 {
   _tournament = new Tournament ();
 
@@ -105,7 +104,8 @@ void BellPouleApp::Start (int    argc,
                          "application",
                          this);
   Application::Start (argc,
-                      argv);
+                      argv,
+                      _tournament);
 
   if (argc > 1)
   {
@@ -117,23 +117,6 @@ void BellPouleApp::Start (int    argc,
   }
 
   gtk_main ();
-}
-
-// --------------------------------------------------------------------------------
-gboolean BellPouleApp::OnHttpPost (Net::Message *message)
-{
-  return _tournament->OnHttpPost (message);
-}
-
-// --------------------------------------------------------------------------------
-gchar *BellPouleApp::GetSecretKey (const gchar *authentication_scheme)
-{
-  if (_tournament)
-  {
-    return _tournament->GetSecretKey (authentication_scheme);
-  }
-
-  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -167,7 +150,8 @@ int main (int argc, char **argv)
   application->Prepare ();
 
   application->Start (argc,
-                      argv);
+                      argv,
+                      NULL);
 
   application->Release ();
 

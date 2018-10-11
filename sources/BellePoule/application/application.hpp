@@ -19,22 +19,28 @@
 #include "util/object.hpp"
 #include "network/ring.hpp"
 #include "network/downloader.hpp"
-#include "network/http_server.hpp"
+#include "network/ring.hpp"
 
 class Attribute;
 class AttributeDesc;
 class Module;
 class Language;
 
+namespace Net
+{
+  class Message;
+}
+
 class Application :
   public Object,
-         Net::HttpServer::Client,
-         Net::Downloader::Listener
+  public Net::Downloader::Listener
 {
   public:
     virtual void Prepare ();
 
-    virtual void Start (int argc, char **argv);
+    virtual void Start (int                   argc,
+                        char                **argv,
+                        Net::Ring::Listener  *ring_listener);
 
     void OnOpenUserManual ();
 
@@ -50,20 +56,15 @@ class Application :
 
     virtual ~Application ();
 
-    virtual gboolean OnHttpPost (Net::Message *message) = 0;
-
-    virtual gchar *OnHttpGet (const gchar *url);
-
   private:
     Net::Ring::Role  _role;
     Language        *_language;
     Net::Downloader *_version_downloader;
-    Net::HttpServer *_http_server;
 
     void OnDownloaderData (Net::Downloader  *downloader,
                            const gchar      *data);
 
-    virtual gchar *GetSecretKey (const gchar *authentication_scheme);
+    virtual const gchar *GetSecretKey (const gchar *authentication_scheme);
 
     static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
                                              const gchar    *link,
@@ -81,10 +82,4 @@ class Application :
                             gpointer        user_data);
 
     static gboolean IsCsvReady (AttributeDesc *desc);
-
-    static gboolean HttpPostCbk (Net::HttpServer::Client *client,
-                                 Net::Message            *message);
-
-    static gchar *HttpGetCbk (Net::HttpServer::Client *client,
-                              const gchar             *url);
 };

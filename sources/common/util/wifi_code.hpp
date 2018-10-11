@@ -37,7 +37,7 @@ class WifiCode : public FlashCode
 
     void SetWifiNetwork (Net::WifiNetwork *network);
 
-    gchar *GetKey ();
+    const gchar *GetKey ();
 
     void ResetKey ();
 
