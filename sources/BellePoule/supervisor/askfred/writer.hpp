@@ -102,6 +102,8 @@ namespace AskFred
         void AddToOutline (const gchar *name,
                            const gchar *value);
 
+        const gchar *GetValue (const gchar *of);
+
       private:
         gchar       *_name;
         const gchar *_ref;
@@ -133,8 +135,9 @@ namespace AskFred
         GNode *_current_node;
         GList *_rounds;
 
-        IdFixer *_fencer_id_fixer;
-        IdFixer *_club_id_fixer;
+        IdFixer    *_fencer_id_fixer;
+        IdFixer    *_club_id_fixer;
+        GData      *_id_aliases;
 
         Mode _mode;
 

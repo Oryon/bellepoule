@@ -282,6 +282,25 @@ namespace AskFred
     }
 
     // --------------------------------------------------------------------------------
+    const gchar *Element::GetValue (const gchar *of)
+    {
+      GList *node = g_list_find_custom (_outline,
+                                        of,
+                                        (GCompareFunc) g_strcmp0);
+
+      if (node)
+      {
+        node = g_list_next (node);
+
+        if (node)
+        {
+          return (gchar *) node->data;
+        }
+      }
+      return NULL;
+    }
+
+    // --------------------------------------------------------------------------------
     void Element::AddToOutline (const gchar *name,
                                 const gchar *value)
     {
@@ -332,6 +351,8 @@ namespace AskFred
 
       _fencer_id_fixer = new IdFixer ("ID",   FALSE);
       _club_id_fixer   = new IdFixer ("Club", TRUE);
+
+      g_datalist_init (&_id_aliases);
 
       if (_element_base == NULL)
       {
@@ -531,6 +552,8 @@ namespace AskFred
 
       _fencer_id_fixer->Release ();
       _club_id_fixer->Release   ();
+
+      g_datalist_clear (&_id_aliases);
 
       g_node_traverse (_root_element,
                        G_PRE_ORDER,
@@ -778,6 +801,32 @@ namespace AskFred
         return NULL;
       }
 
+      if (g_strcmp0 (owner->GetName (), "Tireur") == 0)
+      {
+        if (g_strcmp0 (term, "ID") == 0)
+        {
+          const gchar *alias = owner->GetValue ("PluginID");
+
+          if (alias)
+          {
+            g_datalist_set_data (&_id_aliases,
+                                 value,
+                                 (gpointer) alias);
+            return NULL;
+          }
+        }
+        else if (g_strcmp0 (term, "REF") == 0)
+        {
+          gchar *alias = (gchar *) g_datalist_get_data (&_id_aliases, value);
+
+          if (alias)
+          {
+            return alias;
+          }
+          return value;
+        }
+      }
+
       if (g_strcmp0 (term, "DateNaissance") == 0)
       {
         gchar *year = g_strrstr (value,
@@ -812,30 +861,33 @@ namespace AskFred
     // --------------------------------------------------------------------------------
     void Scheme::RemoveNonBreakingSpaces (guchar *in)
     {
-      guint len = strlen ((gchar *) in);
-
-      if (len > 2)
+      if (in)
       {
-        guint n_space = 0;
-        guint c       = 0;
+        guint len = strlen ((gchar *) in);
 
-        for (c = 0; c < len; c++)
+        if (len > 2)
         {
-          if ((in[c] == 0xC2) && (in[c+1] == 0xA0))
-          {
-            in[c-n_space] = ' ';
-            c++;
-            n_space++;
-          }
-          else if (n_space)
-          {
-            in[c-n_space] = in[c];
-          }
-        }
+          guint n_space = 0;
+          guint c       = 0;
 
-        if (n_space)
-        {
-          in[c-n_space] = '\0';
+          for (c = 0; c < len; c++)
+          {
+            if ((in[c] == 0xC2) && (in[c+1] == 0xA0))
+            {
+              in[c-n_space] = ' ';
+              c++;
+              n_space++;
+            }
+            else if (n_space)
+            {
+              in[c-n_space] = in[c];
+            }
+          }
+
+          if (n_space)
+          {
+            in[c-n_space] = '\0';
+          }
         }
       }
     }
