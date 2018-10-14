@@ -276,18 +276,38 @@ namespace Net
 
     // Add secret challenge to message
     {
-      gchar   *iv;
-      char    *crypted;
       Cryptor *cryptor = new Cryptor ();
 
-      crypted = cryptor->Encrypt (SECRET,
-                                  _credentials->GetKey (),
-                                  &iv);
-      message->Set ("iv",     iv);
-      message->Set ("secret", crypted);
+      {
+        gchar *iv;
+        gchar *challenge = cryptor->Encrypt (SECRET,
+                                             _credentials->GetKey (),
+                                             &iv);
+        message->Set ("challenge", challenge);
+        message->Set ("iv", iv);
 
-      g_free (iv);
-      g_free (crypted);
+        g_free (iv);
+        g_free (challenge);
+      }
+
+      {
+        Credentials *credentials = RetreiveBackupCredentials ();
+
+        if (credentials)
+        {
+          gchar       *backup_iv;
+          gchar       *backup_challenge  = cryptor->Encrypt (SECRET,
+                                                             credentials->GetKey (),
+                                                             &backup_iv);
+
+          message->Set ("backup_challenge", backup_challenge);
+          message->Set ("backup_iv",        backup_iv);
+
+          g_free (backup_iv);
+          g_free (backup_challenge);
+          credentials->Release ();
+        }
+      }
 
       cryptor->Release ();
     }
@@ -381,28 +401,29 @@ namespace Net
             {
               if (role != ring->_role)
               {
-                gchar *crypted = message->GetString ("secret");
-                gchar *iv      = message->GetString ("iv");
+                gchar *challenge = message->GetString  ("challenge");
+                gchar *iv         = message->GetString ("iv");
 
-                if (ring->DecryptSecret (crypted,
+                if (ring->DecryptSecret (challenge,
                                          iv,
                                          ring->_credentials))
                 {
                   ring->Add (partner);
                   ring->SendHandshake (partner,
-                                       GRANTED);
+                                       CHALLENGE_PASSED);
                 }
                 else
                 {
 #ifdef WITH_BACKUP_CREDENTIALS
-                  Credentials *credentials = ring->RetreiveBackupCredentials ();
+                  gchar *backup_challenge = message->GetString ("backup_challenge");
+                  gchar *backup_iv        = message->GetString ("backup_iv");
 
-                  if (ring->DecryptSecret (crypted,
-                                           iv,
-                                           credentials))
+                  if (ring->DecryptSecret (backup_challenge,
+                                           backup_iv,
+                                           ring->_credentials))
                   {
                     ring->SendHandshake (partner,
-                                         UNSETTLED);
+                                         BACKUP_CHALLENGE_PASSED);
                   }
                   else
                   {
@@ -410,14 +431,14 @@ namespace Net
                                          AUTHENTICATION_FAILED);
                   }
 
-                  credentials->Release ();
+                  g_free (backup_challenge);
+                  g_free (backup_iv);
 #else
                   ring->SendHandshake (partner,
                                        AUTHENTICATION_FAILED);
 #endif
                 }
-
-                g_free (crypted);
+                g_free (challenge);
                 g_free (iv);
               }
             }
@@ -538,7 +559,7 @@ namespace Net
   {
     Message *message = new Message ("Ring::Handshake");
 
-    if (result == GRANTED)
+    if ((result == CHALLENGE_PASSED) || (result == BACKUP_CHALLENGE_PASSED))
     {
       message->Set ("role",         _role);
       message->Set ("ip_address",   _ip_address);
@@ -838,7 +859,7 @@ namespace Net
     {
       HandshakeResult response = (HandshakeResult) message->GetInteger ("response");
 
-      if (response == UNSETTLED)
+      if (response == BACKUP_CHALLENGE_PASSED)
       {
         Credentials *credentials = RetreiveBackupCredentials ();
 
@@ -848,7 +869,7 @@ namespace Net
       }
       else
       {
-        if (response == GRANTED)
+        if (response == CHALLENGE_PASSED)
         {
           Partner *partner = new Partner (message,
                                           this);

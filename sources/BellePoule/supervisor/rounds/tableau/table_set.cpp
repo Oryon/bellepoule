@@ -3395,8 +3395,8 @@ namespace Table
           {
             GooCanvasItem *match_table = goo_canvas_table_new (match_group,
                                                                "column-spacing", 1.0,
-                                                               "row-spacing",    2.0,
-                                                                 NULL);
+                                                               "row-spacing",    0.0,
+                                                               NULL);
 
             DrawPlayerMatch (match_table,
                              match,
@@ -3544,7 +3544,7 @@ namespace Table
       goo_rect = goo_canvas_rect_new (table,
                                       0.0,
                                       0.0,
-                                      score_size,
+                                      score_size*2,
                                       score_size,
                                       "line-width", 0.3,
                                       NULL);
@@ -3557,7 +3557,7 @@ namespace Table
       goo_rect = goo_canvas_rect_new (table,
                                       0.0,
                                       0.0,
-                                      score_size*5,
+                                      score_size*8,
                                       score_size,
                                       "fill-color", "Grey85",
                                       "stroke-pattern", NULL,

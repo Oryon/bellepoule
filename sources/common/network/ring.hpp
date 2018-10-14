@@ -35,8 +35,8 @@ namespace Net
     public:
       typedef enum
       {
-        GRANTED,
-        UNSETTLED,
+        CHALLENGE_PASSED,
+        BACKUP_CHALLENGE_PASSED,
         AUTHENTICATION_FAILED,
         ROLE_REJECTED
       } HandshakeResult;
