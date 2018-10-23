@@ -99,6 +99,8 @@ class Contest : public Module
 
     void TweetFeeder (Net::Advertiser::Feeder *feeder);
 
+    void MakeDirty ();
+
     guint        GetNetID           ();
     gchar       *GetOrganizer       ();
     gchar       *GetDate            ();
@@ -212,8 +214,6 @@ class Contest : public Module
                    gint               page_nr);
 
     void ChooseColor ();
-
-    void MakeDirty ();
 
     static gboolean OnSaveTimeout (Contest *contest);
 

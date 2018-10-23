@@ -868,10 +868,22 @@ void Tournament::OnRecent ()
 // --------------------------------------------------------------------------------
 void Tournament::OnMenuDialog (const gchar *dialog)
 {
-  GtkWidget *w = _glade->GetWidget (dialog);
+  {
+    GtkWidget *w = _glade->GetWidget (dialog);
 
-  RunDialog (GTK_DIALOG (w));
-  gtk_widget_hide (w);
+    RunDialog (GTK_DIALOG (w));
+    gtk_widget_hide (w);
+  }
+
+  if (g_strcmp0 (dialog, "publication_dialog") == 0)
+  {
+    for (GList *current = _contest_list; current; current = g_list_next (current))
+    {
+      Contest *contest = (Contest *) current->data;
+
+      contest->MakeDirty ();
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------

@@ -2,8 +2,8 @@
 #-- Variables ---------------------------------------
 #----------------------------------------------------
 
-ifneq ($(wildcard ./.UBUNTU),"")
-UBUNTU = $(shell cat ./.UBUNTU)
+ifneq ($(wildcard ./.DISTRIB),"")
+DISTRIB = $(shell cat ./.DISTRIB)
 endif
 ifneq ($(wildcard ./.V),"")
 V = $(shell cat ./.V)
@@ -17,7 +17,7 @@ endif
 VERSION_MAJOR:=$(shell grep "VERSION " $(VERSION_FILE) | sed 's/.* //')
 VERSION_MINOR:=$(shell grep VERSION_REVISION $(VERSION_FILE) | sed 's/.* //')
 VERSION_MATURITY:=$(shell grep VERSION_MATURITY $(VERSION_FILE) | sed 's/.* //')
-ifneq ($(UBUNTU), windows)
+ifneq ($(DISTRIB), windows)
 	ifneq ($(VERSION_MATURITY), )
 		VERSION_MICRO := $(shell echo $(VERSION_MATURITY) | sed 's/alpha0//' | sed 's/alpha//')
 	else
@@ -46,7 +46,7 @@ GOO = goocanvas
 #----------------------------------------------------
 DWEBKIT    = -DWEBKIT
 WEBKIT_LIB = webkit-1.0
-ifeq ($(UBUNTU), osx)
+ifeq ($(DISTRIB), osx)
 	undefine DWEBKIT
 	undefine WEBKIT_LIB
 endif
@@ -54,7 +54,7 @@ endif
 #----------------------------------------------------
 #-- Compilers ---------------------------------------
 #----------------------------------------------------
-ifeq ($(UBUNTU), windows)
+ifeq ($(DISTRIB), windows)
 CC_FAMILY = i686-w64-mingw32-
 EXE       = .exe
 MINGW=$(HOME)/Project/Cross/Xroad/w32/$(PRODUCT)
@@ -69,7 +69,7 @@ WINDRES = $(CC_FAMILY)windres
 CC      = $(CC_FAMILY)g++
 AR      = $(CC_FAMILY)ar
 
-ifeq ($(UBUNTU), osx)
+ifeq ($(DISTRIB), osx)
 PKG_CONFIG = x86_64-apple-darwin15-pkg-config
 CC  = o64-clang++
 #CC += -arch i386
@@ -116,11 +116,11 @@ ifeq ($(OUTPUT), Debug)
 CFLAGS += -DDEBUG=1
 endif
 
-ifeq ($(UBUNTU), windows)
+ifeq ($(DISTRIB), windows)
 CFLAGS += -DWINDOWS_TEMPORARY_PATCH=1
 CFLAGS += -DWIN32
 CFLAGS += -I$(MINGW)/include
-else ifeq ($(UBUNTU), osx)
+else ifeq ($(DISTRIB), osx)
 CFLAGS += -DOSX
 CFLAGS += -Wno-cast-align
 CFLAGS += -Wno-overloaded-virtual
@@ -144,7 +144,7 @@ LDFLAGS += -lssl
 LDFLAGS += -lcrypto
 LDFLAGS += -L$(OUTPUT)
 
-ifeq ($(UBUNTU), windows)
+ifeq ($(DISTRIB), windows)
 LDFLAGS += -lws2_32
 LDFLAGS += -liphlpapi
 ifeq ($(OUTPUT), Release)
@@ -153,7 +153,7 @@ endif
 endif
 LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 $(WEBKIT_LIB))
 
-ifeq ($(UBUNTU), osx)
+ifeq ($(DISTRIB), osx)
 LDFLAGS += -headerpad_max_install_names
 LDFLAGS += -framework CoreFoundation
 else ifeq ($(OUTPUT), Release)
@@ -174,7 +174,7 @@ OBJ_LIB += $(SRC:.cpp=.o)
 
 SRC_MARSHALLER = $(wildcard sources/BellePoule/marshaller/*.cpp)
 OBJ_MARSHALLER = $(SRC_MARSHALLER:.cpp=.o)
-ifeq ($(UBUNTU), windows)
+ifeq ($(DISTRIB), windows)
 OBJ_MARSHALLER += sources/BellePoule/marshaller/marshaller-ico.o
 endif
 
@@ -183,23 +183,23 @@ SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*.cpp)
 SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*/*.cpp)
 SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*/*/*.cpp)
 OBJ_SUPERVISOR = $(SRC_SUPERVISOR:.cpp=.o)
-ifeq ($(UBUNTU), windows)
+ifeq ($(DISTRIB), windows)
 OBJ_SUPERVISOR += sources/BellePoule/supervisor/supervisor-ico.o
 endif
 
-ifeq ($(UBUNTU), windows)
+ifeq ($(DISTRIB), windows)
 SHARED_LIB =
 RPATH      =
 STATIC_LIB = $(OUTPUT)/lib$(PRODUCT).a
 
 else
-ifeq ($(UBUNTU), fedora)
+ifeq ($(DISTRIB), fedora)
 LIB_FOLDER = $(shell rpm --eval '%{_libdir}')
 else
 LIB_FOLDER = /usr/lib
 endif
 
-ifeq ($(UBUNTU), osx)
+ifeq ($(DISTRIB), osx)
 SHARED_OPT = -dynamiclib
 SHARED_LIB = $(OUTPUT)/lib$(PRODUCT).dylib
 else
@@ -250,7 +250,7 @@ $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHAL
 #--
 vars:
 	@echo -e "\e[1;41m**** Variables ****\e[0m"
-	@echo "$(UBUNTU)"
+	@echo "$(DISTRIB)"
 	@echo "$(V)"
 	@echo "$(VERSION)"
 	@echo "$(VERSION_MATURITY)"
@@ -268,16 +268,16 @@ valgrind:
 #----------------------------------------------------
 #-- Packaging ---------------------------------------
 #----------------------------------------------------
-ifeq ($(UBUNTU), windows)
+ifeq ($(DISTRIB), windows)
 prepare_resources = prepare_windows_resources
 build_staging     = build_windows
 publish_staging   = publish_windows
 RESOURCES         = $(PACKAGE)/$(RELEASE)/resources
-else ifeq ($(UBUNTU), archlinux)
+else ifeq ($(DISTRIB), archlinux)
 prepare_linux     = prepare_arch
 build_staging     = build_arch
 publish_staging   = publish_arch
-else ifeq ($(UBUNTU), osx)
+else ifeq ($(DISTRIB), osx)
 prepare_osx       = prepare_osx
 prepare_examples  = prepare_examples
 prepare_resources = prepare_osx_resources
@@ -296,11 +296,11 @@ EXAMPLES          = $(PACKAGE)/$(RELEASE)/Exemples
 RESOURCES         = $(PACKAGE)/$(RELEASE)/resources
 endif
 
-ifeq ($(UBUNTU), stretch)
+ifeq ($(DISTRIB), stretch)
 publish_staging   = publish_debian
 endif
 
-ifeq ($(UBUNTU), fedora)
+ifeq ($(DISTRIB), fedora)
 prepare_linux     = prepare_fedora
 build_staging     = build_fedora
 publish_staging   = publish_fedora
@@ -449,7 +449,7 @@ prepare_staging:
 	rm -rf $(PACKAGE)/*
 	mkdir -p $(PACKAGE)/$(RELEASE)
 	cp Makefile $(PACKAGE)/$(RELEASE)
-	@echo "$(UBUNTU)" > $(PACKAGE)/$(RELEASE)/.UBUNTU
+	@echo "$(DISTRIB)" > $(PACKAGE)/$(RELEASE)/.DISTRIB
 	@echo "$(V)"      > $(PACKAGE)/$(RELEASE)/.V
 
 prepare_debian:
@@ -457,7 +457,7 @@ prepare_debian:
 
 prepare_changelog:
 	rm -f $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo "$(PRODUCT) ($(VERSION)ubuntu$(VERSION_MICRO)~$(UBUNTU)$(V)) $(UBUNTU); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo "$(PRODUCT) ($(VERSION)ubuntu$(VERSION_MICRO)~$(DISTRIB)$(V)) $(DISTRIB); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "  * Miscellaneous improvements" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
@@ -599,23 +599,23 @@ clean_sources:
 #----------------------------------------------------
 help: vars
 	@echo -e "\e[1;44m**** Ubuntu ****\e[0m"
-	@echo -e "make -s UBUNTU=xenial  V=1 package"
-	@echo -e "make -s UBUNTU=trusty  V=1 package"
+	@echo -e "make -s DISTRIB=xenial  V=1 package"
+	@echo -e "make -s DISTRIB=trusty  V=1 package"
 	@echo -e ""
 	@echo -e "\e[1;42m**** Windows ****\e[0m"
-	@echo -e "make -s UBUNTU=windows V=1 package"
+	@echo -e "make -s DISTRIB=windows V=1 package"
 	@echo -e ""
 	@echo -e "\e[1;45m**** MacOs ****\e[0m"
-	@echo -e "make -s UBUNTU=osx V=1 package"
+	@echo -e "make -s DISTRIB=osx V=1 package"
 	@echo -e ""
 	@echo -e "\e[1;46m**** Archlinux ****\e[0m"
-	@echo -e "make -s UBUNTU=archlinux V=1 package"
+	@echo -e "make -s DISTRIB=archlinux V=1 package"
 	@echo -e ""
 	@echo -e "\e[1;41m**** Fedora (VirtualBox) ****\e[0m"
-	@echo -e "make -s UBUNTU=fedora V=1 package"
+	@echo -e "make -s DISTRIB=fedora V=1 package"
 	@echo -e ""
 	@echo -e "\e[1;43m**** Debian (VirtualBox) ****\e[0m"
-	@echo -e "make -s UBUNTU=stretch V=1 package"
+	@echo -e "make -s DISTRIB=stretch V=1 package"
 	@echo -e ""
 	@echo -e "cd $(PACKAGE)/$(RELEASE)"
 	@echo -e "make -s build"
