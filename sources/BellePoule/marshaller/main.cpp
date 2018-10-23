@@ -84,6 +84,8 @@ namespace Marshaller
     _marshaller->Start ();
 
     gtk_main ();
+
+    Object::DumpList ();
   }
 }
 
@@ -97,10 +99,6 @@ int main (int argc, char **argv)
   application->Start (argc,
                       argv,
                       NULL);
-
-  application->Release ();
-
-  Object::DumpList ();
 
   return 0;
 }

@@ -25,24 +25,24 @@ namespace Net
   class WebServer : public Object
   {
     public:
-      typedef void (*StateFunc) (gboolean  in_progress,
-                                 gboolean  on,
-                                 Object   *owner);
+      struct Listener
+      {
+        virtual void OnWebServerState (gboolean in_progress,
+                                       gboolean on) = 0;
+      };
 
-      WebServer (StateFunc  progress_func,
-                 Object    *owner);
+      WebServer (Listener *listener);
 
       void Start ();
 
       void Stop ();
 
     private:
-      GMutex           _mutex;
-      StateFunc        _state_func;
-      Object          *_owner;
-      gboolean         _in_progress;
-      gboolean         _on;
-      gboolean         _failed;
+      GMutex    _mutex;
+      Listener *_listener;
+      gboolean  _in_progress;
+      gboolean  _on;
+      gboolean  _failed;
 
       virtual ~WebServer ();
 

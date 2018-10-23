@@ -19,7 +19,6 @@
 #include "util/object.hpp"
 #include "network/ring.hpp"
 #include "network/downloader.hpp"
-#include "network/ring.hpp"
 
 class Attribute;
 class AttributeDesc;

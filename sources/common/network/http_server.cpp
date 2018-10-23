@@ -87,14 +87,20 @@ namespace Net
     _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
                                 port,
                                 NULL, NULL,
-                                (MHD_AccessHandlerCallback)  OnMicroHttpRequest,          this,
-                                MHD_OPTION_NOTIFY_COMPLETED, OnMicroHttpRequestCompleted, this,
+                                (MHD_AccessHandlerCallback)         OnMicroHttpRequest,          this,
+                                MHD_OPTION_NOTIFY_COMPLETED,        OnMicroHttpRequestCompleted, this,
+#ifdef WIN32
+                                MHD_OPTION_LISTENING_ADDRESS_REUSE, SO_REUSEADDR,
+#else
+                                MHD_OPTION_LISTENING_ADDRESS_REUSE, SO_REUSEPORT,
+#endif
                                 MHD_OPTION_END);
   }
 
   // --------------------------------------------------------------------------------
   HttpServer::~HttpServer ()
   {
+    printf (MAGENTA "*** HttpServer ***\n" ESC);
     MHD_stop_daemon (_daemon);
 
     _cryptor->Release ();

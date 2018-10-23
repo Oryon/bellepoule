@@ -45,7 +45,7 @@ namespace Net
               GtkWidget *partner_indicator)
     : Object ("Ring")
   {
-    _ip_address        = NULL;
+    _unicast_address   = NULL;
     _partner_list      = NULL;
     _message_list      = NULL;
     _partner_listeners = NULL;
@@ -55,6 +55,7 @@ namespace Net
     _unicast_port      = WifiCode::ClaimIpPort ();
     _credentials       = NULL;
     _partner_id        = g_random_int ();
+    _quit_countdown    = -1;
 
     _partner_indicator = partner_indicator;
 
@@ -109,6 +110,7 @@ namespace Net
         GSource *source = g_socket_create_source (socket,
                                                   (GIOCondition) (G_IO_IN|G_IO_ERR|G_IO_HUP),
                                                   NULL);
+
         g_source_set_callback (source,
                                (GSourceFunc) OnMulticast,
                                this,
@@ -123,17 +125,20 @@ namespace Net
     _heartbeat_timer = g_timeout_add_seconds (5,
                                               (GSourceFunc) SendHeartbeat,
                                               this);
+
+    printf (YELLOW ">>> %d <<<<\n" ESC, _unicast_port);
   }
 
   // --------------------------------------------------------------------------------
   Ring::~Ring ()
   {
-    if (_heartbeat_timer)
-    {
-      g_source_remove (_heartbeat_timer);
-    }
-
     _credentials->Release ();
+    _http_server->Release ();
+
+    g_free (_unicast_address);
+    g_object_unref (_announce_address);
+
+    gtk_main_quit ();
   }
 
   // --------------------------------------------------------------------------------
@@ -210,58 +215,76 @@ namespace Net
   // --------------------------------------------------------------------------------
   gboolean Ring::JoinMulticast (GSocket *socket)
   {
-    GInetAddress *address;
-    GError       *error   = NULL;
+    GuessIpV4Addresses ();
 
 #if defined MULTICAST_ANNOUNCE
-    address = g_inet_address_new_from_string ("225.0.0.35");
+    if (_announce_address)
+    {
+      g_object_unref (_announce_address);
+    }
 
-    g_socket_join_multicast_group (socket,
-                                   address,
-                                   FALSE,
-                                   NULL,
-                                   &error);
-#else
-    address = g_inet_address_new_from_string ("255.255.255.255");
+    {
+      GError       *error   = NULL;
+      GInetAddress *address = g_inet_address_new_from_string ("225.0.0.35");
+
+      g_socket_join_multicast_group (socket,
+                                     address,
+                                     FALSE,
+                                     NULL,
+                                     &error);
+      if (error)
+      {
+        g_warning ("Ring::JoinMulticast: %s", error->message);
+        g_clear_error (&error);
+
+        g_object_unref (address);
+        address = g_inet_address_new_loopback (G_SOCKET_FAMILY_IPV4);
+      }
+
+      _announce_address = g_inet_socket_address_new (address,
+                                                     ANNOUNCE_PORT);
+      g_object_unref (address);
+    }
 #endif
 
-    if (error == NULL)
-    {
-      _ip_address = GuessIpV4Address ();
-    }
-    else
-    {
-      g_warning ("Ring::JoinMulticast: %s", error->message);
-      g_clear_error (&error);
+    g_socket_set_broadcast (socket,
+                            TRUE);
 
-      g_object_unref (address);
-      address = g_inet_address_new_loopback (G_SOCKET_FAMILY_IPV4);
-      _ip_address = g_inet_address_to_string (address);
-    }
-
-    _announce_address = g_inet_socket_address_new (address,
-                                                   ANNOUNCE_PORT);
-
-    g_object_unref (address);
     return TRUE;
   }
 
   // --------------------------------------------------------------------------------
   void Ring::Leave ()
   {
+    if (_heartbeat_timer)
+    {
+      g_source_remove (_heartbeat_timer);
+      _heartbeat_timer = 0;
+    }
+
     {
       Message *message = new Message ("Ring::Farewell");
 
       message->Set ("partner", _partner_id);
       message->Set ("role",    _role);
 
-      Multicast (message);
+      _quit_countdown = 0;
+      for (GList *current = _partner_list; current; current = _partner_list)
+      {
+        Partner *partner = (Partner *) current->data;
+
+        partner->SendMessage (message);
+        Remove (partner);
+        _quit_countdown++;
+      }
+
       message->Release ();
     }
 
-    _http_server->Release ();
-
-    FreeFullGList (Partner, _partner_list);
+    if (_quit_countdown == 0)
+    {
+      Release ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -270,7 +293,7 @@ namespace Net
     Message *message = new Message ("Ring::Announcement");
 
     message->Set ("role",         _role);
-    message->Set ("ip_address",   _ip_address);
+    message->Set ("ip_address",   _unicast_address);
     message->Set ("unicast_port", _unicast_port);
     message->Set ("partner",      _partner_id);
 
@@ -451,22 +474,6 @@ namespace Net
             partner->Release ();
           }
         }
-        else if (message->Is ("Ring::Farewell"))
-        {
-          if (ring->_partner_id != id)
-          {
-            for (GList *current = ring->_partner_list; current; current = g_list_next (current))
-            {
-              Partner *partner = (Partner *) current->data;
-
-              if (partner->Is (message->GetSignedInteger ("partner")))
-              {
-                ring->Remove (partner);
-                break;
-              }
-            }
-          }
-        }
         else if (message->Is ("SmartPoule::ScoreSheetCall"))
         {
           gchar   *hidden_text;
@@ -530,15 +537,12 @@ namespace Net
 
     if (partner_pass)
     {
-      gchar *ip_address = GuessIpV4Address ();
-
       credentials = new Credentials (GetRoleImage (),
-                                      ip_address,
+                                      _unicast_address,
                                       _unicast_port,
                                       partner_pass);
 
       g_free (partner_pass);
-      g_free (ip_address);
     }
 
     return credentials;
@@ -547,7 +551,7 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::StampSender (Message *message)
   {
-    gchar *url = g_strdup_printf ("http://%s:%d", _ip_address, _unicast_port);
+    gchar *url = g_strdup_printf ("http://%s:%d", _unicast_address, _unicast_port);
 
     message->Set ("address", url);
     g_free (url);
@@ -562,7 +566,7 @@ namespace Net
     if ((result == CHALLENGE_PASSED) || (result == BACKUP_CHALLENGE_PASSED))
     {
       message->Set ("role",         _role);
-      message->Set ("ip_address",   _ip_address);
+      message->Set ("ip_address",   _unicast_address);
       message->Set ("unicast_port", _unicast_port);
       message->Set ("partner",      _partner_id);
     }
@@ -624,8 +628,7 @@ namespace Net
                                           node);
       NotifyPartnerStatus (partner,
                            FALSE);
-      partner->Release ();
-
+      partner->Leave ();
       DisplayIndicator ();
     }
   }
@@ -766,18 +769,14 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Ring::ChangePassphrase (const gchar *passphrase)
   {
-    gchar *ip_address = GuessIpV4Address ();
-
     g_key_file_set_string (Global::_user_config->_key_file,
                            "Ring", "passphrase", passphrase);
 
     Object::TryToRelease (_credentials);
     _credentials = new Credentials (GetRoleImage (),
-                                    ip_address,
+                                    _unicast_address,
                                     _unicast_port,
                                     passphrase);
-
-    g_free (ip_address);
 
     Global::_user_config->Save ();
   }
@@ -816,6 +815,22 @@ namespace Net
   void Ring::OnPartnerKilled (Partner *partener)
   {
     Remove (partener);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Ring::OnPartnerLeaved (Partner *partener)
+  {
+    partener->Release ();
+
+    if (_quit_countdown != -1)
+    {
+      _quit_countdown--;
+
+      if (_quit_countdown == 0)
+      {
+        Release ();
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -883,6 +898,25 @@ namespace Net
       }
       return TRUE;
     }
+    else if (message->Is ("Ring::Farewell"))
+    {
+      gint32 id = (Role) message->GetSignedInteger ("partner");
+
+      if (_partner_id != id)
+      {
+        for (GList *current = _partner_list; current; current = g_list_next (current))
+        {
+          Partner *partner = (Partner *) current->data;
+
+          if (partner->Is (message->GetSignedInteger ("partner")))
+          {
+            Remove (partner);
+            break;
+          }
+        }
+      }
+      return TRUE;
+    }
     else
     {
       return _listener->OnMessage (message);
@@ -892,16 +926,16 @@ namespace Net
   // --------------------------------------------------------------------------------
   const gchar *Ring::GetIpV4Address ()
   {
-    return _ip_address;
+    return _unicast_address;
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Ring::GuessIpV4Address ()
+  void Ring::GuessIpV4Addresses ()
   {
-    gchar *ip_address = NULL;
+    const gchar *broadcast_address = NULL;
 
 #ifdef WIN32
-#if 1
+#if 0
     {
       struct hostent *hostinfo;
       gchar           hostname[50];
@@ -911,41 +945,50 @@ namespace Net
         hostinfo = gethostbyname (hostname);
         if (hostinfo)
         {
-          ip_address = g_strdup (inet_ntoa (*(struct in_addr*) (hostinfo->h_addr)));
+          _unicast_address = g_strdup (inet_ntoa (*(struct in_addr *) (hostinfo->h_addr)));
+
+          for (guint i = 0; hostinfo->h_addr_list[i] != 0; i++)
+          {
+            printf("\tIPv4 Address #%d: %s\n", i, inet_ntoa (*(struct in_addr *) (hostinfo->h_addr_list[i])));
+          }
         }
       }
     }
 #else
     {
-      ULONG            info_length  = sizeof (IP_ADAPTER_INFO);
-      PIP_ADAPTER_INFO adapter_info = (IP_ADAPTER_INFO *) malloc (sizeof (IP_ADAPTER_INFO));
+      gulong info_length;
 
-      if (adapter_info)
+      if (GetAdaptersInfo (NULL, &info_length) == ERROR_BUFFER_OVERFLOW)
       {
-        if (GetAdaptersInfo (adapter_info, &info_length) == ERROR_BUFFER_OVERFLOW)
+        PIP_ADAPTER_INFO pAdapterInfo = (IP_ADAPTER_INFO *) g_malloc (info_length);
+
+        if (GetAdaptersInfo(pAdapterInfo, &info_length) == NO_ERROR)
         {
-          free (adapter_info);
-
-          adapter_info = (IP_ADAPTER_INFO *) malloc (info_length);
-        }
-
-        if (GetAdaptersInfo (adapter_info, &info_length) == NO_ERROR)
-        {
-          PIP_ADAPTER_INFO adapter = adapter_info;
-
-          while (adapter)
+          for (PIP_ADAPTER_INFO pAdapter = pAdapterInfo; pAdapter; pAdapter = pAdapter->Next)
           {
-            if (g_strcmp0 (adapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
+            printf("\tIP Address: \t%s\n", pAdapter->IpAddressList.IpAddress.String);
+            printf("\tIP Mask: \t%s\n",    pAdapter->IpAddressList.IpMask.String);
+            printf("\t***\n");
+
+            if (g_strcmp0 (pAdapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
             {
-              ip_address = g_strdup (adapter->IpAddressList.IpAddress.String);
+              _unicast_address = g_strdup (pAdapter->IpAddressList.IpAddress.String);
+
+              {
+                struct in_addr iaddr;
+                gulong         ip   = inet_addr (_unicast_address);
+                gulong         mask = inet_addr (pAdapter->IpAddressList.IpMask.String);
+
+                iaddr.S_un.S_addr = ip | ~mask;
+
+                broadcast_address = inet_ntoa (iaddr);
+              }
               break;
             }
-
-            adapter = adapter->Next;
           }
         }
 
-        free (adapter_info);
+        g_free (pAdapterInfo);
       }
     }
 #endif
@@ -961,7 +1004,7 @@ namespace Net
       for (struct ifaddrs *ifa = ifa_list; ifa != NULL; ifa = ifa->ifa_next)
       {
         if (   ifa->ifa_addr
-            && (ifa->ifa_flags  & IFF_UP)
+            && (ifa->ifa_flags & IFF_UP)
             && (ifa->ifa_flags  & IFF_RUNNING)
             && ((ifa->ifa_flags & IFF_LOOPBACK) == 0))
         {
@@ -973,10 +1016,12 @@ namespace Net
 
             if (getnameinfo (ifa->ifa_addr,
                              sizeof (struct sockaddr_in),
-                             host,
-                             NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0)
+                             host, NI_MAXHOST,
+                             NULL, 0,
+                             NI_NUMERICHOST) == 0)
             {
-              ip_address = g_strdup (host);
+              _unicast_address = g_strdup (host);
+              broadcast_address = inet_ntoa (((struct sockaddr_in *) ifa->ifa_broadaddr)->sin_addr);
               break;
             }
           }
@@ -987,7 +1032,23 @@ namespace Net
     }
 #endif
 
-    return ip_address;
+    if (_unicast_address == NULL)
+    {
+      GInetAddress *loopback = g_inet_address_new_loopback (G_SOCKET_FAMILY_IPV4);
+
+      _unicast_address  = g_inet_address_to_string (loopback);
+      broadcast_address = _unicast_address;
+      g_object_unref (loopback);
+    }
+
+    if (broadcast_address)
+    {
+      GInetAddress *inet_address = g_inet_address_new_from_string (broadcast_address);
+
+      _announce_address = g_inet_socket_address_new (inet_address,
+                                                     ANNOUNCE_PORT);
+      g_object_unref (inet_address);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1003,6 +1064,8 @@ namespace Net
 
       partner->SendMessage (heartbeat);
     }
+
+    heartbeat->Release ();
 
     return G_SOURCE_CONTINUE;
   }

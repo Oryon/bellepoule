@@ -29,14 +29,13 @@ namespace Net
       typedef enum
       {
         CONN_OK,
-        CONN_ERROR
+        CONN_ERROR,
+        CONN_CLOSED
       } PeerStatus;
 
       struct Listener
       {
         virtual void OnUploadStatus (PeerStatus peer_status) = 0;
-        virtual void Use  () = 0;
-        virtual void Drop () = 0;
       };
 
     public:
@@ -51,22 +50,25 @@ namespace Net
       ~MessageUploader ();
 
     private:
+      struct ThreadData
+      {
+        MessageUploader *_uploader;
+        Message         *_message;
+        PeerStatus       _peer_status;
+      };
+
       gchar             *_url;
       gchar             *_iv;
       Listener          *_listener;
-      PeerStatus         _peer_status;
       GThread           *_sender_thread;
       GAsyncQueue       *_message_queue;
       Cryptor           *_cryptor;
       struct curl_slist *_http_header;
+      gboolean           _farewell;
 
       static gpointer ThreadFunction (MessageUploader *uploader);
 
-      static gboolean DeferedStatus (MessageUploader *uploader);
-
-      static gboolean OnMessageUsed (Message *message);
-
-      static gboolean OnThreadDone (MessageUploader *uploader);
+      static gboolean OnMessageUsed (ThreadData *data);
 
       void PrepareData (gchar       *data_copy,
                         const gchar *passphrase);

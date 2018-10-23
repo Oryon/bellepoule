@@ -58,7 +58,11 @@ namespace Net
   {
     g_free (_address);
     g_free (_passphrase256);
+  }
 
+  // --------------------------------------------------------------------------------
+  void Partner::Leave ()
+  {
     if (_uploader)
     {
       _uploader->Stop ();
@@ -87,8 +91,6 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Partner::SendMessage (Message *message)
   {
-    message->Dump (FALSE);
-
     message->SetPassPhrase256 (_passphrase256);
     _uploader->PushMessage (message);
   }
@@ -112,17 +114,14 @@ namespace Net
     {
       _listener->OnPartnerKilled (this);
     }
-  }
+    else if (peer_status == MessageUploader::CONN_CLOSED)
+    {
+      printf (CYAN "*** CONN_CLOSED ***\n");
 
-  // --------------------------------------------------------------------------------
-  void Partner::Use ()
-  {
-    Retain ();
-  }
+      _uploader->Release ();
+      _uploader = NULL;
 
-  // --------------------------------------------------------------------------------
-  void Partner::Drop ()
-  {
-    Release ();
+      _listener->OnPartnerLeaved (this);
+    }
   }
 }

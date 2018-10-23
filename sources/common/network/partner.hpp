@@ -30,6 +30,7 @@ namespace Net
       struct Listener
       {
         virtual void OnPartnerKilled (Partner *partener) = 0;
+        virtual void OnPartnerLeaved (Partner *partener) = 0;
       };
 
     public:
@@ -48,6 +49,8 @@ namespace Net
 
       guint GetPort ();
 
+      void Leave ();
+
     private:
       guint            _role;
       gint32           _partner_id;
@@ -60,9 +63,5 @@ namespace Net
       ~Partner ();
 
       void OnUploadStatus (MessageUploader::PeerStatus peer_status);
-
-      void Use ();
-
-      void Drop ();
   };
 }

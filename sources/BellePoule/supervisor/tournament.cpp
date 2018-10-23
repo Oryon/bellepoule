@@ -177,8 +177,7 @@ void Tournament::Start (gchar *filename)
     gtk_target_list_add_uri_targets (target_list, 100);
   }
 
-  _web_server = new Net::WebServer ((Net::WebServer::StateFunc) OnWebServerState,
-                                    this);
+  _web_server = new Net::WebServer (this);
 }
 
 // --------------------------------------------------------------------------------
@@ -991,15 +990,13 @@ Publication *Tournament::GetPublication ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnWebServerState (gboolean  in_progress,
-                                   gboolean  on,
-                                   Object   *owner)
+void Tournament::OnWebServerState (gboolean in_progress,
+                                   gboolean on)
 {
-  Tournament      *t          = dynamic_cast <Tournament *> (owner);
-  GtkWidget       *hbox       = t->_glade->GetWidget ("video_toggle_hbox");
-  GtkWidget       *spinner    = t->_glade->GetWidget ("video_spinner");
-  GtkToggleButton *on_toggle  = GTK_TOGGLE_BUTTON (t->_glade->GetWidget ("video_on"));
-  GtkToggleButton *off_toggle = GTK_TOGGLE_BUTTON (t->_glade->GetWidget ("video_off"));
+  GtkWidget       *hbox       = _glade->GetWidget ("video_toggle_hbox");
+  GtkWidget       *spinner    = _glade->GetWidget ("video_spinner");
+  GtkToggleButton *on_toggle  = GTK_TOGGLE_BUTTON (_glade->GetWidget ("video_on"));
+  GtkToggleButton *off_toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("video_off"));
 
   gtk_toggle_button_set_active (on_toggle,  (on == TRUE));
   gtk_toggle_button_set_active (off_toggle, (on == FALSE));

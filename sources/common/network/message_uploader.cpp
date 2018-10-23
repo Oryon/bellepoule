@@ -29,15 +29,12 @@ namespace Net
     _url = g_strdup (url);
 
     _listener = listener;
-    if (_listener)
-    {
-      _listener->Use ();
-    }
 
     _iv      = NULL;
     _cryptor = new Net::Cryptor ();
 
     _http_header = NULL;
+    _farewell    = FALSE;
 
     _message_queue = g_async_queue_new_full ((GDestroyNotify) Object::TryToRelease);
 
@@ -67,11 +64,6 @@ namespace Net
 
     g_free (_iv);
     _cryptor->Release ();
-
-    if (_listener)
-    {
-      _listener->Drop ();
-    }
 
     if (_http_header)
     {
@@ -119,6 +111,7 @@ namespace Net
   void MessageUploader::PushMessage (Message *message)
   {
     Message *clone = message->Clone ();
+
     g_async_queue_push (_message_queue,
                         clone);
   }
@@ -143,6 +136,12 @@ namespace Net
         g_free (iv_header);
       }
 
+      if (_farewell)
+      {
+        _http_header = curl_slist_append (_http_header, "Connection: close");
+        curl_easy_setopt (curl, CURLOPT_FORBID_REUSE, 1L);
+      }
+
       curl_easy_setopt (curl, CURLOPT_HTTPHEADER, _http_header);
     }
   }
@@ -154,26 +153,18 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean MessageUploader::DeferedStatus (MessageUploader *uploader)
+  gboolean MessageUploader::OnMessageUsed (ThreadData *data)
   {
-    uploader->_listener->OnUploadStatus (uploader->_peer_status);
+    PeerStatus       peer_status = data->_peer_status;
+    MessageUploader *uploader    = data->_uploader;
 
-    return G_SOURCE_REMOVE;
-  }
+    data->_message->Release ();
+    g_free (data);
 
-  // --------------------------------------------------------------------------------
-  gboolean MessageUploader::OnMessageUsed (Message *message)
-  {
-    message->Release ();
-
-    return G_SOURCE_REMOVE;
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean MessageUploader::OnThreadDone (MessageUploader *uploader)
-  {
-    g_async_queue_unref (uploader->_message_queue);
-    uploader->Release ();
+    if (peer_status != CONN_OK)
+    {
+      uploader->_listener->OnUploadStatus (peer_status);
+    }
 
     return G_SOURCE_REMOVE;
   }
@@ -181,59 +172,56 @@ namespace Net
   // --------------------------------------------------------------------------------
   gpointer MessageUploader::ThreadFunction (MessageUploader *uploader)
   {
-    g_async_queue_ref (uploader->_message_queue);
-
     while (1)
     {
-      {
-        Message *message = (Message *) g_async_queue_pop (uploader->_message_queue);
+      ThreadData *data = new ThreadData ();
 
-        if (message->Is ("MessageUploader::stop_sending"))
-        {
-          g_idle_add ((GSourceFunc) OnMessageUsed,
-                      message);
-          break;
-        }
-        else
-        {
-          uploader->PrepareData (message->GetParcel (),
-                                 message->GetPassPhrase256 ());
-        }
+      data->_uploader    = uploader;
+      data->_peer_status = CONN_OK;
+      data->_message     = (Message *) g_async_queue_pop (uploader->_message_queue);
+
+      if (data->_message->Is ("MessageUploader::stop_sending"))
+      {
+        data->_peer_status = CONN_CLOSED;
 
         g_idle_add ((GSourceFunc) OnMessageUsed,
-                    message);
+                    data);
+        break;
       }
+      else
+      {
+        if (data->_message->Is ("Ring::Farewell"))
+        {
+          uploader->_farewell = TRUE;
+        }
 
+        uploader->PrepareData (data->_message->GetParcel (),
+                               data->_message->GetPassPhrase256 ());
+      }
 
       {
         CURLcode curl_code = uploader->Upload ();
 
         if (curl_code != CURLE_OK)
         {
-          uploader->_peer_status = CONN_ERROR;
+          data->_peer_status = CONN_ERROR;
           g_print (RED "[Uploader Error] " ESC "%s\n", curl_easy_strerror (curl_code));
         }
         else
         {
-          uploader->_peer_status = CONN_OK;
+          data->_peer_status = CONN_OK;
 #ifdef UPLOADER_DEBUG
           g_print (YELLOW "[Uploader] " ESC "Done\n");
 #endif
         }
 
-        if (uploader->_listener)
-        {
-          g_idle_add ((GSourceFunc) DeferedStatus,
-                      uploader);
-        }
+        g_idle_add ((GSourceFunc) OnMessageUsed,
+                    data);
       }
 
       g_free (uploader->_iv);
       uploader->_iv = NULL;
     }
-
-    g_idle_add ((GSourceFunc) OnThreadDone,
-                uploader);
 
     return NULL;
   }

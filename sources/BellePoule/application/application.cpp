@@ -237,8 +237,6 @@ Application::Application (Net::Ring::Role     role,
 // --------------------------------------------------------------------------------
 Application::~Application ()
 {
-  Net::Ring::_broker->Leave ();
-
   AttributeDesc::Cleanup ();
 
   _language->Release ();
@@ -803,7 +801,9 @@ gboolean Application::IsCsvReady (AttributeDesc *desc)
 // --------------------------------------------------------------------------------
 void Application::OnQuit (GtkWindow *window)
 {
-  gtk_main_quit ();
+  Release ();
+  Net::Ring::_broker->Leave ();
+  gtk_widget_hide (GTK_WIDGET (window));
 }
 
 // --------------------------------------------------------------------------------

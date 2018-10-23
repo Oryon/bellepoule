@@ -25,8 +25,7 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  WebServer::WebServer (StateFunc  state_func,
-                        Object    *owner)
+  WebServer::WebServer (Listener *listener)
     : Object ("WebServer")
   {
     g_mutex_init (&_mutex);
@@ -34,13 +33,14 @@ namespace Net
     _in_progress  = FALSE;
     _on           = FALSE;
     _failed       = FALSE;
-    _state_func   = state_func;
-    _owner        = owner;
+    _listener     = listener;
   }
 
   // --------------------------------------------------------------------------------
   WebServer::~WebServer ()
   {
+    _listener = NULL;
+
     g_mutex_lock (&_mutex);
     ShutDown (this);
 
@@ -171,8 +171,11 @@ namespace Net
     }
     g_mutex_unlock (&server->_mutex);
 
-    g_idle_add ((GSourceFunc) OnProgress,
-                server);
+    if (server->_listener)
+    {
+      g_idle_add ((GSourceFunc) OnProgress,
+                  server);
+    }
 
     return NULL;
   }
@@ -180,9 +183,11 @@ namespace Net
   // --------------------------------------------------------------------------------
   guint WebServer::OnProgress (WebServer *server)
   {
-    server->_state_func (server->_in_progress,
-                         server->_on,
-                         server->_owner);
+    if (server->_listener)
+    {
+      server->_listener->OnWebServerState (server->_in_progress,
+                                           server->_on);
+    }
 
     return G_SOURCE_REMOVE;
   }

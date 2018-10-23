@@ -18,18 +18,15 @@
 
 #include "util/module.hpp"
 #include "network/ring.hpp"
+#include "network/web_server.hpp"
 
 class Contest;
 class Publication;
 class Glade;
 
-namespace Net
-{
-  class WebServer;
-}
-
 class Tournament : public Module,
-                   public Net::Ring::Listener
+                   public Net::Ring::Listener,
+                   public Net::WebServer::Listener
 {
   public:
     Tournament ();
@@ -99,7 +96,6 @@ class Tournament : public Module,
     static gboolean RecentFileExists (const GtkRecentFilterInfo *filter_info,
                                       Tournament                *tournament);
 
-    static void OnWebServerState (gboolean  in_progress,
-                                  gboolean  on,
-                                  Object    *owner);
+    void OnWebServerState (gboolean in_progress,
+                           gboolean on);
 };

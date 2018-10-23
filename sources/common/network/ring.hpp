@@ -107,19 +107,20 @@ namespace Net
       static const guint  ANNOUNCE_PORT = 35830;
       static const gchar *SECRET;
 
-      Role             _role;
-      guint            _heartbeat_timer;
-      gint32           _partner_id;
-      gchar           *_ip_address;
-      guint            _unicast_port;
-      GList           *_partner_list;
-      GList           *_message_list;
-      GtkWidget       *_partner_indicator;
-      GList           *_partner_listeners;
-      Listener        *_listener;
-      GSocketAddress  *_announce_address;
-      Credentials     *_credentials;
-      HttpServer      *_http_server;
+      Role            _role;
+      guint           _heartbeat_timer;
+      gint32          _partner_id;
+      gchar          *_unicast_address;
+      guint           _unicast_port;
+      GList          *_partner_list;
+      GList          *_message_list;
+      GtkWidget      *_partner_indicator;
+      GList          *_partner_listeners;
+      Listener       *_listener;
+      GSocketAddress *_announce_address;
+      Credentials    *_credentials;
+      HttpServer     *_http_server;
+      gint            _quit_countdown;
 
       void Add (Partner *partner);
 
@@ -143,7 +144,7 @@ namespace Net
 
       void Send (Message *message);
 
-      gchar *GuessIpV4Address ();
+      void GuessIpV4Addresses ();
 
       void OnObjectDeleted (Object *object);
 
@@ -159,6 +160,8 @@ namespace Net
       const gchar *GetRoleImage ();
 
       void OnPartnerKilled (Partner *partener);
+
+      void OnPartnerLeaved (Partner *partener);
 
       static gboolean SendHeartbeat (Ring *ring);
   };
