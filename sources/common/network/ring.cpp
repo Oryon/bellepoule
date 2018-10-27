@@ -77,7 +77,7 @@ namespace Net
     _http_server = new Net::HttpServer (this,
                                         _unicast_port);
 
-    // Multicast listener
+    // Announce listener
     {
       GError  *error  = NULL;
       GSocket *socket;
@@ -217,7 +217,7 @@ namespace Net
   {
     GuessIpV4Addresses ();
 
-#if defined MULTICAST_ANNOUNCE
+#ifdef MULTICAST_ANNOUNCE
     if (_announce_address)
     {
       g_object_unref (_announce_address);
@@ -247,15 +247,14 @@ namespace Net
     }
 #endif
 
-    g_socket_set_broadcast (socket,
-                            TRUE);
-
     return TRUE;
   }
 
   // --------------------------------------------------------------------------------
   void Ring::Leave ()
   {
+    g_object_unref (_announce_socket);
+
     if (_heartbeat_timer)
     {
       g_source_remove (_heartbeat_timer);
@@ -342,13 +341,12 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Ring::Multicast (Message *message)
   {
-    GError  *error  = NULL;
-    GSocket *socket;
+    GError *error = NULL;
 
-    socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
-                           G_SOCKET_TYPE_DATAGRAM,
-                           G_SOCKET_PROTOCOL_DEFAULT,
-                           &error);
+    _announce_socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
+                                     G_SOCKET_TYPE_DATAGRAM,
+                                     G_SOCKET_PROTOCOL_DEFAULT,
+                                     &error);
     if (error)
     {
       g_warning ("g_socket_new: %s\n", error->message);
@@ -358,10 +356,10 @@ namespace Net
     {
       gchar *parcel = message->GetParcel ();
 
-      g_socket_set_blocking  (socket, FALSE);
-      g_socket_set_broadcast (socket, TRUE);
+      g_socket_set_blocking  (_announce_socket, FALSE);
+      g_socket_set_broadcast (_announce_socket, TRUE);
 
-      g_socket_send_to (socket,
+      g_socket_send_to (_announce_socket,
                         _announce_address,
                         parcel,
                         strlen (parcel) + 1,
@@ -374,7 +372,6 @@ namespace Net
       }
 
       g_free (parcel);
-      g_object_unref (socket);
     }
   }
 
@@ -1004,7 +1001,7 @@ namespace Net
       for (struct ifaddrs *ifa = ifa_list; ifa != NULL; ifa = ifa->ifa_next)
       {
         if (   ifa->ifa_addr
-            && (ifa->ifa_flags & IFF_UP)
+            && (ifa->ifa_flags  & IFF_UP)
             && (ifa->ifa_flags  & IFF_RUNNING)
             && ((ifa->ifa_flags & IFF_LOOPBACK) == 0))
         {

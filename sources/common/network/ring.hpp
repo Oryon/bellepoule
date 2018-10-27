@@ -118,6 +118,7 @@ namespace Net
       GList          *_partner_listeners;
       Listener       *_listener;
       GSocketAddress *_announce_address;
+      GSocket        *_announce_socket;
       Credentials    *_credentials;
       HttpServer     *_http_server;
       gint            _quit_countdown;

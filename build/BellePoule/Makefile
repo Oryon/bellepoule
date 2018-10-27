@@ -599,8 +599,7 @@ clean_sources:
 #----------------------------------------------------
 help: vars
 	@echo -e "\e[1;44m**** Ubuntu ****\e[0m"
-	@echo -e "make -s DISTRIB=xenial  V=1 package"
-	@echo -e "make -s DISTRIB=trusty  V=1 package"
+	@echo -e "make -s DISTRIB=xenial V=1 package"
 	@echo -e ""
 	@echo -e "\e[1;42m**** Windows ****\e[0m"
 	@echo -e "make -s DISTRIB=windows V=1 package"

@@ -64,7 +64,6 @@ namespace Net
       GAsyncQueue       *_message_queue;
       Cryptor           *_cryptor;
       struct curl_slist *_http_header;
-      gboolean           _farewell;
 
       static gpointer ThreadFunction (MessageUploader *uploader);
 

@@ -34,7 +34,6 @@ namespace Net
     _cryptor = new Net::Cryptor ();
 
     _http_header = NULL;
-    _farewell    = FALSE;
 
     _message_queue = g_async_queue_new_full ((GDestroyNotify) Object::TryToRelease);
 
@@ -136,12 +135,6 @@ namespace Net
         g_free (iv_header);
       }
 
-      if (_farewell)
-      {
-        _http_header = curl_slist_append (_http_header, "Connection: close");
-        curl_easy_setopt (curl, CURLOPT_FORBID_REUSE, 1L);
-      }
-
       curl_easy_setopt (curl, CURLOPT_HTTPHEADER, _http_header);
     }
   }
@@ -190,11 +183,6 @@ namespace Net
       }
       else
       {
-        if (data->_message->Is ("Ring::Farewell"))
-        {
-          uploader->_farewell = TRUE;
-        }
-
         uploader->PrepareData (data->_message->GetParcel (),
                                data->_message->GetPassPhrase256 ());
       }
