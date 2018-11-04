@@ -388,28 +388,54 @@ namespace Marshaller
 
         if (xml_nodeset->nodeNr == 1)
         {
-          Player *referee = new EnlistedReferee ();
-          Player::AttributeId weapon_attr_id ("weapon");
-
-          referee->Load (xml_nodeset->nodeTab[0]);
+          Player *new_referee;
+          guint   ref;
+          gchar  *weapon;
 
           {
-            Attribute            *weapon_attr  = referee->GetAttribute (&weapon_attr_id);
-            People::RefereesList *referee_list = GetListOf (weapon_attr->GetStrValue ());
+            Player *submitted_referee = new EnlistedReferee ();
 
-            if (referee_list->GetPlayerFromRef (referee->GetRef ()) == NULL)
+            submitted_referee->Load (xml_nodeset->nodeTab[0]);
+
             {
-              UpdateAffinities (referee);
+              Player::AttributeId   weapon_attr_id ("weapon");
+              Attribute            *weapon_attr  = submitted_referee->GetAttribute (&weapon_attr_id);
 
-              referee_list->RegisterPlayer (referee,
+              weapon = g_strdup (weapon_attr->GetStrValue ());
+            }
+
+            ref = submitted_referee->GetRef ();
+
+            new_referee = GetReferee (ref);
+            if (new_referee)
+            {
+              new_referee->Retain ();
+              submitted_referee->Release ();
+            }
+            else
+            {
+              new_referee = submitted_referee;
+            }
+          }
+
+          {
+            People::RefereesList *referee_list = GetListOf (weapon);
+
+            if (referee_list->GetPlayerFromRef (ref) == NULL)
+            {
+              UpdateAffinities (new_referee);
+
+              referee_list->RegisterPlayer (new_referee,
                                             NULL);
               referee_list->OnListChanged ();
             }
             else
             {
-              referee->Release ();
+              new_referee->Release ();
             }
           }
+
+          g_free (weapon);
         }
 
         xmlXPathFreeObject  (xml_object);
