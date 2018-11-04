@@ -125,8 +125,6 @@ namespace Net
     _heartbeat_timer = g_timeout_add_seconds (5,
                                               (GSourceFunc) SendHeartbeat,
                                               this);
-
-    printf (YELLOW ">>> %d <<<<\n" ESC, _unicast_port);
   }
 
   // --------------------------------------------------------------------------------
@@ -963,10 +961,6 @@ namespace Net
         {
           for (PIP_ADAPTER_INFO pAdapter = pAdapterInfo; pAdapter; pAdapter = pAdapter->Next)
           {
-            printf("\tIP Address: \t%s\n", pAdapter->IpAddressList.IpAddress.String);
-            printf("\tIP Mask: \t%s\n",    pAdapter->IpAddressList.IpMask.String);
-            printf("\t***\n");
-
             if (g_strcmp0 (pAdapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
             {
               _unicast_address = g_strdup (pAdapter->IpAddressList.IpAddress.String);
