@@ -27,8 +27,8 @@ namespace Net
                     Listener *listener)
     : Object ("Partner")
   {
-    _role  = message->GetInteger       ("role");
-    _partner_id = message->GetSignedInteger ("partner");
+    _role       = message->GetInteger ("role");
+    _partner_id = message->GetInteger ("partner");
 
     _passphrase256 = NULL;
     _uploader      = NULL;
@@ -76,7 +76,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Partner::Is (gint32 partner_id)
+  gboolean Partner::Is (guint32 partner_id)
   {
     return _partner_id == partner_id;
   }

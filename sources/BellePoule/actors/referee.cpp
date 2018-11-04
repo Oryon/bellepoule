@@ -137,7 +137,7 @@ void Referee::GiveAnId ()
                            -1);
 
         digest = g_strdup (g_checksum_get_string (checksum));
-        digest[8] = 0;
+        digest[4] = 0;
         SetRef (g_ascii_strtoll (digest,
                                  NULL,
                                  16));

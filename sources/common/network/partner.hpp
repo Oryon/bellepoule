@@ -41,7 +41,7 @@ namespace Net
 
       void SendMessage (Message *message);
 
-      gboolean Is (gint32 partner_id);
+      gboolean Is (guint32 partner_id);
 
       gboolean HasRole (guint role);
 
@@ -53,7 +53,7 @@ namespace Net
 
     private:
       guint            _role;
-      gint32           _partner_id;
+      guint32          _partner_id;
       gchar           *_address;
       guint            _port;
       MessageUploader *_uploader;

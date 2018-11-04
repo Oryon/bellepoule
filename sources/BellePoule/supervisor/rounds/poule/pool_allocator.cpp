@@ -2321,7 +2321,7 @@ namespace Pool
 
         if (referee)
         {
-            pool->AddReferee (referee);
+          pool->AddReferee (referee);
         }
       }
       else

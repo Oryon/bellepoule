@@ -406,7 +406,7 @@ namespace Net
       else
       {
         Message *message = new Message ((guint8 *) buffer);
-        gint32   id      = (Role) message->GetSignedInteger ("partner");
+        guint32  id      = message->GetInteger ("partner");
 
         if (message->Is ("Ring::Announcement"))
         {
@@ -895,7 +895,7 @@ namespace Net
     }
     else if (message->Is ("Ring::Farewell"))
     {
-      gint32 id = (Role) message->GetSignedInteger ("partner");
+      guint32 id = message->GetInteger ("partner");
 
       if (_partner_id != id)
       {
@@ -903,7 +903,7 @@ namespace Net
         {
           Partner *partner = (Partner *) current->data;
 
-          if (partner->Is (message->GetSignedInteger ("partner")))
+          if (partner->Is (message->GetInteger ("partner")))
           {
             Remove (partner);
             break;

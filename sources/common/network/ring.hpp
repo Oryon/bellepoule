@@ -109,7 +109,7 @@ namespace Net
 
       Role            _role;
       guint           _heartbeat_timer;
-      gint32          _partner_id;
+      guint32         _partner_id;
       gchar          *_unicast_address;
       guint           _unicast_port;
       GList          *_partner_list;
