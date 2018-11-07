@@ -427,7 +427,6 @@ namespace Marshaller
 
               referee_list->RegisterPlayer (new_referee,
                                             NULL);
-              referee_list->OnListChanged ();
             }
             else
             {

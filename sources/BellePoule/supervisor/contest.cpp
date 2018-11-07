@@ -1121,17 +1121,6 @@ Contest *Contest::Duplicate ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::LatchPlayerList ()
-{
-  People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
-
-  if (checkin)
-  {
-    checkin->OnListChanged ();
-  }
-}
-
-// --------------------------------------------------------------------------------
 Player *Contest::GetRefereeFromRef (guint ref)
 {
   return _referees_list->GetPlayerFromRef (ref);
@@ -1165,7 +1154,7 @@ void Contest::ManageReferee (Net::Message *message)
 
         weapon_attr = referee->GetAttribute (&weapon_attr_id);
         if (   weapon_attr
-            && (g_ascii_strcasecmp (_weapon->GetXmlImage (), weapon_attr->GetStrValue ()) == 0))
+            && g_strrstr (weapon_attr->GetStrValue (), _weapon->GetXmlImage ()))
         {
           Player *old = _referees_list->GetPlayerFromRef (referee->GetRef ());
 

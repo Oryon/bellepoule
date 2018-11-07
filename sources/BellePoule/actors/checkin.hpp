@@ -88,8 +88,6 @@ namespace People
 
       void OnPrint ();
 
-      virtual void OnListChanged ();
-
     protected:
       Form         *_form;
       TallyCounter *_tally_counter;
@@ -118,6 +116,7 @@ namespace People
 
       virtual void RefreshAttendingDisplay ();
 
+      virtual void OnListChanged ();
 
     private:
       Listener     *_listener;

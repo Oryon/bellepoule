@@ -82,6 +82,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::Add (Player *player)
   {
+    _tally_counter->Monitor (player);
     PlayersList::Add (player);
     Monitor (player);
   }
@@ -129,10 +130,13 @@ namespace People
       const gchar *player_class_xml_tag  = PlayerFactory::GetXmlTag (player_class);
       gchar       *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
 
+      MuteListChanges (TRUE);
       LoadList (node,
                 player_class,
                 player_class_xml_tag,
                 players_class_xml_tag);
+      MuteListChanges (FALSE);
+      NotifyListChanged ();
 
       g_free (players_class_xml_tag);
     }
@@ -168,7 +172,6 @@ namespace People
         else if (g_strcmp0 ((char *) n->name, players_class_xml_tag) != 0)
         {
           owner = NULL;
-          OnListChanged ();
           return;
         }
       }
@@ -297,8 +300,8 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::OnListChanged ()
   {
-    RefreshAttendingDisplay ();
     PlayersList::OnListChanged ();
+    RefreshAttendingDisplay ();
   }
 
   // --------------------------------------------------------------------------------
@@ -415,6 +418,7 @@ namespace People
           g_free (uri);
         }
 
+        MuteListChanges (TRUE);
         if (   g_str_has_suffix (filename, ".fff")
             || g_str_has_suffix (filename, ".FFF"))
         {
@@ -424,12 +428,12 @@ namespace People
         {
           ImportCSV (filename);
         }
+        MuteListChanges (FALSE);
+        NotifyListChanged ();
       }
     }
 
     gtk_widget_destroy (chooser);
-
-    OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------
@@ -683,8 +687,6 @@ namespace People
       }
       g_free (utf8_content);
     }
-
-    RefreshAttendingDisplay ();
   }
 
   // --------------------------------------------------------------------------------
@@ -814,8 +816,6 @@ namespace People
       g_strfreev (rows);
     }
     g_free (utf8_content);
-
-    RefreshAttendingDisplay ();
   }
 
   // --------------------------------------------------------------------------------
@@ -847,15 +847,11 @@ namespace People
     {
       Update (player);
     }
-
-    OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------
   void Checkin::Monitor (Player *player)
   {
-    _tally_counter->Monitor (player);
-
     player->SetChangeCbk ("attending",
                           (Player::OnChange) OnAttrAttendingChanged,
                           this);
@@ -896,8 +892,6 @@ namespace People
 
     checkin->_tally_counter->OnAttendingChanged (player,
                                                  value);
-
-    checkin->RefreshAttendingDisplay ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1103,6 +1097,7 @@ namespace People
     Player::AttributeId  attr_id ("attending");
     GList               *current_player = _player_list;
 
+    MuteListChanges (TRUE);
     while (current_player)
     {
       Player *p = (Player *) current_player->data;
@@ -1112,7 +1107,8 @@ namespace People
                         present);
       current_player = g_list_next (current_player);
     }
-    OnListChanged ();
+    MuteListChanges (FALSE);
+    NotifyListChanged ();
   }
 
   // --------------------------------------------------------------------------------

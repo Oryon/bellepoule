@@ -50,14 +50,14 @@ namespace People
 
       void OnConfigChanged ();
 
-      void OnListChanged ();
-
       void Add (Player *player);
 
     private:
       void OnLocked ();
 
       void OnUnLocked ();
+
+      void OnListChanged ();
 
       void OnLoadingCompleted ();
 

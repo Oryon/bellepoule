@@ -125,6 +125,7 @@ namespace People
     GSList              *current = GetShortList ();
     Player::AttributeId  exported_attr ("exported");
 
+    MuteListChanges (TRUE);
     while (current)
     {
       Player *player = (Player *) current->data;
@@ -135,6 +136,8 @@ namespace People
 
       current = g_slist_next (current);
     }
+    MuteListChanges (FALSE);
+    NotifyListChanged ();
   }
 
   // --------------------------------------------------------------------------------
@@ -231,7 +234,6 @@ namespace People
 
         current = g_slist_next (current);
       }
-      contest->LatchPlayerList ();
     }
   }
 
@@ -293,7 +295,6 @@ namespace People
     Reset ();
 
     OnAttrListUpdated ();
-    OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------

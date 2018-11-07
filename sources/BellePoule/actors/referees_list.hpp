@@ -53,6 +53,8 @@ namespace People
 
       void OnCheckinClicked ();
 
+      void Add (Player *player);
+
     protected:
       virtual ~RefereesList ();
 
@@ -66,13 +68,16 @@ namespace People
 
       void Monitor (Player *referee);
 
-      void GiveRefereeAnId (Referee *referee);
-
       void OnPlayerLoaded (Player *referee,
                            Player *owner);
 
       void OnFormEvent (Player                  *referee,
                         People::Form::FormEvent  event);
+
+      void TogglePlayerAttr (Player              *player,
+                             Player::AttributeId *attr_id,
+                             gboolean             new_value,
+                             gboolean             popup_on_error = FALSE);
 
       static gboolean RefereeIsVisible (GtkTreeModel *model,
                                         GtkTreeIter  *iter,

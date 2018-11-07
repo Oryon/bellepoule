@@ -68,8 +68,6 @@ class Contest : public Module
 
     void LoadFencerFile (const gchar *filename);
 
-    void LatchPlayerList ();
-
     void AttachTo (GtkNotebook *to);
 
     void Save ();

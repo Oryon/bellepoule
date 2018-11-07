@@ -112,7 +112,7 @@ namespace Marshaller
       }
     }
 
-    SetPopupVisibility ("PlayersList::ReadOnlyAction",
+    SetPopupVisibility ("PlayersList::CopyAction",
                         FALSE);
 
     if (dnd_capable)

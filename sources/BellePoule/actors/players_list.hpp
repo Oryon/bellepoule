@@ -116,6 +116,10 @@ namespace People
       void SetAttributeRight (const gchar *name,
                               gboolean     modifiable);
 
+      void MuteListChanges (gboolean mute);
+
+      void NotifyListChanged ();
+
       virtual void OnListChanged ();
 
       Player *GetPlayerWithAttribute (Player::AttributeId *attr_id,
@@ -147,6 +151,7 @@ namespace People
       gboolean      _flat_print;
       PlayersStore *_store;
       const gchar  *_parcel_name;
+      gboolean      _list_changes_muted;
 
       void RefreshDisplay ();
 
@@ -198,8 +203,11 @@ namespace People
       static void OnCopySelection (GtkWidget   *w,
                                    PlayersList *players_list);
 
-      static void OnPasteSelection (GtkWidget   *w,
-                                    PlayersList *players_list);
+      static void OnPasteCloneSelection (GtkWidget   *w,
+                                         PlayersList *players_list);
+
+      static void OnPasteLinkSelection (GtkWidget   *w,
+                                        PlayersList *players_list);
 
       static void OnRemoveSelection (GtkWidget   *w,
                                      PlayersList *players_list);

@@ -155,7 +155,7 @@ namespace People
       ConnectDndSource (GTK_WIDGET (_tree_view));
       ConnectDndDest   (GTK_WIDGET (_tree_view));
     }
-    SetPopupVisibility ("PlayersList::WriteAction", TRUE);
+    SetPopupVisibility ("PlayersList::PasteCloneAction", TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -351,55 +351,62 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::ConvertFromBaseToResult ()
   {
-    // This method aims to deal with the strange FIE xml specification.
-    // Two different file formats are used. One for preparation one for result.
-    // Both are almost similar except that they use a same keyword ("classement")
-    // for a different meanning.
+    MuteListChanges (TRUE);
+
     {
-      GList *current = _player_list;
-
-      while (current)
+      // This method aims to deal with the strange FIE xml specification.
+      // Two different file formats are used. One for preparation one for result.
+      // Both are almost similar except that they use a same keyword ("classement")
+      // for a different meanning.
       {
-        Player *p = (Player *) current->data;
+        GList *current = _player_list;
 
-        if (p)
+        while (current)
         {
-          Player::AttributeId  place_attr_id ("final_rank");
-          Attribute           *final_rank  = p->GetAttribute (&place_attr_id);
+          Player *p = (Player *) current->data;
 
-          if (final_rank)
+          if (p)
           {
-            Player::AttributeId ranking_attr_id ("ranking");
+            Player::AttributeId  place_attr_id ("final_rank");
+            Attribute           *final_rank  = p->GetAttribute (&place_attr_id);
 
-            p->SetAttributeValue (&ranking_attr_id,
-                                  final_rank->GetUIntValue ());
-            p->RemoveAttribute (&place_attr_id);
-            Update (p);
+            if (final_rank)
+            {
+              Player::AttributeId ranking_attr_id ("ranking");
+
+              p->SetAttributeValue (&ranking_attr_id,
+                                    final_rank->GetUIntValue ());
+              p->RemoveAttribute (&place_attr_id);
+              Update (p);
+            }
           }
+          current = g_list_next (current);
         }
-        current = g_list_next (current);
       }
-    }
 
-    // FFE xml files may have teams with attending attribute set!
-    // By default everybody is absent.
-    {
-      GList *current = _player_list;
-
-      while (current)
+      // FFE xml files may have teams with attending attribute set!
+      // By default everybody is absent.
       {
-        Player *player = (Player *) current->data;
+        GList *current = _player_list;
 
-        if (player->Is ("Team"))
+        while (current)
         {
-          Team *team = (Team *) player;
+          Player *player = (Player *) current->data;
 
-          team->SetAttendingFromMembers  ();
-          Update (team);
+          if (player->Is ("Team"))
+          {
+            Team *team = (Team *) player;
+
+            team->SetAttendingFromMembers  ();
+            Update (team);
+          }
+          current = g_list_next (current);
         }
-        current = g_list_next (current);
       }
     }
+
+    MuteListChanges (FALSE);
+    NotifyListChanged ();
   }
 
   // --------------------------------------------------------------------------------
@@ -554,8 +561,7 @@ namespace People
   void CheckinSupervisor::ApplyConfig ()
   {
     Stage::ApplyConfig ();
-
-    OnListChanged ();
+    ApplyConfig (NULL);
   }
 
   // --------------------------------------------------------------------------------
@@ -585,7 +591,7 @@ namespace People
         }
       }
 
-      OnListChanged ();
+      ApplyConfig (NULL);
     }
   }
 
@@ -713,7 +719,7 @@ namespace People
     if (Locked ())
     {
       SetSensitiveState (FALSE);
-      SetPopupVisibility ("PlayersList::WriteAction", FALSE);
+      SetPopupVisibility ("PlayersList::PasteCloneAction", FALSE);
     }
   }
 
@@ -740,7 +746,7 @@ namespace People
   {
     DisableSensitiveWidgets ();
     SetSensitiveState (FALSE);
-    SetPopupVisibility ("PlayersList::WriteAction", FALSE);
+    SetPopupVisibility ("PlayersList::PasteCloneAction", FALSE);
 
     UpdateChecksum ();
     UpdateRanking  ();
@@ -837,7 +843,7 @@ namespace People
   {
     EnableSensitiveWidgets ();
     SetSensitiveState (TRUE);
-    SetPopupVisibility ("PlayersList::WriteAction", TRUE);
+    SetPopupVisibility ("PlayersList::PasteCloneAction", TRUE);
     _form->UnLock ();
     EnableDragAndDrop ();
 
@@ -1008,8 +1014,11 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnListChanged ()
   {
-    Checkin::OnListChanged ();
+    MuteListChanges (TRUE);
     ApplyConfig (NULL);
+    MuteListChanges (FALSE);
+
+    Checkin::OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1177,6 +1186,7 @@ namespace People
   {
     RankImporter *importer = new RankImporter (Global::_user_config->_key_file);
 
+    MuteListChanges (TRUE);
     {
       GList *current = _player_list;
 
@@ -1190,10 +1200,9 @@ namespace People
         current = g_list_next (current);
       }
     }
+    MuteListChanges (FALSE);
 
     importer->Release ();
-
-    OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------

@@ -117,7 +117,7 @@ namespace People
     }
 
     // Popup menu
-    SetPopupVisibility ("PlayersList::WriteAction",
+    SetPopupVisibility ("PlayersList::PasteLinkAction",
                         TRUE);
 
     RefreshAttendingDisplay ();
@@ -142,14 +142,14 @@ namespace People
   void RefereesList::OnPlayerLoaded (Player *referee,
                                      Player *owner)
   {
-    GiveRefereeAnId ((Referee *) referee);
+    ((Referee*) referee)->GiveAnId ();
   }
 
   // --------------------------------------------------------------------------------
   void RefereesList::OnFormEvent (Player                  *referee,
                                   People::Form::FormEvent  event)
   {
-    GiveRefereeAnId ((Referee *) referee);
+    ((Referee*) referee)->GiveAnId ();
 
     Checkin::OnFormEvent (referee,
                           event);
@@ -162,16 +162,20 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void RefereesList::GiveRefereeAnId (Referee *referee)
+  void RefereesList::TogglePlayerAttr (Player              *player,
+                                       Player::AttributeId *attr_id,
+                                       gboolean             new_value,
+                                       gboolean             popup_on_error)
   {
-    referee->GiveAnId ();
+    Checkin::TogglePlayerAttr (player,
+                               attr_id,
+                               new_value,
+                               popup_on_error);
 
-    if (_weapon)
+    if (_listener)
     {
-      Player::AttributeId weapon_attr_id ("weapon");
-
-      referee->SetAttributeValue (&weapon_attr_id,
-                                  _weapon->GetXmlImage ());
+      _listener->OnRefereeUpdated (this,
+                                   player);
     }
   }
 
@@ -207,6 +211,35 @@ namespace People
     referee->SetChangeCbk ("workload_rate",
                            (Player::OnChange) OnParticipationRateChanged,
                            this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::Add (Player *player)
+  {
+    Checkin::Add (player);
+
+    if (_weapon)
+    {
+      Player::AttributeId  weapon_attr_id ("weapon");
+      Attribute *weapon_attr = player->GetAttribute (&weapon_attr_id);
+      Referee   *referee     = (Referee*) player;
+      GString   *digest      = g_string_new (NULL);
+
+      if (weapon_attr)
+      {
+        digest = g_string_append (digest,
+                                  weapon_attr->GetStrValue ());
+      }
+
+      digest = g_string_append (digest,
+                                _weapon->GetXmlImage ());
+
+      referee->SetAttributeValue (&weapon_attr_id,
+                                  digest->str);
+
+      g_string_free (digest,
+                     TRUE);
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -33,14 +33,15 @@ namespace People
   PlayersList::PlayersList (const gchar *glade_file,
                             guint        rights)
     : Object ("PlayersList"),
-      Module (glade_file)
+    Module (glade_file)
   {
-    _rights          = rights;
-    _player_list     = NULL;
-    _store           = NULL;
-    _column_width    = NULL;
-    _selector_column = -1;
-    _parcel_name     = NULL;
+    _rights             = rights;
+    _player_list        = NULL;
+    _store              = NULL;
+    _column_width       = NULL;
+    _selector_column    = -1;
+    _parcel_name        = NULL;
+    _list_changes_muted = FALSE;
 
     {
       _tree_view = GTK_TREE_VIEW (_glade->GetWidget ("players_list"));
@@ -67,7 +68,8 @@ namespace People
               "<ui>\n"
               "  <popup name='PopupMenu'>\n"
               "    <menuitem action='CopyAction'/>\n"
-              "    <menuitem action='PasteAction'/>\n"
+              "    <menuitem action='PasteCloneAction'/>\n"
+              "    <menuitem action='PasteLinkAction'/>\n"
               "    <menuitem action='RemoveAction'/>\n"
               "  </popup>\n"
               "</ui>";
@@ -83,31 +85,43 @@ namespace People
             }
           }
 
-          // Popup
+          // CopyAction
           {
             static GtkActionEntry entries[] =
             {
               {"CopyAction", GTK_STOCK_COPY, gettext ("Copy"), NULL, NULL, G_CALLBACK (OnCopySelection)},
             };
 
-            AddPopupEntries ("PlayersList::ReadOnlyAction",
+            AddPopupEntries ("PlayersList::CopyAction",
                              G_N_ELEMENTS (entries),
                              entries);
           }
 
-          // Popup
+          // PasteCloneAction
           {
             static GtkActionEntry entries[] =
             {
-              {"PasteAction", GTK_STOCK_PASTE, gettext ("Paste"), NULL, NULL, G_CALLBACK (OnPasteSelection)},
+              {"PasteCloneAction", GTK_STOCK_PASTE, gettext ("Paste"), NULL, NULL, G_CALLBACK (OnPasteCloneSelection)},
             };
 
-            AddPopupEntries ("PlayersList::WriteAction",
+            AddPopupEntries ("PlayersList::PasteCloneAction",
                              G_N_ELEMENTS (entries),
                              entries);
           }
 
-          // Popup
+          // PasteLinkAction
+          {
+            static GtkActionEntry entries[] =
+            {
+              {"PasteLinkAction", GTK_STOCK_PASTE, gettext ("Paste (link)"), NULL, NULL, G_CALLBACK (OnPasteLinkSelection)},
+            };
+
+            AddPopupEntries ("PlayersList::PasteLinkAction",
+                             G_N_ELEMENTS (entries),
+                             entries);
+          }
+
+          // RemoveAction
           {
             static GtkActionEntry entries[] =
             {
@@ -128,7 +142,9 @@ namespace People
                                       G_CALLBACK (OnButtonPress), menu);
           }
 
-          SetPopupVisibility ("PlayersList::WriteAction",
+          SetPopupVisibility ("PlayersList::PasteCloneAction",
+                              FALSE);
+          SetPopupVisibility ("PlayersList::PasteLinkAction",
                               FALSE);
           SetPopupVisibility ("PlayersList::RemoveAction",
                               FALSE);
@@ -173,6 +189,8 @@ namespace People
   PlayersList::~PlayersList ()
   {
     Wipe ();
+    FreeFullGList (Player,
+                   _clipboard);
     Object::TryToRelease (_store);
     //g_object_unref (G_OBJECT (_ui_manager));
   }
@@ -277,6 +295,7 @@ namespace People
   {
     OnAttrListUpdated ();
 
+    MuteListChanges (TRUE);
     {
       GList *current = _player_list;
 
@@ -288,8 +307,8 @@ namespace People
         current = g_list_next (current);
       }
     }
-
-    OnListChanged ();
+    MuteListChanges (FALSE);
+    NotifyListChanged ();
   }
 
   // --------------------------------------------------------------------------------
@@ -383,9 +402,10 @@ namespace People
                             gtk_tree_model_get_n_columns (GTK_TREE_MODEL (store)) - 1,
                             player, -1);
       }
-    }
 
-    player->Spread ();
+      NotifyListChanged ();
+      player->Spread ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -518,8 +538,6 @@ namespace People
     }
     attr_id->Release ();
     gtk_tree_path_free (toggeled_path);
-
-    OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------
@@ -925,6 +943,7 @@ namespace People
     }
 
     // Perform the removing
+    MuteListChanges (TRUE);
     {
       GList *current_ref = ref_list;
 
@@ -964,10 +983,10 @@ namespace People
         current_ref = g_list_next (current_ref);
       }
     }
+    MuteListChanges (FALSE);
+    NotifyListChanged ();
 
     g_list_free (ref_list);
-
-    OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------
@@ -983,6 +1002,8 @@ namespace People
                                     player);
 
       player->Release ();
+
+      NotifyListChanged ();
     }
   }
 
@@ -996,6 +1017,21 @@ namespace People
   void PlayersList::CollapseAll ()
   {
     gtk_tree_view_collapse_all (_tree_view);
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::MuteListChanges (gboolean mute)
+  {
+    _list_changes_muted = mute;
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::NotifyListChanged ()
+  {
+    if (_list_changes_muted == FALSE)
+    {
+      OnListChanged ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1578,51 +1614,52 @@ namespace People
   void PlayersList::OnCopySelection (GtkWidget   *w,
                                      PlayersList *players_list)
   {
-    g_list_free_full (_clipboard,
-                      (GDestroyNotify) Object::TryToRelease);
+    FreeFullGList (Player,
+                   _clipboard);
 
     _clipboard = players_list->RetreiveSelectedPlayers ();
 
+    for (GList *current = _clipboard; current; current = g_list_next (current))
     {
-      GList *current = _clipboard;
+      Player *player = (Player *) current->data;
 
-      while (current)
-      {
-        Player *player = (Player *) current->data;
-
-        player->Retain ();
-        current = g_list_next (current);
-      }
+      player->Retain ();
     }
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::OnPasteSelection (GtkWidget   *w,
-                                      PlayersList *players_list)
+  void PlayersList::OnPasteCloneSelection (GtkWidget   *w,
+                                           PlayersList *players_list)
   {
-    if (_clipboard)
+    for (GList *current = _clipboard; current; current = g_list_next (current))
     {
-      GList *current = _clipboard;
+      Player *player     = (Player *) current->data;
+      Player *duplicated = (Player *) player->Duplicate ();
 
-      if (g_list_find (players_list->_player_list, current->data))
-      {
-        return;
-      }
-
-      while (current)
-      {
-        Player *player     = (Player *) current->data;
-        Player *duplicated = (Player *) player->Duplicate ();
-
-        players_list->Add (duplicated);
-        duplicated->Release ();
-        player->Release     ();
-        current = g_list_next (current);
-      }
-
-      g_list_free (_clipboard);
-      _clipboard = NULL;
+      players_list->Add (duplicated);
+      duplicated->Release ();
     }
+
+    FreeFullGList (Player,
+                   _clipboard);
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::OnPasteLinkSelection (GtkWidget   *w,
+                                          PlayersList *players_list)
+  {
+    for (GList *current = _clipboard; current; current = g_list_next (current))
+    {
+      Player *player = (Player *) current->data;
+
+      if (g_list_find (players_list->_player_list, current->data) == NULL)
+      {
+        players_list->Add (player);
+      }
+    }
+
+    FreeFullGList (Player,
+                   _clipboard);
   }
 
   // --------------------------------------------------------------------------------

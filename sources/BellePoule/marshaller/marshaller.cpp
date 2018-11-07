@@ -284,6 +284,17 @@ namespace Marshaller
   void Marshaller::OnRefereeUpdated (People::RefereesList *referee_list,
                                      Player               *referee)
   {
+    for (GList *weapons = Weapon::GetList (); weapons; weapons = g_list_next (weapons))
+    {
+      Weapon               *weapon       = (Weapon *) weapons->data;
+      People::RefereesList *current_list = _referee_pool->GetListOf (weapon->GetXmlImage ());
+
+      if (current_list != referee_list)
+      {
+        current_list->Update (referee);
+      }
+    }
+
     _referee_pool->UpdateAffinities (referee);
     _hall->OnNewWarningPolicy ();
   }
