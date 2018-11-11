@@ -418,22 +418,22 @@ namespace Marshaller
             }
           }
 
+          for (gchar *w = weapon; *w != '\0'; w++)
           {
-            People::RefereesList *referee_list = GetListOf (weapon);
+            gchar                 current_weapon[2] = {w[0], 0};
+            People::RefereesList *referee_list = GetListOf (current_weapon);
 
-            if (referee_list->GetPlayerFromRef (ref) == NULL)
+            if (referee_list && (referee_list->GetPlayerFromRef (ref) == NULL))
             {
               UpdateAffinities (new_referee);
 
+              new_referee->Retain ();
               referee_list->RegisterPlayer (new_referee,
                                             NULL);
             }
-            else
-            {
-              new_referee->Release ();
-            }
           }
 
+          new_referee->Release ();
           g_free (weapon);
         }
 

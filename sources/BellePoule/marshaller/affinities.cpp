@@ -197,7 +197,7 @@ namespace Marshaller
     Attribute           *attr   = player->GetAttribute (&attr_id);
     guint64              digest = 0;
 
-    if (attr)
+    if (attr && attr->GetStrValue ())
     {
       gchar *checksum = g_compute_checksum_for_string (G_CHECKSUM_SHA1,
                                                        attr->GetStrValue (),

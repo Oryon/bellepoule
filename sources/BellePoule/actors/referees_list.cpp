@@ -216,30 +216,35 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::Add (Player *player)
   {
-    Checkin::Add (player);
-
     if (_weapon)
     {
       Player::AttributeId  weapon_attr_id ("weapon");
       Attribute *weapon_attr = player->GetAttribute (&weapon_attr_id);
       Referee   *referee     = (Referee*) player;
-      GString   *digest      = g_string_new (NULL);
 
-      if (weapon_attr)
+      if (   (weapon_attr == NULL)
+          || (g_strrstr (weapon_attr->GetStrValue (), _weapon->GetXmlImage ()) == NULL))
       {
+        GString *digest = g_string_new (NULL);
+
+        if (weapon_attr)
+        {
+          digest = g_string_append (digest,
+                                    weapon_attr->GetStrValue ());
+        }
+
         digest = g_string_append (digest,
-                                  weapon_attr->GetStrValue ());
+                                  _weapon->GetXmlImage ());
+
+        referee->SetAttributeValue (&weapon_attr_id,
+                                    digest->str);
+
+        g_string_free (digest,
+                       TRUE);
       }
-
-      digest = g_string_append (digest,
-                                _weapon->GetXmlImage ());
-
-      referee->SetAttributeValue (&weapon_attr_id,
-                                  digest->str);
-
-      g_string_free (digest,
-                     TRUE);
     }
+
+    Checkin::Add (player);
   }
 
   // --------------------------------------------------------------------------------
