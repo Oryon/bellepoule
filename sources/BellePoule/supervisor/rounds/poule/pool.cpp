@@ -38,7 +38,7 @@
 
 namespace Pool
 {
-  gboolean Pool::_match_id_watermarked = TRUE;
+  gboolean Pool::_match_id_watermarked = FALSE;
 
   // --------------------------------------------------------------------------------
   Pool::Pool (Data        *max_score,
