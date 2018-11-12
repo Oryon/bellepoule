@@ -1162,12 +1162,13 @@ void Contest::ManageReferee (Net::Message *message)
           {
             old->UpdateFrom (referee);
             old->RefreshParcel ();
-            MakeDirty ();
           }
           else
           {
             _referees_list->Add (referee);
           }
+
+          MakeDirty ();
         }
 
         referee->Release ();
