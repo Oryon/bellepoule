@@ -994,14 +994,14 @@ void Schedule::Load (xmlDoc               *doc,
   xmlXPathContext *xml_context         = xmlXPathNewContext (doc);
   gint             current_stage_index = -1;
 
+  // Get the current stage
   {
-    xmlNodeSet     *xml_nodeset;
     gchar          *xml_object_path = g_strdup_printf ("%s/Phases", contest_keyword);
     xmlXPathObject *xml_object      = xmlXPathEval (BAD_CAST xml_object_path, xml_context);
+    xmlNodeSet     *xml_nodeset     = xml_object->nodesetval;
 
     g_free (xml_object_path);
 
-    xml_nodeset = xml_object->nodesetval;
     if (xml_object->nodesetval->nodeNr)
     {
       char *attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0],
@@ -1019,44 +1019,70 @@ void Schedule::Load (xmlDoc               *doc,
 
   gtk_widget_show_all (GetRootWidget ());
 
-  referees->LoadList (xml_context,
-                      contest_keyword);
-  referees->Disclose ("BellePoule::Referee");
-  referees->Spread ();
-
+  // Referees
   {
-    gchar          *path        = g_strdup_printf ("%s/Phases/*", contest_keyword);
-    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
-    xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
-    guint           nb_stage    = 0;
+    referees->LoadList (xml_context,
+                        contest_keyword);
+    referees->Disclose ("BellePoule::Referee");
+    referees->Spread ();
+  }
 
-    g_free (path);
+  // Stages
+  {
+    guint nb_stage = 0;
 
-    if (xml_nodeset->nodeNr == 0)
+    // Add Checkin stage if missing
     {
-      Stage *first_stage = CreateStage ("Pointage");
+      gchar          *xml_object_path = g_strdup_printf ("%s/Phases/Pointage", contest_keyword);
+      xmlXPathObject *xml_object      = xmlXPathEval (BAD_CAST xml_object_path, xml_context);
+      xmlNodeSet     *xml_nodeset     = xml_object->nodesetval;
 
-      LoadPeoples (first_stage,
-                   xml_context,
-                   contest_keyword);
+      g_free (xml_object_path);
 
-      AddStage  (first_stage);
-      PlugStage (first_stage);
-      first_stage->Display ();
+      if (xml_nodeset->nodeNr == 0)
+      {
+        Stage *first_stage = CreateStage ("Pointage");
 
-      nb_stage = 1;
+        LoadPeoples (first_stage,
+                     xml_context,
+                     contest_keyword);
+
+        AddStage  (first_stage);
+        PlugStage (first_stage);
+        first_stage->Display ();
+
+        nb_stage++;
+      }
+
+      xmlXPathFreeObject  (xml_object);
     }
-    else
+
     {
+      gchar          *path        = g_strdup_printf ("%s/Phases/*", contest_keyword);
+      xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
+      xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
+
+      g_free (path);
+
       for (guint i = 0; i < (guint) xml_nodeset->nodeNr; i++)
       {
         Stage *stage = CreateStage ((gchar *) xml_nodeset->nodeTab[i]->name);
 
         if (i == 0)
         {
-          LoadPeoples (stage,
-                       xml_context,
-                       contest_keyword);
+          if (nb_stage == 0)
+          {
+            LoadPeoples (stage,
+                         xml_context,
+                         contest_keyword);
+          }
+          else
+          {
+            Stage *injected_checkin_stage = GetStage (0);
+
+            injected_checkin_stage->Lock ();
+            DisplayLocks ();
+          }
         }
 
         LoadStage (stage,
@@ -1064,9 +1090,9 @@ void Schedule::Load (xmlDoc               *doc,
                    &nb_stage,
                    current_stage_index);
       }
-    }
 
-    xmlXPathFreeObject (xml_object);
+      xmlXPathFreeObject (xml_object);
+    }
 
     // Add additional stages
     // for xml files generated with other
