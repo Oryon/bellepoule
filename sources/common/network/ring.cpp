@@ -657,14 +657,9 @@ namespace Net
   void Ring::OnObjectDeleted (Object *object)
   {
     Message *message = (Message *)object;
-    GList   *node    = g_list_find (_message_list,
-                                    message);
 
-    if (node)
-    {
-      _message_list = g_list_delete_link (_message_list,
-                                          node);
-    }
+    _message_list = g_list_remove (_message_list,
+                                   message);
   }
 
   // -------------------------------------------------------------------------------
@@ -685,14 +680,8 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::RecallMessage (Message *message)
   {
-    GList *node = g_list_find (_message_list,
-                               message);
-
-    if (node)
-    {
-      _message_list = g_list_delete_link (_message_list,
-                                          node);
-    }
+    _message_list = g_list_remove (_message_list,
+                                   message);
 
     if (message->GetFitness ())
     {
@@ -723,14 +712,8 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::UnregisterPartnerListener (PartnerListener *listener)
   {
-    GList *node = g_list_find (_partner_listeners,
-                               listener);
-
-    if (node)
-    {
-      _partner_listeners = g_list_delete_link (_partner_listeners,
-                                               node);
-    }
+    _partner_listeners = g_list_remove (_partner_listeners,
+                                        listener);
   }
 
   // -------------------------------------------------------------------------------

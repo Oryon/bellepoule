@@ -92,14 +92,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Timeline::RemoveCompetition (Competition *competition)
   {
-    GList *node = g_list_find (_competition_list,
-                               competition);
-
-    if (node)
-    {
-      _competition_list = g_list_delete_link (_competition_list,
-                                              node);
-    }
+    _competition_list = g_list_remove (_competition_list,
+                                       competition);
   }
 
   // --------------------------------------------------------------------------------

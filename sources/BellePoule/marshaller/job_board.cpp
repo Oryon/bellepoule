@@ -61,16 +61,8 @@ namespace Marshaller
 
     g_list_free (_job_list);
 
-    {
-      GList *node = g_list_find (_boards,
-                                 this);
-
-      if (node)
-      {
-        _boards = g_list_delete_link (_boards,
-                                      node);
-      }
-    }
+    _boards = g_list_remove (_boards,
+                             this);
   }
 
   // --------------------------------------------------------------------------------

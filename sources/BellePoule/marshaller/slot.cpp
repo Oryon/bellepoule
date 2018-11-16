@@ -301,13 +301,8 @@ namespace Marshaller
   {
     if (job)
     {
-      {
-        GList *node = g_list_find (_job_list,
-                                   job);
-
-        _job_list = g_list_delete_link (_job_list,
-                                        node);
-      }
+      _job_list = g_list_remove (_job_list,
+                                 job);
 
       {
         g_list_foreach (_referee_list,
@@ -361,14 +356,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Slot::RemoveReferee (EnlistedReferee *referee)
   {
-    GList *node = g_list_find (_referee_list,
-                               referee);
-
-    if (node)
-    {
-      _referee_list = g_list_delete_link (_referee_list,
-                                          node);
-    }
+    _referee_list = g_list_remove (_referee_list,
+                                   referee);
 
     {
       GList *current = _job_list;

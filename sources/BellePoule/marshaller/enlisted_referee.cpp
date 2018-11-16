@@ -77,14 +77,8 @@ namespace Marshaller
   void EnlistedReferee::OnRemovedFromSlot (EnlistedReferee *referee,
                                            Slot            *slot)
   {
-    GList *node = g_list_find (referee->_slots,
-                               slot);
-
-    if (node)
-    {
-      referee->_slots = g_list_delete_link (referee->_slots,
-                                            node);
-    }
+    referee->_slots = g_list_remove (referee->_slots,
+                                     slot);
 
     referee->_work_load -= slot->GetDuration () / G_TIME_SPAN_MINUTE;
   }

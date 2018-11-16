@@ -374,11 +374,8 @@ namespace Marshaller
 
     if (competition && (competition->GetBatches () == NULL))
     {
-      GList *node = g_list_find (_competition_list,
-                                 competition);
-
-      _competition_list = g_list_delete_link (_competition_list,
-                                              node);
+      _competition_list = g_list_remove (_competition_list,
+                                         competition);
 
       _timeline->RemoveCompetition (competition);
       competition->Release ();
@@ -753,15 +750,10 @@ namespace Marshaller
 
       if (node)
       {
-        GSList *zone = g_slist_find (_drop_zones, piste);
+        _drop_zones = g_slist_remove (_drop_zones,
+                                      piste);
 
-        if (zone)
-        {
-          _drop_zones = g_slist_remove_link (_drop_zones,
-                                             zone);
-        }
-
-        _piste_list = g_list_remove_link (_piste_list,
+        _piste_list = g_list_delete_link (_piste_list,
                                           node);
 
         piste->Disable ();
@@ -939,10 +931,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::UnSelectPiste (Piste *piste)
   {
-    GList *selected_node = g_list_find (_selected_piste_list, piste);
-
-    _selected_piste_list = g_list_remove_link (_selected_piste_list,
-                                               selected_node);
+    _selected_piste_list = g_list_remove (_selected_piste_list,
+                                          piste);
     piste->UnSelect ();
 
     SetToolBarSensitivity ();

@@ -626,14 +626,9 @@ namespace Marshaller
   {
     if (slot && (slot->GetJobList () == NULL))
     {
-      GList *node = g_list_find (_slots,
-                                 slot);
+      _slots = g_list_remove (_slots,
+                              slot);
 
-      if (node)
-      {
-        _slots = g_list_delete_link (_slots,
-                                     node);
-      }
       slot->Release ();
     }
   }

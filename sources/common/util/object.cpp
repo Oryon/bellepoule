@@ -215,14 +215,8 @@ void Object::AddObjectListener (Listener *listener)
 // --------------------------------------------------------------------------------
 void Object::RemoveObjectListener (Listener *listener)
 {
-  GList *node = g_list_find (_listener_list,
-                             listener);
-
-  if (node)
-  {
-    _listener_list = g_list_remove_link (_listener_list,
-                                         node);
-  }
+  _listener_list = g_list_remove (_listener_list,
+                                  listener);
 }
 
 // --------------------------------------------------------------------------------

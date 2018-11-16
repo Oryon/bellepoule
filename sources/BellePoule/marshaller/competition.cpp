@@ -293,16 +293,8 @@ namespace Marshaller
   {
     Batch *batch = GetBatch (message->GetNetID ());
 
-    {
-      GList *node = g_list_find (_batches,
-                                 batch);
-
-      if (node)
-      {
-        _batches = g_list_delete_link (_batches,
-                                       node);
-      }
-    }
+    _batches = g_list_remove (_batches,
+                              batch);
 
     {
       GtkTreeIter *iter = GetBatchIter (batch);

@@ -410,19 +410,11 @@ namespace Marshaller
         gtk_list_store_remove (_job_store,
                                &iter);
 
-        {
-          GList *node = g_list_find (_pending_list,
-                                     current_job);
-          _pending_list = g_list_delete_link (_pending_list,
-                                              node);
-        }
+        _pending_list = g_list_remove (_pending_list,
+                                       current_job);
 
-        {
-          GList *node = g_list_find (_scheduled_list,
-                                     current_job);
-          _scheduled_list = g_list_delete_link (_scheduled_list,
-                                                node);
-        }
+        _scheduled_list = g_list_remove (_scheduled_list,
+                                         current_job);
 
         RefreshControlPanel ();
         current_job->Release ();

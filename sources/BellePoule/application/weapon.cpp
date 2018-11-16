@@ -38,13 +38,8 @@ Weapon::Weapon (const gchar *image,
 // --------------------------------------------------------------------------------
 Weapon::~Weapon ()
 {
-  GList *node = g_list_find (_list, this);
-
-  if (node)
-  {
-    _list = g_list_delete_link (_list,
-                                node);
-  }
+  _list = g_list_remove (_list,
+                         this);
 
   g_free (_image);
   g_free (_xml_image);
