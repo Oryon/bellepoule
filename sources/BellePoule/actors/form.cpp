@@ -537,7 +537,7 @@ namespace People
             g_strstrip (value);
             if (value[0] || (attr_desc->_uniqueness == AttributeDesc::SINGULAR))
             {
-            player->SetAttributeValue (attr_id,
+              player->SetAttributeValue (attr_id,
                                          value);
             }
             else

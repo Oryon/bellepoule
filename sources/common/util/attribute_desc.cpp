@@ -38,6 +38,7 @@ AttributeDesc::AttributeDesc (GType        type,
   _user_name          = g_strdup (user_name);
   _uniqueness         = SINGULAR;
   _favorite_look      = LONG_TEXT;
+  _short_length       = 3;
   _persistency        = PERSISTENT;
   _scope              = GLOBAL;
   _free_value_allowed = TRUE;

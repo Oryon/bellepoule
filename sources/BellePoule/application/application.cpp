@@ -287,6 +287,7 @@ void Application::Prepare ()
     desc->EnableSorting ();
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", gettext ("last name"));
+    desc->_short_length = 15;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name", "Prenom", gettext ("first name"));
 

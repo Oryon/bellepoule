@@ -218,8 +218,25 @@ gchar *TextAttribute::GetUserImage (AttributeDesc::Look look)
   {
     if (look == AttributeDesc::SHORT_TEXT)
     {
-      return g_strndup (_value,
-                        3);
+      gchar *image = g_utf8_substring (_value,
+                                       0,
+                                       _desc->_short_length);
+
+      if (_desc->_short_length <= 3)
+      {
+        return image;
+      }
+      else if (strlen (image) < strlen (_value))
+      {
+        gchar *pruned = g_strdup_printf ("%s…", image);
+
+        g_free (image);
+        return pruned;
+      }
+      else
+      {
+        return image;
+      }
     }
     else
     {

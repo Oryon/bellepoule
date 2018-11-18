@@ -81,6 +81,7 @@ class AttributeDesc : public Object
     Scope         _scope;
     Uniqueness    _uniqueness;
     Look          _favorite_look;
+    guint         _short_length;
     gboolean      _free_value_allowed;
     Rights        _rights;
     GCompareFunc  _compare_func;
