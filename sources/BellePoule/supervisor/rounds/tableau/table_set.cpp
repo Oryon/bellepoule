@@ -2050,26 +2050,32 @@ namespace Table
 
         if (match)
         {
-          guint    referee_ref = message->GetInteger ("referee");
-          Contest *contest     = _supervisor->GetContest ();
-          Player  *referee     = contest->GetRefereeFromRef (referee_ref);
+          gsize    referee_count;
+          guint   *referee_refs = message->GetIntegerList ("referees", &referee_count);
+          Contest *contest      = _supervisor->GetContest ();
 
-          if (referee && (message->GetFitness () > 0))
+          if (referee_refs && (message->GetFitness () > 0))
           {
-            gchar *start_time = message->GetString  ("start_time");
+            gchar  *start_time = message->GetString ("start_time");
 
             match->SetStartTime    (new FieTime (start_time));
             match->SetDurationSpan (message->GetInteger ("duration_span"));
             match->SetPiste        (message->GetInteger ("piste"));
-            match->AddReferee      (referee);
 
             g_free (start_time);
+
+            for (guint i = 0; i < referee_count; i++)
+            {
+              Player *referee = contest->GetRefereeFromRef (referee_refs[i]);
+
+              match->AddReferee (referee);
+            }
           }
           else
           {
             match->SetPiste (0);
             match->SetStartTime (NULL);
-            match->RemoveReferee (referee);
+            match->RemoveAllReferees ();
           }
 
           RefreshParcel ();

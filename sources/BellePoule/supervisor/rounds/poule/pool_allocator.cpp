@@ -206,6 +206,7 @@ namespace Pool
 #endif
                                             "IP",
                                             "password",
+                                            "cyphered_password",
                                             "HS",
                                             "attending",
                                             "exported",
@@ -2314,19 +2315,22 @@ namespace Pool
                                                     pool->GetNumber () - 1);
 
     {
+      pool->RemoveAllReferee ();
+
       if (message->GetFitness () > 0)
       {
-        guint   ref     = message->GetInteger ("referee");
-        Player *referee = (Player *) _contest->GetRefereeFromRef (ref);
+        gsize   length;
+        guint  *ref     = message->GetIntegerList ("referees", &length);
 
-        if (referee)
+        for (guint i = 0; i < length; i++)
         {
-          pool->AddReferee (referee);
+          Player *referee = (Player *) _contest->GetRefereeFromRef (ref[i]);
+
+          if (referee)
+          {
+            pool->AddReferee (referee);
+          }
         }
-      }
-      else
-      {
-        pool->RemoveAllReferee ();
       }
     }
 

@@ -37,6 +37,7 @@ namespace Marshaller
   {
     _listener         = NULL;
     _fencer_list      = NULL;
+    _referee_list     = NULL;
     _gdk_color        = gdk_color_copy (gdk_color);
     _name             = NULL;
     _batch            = batch;
@@ -78,6 +79,7 @@ namespace Marshaller
     gdk_color_free (_gdk_color);
 
     FreeFullGList (Player, _fencer_list);
+    g_list_free   (_referee_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -169,9 +171,36 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Job::SetReferee (guint referee_ref)
+  void Job::MakeRefereeParcel ()
   {
-    _parcel->Set ("referee", referee_ref);
+    if (_referee_list)
+    {
+      gsize length           = g_list_length (_referee_list);
+      guint referees[length];
+
+      for (guint i = 0; i < length; i++)
+      {
+        referees[i] = GPOINTER_TO_UINT (g_list_nth_data (_referee_list,
+                                                         i));
+      }
+
+      _parcel->SetList ("referees",
+                        referees,
+                        length);
+    }
+    else
+    {
+      _parcel->Remove ("referees");
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Job::AddReferee (guint referee_ref)
+  {
+    _referee_list = g_list_append (_referee_list,
+                                   GUINT_TO_POINTER (referee_ref));
+
+    MakeRefereeParcel ();
 
     if (_listener)
     {
@@ -182,7 +211,16 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Job::RemoveReferee (Player *referee)
   {
-    _parcel->Remove ("referee");
+    GList *node = g_list_find (_referee_list,
+                               GUINT_TO_POINTER (referee->GetRef ()));
+
+    if (node)
+    {
+      _referee_list = g_list_delete_link (_referee_list,
+                                          node);
+
+      MakeRefereeParcel ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -205,7 +243,7 @@ namespace Marshaller
 
     _parcel->Remove ("piste");
     _parcel->Remove ("start_time");
-    _parcel->Remove ("referee");
+    _parcel->Remove ("referees");
 
     if (_listener)
     {

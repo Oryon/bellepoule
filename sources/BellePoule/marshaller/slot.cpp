@@ -281,7 +281,7 @@ namespace Marshaller
         {
           EnlistedReferee *referee = (EnlistedReferee *) _referee_list->data;
 
-          job->SetReferee (referee->GetRef ());
+          job->AddReferee (referee->GetRef ());
         }
       }
 
@@ -348,7 +348,7 @@ namespace Marshaller
       {
         Job *job = (Job *) current->data;
 
-        job->SetReferee (referee->GetRef ());
+        job->AddReferee (referee->GetRef ());
         RefreshJobStatus (job);
 
         current = g_list_next (current);

@@ -70,7 +70,7 @@ namespace Marshaller
 
       guint GetNetID ();
 
-      void SetReferee (guint referee_ref);
+      void AddReferee (guint referee_ref);
 
       void RemoveReferee (Player *referee);
 
@@ -101,6 +101,7 @@ namespace Marshaller
       Batch     *_batch;
       Slot      *_slot;
       GList     *_fencer_list;
+      GList     *_referee_list;
       Listener  *_listener;
       guint      _kinship;
       guint      _workload_units;
@@ -109,5 +110,7 @@ namespace Marshaller
       gboolean   _over;
 
       ~Job ();
+
+      void MakeRefereeParcel ();
   };
 }

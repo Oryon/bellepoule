@@ -466,13 +466,13 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Job *Batch::Load (Net::Message  *message,
                     guint         *piste_id,
-                    guint         *referee_id,
+                    GList        **referees,
                     FieTime      **start_time)
   {
     Job *job = NULL;
 
     *piste_id   = 0;
-    *referee_id = 0;
+    *referees   = NULL;
     *start_time = NULL;
 
     _loading = TRUE;
@@ -585,7 +585,8 @@ namespace Marshaller
                   attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
                   if (attr)
                   {
-                    *referee_id = atoi (attr);
+                    *referees = g_list_append (*referees,
+                                               GUINT_TO_POINTER (atoi (attr)));
                     xmlFree (attr);
                   }
                 }

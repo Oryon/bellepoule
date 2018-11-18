@@ -53,6 +53,10 @@ namespace Net
       void Set (const gchar *field,
                 const guint  value);
 
+      void SetList (const gchar *field,
+                    const guint  list[],
+                    gsize        length);
+
       void Set (const gchar *field,
                 const gint   value);
 
@@ -61,6 +65,9 @@ namespace Net
       gchar *GetString (const gchar *field);
 
       guint GetInteger (const gchar *field);
+
+      guint *GetIntegerList (const gchar *field,
+                             gsize       *length);
 
       gint GetSignedInteger (const gchar *field);
 

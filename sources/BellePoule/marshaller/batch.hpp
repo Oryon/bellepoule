@@ -55,7 +55,7 @@ namespace Marshaller
 
       Job *Load (Net::Message  *message,
                  guint         *piste_id,
-                 guint         *referee_id,
+                 GList        **referees,
                  FieTime      **start_time);
 
       void CloseLoading ();

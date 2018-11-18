@@ -460,12 +460,12 @@ namespace Marshaller
         else
         {
           guint    piste_id;
-          guint    referee_id;
+          GList   *referees;
           FieTime *start_time = NULL;
 
           job = batch->Load (message,
                              &piste_id,
-                             &referee_id,
+                             &referees,
                              &start_time);
           if (job)
           {
@@ -483,15 +483,24 @@ namespace Marshaller
 
                 if (slot)
                 {
-                  EnlistedReferee *referee = _referee_pool->GetReferee (referee_id);
+                  gboolean has_referees = FALSE;
 
-                  if (referee)
+                  slot->AddJob (job);
+
+                  for (GList *current = referees; current; current = g_list_next (current))
                   {
-                    slot->AddJob     (job);
-                    slot->AddReferee (referee);
+                    EnlistedReferee *referee = _referee_pool->GetReferee (GPOINTER_TO_UINT (current->data));
 
+                    if (referee)
+                    {
+                      has_referees = TRUE;
+                      slot->AddReferee (referee);
+                    }
+                  }
+
+                  if (has_referees)
+                  {
                     job->SetRealDuration (real_duration);
-
                     Redraw ();
                   }
                   else
@@ -503,7 +512,10 @@ namespace Marshaller
               start_time->Release ();
             }
           }
+
           batch->CloseLoading ();
+          g_list_free (referees);
+
           _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
         }
       }

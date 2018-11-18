@@ -227,6 +227,19 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void Message::SetList (const gchar *field,
+                         const guint  list[],
+                         gsize        length)
+  {
+    g_key_file_set_integer_list (_key_file,
+                                 "Body",
+                                 field,
+                                 (gint *) list,
+                                 length);
+    _is_valid = TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
   void Message::Set (const gchar *field,
                      const gint   value)
   {
@@ -268,6 +281,17 @@ namespace Net
                                   "Body",
                                   field,
                                   NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  guint *Message::GetIntegerList (const gchar *field,
+                                  gsize       *length)
+  {
+    return (guint *) g_key_file_get_integer_list (_key_file,
+                                                  "Body",
+                                                  field,
+                                                  length,
+                                                  NULL);
   }
 
   // --------------------------------------------------------------------------------
