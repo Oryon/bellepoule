@@ -140,6 +140,13 @@ void Filter::AddOwner (Module *owner)
 }
 
 // --------------------------------------------------------------------------------
+void Filter::RemoveOwner (Module *owner)
+{
+  _owners = g_list_remove (_owners,
+                           owner);
+}
+
+// --------------------------------------------------------------------------------
 guint Filter::GetAttributeId (const gchar *name)
 {
   GSList *current = _attr_list;

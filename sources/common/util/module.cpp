@@ -84,6 +84,11 @@ Module::Module (const gchar *glade_file,
 // --------------------------------------------------------------------------------
 Module::~Module ()
 {
+  if (_filter)
+  {
+    _filter->RemoveOwner (this);
+  }
+
   _dnd_config->Release ();
 
   while (_plugged_list)

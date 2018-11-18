@@ -59,6 +59,8 @@ class Filter : public Object
 
     void AddOwner (Module *owner);
 
+    void RemoveOwner (Module *owner);
+
     void UnPlug ();
 
     void Save (XmlScheme   *xml_scheme,
