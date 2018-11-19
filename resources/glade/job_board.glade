@@ -36,6 +36,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="image">image3</property>
+                <signal name="clicked" handler="on_take_off_button_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -50,6 +51,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="image">image4</property>
+                <signal name="clicked" handler="on_move_button_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -58,12 +60,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="close_board_button">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
+                <signal name="clicked" handler="on_close_board_button_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -372,7 +375,7 @@
     <action-widgets>
       <action-widget response="1">take_off_button</action-widget>
       <action-widget response="2">move_button</action-widget>
-      <action-widget response="0">button1</action-widget>
+      <action-widget response="0">close_board_button</action-widget>
     </action-widgets>
   </object>
 </interface>

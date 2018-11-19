@@ -56,10 +56,10 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   JobBoard::~JobBoard ()
   {
+    Clean ();
+
     Object::TryToRelease (_referee_details);
     Object::TryToRelease (_fencer_details);
-
-    g_list_free (_job_list);
 
     _boards = g_list_remove (_boards,
                              this);
@@ -107,8 +107,7 @@ namespace Marshaller
 
     if (_current_job == node)
     {
-      gtk_dialog_response (GTK_DIALOG (_dialog),
-                           0);
+      gtk_widget_hide (_dialog);
     }
   }
 
@@ -210,31 +209,9 @@ namespace Marshaller
 
       DisplayCurrent ();
 
-      {
-        guint response = gtk_dialog_run (GTK_DIALOG (_dialog));
-
-        if (_current_job)
-        {
-          Job *selected_job = (Job *) _current_job->data;
-
-          if (response == 1)
-          {
-            Batch *batch = selected_job->GetBatch ();
-            Slot  *slot  = selected_job->GetSlot ();
-
-            slot->RemoveJob (selected_job);
-            _listener->OnJobBoardUpdated (batch->GetCompetition ());
-          }
-          else if (response == 2)
-          {
-            _listener->OnJobMove (selected_job);
-          }
-        }
-      }
-      gtk_widget_hide (_dialog);
+      Raise (GTK_DIALOG (_dialog),
+             NULL);
     }
-
-    ForgetCurrentJob ();
   }
 
   // --------------------------------------------------------------------------------
@@ -491,6 +468,43 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void JobBoard::OnTakeOffClicked ()
+  {
+    if (_current_job)
+    {
+      Job *selected_job = (Job *) _current_job->data;
+
+      Batch *batch = selected_job->GetBatch ();
+      Slot  *slot  = selected_job->GetSlot ();
+
+      slot->RemoveJob (selected_job);
+      _listener->OnJobBoardUpdated (batch->GetCompetition ());
+    }
+
+    OnCloseClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::OnMoveClicked ()
+  {
+    if (_current_job)
+    {
+      Job *selected_job = (Job *) _current_job->data;
+
+      _listener->OnJobMove (selected_job);
+    }
+
+    OnCloseClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void JobBoard::OnCloseClicked ()
+  {
+    ForgetCurrentJob ();
+    gtk_widget_hide (_dialog);
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_previous_job_clicked (GtkWidget *widget,
                                                            Object    *owner)
   {
@@ -506,5 +520,32 @@ namespace Marshaller
     JobBoard *jb = dynamic_cast <JobBoard *> (owner);
 
     jb->OnNextClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_take_off_button_clicked (GtkWidget *widget,
+                                                           Object    *owner)
+  {
+    JobBoard *jb = dynamic_cast <JobBoard *> (owner);
+
+    jb->OnTakeOffClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_move_button_clicked (GtkWidget *widget,
+                                                           Object    *owner)
+  {
+    JobBoard *jb = dynamic_cast <JobBoard *> (owner);
+
+    jb->OnMoveClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_close_board_button_clicked (GtkWidget *widget,
+                                                                 Object    *owner)
+  {
+    JobBoard *jb = dynamic_cast <JobBoard *> (owner);
+
+    jb->OnCloseClicked ();
   }
 }

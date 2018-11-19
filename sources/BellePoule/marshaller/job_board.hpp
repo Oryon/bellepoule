@@ -55,6 +55,12 @@ namespace Marshaller
 
       void OnNextClicked ();
 
+      void OnTakeOffClicked ();
+
+      void OnMoveClicked ();
+
+      void OnCloseClicked ();
+
       static void ForeRedraw ();
 
       static void SetTimeLine (Timeline *timeline,

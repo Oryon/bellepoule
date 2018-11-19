@@ -788,6 +788,8 @@ namespace Marshaller
 
     if (slots)
     {
+      _job_board->Clean ();
+
       while (slots)
       {
         Slot *slot = (Slot *) slots->data;
@@ -798,7 +800,6 @@ namespace Marshaller
       }
 
       _job_board->Display ();
-      _job_board->Clean ();
     }
   }
 
