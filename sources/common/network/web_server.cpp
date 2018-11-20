@@ -109,7 +109,7 @@ namespace Net
       }
 #else
       {
-        cmd_line     = g_strdup_printf ("sudo -A --preserve-env %s.sh", path);
+        cmd_line     = g_strdup_printf ("pkexec %s.sh", path);
         spawn_status = g_spawn_command_line_sync (cmd_line,
                                                   NULL,
                                                   NULL,

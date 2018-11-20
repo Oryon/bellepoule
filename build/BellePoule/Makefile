@@ -172,6 +172,14 @@ SRC += $(wildcard sources/BellePoule/actors/*.cpp)
 SRC += $(wildcard sources/BellePoule/application/*.cpp)
 OBJ_LIB += $(SRC:.cpp=.o)
 
+ifeq ($(DISTRIB), bionic)
+GOOCANVAS_LIB     = sources/goocanvas/src/.libs/libgoocanvas.so
+install_goocanvas = install_goocanvas
+else
+GOOCANVAS_LIB     =
+install_goocanvas =
+endif
+
 SRC_MARSHALLER = $(wildcard sources/BellePoule/marshaller/*.cpp)
 OBJ_MARSHALLER = $(SRC_MARSHALLER:.cpp=.o)
 ifeq ($(DISTRIB), windows)
@@ -214,7 +222,11 @@ endif
 #----------------------------------------------------
 #-- Targets -----------------------------------------
 #----------------------------------------------------
-all: output $(OUTPUT)/$(PRODUCT)-marshaller$(EXE) $(OUTPUT)/$(PRODUCT)-supervisor$(EXE)
+all: output sources/goocanvas $(OUTPUT)/$(PRODUCT)-marshaller$(EXE) $(OUTPUT)/$(PRODUCT)-supervisor$(EXE)
+
+sources/goocanvas:
+	tar xvjf goocanvas.tgz
+	cd sources/goocanvas && make
 
 output:
 	@mkdir -p $(OUTPUT)
@@ -231,11 +243,11 @@ $(STATIC_LIB): $(OBJ_LIB)
 
 $(OUTPUT)/$(PRODUCT)-supervisor$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_SUPERVISOR)
 	@echo -e "\e[1;31m" $@ "\e[0m"
-	@$(CC) -o $@ $(OBJ_SUPERVISOR) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(LDFLAGS)
+	@$(CC) -o $@ $(OBJ_SUPERVISOR) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(GOOCANVAS_LIB) $(LDFLAGS)
 
 $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHALLER)
 	@echo -e "\e[1;31m" $@ "\e[0m"
-	@$(CC) -o $@ $(OBJ_MARSHALLER) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(LDFLAGS)
+	@$(CC) -o $@ $(OBJ_MARSHALLER) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(GOOCANVAS_LIB) $(LDFLAGS)
 
 #--
 
@@ -268,6 +280,9 @@ valgrind:
 #----------------------------------------------------
 #-- Packaging ---------------------------------------
 #----------------------------------------------------
+GOOCANVAS_BUILD_DEP = libgoocanvas-dev\,
+GOOCANVAS_DEP       = libgoocanvas3\,
+prepare_goocanvas   = prepare_fake_goocanvas
 ifeq ($(DISTRIB), windows)
 prepare_resources = prepare_windows_resources
 build_staging     = build_windows
@@ -296,6 +311,14 @@ EXAMPLES          = $(PACKAGE)/$(RELEASE)/Exemples
 RESOURCES         = $(PACKAGE)/$(RELEASE)/resources
 endif
 
+ifeq ($(DISTRIB), bionic)
+prepare_goocanvas   = prepare_goocanvas
+GOO                 =
+GOOCANVAS_BUILD_DEP =
+GOOCANVAS_DEP       =
+CFLAGS             += -Isources/goocanvas/src
+endif
+
 ifeq ($(DISTRIB), stretch)
 publish_staging   = publish_debian
 endif
@@ -313,7 +336,7 @@ else
 install_lighttpd = 
 endif
 
-package: prepare_staging $(prepare_linux) $(prepare_osx) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www)
+package: prepare_staging $(prepare_linux) $(prepare_osx) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www) $(prepare_goocanvas)
 	rm -rf `find $(PACKAGE) -name "*~*"`
 	rm -rf `find $(PACKAGE) -name "*.swp"`
 	rm -rf `find $(PACKAGE) -name ".*.swp"`
@@ -454,6 +477,13 @@ prepare_staging:
 
 prepare_debian:
 	cp -rf debian $(PACKAGE)/$(RELEASE)
+	cp bionic/goocanvas.tgz $(PACKAGE)/$(RELEASE)
+
+prepare_goocanvas:
+	cp bionic/goocanvas.tgz $(PACKAGE)/$(RELEASE)
+
+prepare_fake_goocanvas:
+	touch $(PACKAGE)/$(RELEASE)/sources/goocanvas
 
 prepare_changelog:
 	rm -f $(PACKAGE)/$(RELEASE)/debian/changelog
@@ -466,6 +496,8 @@ prepare_changelog:
 prepare_control:
 	# language-pack-gnome-fr-base  ...
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/control
+	sed -i 's/__GOOCANVAS_BUILD_DEP__/$(GOOCANVAS_BUILD_DEP)/g' $(PACKAGE)/$(RELEASE)/debian/control
+	sed -i 's/__GOOCANVAS_DEP__/$(GOOCANVAS_DEP)/g' $(PACKAGE)/$(RELEASE)/debian/control
 ifeq ($(PRODUCT), bellepoulebeta)
 	sed -i 's/Replaces/#Replaces/' $(PACKAGE)/$(RELEASE)/debian/control
 endif
@@ -552,12 +584,12 @@ publish_arch:
 #----------------------------------------------------
 .PHONY: install clean_sources
 
-install: $(install_lighttpd)
+install: $(install_lighttpd) $(install_goocanvas)
 	mkdir -p $(DESTDIR)/usr/bin
 	mkdir -p $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)
 	install $(OUTPUT)/$(PRODUCT)-supervisor $(DESTDIR)/usr/bin/$(PRODUCT)-supervisor
 	install $(OUTPUT)/$(PRODUCT)-marshaller $(DESTDIR)/usr/bin/$(PRODUCT)-marshaller
-	install $(OUTPUT)/lib$(PRODUCT).so  $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)/lib$(PRODUCT).so
+	install $(OUTPUT)/lib$(PRODUCT).so $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)/lib$(PRODUCT).so
 	mkdir -p $(DESTDIR)/usr/share/applications
 	install --mode=644 debian/$(PRODUCT)-marshaller.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-marshaller.desktop
 	install --mode=644 debian/$(PRODUCT)-supervisor.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-supervisor.desktop
@@ -574,6 +606,10 @@ install: $(install_lighttpd)
 		do \
 		install --mode=644 $$file '$(DESTDIR)/usr/share/$(PRODUCT)/'$$file ;\
 		done
+
+install_goocanvas:
+	mkdir -p $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)
+	install $(GOOCANVAS_LIB)   $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)/libgoocanvas.so.3
 
 install_lighttpd:
 	mkdir -p $(DESTDIR)/etc/lighttpd/conf-available
@@ -600,6 +636,7 @@ clean_sources:
 help: vars
 	@echo -e "\e[1;44m**** Ubuntu ****\e[0m"
 	@echo -e "make -s DISTRIB=xenial V=1 package"
+	@echo -e "make -s DISTRIB=bionic V=1 package"
 	@echo -e ""
 	@echo -e "\e[1;42m**** Windows ****\e[0m"
 	@echo -e "make -s DISTRIB=windows V=1 package"
