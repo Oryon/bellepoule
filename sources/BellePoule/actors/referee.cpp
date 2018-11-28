@@ -164,8 +164,15 @@ void Referee::GiveAnId ()
                                                    _iv,
                                                    key);
 
-        SetAttributeValue (&clear_attr_id,
-                           password);
+        if (   password
+            && (password[256/8] == '\0')
+            && g_utf8_validate (password,
+                                256/8,
+                                NULL))
+        {
+          SetAttributeValue (&clear_attr_id,
+                             password);
+        }
 
         g_free (password);
         cryptor->Release ();
