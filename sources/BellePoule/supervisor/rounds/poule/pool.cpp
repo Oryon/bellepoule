@@ -931,17 +931,17 @@ namespace Pool
                                  i*cell_h,
                                  cell_w*5,
                                  cell_h,
-                                 "fill-color", "Grey85",
+                                 "fill-color",   "Grey85",
                                  "stroke-color", "White",
                                  "line-width", 2.0,
                                  NULL);
             goo_canvas_text_new (dashboard_body,
                                  gettext ("Signature"),
                                  0.0,
-                                 cell_h * (i + (1.0/2.0)),
+                                 i*cell_h,
                                  -1,
-                                 GTK_ANCHOR_W,
-                                 "fill-color", "Grey95",
+                                 GTK_ANCHOR_NW,
+                                 "fill-color",   "Grey95",
                                  "font", BP_FONT "bold 30.0px",
                                  NULL);
           }

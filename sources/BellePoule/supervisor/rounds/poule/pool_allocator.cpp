@@ -1967,15 +1967,6 @@ namespace Pool
     {
       Pool *pool = GetPoolOf (current);
 
-      if (_has_marshaller)
-      {
-        if (   (pool->GetPiste ()       == 0)
-            || (pool->GetRefereeList () == NULL))
-        {
-          return FALSE;
-        }
-      }
-
       if (pool->GetUIntData (this, "is_balanced") == 0)
       {
         return FALSE;
@@ -2415,6 +2406,32 @@ namespace Pool
     Allocator *pa = dynamic_cast <Allocator *> (owner);
 
     pa->OnPrintClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Allocator::WarnLocking ()
+  {
+    if (_has_marshaller)
+    {
+      for (GSList *current = _drop_zones; current; current = g_slist_next (current))
+      {
+        Pool *pool = GetPoolOf (current);
+
+        if (   (pool->GetPiste ()       == 0)
+            || (pool->GetRefereeList () == NULL))
+        {
+          GtkWidget *dialog = _glade->GetWidget ("roadmap_alert_dialog");
+          gboolean   response;
+
+          response = RunDialog (GTK_DIALOG (dialog));
+          gtk_widget_hide (dialog);
+
+          return response == GTK_RESPONSE_YES;
+        }
+      }
+    }
+
+    return TRUE;
   }
 
   // --------------------------------------------------------------------------------
