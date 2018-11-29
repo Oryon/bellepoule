@@ -27,7 +27,7 @@
 
 namespace People
 {
-  GList *PlayersList::_clipboard = NULL;
+  GList *PlayersList::_clipboard = nullptr;
 
   // --------------------------------------------------------------------------------
   PlayersList::PlayersList (const gchar *glade_file,
@@ -36,11 +36,11 @@ namespace People
     Module (glade_file)
   {
     _rights             = rights;
-    _player_list        = NULL;
-    _store              = NULL;
-    _column_width       = NULL;
+    _player_list        = nullptr;
+    _store              = nullptr;
+    _column_width       = nullptr;
     _selector_column    = -1;
-    _parcel_name        = NULL;
+    _parcel_name        = nullptr;
     _list_changes_muted = FALSE;
 
     {
@@ -63,7 +63,7 @@ namespace People
           _ui_manager = gtk_ui_manager_new ();
 
           {
-            GError *error = NULL;
+            GError *error = nullptr;
             static const gchar xml[] =
               "<ui>\n"
               "  <popup name='PopupMenu'>\n"
@@ -81,7 +81,7 @@ namespace People
             {
               g_message ("building menus failed: %s", error->message);
               g_error_free (error);
-              error = NULL;
+              error = nullptr;
             }
           }
 
@@ -89,7 +89,7 @@ namespace People
           {
             static GtkActionEntry entries[] =
             {
-              {"CopyAction", GTK_STOCK_COPY, gettext ("Copy"), NULL, NULL, G_CALLBACK (OnCopySelection)},
+              {"CopyAction", GTK_STOCK_COPY, gettext ("Copy"), nullptr, nullptr, G_CALLBACK (OnCopySelection)},
             };
 
             AddPopupEntries ("PlayersList::CopyAction",
@@ -101,7 +101,7 @@ namespace People
           {
             static GtkActionEntry entries[] =
             {
-              {"PasteCloneAction", GTK_STOCK_PASTE, gettext ("Paste"), NULL, NULL, G_CALLBACK (OnPasteCloneSelection)},
+              {"PasteCloneAction", GTK_STOCK_PASTE, gettext ("Paste"), nullptr, nullptr, G_CALLBACK (OnPasteCloneSelection)},
             };
 
             AddPopupEntries ("PlayersList::PasteCloneAction",
@@ -113,7 +113,7 @@ namespace People
           {
             static GtkActionEntry entries[] =
             {
-              {"PasteLinkAction", GTK_STOCK_PASTE, gettext ("Paste (link)"), NULL, NULL, G_CALLBACK (OnPasteLinkSelection)},
+              {"PasteLinkAction", GTK_STOCK_PASTE, gettext ("Paste (link)"), nullptr, nullptr, G_CALLBACK (OnPasteLinkSelection)},
             };
 
             AddPopupEntries ("PlayersList::PasteLinkAction",
@@ -125,7 +125,7 @@ namespace People
           {
             static GtkActionEntry entries[] =
             {
-              {"RemoveAction", GTK_STOCK_REMOVE, gettext ("Remove"), NULL, NULL, G_CALLBACK (OnRemoveSelection)},
+              {"RemoveAction", GTK_STOCK_REMOVE, gettext ("Remove"), nullptr, nullptr, G_CALLBACK (OnRemoveSelection)},
             };
 
             AddPopupEntries ("PlayersList::RemoveAction",
@@ -200,7 +200,7 @@ namespace People
   {
     Module::SetFilter (filter);
 
-    if (_filter && (_store == NULL))
+    if (_filter && (_store == nullptr))
     {
       GSList *current = _filter->GetAttrList ();
       guint   nb_attr = g_slist_length (current);
@@ -269,7 +269,7 @@ namespace People
       groups = g_list_next (groups);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -345,7 +345,7 @@ namespace People
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -370,7 +370,7 @@ namespace People
       {
         GSList *attr_list = _filter->GetAttrList ();
 
-        for (guint i = 0; attr_list != NULL; i++)
+        for (guint i = 0; attr_list != nullptr; i++)
         {
           AttributeDesc       *desc    = (AttributeDesc *) attr_list->data;
           Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
@@ -418,7 +418,7 @@ namespace People
   GSList *PlayersList::CreateCustomList (CustomFilter filter,
                                          PlayersList *owner)
   {
-    GSList *custom_list = NULL;
+    GSList *custom_list = nullptr;
     GList  *current     = _player_list;
 
     while (current)
@@ -453,10 +453,10 @@ namespace People
   // --------------------------------------------------------------------------------
   GList *PlayersList::RetreiveSelectedPlayers ()
   {
-    GList            *result         = NULL;
+    GList            *result         = nullptr;
     GtkTreeSelection *selection      = gtk_tree_view_get_selection (_tree_view);
     GList            *selection_list = gtk_tree_selection_get_selected_rows (selection,
-                                                                             NULL);
+                                                                             nullptr);
 
     for (guint i = 0; i < g_list_length (selection_list); i++)
     {
@@ -475,7 +475,7 @@ namespace People
       }
     }
 
-    g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
+    g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, nullptr);
     g_list_free    (selection_list);
 
     return result;
@@ -588,7 +588,7 @@ namespace People
                                      GtkTreeIter         *b,
                                      Player::AttributeId *attr_id)
   {
-    guint32 *rand_seed = (guint32 *) attr_id->GetPtrData (NULL,
+    guint32 *rand_seed = (guint32 *) attr_id->GetPtrData (nullptr,
                                                           "CompareIteratorRandSeed");
 
     if (rand_seed)
@@ -631,7 +631,7 @@ namespace People
       current = g_list_next (current);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -662,8 +662,8 @@ namespace People
   {
     AttributeDesc       *desc = attr_layout->_desc;
     AttributeDesc::Look  look = attr_layout->_look;
-    GtkTreeViewColumn   *column   = NULL;
-    GtkCellRenderer     *renderer = NULL;
+    GtkTreeViewColumn   *column   = nullptr;
+    GtkCellRenderer     *renderer = nullptr;
     gboolean             attr_modifiable = desc->GetUIntData (this,
                                                               "modifiable");
 
@@ -731,7 +731,7 @@ namespace People
                                              renderer,
                                              (GtkTreeCellDataFunc) OnCellDataFunc,
                                              this,
-                                             NULL);
+                                             nullptr);
 
     if (renderer && column)
     {
@@ -747,7 +747,7 @@ namespace People
 
         if (desc->_type != G_TYPE_STRING)
         {
-          attr_id->SetData (NULL,
+          attr_id->SetData (nullptr,
                             "CompareIteratorRandSeed",
                             &_rand_seed);
         }
@@ -857,7 +857,7 @@ namespace People
     }
 
     g_list_free (_player_list);
-    _player_list = NULL;
+    _player_list = nullptr;
 
     if (_store)
     {
@@ -868,16 +868,16 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::RemoveSelection ()
   {
-    GList        *ref_list = NULL;
+    GList        *ref_list = nullptr;
     GtkTreeModel *model    = GTK_TREE_MODEL (_store->GetTreeStore (_tree_view));
 
     {
       GtkTreeSelection *selection            = gtk_tree_view_get_selection (_tree_view);
-      GList            *full_selection_list  = NULL;
-      GList            *short_selection_list = NULL;
+      GList            *full_selection_list  = nullptr;
+      GList            *short_selection_list = nullptr;
 
       full_selection_list = gtk_tree_selection_get_selected_rows (selection,
-                                                                  NULL);
+                                                                  nullptr);
 
       // Forget children when their ancestor is in the selection
       {
@@ -899,7 +899,7 @@ namespace People
             gtk_tree_path_up (ancestor_path);
             if (g_list_find_custom (full_selection_list,
                                     ancestor_path,
-                                    (GCompareFunc) gtk_tree_path_compare) == NULL)
+                                    (GCompareFunc) gtk_tree_path_compare) == nullptr)
             {
               short_selection_list = g_list_prepend (short_selection_list,
                                                      current->data);
@@ -937,7 +937,7 @@ namespace People
         }
       }
 
-      g_list_foreach (full_selection_list, (GFunc) gtk_tree_path_free, NULL);
+      g_list_foreach (full_selection_list, (GFunc) gtk_tree_path_free, nullptr);
       g_list_free    (full_selection_list);
       g_list_free    (short_selection_list);
     }
@@ -1043,7 +1043,7 @@ namespace People
   // --------------------------------------------------------------------------------
   Player *PlayersList::GetPlayer (const gchar *path_string)
   {
-    Player      *result  = NULL;
+    Player      *result  = nullptr;
     GtkTreePath *path;
     GList       *current = _player_list;
 
@@ -1131,7 +1131,7 @@ namespace People
     GList   *layout_list = _filter->GetLayoutList ();
     gdouble  x           = 0.0;
 
-    for (guint i = 0; layout_list != NULL; i++)
+    for (guint i = 0; layout_list != nullptr; i++)
     {
       Filter::Layout *attr_layout = (Filter::Layout *) layout_list->data;
 
@@ -1186,7 +1186,7 @@ namespace People
   {
     GList         *layout_list = _filter->GetLayoutList ();
     gdouble        x           = 0.0;
-    GooCanvasItem *bar         = NULL;
+    GooCanvasItem *bar         = nullptr;
 
     if (   ((_flat_print == FALSE) && (gtk_tree_path_get_depth (path) == 1))
         || ((_flat_print == TRUE)  && (row % 2)))
@@ -1199,7 +1199,7 @@ namespace People
                                  NULL);
     }
 
-    for (guint j = 0; layout_list != NULL; j++)
+    for (guint j = 0; layout_list != nullptr; j++)
     {
       Filter::Layout      *attr_layout = (Filter::Layout *) layout_list->data;
       Player::AttributeId *attr_id     = Player::AttributeId::Create (attr_layout->_desc, GetDataOwner ());
@@ -1457,7 +1457,7 @@ namespace People
                                   GtkPrintContext   *context,
                                   gint               page_nr)
   {
-    if (_column_width == NULL)
+    if (_column_width == nullptr)
     {
       return;
     }
@@ -1483,7 +1483,7 @@ namespace People
 
         goo_canvas_render (canvas,
                            cr,
-                           NULL,
+                           nullptr,
                            1.0);
 
         gtk_widget_destroy (GTK_WIDGET (canvas));
@@ -1517,7 +1517,7 @@ namespace People
 
         goo_canvas_render (canvas,
                            cr,
-                           NULL,
+                           nullptr,
                            1.0);
 
         gtk_widget_destroy (GTK_WIDGET (canvas));
@@ -1536,7 +1536,7 @@ namespace People
       if (IterNextNode (model,
                         iter) == FALSE)
       {
-        return NULL;
+        return nullptr;
       }
 
       {
@@ -1549,7 +1549,7 @@ namespace People
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -1601,7 +1601,7 @@ namespace People
                                 GtkPrintContext   *context)
   {
     g_free (_column_width);
-    _column_width = NULL;
+    _column_width = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -1652,7 +1652,7 @@ namespace People
     {
       Player *player = (Player *) current->data;
 
-      if (g_list_find (players_list->_player_list, current->data) == NULL)
+      if (g_list_find (players_list->_player_list, current->data) == nullptr)
       {
         players_list->Add (player);
       }
@@ -1680,7 +1680,7 @@ namespace People
       if (event_button->button == 3)
       {
         gtk_menu_popup (GTK_MENU (widget),
-                        NULL, NULL, NULL, NULL,
+                        nullptr, nullptr, nullptr, nullptr,
                         event_button->button, event_button->time);
         return TRUE;
       }
@@ -1761,7 +1761,7 @@ namespace People
       current = g_list_next (current);
     }
 
-    _parcel_name = NULL;
+    _parcel_name = nullptr;
   }
 
   // --------------------------------------------------------------------------------

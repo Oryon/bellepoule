@@ -72,7 +72,7 @@ namespace Marshaller
       {
         Weapon               *weapon   = (Weapon *) current->data;
         People::RefereesList *list     = new People::RefereesList (this);
-        GtkWidget            *viewport = gtk_viewport_new (NULL, NULL);
+        GtkWidget            *viewport = gtk_viewport_new (nullptr, nullptr);
 
         list->SetWeapon (weapon);
         list->SetData (this,
@@ -259,7 +259,7 @@ namespace Marshaller
       {
         if (tokens[0] && tokens[1] && tokens[2])
         {
-          WifiCode        *wifi_code = NULL;
+          WifiCode        *wifi_code = nullptr;
           guint            ref       = atoi (tokens[2]);
           EnlistedReferee *referee   = _referee_pool->GetReferee (ref);
 
@@ -277,7 +277,7 @@ namespace Marshaller
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -372,7 +372,7 @@ namespace Marshaller
   {
     GList *current = Weapon::GetList ();
 
-    for (guint i = 0; current != NULL; i++)
+    for (guint i = 0; current != nullptr; i++)
     {
       Weapon *weapon = (Weapon *) current->data;
 
@@ -390,7 +390,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   GList *Marshaller::GetRefereeList ()
   {
-    GList *full_list = NULL;
+    GList *full_list = nullptr;
     GList *weapons   = Weapon::GetList ();
 
     while (weapons)
@@ -559,7 +559,7 @@ namespace Marshaller
               const gchar   *strings[] = {gettext ("Meal"),
                 gettext ("Drink"),
                 gettext ("Dessert"),
-                gettext ("Coffee"), NULL};
+                gettext ("Coffee"), nullptr};
 
               Canvas::NormalyzeDecimalNotation (font);
 
@@ -568,7 +568,7 @@ namespace Marshaller
                             "stroke-color", "White",
                             "fill-color",   "grey",
                             NULL);
-              for (guint i = 0; strings[i] != NULL; i++)
+              for (guint i = 0; strings[i] != nullptr; i++)
               {
                 item = Canvas::PutTextInTable (food_table,
                                                gettext (strings[i]),
@@ -658,9 +658,9 @@ namespace Marshaller
         guint   c       = 0;
 
         {
-          const gchar *column[] = {"name", "first_name", "level", NULL};
+          const gchar *column[] = {"name", "first_name", "level", nullptr};
 
-          for (guint i = 0; column[i] != NULL; i++)
+          for (guint i = 0; column[i] != nullptr; i++)
           {
             Player::AttributeId  attr_id (column[i]);
             Attribute           *attr   = referee->GetAttribute (&attr_id);
@@ -690,9 +690,9 @@ namespace Marshaller
 
         {
           struct lconv *local_conv = localeconv ();
-          const gchar  *column[]   = {local_conv->currency_symbol, gettext ("Signature"), NULL};
+          const gchar  *column[]   = {local_conv->currency_symbol, gettext ("Signature"), nullptr};
 
-          for (guint i = 0; column[i] != NULL; i++)
+          for (guint i = 0; column[i] != nullptr; i++)
           {
             item = Canvas::PutTextInTable (main_table,
                                            gettext (column[i]),
@@ -713,7 +713,7 @@ namespace Marshaller
 
       Canvas::Anchor (main_table,
                       header,
-                      NULL,
+                      nullptr,
                       40);
 #if 0
       if (_print_scale != 1.0)
@@ -734,7 +734,7 @@ namespace Marshaller
 
     goo_canvas_render (canvas,
                        cr,
-                       NULL,
+                       nullptr,
                        1.0);
     gtk_widget_destroy (GTK_WIDGET (canvas));
 
@@ -789,10 +789,10 @@ namespace Marshaller
                   NULL,
                   SW_SHOWNORMAL);
 #else
-    gtk_show_uri (NULL,
+    gtk_show_uri (nullptr,
                   "https://play.google.com/store/apps/details?id=betton.escrime.smartpoule",
                   GDK_CURRENT_TIME,
-                  NULL);
+                  nullptr);
 #endif
   }
 

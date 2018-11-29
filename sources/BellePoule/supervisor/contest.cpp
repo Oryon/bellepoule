@@ -106,7 +106,7 @@ const gchar *Contest::level_xml_image[_nb_level] =
   "X"
 };
 
-GList *Contest::_color_list = NULL;
+GList *Contest::_color_list = nullptr;
 
 // --------------------------------------------------------------------------------
 Contest::Time::Time (const gchar *name)
@@ -222,34 +222,34 @@ Contest::Contest (GList    *advertisers,
   _fie_id = g_strdup_printf ("%x", GetNetID ());
 
   _read_only   = FALSE;
-  _authority   = NULL;
-  _filename    = NULL;
-  _tournament  = NULL;
+  _authority   = nullptr;
+  _filename    = nullptr;
+  _tournament  = nullptr;
   _weapon      = Weapon::GetDefault ();
   _category    = new Category (_glade->GetWidget ("category_combobox"));
   _level       = 0;
   _gender      = 0;
   _team_event  = FALSE;
   _derived     = FALSE;
-  _source      = NULL;
+  _source      = nullptr;
   _advertisers = advertisers;
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
                                  "default_name",
-                                 NULL);
+                                 nullptr);
   _organizer = g_key_file_get_string (Global::_user_config->_key_file,
                                       "Competiton",
                                       "default_organizer",
-                                      NULL);
+                                      nullptr);
   _web_site = g_key_file_get_string (Global::_user_config->_key_file,
                                      "Competiton",
                                      "default_web_site",
-                                     NULL);
+                                     nullptr);
   _location = g_key_file_get_string (Global::_user_config->_key_file,
                                      "Competiton",
                                      "default_location",
-                                     NULL);
+                                     nullptr);
 
   _manual_classification  = new Data ("ClassementManuel",       (guint) (for_duplication == TRUE));
   _minimum_team_size      = new Data ("TailleMinimaleEquipe",   3);
@@ -265,7 +265,7 @@ Contest::Contest (GList    *advertisers,
 
   _properties_dialog = _glade->GetWidget ("properties_dialog");
 
-  SetData (NULL,
+  SetData (nullptr,
            "SensitiveWidgetForCheckinStage",
            _glade->GetWidget ("team_vbox"));
 
@@ -349,7 +349,7 @@ void Contest::GetUnknownAttributes (const gchar     *contest_keyword,
 
       while (current_attr)
       {
-        if (AttributeDesc::GetDescFromXmlName ((const gchar *) current_attr->name) == NULL)
+        if (AttributeDesc::GetDescFromXmlName ((const gchar *) current_attr->name) == nullptr)
         {
           AttributeDesc::Declare (G_TYPE_STRING,
                                   (const gchar *) current_attr->name,
@@ -516,7 +516,7 @@ void Contest::LoadXml (const gchar *filename)
       if (g_str_has_suffix (_filename,
                             ".cotcot") == FALSE)
       {
-        SetFilename (NULL);
+        SetFilename (nullptr);
       }
       else
       {
@@ -537,10 +537,10 @@ void Contest::LoadXml (const gchar *filename)
     }
   }
 
-  if ((_filename == NULL) && (_read_only == FALSE))
+  if ((_filename == nullptr) && (_read_only == FALSE))
   {
     GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
-                                                                  NULL,
+                                                                  nullptr,
                                                                   GTK_FILE_CHOOSER_ACTION_SAVE,
                                                                   GTK_STOCK_CANCEL,  GTK_RESPONSE_CANCEL,
                                                                   GTK_STOCK_SAVE_AS, GTK_RESPONSE_ACCEPT,
@@ -662,11 +662,11 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
                                _gdk_color) == FALSE)
           {
             gdk_color_free (_gdk_color);
-            _gdk_color = NULL;
+            _gdk_color = nullptr;
           }
           xmlFree (attr);
         }
-        if (_gdk_color == NULL)
+        if (_gdk_color == nullptr)
         {
           ChooseColor ();
         }
@@ -691,7 +691,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         if (attr)
         {
           _parcel->SetNetID (g_ascii_strtoull (attr,
-                                               NULL,
+                                               nullptr,
                                                16));
           xmlFree (attr);
         }
@@ -705,7 +705,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Date");
-        if (attr == NULL)
+        if (attr == nullptr)
         {
           attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "DateDebut");
         }
@@ -1062,7 +1062,7 @@ void Contest::AskForSettings ()
   if (_read_only == FALSE)
   {
     GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
-                                                                  NULL,
+                                                                  nullptr,
                                                                   GTK_FILE_CHOOSER_ACTION_SAVE,
                                                                   GTK_STOCK_CANCEL,  GTK_RESPONSE_CANCEL,
                                                                   GTK_STOCK_SAVE_AS, GTK_RESPONSE_ACCEPT,
@@ -1191,7 +1191,7 @@ void Contest::ChooseColor ()
   color_to_use = g_key_file_get_integer (Global::_user_config->_key_file,
                                          "Competiton",
                                          "color_to_use",
-                                         NULL);
+                                         nullptr);
   if (color_to_use >= (gint) (g_list_length (_color_list)))
   {
     color_to_use = 0;
@@ -1274,10 +1274,10 @@ void Contest::Cleanup ()
 {
   g_list_foreach (_color_list,
                   (GFunc) g_free,
-                  NULL);
+                  nullptr);
   g_list_free (_color_list);
 
-  _color_list = NULL;
+  _color_list = nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -1933,7 +1933,7 @@ gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
     gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                  "Competiton",
                                                  config_key,
-                                                 NULL);
+                                                 nullptr);
     if (last_dirname)
     {
       gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
@@ -1988,8 +1988,8 @@ gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
 void Contest::AddFileToRecentManager (const gchar *filename)
 {
   gchar *uri = g_filename_to_uri (filename,
-                                  NULL,
-                                  NULL);
+                                  nullptr,
+                                  nullptr);
 
   gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
                                uri);
@@ -2026,10 +2026,10 @@ void Contest::on_web_site_button_clicked ()
                  NULL,
                  SW_SHOWNORMAL);
 #else
-  gtk_show_uri (NULL,
+  gtk_show_uri (nullptr,
                 gtk_entry_get_text (GTK_ENTRY (entry)),
                 GDK_CURRENT_TIME,
-                NULL);
+                nullptr);
 #endif
 }
 
@@ -2158,12 +2158,12 @@ void Contest::DrawPage (GtkPrintOperation *operation,
 
   goo_canvas_render (canvas,
                      gtk_print_context_get_cairo_context (context),
-                     NULL,
+                     nullptr,
                      1.0);
 
   gtk_widget_destroy (GTK_WIDGET (canvas));
 
-  if (operation_matrix == NULL)
+  if (operation_matrix == nullptr)
   {
     cairo_t *cr = gtk_print_context_get_cairo_context (context);
 
@@ -2194,10 +2194,10 @@ extern "C" G_MODULE_EXPORT void on_save_toolbutton_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void Contest::on_save_toolbutton_clicked ()
 {
-  if ((_filename == NULL) && (_read_only == FALSE))
+  if ((_filename == nullptr) && (_read_only == FALSE))
   {
     GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
-                                                                  NULL,
+                                                                  nullptr,
                                                                   GTK_FILE_CHOOSER_ACTION_SAVE,
                                                                   GTK_STOCK_CANCEL,  GTK_RESPONSE_CANCEL,
                                                                   GTK_STOCK_SAVE_AS, GTK_RESPONSE_ACCEPT,
@@ -2274,10 +2274,10 @@ void Contest::on_contest_close_button_clicked ()
 {
   gint choice = GTK_RESPONSE_ACCEPT;
 
-  if ((_filename == NULL) && (_read_only == FALSE))
+  if ((_filename == nullptr) && (_read_only == FALSE))
   {
     GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
-                                                                  NULL,
+                                                                  nullptr,
                                                                   GTK_FILE_CHOOSER_ACTION_SAVE,
                                                                   GTK_STOCK_CANCEL,                 GTK_RESPONSE_CANCEL,
                                                                   gettext ("Close without saving"), GTK_RESPONSE_REJECT,
@@ -2318,7 +2318,7 @@ gboolean Contest::IsTeamEvent ()
 // --------------------------------------------------------------------------------
 gboolean Contest::HasAskFredEntry ()
 {
-  return _source != NULL;
+  return _source != nullptr;
 }
 
 // --------------------------------------------------------------------------------

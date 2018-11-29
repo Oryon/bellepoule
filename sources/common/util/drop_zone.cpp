@@ -35,7 +35,7 @@ DropZone::~DropZone ()
 // --------------------------------------------------------------------------------
 void DropZone::Wipe ()
 {
-  _drop_rect = NULL;
+  _drop_rect = nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ void DropZone::Draw (GooCanvasItem *root_item)
   if (_drop_rect)
   {
     goo_canvas_item_lower (_drop_rect,
-                           NULL);
+                           nullptr);
   }
 }
 

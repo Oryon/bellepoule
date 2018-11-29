@@ -72,7 +72,7 @@ namespace NeoSwapper
       return _criterias[at_depth];
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------

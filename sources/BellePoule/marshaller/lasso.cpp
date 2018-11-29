@@ -22,7 +22,7 @@ namespace Marshaller
   Lasso::Lasso ()
     : Object ("Lasso")
   {
-    _rectangle = NULL;
+    _rectangle = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ namespace Marshaller
     if (_rectangle)
     {
       goo_canvas_item_remove (_rectangle);
-      _rectangle = NULL;
+      _rectangle = nullptr;
     }
   }
 

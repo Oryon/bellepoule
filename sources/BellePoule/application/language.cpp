@@ -39,11 +39,11 @@ Language::Language ()
     gchar *user_language = g_key_file_get_string (Global::_user_config->_key_file,
                                                   "Tournament",
                                                   "interface_language",
-                                                  NULL);
+                                                  nullptr);
 
-    if (user_language == NULL)
+    if (user_language == nullptr)
     {
-      user_language = g_ascii_strdown (setlocale (LC_MESSAGES, NULL), -1);
+      user_language = g_ascii_strdown (setlocale (LC_MESSAGES, nullptr), -1);
 
       if (user_language)
       {
@@ -149,15 +149,15 @@ void Language::Populate (GtkMenuItem  *menu_item,
 
   if (g_file_get_contents (filename,
                            &contents,
-                           NULL,
-                           NULL) == TRUE)
+                           nullptr,
+                           nullptr) == TRUE)
   {
     gchar **lines = g_strsplit_set (contents, "\n", 0);
 
     if (lines)
     {
       gchar  *favorite = g_strdup (g_getenv ("LANGUAGE"));
-      GSList *group    = NULL;
+      GSList *group    = nullptr;
 
       for (guint l = 0; lines[l] && lines[l][0]; l++)
       {

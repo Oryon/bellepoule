@@ -29,7 +29,7 @@ namespace Marshaller
     : Object ("Timeline"),
     CanvasModule ("timeline.glade", "canvas_scrolled_window")
   {
-    _competition_list = NULL;
+    _competition_list = nullptr;
     _listener         = listener;
     _button_pressed   = FALSE;
 
@@ -225,7 +225,7 @@ namespace Marshaller
     {
       GList *current_competition = _competition_list;
 
-      for (guint i = 0; current_competition != NULL; i++)
+      for (guint i = 0; current_competition != nullptr; i++)
       {
         Competition *competition   = (Competition *) current_competition->data;
         gchar       *color         = gdk_color_to_string (competition->GetColor ());
@@ -236,7 +236,7 @@ namespace Marshaller
           Batch *batch       = (Batch *) current_batch->data;
           GList *current_job = batch->GetScheduledJobs ();
 
-          while (current_job != NULL)
+          while (current_job != nullptr)
           {
             Job       *job   = (Job *) current_job->data;
             Slot      *slot  = job->GetSlot ();

@@ -67,7 +67,7 @@ namespace Net
 
       EVP_EncryptInit_ex (cipher,
                           EVP_aes_256_cbc (),
-                          NULL,
+                          nullptr,
                           (guchar *) key,
                           iv);
 
@@ -122,12 +122,12 @@ namespace Net
 
         if (EVP_DecryptInit_ex  (cipher,
                                  EVP_aes_256_cbc (),
-                                 NULL,
+                                 nullptr,
                                  (guchar *) key,
                                  iv) == -1)
         {
           g_free (plaintext);
-          plaintext = NULL;
+          plaintext = nullptr;
         }
         else
         {
@@ -138,7 +138,7 @@ namespace Net
                                  cipher_bytes,  cipher_len) == -1)
           {
             g_free (plaintext);
-            plaintext = NULL;
+            plaintext = nullptr;
           }
           else
           {
@@ -149,7 +149,7 @@ namespace Net
                                  &written_len) == -1)
             {
               g_free (plaintext);
-              plaintext = NULL;
+              plaintext = nullptr;
             }
             else
             {
@@ -169,7 +169,7 @@ namespace Net
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // ----------------------------------------------------------------------------------------------

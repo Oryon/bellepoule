@@ -29,7 +29,7 @@ namespace Table
   TableZone::TableZone ()
     : Object ("TableZone")
   {
-    _node = NULL;
+    _node = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -96,14 +96,14 @@ namespace Table
                                 column);
             Canvas::SetTableItemAttribute (referee_table, "right-padding", 2.0);
 
-            for (guint i = 0; current != NULL; i++)
+            for (guint i = 0; current != nullptr; i++)
             {
               Player *referee = (Player *) current->data;
 
               {
-                static gchar *referee_icon = NULL;
+                static gchar *referee_icon = nullptr;
 
-                if (referee_icon == NULL)
+                if (referee_icon == nullptr)
                 {
                   referee_icon = g_build_filename (Global::_share_dir, "resources/glade/images/referee.png", NULL);
                 }

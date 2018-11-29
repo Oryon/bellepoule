@@ -30,11 +30,11 @@ namespace Net
   // --------------------------------------------------------------------------------
   GregUploader::GregUploader (const gchar *url,
                               const gchar *www)
-    : FileUploader (url, NULL, NULL, www)
+    : FileUploader (url, nullptr, nullptr, www)
   {
     _current_job  = 0;
-    _local_file   = NULL;
-    _remote_file  = NULL;
+    _local_file   = nullptr;
+    _remote_file  = nullptr;
     _job_url      = g_new0 (gchar *, JOB_COUNT);
     _has_location = FALSE;
 
@@ -61,14 +61,14 @@ namespace Net
   {
     if (_has_location)
     {
-      if (_remote_file == NULL)
+      if (_remote_file == nullptr)
       {
         _remote_file = g_path_get_basename (file_path);
       }
 
       {
         gchar *escaped  = g_uri_escape_string (_remote_file,
-                                               NULL,
+                                               nullptr,
                                                FALSE);
 
         _job_url[0] = g_strdup_printf ("http://www.escrime-info.com/gregxml/Greg/envoyer.php?fichier=%s",
@@ -91,7 +91,7 @@ namespace Net
       return _job_url[_current_job];
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -99,8 +99,8 @@ namespace Net
   {
     FileUploader::SetCurlOptions (curl);
 
-    _form_head = NULL;
-    _form_tail = NULL;
+    _form_head = nullptr;
+    _form_tail = nullptr;
 
     if (_current_job == 0)
     {

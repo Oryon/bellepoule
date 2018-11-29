@@ -25,13 +25,13 @@ const gchar *Fencer::_xml_tag    = "Tireur";
 Fencer::Fencer ()
 : Player (_class_name)
 {
-  _team = NULL;
+  _team = nullptr;
 }
 
 // --------------------------------------------------------------------------------
 Fencer::~Fencer ()
 {
-  SetTeam (NULL);
+  SetTeam (nullptr);
 }
 
 // --------------------------------------------------------------------------------

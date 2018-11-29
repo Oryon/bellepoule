@@ -98,7 +98,7 @@ class Object
     void SetData (Object         *owner,
                   const gchar    *key,
                   void           *data,
-                  GDestroyNotify  destroy_cbk = NULL);
+                  GDestroyNotify  destroy_cbk = nullptr);
 
     void *GetPtrData (Object      *owner,
                       const gchar *key);

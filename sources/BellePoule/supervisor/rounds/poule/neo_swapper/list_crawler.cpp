@@ -23,8 +23,8 @@ namespace NeoSwapper
     : Object ("SmartSwapper::ListCrawler")
   {
     _list         = list;
-    _left_cursor  = NULL;
-    _right_cursor = NULL;
+    _left_cursor  = nullptr;
+    _right_cursor = nullptr;
 
     _request_count = 0;
   }
@@ -51,16 +51,16 @@ namespace NeoSwapper
   {
     GList *next;
 
-    if ((_left_cursor == NULL) && (_right_cursor == NULL))
+    if ((_left_cursor == nullptr) && (_right_cursor == nullptr))
     {
-      next = NULL;
+      next = nullptr;
     }
-    else if (_left_cursor == NULL)
+    else if (_left_cursor == nullptr)
     {
       next = _right_cursor;
       _right_cursor = g_list_next (_right_cursor);
     }
-    else if (_right_cursor == NULL)
+    else if (_right_cursor == nullptr)
     {
       next = _left_cursor;
       _left_cursor = g_list_previous (_left_cursor);

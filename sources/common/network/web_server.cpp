@@ -39,7 +39,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   WebServer::~WebServer ()
   {
-    _listener = NULL;
+    _listener = nullptr;
 
     g_mutex_lock (&_mutex);
     ShutDown (this);
@@ -65,7 +65,7 @@ namespace Net
       g_thread_try_new ("WebServer::Start",
                         (GThreadFunc) StartUp,
                         this,
-                        NULL);
+                        nullptr);
     }
   }
 
@@ -77,7 +77,7 @@ namespace Net
       g_thread_try_new ("WebServer::Stop",
                         (GThreadFunc) ShutDown,
                         this,
-                        NULL);
+                        nullptr);
     }
   }
 
@@ -86,7 +86,7 @@ namespace Net
   {
     if (_failed == FALSE)
     {
-      GError   *error       = NULL;
+      GError   *error       = nullptr;
       gint      exit_status;
       gchar    *path        = g_build_filename (Global::_share_dir, "scripts", script, NULL);
       gchar    *cmd_line;
@@ -111,8 +111,8 @@ namespace Net
       {
         cmd_line     = g_strdup_printf ("pkexec %s.sh", path);
         spawn_status = g_spawn_command_line_sync (cmd_line,
-                                                  NULL,
-                                                  NULL,
+                                                  nullptr,
+                                                  nullptr,
                                                   &exit_status,
                                                   &error);
       }
@@ -155,7 +155,7 @@ namespace Net
     g_idle_add ((GSourceFunc) OnProgress,
                 server);
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ namespace Net
                   server);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------

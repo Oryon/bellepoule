@@ -40,7 +40,7 @@ namespace Oauth
         gchar *token_secret = g_key_file_get_string (Global::_user_config->_key_file,
                                                      service,
                                                      "token_secret",
-                                                     NULL);
+                                                     nullptr);
 
         SetTokenSecret (token_secret);
         g_free (token_secret);
@@ -58,7 +58,7 @@ namespace Oauth
     void Session::Reset ()
     {
       Oauth::Session::Reset ();
-      SetTokenSecret (NULL);
+      SetTokenSecret (nullptr);
     }
 
     // --------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ namespace Oauth
         g_key_file_remove_key (Global::_user_config->_key_file,
                                GetService (),
                                "token_secret",
-                               NULL);
+                               nullptr);
       }
     }
   }

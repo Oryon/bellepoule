@@ -26,10 +26,10 @@ namespace Oauth
     : Object ("Oauth::Field")
   {
     _key           = g_strdup (key);
-    _encoded_key   = g_uri_escape_string (key, NULL, FALSE);
+    _encoded_key   = g_uri_escape_string (key, nullptr, FALSE);
 
     _value         = g_strdup (value);
-    _encoded_value = g_uri_escape_string (value, NULL, FALSE);
+    _encoded_value = g_uri_escape_string (value, nullptr, FALSE);
 
     _parcel        = g_strdup_printf ("%s=%s",     _encoded_key, _encoded_value);
     _quoted_parcel = g_strdup_printf ("%s=\"%s\"", _encoded_key, _encoded_value);

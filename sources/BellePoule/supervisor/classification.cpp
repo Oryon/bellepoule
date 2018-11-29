@@ -63,7 +63,7 @@ void Classification::SetSortFunction (GtkTreeIterCompareFunc sort_func,
                                    1,
                                    sort_func,
                                    user_data,
-                                   NULL);
+                                   nullptr);
 }
 
 // --------------------------------------------------------------------------------
@@ -97,9 +97,9 @@ void Classification::DumpToFFF (gchar   *filename,
                              -1,
                              "ISO-8859-1",
                              "UTF-8",
-                             NULL,
+                             nullptr,
                              &bytes_written,
-                             NULL);
+                             nullptr);
 
         if (iso8858)
         {
@@ -122,7 +122,7 @@ void Classification::DumpToFFF (gchar   *filename,
       player      = (Player *) current_player->data;
       status_attr = player->GetAttribute (&attr_id);
 
-      if ((status_attr == NULL) || (* (status_attr->GetStrValue ()) != 'E'))
+      if ((status_attr == nullptr) || (* (status_attr->GetStrValue ()) != 'E'))
       {
         // General
         {
@@ -219,7 +219,7 @@ void Classification::WriteFFFString (FILE        *file,
 
   if (attr)
   {
-    GError *error = NULL;
+    GError *error = nullptr;
     gchar  *result;
 
     {
@@ -257,7 +257,7 @@ void Classification::WriteFFFString (FILE        *file,
                           -1,
                           "ISO-8859-1",
                           "UTF-8",
-                          NULL,
+                          nullptr,
                           &bytes_written,
                           &error);
       g_free (xml_image);

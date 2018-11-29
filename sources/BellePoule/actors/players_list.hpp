@@ -72,7 +72,7 @@ namespace People
       void CollapseAll ();
 
       void Disclose (const gchar *as,
-                     Object      *extra_feeder = NULL);
+                     Object      *extra_feeder = nullptr);
 
       void Conceal ();
 

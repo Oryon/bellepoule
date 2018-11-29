@@ -116,7 +116,7 @@ class Schedule : public Module,
     gint GetNotebookPageNum (Stage *stage);
 
     void AddStage (Stage *stage,
-                   Stage *after = NULL);
+                   Stage *after = nullptr);
 
     void InsertStage (Stage *stage,
                       Stage *after);

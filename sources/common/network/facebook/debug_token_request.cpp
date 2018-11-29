@@ -55,7 +55,7 @@ namespace Net
           GDateTime *date;
           gchar     *expires_string = GetJsonAtPath ("$.data.expires_at");
           guint      expires_int    = g_ascii_strtoull (expires_string,
-                                                        NULL,
+                                                        nullptr,
                                                         10);
 
           date = g_date_time_new_from_unix_utc (expires_int);

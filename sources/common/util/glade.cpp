@@ -27,7 +27,7 @@ Glade::Glade (const gchar *file_name,
 {
   if (file_name)
   {
-    GError *error = NULL;
+    GError *error = nullptr;
     gchar  *path = g_build_filename (Global::_share_dir, "resources", "glade", file_name, NULL);
 
     _glade_xml = gtk_builder_new ();
@@ -35,13 +35,13 @@ Glade::Glade (const gchar *file_name,
     gtk_builder_add_from_file (_glade_xml,
                                path,
                                &error);
-    if (error != NULL)
+    if (error != nullptr)
     {
       g_print ("<<%s>> %s\n", path, error->message);
     }
     g_free (path);
 
-    if (error != NULL)
+    if (error != nullptr)
     {
       gchar *spare_file_name = g_build_filename (Global::_share_dir, "..", "..", "resources", "glade", file_name, NULL);
 
@@ -51,7 +51,7 @@ Glade::Glade (const gchar *file_name,
                                  &error);
       g_free (spare_file_name);
 
-      if (error != NULL)
+      if (error != nullptr)
       {
         g_print ("<<%s>> %s\n", spare_file_name, error->message);
         g_error_free (error);
@@ -68,7 +68,7 @@ Glade::Glade (const gchar *file_name,
   }
   else
   {
-    _glade_xml = NULL;
+    _glade_xml = nullptr;
   }
 }
 

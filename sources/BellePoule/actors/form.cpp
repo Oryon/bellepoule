@@ -33,10 +33,10 @@ namespace People
     : Object ("Form"),
       Module ("form.glade", "FillInForm")
   {
-    _listeners    = NULL;
+    _listeners    = nullptr;
     _close_on_add = FALSE;
 
-    _pages      = NULL;
+    _pages      = nullptr;
     _page_count = 0;
 
     _player_owner = player_owner;
@@ -86,7 +86,7 @@ namespace People
 
     {
       GSList      *current    = filter->GetAttrList ();
-      GtkComboBox *selector_w = NULL;
+      GtkComboBox *selector_w = nullptr;
       GtkWidget   *smartpoule_label = gtk_label_new (gettext ("<b>Smartpoule</b> configuration code"));
 
       page->_title_vbox       = gtk_vbox_new (TRUE, 0);
@@ -97,7 +97,7 @@ namespace People
       gtk_label_set_use_markup (GTK_LABEL (smartpoule_label), TRUE);
 
       {
-        GtkScrolledWindow *scroll_box = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (NULL, NULL));
+        GtkScrolledWindow *scroll_box = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (nullptr, NULL));
         GtkWidget         *field_vbox = gtk_hbox_new (FALSE, 0);
         GtkWidget         *field_hbox = gtk_hbox_new (FALSE, 5);
 
@@ -208,7 +208,7 @@ namespace People
 
                     value_w       = gtk_combo_box_new ();
                     text_renderer = gtk_cell_renderer_text_new ();
-                    completion    = NULL;
+                    completion    = nullptr;
 
                     gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), text_renderer, TRUE);
                     gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (value_w), text_renderer,
@@ -451,7 +451,7 @@ namespace People
       GtkWidget           *w;
       gchar               *attr_name;
       AttributeDesc       *attr_desc;
-      Player::AttributeId *attr_id = NULL;
+      Player::AttributeId *attr_id = nullptr;
 
       w = (GtkWidget *) g_list_nth_data (children,
                                          i);
@@ -564,7 +564,7 @@ namespace People
 
     gtk_widget_hide (w);
 
-    ReadAndWipe (NULL);
+    ReadAndWipe (nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -645,7 +645,7 @@ namespace People
     _player_to_update = player;
     if (_player_to_update)
     {
-      Page  *page     = NULL;
+      Page  *page     = nullptr;
       GList *children;
 
       for (guint i = 0; i < _page_count; i++)
@@ -685,10 +685,10 @@ namespace People
         attr_id   = Player::AttributeId::Create (attr_desc, _player_owner);
         attr      = player->GetAttribute (attr_id);
 
-        if (   (attr == NULL)
+        if (   (attr == nullptr)
             && (attr_desc->_uniqueness == AttributeDesc::NOT_SINGULAR))
         {
-          GtkEntry *entry = NULL;
+          GtkEntry *entry = nullptr;
 
           if (attr_desc->_type == G_TYPE_BOOLEAN)
           {

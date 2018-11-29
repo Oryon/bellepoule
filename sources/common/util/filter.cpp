@@ -36,10 +36,10 @@ Filter::Filter (const gchar *name,
                 GSList      *attr_list)
 : Object ("Filter")
 {
-  _dialog        = NULL;
-  _selected_list = NULL;
+  _dialog        = nullptr;
+  _selected_list = nullptr;
   _attr_list     = attr_list;
-  _owners        = NULL;
+  _owners        = nullptr;
   _name          = g_strdup (name);
 
   {
@@ -127,7 +127,7 @@ void Filter::AddOwner (Module *owner)
 {
   if (g_strstr_len (_name,
                     -1,
-                    owner->GetKlassName ()) == NULL)
+                    owner->GetKlassName ()) == nullptr)
   {
     gchar *name = g_strdup_printf ("%s::%s", _name, owner->GetKlassName ());
 
@@ -151,7 +151,7 @@ guint Filter::GetAttributeId (const gchar *name)
 {
   GSList *current = _attr_list;
 
-  for (guint i = 0; current != NULL; i++)
+  for (guint i = 0; current != nullptr; i++)
   {
     AttributeDesc *desc = (AttributeDesc *) current->data;
 
@@ -181,7 +181,7 @@ GList *Filter::GetLayoutList ()
 void Filter::ShowAttribute (const gchar *name)
 {
   GtkTreeIter  iter;
-  GtkTreeIter *sibling = NULL;
+  GtkTreeIter *sibling = nullptr;
   gboolean     iter_is_valid;
 
   iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_attr_filter_store),
@@ -245,8 +245,8 @@ void Filter::RestoreLast ()
     last_selection = g_key_file_get_string_list (Global::_user_config->_key_file,
                                                  _name,
                                                  "display",
-                                                 NULL,
-                                                 NULL);
+                                                 nullptr,
+                                                 nullptr);
 
     if (last_selection)
     {
@@ -356,10 +356,10 @@ void Filter::Load (xmlNode     *xml_node,
 // --------------------------------------------------------------------------------
 void Filter::SelectAttributes ()
 {
-  if (_dialog == NULL)
+  if (_dialog == nullptr)
   {
     _dialog = gtk_dialog_new_with_buttons (gettext ("Data to display"),
-                                           NULL,
+                                           nullptr,
                                            GTK_DIALOG_DESTROY_WITH_PARENT,
                                            GTK_STOCK_CLOSE,
                                            GTK_RESPONSE_NONE,

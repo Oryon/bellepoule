@@ -177,7 +177,7 @@ namespace People
     Player::AttributeId  previous_stage_rank_attr_id ("rank", GetPreviousStage ());
     Player::AttributeId  rank_attr_id                ("rank", this);
     Player::AttributeId  promoted_attr_id            ("promoted", this);
-    GSList              *result = NULL;
+    GSList              *result = nullptr;
 
     {
       GSList *current = GetShortList ();
@@ -208,7 +208,7 @@ namespace People
     {
       GList *current = _player_list;
 
-      while (current != NULL)
+      while (current != nullptr)
       {
         Player    *player              = (Player *) current->data;
         Attribute *previous_stage_rank = player->GetAttribute (&previous_stage_rank_attr_id);
@@ -239,7 +239,7 @@ namespace People
   {
     LoadConfiguration (xml_node);
 
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {

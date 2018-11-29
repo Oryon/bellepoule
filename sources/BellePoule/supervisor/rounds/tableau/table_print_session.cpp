@@ -24,9 +24,9 @@ namespace Table
                               const gchar *title,
                               Table       *from_table)
     : Object ("PrintSession"),
-      BookSection (NULL)
+      BookSection (nullptr)
   {
-    _bounds_table = NULL;
+    _bounds_table = nullptr;
     _type         = type;
     _from_table   = from_table;
     _nb_pages     = 0;
@@ -40,7 +40,7 @@ namespace Table
 
       for (guint i = 0; i < 2; i++)
       {
-        if (to->GetRightTable () == NULL)
+        if (to->GetRightTable () == nullptr)
         {
           break;
         }

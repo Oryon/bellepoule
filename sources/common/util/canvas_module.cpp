@@ -35,17 +35,17 @@ CanvasModule::CanvasModule (const gchar *glade_file,
                             const gchar *root)
   : Module (glade_file, root)
 {
-  _canvas           = NULL;
-  _scrolled_window  = NULL;
-  _zoomer           = NULL;
-  _drop_zones       = NULL;
-  _target_drop_zone = NULL;
+  _canvas           = nullptr;
+  _scrolled_window  = nullptr;
+  _zoomer           = nullptr;
+  _drop_zones       = nullptr;
+  _target_drop_zone = nullptr;
   _dragging         = FALSE;
-  _drag_text        = NULL;
+  _drag_text        = nullptr;
   _zoom_factor      = 1.0;
   _h_adj            = 0.0;
   _v_adj            = 0.0;
-  _scroller         = NULL;
+  _scroller         = nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ CanvasModule::~CanvasModule ()
 // --------------------------------------------------------------------------------
 void CanvasModule::OnPlugged ()
 {
-  if (_canvas == NULL)
+  if (_canvas == nullptr)
   {
     _scrolled_window = GTK_SCROLLED_WINDOW (_glade->GetWidget ("canvas_scrolled_window"));
 
@@ -100,8 +100,8 @@ void CanvasModule::OnUnPlugged ()
   if (_canvas)
   {
     gtk_widget_destroy (GTK_WIDGET (_canvas));
-    _canvas          = NULL;
-    _scrolled_window = NULL;
+    _canvas          = nullptr;
+    _scrolled_window = nullptr;
   }
 }
 
@@ -134,7 +134,7 @@ GooCanvasItem *CanvasModule::GetRootItem ()
   }
   else
   {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -237,9 +237,9 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
 
   if (player)
   {
-    GList *layout_list = NULL;
+    GList *layout_list = nullptr;
 
-    if (filter == NULL)
+    if (filter == nullptr)
     {
       filter = _filter;
     }
@@ -248,7 +248,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
       layout_list = filter->GetLayoutList ();
     }
 
-    for (guint a = 0; layout_list != NULL; a++)
+    for (guint a = 0; layout_list != nullptr; a++)
     {
       Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;;
       Attribute            *attr;
@@ -269,7 +269,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
       if (attr)
       {
         gdouble    font_height = 14.0;
-        GdkPixbuf *pixbuf      = NULL;
+        GdkPixbuf *pixbuf      = nullptr;
 
         if (attr_layout->_look == AttributeDesc::GRAPHICAL)
         {
@@ -284,7 +284,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
           regex = g_regex_new ("[0-9]+\\.[0-9]+px",
                                GRegexCompileFlags (0),
                                GRegexMatchFlags (0),
-                               NULL);
+                               nullptr);
           g_regex_match (regex,
                          common_markup,
                          GRegexMatchFlags (0),
@@ -295,7 +295,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
             gchar   *word = g_match_info_fetch (match_info, 0);
 
             font_height = g_ascii_strtod (word,
-                                          NULL);
+                                          nullptr);
             g_free (word);
           }
           g_match_info_free (match_info);
@@ -401,7 +401,7 @@ void CanvasModule::DrawPage (GtkPrintOperation *operation,
   cairo_t   *cr     = gtk_print_context_get_cairo_context (context);
   GooCanvas *canvas = (GooCanvas *) g_object_get_data (G_OBJECT (operation), "operation_canvas");
 
-  if (canvas == NULL)
+  if (canvas == nullptr)
   {
     canvas = _canvas;
 
@@ -464,7 +464,7 @@ void CanvasModule::DrawPage (GtkPrintOperation *operation,
 
     goo_canvas_render (canvas,
                        cr,
-                       NULL,
+                       nullptr,
                        1.0);
   }
   cairo_restore (cr);
@@ -509,7 +509,7 @@ gboolean CanvasModule::PreparePreview (GtkPrintOperation        *operation,
 
   goo_canvas_render (_canvas,
                      cr,
-                     NULL,
+                     nullptr,
                      1.0);
 
   cairo_show_page (cr);
@@ -603,7 +603,7 @@ DropZone *CanvasModule::GetZoneAt (gint x,
     current = g_slist_next (current);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -622,7 +622,7 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
     if (_target_drop_zone)
     {
       _target_drop_zone->Unfocus ();
-      _target_drop_zone = NULL;
+      _target_drop_zone = nullptr;
     }
 
     {
@@ -672,13 +672,13 @@ gboolean CanvasModule::OnDragDrop (GtkWidget      *widget,
       if (_dnd_config->GetFloatingObject ())
       {
         DropObject (_dnd_config->GetFloatingObject (),
-                    NULL,
+                    nullptr,
                     _target_drop_zone);
 
         result = TRUE;
       }
 
-      _target_drop_zone = NULL;
+      _target_drop_zone = nullptr;
     }
   }
 
@@ -813,14 +813,14 @@ gboolean CanvasModule::OnButtonRelease (GooCanvasItem  *item,
     _dragging = FALSE;
 
     goo_canvas_item_remove (_drag_text);
-    _drag_text = NULL;
+    _drag_text = nullptr;
 
     DropObject (_dnd_config->GetFloatingObject (),
                 _source_drop_zone,
                 _target_drop_zone);
 
-    _target_drop_zone = NULL;
-    _source_drop_zone = NULL;
+    _target_drop_zone = nullptr;
+    _source_drop_zone = nullptr;
 
     ResetCursor ();
     MakeDirty ();
@@ -867,7 +867,7 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
     if (_target_drop_zone)
     {
       _target_drop_zone->Unfocus ();
-      _target_drop_zone = NULL;
+      _target_drop_zone = nullptr;
     }
 
     {

@@ -30,7 +30,7 @@ namespace Marshaller
   EnlistedReferee::EnlistedReferee ()
     : Referee ()
   {
-    _slots     = NULL;
+    _slots     = nullptr;
     _work_load = 0;
     _job_board = new JobBoard ();
 
@@ -103,7 +103,7 @@ namespace Marshaller
   Slot *EnlistedReferee::GetAvailableSlotFor (Slot      *slot,
                                               GTimeSpan  duration)
   {
-    Slot                *available_slot = NULL;
+    Slot                *available_slot = nullptr;
     Player::AttributeId  attr_id ("attending");
     Attribute           *attr = GetAttribute (&attr_id);
 
@@ -111,7 +111,7 @@ namespace Marshaller
     {
       GList *free_slots;
 
-      free_slots = Slot::GetFreeSlots (NULL,
+      free_slots = Slot::GetFreeSlots (nullptr,
                                        _slots,
                                        slot->GetStartTime (),
                                        duration);
@@ -182,7 +182,7 @@ namespace Marshaller
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------

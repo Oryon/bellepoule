@@ -41,16 +41,16 @@ namespace Table
     _size               = size;
     _number             = number;
     _column             = number;
-    _left_table         = NULL;
-    _right_table        = NULL;
-    _first_error        = NULL;
+    _left_table         = nullptr;
+    _right_table        = nullptr;
+    _first_error        = nullptr;
     _is_over            = FALSE;
     _ready_to_fence     = FALSE;
     _has_all_roadmap    = FALSE;
     _roadmap_count      = 0;
-    _status_item        = NULL;
-    _header_item        = NULL;
-    _defeated_table_set = NULL;
+    _status_item        = nullptr;
+    _header_item        = nullptr;
+    _defeated_table_set = nullptr;
     _is_displayed       = TRUE;
     _loaded             = FALSE;
     _node_table         = g_new (GNode *, _size);
@@ -58,7 +58,7 @@ namespace Table
     _xml_player_tag     = xml_player_tag;
     _mini_name          = g_strdup_printf ("T%d", _size);
 
-    _match_list = NULL;
+    _match_list = nullptr;
 
     Disclose ("BellePoule::Batch");
 
@@ -160,11 +160,11 @@ namespace Table
   gint Table::CompareMatchNumber (Match *a,
                                   Match *b)
   {
-    if (b == NULL)
+    if (b == nullptr)
     {
       return 1;
     }
-    else if (a == NULL)
+    else if (a == nullptr)
     {
       return -1;
     }
@@ -182,9 +182,9 @@ namespace Table
     GSList   *current_match = _match_list;
     gboolean  nb_loosers    = 0;
 
-    if (loosers)      *loosers      = NULL;
-    if (withdrawals)  *withdrawals  = NULL;
-    if (blackcardeds) *blackcardeds = NULL;
+    if (loosers)      *loosers      = nullptr;
+    if (withdrawals)  *withdrawals  = nullptr;
+    if (blackcardeds) *blackcardeds = nullptr;
 
     while (current_match)
     {
@@ -217,7 +217,7 @@ namespace Table
           if (loosers)
           {
             *loosers = g_slist_append (*loosers,
-                                       NULL);
+                                       nullptr);
           }
         }
         else
@@ -246,7 +246,7 @@ namespace Table
   {
     if (list)
     {
-      GSList *simplified_list = NULL;
+      GSList *simplified_list = nullptr;
 
       // Remove empty branches from the top of the tree
       {
@@ -266,7 +266,7 @@ namespace Table
 
             // If applicable, invert the NULL player (withdrawal) with its opponent
             // to make looser trees nicer.
-            if (odd && (even->data == NULL))
+            if (odd && (even->data == nullptr))
             {
               simplified_list = g_slist_remove (simplified_list,
                                                 odd->data);
@@ -281,7 +281,7 @@ namespace Table
 
       // Remove empty branches from the bottom of the tree
       {
-        GSList *ultimate_fencer = NULL;
+        GSList *ultimate_fencer = nullptr;
         GSList *current         = simplified_list;
 
         while (current)
@@ -301,7 +301,7 @@ namespace Table
           {
             GSList *next = g_slist_next (current);
 
-            if (current->data == NULL)
+            if (current->data == nullptr)
             {
               simplified_list = g_slist_delete_link (simplified_list,
                                                      current);
@@ -314,7 +314,7 @@ namespace Table
           {
             simplified_list = g_slist_insert_before (simplified_list,
                                                      ultimate_fencer,
-                                                     NULL);
+                                                     nullptr);
           }
         }
       }
@@ -362,7 +362,7 @@ namespace Table
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -383,7 +383,7 @@ namespace Table
       return _node_table[index];
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -391,7 +391,7 @@ namespace Table
   {
     NodeData *data = (NodeData *) node->data;
 
-    return (data->_fencer_goo_table != NULL);
+    return (data->_fencer_goo_table != nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -405,7 +405,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Table::Load (xmlNode *xml_node)
   {
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
@@ -419,7 +419,7 @@ namespace Table
             if (attr)
             {
               _parcel->SetNetID (g_ascii_strtoull (attr,
-                                                   NULL,
+                                                   nullptr,
                                                    16));
               xmlFree (attr);
             }
@@ -427,7 +427,7 @@ namespace Table
         }
         else if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
-          gchar *number = NULL;
+          gchar *number = nullptr;
 
           {
             gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
@@ -451,7 +451,7 @@ namespace Table
               if (attr)
               {
                 netid = g_ascii_strtoull (attr,
-                                          NULL,
+                                          nullptr,
                                           16);
                 xmlFree (attr);
               }
@@ -495,22 +495,22 @@ namespace Table
   void Table::LoadMatch (xmlNode *xml_node,
                          Match   *match)
   {
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
-        static xmlNode *A = NULL;
-        static xmlNode *B = NULL;
+        static xmlNode *A = nullptr;
+        static xmlNode *B = nullptr;
 
         if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
           gchar *attr;
 
-          A = NULL;
-          B = NULL;
+          A = nullptr;
+          B = nullptr;
 
           attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
-          if ((attr == NULL) || (atoi (attr) != match->GetNumber ()))
+          if ((attr == nullptr) || (atoi (attr) != match->GetNumber ()))
           {
             xmlFree (attr);
             return;
@@ -558,7 +558,7 @@ namespace Table
         }
         else if (g_strcmp0 ((char *) n->name, _xml_player_tag) == 0)
         {
-          if (A == NULL)
+          if (A == nullptr)
           {
             A = n;
           }
@@ -567,8 +567,8 @@ namespace Table
             B = n;
 
             {
-              Player *fencer_a = NULL;
-              Player *fencer_b = NULL;
+              Player *fencer_a = nullptr;
+              Player *fencer_b = nullptr;
               gchar  *attr;
 
               attr = (gchar *) xmlGetProp (A, BAD_CAST "REF");
@@ -599,8 +599,8 @@ namespace Table
               }
             }
 
-            A = NULL;
-            B = NULL;
+            A = nullptr;
+            B = nullptr;
             return;
           }
         }
@@ -773,7 +773,7 @@ namespace Table
       Match *match = (Match *) current_match->data;
 
       match->SetPiste          (0);
-      match->SetStartTime      (NULL);
+      match->SetStartTime      (nullptr);
       match->SetDurationSpan   (1);
       match->RemoveAllReferees ();
 

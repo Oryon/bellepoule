@@ -46,7 +46,7 @@ gboolean JsonFile::Load ()
 
   if (json_parser_load_from_file (parser,
                                   _path,
-                                  NULL))
+                                  nullptr))
   {
     JsonReader *reader = json_reader_new (json_parser_get_root (parser));
 
@@ -94,7 +94,7 @@ void JsonFile::Save ()
 
     json_generator_to_file (generator,
                             _path,
-                            NULL);
+                            nullptr);
 
     json_node_free (root);
     g_object_unref (generator);

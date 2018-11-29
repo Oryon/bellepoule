@@ -30,7 +30,7 @@ Data::Data (const gchar *xml_name,
   _xml_name = g_strdup (xml_name);
   _value    = default_value;
   _valid    = TRUE;
-  _string   = NULL;
+  _string   = nullptr;
 
   _is_integer = TRUE;
 }

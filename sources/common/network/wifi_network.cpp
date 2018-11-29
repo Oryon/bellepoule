@@ -22,9 +22,9 @@ namespace Net
   WifiNetwork::WifiNetwork ()
     : Object ("WifiNetwork")
   {
-    _SSID       = NULL;
-    _passphrase = NULL;
-    _encryption = NULL;
+    _SSID       = nullptr;
+    _passphrase = nullptr;
+    _encryption = nullptr;
   }
 
   // --------------------------------------------------------------------------------

@@ -41,7 +41,7 @@ void Book::Prepare (GtkPrintOperation *operation,
 {
   GList *current_stage = stage_list;
 
-  _chapters   = NULL;
+  _chapters   = nullptr;
   _page_count = 1;
 
   while (current_stage)

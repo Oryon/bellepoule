@@ -103,7 +103,7 @@ namespace Net
                                          "?#&",
                                          -1);
 
-        for (guint p = 0; params[p] != NULL; p++)
+        for (guint p = 0; params[p] != nullptr; p++)
         {
           if (g_strrstr (params[p], "access_token="))
           {

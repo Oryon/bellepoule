@@ -30,13 +30,13 @@ namespace Pool
                               const gchar *name)
     : Object ("PillowDialog")
   {
-     _parent_window    = NULL;
-     _postponed_revert = NULL;
+     _parent_window    = nullptr;
+     _postponed_revert = nullptr;
      _listener         = listener;
 
     _checkin = new People::Checkin ("pillow_list.glade",
                                     "Fencer",
-                                    NULL);
+                                    nullptr);
 
     {
       GSList *attr_list;
@@ -277,7 +277,7 @@ namespace Pool
     }
 
     g_list_free (pillow->_postponed_revert);
-    pillow->_postponed_revert = NULL;
+    pillow->_postponed_revert = nullptr;
 
     {
       gchar *warning = g_strdup_printf (gettext ("Impossible to apply with this configuration of pools"));

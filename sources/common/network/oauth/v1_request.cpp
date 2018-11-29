@@ -65,7 +65,7 @@ namespace Oauth
         return g_strdup (&field_desc[strlen (field_name)]);
       }
 
-      return NULL;
+      return nullptr;
     }
 
     // --------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ namespace Oauth
 
       DumpRateLimits (header);
 
-      if (body == NULL)
+      if (body == nullptr)
       {
         _status = NETWORK_ERROR;
       }
@@ -129,7 +129,7 @@ namespace Oauth
     {
       guint        rate_limit_limit;
       guint        rate_limit_remaining;
-      GDateTime   *rate_limit_reset = NULL;
+      GDateTime   *rate_limit_reset = nullptr;
       const gchar *value;
 
       value = (const gchar *) g_hash_table_lookup (header,
@@ -137,7 +137,7 @@ namespace Oauth
       if (value)
       {
         rate_limit_limit = g_ascii_strtoull (value,
-                                             NULL,
+                                             nullptr,
                                              10);
       }
       else
@@ -150,7 +150,7 @@ namespace Oauth
       if (value)
       {
         rate_limit_remaining = g_ascii_strtoull (value,
-                                                 NULL,
+                                                 nullptr,
                                                  10);
       }
       else
@@ -166,7 +166,7 @@ namespace Oauth
           GTimeVal time_val;
 
           time_val.tv_sec = g_ascii_strtoull (value,
-                                              NULL,
+                                              nullptr,
                                               10);
           time_val.tv_usec = 0;
           rate_limit_reset = g_date_time_new_from_timeval_utc (&time_val);
@@ -231,7 +231,7 @@ namespace Oauth
     // --------------------------------------------------------------------------------
     void Request::Sign ()
     {
-      GString *base_string = g_string_new (NULL);
+      GString *base_string = g_string_new (nullptr);
       gchar   *signature;
 
       // String to sign
@@ -244,7 +244,7 @@ namespace Oauth
         // URL
         {
           gchar *encoded_url = g_uri_escape_string (GetURL (),
-                                                    NULL,
+                                                    nullptr,
                                                     FALSE);
 
           base_string = g_string_append (base_string,
@@ -258,7 +258,7 @@ namespace Oauth
         // Fields
         {
           GList   *current;
-          GString *parameter_string = g_string_new (NULL);
+          GString *parameter_string = g_string_new (nullptr);
           GList   *signing_list     = g_list_concat (g_list_copy (_header_list),
                                                      g_list_copy (_parameter_list));
           signing_list = g_list_sort (signing_list,
@@ -281,7 +281,7 @@ namespace Oauth
 
           {
             gchar *encoded = g_uri_escape_string (parameter_string->str,
-                                                  NULL,
+                                                  nullptr,
                                                   FALSE);
 
             base_string = g_string_append (base_string,
@@ -320,7 +320,7 @@ namespace Oauth
                      &hmac_string[i*2],
                      sizeof (ascii));
           hmac_hexa[i] = g_ascii_strtoull (ascii,
-                                           NULL,
+                                           nullptr,
                                            16);
         }
 
@@ -341,7 +341,7 @@ namespace Oauth
     // --------------------------------------------------------------------------------
     struct curl_slist *Request::GetHeader ()
     {
-      gchar *bundle = NULL;
+      gchar *bundle = nullptr;
 
       {
         Session *v1_session = GetSession ();
@@ -393,14 +393,14 @@ namespace Oauth
 
       if (bundle)
       {
-        struct curl_slist *curl_header = NULL;
+        struct curl_slist *curl_header = nullptr;
 
         curl_header = curl_slist_append (curl_header, bundle);
         g_free (bundle);
         return curl_header;
       }
 
-      return NULL;
+      return nullptr;
     }
   }
 }

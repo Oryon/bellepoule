@@ -39,21 +39,21 @@ class Module : public virtual Object
 
     void Plug (Module       *module,
                GtkWidget    *in,
-               GtkToolbar   *toolbar          = NULL,
-               GtkContainer *config_container = NULL);
+               GtkToolbar   *toolbar          = nullptr,
+               GtkContainer *config_container = nullptr);
 
     void UnPlug ();
 
     void AddSensitiveWidget (GtkWidget *w);
 
     void Print (const gchar *job_name,
-                Object      *data = NULL);
+                Object      *data = nullptr);
 
     void PrintPDF (const gchar  *job_name,
                    const gchar  *filename);
 
     void PrintPreview (const gchar  *job_name,
-                       Object      *data = NULL);
+                       Object      *data = nullptr);
 
     void SelectAttributes ();
 
@@ -100,7 +100,7 @@ class Module : public virtual Object
                            GtkPrintContext   *context,
                            gint               page_nr);
 
-    virtual gchar *GetPrintName () {return NULL;};
+    virtual gchar *GetPrintName () {return nullptr;};
 
   protected:
     DndConfig *_dnd_config;
@@ -123,7 +123,7 @@ class Module : public virtual Object
     static const gdouble PRINT_FONT_HEIGHT;
 
     Module (const gchar *glade_file,
-            const gchar *root = NULL);
+            const gchar *root = nullptr);
 
     virtual void OnPlugged   () {};
     virtual void OnUnPlugged () {};

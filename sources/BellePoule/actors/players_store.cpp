@@ -30,7 +30,7 @@ namespace People
     _gtk_tree_store = gtk_tree_store_newv (n_columns,
                                            types);
     _gtk_tree_filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (_gtk_tree_store),
-                                                  NULL);
+                                                  nullptr);
     _gtk_tree_sort = gtk_tree_model_sort_new_with_model (_gtk_tree_filter);
   }
 
@@ -112,13 +112,13 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersStore::Append (Player *player)
   {
-    Team *team = NULL;
+    Team *team = nullptr;
 
     if (player->Is ("Team") == FALSE)
     {
       Append (_flat_store,
               player,
-              NULL);
+              nullptr);
 
       if (player->Is ("Fencer"))
       {
@@ -175,7 +175,7 @@ namespace People
       {
         gtk_tree_store_append (store->_gtk_tree_store,
                                &iter,
-                               NULL);
+                               nullptr);
       }
 
       player->SetData (store, "tree_row_ref",
@@ -338,10 +338,10 @@ namespace People
     gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (_flat_store->_gtk_tree_filter),
                                             func,
                                             data,
-                                            NULL);
+                                            nullptr);
     gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (_tree_store->_gtk_tree_filter),
                                             func,
                                             data,
-                                            NULL);
+                                            nullptr);
   }
 }

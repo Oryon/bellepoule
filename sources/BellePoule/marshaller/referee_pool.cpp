@@ -41,7 +41,7 @@ namespace Marshaller
   RefereePool::RefereePool ()
     : Object ("marshaller.glade")
   {
-    _list_by_weapon = NULL;
+    _list_by_weapon = nullptr;
 
     {
       _free_color = g_new (GdkColor, 1);
@@ -68,7 +68,7 @@ namespace Marshaller
       GtkUIManager *ui_manager = list->GetUiManager ();
 
       {
-        GError *error = NULL;
+        GError *error = nullptr;
         static const gchar xml[] =
           "<ui>\n"
           "  <popup name='PopupMenu'>\n"
@@ -84,7 +84,7 @@ namespace Marshaller
         {
           g_message ("building menus failed: %s", error->message);
           g_error_free (error);
-          error = NULL;
+          error = nullptr;
         }
       }
 
@@ -92,7 +92,7 @@ namespace Marshaller
       {
         static GtkActionEntry entries[] =
         {
-          {"JobListAction", GTK_STOCK_JUSTIFY_FILL, gettext ("Display jobs"), NULL, NULL, G_CALLBACK (OnDisplayJobs)}
+          {"JobListAction", GTK_STOCK_JUSTIFY_FILL, gettext ("Display jobs"), nullptr, nullptr, G_CALLBACK (OnDisplayJobs)}
         };
 
         list->AddPopupEntries ("RefereesList::JobActions",
@@ -151,7 +151,7 @@ namespace Marshaller
       current_weapon = g_list_next (current_weapon);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -241,7 +241,7 @@ namespace Marshaller
     {
       EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
 
-      referee->RemoveData (NULL,
+      referee->RemoveData (nullptr,
                            "RefereesList::CellColor");
 
       current_referee = g_list_next (current_referee);
@@ -275,7 +275,7 @@ namespace Marshaller
                 {
                   Job *job = (Job *) jobs->data;
 
-                  referee->SetData (NULL,
+                  referee->SetData (nullptr,
                                     "RefereesList::CellColor",
                                     gdk_color_copy (job->GetGdkColor ()),
                                     (GDestroyNotify) gdk_color_free);
@@ -322,7 +322,7 @@ namespace Marshaller
       current_weapon = g_list_next (current_weapon);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -362,7 +362,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void RefereePool::UpdateAffinities (Player *referee)
   {
-    referee->SetData (NULL,
+    referee->SetData (nullptr,
                       "affinities",
                       new Affinities (referee),
                       (GDestroyNotify) Affinities::Destroy);
@@ -423,13 +423,13 @@ namespace Marshaller
             gchar                 current_weapon[2] = {w[0], 0};
             People::RefereesList *referee_list = GetListOf (current_weapon);
 
-            if (referee_list && (referee_list->GetPlayerFromRef (ref) == NULL))
+            if (referee_list && (referee_list->GetPlayerFromRef (ref) == nullptr))
             {
               UpdateAffinities (new_referee);
 
               new_referee->Retain ();
               referee_list->RegisterPlayer (new_referee,
-                                            NULL);
+                                            nullptr);
             }
           }
 
@@ -455,7 +455,7 @@ namespace Marshaller
     {
       if (rl->IsCollapsed ())
       {
-        OnDisplayJobs (NULL,
+        OnDisplayJobs (nullptr,
                        rl);
         return TRUE;
       }

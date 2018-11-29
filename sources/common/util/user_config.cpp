@@ -32,7 +32,7 @@ UserConfig::UserConfig (const gchar *app_name,
   if (g_key_file_load_from_file (_key_file,
                                  _file_path,
                                  G_KEY_FILE_KEEP_COMMENTS,
-                                 NULL) == FALSE)
+                                 nullptr) == FALSE)
   {
     g_mkdir_with_parents (dir_path,
                           0700);
@@ -55,7 +55,7 @@ void UserConfig::Save ()
 {
   if (_read_only == FALSE)
   {
-    GError *error = NULL;
+    GError *error = nullptr;
     gsize   config_length;
     gchar  *config = g_key_file_to_data (_key_file,
                                          &config_length,
@@ -81,8 +81,8 @@ void UserConfig::Save ()
 // --------------------------------------------------------------------------------
 gboolean UserConfig::IsEmpty ()
 {
-  gchar    **contents = g_key_file_get_groups (_key_file, NULL);
-  gboolean   is_empty = (contents == NULL);
+  gchar    **contents = g_key_file_get_groups (_key_file, nullptr);
+  gboolean   is_empty = (contents == nullptr);
 
   g_strfreev (contents);
 

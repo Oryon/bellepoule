@@ -23,7 +23,7 @@ namespace Net
   class Cryptor : public Object
   {
     public:
-      Cryptor (const gchar *iv_b64 = NULL);
+      Cryptor (const gchar *iv_b64 = nullptr);
 
       gchar *Encrypt (const gchar  *text,
                       const gchar  *key,

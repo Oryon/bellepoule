@@ -35,15 +35,15 @@ namespace Marshaller
             GdkColor     *gdk_color)
     : Object ("Job")
   {
-    _listener         = NULL;
-    _fencer_list      = NULL;
-    _referee_list     = NULL;
+    _listener         = nullptr;
+    _fencer_list      = nullptr;
+    _referee_list     = nullptr;
     _gdk_color        = gdk_color_copy (gdk_color);
-    _name             = NULL;
+    _name             = nullptr;
     _batch            = batch;
     _netid            = message->GetNetID ();
     _sibling_order    = sibling_order;
-    _slot             = NULL;
+    _slot             = nullptr;
     _kinship          = 0;
     _regular_duration = 0;
     _over             = FALSE;
@@ -141,7 +141,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Job::SetRealDuration (GTimeSpan duration)
   {
-    if (_slot != NULL)
+    if (_slot != nullptr)
     {
       if (duration > 0)
       {
@@ -292,7 +292,7 @@ namespace Marshaller
   {
     if (_slot)
     {
-      return _slot->GetRefereeList () != NULL;
+      return _slot->GetRefereeList () != nullptr;
     }
 
     return FALSE;
@@ -307,7 +307,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Job::RefreshStatus ()
   {
-    GList *referees = NULL;
+    GList *referees = nullptr;
 
     if (_slot)
     {
@@ -321,7 +321,7 @@ namespace Marshaller
       Player     *referee            = (Player *) referees->data;
       GList      *fencers            = GetFencerList ();
 
-      referee_affinities = (Affinities *) referee->GetPtrData (NULL,
+      referee_affinities = (Affinities *) referee->GetPtrData (nullptr,
                                                                "affinities");
       while (fencers)
       {
@@ -329,7 +329,7 @@ namespace Marshaller
         Player     *fencer            = (Player *) fencers->data;
         guint       kinship;
 
-        fencer_affinities = (Affinities *) fencer->GetPtrData (NULL,
+        fencer_affinities = (Affinities *) fencer->GetPtrData (nullptr,
                                                                "affinities");
 
         if (fencer_affinities)

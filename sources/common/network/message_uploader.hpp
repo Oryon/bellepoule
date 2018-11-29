@@ -40,7 +40,7 @@ namespace Net
 
     public:
       MessageUploader (const gchar *url,
-                       Listener    *listener = NULL);
+                       Listener    *listener = nullptr);
 
       void Stop ();
 

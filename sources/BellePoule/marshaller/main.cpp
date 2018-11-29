@@ -73,7 +73,7 @@ namespace Marshaller
     _marshaller = new Marshaller ();
 
     _main_module = _marshaller;
-    _main_module->SetData (NULL,
+    _main_module->SetData (nullptr,
                            "application",
                            this);
 
@@ -98,7 +98,7 @@ int main (int argc, char **argv)
 
   application->Start (argc,
                       argv,
-                      NULL);
+                      nullptr);
 
   return 0;
 }

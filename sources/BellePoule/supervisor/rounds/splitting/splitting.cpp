@@ -37,7 +37,7 @@ namespace People
   const gchar *Splitting::_class_name     = N_ ("Split");
   const gchar *Splitting::_xml_class_name = "PointDeScission";
 
-  Tournament *Splitting::_tournament = NULL;
+  Tournament *Splitting::_tournament = nullptr;
 
   // --------------------------------------------------------------------------------
   Splitting::Splitting (StageClass *stage_class)
@@ -195,10 +195,10 @@ namespace People
       Player::AttributeId  exported_attr ("exported");
 
       _tournament->Plug (contest,
-                         NULL);
+                         nullptr);
       _tournament->Manage (contest);
 
-      for (guint i = 0; current != NULL; i++)
+      for (guint i = 0; current != nullptr; i++)
       {
         Player    *player = (Player *) current->data;
         Attribute *attr   = player->GetAttribute (&exported_attr);

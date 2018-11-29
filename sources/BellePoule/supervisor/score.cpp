@@ -112,7 +112,7 @@ const gchar *Score::GetStatusImage ()
     return "E";
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------

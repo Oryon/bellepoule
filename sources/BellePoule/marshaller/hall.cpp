@@ -55,16 +55,16 @@ namespace Marshaller
     CanvasModule ("hall.glade")
   {
     _listener            = listener;
-    _piste_list          = NULL;
-    _selected_piste_list = NULL;
+    _piste_list          = nullptr;
+    _selected_piste_list = nullptr;
     _redraw_timeout      = 0;
-    _floating_job        = NULL;
+    _floating_job        = nullptr;
 
     _dragging = FALSE;
 
     SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")));
 
-    _competition_list = NULL;
+    _competition_list = nullptr;
 
     _referee_pool = referee_pool;
     _referee_pool->SetDndPeerListener (this);
@@ -114,8 +114,8 @@ namespace Marshaller
 
     StopRedraw ();
 
-    JobBoard::SetTimeLine (NULL,
-                           NULL);
+    JobBoard::SetTimeLine (nullptr,
+                           nullptr);
 
     FreeFullGList (Competition, _competition_list);
     FreeFullGList (Piste, _piste_list);
@@ -295,7 +295,7 @@ namespace Marshaller
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -346,7 +346,7 @@ namespace Marshaller
     guint        id          = message->GetNetID ();
     Competition *competition = GetCompetition (id);
 
-    if (competition == NULL)
+    if (competition == nullptr)
     {
       competition = new Competition (id,
                                      this);
@@ -372,7 +372,7 @@ namespace Marshaller
     guint        id          = message->GetNetID ();
     Competition *competition = GetCompetition (id);
 
-    if (competition && (competition->GetBatches () == NULL))
+    if (competition && (competition->GetBatches () == nullptr))
     {
       _competition_list = g_list_remove (_competition_list,
                                          competition);
@@ -458,7 +458,7 @@ namespace Marshaller
         {
           guint    piste_id;
           GList   *referees;
-          FieTime *start_time = NULL;
+          FieTime *start_time = nullptr;
 
           job = batch->Load (message,
                              &piste_id,
@@ -574,7 +574,7 @@ namespace Marshaller
     {
       GList *before = _piste_list;
 
-      for (guint i = 1; before != NULL; i++)
+      for (guint i = 1; before != nullptr; i++)
       {
         Piste *current_piste = (Piste *) before->data;
 
@@ -637,7 +637,7 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -657,7 +657,7 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -675,7 +675,7 @@ namespace Marshaller
     }
 
     g_list_free (_selected_piste_list);
-    _selected_piste_list = NULL;
+    _selected_piste_list = nullptr;
 
     Redraw ();
   }
@@ -769,7 +769,7 @@ namespace Marshaller
     {
       _floating_job->RemoveData (this,
                                  "floating_referees");
-      _floating_job = NULL;
+      _floating_job = nullptr;
 
       _listener->OnUnBlur ();
       gtk_widget_set_sensitive (_glade->GetWidget ("toolbar"),
@@ -831,7 +831,7 @@ namespace Marshaller
     }
 
     g_list_free (_selected_piste_list);
-    _selected_piste_list = NULL;
+    _selected_piste_list = nullptr;
 
     SetToolBarSensitivity ();
   }
@@ -840,9 +840,9 @@ namespace Marshaller
   void Hall::SetToolBarSensitivity ()
   {
     gtk_widget_set_sensitive (_glade->GetWidget ("remove_piste_button"),
-                              _selected_piste_list != NULL);
+                              _selected_piste_list != nullptr);
     gtk_widget_set_sensitive (_glade->GetWidget ("rotate_piste_button"),
-                              _selected_piste_list != NULL);
+                              _selected_piste_list != nullptr);
     gtk_widget_set_sensitive (_glade->GetWidget ("cone_togglebutton"),
                               FALSE);
     if (_selected_piste_list)
@@ -948,7 +948,7 @@ namespace Marshaller
   void Hall::OnPisteButtonEvent (Piste          *piste,
                                  GdkEventButton *event)
   {
-    if ((event == NULL) || (event->type != GDK_BUTTON_PRESS))
+    if ((event == nullptr) || (event->type != GDK_BUTTON_PRESS))
     {
       ResetCursor ();
       _lasso->Pull ();
@@ -1175,7 +1175,7 @@ namespace Marshaller
         current_job = job_list;
         while (current_job)
         {
-          GList *free_slots = NULL;
+          GList *free_slots = nullptr;
           Job   *job        = (Job *) current_job->data;
           Slot  *job_slot   = job->GetSlot ();
 
@@ -1241,7 +1241,7 @@ namespace Marshaller
   GList *Hall::GetFreePisteSlots (GTimeSpan duration)
   {
     GDateTime *when       = _timeline->RetreiveCursorTime (TRUE);
-    GList     *free_slots = NULL;
+    GList     *free_slots = nullptr;
     GList     *current    = _piste_list;
 
     // All the pistes?
@@ -1284,8 +1284,8 @@ namespace Marshaller
 
     if (result == 0)
     {
-      Affinities *a_affinities = (Affinities *) a->GetPtrData (NULL, "affinities");
-      Affinities *b_affinities = (Affinities *) b->GetPtrData (NULL, "affinities");
+      Affinities *a_affinities = (Affinities *) a->GetPtrData (nullptr, "affinities");
+      Affinities *b_affinities = (Affinities *) b->GetPtrData (nullptr, "affinities");
 
       if (a_affinities && b_affinities)
       {
@@ -1296,7 +1296,7 @@ namespace Marshaller
         while (fencer_list)
         {
           Player     *fencer       = (Player *) fencer_list->data;
-          Affinities *f_affinities = (Affinities *) fencer->GetPtrData (NULL, "affinities");
+          Affinities *f_affinities = (Affinities *) fencer->GetPtrData (nullptr, "affinities");
 
           for (guint i = 1; i <= affinity_count; i = i<<1)
           {
@@ -1579,7 +1579,7 @@ namespace Marshaller
     EnlistedReferee *referee = dynamic_cast <EnlistedReferee *> (floating_object);
     Job             *job     = dynamic_cast <Job *> (floating_object);
     GDateTime       *cursor  = _timeline->RetreiveCursorTime ();
-    Slot            *slot    = NULL;
+    Slot            *slot    = nullptr;
 
     if (referee)
     {

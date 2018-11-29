@@ -46,10 +46,10 @@ class Attendees : public Object
     void Toggle (Player *fencer);
 
   private:
-    Module   *_owner    = NULL;
-    Listener *_listener = NULL;
-    GSList   *_presents = NULL;
-    GSList   *_absents  = NULL;
+    Module   *_owner    = nullptr;
+    Listener *_listener = nullptr;
+    GSList   *_presents = nullptr;
+    GSList   *_absents  = nullptr;
 
     virtual ~Attendees ();
 };

@@ -40,7 +40,7 @@ class Player : public Object, Net::MessageUploader::Listener
     {
       public:
         AttributeId (const gchar *name,
-                     Object      *owner = NULL)
+                     Object      *owner = nullptr)
           : Object ("Player::AttributeId")
         {
           _name      = name;
@@ -162,7 +162,7 @@ class Player : public Object, Net::MessageUploader::Listener
       Client ()
         : Object ("Player::Client")
       {
-        _attr_name = NULL;
+        _attr_name = nullptr;
       };
 
       virtual ~Client ()

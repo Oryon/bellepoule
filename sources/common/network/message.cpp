@@ -24,7 +24,7 @@ namespace Net
     : Object ("Message")
   {
     _spread        = FALSE;
-    _passphrase256 = NULL;
+    _passphrase256 = nullptr;
     _is_valid      = TRUE;
     _key_file      = g_key_file_new ();
   }
@@ -50,7 +50,7 @@ namespace Net
   {
     if (data)
     {
-      GError *error = NULL;
+      GError *error = nullptr;
 
       if (g_key_file_load_from_data (_key_file,
                                      (const gchar *) data,
@@ -82,14 +82,14 @@ namespace Net
 
     {
       gchar *data = g_key_file_to_data (_key_file,
-                                        NULL,
-                                        NULL);
+                                        nullptr,
+                                        nullptr);
 
       g_key_file_load_from_data (clone->_key_file,
                                  data,
                                  -1,
                                  G_KEY_FILE_NONE,
-                                 NULL);
+                                 nullptr);
     }
 
     return clone;
@@ -108,7 +108,7 @@ namespace Net
     gchar    *field_name = g_key_file_get_string (_key_file,
                                                   "Header",
                                                   "name",
-                                                  NULL);
+                                                  nullptr);
 
     result = (g_strcmp0 (name, field_name) == 0);
 
@@ -131,7 +131,7 @@ namespace Net
     return g_key_file_get_uint64 (_key_file,
                                   "Header",
                                   "netid",
-                                  NULL);
+                                  nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ namespace Net
   void Message::SetPassPhrase256 (const gchar *passphrase256)
   {
     g_free (_passphrase256);
-    _passphrase256 = NULL;
+    _passphrase256 = nullptr;
 
     if (passphrase256)
     {
@@ -194,7 +194,7 @@ namespace Net
     return g_key_file_get_uint64 (_key_file,
                                   "Header",
                                   "fitness",
-                                  NULL);
+                                  nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -253,7 +253,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Message::Remove (const gchar *field)
   {
-    GError *error = NULL;
+    GError *error = nullptr;
 
     if (g_key_file_remove_key (_key_file,
                                "Body",
@@ -271,7 +271,7 @@ namespace Net
     return g_key_file_get_string (_key_file,
                                   "Body",
                                   field,
-                                  NULL);
+                                  nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -280,7 +280,7 @@ namespace Net
     return g_key_file_get_uint64 (_key_file,
                                   "Body",
                                   field,
-                                  NULL);
+                                  nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -291,7 +291,7 @@ namespace Net
                                                   "Body",
                                                   field,
                                                   length,
-                                                  NULL);
+                                                  nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -300,15 +300,15 @@ namespace Net
     return g_key_file_get_uint64 (_key_file,
                                   "Body",
                                   field,
-                                  NULL);
+                                  nullptr);
   }
 
   // --------------------------------------------------------------------------------
   gchar *Message::GetParcel ()
   {
     return g_key_file_to_data (_key_file,
-                               NULL,
-                               NULL);
+                               nullptr,
+                               nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -327,7 +327,7 @@ namespace Net
       gchar *field_name = g_key_file_get_string (_key_file,
                                                  "Header",
                                                  "name",
-                                                 NULL);
+                                                 nullptr);
 
       if (GetFitness ())
       {

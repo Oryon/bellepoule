@@ -21,16 +21,16 @@
 
 namespace Marshaller
 {
-  GList *Affinities::_titles     = NULL;
-  GData *Affinities::_colors     = NULL;
-  GData *Affinities::_validities = NULL;
+  GList *Affinities::_titles     = nullptr;
+  GData *Affinities::_colors     = nullptr;
+  GData *Affinities::_validities = nullptr;
 
   // --------------------------------------------------------------------------------
   Affinities::Affinities (Player *player)
     : Object ("Affinities")
   {
-    _checksums    = NULL;
-    _shareholders = NULL;
+    _checksums    = nullptr;
+    _shareholders = nullptr;
 
     {
       GList *current = g_list_last (_titles);
@@ -61,7 +61,7 @@ namespace Marshaller
   void Affinities::Manage (const gchar *title,
                            const gchar *color)
   {
-    if (_titles == NULL)
+    if (_titles == nullptr)
     {
       g_datalist_init (&_colors);
       g_datalist_init (&_validities);
@@ -103,7 +103,7 @@ namespace Marshaller
   {
     GList *current = _titles;
 
-    for (guint i = 0; current != NULL; i++)
+    for (guint i = 0; current != nullptr; i++)
     {
       if (of & 1<<i)
       {
@@ -112,7 +112,7 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -161,12 +161,12 @@ namespace Marshaller
         GList *current      = _checksums;
         GList *with_current = with->_checksums;
 
-        for (guint i = 0; current != NULL; i++)
+        for (guint i = 0; current != nullptr; i++)
         {
           if (current->data && (current->data == with_current->data))
           {
             if (g_datalist_get_data (&_validities,
-                                     (const gchar *) current_key->data) != 0)
+                                     (const gchar *) current_key->data) != nullptr)
             {
               kinship |= 1<<i;
             }
@@ -205,7 +205,7 @@ namespace Marshaller
 
       checksum[8] = 0;
       digest = g_ascii_strtoull (checksum,
-                                 NULL,
+                                 nullptr,
                                  16);
       g_free (checksum);
     }

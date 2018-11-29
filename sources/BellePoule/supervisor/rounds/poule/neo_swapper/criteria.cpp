@@ -52,11 +52,11 @@ namespace NeoSwapper
 
     _pool_count   = pool_count;
     _fencer_count = 0;
-    _fencer_list  = NULL;
+    _fencer_list  = nullptr;
 
     _score_table = g_new0 (guint, pool_count);
     _pool_table  = g_new0 (PoolProxy *, pool_count);
-    _errors      = NULL;
+    _errors      = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -175,8 +175,8 @@ namespace NeoSwapper
   // --------------------------------------------------------------------------------
   GList *Criteria::GetErrors (GList *errors)
   {
-    GList *own_errors          = NULL;
-    GList *over_populated_list = NULL;
+    GList *own_errors          = nullptr;
+    GList *over_populated_list = nullptr;
 
     for (guint i = 0; i < _pool_count; i++)
     {

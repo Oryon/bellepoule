@@ -31,9 +31,9 @@
 
 namespace Marshaller
 {
-  Timeline           *JobBoard::_timeline = NULL;
-  JobBoard::Listener *JobBoard::_listener = NULL;
-  GList              *JobBoard::_boards   = NULL;
+  Timeline           *JobBoard::_timeline = nullptr;
+  JobBoard::Listener *JobBoard::_listener = nullptr;
+  GList              *JobBoard::_boards   = nullptr;
 
   // --------------------------------------------------------------------------------
   JobBoard::JobBoard ()
@@ -41,10 +41,10 @@ namespace Marshaller
       Module ("job_board.glade")
   {
     _dialog          = _glade->GetWidget ("dialog");
-    _job_list        = NULL;
-    _current_job     = NULL;
-    _referee_details = NULL;
-    _fencer_details  = NULL;
+    _job_list        = nullptr;
+    _current_job     = nullptr;
+    _referee_details = nullptr;
+    _fencer_details  = nullptr;
 
     _take_off_button = _glade->GetWidget ("take_off_button");
     _move_button     = _glade->GetWidget ("move_button");
@@ -118,7 +118,7 @@ namespace Marshaller
     {
       Job *job = (Job *) _current_job->data;
 
-      job->SetListener (NULL);
+      job->SetListener (nullptr);
     }
   }
 
@@ -143,10 +143,10 @@ namespace Marshaller
                       (GFunc) ForgetJob,
                       this);
       g_list_free (_job_list);
-      _job_list = NULL;
+      _job_list = nullptr;
     }
 
-    _current_job = NULL;
+    _current_job = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -210,7 +210,7 @@ namespace Marshaller
       DisplayCurrent ();
 
       Raise (GTK_DIALOG (_dialog),
-             NULL);
+             nullptr);
     }
   }
 
@@ -270,13 +270,13 @@ namespace Marshaller
         {
           _referee_details->UnPlug ();
           _referee_details->Release ();
-          _referee_details = NULL;
+          _referee_details = nullptr;
         }
         if (_fencer_details)
         {
           _fencer_details->UnPlug ();
           _fencer_details->Release ();
-          _fencer_details = NULL;
+          _fencer_details = nullptr;
         }
       }
 
@@ -332,7 +332,7 @@ namespace Marshaller
           else
           {
             _referee_details = new JobDetails (this,
-                                               NULL,
+                                               nullptr,
                                                job,
                                                TRUE);
           }
@@ -405,10 +405,10 @@ namespace Marshaller
       GtkWidget *arrow;
 
       arrow = _glade->GetWidget ("previous_job");
-      gtk_widget_set_sensitive (arrow, g_list_previous (_current_job) != NULL);
+      gtk_widget_set_sensitive (arrow, g_list_previous (_current_job) != nullptr);
 
       arrow = _glade->GetWidget ("next_job");
-      gtk_widget_set_sensitive (arrow, g_list_next (_current_job) != NULL);
+      gtk_widget_set_sensitive (arrow, g_list_next (_current_job) != nullptr);
     }
   }
 

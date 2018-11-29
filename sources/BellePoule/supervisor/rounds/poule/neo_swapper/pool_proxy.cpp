@@ -34,7 +34,7 @@ namespace NeoSwapper
     _criteria_count = criteria_count;
 
     {
-      _fencer_list = NULL;
+      _fencer_list = nullptr;
       _size        = 0;
     }
   }
@@ -44,7 +44,7 @@ namespace NeoSwapper
   {
     g_list_foreach (_fencer_list,
                     (GFunc) Object::TryToRelease,
-                    NULL);
+                    nullptr);
     g_list_free (_fencer_list);
   }
 
@@ -101,13 +101,13 @@ namespace NeoSwapper
       current = g_list_next (current);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
   void PoolProxy::RemoveFencer (FencerProxy *fencer)
   {
-    fencer->_new_pool = NULL;
+    fencer->_new_pool = nullptr;
 
     _fencer_list = g_list_remove (_fencer_list,
                                   fencer);
@@ -130,7 +130,7 @@ namespace NeoSwapper
                                 guint  criteria_depth,
                                 GQuark criteria_quark)
   {
-    GList *errors  = NULL;
+    GList *errors  = nullptr;
     guint  found   = 0;
     GList *current = _fencer_list;
 
@@ -180,7 +180,7 @@ namespace NeoSwapper
       current = g_list_next (current);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------

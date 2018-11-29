@@ -54,7 +54,7 @@ Schedule::Schedule (Contest *contest,
   : Object ("Schedule"),
     Module ("schedule.glade", "schedule_notebook")
 {
-   _stage_list    = NULL;
+   _stage_list    = nullptr;
    _current_stage = 0;
    _contest       = contest;
    _advertisers   = advertisers;
@@ -128,7 +128,7 @@ Stage *Schedule::CreateStage (const gchar *class_name)
 
       if (module)
       {
-        module->AddSensitiveWidget (GTK_WIDGET (_contest->GetPtrData (NULL,
+        module->AddSensitiveWidget (GTK_WIDGET (_contest->GetPtrData (nullptr,
                                                                       "SensitiveWidgetForCheckinStage")));
       }
     }
@@ -153,7 +153,7 @@ gboolean Schedule::IsOver ()
     return FALSE;
   }
 
-  return dynamic_cast <People::GeneralClassification *> (GetStage (_current_stage)) != NULL;
+  return dynamic_cast <People::GeneralClassification *> (GetStage (_current_stage)) != nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -214,7 +214,7 @@ void Schedule::GiveName (Stage *stage)
 // --------------------------------------------------------------------------------
 void Schedule::CreateDefault (gboolean without_pools)
 {
-  if (_stage_list == NULL)
+  if (_stage_list == nullptr)
   {
     Stage *stage;
 
@@ -374,7 +374,7 @@ Module *Schedule::GetSelectedModule  ()
   GtkTreeIter       filter_iter;
 
   if (gtk_tree_selection_get_selected (selection,
-                                       NULL,
+                                       nullptr,
                                        &filter_iter))
   {
     Stage       *stage;
@@ -391,14 +391,14 @@ Module *Schedule::GetSelectedModule  ()
     return dynamic_cast <Module *> (stage);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
 void Schedule::AddStage (Stage *stage,
                          Stage *after)
 {
-  if ((after == NULL) && _stage_list)
+  if ((after == nullptr) && _stage_list)
   {
     after = (Stage *) (g_list_last (_stage_list)->data);
   }
@@ -430,7 +430,7 @@ void Schedule::GiveStagesAnId ()
 {
   GList *current = _stage_list;
 
-  for (guint i = 0; current != NULL; i++)
+  for (guint i = 0; current != nullptr; i++)
   {
     Stage *stage = (Stage *) current->data;
 
@@ -444,7 +444,7 @@ void Schedule::GiveStagesAnId ()
 void Schedule::InsertStage (Stage *stage,
                             Stage *after)
 {
-  if ((stage == NULL) || g_list_find (_stage_list, stage))
+  if ((stage == nullptr) || g_list_find (_stage_list, stage))
   {
     return;
   }
@@ -454,9 +454,9 @@ void Schedule::InsertStage (Stage *stage,
 
     // Insert it in the global list
     {
-      Stage *next = NULL;
+      Stage *next = nullptr;
 
-      if (_stage_list == NULL)
+      if (_stage_list == nullptr)
       {
         _stage_list = g_list_append (_stage_list,
                                      stage);
@@ -465,7 +465,7 @@ void Schedule::InsertStage (Stage *stage,
       {
         guint index;
 
-        if (after == NULL)
+        if (after == nullptr)
         {
           after = (Stage *) g_list_nth_data (_stage_list,
                                              0);
@@ -561,7 +561,7 @@ void Schedule::RemoveStage (Stage *stage)
 
       if (next_stage)
       {
-        Stage *previous_stage = NULL;
+        Stage *previous_stage = nullptr;
         GList *previous       = g_list_previous (current);
 
         if (previous)
@@ -569,7 +569,7 @@ void Schedule::RemoveStage (Stage *stage)
           previous_stage = (Stage *) (g_list_previous (current)->data);
         }
         next_stage->SetPrevious (previous_stage);
-        stage->SetPrevious (NULL);
+        stage->SetPrevious (nullptr);
       }
     }
 
@@ -742,7 +742,7 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
       {
         Stage *stage = (Stage *) current->data;
 
-        if (stage->GetInputProvider () == NULL)
+        if (stage->GetInputProvider () == nullptr)
         {
           Stage::StageClass *stage_class = stage->GetClass ();
 
@@ -774,7 +774,7 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
 
             goo_canvas_render (canvas,
                                gtk_print_context_get_cairo_context (context),
-                               NULL,
+                               nullptr,
                                1.0);
             gtk_widget_destroy (GTK_WIDGET (canvas));
           }
@@ -802,7 +802,7 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
         g_object_get_property (G_OBJECT (operation), "export-filename", &gvalue);
 
         // Do not print QRCode in PDF
-        if (g_value_get_string (&gvalue) == NULL)
+        if (g_value_get_string (&gvalue) == nullptr)
         {
           FlashCode *flash = _contest->GetFlashCode ();
 
@@ -851,7 +851,7 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
 
             goo_canvas_render (canvas,
                                gtk_print_context_get_cairo_context (context),
-                               NULL,
+                               nullptr,
                                1.0);
             gtk_widget_destroy (GTK_WIDGET (canvas));
           }
@@ -893,7 +893,7 @@ void Schedule::SavePeoples (XmlScheme       *xml_scheme,
     checkin->SaveList (xml_scheme, "Fencer");
     checkin->SaveList (xml_scheme, "Team");
 
-    referees->SaveList (xml_scheme, NULL);
+    referees->SaveList (xml_scheme, nullptr);
   }
 }
 
@@ -927,7 +927,7 @@ void Schedule::DumpToHTML (FILE *file)
     {
       Stage *stage = (Stage *) current->data;
 
-      if (stage->GetInputProviderClient () == NULL)
+      if (stage->GetInputProviderClient () == nullptr)
       {
         Stage::StageClass *stage_class = stage->GetClass ();
 
@@ -948,11 +948,11 @@ void Schedule::DumpToHTML (FILE *file)
   {
     GList *current = _stage_list;
 
-    for (guint i = 0; current != NULL; i++)
+    for (guint i = 0; current != nullptr; i++)
     {
       Stage *stage = (Stage *) current->data;
 
-      if (stage->GetInputProviderClient () == NULL)
+      if (stage->GetInputProviderClient () == nullptr)
       {
         Stage::StageClass *stage_class = stage->GetClass ();
         Module            *module      = (Module *) dynamic_cast <Module *> (stage);
@@ -1099,7 +1099,7 @@ void Schedule::Load (xmlDoc               *doc,
     // tools than BellePoule
     if (nb_stage > 0)
     {
-      if (dynamic_cast <People::GeneralClassification *> (GetStage (nb_stage-1)) == NULL)
+      if (dynamic_cast <People::GeneralClassification *> (GetStage (nb_stage-1)) == nullptr)
       {
         Stage *stage;
 
@@ -1355,7 +1355,7 @@ gboolean Schedule::on_new_stage_selected (GtkWidget      *widget,
   gchar *class_name = (gchar *) g_object_get_data (G_OBJECT (widget),
                                                    "Schedule::class_name");
   Stage *stage = owner->CreateStage (class_name);
-  Stage *after = NULL;
+  Stage *after = nullptr;
 
   {
     GtkWidget        *treeview  = owner->_glade->GetWidget ("formula_treeview");
@@ -1363,7 +1363,7 @@ gboolean Schedule::on_new_stage_selected (GtkWidget      *widget,
     GtkTreeIter       filter_iter;
 
     if (gtk_tree_selection_get_selected (selection,
-                                         NULL,
+                                         nullptr,
                                          &filter_iter))
     {
       GtkTreeIter iter;
@@ -1588,7 +1588,7 @@ void Schedule::on_next_stage_toolbutton_clicked ()
 void Schedule::PlugStage (Stage *stage)
 {
   Module    *module   = (Module *) dynamic_cast <Module *> (stage);
-  GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
+  GtkWidget *viewport = gtk_viewport_new (nullptr, nullptr);
   gchar     *name     = stage->GetFullName ();
 
   stage->SetData (this, "viewport_stage",
@@ -1601,7 +1601,7 @@ void Schedule::PlugStage (Stage *stage)
   {
     Stage *previous = stage->GetInputProvider ();
 
-    if (previous == NULL)
+    if (previous == nullptr)
     {
       previous = stage->GetPreviousStage ();
     }
@@ -1636,7 +1636,7 @@ void Schedule::on_stage_removed ()
     GtkTreeIter       filter_iter;
 
     if (gtk_tree_selection_get_selected (selection,
-                                         NULL,
+                                         nullptr,
                                          &filter_iter))
     {
       Stage             *stage;
@@ -1679,17 +1679,17 @@ void Schedule::on_stage_removed ()
 
     // Select the last item if the focus is lost
     if (gtk_tree_selection_get_selected (selection,
-                                         NULL,
+                                         nullptr,
                                          &filter_iter) == FALSE)
     {
       guint n = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (_list_store_filter),
-                                                NULL);
+                                                nullptr);
 
       if (n)
       {
         gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_list_store_filter),
                                        &filter_iter,
-                                       NULL,
+                                       nullptr,
                                        n-1);
         gtk_tree_selection_select_iter (selection,
                                         &filter_iter);
@@ -1725,7 +1725,7 @@ void Schedule::StopBookPrint (GtkPrintOperation *operation,
   _book->Stop (operation,
                context);
   _book->Release ();
-  _book = NULL;
+  _book = nullptr;
 
 }
 

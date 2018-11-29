@@ -22,23 +22,23 @@
 XmlScheme::XmlScheme (const gchar *filename)
   : Object ("XmlScheme")
 {
-  _elements = NULL;
+  _elements = nullptr;
 
   _xml_writer = xmlNewTextWriterFilename (filename,
                                           0);
   xmlTextWriterSetIndent (_xml_writer,
                           TRUE);
   xmlTextWriterStartDocument (_xml_writer,
-                              NULL,
+                              nullptr,
                               "UTF-8",
-                              NULL);
+                              nullptr);
 }
 
 // --------------------------------------------------------------------------------
 XmlScheme::XmlScheme (xmlBuffer *xml_buffer)
   : Object ("XmlScheme")
 {
-  _elements = NULL;
+  _elements = nullptr;
 
   _xml_writer = xmlNewTextWriterMemory (xml_buffer,
                                         0);
@@ -64,7 +64,7 @@ const gchar *XmlScheme::GetCurrentElement ()
     return (const gchar *) _elements->data;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -84,8 +84,8 @@ void XmlScheme::StartDTD (const gchar *name)
 {
   xmlTextWriterStartDTD (_xml_writer,
                          BAD_CAST name,
-                         NULL,
-                         NULL);
+                         nullptr,
+                         nullptr);
 }
 
 // --------------------------------------------------------------------------------

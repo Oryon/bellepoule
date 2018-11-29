@@ -29,7 +29,7 @@ namespace Net
                             const gchar *ip_address,
                             guint        port,
                             const gchar *key)
-    : FlashCode (NULL)
+    : FlashCode (nullptr)
   {
     _name = g_strdup (name);
     _ip   = g_strdup (ip_address);

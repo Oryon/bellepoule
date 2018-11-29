@@ -69,8 +69,8 @@ namespace Pool
   const gchar *Allocator::_class_name     = N_ ("Pools arrangement");
   const gchar *Allocator::_xml_class_name = "";
 
-  GdkPixbuf *Allocator::_warning_pixbuf = NULL;
-  GdkPixbuf *Allocator::_moved_pixbuf   = NULL;
+  GdkPixbuf *Allocator::_warning_pixbuf = nullptr;
+  GdkPixbuf *Allocator::_moved_pixbuf   = nullptr;
 
   // --------------------------------------------------------------------------------
   Allocator::Allocator (StageClass *stage_class)
@@ -81,10 +81,10 @@ namespace Pool
     Disclose ("BellePoule::Batch");
 
     _has_marshaller         = FALSE;
-    _config_list            = NULL;
-    _selected_config        = NULL;
-    _main_table             = NULL;
-    _swapping_criteria_list = NULL;
+    _config_list            = nullptr;
+    _selected_config        = nullptr;
+    _main_table             = nullptr;
+    _swapping_criteria_list = nullptr;
     _loaded                 = FALSE;
 
     _max_score = new Data ("ScoreMax",
@@ -94,7 +94,7 @@ namespace Pool
                                   TRUE);
 
     _swapping = new Data ("Decalage",
-                          (gchar *) NULL);
+                          (gchar *) nullptr);
 
     _combobox_store = GTK_LIST_STORE (_glade->GetGObject ("combo_liststore"));
 
@@ -249,7 +249,7 @@ namespace Pool
                 && (attr_desc->_uniqueness == AttributeDesc::NOT_SINGULAR))
             {
               if (g_slist_find (swappables,
-                                current->data) == NULL)
+                                current->data) == nullptr)
               {
                 gtk_list_store_append (swapping_store, &iter);
                 gtk_list_store_set (swapping_store, &iter,
@@ -320,7 +320,7 @@ namespace Pool
       _warning_pixbuf = gtk_widget_render_icon (image,
                                                 GTK_STOCK_DIALOG_WARNING,
                                                 GTK_ICON_SIZE_BUTTON,
-                                                NULL);
+                                                nullptr);
       g_object_unref (image);
 
       image = gtk_image_new ();
@@ -328,7 +328,7 @@ namespace Pool
       _moved_pixbuf = gtk_widget_render_icon (image,
                                               GTK_STOCK_REFRESH,
                                               GTK_ICON_SIZE_BUTTON,
-                                              NULL);
+                                              nullptr);
       g_object_unref (image);
     }
   }
@@ -493,8 +493,8 @@ namespace Pool
                               DropZone *target_zone)
   {
     Player   *floating_object  = (Player *) object;
-    PoolZone *source_pool_zone = NULL;
-    PoolZone *target_pool_zone = NULL;
+    PoolZone *source_pool_zone = nullptr;
+    PoolZone *target_pool_zone = nullptr;
 
     if (target_zone)
     {
@@ -557,7 +557,7 @@ namespace Pool
         {
           Pool *pool = GetPool (0);
 
-          return pool->GetRefereeList () != NULL;
+          return pool->GetRefereeList () != nullptr;
         }
         return FALSE;
       }
@@ -574,7 +574,7 @@ namespace Pool
     if (floating_object)
     {
       Player *player        = (Player *) floating_object;
-      GList  *layout_list = NULL;
+      GList  *layout_list = nullptr;
 
       if (_filter)
       {
@@ -682,7 +682,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::Garnish ()
   {
-    if (_drop_zones == NULL)
+    if (_drop_zones == nullptr)
     {
       Setup ();
 
@@ -738,7 +738,7 @@ namespace Pool
             _swapping_sensitivity_trigger->SwitchOff ();
 
             g_slist_free (_swapping_criteria_list);
-            _swapping_criteria_list = NULL;
+            _swapping_criteria_list = nullptr;
 
             {
               GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("regular_swapping_hbox"));
@@ -855,7 +855,7 @@ namespace Pool
           GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("regular_swapping_hbox"));
           GList        *siblings      = gtk_container_get_children (swapping_hbox);
 
-          for (guint i = 0; tokens[i] != NULL; i++)
+          for (guint i = 0; tokens[i] != nullptr; i++)
           {
             if (*tokens[i] != '\0')
             {
@@ -948,13 +948,13 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::Load (xmlNode *xml_node)
   {
-    static Pool     *current_pool     = NULL;
-    static PoolZone *current_zone     = NULL;
+    static Pool     *current_pool     = nullptr;
+    static PoolZone *current_zone     = nullptr;
     static guint     nb_pool          = 0;
     Stage           *next_stage       = GetNextStage ();
     StageClass      *next_stage_class = next_stage->GetClass ();
 
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
@@ -976,7 +976,7 @@ namespace Pool
         }
         else if (g_strcmp0 ((char *) n->name, "Poule") == 0)
         {
-          if (_config_list == NULL)
+          if (_config_list == nullptr)
           {
             // Get the configuration
             {
@@ -1018,7 +1018,7 @@ namespace Pool
         }
         else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
-          if (current_pool == NULL)
+          if (current_pool == nullptr)
           {
             LoadAttendees (n);
           }
@@ -1061,12 +1061,12 @@ namespace Pool
           current_pool->CreateMatchs (_swapping_criteria_list);
           current_pool->Load (n,
                               GetShortList ());
-          current_pool = NULL;
+          current_pool = nullptr;
           return;
         }
         else
         {
-          current_pool = NULL;
+          current_pool = nullptr;
 
           _swapper->Configure (_drop_zones,
                                _swapping_criteria_list);
@@ -1164,7 +1164,7 @@ namespace Pool
         _best_config = config;
       }
 
-      config = NULL;
+      config = nullptr;
     }
   }
 
@@ -1175,7 +1175,7 @@ namespace Pool
 
     {
       guint           nb_players    = g_slist_length (GetShortList ());
-      Configuration  *config        = NULL;
+      Configuration  *config        = nullptr;
       guint           max_pool_size = Dispatcher::_MAX_POOL_SIZE;
 
       if (nb_players % Dispatcher::_MAX_POOL_SIZE)
@@ -1183,7 +1183,7 @@ namespace Pool
         max_pool_size = Dispatcher::_MAX_POOL_SIZE -1;
       }
 
-      _best_config = NULL;
+      _best_config = nullptr;
       for (guint size = 2; size <= MIN (max_pool_size, nb_players); size++)
       {
         if (nb_players%size == 0)
@@ -1224,7 +1224,7 @@ namespace Pool
 
       if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_combobox_store),
                                          &iter,
-                                         NULL,
+                                         nullptr,
                                          best_index))
       {
         gtk_list_store_set (_combobox_store, &iter,
@@ -1363,7 +1363,7 @@ namespace Pool
     {
       gtk_widget_modify_bg (_glade->GetWidget ("swapping_box"),
                             GTK_STATE_NORMAL,
-                            NULL);
+                            nullptr);
     }
 
 
@@ -1533,14 +1533,14 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::FillPoolTable (PoolZone *zone)
   {
-    if ((zone == NULL) || (_main_table == NULL))
+    if ((zone == nullptr) || (_main_table == nullptr))
     {
       return;
     }
 
     GooCanvasItem *item;
     GooCanvasItem *table       = (GooCanvasItem *) zone->GetPtrData (this, "table");
-    GList         *layout_list = NULL;
+    GList         *layout_list = nullptr;
     Pool          *pool        = zone->GetPool ();
 
     if (_filter)
@@ -1584,7 +1584,7 @@ namespace Pool
         else
         {
           icon_name = g_strdup (GTK_STOCK_DIALOG_ERROR);
-          pool->SetData (this, "is_balanced", 0);
+          pool->SetData (this, "is_balanced", nullptr);
         }
 
         Canvas::PutStockIconInTable (header_table,
@@ -1749,9 +1749,9 @@ namespace Pool
     {
       if (player->Is ("Referee"))
       {
-        static gchar  *referee_icon = NULL;
+        static gchar  *referee_icon = nullptr;
 
-        if (referee_icon == NULL)
+        if (referee_icon == nullptr)
         {
           referee_icon = g_build_filename (Global::_share_dir, "resources/glade/images/referee.png", NULL);
         }
@@ -1793,9 +1793,9 @@ namespace Pool
 
         if (player->GetUIntData (this, "injected"))
         {
-          static gchar  *injected_icon = NULL;
+          static gchar  *injected_icon = nullptr;
 
-          if (injected_icon == NULL)
+          if (injected_icon == nullptr)
           {
             injected_icon = g_build_filename (Global::_share_dir, "resources/glade/images/plus.png", NULL);
           }
@@ -1805,7 +1805,7 @@ namespace Pool
         }
       }
 
-      for (guint i = 0; layout_list != NULL; i++)
+      for (guint i = 0; layout_list != nullptr; i++)
       {
         GooCanvasItem        *item;
         Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;
@@ -1816,10 +1816,10 @@ namespace Pool
         attr = player->GetAttribute (attr_id);
         attr_id->Release ();
 
-        item = NULL;
+        item = nullptr;
         if (attr)
         {
-          GdkPixbuf *pixbuf = NULL;
+          GdkPixbuf *pixbuf = nullptr;
 
           if (attr_layout->_look == AttributeDesc::GRAPHICAL)
           {
@@ -1846,7 +1846,7 @@ namespace Pool
           }
         }
 
-        if (item == NULL)
+        if (item == nullptr)
         {
           item = Canvas::PutTextInTable (table,
                                          " ",
@@ -1897,11 +1897,11 @@ namespace Pool
       }
 
       g_slist_free (_drop_zones);
-      _drop_zones = NULL;
+      _drop_zones = nullptr;
     }
 
     CanvasModule::Wipe ();
-    _main_table = NULL;
+    _main_table = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -1936,8 +1936,8 @@ namespace Pool
     {
       g_slist_free_full (_config_list,
                          (GDestroyNotify) g_free);
-      _config_list     = NULL;
-      _selected_config = NULL;
+      _config_list     = nullptr;
+      _selected_config = nullptr;
     }
   }
 
@@ -1955,7 +1955,7 @@ namespace Pool
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -2000,16 +2000,16 @@ namespace Pool
       if (_has_marshaller)
       {
         if (   (pool->GetPiste ()       == 0)
-            || (pool->GetRefereeList () == NULL))
+            || (pool->GetRefereeList () == nullptr))
         {
           return new Error (Error::LEVEL_WARNING,
-                            NULL,
+                            nullptr,
                             gettext ("Referees allocation \n ongoing"));
         }
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -2108,7 +2108,7 @@ namespace Pool
 
       goo_canvas_render (canvas,
                          gtk_print_context_get_cairo_context (context),
-                         NULL,
+                         nullptr,
                          1.0);
 
       gtk_widget_destroy (GTK_WIDGET (canvas));
@@ -2236,7 +2236,7 @@ namespace Pool
       return zone->GetPool ();
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -2418,7 +2418,7 @@ namespace Pool
         Pool *pool = GetPoolOf (current);
 
         if (   (pool->GetPiste ()       == 0)
-            || (pool->GetRefereeList () == NULL))
+            || (pool->GetRefereeList () == nullptr))
         {
           GtkWidget *dialog = _glade->GetWidget ("roadmap_alert_dialog");
           gboolean   response;
@@ -2506,7 +2506,7 @@ namespace Pool
       GString   *string   = g_string_new ("/");
 
       g_slist_free (allocator->_swapping_criteria_list);
-      allocator->_swapping_criteria_list = NULL;
+      allocator->_swapping_criteria_list = nullptr;
 
       // Regular swapping
       while (siblings)
@@ -2645,7 +2645,7 @@ namespace Pool
       Setup ();
       SelectConfig (from->GetNbPools ());
 
-      if (_selected_config == NULL)
+      if (_selected_config == nullptr)
       {
         return FALSE;
       }

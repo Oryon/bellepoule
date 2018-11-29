@@ -53,8 +53,8 @@ Tournament::Tournament ()
   : Object ("Tournament"),
     Module ("tournament.glade")
 {
-  _contest_list = NULL;
-  _advertisers  = NULL;
+  _contest_list = nullptr;
+  _advertisers  = nullptr;
 
   {
     Net::Advertiser *twitter = new Net::Twitter ();
@@ -137,9 +137,9 @@ void Tournament::Start (gchar *filename)
   {
     gchar *utf8_name = g_locale_to_utf8 (filename,
                                          -1,
-                                         NULL,
-                                         NULL,
-                                         NULL);
+                                         nullptr,
+                                         nullptr,
+                                         nullptr);
 
     OpenUriContest (utf8_name);
     g_free (utf8_name);
@@ -151,7 +151,7 @@ void Tournament::Start (gchar *filename)
     gchar *last_backup = g_key_file_get_string (Global::_user_config->_key_file,
                                                 "Tournament",
                                                 "backup_location",
-                                                NULL);
+                                                nullptr);
     SetBackupLocation (last_backup);
     g_free (last_backup);
   }
@@ -162,15 +162,15 @@ void Tournament::Start (gchar *filename)
 
     gtk_drag_dest_set (main_window,
                        GTK_DEST_DEFAULT_ALL,
-                       NULL,
+                       nullptr,
                        0,
                        GDK_ACTION_COPY);
 
     target_list = gtk_drag_dest_get_target_list (main_window);
 
-    if (target_list == NULL)
+    if (target_list == nullptr)
     {
-      target_list = gtk_target_list_new (NULL, 0);
+      target_list = gtk_target_list_new (nullptr, 0);
       gtk_drag_dest_set_target_list (main_window, target_list);
       gtk_target_list_unref (target_list);
     }
@@ -183,7 +183,7 @@ void Tournament::Start (gchar *filename)
 // --------------------------------------------------------------------------------
 const gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
 {
-  gchar *key = NULL;
+  gchar *key = nullptr;
 
   if (authentication_scheme)
   {
@@ -381,7 +381,7 @@ gboolean Tournament::OnMessage (Net::Message *message)
             {
               if (tokens[2] && (g_strcmp0 (tokens[2], "Competition") == 0))
               {
-                guint    competition_id = g_ascii_strtoull (tokens[3], NULL, 0);
+                guint    competition_id = g_ascii_strtoull (tokens[3], nullptr, 0);
                 Contest *contest        = GetContest (competition_id);
 
                 if (contest)
@@ -462,7 +462,7 @@ Contest *Tournament::GetContest (guint netid)
     current = g_list_next (current);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -482,7 +482,7 @@ Contest *Tournament::GetContest (const gchar *filename)
     current = g_list_next (current);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -494,14 +494,14 @@ void Tournament::OnNew ()
   contest->AskForSettings ();
 
   Plug (contest,
-        NULL);
+        nullptr);
 }
 
 // --------------------------------------------------------------------------------
 void Tournament::OnOpen (gchar *current_folder)
 {
   GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a competion file to open... "),
-                                                    NULL,
+                                                    nullptr,
                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
                                                     GTK_STOCK_CANCEL,
                                                     GTK_RESPONSE_CANCEL,
@@ -548,7 +548,7 @@ void Tournament::OnOpen (gchar *current_folder)
     gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                  "Competiton",
                                                  "default_dir_name",
-                                                 NULL);
+                                                 nullptr);
     if (last_dirname && (g_file_test (last_dirname,
                                       G_FILE_TEST_IS_DIR)))
     {
@@ -602,7 +602,7 @@ void Tournament::OnOpenTemplate ()
 
       if (desc->MatchCriteria ("CSV ready"))
       {
-        GError      *error         = NULL;
+        GError      *error         = nullptr;
         const gchar *to_codeset;
         gchar       *locale_string;
 
@@ -612,8 +612,8 @@ void Tournament::OnOpenTemplate ()
                                                  to_codeset,
                                                  "UTF-8",
                                                  desc->_code_name,
-                                                 NULL,
-                                                 NULL,
+                                                 nullptr,
+                                                 nullptr,
                                                  &error);
         if (error)
         {
@@ -636,7 +636,7 @@ void Tournament::OnOpenTemplate ()
   if (g_file_set_contents (filename,
                            contents->str,
                            -1,
-                           NULL))
+                           nullptr))
   {
     gchar *uri;
 
@@ -655,12 +655,12 @@ void Tournament::OnOpenTemplate ()
                   SW_SHOWNORMAL);
 #else
     uri = g_filename_to_uri (filename,
-                             NULL,
-                             NULL);
-    gtk_show_uri (NULL,
+                             nullptr,
+                             nullptr);
+    gtk_show_uri (nullptr,
                   uri,
                   GDK_CURRENT_TIME,
-                  NULL);
+                  nullptr);
 #endif
 
     g_free (uri);
@@ -701,7 +701,7 @@ void Tournament::OpenUriContest (const gchar *uri)
         Contest                *contest = new Contest (_advertisers);
 
         Plug (contest,
-              NULL);
+              nullptr);
 
         contest->LoadAskFred (event,
                               dirname);
@@ -716,7 +716,7 @@ void Tournament::OpenUriContest (const gchar *uri)
       {
         GtkWidget *dialog;
 
-        dialog = gtk_message_dialog_new (NULL,
+        dialog = gtk_message_dialog_new (nullptr,
                                          GTK_DIALOG_DESTROY_WITH_PARENT,
                                          GTK_MESSAGE_INFO,
                                          GTK_BUTTONS_OK,
@@ -731,11 +731,11 @@ void Tournament::OpenUriContest (const gchar *uri)
     }
     else
     {
-      static const gchar *contest_suffix_table[] = {".cotcot", ".COTCOT", ".xml", ".XML", NULL};
-      static const gchar *people_suffix_table[]  = {".fff", ".FFF", ".csv", ".CSV", ".txt", ".TXT", NULL};
-      Contest            *contest = NULL;
+      static const gchar *contest_suffix_table[] = {".cotcot", ".COTCOT", ".xml", ".XML", nullptr};
+      static const gchar *people_suffix_table[]  = {".fff", ".FFF", ".csv", ".CSV", ".txt", ".TXT", nullptr};
+      Contest            *contest = nullptr;
 
-      for (guint i = 0; contest_suffix_table[i] != NULL; i++)
+      for (guint i = 0; contest_suffix_table[i] != nullptr; i++)
       {
         if (g_str_has_suffix (uri,
                               contest_suffix_table[i]))
@@ -746,13 +746,13 @@ void Tournament::OpenUriContest (const gchar *uri)
 
           Manage (contest);
           Plug (contest,
-                NULL);
+                nullptr);
 
           break;
         }
       }
 
-      for (guint i = 0; people_suffix_table[i] != NULL; i++)
+      for (guint i = 0; people_suffix_table[i] != nullptr; i++)
       {
         if (g_str_has_suffix (uri,
                               people_suffix_table[i]))
@@ -764,7 +764,7 @@ void Tournament::OpenUriContest (const gchar *uri)
           Manage (contest);
           contest->AskForSettings ();
           Plug (contest,
-                NULL);
+                nullptr);
 
           break;
         }
@@ -801,8 +801,8 @@ gboolean Tournament::RecentFileExists (const GtkRecentFilterInfo *filter_info,
   if (filter_info->contains & GTK_RECENT_FILTER_URI)
   {
     gchar *filename = g_filename_from_uri (filter_info->uri,
-                                           NULL,
-                                           NULL);
+                                           nullptr,
+                                           nullptr);
 
     if (filename && g_str_has_suffix (filename, ".cotcot"))
     {
@@ -821,7 +821,7 @@ gboolean Tournament::RecentFileExists (const GtkRecentFilterInfo *filter_info,
 void Tournament::OnRecent ()
 {
   GtkWidget *dialog = gtk_recent_chooser_dialog_new (gettext ("Recently opened files"),
-                                                     NULL,
+                                                     nullptr,
                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                      GTK_STOCK_OPEN,   GTK_RESPONSE_ACCEPT,
                                                      NULL);
@@ -838,7 +838,7 @@ void Tournament::OnRecent ()
                                   (GtkRecentFilterFlags) (GTK_RECENT_FILTER_URI|GTK_RECENT_FILTER_DISPLAY_NAME),
                                   (GtkRecentFilterFunc) RecentFileExists,
                                   this,
-                                  NULL);
+                                  nullptr);
 
     gtk_recent_filter_set_name (filter,
                                 gettext ("BellePoule files"));
@@ -889,7 +889,7 @@ void Tournament::OnMenuDialog (const gchar *dialog)
 void Tournament::OnBackupfileLocation ()
 {
   GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a backup files location..."),
-                                                                NULL,
+                                                                nullptr,
                                                                 GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
                                                                 GTK_STOCK_CANCEL,
                                                                 GTK_RESPONSE_CANCEL,
@@ -901,7 +901,7 @@ void Tournament::OnBackupfileLocation ()
     gchar *last_location = g_key_file_get_string (Global::_user_config->_key_file,
                                                   "Tournament",
                                                   "backup_location",
-                                                  NULL);
+                                                  nullptr);
     if (last_location)
     {
       gtk_file_chooser_select_uri (GTK_FILE_CHOOSER (chooser),
@@ -935,8 +935,8 @@ void Tournament::SetBackupLocation (gchar *location)
   if (location)
   {
     gchar *readable_name = g_filename_from_uri (location,
-                                                NULL,
-                                                NULL);
+                                                nullptr,
+                                                nullptr);
 
     gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("backup_location_menuitem")),
                              readable_name);
@@ -956,13 +956,13 @@ const gchar *Tournament::GetBackupLocation ()
       return location;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
 void Tournament::OnActivateBackup ()
 {
-  if (GetBackupLocation () == NULL)
+  if (GetBackupLocation () == nullptr)
   {
     OnBackupfileLocation ();
   }
@@ -1103,11 +1103,11 @@ extern "C" G_MODULE_EXPORT void on_root_drag_data_received (GtkWidget        *wi
   {
     gchar **uris = g_uri_list_extract_uris ((gchar *) gtk_selection_data_get_data (selection_data));
 
-    for (guint i = 0; uris[i] != NULL; i++)
+    for (guint i = 0; uris[i] != nullptr; i++)
     {
       gchar *filename = g_filename_from_uri (uris[i],
-                                             NULL,
-                                             NULL);
+                                             nullptr,
+                                             nullptr);
 
       t->OpenUriContest (filename);
       g_free (filename);

@@ -45,7 +45,7 @@ namespace Net
   void Body::Clear ()
   {
     g_free (_content);
-    _content        = NULL;
+    _content        = nullptr;
     _size           = 0;
     _size_processed = 0;
   }
@@ -220,7 +220,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   const gchar *Uploader::GetUrl ()
   {
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------

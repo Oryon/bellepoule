@@ -31,8 +31,8 @@ namespace Pool
   {
     _pool_size     = 0;
     _name          = g_strdup (name);
-    _opponent_list = NULL;
-    _pair_list     = NULL;
+    _opponent_list = nullptr;
+    _pair_list     = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -42,13 +42,13 @@ namespace Pool
   {
     _pool_size     = pool_size;
     _name          = g_strdup (name);
-    _opponent_list = NULL;
-    _pair_list     = NULL;
+    _opponent_list = nullptr;
+    _pair_list     = nullptr;
 
     for (guint i = 0; i < pool_size; i++)
     {
       _opponent_list = g_list_append (_opponent_list,
-                                      new Opponent (i+1, NULL));
+                                      new Opponent (i+1, nullptr));
     }
 
     {
@@ -102,18 +102,18 @@ namespace Pool
   {
     guint biggest_team_size = 0;
 
-    GHashTable *affinity_distribution = g_hash_table_new (NULL,
-                                                          NULL);
+    GHashTable *affinity_distribution = g_hash_table_new (nullptr,
+                                                          nullptr);
 
     Reset ();
 
     _pool_size = g_slist_length (fencer_list);
 
     {
-      Player::AttributeId *affinity = Player::AttributeId::Create (affinity_criteria, NULL);
+      Player::AttributeId *affinity = Player::AttributeId::Create (affinity_criteria, nullptr);
       GSList              *current  = fencer_list;
 
-      for (guint i = 0; current != NULL; i++)
+      for (guint i = 0; current != nullptr; i++)
       {
         Fencer   *fencer   = (Fencer *) current->data;
         Opponent *opponent = new Opponent (i+1, fencer);
@@ -249,7 +249,7 @@ namespace Pool
 
       pair->ResetFitness ();
 
-      for (guint i = 0; previous != NULL; i++)
+      for (guint i = 0; previous != nullptr; i++)
       {
         Pair *previous_pair = (Pair *) previous->data;
 

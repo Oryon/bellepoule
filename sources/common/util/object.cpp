@@ -21,8 +21,8 @@
 
 #ifdef DEBUG
 guint        Object::_nb_objects     = 0;
-GList       *Object::_list           = NULL;
-const gchar *Object::_klass_to_track = NULL;
+GList       *Object::_list           = nullptr;
+const gchar *Object::_klass_to_track = nullptr;
 
 struct ClassStatus
 {
@@ -42,10 +42,10 @@ Object::Object (const gchar *class_name)
   g_datalist_init (&_datalist);
   _ref_count = 1;
 
-  _flash_code       = NULL;
-  _parcel           = NULL;
-  _concealed_parcel = NULL;
-  _listener_list    = NULL;
+  _flash_code       = nullptr;
+  _parcel           = nullptr;
+  _concealed_parcel = nullptr;
+  _listener_list    = nullptr;
 
   _class_name = class_name;
 
@@ -152,7 +152,7 @@ const gchar *Object::GetKlassName ()
 // --------------------------------------------------------------------------------
 gchar *Object::GetUndivadableText (const gchar *text)
 {
-  guint8 *result = NULL;
+  guint8 *result = nullptr;
 
   if (text)
   {
@@ -314,7 +314,7 @@ void Object::RemoveAllData ()
   if (_datalist)
   {
     g_datalist_clear (&_datalist);
-    _datalist = NULL;
+    _datalist = nullptr;
   }
 }
 
@@ -351,7 +351,7 @@ gint Object::GetIntData (Object      *owner,
 // --------------------------------------------------------------------------------
 Net::Message *Object::Disclose (const gchar *as)
 {
-  if (_parcel == NULL)
+  if (_parcel == nullptr)
   {
     if (_concealed_parcel)
     {
@@ -370,7 +370,7 @@ Net::Message *Object::Disclose (const gchar *as)
 void Object::Conceal ()
 {
   _concealed_parcel = _parcel;
-  _parcel           = NULL;
+  _parcel           = nullptr;
 }
 
 // --------------------------------------------------------------------------------

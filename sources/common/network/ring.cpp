@@ -37,7 +37,7 @@ namespace Net
 {
   const gchar *Ring::SECRET = "tagada soinsoin";
 
-  Ring *Ring::_broker = NULL;
+  Ring *Ring::_broker = nullptr;
 
   // --------------------------------------------------------------------------------
   Ring::Ring (Role       role,
@@ -45,15 +45,15 @@ namespace Net
               GtkWidget *partner_indicator)
     : Object ("Ring")
   {
-    _unicast_address   = NULL;
-    _partner_list      = NULL;
-    _message_list      = NULL;
-    _partner_listeners = NULL;
+    _unicast_address   = nullptr;
+    _partner_list      = nullptr;
+    _message_list      = nullptr;
+    _partner_listeners = nullptr;
     _listener          = listener;
-    _announce_address  = NULL;
+    _announce_address  = nullptr;
     _role              = role;
     _unicast_port      = WifiCode::ClaimIpPort ();
-    _credentials       = NULL;
+    _credentials       = nullptr;
     _partner_id        = g_random_int ();
     _quit_countdown    = -1;
 
@@ -62,9 +62,9 @@ namespace Net
     {
       gchar *passphrase = g_key_file_get_string (Global::_user_config->_key_file,
                                                  "Ring", "passphrase",
-                                                 NULL);
+                                                 nullptr);
 
-      if (passphrase == NULL)
+      if (passphrase == nullptr)
       {
         passphrase = FlashCode::GetKey256 ();
       }
@@ -79,13 +79,13 @@ namespace Net
 
     // Announce listener
     {
-      GError  *error  = NULL;
+      GError  *error  = nullptr;
       GSocket *socket;
 
       socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
                              G_SOCKET_TYPE_DATAGRAM,
                              G_SOCKET_PROTOCOL_DEFAULT,
-                             NULL);
+                             nullptr);
 
       {
         GInetAddress   *any_ip        = g_inet_address_new_any    (G_SOCKET_FAMILY_IPV4);
@@ -109,13 +109,13 @@ namespace Net
       {
         GSource *source = g_socket_create_source (socket,
                                                   (GIOCondition) (G_IO_IN|G_IO_ERR|G_IO_HUP),
-                                                  NULL);
+                                                  nullptr);
 
         g_source_set_callback (source,
                                (GSourceFunc) OnMulticast,
                                this,
-                               NULL);
-        g_source_attach (source, NULL);
+                               nullptr);
+        g_source_attach (source, nullptr);
         g_source_unref (source);
       }
 
@@ -339,7 +339,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Ring::Multicast (Message *message)
   {
-    GError *error = NULL;
+    GError *error = nullptr;
 
     _announce_socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
                                      G_SOCKET_TYPE_DATAGRAM,
@@ -361,7 +361,7 @@ namespace Net
                         _announce_address,
                         parcel,
                         strlen (parcel) + 1,
-                        NULL,
+                        nullptr,
                         &error);
       if (error)
       {
@@ -388,14 +388,14 @@ namespace Net
     }
     else if (condition == G_IO_IN)
     {
-      GError             *error       = NULL;
+      GError             *error       = nullptr;
       static const guint  buffer_size = 2048;
       gchar              *buffer      = g_new0 (gchar, buffer_size-1);
 
       g_socket_receive (socket,
                         buffer,
                         buffer_size,
-                        NULL,
+                        nullptr,
                         &error);
 
       if (error)
@@ -509,7 +509,7 @@ namespace Net
   // -------------------------------------------------------------------------------
   Credentials *Ring::RetreiveBackupCredentials ()
   {
-    Credentials *credentials = NULL;
+    Credentials *credentials = nullptr;
     gchar       *partner_pass;
 
     {
@@ -526,7 +526,7 @@ namespace Net
 
       partner_pass = g_key_file_get_string (partner_config->_key_file,
                                             "Ring", "passphrase",
-                                            NULL);
+                                            nullptr);
       partner_config->Release ();
     }
 
@@ -666,7 +666,7 @@ namespace Net
   void Ring::SpreadMessage (Message *message)
   {
     if (g_list_find (_message_list,
-                     message) == NULL)
+                     message) == nullptr)
     {
       message->AddObjectListener (this);
       _message_list = g_list_prepend (_message_list,
@@ -694,7 +694,7 @@ namespace Net
   void Ring::RegisterPartnerListener (PartnerListener *listener)
   {
     if (g_list_find (_partner_listeners,
-                     listener) == NULL)
+                     listener) == nullptr)
     {
       _partner_listeners = g_list_prepend (_partner_listeners,
                                            listener);
@@ -724,7 +724,7 @@ namespace Net
     {
       return (Partner *) _partner_list->data;
     }
-    return NULL;
+    return nullptr;
   }
 
   // -------------------------------------------------------------------------------
@@ -823,7 +823,7 @@ namespace Net
       return "RESOURCE_USER";
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -842,7 +842,7 @@ namespace Net
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -910,7 +910,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Ring::GuessIpV4Addresses ()
   {
-    const gchar *broadcast_address = NULL;
+    const gchar *broadcast_address = nullptr;
 
 #ifdef WIN32
 #if 0
@@ -975,7 +975,7 @@ namespace Net
     }
     else
     {
-      for (struct ifaddrs *ifa = ifa_list; ifa != NULL; ifa = ifa->ifa_next)
+      for (struct ifaddrs *ifa = ifa_list; ifa != nullptr; ifa = ifa->ifa_next)
       {
         if (   ifa->ifa_addr
             && (ifa->ifa_flags  & IFF_UP)
@@ -991,7 +991,7 @@ namespace Net
             if (getnameinfo (ifa->ifa_addr,
                              sizeof (struct sockaddr_in),
                              host, NI_MAXHOST,
-                             NULL, 0,
+                             nullptr, 0,
                              NI_NUMERICHOST) == 0)
             {
               _unicast_address = g_strdup (host);
@@ -1006,7 +1006,7 @@ namespace Net
     }
 #endif
 
-    if (_unicast_address == NULL)
+    if (_unicast_address == nullptr)
     {
       GInetAddress *loopback = g_inet_address_new_loopback (G_SOCKET_FAMILY_IPV4);
 

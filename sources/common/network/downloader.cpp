@@ -26,9 +26,9 @@ namespace Net
     : Object ("Downloader")
   {
     _listener = listener;
-    _data     = NULL;
+    _data     = nullptr;
     _size     = 0;
-    _address  = NULL;
+    _address  = nullptr;
     _killed   = FALSE;
     _name     = g_strdup (name);
   }
@@ -44,7 +44,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Downloader::Start (const gchar *address)
   {
-    GError *error = NULL;
+    GError *error = nullptr;
 
     _address = g_strdup (address);
 
@@ -54,7 +54,7 @@ namespace Net
                                 (GThreadFunc) ThreadFunction,
                                 this,
                                 &error);
-    if (_thread == NULL)
+    if (_thread == nullptr)
     {
       g_printerr ("Failed to create Downloader thread: %s\n", error->message);
       g_error_free (error);
@@ -102,7 +102,7 @@ namespace Net
     {
       CURL *curl_handle;
 
-      downloader->_data = NULL;
+      downloader->_data = nullptr;
       downloader->_size = 0;
 
       curl_handle = curl_easy_init ();
@@ -125,7 +125,7 @@ namespace Net
     g_idle_add ((GSourceFunc) OnThreadDone,
                 downloader);
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------

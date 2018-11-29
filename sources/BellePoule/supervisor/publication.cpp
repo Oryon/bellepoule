@@ -45,7 +45,7 @@ Publication::Publication (Glade *glade)
   {
     GtkListStore *model  = GTK_LIST_STORE (_glade->GetGObject ("FavoriteFTP"));
     gchar        *path   = g_build_filename (Global::_share_dir, "resources", "glade", "images", "escrime_info.jpg", NULL);
-    GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, NULL);
+    GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, nullptr);
     GtkTreeIter   iter;
 
     g_free (path);
@@ -74,7 +74,7 @@ Net::FileUploader *Publication::GetUpLoader ()
 
   if (url[0] == '\0')
   {
-    return NULL;
+    return nullptr;
   }
   else if (g_strrstr (url, "escrime-info.com"))
   {

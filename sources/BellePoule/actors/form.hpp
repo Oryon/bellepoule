@@ -48,7 +48,7 @@ namespace People
                     const gchar *player_class);
 
       void Show (GtkWindow *over,
-                 Player    *player = NULL);
+                 Player    *player = nullptr);
 
       void Hide ();
 

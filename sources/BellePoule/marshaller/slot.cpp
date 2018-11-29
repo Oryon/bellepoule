@@ -31,14 +31,14 @@ namespace Marshaller
               GTimeSpan  duration)
     : Object ("Slot")
   {
-    _job_list     = NULL;
-    _referee_list = NULL;
+    _job_list     = nullptr;
+    _referee_list = nullptr;
     _piste        = piste;
 
     _duration = duration;
 
-    _fie_time = NULL;
-    _start    = NULL;
+    _fie_time = nullptr;
+    _start    = nullptr;
     SetStartTime (start_time);
 
     _end = end_time;
@@ -98,7 +98,7 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    return _job_list != NULL;
+    return _job_list != nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Slot::FixOverlaps (gboolean dry_run)
   {
-    GList *resources = NULL;
+    GList *resources = nullptr;
 
     if (_referee_list)
     {
@@ -165,7 +165,7 @@ namespace Marshaller
     }
     resources = g_list_prepend (resources, dynamic_cast <Resource *> (_piste));
 
-    for (GList *current = resources; current != NULL; current = g_list_next (current))
+    for (GList *current = resources; current != nullptr; current = g_list_next (current))
     {
       Resource *resource = (Resource *) current->data;
       Slot     *slot     = resource->GetSlotAfter (this);
@@ -265,7 +265,7 @@ namespace Marshaller
     SetDuration (job->GetRegularDuration ());
 
     {
-      gboolean assigned_to_piste = (_job_list != NULL);
+      gboolean assigned_to_piste = (_job_list != nullptr);
 
       _job_list = g_list_append (_job_list,
                                  job);
@@ -309,19 +309,19 @@ namespace Marshaller
                         (GFunc) EnlistedReferee::OnRemovedFromSlot,
                         this);
         g_list_free (_referee_list);
-        _referee_list = NULL;
+        _referee_list = nullptr;
       }
 
       RefreshJobStatus (job);
 
       job->RemoveObjectListener (this);
-      job->SetSlot              (NULL);
+      job->SetSlot              (nullptr);
 
       _piste->OnSlotUpdated (this);
 
       _duration = 0;
 
-      if (GetJobList () == NULL)
+      if (GetJobList () == nullptr)
       {
         _piste->OnSlotRetracted (this);
       }
@@ -407,11 +407,11 @@ namespace Marshaller
   GDateTime *Slot::GetLatestDate (GDateTime *a,
                                   GDateTime *b)
   {
-    if (a == NULL)
+    if (a == nullptr)
     {
       return b;
     }
-    if (b == NULL)
+    if (b == nullptr)
     {
       return a;
     }
@@ -429,7 +429,7 @@ namespace Marshaller
   {
     if (g_date_time_compare (_start, time) <= 0)
     {
-      if (_start == NULL) Dump (this);
+      if (_start == nullptr) Dump (this);
       GDateTime *end_time = g_date_time_add (_start,
                                              GetDuration  ());
 
@@ -463,7 +463,7 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -472,7 +472,7 @@ namespace Marshaller
                            GDateTime *from,
                            GTimeSpan  duration)
   {
-    Slot  *slot  = NULL;
+    Slot  *slot  = nullptr;
     GList *slots = GetFreeSlots (piste,
                                  booked_slots,
                                  from,
@@ -490,7 +490,7 @@ namespace Marshaller
         break;
       }
 
-      slot = NULL;
+      slot = nullptr;
       current = g_list_next (current);
     }
 
@@ -505,14 +505,14 @@ namespace Marshaller
                              GDateTime *from,
                              GTimeSpan  duration)
   {
-    GList *slots = NULL;
+    GList *slots = nullptr;
 
     // Before the booked slots
-    if (booked_slots == NULL)
+    if (booked_slots == nullptr)
     {
       Slot *free_slot = new Slot (piste,
                                   from,
-                                  NULL,
+                                  nullptr,
                                   duration);
       slots = g_list_append (slots,
                              free_slot);
@@ -541,14 +541,14 @@ namespace Marshaller
       {
         GList *next         = g_list_next (current);
         Slot  *current_slot = (Slot *) current->data;
-        Slot  *free_slot    = NULL;
+        Slot  *free_slot    = nullptr;
 
-        if (next == NULL)
+        if (next == nullptr)
         {
           // After the booked slots
           free_slot = new Slot (piste,
                                 GetLatestDate (from, current_slot->_end),
-                                NULL,
+                                nullptr,
                                 duration);
         }
         else

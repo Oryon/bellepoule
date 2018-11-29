@@ -33,9 +33,9 @@ TreeModelIndex::TreeModelIndex (GtkTreeModel *model,
   }
   else
   {
-    _hash_table = g_hash_table_new_full (NULL,
-                                         NULL,
-                                         NULL,
+    _hash_table = g_hash_table_new_full (nullptr,
+                                         nullptr,
+                                         nullptr,
                                          (GDestroyNotify) gtk_tree_row_reference_free);
   }
 }

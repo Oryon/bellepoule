@@ -16,7 +16,7 @@
 
 #include "player_factory.hpp"
 
-GSList *PlayerFactory::_classes = NULL;
+GSList *PlayerFactory::_classes = nullptr;
 
 // --------------------------------------------------------------------------------
 PlayerFactory::PlayerFactory ()
@@ -59,7 +59,7 @@ PlayerFactory::PlayerClass *PlayerFactory::GetPlayerClass (const gchar *class_na
     current = g_slist_next (current);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ Player *PlayerFactory::CreatePlayer (const gchar *class_name)
     return class_desc->_constructor ();
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -85,5 +85,5 @@ const gchar *PlayerFactory::GetXmlTag (const gchar *class_name)
     return class_desc->_xml_tag;
   }
 
-  return NULL;
+  return nullptr;
 }

@@ -23,7 +23,7 @@
 
 const gchar *Referee::_class_name = "Referee";
 const gchar *Referee::_xml_tag    = "Arbitre";
-const gchar *Referee::_iv         = NULL;
+const gchar *Referee::_iv         = nullptr;
 
 // --------------------------------------------------------------------------------
 Referee::Referee ()
@@ -34,7 +34,7 @@ Referee::Referee ()
   attr_id._name = (gchar *) "connection";
   SetAttributeValue (&attr_id, "Manual");
 
-  if (_iv == NULL)
+  if (_iv == nullptr)
   {
     guchar *zero = g_new0 (guchar, 16);
 
@@ -92,7 +92,7 @@ void Referee::SaveAttributes (XmlScheme *xml_scheme,
         Net::Cryptor *cryptor = new Net::Cryptor (_iv);
         gchar        *cypher  = cryptor->Encrypt (password->GetStrValue (),
                                                   key,
-                                                  NULL);
+                                                  nullptr);
 
         SetAttributeValue (&cyphered_attr_id,
                            cypher);
@@ -118,7 +118,7 @@ void Referee::GiveAnId ()
     AttributeId  attr_id ("ref");
     Attribute   *attr = GetAttribute (&attr_id);
 
-    if (attr == NULL)
+    if (attr == nullptr)
     {
       Player::AttributeId name_attr_id      ("name");
       Player::AttributeId firstname_attr_id ("first_name");
@@ -139,7 +139,7 @@ void Referee::GiveAnId ()
         digest = g_strdup (g_checksum_get_string (checksum));
         digest[4] = 0;
         SetRef (g_ascii_strtoll (digest,
-                                 NULL,
+                                 nullptr,
                                  16));
         g_free (digest);
       }
@@ -168,7 +168,7 @@ void Referee::GiveAnId ()
             && (password[256/8] == '\0')
             && g_utf8_validate (password,
                                 256/8,
-                                NULL))
+                                nullptr))
         {
           SetAttributeValue (&clear_attr_id,
                              password);

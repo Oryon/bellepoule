@@ -76,7 +76,7 @@ GooCanvasItem *Canvas::PutTextInTable (GooCanvasItem *table,
                                        guint          row,
                                        guint          column)
 {
-  GooCanvasItem *item = NULL;
+  GooCanvasItem *item = nullptr;
 
   if (text)
   {
@@ -121,7 +121,7 @@ GooCanvasItem *Canvas::CreateIcon (GooCanvasItem *parent,
     pixbuf = gtk_widget_render_icon (image,
                                      icon_name,
                                      GTK_ICON_SIZE_BUTTON,
-                                     NULL);
+                                     nullptr);
     g_object_unref (image);
   }
 
@@ -159,7 +159,7 @@ GooCanvasItem *Canvas::PutIconInTable (GooCanvasItem *table,
                                        guint          row,
                                        guint          column)
 {
-  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (icon_name, NULL);
+  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (icon_name, nullptr);
 
   GooCanvasItem *item = goo_canvas_image_new (table,
                                               pixbuf,
@@ -181,11 +181,11 @@ GooCanvasItem *Canvas::PutPixbufInTable (GooCanvasItem *table,
                                          guint          row,
                                          guint          column)
 {
-  static GdkPixbuf *empty_pixbuf = NULL;
+  static GdkPixbuf *empty_pixbuf = nullptr;
 
-  if (pixbuf == NULL)
+  if (pixbuf == nullptr)
   {
-    if (empty_pixbuf == NULL)
+    if (empty_pixbuf == nullptr)
     {
       empty_pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
                                      FALSE,

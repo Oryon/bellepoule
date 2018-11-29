@@ -77,26 +77,26 @@ namespace Table
 
     _supervisor     = supervisor;
     _filter         = supervisor_module->GetFilter ();
-    _main_table     = NULL;
-    _tree_root      = NULL;
-    _tables         = NULL;
-    _match_to_print = NULL;
+    _main_table     = nullptr;
+    _tree_root      = nullptr;
+    _tables         = nullptr;
+    _match_to_print = nullptr;
     _nb_tables      = 0;
     _locked         = FALSE;
     _id             = id;
-    _attendees      = NULL;
-    _withdrawals    = NULL;
-    _first_error    = NULL;
+    _attendees      = nullptr;
+    _withdrawals    = nullptr;
+    _first_error    = nullptr;
     _is_over        = FALSE;
     _first_place    = first_place;
     _loaded         = FALSE;
     _is_active      = FALSE;
     _html_table     = new HtmlTable (supervisor_module);
     _has_marshaller = FALSE;
-    _from_table     = NULL;
-    _to_table       = NULL;
+    _from_table     = nullptr;
+    _to_table       = nullptr;
 
-    _listener       = NULL;
+    _listener       = nullptr;
 
     SetZoomer (zoomer);
     ZoomTo (1.0);
@@ -104,7 +104,7 @@ namespace Table
     _page_setup = gtk_page_setup_new ();
 
     SetDataOwner (supervisor_module);
-    _score_collector = NULL;
+    _score_collector = nullptr;
 
     _max_score = supervisor->GetMaxScore ();
 
@@ -118,7 +118,7 @@ namespace Table
       _printer_pixbuf = gtk_widget_render_icon (image,
                                                 GTK_STOCK_PRINT,
                                                 GTK_ICON_SIZE_BUTTON,
-                                                NULL);
+                                                nullptr);
       g_object_unref (image);
     }
 
@@ -142,11 +142,11 @@ namespace Table
       gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (_glade->GetWidget ("quick_search_combobox")),
                                           (GtkCellRenderer *) _glade->GetWidget ("quick_search_renderertext"),
                                           (GtkCellLayoutDataFunc) SetQuickSearchRendererSensitivity,
-                                          this, NULL);
+                                          this, nullptr);
       gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (_glade->GetWidget ("quick_search_combobox")),
                                           (GtkCellRenderer *) _glade->GetWidget ("quick_search_path_renderertext"),
                                           (GtkCellLayoutDataFunc) SetQuickSearchRendererSensitivity,
-                                          this, NULL);
+                                          this, nullptr);
       gtk_tree_model_filter_set_visible_column (_quick_search_filter,
                                                 QUICK_MATCH_VISIBILITY_COLUMN_bool);
     }
@@ -221,7 +221,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   gboolean TableSet::HasAttendees ()
   {
-    return (_attendees != NULL);
+    return (_attendees != nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -236,7 +236,7 @@ namespace Table
 
       if (table->_defeated_table_set)
       {
-        table->_defeated_table_set->SetAttendees (NULL, NULL);
+        table->_defeated_table_set->SetAttendees (nullptr, nullptr);
       }
     }
 
@@ -339,8 +339,8 @@ namespace Table
 
     _quick_score_collector->AddCollectingPoint (goo_rect,
                                                 score_text,
-                                                NULL,
-                                                NULL);
+                                                nullptr,
+                                                nullptr);
 
     return goo_rect;
   }
@@ -350,7 +350,7 @@ namespace Table
   {
     if (_tree_root)
     {
-      _first_error = NULL;
+      _first_error = nullptr;
       _is_over     = TRUE;
 
       for (guint i = 0; i < _nb_tables; i ++)
@@ -359,11 +359,11 @@ namespace Table
         _tables[i]->_ready_to_fence  = TRUE;
         _tables[i]->_has_all_roadmap = TRUE;
         _tables[i]->_roadmap_count   = 0;
-        _tables[i]->_first_error     = NULL;
+        _tables[i]->_first_error     = nullptr;
         if (_tables[i]->_status_item && (quick == FALSE))
         {
           WipeItem (_tables[i]->_status_item);
-          _tables[i]->_status_item = NULL;
+          _tables[i]->_status_item = nullptr;
         }
       }
 
@@ -386,7 +386,7 @@ namespace Table
           _first_error = table->_first_error;
           _is_over     = FALSE;
         }
-        else if (   ((left_table == NULL) || left_table->_is_over)
+        else if (   ((left_table == nullptr) || left_table->_is_over)
                  && (table->_has_all_roadmap == FALSE))
         {
           icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
@@ -537,7 +537,7 @@ namespace Table
         }
 
         g_free (_row_filled);
-        _row_filled = NULL;
+        _row_filled = nullptr;
       }
 
       RefreshNodes ();
@@ -562,7 +562,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   gboolean TableSet::HasError ()
   {
-    return (_first_error != NULL);
+    return (_first_error != nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -602,7 +602,7 @@ namespace Table
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -628,9 +628,9 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::LoadNode (xmlNode *xml_node)
   {
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
-      static Table *table = NULL;
+      static Table *table = nullptr;
 
       if (n->type == XML_ELEMENT_NODE)
       {
@@ -744,7 +744,7 @@ namespace Table
 
       g_node_destroy (_tree_root);
 
-      _tree_root = NULL;
+      _tree_root = nullptr;
     }
 
     for (guint i = 0; i < _nb_tables; i++)
@@ -753,7 +753,7 @@ namespace Table
     }
     g_free (_tables);
     _nb_tables = 0;
-    _tables    = NULL;
+    _tables    = nullptr;
     _is_over   = FALSE;
   }
 
@@ -813,7 +813,7 @@ namespace Table
 
             gtk_tree_store_prepend (_quick_search_treestore,
                                     &table_iter,
-                                    NULL);
+                                    nullptr);
             gtk_tree_store_set (_quick_search_treestore, &table_iter,
                                 QUICK_MATCH_NAME_COLUMN_str,        image,
                                 QUICK_MATCH_VISIBILITY_COLUMN_bool, 1,
@@ -824,7 +824,7 @@ namespace Table
       }
     }
 
-    AddFork (NULL);
+    AddFork (nullptr);
 
     _html_table->Prepare (_nb_tables);
 
@@ -913,19 +913,19 @@ namespace Table
     NodeData *data = (NodeData *) node->data;
 
     WipeItem (data->_connector);
-    data->_connector = NULL;
+    data->_connector = nullptr;
 
     WipeItem (data->_fencer_goo_table);
     WipeItem (data->_match_goo_table);
 
-    data->_match_goo_table = NULL;
-    data->_fencer_goo_table = NULL;
-    data->_score_goo_table  = NULL;
-    data->_score_goo_rect   = NULL;
-    data->_score_goo_text   = NULL;
-    data->_score_goo_image  = NULL;
-    data->_fencer_goo_image = NULL;
-    data->_print_goo_icon   = NULL;
+    data->_match_goo_table = nullptr;
+    data->_fencer_goo_table = nullptr;
+    data->_score_goo_table  = nullptr;
+    data->_score_goo_rect   = nullptr;
+    data->_score_goo_text   = nullptr;
+    data->_score_goo_image  = nullptr;
+    data->_fencer_goo_image = nullptr;
+    data->_print_goo_icon   = nullptr;
 
     return FALSE;
   }
@@ -985,7 +985,7 @@ namespace Table
 
         if (   table_set->_has_marshaller
             && (   (data->_match->GetPiste () == 0)
-                || (data->_match->GetStartTime () == NULL)))
+                || (data->_match->GetStartTime () == nullptr)))
         {
           left_table->_has_all_roadmap = FALSE;
         }
@@ -1012,7 +1012,7 @@ namespace Table
       GooCanvasBounds  bounds;
 
       WipeItem (data->_connector);
-      data->_connector = NULL;
+      data->_connector = nullptr;
 
       goo_canvas_item_get_bounds (data->_fencer_goo_table,
                                   &bounds);
@@ -1058,7 +1058,7 @@ namespace Table
           GooCanvasBounds  sibling_bound;
 
           sibling = g_node_next_sibling (node);
-          if (sibling == NULL)
+          if (sibling == nullptr)
           {
             sibling = g_node_prev_sibling (node);
           }
@@ -1147,7 +1147,7 @@ namespace Table
         {
           const gchar *match_name = data->_match->GetName ();
 
-          if (   (match_name == NULL)
+          if (   (match_name == nullptr)
               || data->_match->ExemptedMatch ())
           {
             match_name = (gchar *) "";
@@ -1234,9 +1234,9 @@ namespace Table
           // arrow_icon
           {
             GooCanvasItem *goo_item;
-            static gchar  *arrow_icon = NULL;
+            static gchar  *arrow_icon = nullptr;
 
-            if (arrow_icon == NULL)
+            if (arrow_icon == nullptr)
             {
               arrow_icon = g_build_filename (Global::_share_dir, "resources/glade/images/arrow.png", NULL);
             }
@@ -1287,7 +1287,7 @@ namespace Table
           // _score_goo_image (status icon)
           {
             data->_score_goo_image = Canvas::PutPixbufInTable (data->_score_goo_table,
-                                                               NULL,
+                                                               nullptr,
                                                                0,
                                                                0);
 
@@ -1399,11 +1399,11 @@ namespace Table
       // _fencer_goo_image
       {
         WipeItem (data->_fencer_goo_image);
-        data->_fencer_goo_image = NULL;
+        data->_fencer_goo_image = nullptr;
 
         if (winner)
         {
-          Filter *display_filter = NULL;
+          Filter *display_filter = nullptr;
           Table  *left_table     = data->_table->GetLeftTable ();
 
           if (left_table && left_table->IsDisplayed ())
@@ -1444,7 +1444,7 @@ namespace Table
           {
             // _score_goo_text
             {
-              gchar *score_image = NULL;
+              gchar *score_image = nullptr;
 
               if (winner)
               {
@@ -1456,7 +1456,7 @@ namespace Table
                 }
               }
 
-              if (score_image == NULL)
+              if (score_image == nullptr)
               {
                 score_image = g_strdup ("");
               }
@@ -1564,8 +1564,8 @@ namespace Table
       GNode    *childB      = g_node_nth_child (node, 1);
       NodeData *childB_data = (NodeData *)  childB->data;
 
-      if (   (childA_data->_match == NULL)
-          && (childB_data->_match == NULL))
+      if (   (childA_data->_match == nullptr)
+          && (childB_data->_match == nullptr))
       {
         table_set->DropMatch (node);
       }
@@ -1578,7 +1578,7 @@ namespace Table
   void TableSet::AddFork (GNode *to)
   {
     GNode    *node;
-    NodeData *to_data    = NULL;
+    NodeData *to_data    = nullptr;
     NodeData *data       = new NodeData;
     Table    *left_table;
 
@@ -1587,7 +1587,7 @@ namespace Table
       to_data = (NodeData *) to->data;
     }
 
-    if (to == NULL)
+    if (to == nullptr)
     {
       data->_expected_winner_rank = 1;
       data->_table                = _tables[0];
@@ -1622,15 +1622,15 @@ namespace Table
       data->_table->AddNode (node);
     }
 
-    data->_match_goo_table  = NULL;
-    data->_fencer_goo_table = NULL;
-    data->_score_goo_table  = NULL;
-    data->_score_goo_rect   = NULL;
-    data->_score_goo_text   = NULL;
-    data->_score_goo_image  = NULL;
-    data->_fencer_goo_image = NULL;
-    data->_print_goo_icon   = NULL;
-    data->_connector        = NULL;
+    data->_match_goo_table  = nullptr;
+    data->_fencer_goo_table = nullptr;
+    data->_score_goo_table  = nullptr;
+    data->_score_goo_rect   = nullptr;
+    data->_score_goo_text   = nullptr;
+    data->_score_goo_image  = nullptr;
+    data->_fencer_goo_image = nullptr;
+    data->_print_goo_icon   = nullptr;
+    data->_connector        = nullptr;
     data->_match = new Match (_max_score);
 
     {
@@ -1731,7 +1731,7 @@ namespace Table
       if (player)
       {
         data->_match->SetOpponent (0, player);
-        data->_match->SetOpponent (1, NULL);
+        data->_match->SetOpponent (1, nullptr);
 
         if (to_data)
         {
@@ -1775,11 +1775,11 @@ namespace Table
       }
 
       data->_match->Release ();
-      data->_match = NULL;
+      data->_match = nullptr;
 
       if (g_node_child_position (node->parent, node) == 0)
       {
-        parent_data->_match->SetOpponent (0, NULL);
+        parent_data->_match->SetOpponent (0, nullptr);
       }
       else
       {
@@ -1790,7 +1790,7 @@ namespace Table
         {
           parent_data->_match->SetOpponent (0, A_data->_match->GetWinner ());
         }
-        parent_data->_match->SetOpponent (1, NULL);
+        parent_data->_match->SetOpponent (1, nullptr);
       }
     }
   }
@@ -1819,11 +1819,11 @@ namespace Table
     }
 
     CanvasModule::Wipe ();
-    _main_table = NULL;
+    _main_table = nullptr;
 
     for (guint i = 0; i < _nb_tables; i ++)
     {
-      _tables[i]->_status_item = NULL;
+      _tables[i]->_status_item = nullptr;
     }
   }
 
@@ -1832,7 +1832,7 @@ namespace Table
                                       gboolean  all_sheet)
   {
     g_slist_free (_match_to_print);
-    _match_to_print = NULL;
+    _match_to_print = nullptr;
 
     {
       GtkTreeIter parent;
@@ -1859,7 +1859,7 @@ namespace Table
           {
             Table *table = (Table *) match->GetPtrData (this, "table");
 
-            if ((table_to_print == NULL) || (table_to_print == table))
+            if ((table_to_print == nullptr) || (table_to_print == table))
             {
               gboolean already_printed = match->GetUIntData (this, "printed");
 
@@ -1914,7 +1914,7 @@ namespace Table
       Player *winner = data->_match->GetWinner ();
 
       if (winner && g_slist_find (table_set->_result_list,
-                                  winner) == NULL)
+                                  winner) == nullptr)
       {
         table_set->_result_list = g_slist_append (table_set->_result_list,
                                                   winner);
@@ -1977,7 +1977,7 @@ namespace Table
       {
         Table *right_table = _to_table->GetRightTable ();
 
-        if (right_table == NULL)
+        if (right_table == nullptr)
         {
           break;
         }
@@ -2074,7 +2074,7 @@ namespace Table
           else
           {
             match->SetPiste (0);
-            match->SetStartTime (NULL);
+            match->SetStartTime (nullptr);
             match->RemoveAllReferees ();
           }
 
@@ -2157,7 +2157,7 @@ namespace Table
             xmlDoc *doc = xmlReadMemory (xml_data,
                                          strlen (xml_data),
                                          "message.xml",
-                                         NULL,
+                                         nullptr,
                                          0);
 
             if (doc)
@@ -2365,8 +2365,8 @@ namespace Table
       {
         Player *A      = to_match->GetOpponent (0);
         Player *B      = to_match->GetOpponent (1);
-        gchar  *A_name = NULL;
-        gchar  *B_name = NULL;
+        gchar  *A_name = nullptr;
+        gchar  *B_name = nullptr;
 
         if (A)
         {
@@ -2413,7 +2413,7 @@ namespace Table
 
     g_object_ref (_quick_search_filter);
 
-    gtk_combo_box_set_model (combobox, NULL);
+    gtk_combo_box_set_model (combobox, nullptr);
     gtk_tree_model_filter_refilter (_quick_search_filter);
     gtk_combo_box_set_model (combobox, GTK_TREE_MODEL (_quick_search_filter));
 
@@ -2513,7 +2513,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   GSList *TableSet::GetCurrentClassification ()
   {
-    _result_list = NULL;
+    _result_list = nullptr;
 
     if (_tree_root)
     {
@@ -2538,12 +2538,12 @@ namespace Table
         Player::AttributeId *attr_id         = new Player::AttributeId ("rank", GetDataOwner ());
         GSList              *current;
         guint                previous_rank   = 0;
-        Player              *previous_player = NULL;
+        Player              *previous_player = nullptr;
         guint32              rand_seed       = _rand_seed;
 
         _rand_seed = 0; // !!
         current = _result_list;
-        for (guint i = _first_place; current != NULL; i++)
+        for (guint i = _first_place; current != nullptr; i++)
         {
           Player *player = (Player *) current->data;
 
@@ -2583,14 +2583,14 @@ namespace Table
   // --------------------------------------------------------------------------------
   GSList *TableSet::GetBlackcardeds ()
   {
-    GSList *blackcardeds = NULL;
+    GSList *blackcardeds = nullptr;
 
     for (guint i = 0; i < _nb_tables; i++)
     {
       GSList *current;
 
-      _tables[i]->GetLoosers (NULL,
-                              NULL,
+      _tables[i]->GetLoosers (nullptr,
+                              nullptr,
                               &current);
       blackcardeds = g_slist_concat (blackcardeds,
                                      current);
@@ -2609,11 +2609,11 @@ namespace Table
                                 Player   *B,
                                 TableSet *table_set)
   {
-    if (B == NULL)
+    if (B == nullptr)
     {
       return 1;
     }
-    else if (A == NULL)
+    else if (A == nullptr)
     {
       return -1;
     }
@@ -2741,7 +2741,7 @@ namespace Table
     if (top)
     {
       data = (NodeData *) top->data;
-      if (data->_fencer_goo_table == NULL)
+      if (data->_fencer_goo_table == nullptr)
       {
         data = (NodeData *) bottom->data;
       }
@@ -2755,7 +2755,7 @@ namespace Table
     if (bottom)
     {
       data = (NodeData *) bottom->data;
-      if (data->_fencer_goo_table == NULL)
+      if (data->_fencer_goo_table == nullptr)
       {
         data = (NodeData *) top->data;
       }
@@ -2777,7 +2777,7 @@ namespace Table
   {
     if (view == Stage::STAGE_VIEW_RESULT)
     {
-      GList *sections   = NULL;
+      GList *sections   = nullptr;
       guint  nb_section;
 
       nb_section  = _nb_tables / 3;
@@ -2800,7 +2800,7 @@ namespace Table
       return sections;
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -2880,8 +2880,8 @@ namespace Table
         {
           GooCanvasBounds  W_node_bounds;
           GooCanvasBounds  bounds;
-          GNode           *NW_node = NULL;
-          GNode           *SW_node = NULL;
+          GNode           *NW_node = nullptr;
+          GNode           *SW_node = nullptr;
 
           for (guint n = i*nb_row; n < (i+1)*nb_row; n++)
           {
@@ -2889,7 +2889,7 @@ namespace Table
 
             if (node && Table::NodeHasGooTable (node))
             {
-              if (NW_node == NULL)
+              if (NW_node == nullptr)
               {
                 NW_node = node;
               }
@@ -2997,7 +2997,7 @@ namespace Table
   {
     PrintSession *print_session   = GetPrintSession (operation);
     GtkWidget    *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
-    GtkWidget    *drawing_layout  = gtk_layout_new (NULL, NULL);
+    GtkWidget    *drawing_layout  = gtk_layout_new (nullptr, nullptr);
     gdouble       paper_w         = gtk_print_context_get_width (context);
     gdouble       paper_h         = gtk_print_context_get_height (context);
     guint         spacing         = 5;
@@ -3030,7 +3030,7 @@ namespace Table
 
     // Create a new drawing layout in the ScrolledWindow
     {
-      drawing_layout = gtk_layout_new (NULL, NULL);
+      drawing_layout = gtk_layout_new (nullptr, nullptr);
       gtk_container_add (GTK_CONTAINER (scrolled_window),
                          drawing_layout);
 
@@ -3338,7 +3338,7 @@ namespace Table
                             flash_item,
                             Canvas::START);
             Canvas::Anchor (name_item,
-                            NULL,
+                            nullptr,
                             flash_item,
                             5);
 
@@ -3392,7 +3392,7 @@ namespace Table
                             referee_group,
                             Canvas::START);
             Canvas::Anchor (strip_group,
-                            NULL,
+                            nullptr,
                             referee_group,
                             20);
           }
@@ -3415,7 +3415,7 @@ namespace Table
 
             Canvas::Anchor (match_table,
                             title_group,
-                            NULL,
+                            nullptr,
                             10);
             Canvas::VAlign (match_table,
                             Canvas::START,
@@ -3434,7 +3434,7 @@ namespace Table
 
       goo_canvas_render (canvas,
                          cr,
-                         NULL,
+                         nullptr,
                          1.0);
       gtk_widget_destroy (GTK_WIDGET (canvas));
 
@@ -3514,7 +3514,7 @@ namespace Table
       GooCanvasItem *image = GetPlayerImage (table,
                                              common_markup,
                                              player,
-                                             NULL,
+                                             nullptr,
                                              "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                              "first_name", "foreground=\"darkblue\"",
                                              "club",       "style=\"italic\" foreground=\"dimgrey\"",
@@ -3631,7 +3631,7 @@ namespace Table
   {
     GtkWidget *score_sheet_dialog = _glade->GetWidget ("score_sheet_dialog");
 
-    if (table == NULL)
+    if (table == nullptr)
     {
       table = _from_table;
     }
@@ -3687,7 +3687,7 @@ namespace Table
     PrintSession *print_session = new PrintSession (PrintSession::SCORE_SHEETS);
 
     g_slist_free (table_set->_match_to_print);
-    table_set->_match_to_print = NULL;
+    table_set->_match_to_print = nullptr;
 
     table_set->_match_to_print = g_slist_prepend (table_set->_match_to_print,
                                                   g_object_get_data (G_OBJECT (item), "match_to_print"));
@@ -3735,7 +3735,7 @@ namespace Table
 
     g_free (code);
 
-    OnNewScore (NULL,
+    OnNewScore (nullptr,
                 match,
                 player);
   }
@@ -3752,7 +3752,7 @@ namespace Table
       GtkWidget *combo;
       NodeData  *data;
       Player    *winner;
-      NodeData  *parent_data = NULL;
+      NodeData  *parent_data = nullptr;
 
       {
         GNode *node = (GNode *) g_object_get_data (G_OBJECT (item), "TableSet::node");

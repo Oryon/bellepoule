@@ -24,10 +24,10 @@ namespace Net
                               const gchar *passwd,
                               const gchar *www)
   {
-    _full_url  = NULL;
+    _full_url  = nullptr;
     _user      = g_strdup (user);
     _passwd    = g_strdup (passwd);
-    _file_path = NULL;
+    _file_path = nullptr;
     _url       = g_strdup (url);
     _www       = g_strdup (url);
   }
@@ -59,14 +59,14 @@ namespace Net
     Retain ();
 
     {
-      GError *error = NULL;
+      GError *error = nullptr;
 
       GThread *sender_thread = g_thread_try_new ("FileUploader",
                                                  (GThreadFunc) ThreadFunction,
                                                  this,
                                                  &error);
 
-      if (sender_thread == NULL)
+      if (sender_thread == nullptr)
       {
         g_printerr ("Failed to create FileUploader thread: %s\n", error->message);
         g_error_free (error);
@@ -107,12 +107,12 @@ namespace Net
   {
     if (_file_path)
     {
-      GError *error = NULL;
+      GError *error = nullptr;
       gchar  *data_copy;
 
       if (g_file_get_contents (_file_path,
                                &data_copy,
-                               NULL,
+                               nullptr,
                                &error) == FALSE)
       {
         g_print ("Unable to read file: %s\n", error->message);
@@ -134,7 +134,7 @@ namespace Net
     g_idle_add ((GSourceFunc) OnThreadDone,
                 uploader);
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------

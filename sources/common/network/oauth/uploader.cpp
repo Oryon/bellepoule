@@ -25,9 +25,9 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   Uploader::Uploader (Listener *listener)
   {
-    _request        = NULL;
-    _http_header    = NULL;
-    _url_parameters = NULL;
+    _request        = nullptr;
+    _http_header    = nullptr;
+    _url_parameters = nullptr;
 
     _response_header = g_hash_table_new_full (g_str_hash,
                                               g_str_equal,
@@ -64,7 +64,7 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   void Uploader::UpLoadRequest (Request *request)
   {
-    if (_request == NULL)
+    if (_request == nullptr)
     {
       Retain ();
 
@@ -72,19 +72,19 @@ namespace Oauth
       _request->Retain ();
 
       {
-        GError  *error         = NULL;
+        GError  *error         = nullptr;
         GThread *sender_thread;
 
         sender_thread = g_thread_try_new ("Oauth::Uploader",
                                           (GThreadFunc) ThreadFunction,
                                           this,
                                           &error);
-        if (sender_thread == NULL)
+        if (sender_thread == nullptr)
         {
           g_printerr ("Failed to create Uploader thread: %s\n", error->message);
           g_error_free (error);
           _request->Release ();
-          _request = NULL;
+          _request = nullptr;
           Release ();
         }
       }
@@ -220,6 +220,6 @@ namespace Oauth
     g_idle_add ((GSourceFunc) OnThreadDone,
                 uploader);
 
-    return NULL;
+    return nullptr;
   }
 }

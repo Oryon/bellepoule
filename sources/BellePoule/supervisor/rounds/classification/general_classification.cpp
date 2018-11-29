@@ -143,7 +143,7 @@ namespace People
   {
     Player::AttributeId final_rank_attr_id ("final_rank");
     GSList *full_result = g_slist_copy (_attendees->GetPresents ());
-    GSList *result      = NULL;
+    GSList *result      = nullptr;
 
     GiveShortListAFinalRank ();
 
@@ -257,7 +257,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
   {
-    gchar *filename          = NULL;
+    gchar *filename          = nullptr;
     gchar *filename_modifier = (gchar *) "";
 
     {
@@ -267,13 +267,13 @@ namespace People
         gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                      "Competiton",
                                                      "export_dir",
-                                                     NULL);
-        if (last_dirname == NULL)
+                                                     nullptr);
+        if (last_dirname == nullptr)
         {
           last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                 "Competiton",
                                                 "default_dir_name",
-                                                NULL);
+                                                nullptr);
         }
         if (last_dirname)
         {
@@ -285,7 +285,7 @@ namespace People
       }
 
       gtk_file_chooser_set_extra_widget (GTK_FILE_CHOOSER (chooser),
-                                         NULL);
+                                         nullptr);
 
       {
         GtkFileFilter *filter = gtk_file_filter_new ();
@@ -396,7 +396,7 @@ namespace People
         {
           GtkEntry *entry          = (GtkEntry *) _glade->GetWidget ("place_entry");
           guint     place_shifting = g_ascii_strtoll (gtk_entry_get_text (entry),
-                                                      NULL,
+                                                      nullptr,
                                                       10);
 
           if (place_shifting)
@@ -546,7 +546,7 @@ namespace People
   {
     GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
-    g->OnFilterClicked (NULL);
+    g->OnFilterClicked (nullptr);
   }
 
   // --------------------------------------------------------------------------------

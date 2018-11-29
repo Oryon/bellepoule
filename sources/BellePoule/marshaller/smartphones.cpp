@@ -48,7 +48,7 @@ namespace Marshaller
       gtk_entry_set_visibility (GTK_ENTRY (_glade->GetWidget ("passphrase_entry")),
                                 FALSE);
 
-      RefreshScannerCode (NULL, this);
+      RefreshScannerCode (nullptr, this);
     }
   }
 

@@ -69,7 +69,7 @@ namespace Table
     _fenced_places = new Data ("PlacesTirees",
                                (guint) NONE);
 
-    _displayed_table_set = NULL;
+    _displayed_table_set = nullptr;
 
     {
       AddSensitiveWidget (_glade->GetWidget ("input_toolbutton"));
@@ -222,7 +222,7 @@ namespace Table
     if (_displayed_table_set)
     {
       _displayed_table_set->UnPlug ();
-      _displayed_table_set = NULL;
+      _displayed_table_set = nullptr;
     }
 
     if (table_set)
@@ -239,7 +239,7 @@ namespace Table
   gboolean Supervisor::IsOver ()
   {
     _is_over     = TRUE;
-    _first_error = NULL;
+    _first_error = nullptr;
 
     gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                             (GtkTreeModelForeachFunc) TableSetIsOver,
@@ -257,7 +257,7 @@ namespace Table
     }
     else
     {
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -277,7 +277,7 @@ namespace Table
       ts->_is_over &= table_set->IsOver ();
     }
 
-    if (ts->_first_error == NULL)
+    if (ts->_first_error == nullptr)
     {
       ts->_first_error = table_set->GetFirstError ();
     }
@@ -330,7 +330,7 @@ namespace Table
 
           FeedTableSetStore (1,
                              nb_tables,
-                             NULL);
+                             nullptr);
         }
 
         {
@@ -363,7 +363,7 @@ namespace Table
                             this);
     gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")));
 
-    if (_displayed_table_set == NULL)
+    if (_displayed_table_set == nullptr)
     {
       GtkTreeIter iter;
 
@@ -376,7 +376,7 @@ namespace Table
 
         gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
                                   path,
-                                  NULL,
+                                  nullptr,
                                   FALSE);
 
         gtk_tree_path_free (path);
@@ -406,7 +406,7 @@ namespace Table
     if (_displayed_table_set && (_displayed_table_set == table_set))
     {
       _displayed_table_set->UnPlug ();
-      _displayed_table_set = NULL;
+      _displayed_table_set = nullptr;
     }
   }
 
@@ -492,7 +492,7 @@ namespace Table
   {
     GtkTreeIter  iter;
     GtkTreePath *path = gtk_tree_path_new_from_string (id);
-    TableSet    *table_set = NULL;
+    TableSet    *table_set = nullptr;
 
     if (gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_treestore),
                                  &iter,
@@ -534,12 +534,12 @@ namespace Table
     {
       _displayed_table_set->Wipe ();
       _displayed_table_set->UnPlug ();
-      _displayed_table_set = NULL;
+      _displayed_table_set = nullptr;
     }
 
     gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
                             DeleteTableSet,
-                            NULL);
+                            nullptr);
     gtk_tree_store_clear (_table_set_treestore);
   }
 
@@ -599,7 +599,7 @@ namespace Table
         {
           gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
                                     path,
-                                    NULL,
+                                    nullptr,
                                     FALSE);
 
           if (_displayed_table_set)
@@ -638,7 +638,7 @@ namespace Table
   {
     LoadConfiguration (xml_node);
 
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
@@ -833,13 +833,13 @@ namespace Table
   void Supervisor::OnTableSetDisplayed (TableSet *table_set,
                                         Table    *from)
   {
-    if ((_displayed_table_set == NULL) || (table_set == _displayed_table_set))
+    if ((_displayed_table_set == nullptr) || (table_set == _displayed_table_set))
     {
       Table *previous = from->GetLeftTable ();
       Table *next     = from->GetRightTable ();
 
       gtk_widget_set_sensitive (_glade->GetWidget ("previous_button"),
-                                previous != NULL);
+                                previous != nullptr);
 
       gtk_widget_set_sensitive (_glade->GetWidget ("next_button"),
                                 next && next->_ready_to_fence);
@@ -892,7 +892,7 @@ namespace Table
 
           if (table->GetLoosers (&loosers,
                                  &withdrawals,
-                                 NULL) > 0)
+                                 nullptr) > 0)
           {
             defeated_table_set->SetAttendees (loosers,
                                               withdrawals);
@@ -914,7 +914,7 @@ namespace Table
           }
           else
           {
-            defeated_table_set->SetAttendees (NULL,
+            defeated_table_set->SetAttendees (nullptr,
                                               withdrawals);
             HideTableSet (defeated_table_set,
                           &defeated_iter);
@@ -1010,7 +1010,7 @@ namespace Table
 
     gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
                             (GtkTreeModelForeachFunc) ToggleTableSetLock,
-                            0);
+                            nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -1078,7 +1078,7 @@ namespace Table
   {
     GtkWidget *dialog;
 
-    dialog = gtk_message_dialog_new (NULL,
+    dialog = gtk_message_dialog_new (nullptr,
                                      GTK_DIALOG_DESTROY_WITH_PARENT,
                                      GTK_MESSAGE_QUESTION,
                                      GTK_BUTTONS_OK_CANCEL,
@@ -1116,8 +1116,8 @@ namespace Table
   // --------------------------------------------------------------------------------
   GSList *Supervisor::GetCurrentClassification ()
   {
-    _result       = NULL;
-    _blackcardeds = NULL;
+    _result       = nullptr;
+    _blackcardeds = nullptr;
 
     gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                             (GtkTreeModelForeachFunc) GetTableSetClassification,
@@ -1133,7 +1133,7 @@ namespace Table
 
     _result = g_slist_concat (_result,
                               _blackcardeds);
-    _blackcardeds = NULL;
+    _blackcardeds = nullptr;
 
     return _result;
   }
@@ -1171,7 +1171,7 @@ namespace Table
       {
         Player *player = (Player *) blacardeds->data;
 
-        if (g_slist_find (ts->_blackcardeds, player) == NULL)
+        if (g_slist_find (ts->_blackcardeds, player) == nullptr)
         {
           ts->_blackcardeds = g_slist_prepend (ts->_blackcardeds,
                                                player);
@@ -1196,7 +1196,7 @@ namespace Table
 
     gtk_tree_view_get_cursor (treeview,
                               &path,
-                              NULL);
+                              nullptr);
     gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_filter),
                              &iter,
                              path);
@@ -1251,7 +1251,7 @@ namespace Table
       return _displayed_table_set->GetPrintName ();
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -1263,7 +1263,7 @@ namespace Table
       {
         return _displayed_table_set->GetBookSections (view);
       }
-      return NULL;
+      return nullptr;
     }
 
     return Stage::GetBookSections (view);

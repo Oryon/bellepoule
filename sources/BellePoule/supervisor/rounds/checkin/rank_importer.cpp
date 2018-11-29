@@ -28,7 +28,7 @@ namespace People
   RankImporter::RankImporter (GKeyFile *config_file)
     : Object ("RankImporter")
   {
-    _rank_table = NULL;
+    _rank_table = nullptr;
     DisplayChooser (config_file);
   }
 
@@ -59,8 +59,8 @@ namespace People
       Attribute           *attr;
       Player::AttributeId  name_attr_id  ("name");
       Player::AttributeId  first_attr_id ("first_name");
-      gchar               *name       = NULL;
-      gchar               *first_name = NULL;
+      gchar               *name       = nullptr;
+      gchar               *first_name = nullptr;
 
       attr = fencer->GetAttribute (&name_attr_id);
       if (attr)
@@ -99,7 +99,7 @@ namespace People
   void RankImporter::DisplayChooser (GKeyFile *config_file)
   {
     GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a rank file to apply..."),
-                                                      NULL,
+                                                      nullptr,
                                                       GTK_FILE_CHOOSER_ACTION_OPEN,
                                                       GTK_STOCK_CANCEL,
                                                       GTK_RESPONSE_CANCEL,
@@ -151,7 +151,7 @@ namespace People
 
           gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (chooser),
                                                 example_dirname,
-                                                NULL);
+                                                nullptr);
           g_free (example_dirname);
           g_free (install_dirname);
         }
@@ -162,7 +162,7 @@ namespace People
       gchar *last_dirname = g_key_file_get_string (config_file,
                                                    "CheckinSupervisor",
                                                    "default_import_dir_name",
-                                                   NULL);
+                                                   nullptr);
       if (last_dirname && g_file_test (last_dirname,
                                        G_FILE_TEST_IS_DIR))
       {
@@ -191,8 +191,8 @@ namespace People
 
         {
           gchar *uri = g_filename_to_uri (filename,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr);
 
           gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
                                        uri);
@@ -202,7 +202,7 @@ namespace People
         _rank_table = g_hash_table_new_full (g_str_hash,
                                              g_str_equal,
                                              g_free,
-                                             NULL);
+                                             nullptr);
 
         _worst_rank = 0;
 
@@ -229,16 +229,16 @@ namespace People
 
     if (g_file_get_contents (filename,
                              &file_content,
-                             NULL,
-                             NULL))
+                             nullptr,
+                             nullptr))
     {
       gchar *utf8_content = g_convert (file_content,
                                        -1,
                                        "UTF-8",
                                        "ISO-8859-1",
-                                       NULL,
-                                       NULL,
-                                       NULL);
+                                       nullptr,
+                                       nullptr,
+                                       nullptr);
 
       g_free (file_content);
       if (utf8_content)
@@ -256,7 +256,7 @@ namespace People
 
           if (lines)
           {
-            for (guint l = 0; lines[l] != NULL; l++)
+            for (guint l = 0; lines[l] != nullptr; l++)
             {
               gchar **tokens = g_strsplit_set (lines[l],
                                                "/",
@@ -264,12 +264,12 @@ namespace People
 
               if (tokens && tokens[0])
               {
-                gchar       *name       = NULL;
-                gchar       *first_name = NULL;
-                const gchar *rank       = NULL;
+                gchar       *name       = nullptr;
+                gchar       *first_name = nullptr;
+                const gchar *rank       = nullptr;
                 guint        rank_value;
 
-                for (guint t = 0; tokens[t] != NULL; t++)
+                for (guint t = 0; tokens[t] != nullptr; t++)
                 {
                   if (t == 0)
                   {
@@ -335,7 +335,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void RankImporter::LoadList (xmlNode *xml_node)
   {
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {

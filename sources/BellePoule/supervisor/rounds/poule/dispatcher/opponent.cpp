@@ -28,8 +28,8 @@ namespace Pool
     _id              = id;
     _fencer          = fencer;
     _fitness         = -1;
-    _opponent_list   = NULL;
-    _fitness_profile = NULL;
+    _opponent_list   = nullptr;
+    _fitness_profile = nullptr;
     _max_fitness     = 0;
     _lock            = 0;
     _quark           = 0;
@@ -116,7 +116,7 @@ namespace Pool
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -182,7 +182,7 @@ namespace Pool
       return _fencer->GetName ();
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------

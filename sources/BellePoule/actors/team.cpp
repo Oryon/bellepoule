@@ -29,11 +29,11 @@ const gchar *Team::_xml_tag    = "Equipe";
 Team::Team ()
 : Player (_class_name)
 {
-  _member_list = NULL;
+  _member_list = nullptr;
 
-  _default_classification = NULL;
-  _minimum_size           = NULL;
-  _manual_classification  = NULL;
+  _default_classification = nullptr;
+  _minimum_size           = nullptr;
+  _manual_classification  = nullptr;
   _enable_member_saving   = TRUE;
 }
 
@@ -121,7 +121,7 @@ void Team::SetAttributesFromMembers ()
     {
       AttributeId  attr_id (attr_desc->_code_name);
       GSList      *current_member = _member_list;
-      Attribute   *team_attr      = NULL;
+      Attribute   *team_attr      = nullptr;
 
       RemoveAttribute (&attr_id);
 
@@ -132,7 +132,7 @@ void Team::SetAttributesFromMembers ()
 
         if (team_attr && (Attribute::Compare (team_attr, attr) != 0))
         {
-          team_attr = NULL;
+          team_attr = nullptr;
           break;
         }
         team_attr = attr;
@@ -223,7 +223,7 @@ void Team::Load (xmlNode *xml_node)
     Player::AttributeId  name_attr_id ("name");
     Attribute           *name_attr = GetAttribute (&name_attr_id);
 
-    if (   (name_attr == NULL)
+    if (   (name_attr == nullptr)
         || (g_strcmp0 (name_attr->GetStrValue (), "???") == 0))
     {
       Player::AttributeId  ref_attr_id ("ref");

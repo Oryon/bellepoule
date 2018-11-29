@@ -49,8 +49,8 @@ namespace Marshaller
     _blocked = FALSE;
 
     _horizontal = TRUE;
-    _listener   = NULL;
-    _slots      = NULL;
+    _listener   = nullptr;
+    _slots      = nullptr;
 
     _clock = clock;
     _clock->Retain ();
@@ -162,7 +162,7 @@ namespace Marshaller
     // Cone
     {
       gchar     *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "images", "VLC.png", NULL);
-      GdkPixbuf *pixbuf    = gdk_pixbuf_new_from_file (icon_file, NULL);
+      GdkPixbuf *pixbuf    = gdk_pixbuf_new_from_file (icon_file, nullptr);
 
       _cone = goo_canvas_image_new (_root_item,
                                     pixbuf,
@@ -187,7 +187,7 @@ namespace Marshaller
     // Finish
     {
       gchar     *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "images", "finish.png", NULL);
-      GdkPixbuf *pixbuf    = gdk_pixbuf_new_from_file (icon_file, NULL);
+      GdkPixbuf *pixbuf    = gdk_pixbuf_new_from_file (icon_file, nullptr);
 
       _finish = goo_canvas_image_new (_root_item,
                                       pixbuf,
@@ -365,7 +365,7 @@ namespace Marshaller
       }
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -386,7 +386,7 @@ namespace Marshaller
   {
     return new Slot (this,
                      from,
-                     NULL,
+                     nullptr,
                      duration);
   }
 
@@ -402,7 +402,7 @@ namespace Marshaller
                                 duration);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -417,7 +417,7 @@ namespace Marshaller
                                  duration);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -489,7 +489,7 @@ namespace Marshaller
     if (slot && slot->TimeIsInside (_display_time))
     {
       GString     *match_name   = g_string_new ("");
-      const gchar *last_name    = NULL;
+      const gchar *last_name    = nullptr;
       GList       *referee_list = slot->GetRefereeList ();
 
       if (slot->IsOver ())
@@ -530,7 +530,7 @@ namespace Marshaller
       {
         GList *current = slot->GetJobList ();
 
-        for (guint i = 0; current != NULL; i++)
+        for (guint i = 0; current != nullptr; i++)
         {
           Job *job = (Job *) current->data;
 
@@ -624,7 +624,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Piste::OnSlotRetracted (Slot *slot)
   {
-    if (slot && (slot->GetJobList () == NULL))
+    if (slot && (slot->GetJobList () == nullptr))
     {
       _slots = g_list_remove (_slots,
                               slot);
@@ -814,7 +814,7 @@ namespace Marshaller
       if (event->time == piste->_button_press_time)
       {
         piste->_listener->OnPisteButtonEvent (piste,
-                                              NULL);
+                                              nullptr);
         piste->OnDoubleClick (piste,
                               event);
       }

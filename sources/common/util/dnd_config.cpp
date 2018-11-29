@@ -20,9 +20,9 @@
 DndConfig::DndConfig ()
   : Object ("DndConfig")
 {
-  _floating_object = NULL;
-  _target_list     = gtk_target_list_new (NULL, 0);
-  _peer_listener   = NULL;
+  _floating_object = nullptr;
+  _target_list     = gtk_target_list_new (nullptr, 0);
+  _peer_listener   = nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ void DndConfig::SetOnAWidgetSrc (GtkWidget       *widget,
 {
   gtk_drag_source_set (widget,
                        start_button_mask,
-                       NULL, 0,
+                       nullptr, 0,
                        actions);
   gtk_drag_source_set_target_list (widget,
                                    _target_list);
@@ -80,7 +80,7 @@ void DndConfig::SetOnAWidgetDest (GtkWidget     *widget,
 {
   gtk_drag_dest_set (widget,
                      (GtkDestDefaults) 0,
-                     NULL, 0,
+                     nullptr, 0,
                      actions);
   gtk_drag_dest_set_target_list (widget,
                                  _target_list);
@@ -93,7 +93,7 @@ void DndConfig::SetOnAWidgetSrc (GtkTreeView     *widget,
 {
   gtk_tree_view_enable_model_drag_source (widget,
                                           start_button_mask,
-                                          NULL, 0,
+                                          nullptr, 0,
                                           actions);
   gtk_drag_source_set_target_list (GTK_WIDGET (widget),
                                    _target_list);
@@ -104,7 +104,7 @@ void DndConfig::SetOnAWidgetDest (GtkTreeView   *widget,
                                   GdkDragAction  actions)
 {
   gtk_tree_view_enable_model_drag_dest (widget,
-                                        NULL, 0,
+                                        nullptr, 0,
                                         actions);
   gtk_drag_dest_set_target_list (GTK_WIDGET (widget),
                                  _target_list);
@@ -126,9 +126,9 @@ Object *DndConfig::GetFloatingObject ()
 void DndConfig::SetContext (GdkDragContext *context)
 {
   if (g_object_get_data (G_OBJECT (context),
-                         "DndConfig") == NULL)
+                         "DndConfig") == nullptr)
   {
-    _floating_object = NULL;
+    _floating_object = nullptr;
 
     g_object_set_data (G_OBJECT (context),
                        "DndConfig",

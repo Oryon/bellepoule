@@ -33,30 +33,30 @@
 
 #include "stage.hpp"
 
-GSList *Stage::_stage_base = NULL;
+GSList *Stage::_stage_base = nullptr;
 
 // --------------------------------------------------------------------------------
 Stage::Stage (StageClass *stage_class)
 {
   _name              = g_strdup ("");
   _locked            = FALSE;
-  _result            = NULL;
-  _output_short_list = NULL;
+  _result            = nullptr;
+  _output_short_list = nullptr;
   _quota_exceedance  = 0;
-  _previous          = NULL;
-  _next              = NULL;
+  _previous          = nullptr;
+  _next              = nullptr;
   _stage_class       = stage_class;
-  _attendees         = NULL;
-  _classification    = NULL;
-  _input_provider    = NULL;
+  _attendees         = nullptr;
+  _classification    = nullptr;
+  _input_provider    = nullptr;
   _classification_on = FALSE;
 
   _sensitivity_trigger    = new SensitivityTrigger ();
-  _score_stuffing_trigger = NULL;
+  _score_stuffing_trigger = nullptr;
 
-  _status_listener = NULL;
+  _status_listener = nullptr;
 
-  _max_score = NULL;
+  _max_score = nullptr;
 
   _nb_qualified = new Data ("NbQualifiesParIndice",
                             (guint) 0);
@@ -77,7 +77,7 @@ Stage::~Stage ()
 
   if (_previous)
   {
-    _previous->_next = NULL;
+    _previous->_next = nullptr;
   }
 }
 
@@ -112,7 +112,7 @@ const gchar *Stage::GetPurpose ()
 // --------------------------------------------------------------------------------
 GList *Stage::GetBookSections (StageView view)
 {
-  GList       *sections = NULL;
+  GList       *sections = nullptr;
   gchar       *title    = GetFullName ();
   BookSection *section  = new BookSection (title);
 
@@ -214,10 +214,10 @@ guint Stage::GetNetID ()
 void Stage::FreeResult ()
 {
   g_slist_free (_result);
-  _result = NULL;
+  _result = nullptr;
 
   g_slist_free (_output_short_list);
-  _output_short_list = NULL;
+  _output_short_list = nullptr;
   _quota_exceedance  = 0;
 }
 
@@ -287,7 +287,7 @@ gboolean Stage::IsOver ()
 // --------------------------------------------------------------------------------
 Error *Stage::GetError ()
 {
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -417,7 +417,7 @@ void Stage::RetrieveAttendees ()
       Player::AttributeId  global_status_attr_id ("global_status");
       GSList              *current = short_list;
 
-      for (guint i = 0; current != NULL; i++)
+      for (guint i = 0; current != nullptr; i++)
       {
         Player *player = (Player *) current->data;
 
@@ -451,7 +451,7 @@ void Stage::SetOutputShortlist ()
   if (_output_short_list)
   {
     g_slist_free (_output_short_list);
-    _output_short_list = NULL;
+    _output_short_list = nullptr;
   }
 
   if (_result)
@@ -467,7 +467,7 @@ void Stage::SetOutputShortlist ()
     // Remove all of the withdrawalls and black cards
     {
       Player::AttributeId stage_status_attr_id ("status", GetPlayerDataOwner ());
-      GSList *new_short_list = NULL;
+      GSList *new_short_list = nullptr;
       GSList *current        = _output_short_list;
 
       while (current)
@@ -581,15 +581,15 @@ void Stage::SetOutputShortlist ()
         {
           GSList              *current = reversed_short_list;
           Player::AttributeId  rank_attr_id ("rank", this);
-          Attribute           *last_qualified_rank = NULL;
+          Attribute           *last_qualified_rank = nullptr;
 
           _quota_exceedance = g_slist_length (_output_short_list);
-          for (guint i = 0; current != NULL; i++)
+          for (guint i = 0; current != nullptr; i++)
           {
             Player    *current_fencer = (Player *) current->data;
             Attribute *current_rank   = current_fencer->GetAttribute (&rank_attr_id);
 
-            if (last_qualified_rank == NULL)
+            if (last_qualified_rank == nullptr)
             {
               last_qualified_rank = current_rank;
             }
@@ -733,7 +733,7 @@ Player *Stage::GetFencerFromRef (guint ref)
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -790,7 +790,7 @@ Stage::StageClass *Stage::GetClass (const gchar *name)
       current = g_slist_next (current);
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -831,7 +831,7 @@ Stage *Stage::CreateInstance (const gchar *name)
     return stage;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -843,7 +843,7 @@ guint Stage::GetRights ()
 // --------------------------------------------------------------------------------
 const gchar *Stage::GetInputProviderClient ()
 {
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -907,14 +907,14 @@ Stage *Stage::GetInputProvider ()
 void Stage::OnFilterClicked (const gchar *classification_toggle_button)
 {
   Module              *module = dynamic_cast <Module *> (this);
-  GtkToggleToolButton *w      = NULL;
+  GtkToggleToolButton *w      = nullptr;
 
   if (classification_toggle_button)
   {
     w = GTK_TOGGLE_TOOL_BUTTON (module->GetGObject (classification_toggle_button));
   }
 
-  if ((w == NULL) || gtk_toggle_tool_button_get_active (w))
+  if ((w == nullptr) || gtk_toggle_tool_button_get_active (w))
   {
     if (_classification)
     {
@@ -981,7 +981,7 @@ GSList *Stage::GetShortList ()
     return _previous->_output_short_list;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -993,12 +993,12 @@ Classification *Stage::GetClassification ()
 // --------------------------------------------------------------------------------
 void Stage::SetClassificationFilter (Filter *filter)
 {
-  if (_classification == NULL)
+  if (_classification == nullptr)
   {
     Module    *module           = dynamic_cast <Module *> (this);
     GtkWidget *classification_w = GTK_WIDGET (module->GetGObject ("coumpound_classification_hook"));
 
-    if (classification_w == NULL)
+    if (classification_w == nullptr)
     {
       classification_w = GTK_WIDGET (module->GetGObject ("classification_hook"));
     }
@@ -1023,7 +1023,7 @@ gboolean Stage::HasItsOwnRanking ()
 // --------------------------------------------------------------------------------
 void Stage::GiveEliminatedAFinalRank ()
 {
-  if (_result && (GetInputProviderClient () == NULL))
+  if (_result && (GetInputProviderClient () == nullptr))
   {
     Player::AttributeId status_attr_id     ("status", GetPlayerDataOwner ());
     Player::AttributeId rank_attr_id       ("rank",   GetPlayerDataOwner ());
@@ -1037,7 +1037,7 @@ void Stage::GiveEliminatedAFinalRank ()
       Player    *player    = (Player *) current->data;
       Attribute *rank_attr = player->GetAttribute (&rank_attr_id);
 
-      if ((_next == NULL) || (_next->HasItsOwnRanking () == FALSE))
+      if ((_next == nullptr) || (_next->HasItsOwnRanking () == FALSE))
       {
         player->SetAttributeValue (&final_rank_attr_id,
                                    rank_attr->GetUIntValue ());
@@ -1083,7 +1083,7 @@ void Stage::UpdateClassification (Classification *classification,
 {
   if (classification)
   {
-    Player::AttributeId *previous_attr_id = NULL;
+    Player::AttributeId *previous_attr_id = nullptr;
 
     if (_input_provider)
     {
@@ -1189,7 +1189,7 @@ void Stage::LockOnClassification (GtkWidget *w)
 // --------------------------------------------------------------------------------
 void Stage::SetScoreStuffingPolicy (gboolean allowed)
 {
-  if (_score_stuffing_trigger == NULL)
+  if (_score_stuffing_trigger == nullptr)
   {
     Module *module = dynamic_cast <Module *> (this);
 
@@ -1252,7 +1252,7 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
     if (attr)
     {
       _parcel->SetNetID (g_ascii_strtoull (attr,
-                                           NULL,
+                                           nullptr,
                                            16));
       xmlFree (attr);
     }
@@ -1455,7 +1455,7 @@ void Stage::Dump ()
   {
     GSList *current = _result;
 
-    for (guint i = 0; current != NULL; i++)
+    for (guint i = 0; current != nullptr; i++)
     {
       Player *player = (Player *) current->data;
 
@@ -1505,7 +1505,7 @@ void Stage::DrawConfigLine (GtkPrintOperation *operation,
 
     goo_canvas_render (canvas,
                        gtk_print_context_get_cairo_context (context),
-                       NULL,
+                       nullptr,
                        1.0);
 
     gtk_widget_destroy (GTK_WIDGET (canvas));

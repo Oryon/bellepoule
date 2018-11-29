@@ -253,7 +253,7 @@ class Stage : public virtual Object,
     virtual void OnUnLocked () {};
     static StageClass *GetClass (const gchar *name);
 
-    virtual GSList *GetCurrentClassification () {return NULL;};
+    virtual GSList *GetCurrentClassification () {return nullptr;};
 
     virtual void SetOutputShortlist ();
 

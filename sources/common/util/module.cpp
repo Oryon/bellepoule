@@ -23,21 +23,21 @@
 
 const gdouble  Module::PRINT_HEADER_FRAME_HEIGHT = 10.0; // % of paper width
 const gdouble  Module::PRINT_FONT_HEIGHT         = 2.0;  // % of paper width
-GtkTreeModel  *Module::_status_model             = NULL;
-GtkWindow     *Module::_main_window              = NULL;
+GtkTreeModel  *Module::_status_model             = nullptr;
+GtkWindow     *Module::_main_window              = nullptr;
 
 // --------------------------------------------------------------------------------
 Module::Module (const gchar *glade_file,
                 const gchar *root)
 {
-   _plugged_list     = NULL;
-   _owner            = NULL;
+   _plugged_list     = nullptr;
+   _owner            = nullptr;
    _data_owner       = this;
-   _root             = NULL;
-   _glade            = NULL;
-   _toolbar          = NULL;
-   _config_container = NULL;
-   _filter           = NULL;
+   _root             = nullptr;
+   _glade            = nullptr;
+   _toolbar          = nullptr;
+   _config_container = nullptr;
+   _filter           = nullptr;
    _rand_seed        = 0;
 
   _print_settings            = gtk_print_settings_new ();
@@ -63,7 +63,7 @@ Module::Module (const gchar *glade_file,
       gtk_widget_set_name (_root,
                            glade_file);
 
-      if (_main_window == NULL)
+      if (_main_window == nullptr)
       {
         _main_window = GTK_WINDOW (_root);
       }
@@ -180,9 +180,9 @@ gboolean Module::OnDragDrop (GtkWidget      *widget,
 {
   GdkAtom atom = gtk_drag_dest_find_target (widget,
                                             drag_context,
-                                            NULL);
+                                            nullptr);
 
-  return (atom != 0);
+  return (atom != nullptr);
 }
 
 // --------------------------------------------------------------------------------
@@ -212,13 +212,13 @@ gboolean Module::OnDragMotion (GtkWidget      *widget,
   {
     GdkAtom atom = gtk_drag_dest_find_target (widget,
                                               drag_context,
-                                              NULL);
+                                              nullptr);
 
     if (atom)
     {
       _dnd_config->SetContext (drag_context);
 
-      if (_dnd_config->GetFloatingObject () == NULL)
+      if (_dnd_config->GetFloatingObject () == nullptr)
       {
         gtk_drag_get_data (widget,
                            drag_context,
@@ -295,7 +295,7 @@ void Module::OnDragDataReceived (GtkWidget        *widget,
 Object *Module::GetDropObjectFromRef (guint32 ref,
                                       guint   key)
 {
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -422,7 +422,7 @@ void Module::UnPlug ()
     {
       _owner->_plugged_list = g_slist_remove (_owner->_plugged_list,
                                               this);
-      _owner = NULL;
+      _owner = nullptr;
     }
 
     if (_filter)
@@ -448,7 +448,7 @@ Module::State Module::GetState ()
 // --------------------------------------------------------------------------------
 gboolean Module::IsPlugged ()
 {
-  return (gtk_widget_get_parent (_root) != NULL);
+  return (gtk_widget_get_parent (_root) != nullptr);
 }
 
 // --------------------------------------------------------------------------------
@@ -501,7 +501,7 @@ void Module::SetCursor (GdkCursorType cursor_type)
 void Module::ResetCursor ()
 {
   gdk_window_set_cursor (gtk_widget_get_window (_root),
-                         NULL);
+                         nullptr);
 }
 
 // --------------------------------------------------------------------------------
@@ -509,9 +509,9 @@ void Module::Print (const gchar *job_name,
                     Object      *data)
 {
   Print (job_name,
-         NULL,
+         nullptr,
          data,
-         NULL,
+         nullptr,
          GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG);
 }
 
@@ -521,8 +521,8 @@ void Module::PrintPDF (const gchar  *job_name,
 {
   Print (job_name,
          filename,
-         NULL,
-         NULL,
+         nullptr,
+         nullptr,
          GTK_PRINT_OPERATION_ACTION_EXPORT);
 }
 
@@ -531,9 +531,9 @@ void Module::PrintPreview (const gchar *job_name,
                            Object      *data)
 {
   Print (job_name,
-         NULL,
+         nullptr,
          data,
-         NULL,
+         nullptr,
          GTK_PRINT_OPERATION_ACTION_PREVIEW);
 }
 
@@ -545,7 +545,7 @@ void Module::Print (const gchar             *job_name,
                     GtkPrintOperationAction  action)
 {
   GtkPrintOperationResult  res;
-  GError                  *error     = NULL;
+  GError                  *error     = nullptr;
   GtkPrintOperation       *operation = gtk_print_operation_new ();
 
   if (data)
@@ -607,7 +607,7 @@ void Module::Print (const gchar             *job_name,
 
   res = gtk_print_operation_run (operation,
                                  action,
-                                 NULL,
+                                 nullptr,
                                  &error);
 
   if (res == GTK_PRINT_OPERATION_RESULT_APPLY)
@@ -639,7 +639,7 @@ void Module::Print (const gchar             *job_name,
   {
     GtkWidget *dialog;
 
-    dialog = gtk_message_dialog_new (NULL,
+    dialog = gtk_message_dialog_new (nullptr,
                                      GTK_DIALOG_DESTROY_WITH_PARENT,
                                      GTK_MESSAGE_ERROR,
                                      GTK_BUTTONS_CLOSE,
@@ -820,7 +820,7 @@ GdkPixbuf *Module::GetPixbuf (const gchar *icon)
 {
   GdkPixbuf *pixbuf;
 
-  pixbuf = gdk_pixbuf_new_from_file (icon, NULL);
+  pixbuf = gdk_pixbuf_new_from_file (icon, nullptr);
   if (pixbuf)
   {
     return pixbuf;
@@ -833,7 +833,7 @@ GdkPixbuf *Module::GetPixbuf (const gchar *icon)
     pixbuf = gtk_widget_render_icon (image,
                                      icon,
                                      GTK_ICON_SIZE_BUTTON,
-                                     NULL);
+                                     nullptr);
     g_object_unref (image);
   }
 
@@ -852,7 +852,7 @@ gint Module::RunDialog (GtkDialog *dialog)
 void Module::Raise (GtkDialog *dialog,
                     GtkWindow *over)
 {
-  if (over == NULL)
+  if (over == nullptr)
   {
     gtk_window_set_transient_for (GTK_WINDOW (dialog),
                                   _main_window);
@@ -872,7 +872,7 @@ void Module::Raise (GtkDialog *dialog,
 // --------------------------------------------------------------------------------
 GtkTreeModel *Module::GetStatusModel ()
 {
-  if (_status_model == NULL)
+  if (_status_model == nullptr)
   {
     AttributeDesc *desc = AttributeDesc::GetDescFromCodeName ("status");
 
@@ -907,7 +907,7 @@ GtkTreeModel *Module::GetStatusModel ()
         {
           GtkTreeIter pool_iter;
 
-          gtk_tree_store_append (GTK_TREE_STORE (_status_model), &pool_iter, NULL);
+          gtk_tree_store_append (GTK_TREE_STORE (_status_model), &pool_iter, nullptr);
           gtk_tree_store_set (GTK_TREE_STORE (_status_model), &pool_iter,
                               AttributeDesc::DISCRETE_XML_IMAGE_str, xml_image,
                               AttributeDesc::DISCRETE_LONG_TEXT_str, user_image,

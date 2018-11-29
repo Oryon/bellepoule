@@ -37,7 +37,7 @@ namespace People
       };
 
     public:
-      RefereesList (Listener *listener = NULL);
+      RefereesList (Listener *listener = nullptr);
 
       void SetWeapon (Weapon *weapon);
 

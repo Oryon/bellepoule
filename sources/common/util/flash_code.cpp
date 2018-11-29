@@ -47,7 +47,7 @@ gchar *FlashCode::GetText ()
 // --------------------------------------------------------------------------------
 GdkPixbuf *FlashCode::GetPixbuf (guint pixel_size)
 {
-  GdkPixbuf *pixbuf = NULL;
+  GdkPixbuf *pixbuf = nullptr;
 
   {
     QRcode *qr_code;
@@ -97,7 +97,7 @@ GdkPixbuf *FlashCode::GetPixbuf (guint pixel_size)
                                                dst_width,
                                                dst_stride,
                                                DestroyPixbuf,
-                                               NULL);
+                                               nullptr);
 
       pixbuf = gdk_pixbuf_scale_simple (small_pixbuf,
                                         dst_width * pixel_size,

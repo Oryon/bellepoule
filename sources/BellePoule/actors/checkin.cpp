@@ -36,11 +36,11 @@ namespace People
     : Object ("Checkin"),
     PlayersList (glade)
   {
-    _form            = NULL;
+    _form            = nullptr;
     _tally_counter   = new TallyCounter ();
     _base_class      = base_class;
     _gathering_class = gathering_class;
-    _listener        = NULL;
+    _listener        = nullptr;
 
     RefreshAttendingDisplay ();
   }
@@ -57,7 +57,7 @@ namespace People
                              const gchar *player_class,
                              Module      *player_owner)
   {
-    if (_form == NULL)
+    if (_form == nullptr)
     {
       if (player_owner)
       {
@@ -92,7 +92,7 @@ namespace People
                                 const gchar     *from_node,
                                 const gchar     *player_class)
   {
-    xmlNode        *node                  = NULL;
+    xmlNode        *node                  = nullptr;
     const gchar    *player_class_xml_tag  = PlayerFactory::GetXmlTag (player_class);
     gchar          *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
     gchar          *path                  = g_strdup_printf ("%s/%s", from_node, players_class_xml_tag);
@@ -116,7 +116,7 @@ namespace People
                           const gchar     *from_node,
                           const gchar     *player_class)
   {
-    if (player_class == NULL)
+    if (player_class == nullptr)
     {
       player_class = _base_class;
     }
@@ -151,7 +151,7 @@ namespace People
   {
     const gchar *base_class_xml_tag = PlayerFactory::GetXmlTag (_base_class);
 
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
@@ -159,7 +159,7 @@ namespace People
         {
           owner = LoadPlayer (n,
                               player_class,
-                              NULL);
+                              nullptr);
         }
         else if (   _gathering_class
                  && (g_strcmp0 (player_class, _gathering_class) == 0)
@@ -171,7 +171,7 @@ namespace People
         }
         else if (g_strcmp0 ((char *) n->name, players_class_xml_tag) != 0)
         {
-          owner = NULL;
+          owner = nullptr;
           return;
         }
       }
@@ -265,7 +265,7 @@ namespace People
   void Checkin::SaveList (XmlScheme   *xml_scheme,
                           const gchar *player_class)
   {
-    if (player_class == NULL)
+    if (player_class == nullptr)
     {
       player_class = _base_class;
     }
@@ -311,14 +311,14 @@ namespace People
     Player::AttributeId  attr_id ("attending");
     Attribute           *attr = player->GetAttribute (&attr_id);
 
-    return ((attr == NULL) || (attr->GetUIntValue () == TRUE));
+    return ((attr == nullptr) || (attr->GetUIntValue () == TRUE));
   }
 
   // --------------------------------------------------------------------------------
   void Checkin::OnImport ()
   {
     GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a fencer file to import..."),
-                                                      NULL,
+                                                      nullptr,
                                                       GTK_FILE_CHOOSER_ACTION_OPEN,
                                                       GTK_STOCK_CANCEL,
                                                       GTK_RESPONSE_CANCEL,
@@ -370,7 +370,7 @@ namespace People
 
           gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (chooser),
                                                 example_dirname,
-                                                NULL);
+                                                nullptr);
           g_free (example_dirname);
           g_free (install_dirname);
         }
@@ -381,7 +381,7 @@ namespace People
       gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                    "Checkin",
                                                    "default_import_dir_name",
-                                                   NULL);
+                                                   nullptr);
       if (last_dirname && g_file_test (last_dirname,
                                        G_FILE_TEST_IS_DIR))
       {
@@ -410,8 +410,8 @@ namespace People
 
         {
           gchar *uri = g_filename_to_uri (filename,
-                                          NULL,
-                                          NULL);
+                                          nullptr,
+                                          nullptr);
 
           gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
                                        uri);
@@ -439,14 +439,14 @@ namespace People
   // --------------------------------------------------------------------------------
   gchar *Checkin::GetFileContent (gchar *filename)
   {
-    gchar *file_content = NULL;
+    gchar *file_content = nullptr;
     gchar *raw_file;
     gsize  length;
 
     if (g_file_get_contents ((const gchar *) filename,
                              &raw_file,
                              &length,
-                             NULL))
+                             nullptr))
     {
       guint j;
 
@@ -482,14 +482,14 @@ namespace People
     gchar  *utf8_content;
 
     {
-      GError *error         = NULL;
+      GError *error         = nullptr;
       gsize   bytes_written;
 
       utf8_content = g_convert (file_content,
                                 -1,
                                 "UTF-8",
                                 "ISO-8859-1",
-                                NULL,
+                                nullptr,
                                 &bytes_written,
                                 &error);
       g_free (file_content);
@@ -534,13 +534,13 @@ namespace People
         // 08/11/2009;;;;
 
         // Fencers
-        for (guint l = 2; lines[l] != NULL; l++)
+        for (guint l = 2; lines[l] != nullptr; l++)
         {
           gchar               **line;
           Player               *player;
           Player::AttributeId   attr_id ("");
 
-          player = NULL;
+          player = nullptr;
           line = g_strsplit_set (lines[l],
                                  ";",
                                  0);
@@ -650,7 +650,7 @@ namespace People
               attr_id._name = (gchar *) "club";
               player->SetAttributeValue (&attr_id, tokens[2]);
 
-              if (tokens[3] == NULL)
+              if (tokens[3] == nullptr)
               {
                 attr_id._name = (gchar *) "ranking";
                 player->SetAttributeValue (&attr_id, (guint) 0);
@@ -674,7 +674,7 @@ namespace People
           {
             if (player)
             {
-              OnPlayerLoaded (player, NULL);
+              OnPlayerLoaded (player, nullptr);
               Add (player);
               player->Release ();
             }
@@ -696,12 +696,12 @@ namespace People
     gchar  *utf8_content;
 
     {
-      GError *error = NULL;
+      GError *error = nullptr;
 
       utf8_content = g_locale_to_utf8 (file_content,
                                        -1,
-                                       NULL,
-                                       NULL,
+                                       nullptr,
+                                       nullptr,
                                        &error);
       g_free (file_content);
 
@@ -728,7 +728,7 @@ namespace People
       if (rows && rows[0])
       {
         guint           nb_attr    = 0;
-        AttributeDesc **columns    = NULL;
+        AttributeDesc **columns    = nullptr;
         const char     *delimiters = ",";
 
         if (strchr (rows[0], ';'))
@@ -744,7 +744,7 @@ namespace People
 
           if (header_attr)
           {
-            for (guint i = 0; header_attr[i] != NULL; i++)
+            for (guint i = 0; header_attr[i] != nullptr; i++)
             {
               g_strdelimit (header_attr[i],
                             "\"",
@@ -767,7 +767,7 @@ namespace People
         }
 
         // Fencers
-        for (guint f = 1; rows[f] != NULL; f++)
+        for (guint f = 1; rows[f] != nullptr; f++)
         {
           gchar **tokens = g_strsplit_set (rows[f],
                                            delimiters,
@@ -781,7 +781,7 @@ namespace People
 
             for (guint c = 0; c < nb_attr; c++)
             {
-              if (tokens[c] == NULL)
+              if (tokens[c] == nullptr)
               {
                 break;
               }
@@ -802,7 +802,7 @@ namespace People
 
             if (has_attribute)
             {
-              OnPlayerLoaded (player, NULL);
+              OnPlayerLoaded (player, nullptr);
               Add (player);
             }
             player->Release ();
@@ -998,7 +998,7 @@ namespace People
 
       if (player && (player->IsSticky () == FALSE))
       {
-        _form->Show (NULL,
+        _form->Show (nullptr,
                      player);
       }
     }

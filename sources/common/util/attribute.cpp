@@ -60,7 +60,7 @@ Attribute *Attribute::New (const gchar *name)
       return new TextAttribute (desc);
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ gint Attribute::Compare (Attribute *a, Attribute *b)
 // --------------------------------------------------------------------------------
 char *Attribute::GetStrValue ()
 {
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ TextAttribute::~TextAttribute ()
 void TextAttribute::SetValue (const gchar *value)
 {
   g_free (_value);
-  _value = NULL;
+  _value = nullptr;
 
   if (value)
   {
@@ -279,7 +279,7 @@ Attribute *TextAttribute::Duplicate ()
   }
   else
   {
-    attr->_value = NULL;
+    attr->_value = nullptr;
   }
 
   return attr;
@@ -404,11 +404,11 @@ void IntAttribute::SetValue (const gchar *value)
   {
     if (strstr (value, "0x"))
     {
-      _value = strtol (value, NULL, 16);
+      _value = strtol (value, nullptr, 16);
     }
     else
     {
-      _value = strtol (value, NULL, 10);
+      _value = strtol (value, nullptr, 10);
     }
   }
 }

@@ -21,9 +21,9 @@
 #include "attribute_desc.hpp"
 #include "tree_model_index.hpp"
 
-GList                       *AttributeDesc::_list           = NULL;
-GSList                      *AttributeDesc::_swappable_list = NULL;
-AttributeDesc::CriteriaFunc  AttributeDesc::_criteria_func  = NULL;
+GList                       *AttributeDesc::_list           = nullptr;
+GSList                      *AttributeDesc::_swappable_list = nullptr;
+AttributeDesc::CriteriaFunc  AttributeDesc::_criteria_func  = nullptr;
 
 // --------------------------------------------------------------------------------
 AttributeDesc::AttributeDesc (GType        type,
@@ -43,15 +43,15 @@ AttributeDesc::AttributeDesc (GType        type,
   _scope              = GLOBAL;
   _free_value_allowed = TRUE;
   _rights             = PUBLIC;
-  _discrete_model     = NULL;
-  _compare_func       = NULL;
+  _discrete_model     = nullptr;
+  _compare_func       = nullptr;
   _has_selector       = FALSE;
   _is_selector        = FALSE;
 
-  _discrete_code_index       = NULL;
-  _discrete_xml_index        = NULL;
-  _discrete_long_text_index  = NULL;
-  _discrete_short_text_index = NULL;
+  _discrete_code_index       = nullptr;
+  _discrete_xml_index        = nullptr;
+  _discrete_long_text_index  = nullptr;
+  _discrete_short_text_index = nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ gboolean AttributeDesc::DiscreteFilterForCombobox (GtkTreeModel *model,
                                                    GtkTreeIter  *iter,
                                                    GtkComboBox  *selector)
 {
-  gchar    *selector_country = NULL;
+  gchar    *selector_country = nullptr;
   gboolean  result           = FALSE;
 
   {
@@ -189,12 +189,12 @@ void AttributeDesc::BindDiscreteValues (GObject     *object,
     if (_has_selector)
     {
       GtkTreeModel *filter = gtk_tree_model_filter_new (_discrete_model,
-                                                        NULL);
+                                                        nullptr);
 
       gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (filter),
                                               (GtkTreeModelFilterVisibleFunc) DiscreteFilterForCombobox,
                                               selector,
-                                              NULL);
+                                              nullptr);
 
       if (selector)
       {
@@ -249,8 +249,8 @@ void AttributeDesc::EnableSorting ()
   gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_discrete_model),
                                    DISCRETE_LONG_TEXT_str,
                                    (GtkTreeIterCompareFunc) CompareTextColumn,
-                                   NULL,
-                                   NULL);
+                                   nullptr,
+                                   nullptr);
 
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_discrete_model),
                                         DISCRETE_LONG_TEXT_str,
@@ -331,7 +331,7 @@ void AttributeDesc::Refilter (GtkComboBox *selector,
 // --------------------------------------------------------------------------------
 gboolean AttributeDesc::HasDiscreteValue ()
 {
-  return (_discrete_model != NULL);
+  return (_discrete_model != nullptr);
 }
 
 // --------------------------------------------------------------------------------
@@ -377,7 +377,7 @@ GtkTreeIter *AttributeDesc::GetDiscreteIter (const gchar *from_user_image)
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -415,7 +415,7 @@ void *AttributeDesc::GetDiscreteData (guint from_code,
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -455,7 +455,7 @@ void *AttributeDesc::GetDiscreteData (const gchar *from_user_image,
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -477,7 +477,7 @@ gchar *AttributeDesc::GetXmlImage (gchar *user_image)
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -496,7 +496,7 @@ gchar *AttributeDesc::GetUserImage (GtkTreeIter *iter,
   }
   else
   {
-    return NULL;
+    return nullptr;
   }
 
   if (_discrete_model)
@@ -512,7 +512,7 @@ gchar *AttributeDesc::GetUserImage (GtkTreeIter *iter,
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -530,7 +530,7 @@ gchar *AttributeDesc::GetXmlImage (GtkTreeIter *iter)
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -559,7 +559,7 @@ gchar *AttributeDesc::GetUserImage (gchar *xml_image,
         }
         else
         {
-          return NULL;
+          return nullptr;
         }
 
         gtk_tree_model_get (_discrete_model, &iter,
@@ -571,7 +571,7 @@ gchar *AttributeDesc::GetUserImage (gchar *xml_image,
     return GetUndivadableText (xml_image);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -580,7 +580,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
                                        const gchar *first_icon,
                                        ...)
 {
-  if (_discrete_model == NULL)
+  if (_discrete_model == nullptr)
   {
     CreateDiscreteModel ();
   }
@@ -596,7 +596,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
     {
       GtkTreeIter iter;
 
-      gtk_tree_store_append (GTK_TREE_STORE (_discrete_model), &iter, NULL);
+      gtk_tree_store_append (GTK_TREE_STORE (_discrete_model), &iter, nullptr);
 
       {
         gchar *undivadable_image = GetUndivadableText (user_image);
@@ -626,7 +626,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
 
         if (g_file_test (icon_path, G_FILE_TEST_IS_REGULAR))
         {
-          pixbuf = gdk_pixbuf_new_from_file (icon_path, NULL);
+          pixbuf = gdk_pixbuf_new_from_file (icon_path, nullptr);
         }
         else
         {
@@ -636,7 +636,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
           pixbuf = gtk_widget_render_icon (image,
                                            icon,
                                            GTK_ICON_SIZE_BUTTON,
-                                           NULL);
+                                           nullptr);
           g_object_unref (image);
         }
 
@@ -696,7 +696,7 @@ void AttributeDesc::AddDiscreteValueSelector (const gchar *name)
 void AttributeDesc::AddLocalizedDiscreteValues (const gchar *name)
 {
   gchar       *dir_path = g_build_filename (Global::_share_dir, "resources", "localized_data", NULL);
-  GDir        *dir      = g_dir_open       (dir_path, 0,  NULL);
+  GDir        *dir      = g_dir_open       (dir_path, 0,  nullptr);
   const gchar *country  = g_dir_read_name  (dir);
 
   CreateDiscreteModel ();
@@ -723,12 +723,12 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
 {
   gchar  *raw_file;
   gchar  *index_file = g_build_filename (dir, "index.txt", NULL);
-  GError *error      = NULL;
+  GError *error      = nullptr;
 
 
   if (g_file_get_contents ((const gchar *) index_file,
                            &raw_file,
-                           NULL,
+                           nullptr,
                            &error) == FALSE)
   {
     if (g_error_matches (error,
@@ -759,7 +759,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
 
       if (tokens)
       {
-        gchar *textdomain = NULL;
+        gchar *textdomain = nullptr;
 
         {
           gchar *translations = g_build_filename (dir, "translations", NULL);
@@ -771,11 +771,11 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
           g_free (translations);
         }
 
-        for (guint i = 0; (tokens[i] != NULL) && (*tokens[i] != 0); i+=nb_tokens)
+        for (guint i = 0; (tokens[i] != nullptr) && (*tokens[i] != 0); i+=nb_tokens)
         {
           GtkTreeIter iter;
 
-          gtk_tree_store_append (GTK_TREE_STORE (_discrete_model), &iter, NULL);
+          gtk_tree_store_append (GTK_TREE_STORE (_discrete_model), &iter, nullptr);
 
           // Selector
           {
@@ -798,13 +798,13 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
 
               // Icon
               {
-                gchar *escape_file     = g_uri_escape_string (tokens[i], NULL, FALSE);
+                gchar *escape_file     = g_uri_escape_string (tokens[i], nullptr, FALSE);
                 gchar *pixbuf_file     = g_build_filename (dir, escape_file, NULL);
                 gchar *pixbuf_file_png = g_strdup_printf ("%s.png", pixbuf_file);
 
                 if (g_file_test (pixbuf_file_png, G_FILE_TEST_IS_REGULAR))
                 {
-                  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (pixbuf_file_png, NULL);
+                  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (pixbuf_file_png, nullptr);
 
                   gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
                                       DISCRETE_ICON_pix, pixbuf, -1);
@@ -857,7 +857,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
 
             if (subtokens)
             {
-              for (guint s = 0; subtokens[s] != NULL; s++)
+              for (guint s = 0; subtokens[s] != nullptr; s++)
               {
                 gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
                                     DISCRETE_CODE_uint, atoi (subtokens[s]),
@@ -882,7 +882,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
 // --------------------------------------------------------------------------------
 void AttributeDesc::CreateExcludingList (GSList **list, ...)
 {
-  GSList *new_list = NULL;
+  GSList *new_list = nullptr;
   GList  *current  = _list;
 
   while (current)
@@ -901,7 +901,7 @@ void AttributeDesc::CreateExcludingList (GSList **list, ...)
     }
     va_end (ap);
 
-    if (name == NULL)
+    if (name == nullptr)
     {
       new_list = g_slist_append (new_list,
                                  desc);
@@ -916,7 +916,7 @@ void AttributeDesc::CreateExcludingList (GSList **list, ...)
 // --------------------------------------------------------------------------------
 void AttributeDesc::CreateIncludingList (GSList **list, ...)
 {
-  GSList *new_list = NULL;
+  GSList *new_list = nullptr;
   GList  *current  = _list;
 
   while (current)
@@ -965,7 +965,7 @@ AttributeDesc *AttributeDesc::GetDescFromCodeName (const gchar *code_name)
     current = g_list_next (current);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -984,7 +984,7 @@ AttributeDesc *AttributeDesc::GetDescFromXmlName (const gchar *xml_name)
     current = g_list_next (current);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -1016,5 +1016,5 @@ AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name,
     current = g_list_next (current);
   }
 
-  return NULL;
+  return nullptr;
 }

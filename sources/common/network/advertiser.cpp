@@ -37,9 +37,9 @@ namespace Net
       Module ("advertiser.glade")
   {
     _state            = WARMUP;
-    _title            = NULL;
-    _link             = NULL;
-    _session          = NULL;
+    _title            = nullptr;
+    _link             = nullptr;
+    _session          = nullptr;
     _pending_response = FALSE;
 #ifdef WEBKIT
     _oob_authentication = FALSE;
@@ -209,7 +209,7 @@ namespace Net
                              const gchar *title)
   {
     g_free (advertiser->_title);
-    advertiser->_title = NULL;
+    advertiser->_title = nullptr;
 
     if (title)
     {
@@ -222,7 +222,7 @@ namespace Net
                             const gchar *link)
   {
     g_free (advertiser->_link);
-    advertiser->_link = NULL;
+    advertiser->_link = nullptr;
 
     if (link)
     {
@@ -465,9 +465,9 @@ extern "C" G_MODULE_EXPORT void on_pin_url_clicked (GtkWidget *widget,
                 NULL,
                 SW_SHOWNORMAL);
 #else
-  gtk_show_uri (NULL,
+  gtk_show_uri (nullptr,
                 uri,
                 GDK_CURRENT_TIME,
-                NULL);
+                nullptr);
 #endif
 }

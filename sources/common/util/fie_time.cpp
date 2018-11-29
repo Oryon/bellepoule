@@ -30,9 +30,9 @@ FieTime::FieTime (GDateTime *time)
 FieTime::FieTime (const gchar *time)
   : Object ("FieTime")
 {
-  _image       = NULL;
-  _xml_image   = NULL;
-  _g_date_time = NULL;
+  _image       = nullptr;
+  _xml_image   = nullptr;
+  _g_date_time = nullptr;
 
   {
     gchar **tokens = g_strsplit_set (time,
@@ -43,7 +43,7 @@ FieTime::FieTime (const gchar *time)
     {
       guint token_count = 0;
 
-      while (tokens[token_count] != 0)
+      while (tokens[token_count] != nullptr)
       {
         token_count++;
       }

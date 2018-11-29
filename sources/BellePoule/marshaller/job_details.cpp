@@ -30,7 +30,7 @@
 
 namespace Marshaller
 {
-  RefereePool *JobDetails::_referee_pool = NULL;
+  RefereePool *JobDetails::_referee_pool = nullptr;
 
   // --------------------------------------------------------------------------------
   JobDetails::JobDetails (Listener *listener,
@@ -261,7 +261,7 @@ namespace Marshaller
     JobDetails *paired_details = _listener->GetPairedOf (this);
     GList      *paired_list    = paired_details->GetList ();
     Player     *player         = GetPlayer (tree_model, iter);
-    Affinities *affinities     = (Affinities *) player->GetPtrData (NULL,
+    Affinities *affinities     = (Affinities *) player->GetPtrData (nullptr,
                                                                     "affinities");
     g_object_set (cell,
                   "cell-background-set", FALSE,
@@ -270,7 +270,7 @@ namespace Marshaller
     while (paired_list)
     {
       Player     *paired_player     = (Player *) paired_list->data;
-      Affinities *paired_affinities = (Affinities *) paired_player->GetPtrData (NULL, "affinities");
+      Affinities *paired_affinities = (Affinities *) paired_player->GetPtrData (nullptr, "affinities");
       guint       kinship           = affinities->KinshipWith (paired_affinities);
 
       if (kinship > 0)
@@ -279,7 +279,7 @@ namespace Marshaller
         AttributeDesc *cell_attribute = (AttributeDesc *) g_object_get_data (G_OBJECT (tree_column),
                                                                              "PlayersList::AttributeDesc");
 
-        for (guint i = 0; affinity_names != NULL; i++)
+        for (guint i = 0; affinity_names != nullptr; i++)
         {
           if (g_strcmp0 (cell_attribute->_code_name, (gchar *) affinity_names->data) == 0)
           {

@@ -32,8 +32,8 @@ namespace AskFred
     Club::Club ()
       : Object ("AskFred::Club")
     {
-      _name     = NULL;
-      _division = NULL;
+      _name     = nullptr;
+      _division = nullptr;
     }
 
     // --------------------------------------------------------------------------------
@@ -50,18 +50,18 @@ namespace AskFred
     Competitor::Competitor ()
       : Object ("AskFred::Competitor")
     {
-      _competitor_id = NULL;
-      _last_name     = NULL;
-      _first_name    = NULL;
-      _birth         = NULL;
-      _gender        = NULL;
-      _licence       = NULL;
-      _club          = NULL;
-      _members       = NULL;
+      _competitor_id = nullptr;
+      _last_name     = nullptr;
+      _first_name    = nullptr;
+      _birth         = nullptr;
+      _gender        = nullptr;
+      _licence       = nullptr;
+      _club          = nullptr;
+      _members       = nullptr;
 
-      _rating_saber  = NULL;
-      _rating_epee   = NULL;
-      _rating_foil   = NULL;
+      _rating_saber  = nullptr;
+      _rating_epee   = nullptr;
+      _rating_foil   = nullptr;
       _ranking_saber = 9999;
       _ranking_epee  = 9999;
       _ranking_foil  = 9999;
@@ -179,11 +179,11 @@ namespace AskFred
         if (g_ascii_isalpha (letter))
         {
           guint      ranking     = 1000*(1 + letter - 'A');
-          GDateYear  rating_year = g_ascii_strtoll (&usfa_rating[1], NULL, 10);
+          GDateYear  rating_year = g_ascii_strtoll (&usfa_rating[1], nullptr, 10);
           GDate     *date        = g_date_new ();
 
           g_date_set_time_t (date,
-                             time (NULL));
+                             time (nullptr));
 
           ranking += 100 * (g_date_get_year (date) - rating_year);
 
@@ -211,7 +211,7 @@ namespace AskFred
     // --------------------------------------------------------------------------------
     const gchar *Competitor::GetRating (const gchar *weapon)
     {
-      gchar *rating = NULL;
+      gchar *rating = nullptr;
 
       if (weapon)
       {
@@ -273,14 +273,14 @@ namespace AskFred
       _location      = location;
       _organizer     = organizer;
       _tournament_id = tournament_id;
-      _event_id      = NULL;
+      _event_id      = nullptr;
 
-      _gender     = NULL;
-      _weapon     = NULL;
-      _category   = NULL;
+      _gender     = nullptr;
+      _weapon     = nullptr;
+      _category   = nullptr;
       _team_event = FALSE;
 
-      _competitors = NULL;
+      _competitors = nullptr;
     }
 
     // --------------------------------------------------------------------------------
@@ -297,35 +297,35 @@ namespace AskFred
 
   namespace Reader
   {
-    GHashTable *Parser::_divisions = NULL;
+    GHashTable *Parser::_divisions = nullptr;
 
     // --------------------------------------------------------------------------------
     Parser::Parser (const gchar *filename)
       : Object ("AskFred::Parser")
     {
-      _name          = NULL;
-      _location      = NULL;
-      _organizer     = NULL;
-      _tournament_id = NULL;
+      _name          = nullptr;
+      _location      = nullptr;
+      _organizer     = nullptr;
+      _tournament_id = nullptr;
 
-      _events = NULL;
+      _events = nullptr;
 
       _competitors = g_hash_table_new_full (g_direct_hash,
                                             g_direct_equal,
-                                            NULL,
+                                            nullptr,
                                             (GDestroyNotify) Object::TryToRelease);
 
       _clubs = g_hash_table_new_full (g_direct_hash,
                                       g_direct_equal,
-                                      NULL,
+                                      nullptr,
                                       (GDestroyNotify) Object::TryToRelease);
 
-      if (_divisions == NULL)
+      if (_divisions == nullptr)
       {
         _divisions = g_hash_table_new_full (g_direct_hash,
                                             g_direct_equal,
-                                            NULL,
-                                            NULL);
+                                            nullptr,
+                                            nullptr);
 
         g_hash_table_insert (_divisions, GINT_TO_POINTER (1),   (gpointer) "Western WA");
         g_hash_table_insert (_divisions, GINT_TO_POINTER (2),   (gpointer) "Inland Emp");
@@ -562,7 +562,7 @@ namespace AskFred
             competitor->_competitor_id = g_strdup (attr);
 
             g_hash_table_insert (_competitors,
-                                 GINT_TO_POINTER (g_ascii_strtoll (attr, NULL, 10)),
+                                 GINT_TO_POINTER (g_ascii_strtoll (attr, nullptr, 10)),
                                  competitor);
 
             xmlFree (attr);
@@ -599,7 +599,7 @@ namespace AskFred
           attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[i], BAD_CAST "ClubID1");
           if (attr)
           {
-            guint  id   = g_ascii_strtoll (attr, NULL, 10);
+            guint  id   = g_ascii_strtoll (attr, nullptr, 10);
             Club  *club;
 
             club = (Club *) g_hash_table_lookup (_clubs,
@@ -609,7 +609,7 @@ namespace AskFred
             xmlFree (attr);
           }
 
-          for (xmlNode *n = xml_nodeset->nodeTab[i]->children; n != NULL; n = n->next)
+          for (xmlNode *n = xml_nodeset->nodeTab[i]->children; n != nullptr; n = n->next)
           {
             if (n->type == XML_ELEMENT_NODE)
             {
@@ -661,7 +661,7 @@ namespace AskFred
             competitor->_competitor_id = g_strdup (attr);
 
             g_hash_table_insert (_competitors,
-                                 GINT_TO_POINTER (g_ascii_strtoll (attr, NULL, 10)),
+                                 GINT_TO_POINTER (g_ascii_strtoll (attr, nullptr, 10)),
                                  competitor);
 
             xmlFree (attr);
@@ -677,7 +677,7 @@ namespace AskFred
           attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[i], BAD_CAST "ClubID");
           if (attr)
           {
-            guint  id   = g_ascii_strtoll (attr, NULL, 10);
+            guint  id   = g_ascii_strtoll (attr, nullptr, 10);
             Club  *club;
 
             club = (Club *) g_hash_table_lookup (_clubs,
@@ -687,7 +687,7 @@ namespace AskFred
             xmlFree (attr);
           }
 
-          for (xmlNode *n = xml_nodeset->nodeTab[i]->children; n != NULL; n = n->next)
+          for (xmlNode *n = xml_nodeset->nodeTab[i]->children; n != nullptr; n = n->next)
           {
             if (n->type == XML_ELEMENT_NODE)
             {
@@ -696,7 +696,7 @@ namespace AskFred
                 attr = (gchar *) xmlGetProp (n, BAD_CAST "FencerID");
                 if (attr)
                 {
-                  guint       id     = g_ascii_strtoll (attr, NULL, 10);
+                  guint       id     = g_ascii_strtoll (attr, nullptr, 10);
                   Competitor *member = (Competitor *) g_hash_table_lookup (_competitors,
                                                                            GINT_TO_POINTER (id));
 
@@ -737,7 +737,7 @@ namespace AskFred
           attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[i], BAD_CAST "DivisionID");
           if (attr)
           {
-            guint id = g_ascii_strtoll (attr, NULL, 10);
+            guint id = g_ascii_strtoll (attr, nullptr, 10);
 
             club->_division = g_strdup ((const gchar *) g_hash_table_lookup (_divisions,
                                                                              GINT_TO_POINTER (id)));
@@ -748,7 +748,7 @@ namespace AskFred
           if (attr)
           {
             g_hash_table_insert (_clubs,
-                                 GINT_TO_POINTER (g_ascii_strtoll (attr, NULL, 10)),
+                                 GINT_TO_POINTER (g_ascii_strtoll (attr, nullptr, 10)),
                                  club);
             xmlFree (attr);
           }
@@ -901,11 +901,11 @@ namespace AskFred
                                            6);
             if (date[0] && date[1] && date[2] && date[3] && date[4])
             {
-              event->_year   = g_ascii_strtoll (date[0], NULL, 10);
-              event->_month  = g_ascii_strtoll (date[1], NULL, 10);
-              event->_day    = g_ascii_strtoll (date[2], NULL, 10);
-              event->_hour   = g_ascii_strtoll (date[3], NULL, 10);
-              event->_minute = g_ascii_strtoll (date[4], NULL, 10);
+              event->_year   = g_ascii_strtoll (date[0], nullptr, 10);
+              event->_month  = g_ascii_strtoll (date[1], nullptr, 10);
+              event->_day    = g_ascii_strtoll (date[2], nullptr, 10);
+              event->_hour   = g_ascii_strtoll (date[3], nullptr, 10);
+              event->_minute = g_ascii_strtoll (date[4], nullptr, 10);
             }
 
             g_strfreev (date);
@@ -913,14 +913,14 @@ namespace AskFred
           }
 
           // Fencers
-          for (xmlNode *n = xml_nodeset->nodeTab[i]->children; n != NULL; n = n->next)
+          for (xmlNode *n = xml_nodeset->nodeTab[i]->children; n != nullptr; n = n->next)
           {
             if (n->type == XML_ELEMENT_NODE)
             {
               attr = (gchar *) xmlGetProp (n, BAD_CAST "CompetitorID");
               if (attr)
               {
-                guint       id     = g_ascii_strtoll (attr, NULL, 10);
+                guint       id     = g_ascii_strtoll (attr, nullptr, 10);
                 Competitor *competitor;
 
                 competitor = (Competitor *) g_hash_table_lookup (_competitors,

@@ -36,10 +36,10 @@ Player::Player (const gchar *player_class)
 
   _player_class = player_class;
 
-  _clients = NULL;
-  _partner = NULL;
+  _clients = nullptr;
+  _partner = nullptr;
 
-  _weapon = NULL;
+  _weapon = nullptr;
 
   _wifi_code = new WifiCode (this);
 
@@ -127,9 +127,9 @@ void Player::UpdateFrom (Player *from)
 Player::AttributeId *Player::AttributeId::Create (AttributeDesc *desc,
                                                   Object        *owner)
 {
-  if (desc == NULL)
+  if (desc == nullptr)
   {
-    return NULL;
+    return nullptr;
   }
   else if (desc->_scope == AttributeDesc::GLOBAL)
   {
@@ -146,11 +146,11 @@ gint Player::Compare (Player      *a,
                       Player      *b,
                       AttributeId *attr_id)
 {
-  if (b == NULL)
+  if (b == nullptr)
   {
     return 1;
   }
-  else if (a == NULL)
+  else if (a == nullptr)
   {
     return -1;
   }
@@ -176,11 +176,11 @@ gint Player::MultiCompare (Player *a,
                            Player *b,
                            GSList *attr_list)
 {
-  if (b == NULL)
+  if (b == nullptr)
   {
     return 1;
   }
-  else if (a == NULL)
+  else if (a == nullptr)
   {
     return -1;
   }
@@ -283,7 +283,7 @@ void Player::SetChangeCbk (const gchar *attr_name,
 void Player::RemoveCbkOwner (Object *owner)
 {
   GList *current;
-  GList *remove_list = NULL;
+  GList *remove_list = nullptr;
 
   current = _clients;
   while (current)
@@ -388,7 +388,7 @@ void Player::SetAttributeValue (AttributeId *attr_id,
 {
   Attribute *attr = GetAttribute (attr_id);
 
-  if (attr == NULL)
+  if (attr == nullptr)
   {
     attr = Attribute::New (attr_id->_name);
 
@@ -397,7 +397,7 @@ void Player::SetAttributeValue (AttributeId *attr_id,
              attr,
              (GDestroyNotify) Object::TryToRelease);
   }
-  else if ((attr->GetStrValue () == NULL) && (value == NULL))
+  else if ((attr->GetStrValue () == nullptr) && (value == nullptr))
   {
     return;
   }
@@ -417,7 +417,7 @@ void Player::SetAttributeValue (AttributeId *attr_id,
 {
   Attribute *attr = GetAttribute (attr_id);
 
-  if (attr == NULL)
+  if (attr == nullptr)
   {
     attr = Attribute::New (attr_id->_name);
 
@@ -554,7 +554,7 @@ void Player::SaveAttributes (XmlScheme *xml_scheme,
             {
               gchar  *year_image;
               gint32  year = g_ascii_strtoll (xml_image,
-                                              NULL,
+                                              nullptr,
                                               10);
 
               year_image = g_strdup_printf ("%d", year);
@@ -689,7 +689,7 @@ void Player::Load (xmlNode *xml_node)
     current = g_slist_next (current);
   }
 
-  if (GetAttribute (&attending_attr_id) == NULL)
+  if (GetAttribute (&attending_attr_id) == nullptr)
   {
     SetAttributeValue (&attending_attr_id,
                        (guint) FALSE);
@@ -709,7 +709,7 @@ gchar *Player::GetName ()
     return attr->GetUserImage (AttributeDesc::LONG_TEXT);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -724,7 +724,7 @@ void Player::SetName (const gchar *name)
 // --------------------------------------------------------------------------------
 void Player::FeedParcel (Net::Message *parcel)
 {
-  if (parcel == NULL)
+  if (parcel == nullptr)
   {
     g_warning ("Player::FeedParcel (%s) ==> No parcel.\n", GetName ());
     return;

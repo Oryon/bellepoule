@@ -26,23 +26,23 @@
 #endif
 #include "wifi_code.hpp"
 
-Net::WifiNetwork *WifiCode::_wifi_network = NULL;
+Net::WifiNetwork *WifiCode::_wifi_network = nullptr;
 guint             WifiCode::_port         = 0;
 
 // --------------------------------------------------------------------------------
 WifiCode::WifiCode (const gchar *user_name)
   : FlashCode (user_name)
 {
-  _player = NULL;
-  _key    = NULL;
+  _player = nullptr;
+  _key    = nullptr;
 }
 
 // --------------------------------------------------------------------------------
 WifiCode::WifiCode (Player *player)
-  : FlashCode (NULL)
+  : FlashCode (nullptr)
 {
   _player = player;
-  _key    = NULL;
+  _key    = nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -64,11 +64,11 @@ guint WifiCode::ClaimIpPort ()
   GSocket      *socket = g_socket_new (G_SOCKET_FAMILY_IPV4,
                                        G_SOCKET_TYPE_STREAM,
                                        G_SOCKET_PROTOCOL_DEFAULT,
-                                       NULL);
+                                       nullptr);
 
   for (guint port = 35830; port < 35840; port++)
   {
-    GError         *error         = NULL;
+    GError         *error         = nullptr;
     GSocketAddress *bound_address = g_inet_socket_address_new (any_ip, port);
 
     g_socket_bind (socket,
@@ -119,13 +119,13 @@ gchar *WifiCode::GetNetwork ()
 void WifiCode::ResetKey ()
 {
   g_free (_key);
-  _key = NULL;
+  _key = nullptr;
 }
 
 // --------------------------------------------------------------------------------
 const gchar *WifiCode::GetKey ()
 {
-  if (_key == NULL)
+  if (_key == nullptr)
   {
     _key = GetKey256 ();
 

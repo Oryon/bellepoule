@@ -90,7 +90,7 @@ Category::Category (GtkWidget *combo_box)
   _combo_box = GTK_COMBO_BOX (combo_box);
   _entry     = GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_combo_box)));
   _id        = 0;
-  _fallback  = NULL;
+  _fallback  = nullptr;
 
   {
     GtkTreeModel *model = gtk_combo_box_get_model (_combo_box);
@@ -120,7 +120,7 @@ Category::~Category ()
 void Category::ReadUserChoice ()
 {
   g_free (_fallback);
-  _fallback = NULL;
+  _fallback = nullptr;
 
   _id = gtk_combo_box_get_active (_combo_box);
 
@@ -135,7 +135,7 @@ void Category::ReadUserChoice ()
         _id = i;
 
         g_free (_fallback);
-        _fallback = NULL;
+        _fallback = nullptr;
         break;
       }
     }
@@ -194,7 +194,7 @@ void Category::ParseXml (const gchar *xml)
   _id = -1;
 
   g_free (_fallback);
-  _fallback = NULL;
+  _fallback = nullptr;
 
   for (guint i = 0; i < _nb_category; i++)
   {

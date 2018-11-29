@@ -37,9 +37,9 @@ namespace People
   // --------------------------------------------------------------------------------
   RefereesList::RefereesList (Listener *listener)
     : Object ("RefereesList"),
-      People::Checkin ("referees.glade", "Referee", NULL)
+      People::Checkin ("referees.glade", "Referee", nullptr)
   {
-    _weapon   = NULL;
+    _weapon   = nullptr;
     _listener = listener;
 
     {
@@ -197,7 +197,7 @@ namespace People
       return _weapon->GetXmlImage ();
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -222,10 +222,10 @@ namespace People
       Attribute *weapon_attr = player->GetAttribute (&weapon_attr_id);
       Referee   *referee     = (Referee*) player;
 
-      if (   (weapon_attr == NULL)
-          || (g_strrstr (weapon_attr->GetStrValue (), _weapon->GetXmlImage ()) == NULL))
+      if (   (weapon_attr == nullptr)
+          || (g_strrstr (weapon_attr->GetStrValue (), _weapon->GetXmlImage ()) == nullptr))
       {
-        GString *digest = g_string_new (NULL);
+        GString *digest = g_string_new (nullptr);
 
         if (weapon_attr)
         {
@@ -403,7 +403,7 @@ namespace People
 
       goo_canvas_render (canvas,
                          gtk_print_context_get_cairo_context (context),
-                         NULL,
+                         nullptr,
                          1.0);
 
       gtk_widget_destroy (GTK_WIDGET (canvas));
@@ -429,7 +429,7 @@ namespace People
       Player *referee = GetPlayer (tree_model,
                                    iter);
 
-      GdkColor *color = (GdkColor *) referee->GetPtrData (NULL,
+      GdkColor *color = (GdkColor *) referee->GetPtrData (nullptr,
                                                           "RefereesList::CellColor");
 
       if (color)

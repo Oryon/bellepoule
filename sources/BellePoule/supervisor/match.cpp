@@ -67,8 +67,8 @@ Match::~Match ()
 // --------------------------------------------------------------------------------
 void Match::Init (Data *max_score)
 {
-  _referee_list  = NULL;
-  _start_time    = NULL;
+  _referee_list  = nullptr;
+  _start_time    = nullptr;
   _duration_sec  = 0;
   _duration_span = 1;
   _piste         = 0;
@@ -77,7 +77,7 @@ void Match::Init (Data *max_score)
 
   for (guint i = 0; i < 2; i++)
   {
-    _opponents[i]._fencer   = NULL;
+    _opponents[i]._fencer   = nullptr;
     _opponents[i]._is_known = FALSE;
     _opponents[i]._score    = new Score (max_score);
   }
@@ -109,7 +109,7 @@ void Match::SetOpponent (guint   position,
   _opponents[position]._fencer   = fencer;
   _opponents[position]._is_known = TRUE;
 
-  if (fencer == NULL)
+  if (fencer == nullptr)
   {
     _opponents[position]._score->Set (0, FALSE);
     _opponents[!position]._score->Set (0, TRUE);
@@ -119,7 +119,7 @@ void Match::SetOpponent (guint   position,
 // --------------------------------------------------------------------------------
 void Match::RemoveOpponent (guint position)
 {
-  _opponents[position]._fencer   = NULL;
+  _opponents[position]._fencer   = nullptr;
   _opponents[position]._is_known = FALSE;
 
   _opponents[position]._score->Clean ();
@@ -166,7 +166,7 @@ gboolean Match::ExemptedMatch ()
 {
   for (guint i = 0; i < 2; i++)
   {
-    if (   (_opponents[i]._fencer == NULL)
+    if (   (_opponents[i]._fencer == nullptr)
         && _opponents[i]._is_known)
     {
       return TRUE;
@@ -181,7 +181,7 @@ Player *Match::GetWinner ()
 {
   for (guint i = 0; i < 2; i++)
   {
-    if (   (_opponents[i]._fencer == NULL)
+    if (   (_opponents[i]._fencer == nullptr)
         && _opponents[i]._is_known)
     {
       return _opponents[!i]._fencer;
@@ -200,7 +200,7 @@ Player *Match::GetWinner ()
           return _opponents[!i]._fencer;
         }
       }
-      return NULL;
+      return nullptr;
     }
     else if (HasError () == FALSE)
     {
@@ -223,7 +223,7 @@ Player *Match::GetWinner ()
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -242,7 +242,7 @@ Player *Match::GetLooser ()
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -403,7 +403,7 @@ Score *Match::GetScore (Player *fencer)
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -619,7 +619,7 @@ gboolean Match::AdjustRoadmap (Match *according_to)
 {
   if (_opponents[0]._is_known && _opponents[1]._is_known)
   {
-    if ((_start_time == NULL) && (according_to->_duration_span > 1))
+    if ((_start_time == nullptr) && (according_to->_duration_span > 1))
     {
       {
         GDateTime *start = g_date_time_add_full (according_to->_start_time->GetGDateTime (),
@@ -703,7 +703,7 @@ const gchar *Match::GetName ()
   }
   else
   {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -765,20 +765,20 @@ GooCanvasItem *Match::GetScoreTable (GooCanvasItem *parent,
     return score_table;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
 void Match::AddReferee (Player *referee)
 {
-  if (referee == NULL)
+  if (referee == nullptr)
   {
     return;
   }
 
-  if (   (_referee_list == NULL)
+  if (   (_referee_list == nullptr)
       || (g_slist_find (_referee_list,
-                        referee) == NULL))
+                        referee) == nullptr))
   {
     _referee_list = g_slist_prepend (_referee_list,
                                      referee);
@@ -801,7 +801,7 @@ void Match::RemoveAllReferees ()
   if (_referee_list)
   {
     g_slist_free (_referee_list);
-    _referee_list = NULL;
+    _referee_list = nullptr;
   }
 }
 

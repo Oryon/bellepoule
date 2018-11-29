@@ -52,8 +52,8 @@ namespace Marshaller
   {
     _name           = message->GetString ("name");
     _listener       = listener;
-    _scheduled_list = NULL;
-    _pending_list   = NULL;
+    _scheduled_list = nullptr;
+    _pending_list   = nullptr;
     _competition    = competition;
     _loading        = FALSE;
 
@@ -125,10 +125,10 @@ namespace Marshaller
   Batch::~Batch ()
   {
     g_list_free (_scheduled_list);
-    _scheduled_list = NULL;
+    _scheduled_list = nullptr;
 
     g_list_free (_pending_list);
-    _pending_list = NULL;
+    _pending_list = nullptr;
 
     {
       GtkTreeIter iter;
@@ -229,7 +229,7 @@ namespace Marshaller
     gtk_widget_set_sensitive (_assign_button, TRUE);
     gtk_widget_set_sensitive (_cancel_button, TRUE);
 
-    if (_pending_list == NULL)
+    if (_pending_list == nullptr)
     {
       gtk_widget_set_sensitive (_assign_button, FALSE);
 
@@ -256,7 +256,7 @@ namespace Marshaller
                                     UNCOMPLETED);
     }
 
-    if (_scheduled_list == NULL)
+    if (_scheduled_list == nullptr)
     {
       gtk_widget_set_sensitive (_cancel_button, FALSE);
     }
@@ -265,7 +265,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   GList *Batch::RetreiveCurrentSelection ()
   {
-    GList            *result    = NULL;
+    GList            *result    = nullptr;
     GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("competition_treeview"));
     GtkTreeSelection *selection = gtk_tree_view_get_selection (tree_view);
 
@@ -274,7 +274,7 @@ namespace Marshaller
       GList        *current;
       GtkTreeModel *model          = gtk_tree_view_get_model (tree_view);
       GList        *selection_list = gtk_tree_selection_get_selected_rows (selection,
-                                                                           NULL);
+                                                                           nullptr);
 
       current = selection_list;
       while (current)
@@ -452,7 +452,7 @@ namespace Marshaller
                                                 &iter);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -461,11 +461,11 @@ namespace Marshaller
                     GList        **referees,
                     FieTime      **start_time)
   {
-    Job *job = NULL;
+    Job *job = nullptr;
 
     *piste_id   = 0;
-    *referees   = NULL;
-    *start_time = NULL;
+    *referees   = nullptr;
+    *start_time = nullptr;
 
     _loading = TRUE;
 
@@ -549,7 +549,7 @@ namespace Marshaller
                                            job);
             _job_board->AddJob (job);
 
-            for (xmlNode *n = xml_nodeset->nodeTab[0]->children; n != NULL; n = n->next)
+            for (xmlNode *n = xml_nodeset->nodeTab[0]->children; n != nullptr; n = n->next)
             {
               if (n->type == XML_ELEMENT_NODE)
               {
@@ -561,7 +561,7 @@ namespace Marshaller
                   {
                     Player *fencer = _competition->GetFencer (atoi (attr));
 
-                    if (fencer == NULL)
+                    if (fencer == nullptr)
                     {
                       g_error ("Fencer %s not found!\n", attr);
                     }

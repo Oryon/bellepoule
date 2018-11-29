@@ -30,9 +30,9 @@ ScoreCollector::ScoreCollector (Listener  *listener,
                                 gboolean   display_match_name)
   : Object ("ScoreCollector")
 {
-  _entry_item         = NULL;
-  _gtk_entry          = NULL;
-  _collecting_point   = NULL;
+  _entry_item         = nullptr;
+  _gtk_entry          = nullptr;
+  _collecting_point   = nullptr;
   _listener           = listener;
   _is_locked          = FALSE;
   _display_match_name = display_match_name;
@@ -74,7 +74,7 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
 {
   _collecting_point = point;
 
-  if (g_object_get_data (G_OBJECT (point), "score_text") == NULL)
+  if (g_object_get_data (G_OBJECT (point), "score_text") == nullptr)
   {
     AddCollectingTrigger (point);
     AddCollectingTrigger (score_text);
@@ -85,7 +85,7 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
                       G_CALLBACK (on_goocanvas_key_press_event), this);
 
     g_object_set_data (G_OBJECT (point), "score_text", score_text);
-    g_object_set_data (G_OBJECT (point), "next_point", NULL);
+    g_object_set_data (G_OBJECT (point), "next_point", nullptr);
   }
 
   SetMatch (point,
@@ -198,8 +198,8 @@ void ScoreCollector::RemoveCollectingPoints (Match *match)
 {
   if (match)
   {
-    match->SetData (this, "goo_rect_A", NULL);
-    match->SetData (this, "goo_rect_B", NULL);
+    match->SetData (this, "goo_rect_A", nullptr);
+    match->SetData (this, "goo_rect_B", nullptr);
   }
 }
 
@@ -288,7 +288,7 @@ GooCanvasItem *ScoreCollector::GetNextItem (GtkWidget *widget)
     if (   (match == next_match)
         && (match->IsOver () != FALSE))
     {
-      return NULL;
+      return nullptr;
     }
     else if (next_match->IsDropped () == FALSE)
     {
@@ -579,7 +579,7 @@ void ScoreCollector::Stop ()
                                  _focus_out_handle);
 
     goo_canvas_item_remove (_entry_item);
-    _entry_item = NULL;
+    _entry_item = nullptr;
   }
 }
 

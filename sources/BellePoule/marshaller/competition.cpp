@@ -44,9 +44,9 @@ namespace Marshaller
     : Object ("Competition"),
     Module ("competition.glade")
   {
-    _fencer_list = NULL;
-    _batches     = NULL;
-    _weapon      = NULL;
+    _fencer_list = nullptr;
+    _batches     = nullptr;
+    _weapon      = nullptr;
     _id          = id;
     _gdk_color   = g_new (GdkColor, 1);
 
@@ -56,7 +56,7 @@ namespace Marshaller
 
     {
       gchar              *gif       = g_build_filename (Global::_share_dir, "resources", "glade", "images", "apply.gif", NULL);
-      GdkPixbufAnimation *animation = gdk_pixbuf_animation_new_from_file (gif, NULL);
+      GdkPixbufAnimation *animation = gdk_pixbuf_animation_new_from_file (gif, nullptr);
 
       gtk_image_set_from_animation (GTK_IMAGE (_glade->GetWidget ("apply_animation")),
                                     animation);
@@ -194,7 +194,7 @@ namespace Marshaller
   {
     Batch *batch = GetBatch (message->GetNetID ());
 
-    if (batch == NULL)
+    if (batch == nullptr)
     {
       batch = new Batch (message,
                          this,
@@ -263,7 +263,7 @@ namespace Marshaller
     if (iter)
     {
       GtkTreeIter  active_iter;
-      Batch       *active_batch = NULL;
+      Batch       *active_batch = nullptr;
 
       if (gtk_combo_box_get_active_iter (_combobox,
                                          &active_iter))
@@ -336,7 +336,7 @@ namespace Marshaller
                                                 &iter);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -356,7 +356,7 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -433,7 +433,7 @@ namespace Marshaller
         if (player && player->Is ("Team"))
         {
           Team       *team            = (Team *) player;
-          Affinities *team_affinities = (Affinities *) team->GetPtrData (NULL, "affinities");
+          Affinities *team_affinities = (Affinities *) team->GetPtrData (nullptr, "affinities");
           xmlNode    *child           = xml_node->children;
 
           while (child)
@@ -447,7 +447,7 @@ namespace Marshaller
             {
               Affinities *affinities = new Affinities (fencer);
 
-              fencer->SetData (NULL,
+              fencer->SetData (nullptr,
                                "affinities",
                                affinities,
                                (GDestroyNotify) Affinities::Destroy);
@@ -480,7 +480,7 @@ namespace Marshaller
                      "netid",
                      GUINT_TO_POINTER (message->GetNetID ()));
 
-    player->SetData (NULL,
+    player->SetData (nullptr,
                      "affinities",
                      new Affinities (player),
                      (GDestroyNotify) Affinities::Destroy);
@@ -532,7 +532,7 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -556,7 +556,7 @@ namespace Marshaller
       current = g_list_next (current);
     }
 
-    if (batch == NULL)
+    if (batch == nullptr)
     {
       gtk_widget_set_visible (_batch_image,
                               FALSE);
@@ -582,7 +582,7 @@ namespace Marshaller
       return batch;
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------

@@ -16,7 +16,7 @@
 
 #include "weapon.hpp"
 
-GList *Weapon::_list = NULL;
+GList *Weapon::_list = nullptr;
 
 // --------------------------------------------------------------------------------
 Weapon::Weapon (const gchar *image,
@@ -85,7 +85,7 @@ Weapon *Weapon::GetFromXml (const gchar *xml)
     current = g_list_next (current);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ Weapon *Weapon::GetDefault ()
     return (Weapon *) _list->data;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------

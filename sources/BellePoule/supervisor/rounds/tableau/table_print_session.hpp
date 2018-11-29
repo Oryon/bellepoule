@@ -37,8 +37,8 @@ namespace Table
 
     public:
       PrintSession (Type         type,
-                    const gchar *title      = NULL,
-                    Table       *from_table = NULL);
+                    const gchar *title      = nullptr,
+                    Table       *from_table = nullptr);
 
       void Dump ();
 

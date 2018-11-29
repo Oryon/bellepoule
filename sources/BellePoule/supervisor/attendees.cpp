@@ -44,7 +44,7 @@ Module *Attendees::GetOwner ()
 void Attendees::SetPresents (GSList *presents)
 {
   g_slist_free (_presents);
-  _presents = NULL;
+  _presents = nullptr;
 
   _presents = g_slist_copy (presents);
 }
@@ -53,7 +53,7 @@ void Attendees::SetPresents (GSList *presents)
 void Attendees::SetAbsents (GSList *absents)
 {
   g_slist_free (_absents);
-  _absents = NULL;
+  _absents = nullptr;
 
   _absents = g_slist_copy (absents);
 }

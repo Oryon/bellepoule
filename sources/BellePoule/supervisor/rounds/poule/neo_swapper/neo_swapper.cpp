@@ -49,15 +49,15 @@ namespace NeoSwapper
   {
     _owner = owner;
 
-    _error_list = NULL;
+    _error_list = nullptr;
 
-    _criteria_list  = NULL;
+    _criteria_list  = nullptr;
     _criteria_count = 0;
-    _distributions  = NULL;
+    _distributions  = nullptr;
 
     _nb_pools    = 0;
-    _pool_table  = NULL;
-    _fencer_list = NULL;
+    _pool_table  = nullptr;
+    _fencer_list = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ namespace NeoSwapper
     DeletePoolTable ();
 
     g_list_free (_error_list);
-    _error_list = NULL;
+    _error_list = nullptr;
 
     for (guint i = 0; i < _criteria_count; i++)
     {
@@ -93,7 +93,7 @@ namespace NeoSwapper
     _criteria_count = 0;
 
     g_free (_distributions);
-    _distributions = NULL;
+    _distributions = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -113,9 +113,9 @@ namespace NeoSwapper
       _distributions  = g_new (GHashTable *, _criteria_count);
       for (guint i = 0; i < _criteria_count; i++)
       {
-        _distributions[i] = g_hash_table_new_full (NULL,
-                                                   NULL,
-                                                   NULL,
+        _distributions[i] = g_hash_table_new_full (nullptr,
+                                                   nullptr,
+                                                   nullptr,
                                                    (GDestroyNotify) Criteria::Delete);
       }
     }
@@ -174,7 +174,7 @@ namespace NeoSwapper
     {
       g_hash_table_foreach (_distributions[i],
                             (GHFunc) Criteria::Dump,
-                            NULL);
+                            nullptr);
       PRINT (" ");
     }
 #endif
@@ -182,7 +182,7 @@ namespace NeoSwapper
     FindErrors (_criteria_count);
 
     g_list_free (_fencer_list);
-    _fencer_list = NULL;
+    _fencer_list = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -192,7 +192,7 @@ namespace NeoSwapper
     {
       GSList *current = fencer_list;
 
-      for (guint i = 0; current != NULL; i++)
+      for (guint i = 0; current != nullptr; i++)
       {
         guint pool_index;
 
@@ -217,7 +217,7 @@ namespace NeoSwapper
     {
       g_hash_table_foreach (_distributions[i],
                             (GHFunc) Criteria::Dump,
-                            NULL);
+                            nullptr);
       PRINT (" ");
     }
 #endif
@@ -272,7 +272,7 @@ namespace NeoSwapper
     StoreSwapping ();
 
     g_list_free (_fencer_list);
-    _fencer_list = NULL;
+    _fencer_list = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -335,7 +335,7 @@ namespace NeoSwapper
       }
 
       g_free (_pool_table);
-      _pool_table = NULL;
+      _pool_table = nullptr;
     }
   }
 
@@ -344,7 +344,7 @@ namespace NeoSwapper
                               guint   pool_id)
   {
     FencerProxy *shadow_fencer = ManageFencer (fencer,
-                                               NULL);
+                                               nullptr);
 
     if (pool_id)
     {
@@ -354,7 +354,7 @@ namespace NeoSwapper
     }
     else
     {
-      GList *pools_by_size = NULL;
+      GList *pools_by_size = nullptr;
 
       for (guint i = 0; i < _nb_pools; i++)
       {
@@ -398,7 +398,7 @@ namespace NeoSwapper
     Player::AttributeId  stage_start_rank_attr_id ("stage_start_rank", _owner);
     Attribute           *stage_start_rank = player->GetAttribute (&stage_start_rank_attr_id);
 
-    if (stage_start_rank == NULL)
+    if (stage_start_rank == nullptr)
     {
 #ifdef DEBUG
       g_error ("Swapper: %s no start rank !!!", player->GetName ());
@@ -442,7 +442,7 @@ namespace NeoSwapper
       return fencer;
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -466,7 +466,7 @@ namespace NeoSwapper
 
           if (g_hash_table_lookup_extended (criteria_distribution,
                                             (gconstpointer) quark,
-                                            NULL,
+                                            nullptr,
                                             (gpointer *) &criteria) == FALSE)
           {
             criteria = new Criteria (quark,
@@ -494,7 +494,7 @@ namespace NeoSwapper
     PRINT (GREEN "\n\nFind ERRORS" ESC);
 
     g_list_free (_error_list);
-    _error_list = NULL;
+    _error_list = nullptr;
 
     for (guint i = 0; i < depth; i++)
     {
@@ -595,7 +595,7 @@ namespace NeoSwapper
             error_pool->InsertFencer (x_fencer);
             x_pool->InsertFencer     (error);
 
-            error = NULL;
+            error = nullptr;
             break;
           }
           PRINT (RED "     %s (%s)" ESC, x_fencer->_player->GetName (), Criteria::GetImage (x_fencer->GetCriteria (depth-1)));
@@ -617,7 +617,7 @@ namespace NeoSwapper
 
     crawler->Release ();
 
-    return error == NULL;
+    return error == nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -638,7 +638,7 @@ namespace NeoSwapper
     {
       Criteria *criteria = fencer->GetCriteria (depth);
 
-      if (criteria == NULL)
+      if (criteria == nullptr)
       {
         return TRUE;
       }
@@ -686,7 +686,7 @@ namespace NeoSwapper
     }
 #endif
 
-    return _error_list != NULL;
+    return _error_list != nullptr;
   }
 
   // --------------------------------------------------------------------------------

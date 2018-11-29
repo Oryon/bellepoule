@@ -26,7 +26,7 @@ namespace Net
   HttpServer::RequestBody::RequestBody (HttpServer *server)
   {
     _server = server;
-    _data   = NULL;
+    _data   = nullptr;
     _length = 0;
   }
 
@@ -60,7 +60,7 @@ namespace Net
   void HttpServer::RequestBody::Replace (const char *buf)
   {
     g_free (_data);
-    _data   = NULL;
+    _data   = nullptr;
     _length = 0;
 
     if (buf)
@@ -80,13 +80,13 @@ namespace Net
   {
     _port     = port;
     _listener = listener;
-    _iv       = NULL;
+    _iv       = nullptr;
 
     _cryptor = new Cryptor ();
 
     _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
                                 port,
-                                NULL, NULL,
+                                nullptr, nullptr,
                                 (MHD_AccessHandlerCallback)         OnMicroHttpRequest,          this,
                                 MHD_OPTION_NOTIFY_COMPLETED,        OnMicroHttpRequestCompleted, this,
 #ifdef WIN32
@@ -179,7 +179,7 @@ namespace Net
       {
         {
           g_free (_iv);
-          _iv = NULL;
+          _iv = nullptr;
 
           MHD_get_connection_values (connection,
                                      MHD_HEADER_KIND,
@@ -209,7 +209,7 @@ namespace Net
           struct MHD_Response *response;
 
           response = MHD_create_response_from_buffer (0,
-                                                      NULL,
+                                                      nullptr,
                                                       MHD_RESPMEM_PERSISTENT);
           ret = MHD_queue_response (connection,
                                     MHD_HTTP_OK,
@@ -224,7 +224,7 @@ namespace Net
       struct MHD_Response *response;
 
       response = MHD_create_response_from_buffer (0,
-                                                  NULL,
+                                                  nullptr,
                                                   MHD_RESPMEM_PERSISTENT);
       ret = MHD_queue_response (connection,
                                 MHD_HTTP_METHOD_NOT_ALLOWED,
@@ -243,13 +243,13 @@ namespace Net
                                                 enum MHD_RequestTerminationCode   code)
   {
     g_free (server->_iv);
-    server->_iv = NULL;
+    server->_iv = nullptr;
 
     if (*request_body)
     {
       g_idle_add ((GSourceFunc) DeferedPost,
                   *request_body);
-      *request_body = NULL;
+      *request_body = nullptr;
     }
   }
 
@@ -263,7 +263,7 @@ namespace Net
                                       size_t                *upload_data_size,
                                       RequestBody           **request_body)
   {
-    if (*request_body == NULL)
+    if (*request_body == nullptr)
     {
       *request_body = new RequestBody (server);
       return MHD_YES;

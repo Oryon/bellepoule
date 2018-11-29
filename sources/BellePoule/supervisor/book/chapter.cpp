@@ -141,7 +141,7 @@ void Chapter::DrawFrontPage (GtkPrintOperation *operation,
 
       goo_canvas_render (canvas,
                          gtk_print_context_get_cairo_context (context),
-                         NULL,
+                         nullptr,
                          1.0);
 
       gtk_widget_destroy (GTK_WIDGET (canvas));

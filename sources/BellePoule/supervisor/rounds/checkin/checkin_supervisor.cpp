@@ -49,11 +49,11 @@ namespace People
     Checkin ("checkin.glade", "Fencer", "Team"),
     Stage (stage_class)
   {
-    _checksum_list = NULL;
+    _checksum_list = nullptr;
 
-    _manual_classification  = NULL;
-    _minimum_team_size      = NULL;
-    _default_classification = NULL;
+    _manual_classification  = nullptr;
+    _minimum_team_size      = nullptr;
+    _default_classification = nullptr;
 
     _attendees = new Attendees (this,
                                 this);
@@ -416,7 +416,7 @@ namespace People
     {
       Player::AttributeId  name_attr_id       ("name");
       Player::AttributeId  first_name_attr_id ("first_name");
-      GSList              *attr_list = NULL;
+      GSList              *attr_list = nullptr;
 
       attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
       attr_list = g_slist_prepend (attr_list, &name_attr_id);
@@ -428,7 +428,7 @@ namespace People
     }
 
     g_slist_free (_checksum_list);
-    _checksum_list = NULL;
+    _checksum_list = nullptr;
 
     {
       Player::AttributeId  attr_id ("attending");
@@ -486,7 +486,7 @@ namespace People
                  sizeof (short_checksum));
         short_checksum[8] = 0;
 
-        _rand_seed = strtoul (short_checksum, NULL, 16);
+        _rand_seed = strtoul (short_checksum, nullptr, 16);
       }
 
       g_checksum_free (checksum);
@@ -510,7 +510,7 @@ namespace People
                                           ranking_id);
 
     {
-      Player *previous_player  = NULL;
+      Player *previous_player  = nullptr;
       GList  *current_player   = _player_list;
       gint    stage_start_rank = 0;
       guint   nb_present       = 1;
@@ -561,7 +561,7 @@ namespace People
   void CheckinSupervisor::ApplyConfig ()
   {
     Stage::ApplyConfig ();
-    ApplyConfig (NULL);
+    ApplyConfig (nullptr);
   }
 
   // --------------------------------------------------------------------------------
@@ -586,12 +586,12 @@ namespace People
 
           _default_classification->_value = atoi (gtk_entry_get_text (GTK_ENTRY (entry)));
 
-          gtk_widget_modify_base (entry, GTK_STATE_NORMAL, NULL);
-          gtk_widget_modify_font (entry, NULL);
+          gtk_widget_modify_base (entry, GTK_STATE_NORMAL, nullptr);
+          gtk_widget_modify_font (entry, nullptr);
         }
       }
 
-      ApplyConfig (NULL);
+      ApplyConfig (nullptr);
     }
   }
 
@@ -856,11 +856,11 @@ namespace People
     AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
     gchar         *name      = team->GetName ();
 
-    if (team_desc->GetXmlImage (name) == NULL)
+    if (team_desc->GetXmlImage (name) == nullptr)
     {
       team_desc->AddDiscreteValues (name,
                                     name,
-                                    NULL,
+                                    nullptr,
                                     NULL);
     }
 
@@ -891,7 +891,7 @@ namespace People
     }
     else
     {
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -953,7 +953,7 @@ namespace People
   void CheckinSupervisor::OnAttendeeToggled (Player *attendee)
   {
     if (g_list_find (_player_list,
-                     attendee) == NULL)
+                     attendee) == nullptr)
     {
       Add (attendee);
     }
@@ -999,7 +999,7 @@ namespace People
                                        GTK_DIALOG_DESTROY_WITH_PARENT,
                                        GTK_MESSAGE_INFO,
                                        GTK_BUTTONS_CLOSE,
-                                       NULL);
+                                       nullptr);
       gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog),
                                      full_msg);
 
@@ -1015,7 +1015,7 @@ namespace People
   void CheckinSupervisor::OnListChanged ()
   {
     MuteListChanges (TRUE);
-    ApplyConfig (NULL);
+    ApplyConfig (nullptr);
     MuteListChanges (FALSE);
 
     Checkin::OnListChanged ();
@@ -1106,7 +1106,7 @@ namespace People
           team = supervisor->GetTeam (team_name);
 
           // Create a team if necessary
-          if (team == NULL)
+          if (team == nullptr)
           {
             team = (Team *) PlayerFactory::CreatePlayer ("Team");
 

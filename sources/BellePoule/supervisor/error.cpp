@@ -23,8 +23,8 @@ Error::Error (Level        level,
   : Object ("Error")
 {
   _level        = level;
-  _guilty_party = NULL;
-  _reason       = NULL;
+  _guilty_party = nullptr;
+  _reason       = nullptr;
 
   if (guilty_party)
   {

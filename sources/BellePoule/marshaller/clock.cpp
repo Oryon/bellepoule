@@ -27,7 +27,7 @@ namespace Marshaller
     _listener = listener;
     _tag      = 0;
     _offset   = 0;
-    _absolute = NULL;
+    _absolute = nullptr;
 
     OnTimeout (this);
   }

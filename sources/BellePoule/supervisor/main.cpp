@@ -100,7 +100,7 @@ void BellPouleApp::Start (int                   argc,
   People::Splitting::SetHostTournament (_tournament);
 
   _main_module = _tournament;
-  _main_module->SetData (NULL,
+  _main_module->SetData (nullptr,
                          "application",
                          this);
   Application::Start (argc,
@@ -113,7 +113,7 @@ void BellPouleApp::Start (int                   argc,
   }
   else
   {
-    _tournament->Start (NULL);
+    _tournament->Start (nullptr);
   }
 
   gtk_main ();
@@ -153,7 +153,7 @@ int main (int argc, char **argv)
 
   application->Start (argc,
                       argv,
-                      NULL);
+                      nullptr);
 
   return 0;
 }

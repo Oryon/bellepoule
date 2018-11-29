@@ -51,30 +51,30 @@ namespace Pool
       CanvasModule ("pool.glade", "canvas_scrolled_window")
   {
       _number                = number;
-      _fencer_list           = NULL;
-      _referee_list          = NULL;
+      _fencer_list           = nullptr;
+      _referee_list          = nullptr;
       _piste                 = 0;
-      _start_time            = NULL;
+      _start_time            = nullptr;
       _duration_sec          = 0;
-      _sorted_fencer_list    = NULL;
-      _match_list            = NULL;
+      _sorted_fencer_list    = nullptr;
+      _match_list            = nullptr;
       _is_over               = FALSE;
       _has_error             = FALSE;
-      _title_table           = NULL;
-      _status_item           = NULL;
-      _status_pixbuf         = NULL;
+      _title_table           = nullptr;
+      _status_item           = nullptr;
+      _status_pixbuf         = nullptr;
       _locked                = FALSE;
       _max_score             = max_score;
-      _display_data          = NULL;
+      _display_data          = nullptr;
       _nb_drop               = 0;
       _rand_seed             = rand_seed;
       _xml_player_tag        = xml_player_tag;
       _strength              = 0;
       _strength_contributors = 0;
 
-      _status_listener       = NULL;
+      _status_listener       = nullptr;
 
-      _score_collector       = NULL;
+      _score_collector       = nullptr;
 
     {
       gchar *text = g_strdup_printf (gettext ("Pool #%02d"), _number);
@@ -160,16 +160,16 @@ namespace Pool
       }
 
       _score_collector->Release ();
-      _score_collector = NULL;
+      _score_collector = nullptr;
     }
 
-    _title_table   = NULL;
-    _status_item   = NULL;
+    _title_table   = nullptr;
+    _status_item   = nullptr;
 
     if (_status_pixbuf)
     {
       g_object_unref (_status_pixbuf);
-      _status_pixbuf = NULL;
+      _status_pixbuf = nullptr;
     }
 
     for (guint i = 0; i < GetNbPlayers (); i++)
@@ -187,7 +187,7 @@ namespace Pool
     }
 
     g_slist_free (_display_data);
-    _display_data = NULL;
+    _display_data = nullptr;
 
     CanvasModule::Wipe ();
   }
@@ -304,14 +304,14 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::AddReferee (Player *referee)
   {
-    if (referee == NULL)
+    if (referee == nullptr)
     {
       return;
     }
 
-    if (   (_referee_list == NULL)
+    if (   (_referee_list == nullptr)
         || (g_slist_find (_referee_list,
-                          referee) == NULL))
+                          referee) == nullptr))
     {
       _referee_list = g_slist_prepend (_referee_list,
                                        referee);
@@ -327,14 +327,14 @@ namespace Pool
   void Pool::AddFencer (Player *player,
                         Object *rank_owner)
   {
-    if (player == NULL)
+    if (player == nullptr)
     {
       return;
     }
 
-    if (   (_fencer_list == NULL)
+    if (   (_fencer_list == nullptr)
         || (g_slist_find (_fencer_list,
-                          player) == NULL))
+                          player) == nullptr))
     {
       {
         Player::AttributeId attr_id ("pool_nr", rank_owner);
@@ -416,7 +416,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::CreateMatchs (GSList *affinity_criteria_list)
   {
-    AttributeDesc *affinity_criteria = NULL;
+    AttributeDesc *affinity_criteria = nullptr;
 
     if (affinity_criteria_list)
     {
@@ -425,7 +425,7 @@ namespace Pool
 
     SortPlayers ();
 
-    if (_match_list == NULL)
+    if (_match_list == nullptr)
     {
       _dispatcher->SetAffinityCriteria (affinity_criteria,
                                         _sorted_fencer_list);
@@ -683,7 +683,7 @@ namespace Pool
                         _title_table,
                         Canvas::START);
         Canvas::Anchor (referee_group,
-                        NULL,
+                        nullptr,
                         _title_table,
                         cell_w*5);
 
@@ -730,7 +730,7 @@ namespace Pool
                         referee_group,
                         Canvas::START);
         Canvas::Anchor (piste_group,
-                        NULL,
+                        nullptr,
                         referee_group,
                         cell_w/2);
       }
@@ -746,7 +746,7 @@ namespace Pool
 
         // Cells
         {
-          GooCanvasItem *previous_goo_rect = NULL;
+          GooCanvasItem *previous_goo_rect = nullptr;
 
           for (guint i = 0; i < nb_players; i++)
           {
@@ -861,7 +861,7 @@ namespace Pool
           image = GetPlayerImage (player_table,
                                   "font_desc=\"" BP_FONT "14.0px\"",
                                   GetPlayer (i, _sorted_fencer_list),
-                                  NULL,
+                                  nullptr,
                                   "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                   "first_name", "foreground=\"darkblue\"",
                                   "club",       "style=\"italic\" foreground=\"dimgrey\"",
@@ -1117,11 +1117,11 @@ namespace Pool
 
         Canvas::Anchor (dashboard_group,
                         title_group,
-                        NULL,
+                        nullptr,
                         cell_h/2);
 
         Canvas::Anchor (dashboard_group,
-                        NULL,
+                        nullptr,
                         grid_group,
                         cell_w/2);
 
@@ -1211,7 +1211,7 @@ namespace Pool
             GooCanvasItem *image = GetPlayerImage (player_table,
                                                    "font_desc=\"" BP_FONT "14.0px\"",
                                                    player,
-                                                   NULL,
+                                                   nullptr,
                                                    "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                    "first_name", "foreground=\"darkblue\"",
                                                    "club",       "style=\"italic\" foreground=\"dimgrey\"",
@@ -1264,7 +1264,7 @@ namespace Pool
             GooCanvasItem *image        = GetPlayerImage (player_table,
                                                           "font_desc=\"" BP_FONT "14.0px\"",
                                                           player,
-                                                          NULL,
+                                                          nullptr,
                                                           "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                           "first_name", "foreground=\"darkblue\"",
                                                           "club",       "style=\"italic\" foreground=\"dimgrey\"",
@@ -1342,7 +1342,7 @@ namespace Pool
 
         Canvas::Anchor (match_main_table,
                         grid_group,
-                        NULL,
+                        nullptr,
                         cell_w/2);
         Canvas::VAlign (match_main_table,
                         Canvas::START,
@@ -1467,11 +1467,11 @@ namespace Pool
                             guint32   rand_seed,
                             guint     comparison_policy)
   {
-    if (B == NULL)
+    if (B == nullptr)
     {
       return 1;
     }
-    else if (A == NULL)
+    else if (A == nullptr)
     {
       return -1;
     }
@@ -1610,13 +1610,13 @@ namespace Pool
     if (_status_item)
     {
       goo_canvas_item_remove (_status_item);
-      _status_item = NULL;
+      _status_item = nullptr;
     }
 
     if (_status_pixbuf)
     {
       g_object_unref (_status_pixbuf);
-      _status_pixbuf = NULL;
+      _status_pixbuf = nullptr;
     }
 
     if (_is_over)
@@ -1652,7 +1652,7 @@ namespace Pool
         current = g_slist_next (current);
       }
 
-      if (_status_pixbuf == NULL)
+      if (_status_pixbuf == nullptr)
       {
         _status_pixbuf = GetPixbuf (GTK_STOCK_EXECUTE);
       }
@@ -1674,7 +1674,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::RefreshScoreData ()
   {
-    GSList *ranking    = NULL;
+    GSList *ranking    = nullptr;
     guint   nb_players = GetNbPlayers ();
 
     _is_over   = TRUE;
@@ -1809,10 +1809,10 @@ namespace Pool
       Player::AttributeId  indice_id          ("indice",          GetDataOwner ());
       Player::AttributeId  HS_id              ("HS",              GetDataOwner ());
       GSList *current_player  = ranking;
-      Player *previous_player = NULL;
+      Player *previous_player = nullptr;
       guint   previous_rank   = 0;
 
-      for (guint p = 1; current_player != NULL; p++)
+      for (guint p = 1; current_player != nullptr; p++)
       {
         Player *player;
 
@@ -1872,7 +1872,7 @@ namespace Pool
     {
       Player::AttributeId combined_rounds_attr_id (name, _combined_rounds_owner);
 
-      if (_previous_combined_round == NULL)
+      if (_previous_combined_round == nullptr)
       {
         player->SetAttributeValue (&combined_rounds_attr_id,
                                    value);
@@ -2093,7 +2093,7 @@ namespace Pool
       current = g_list_next (current);
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -2106,7 +2106,7 @@ namespace Pool
         _piste = 0;
 
         Object::TryToRelease (_start_time);
-        _start_time = NULL;
+        _start_time = nullptr;
 
         if (message->GetFitness () > 0)
         {
@@ -2137,7 +2137,7 @@ namespace Pool
           xmlDoc *doc = xmlReadMemory (xml_data,
                                        strlen (xml_data),
                                        "noname.xml",
-                                       NULL,
+                                       nullptr,
                                        0);
 
           if (doc)
@@ -2198,7 +2198,7 @@ namespace Pool
       return match;
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -2276,7 +2276,7 @@ namespace Pool
       Player::AttributeId  attr_id ("", GetDataOwner ());
       Attribute           *attr;
 
-      for (guint i = 0; current != NULL; i++)
+      for (guint i = 0; current != nullptr; i++)
       {
         Player *player = (Player *) current->data;
 
@@ -2357,7 +2357,7 @@ namespace Pool
     if (attr)
     {
       _parcel->SetNetID (g_ascii_strtoull (attr,
-                                           NULL,
+                                           nullptr,
                                            16));
       xmlFree (attr);
     }
@@ -2390,36 +2390,36 @@ namespace Pool
   void Pool::Load (xmlNode *xml_node,
                    GSList  *player_list)
   {
-    if (xml_node == NULL)
+    if (xml_node == nullptr)
     {
       return;
     }
 
     _is_over = TRUE;
 
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
-        static xmlNode *A = NULL;
-        static xmlNode *B = NULL;
+        static xmlNode *A = nullptr;
+        static xmlNode *B = nullptr;
 
         if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
-          A = NULL;
-          B = NULL;
+          A = nullptr;
+          B = nullptr;
         }
         else if (g_strcmp0 ((char *) n->name, _xml_player_tag) == 0)
         {
-          if (A == NULL)
+          if (A == nullptr)
           {
             A = n;
           }
           else
           {
             gchar  *attr;
-            Player *player_A = NULL;
-            Player *player_B = NULL;
+            Player *player_A = nullptr;
+            Player *player_B = nullptr;
             Match  *match;
 
             B = n;
@@ -2428,7 +2428,7 @@ namespace Pool
 
               attr = (gchar *) xmlGetProp (A, BAD_CAST "REF");
               node = g_slist_find_custom (player_list,
-                                          (void *) strtol (attr, NULL, 10),
+                                          (void *) strtol (attr, nullptr, 10),
                                           (GCompareFunc) Player::CompareWithRef);
               if (node)
               {
@@ -2438,7 +2438,7 @@ namespace Pool
 
               attr = (gchar *) xmlGetProp (B, BAD_CAST "REF");
               node = g_slist_find_custom (player_list,
-                                          (void *) strtol (attr, NULL, 10),
+                                          (void *) strtol (attr, nullptr, 10),
                                           (GCompareFunc) Player::CompareWithRef);
               if (node)
               {
@@ -2669,7 +2669,7 @@ namespace Pool
   {
     return ComparePlayer (A,
                           B,
-                          NULL,
+                          nullptr,
                           pool->_rand_seed,
                           WITH_RANDOM);
   }

@@ -66,7 +66,7 @@ namespace AskFred
     void IdFixer::PushId (const gchar *name,
                           const gchar *value)
     {
-      if (GetId (value) == NULL)
+      if (GetId (value) == nullptr)
       {
         if (g_strcmp0 (name, _primary_title) == 0)
         {
@@ -155,7 +155,7 @@ namespace AskFred
     gboolean Round::IsWithdrawn (const gchar *id)
     {
       return g_datalist_get_data (&_table,
-                                  id) != NULL;
+                                  id) != nullptr;
     }
   }
 
@@ -168,12 +168,12 @@ namespace AskFred
       : Object ("AskFred::Element")
     {
       _name    = g_strdup (name);
-      _ref     = NULL;
+      _ref     = nullptr;
       _scheme  = scheme;
       _seq     = 0;
       _visible = TRUE;
-      _outline = NULL;
-      _round   = NULL;
+      _outline = nullptr;
+      _round   = nullptr;
 
       if (round)
       {
@@ -220,7 +220,7 @@ namespace AskFred
         return _outline;
       }
 
-      return NULL;
+      return nullptr;
     }
 
     // --------------------------------------------------------------------------------
@@ -297,7 +297,7 @@ namespace AskFred
           return (gchar *) node->data;
         }
       }
-      return NULL;
+      return nullptr;
     }
 
     // --------------------------------------------------------------------------------
@@ -338,7 +338,7 @@ namespace AskFred
 
   namespace Writer
   {
-    GData *Scheme::_element_base = NULL;
+    GData *Scheme::_element_base = nullptr;
 
     // --------------------------------------------------------------------------------
     Scheme::Scheme (const gchar *filename)
@@ -346,15 +346,15 @@ namespace AskFred
       XmlScheme (filename)
     {
       _mode         = COLLECTING_MODE;
-      _current_node = NULL;
-      _rounds       = NULL;
+      _current_node = nullptr;
+      _rounds       = nullptr;
 
       _fencer_id_fixer = new IdFixer ("ID",   FALSE);
       _club_id_fixer   = new IdFixer ("Club", TRUE);
 
       g_datalist_init (&_id_aliases);
 
-      if (_element_base == NULL)
+      if (_element_base == nullptr)
       {
         g_datalist_init (&_element_base);
 
@@ -560,7 +560,7 @@ namespace AskFred
                        G_TRAVERSE_ALL,
                        -1,
                        Element::DeleteNode,
-                       NULL);
+                       nullptr);
 
       g_node_destroy (_root_element);
     }
@@ -568,19 +568,19 @@ namespace AskFred
     // --------------------------------------------------------------------------------
     Element *Scheme::PushElement (const gchar *name)
     {
-      GData   *scheme  = NULL;
+      GData   *scheme  = nullptr;
       Element *element;
 
       // Get the proper scheme
       {
-        GList *chain = NULL;
+        GList *chain = nullptr;
 
-        for (GNode *from = _current_node; from != NULL; from = from->parent)
+        for (GNode *from = _current_node; from != nullptr; from = from->parent)
         {
           chain = g_list_prepend (chain, from->data);
         }
 
-        for (GList *from = chain; from != NULL; from = g_list_next (from))
+        for (GList *from = chain; from != nullptr; from = g_list_next (from))
         {
           GString *path    = g_string_new ("");
           GList   *current = from;
@@ -609,7 +609,7 @@ namespace AskFred
 
         g_list_free (chain);
 
-        if (scheme == NULL)
+        if (scheme == nullptr)
         {
           scheme = (GData *) g_datalist_get_data (&_element_base,
                                                   name);
@@ -628,7 +628,7 @@ namespace AskFred
         {
           element = new Element (name,
                                  scheme,
-                                 NULL);
+                                 nullptr);
         }
 
         if (_current_node)
@@ -726,7 +726,7 @@ namespace AskFred
                                value);
 
         g_free (value);
-        return NULL;
+        return nullptr;
       }
 
       return format_value;
@@ -737,7 +737,7 @@ namespace AskFred
                                          const gchar *value)
     {
       Element *owner  = (Element *) _current_node->data;
-      Element *parent = NULL;
+      Element *parent = nullptr;
 
       if (_current_node->parent)
       {
@@ -798,7 +798,7 @@ namespace AskFred
           }
         }
 
-        return NULL;
+        return nullptr;
       }
 
       if (g_strcmp0 (owner->GetName (), "Tireur") == 0)
@@ -812,7 +812,7 @@ namespace AskFred
             g_datalist_set_data (&_id_aliases,
                                  value,
                                  (gpointer) alias);
-            return NULL;
+            return nullptr;
           }
         }
         else if (g_strcmp0 (term, "REF") == 0)
@@ -895,7 +895,7 @@ namespace AskFred
     // --------------------------------------------------------------------------------
     void Scheme::StartElement (const gchar *name)
     {
-      Element *parent = NULL;
+      Element *parent = nullptr;
 
       // Round seeding
       if (_current_node)
@@ -953,7 +953,7 @@ namespace AskFred
         {
           const gchar *term;
           const gchar *value;
-          gchar       *value_to_write = NULL;
+          gchar       *value_to_write = nullptr;
 
           term  = (const gchar *) outline->data;
           outline = g_list_next (outline);
@@ -975,7 +975,7 @@ namespace AskFred
             value_to_write = g_strdup_printf ("%d", parent->GetSeq ());
           }
 
-          if (value_to_write == NULL)
+          if (value_to_write == nullptr)
           {
             value_to_write = g_strdup (value);
           }
@@ -995,7 +995,7 @@ namespace AskFred
     {
       {
         Element *element = (Element *) node->data;
-        Element *parent  = NULL;
+        Element *parent  = nullptr;
 
         _current_node = node;
 
@@ -1065,7 +1065,7 @@ namespace AskFred
         }
       }
 
-      if (_current_node->children == NULL)
+      if (_current_node->children == nullptr)
       {
         while (_current_node)
         {
@@ -1085,7 +1085,7 @@ namespace AskFred
             XmlScheme::EndElement ();
           }
 
-          if (_current_node->next == NULL)
+          if (_current_node->next == nullptr)
           {
             _current_node = _current_node->parent;
           }
@@ -1174,7 +1174,7 @@ namespace AskFred
       {
         _current_node = _current_node->parent;
 
-        if (_current_node == NULL)
+        if (_current_node == nullptr)
         {
           Flush (_root_element);
         }

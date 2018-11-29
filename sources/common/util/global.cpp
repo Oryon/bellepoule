@@ -18,5 +18,5 @@
 
 #include "global.hpp"
 
-UserConfig *Global::_user_config = NULL;
-gchar      *Global::_share_dir   = NULL;
+UserConfig *Global::_user_config = nullptr;
+gchar      *Global::_share_dir   = nullptr;

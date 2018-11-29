@@ -32,15 +32,15 @@ namespace Oauth
     _service            = g_strdup (service);
     _consumer_key       = g_strdup (consumer_key);
     _consumer_secret    = g_strdup (consumer_secret);
-    _token              = NULL;
-    _account_id         = NULL;
-    _authorization_page = NULL;
+    _token              = nullptr;
+    _account_id         = nullptr;
+    _authorization_page = nullptr;
 
     {
       gchar *token = g_key_file_get_string (Global::_user_config->_key_file,
                                             service,
                                             "token",
-                                            NULL);
+                                            nullptr);
       SetToken (token);
       g_free (token);
     }
@@ -61,10 +61,10 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   void Session::Reset ()
   {
-    SetToken (NULL);
+    SetToken (nullptr);
 
     g_free (_account_id);
-    _account_id = NULL;
+    _account_id = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -138,11 +138,11 @@ namespace Oauth
     }
     else
     {
-      _token = NULL;
+      _token = nullptr;
       g_key_file_remove_key (Global::_user_config->_key_file,
                              _service,
                              "token",
-                             NULL);
+                             nullptr);
     }
   }
 }

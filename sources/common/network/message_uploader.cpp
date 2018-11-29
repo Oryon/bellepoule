@@ -30,21 +30,21 @@ namespace Net
 
     _listener = listener;
 
-    _iv      = NULL;
+    _iv      = nullptr;
     _cryptor = new Net::Cryptor ();
 
-    _http_header = NULL;
+    _http_header = nullptr;
 
     _message_queue = g_async_queue_new_full ((GDestroyNotify) Object::TryToRelease);
 
     {
-      GError *error = NULL;
+      GError *error = nullptr;
 
       _sender_thread = g_thread_try_new ("MessageUploader",
                                          (GThreadFunc) ThreadFunction,
                                          this,
                                          &error);
-      if (_sender_thread == NULL)
+      if (_sender_thread == nullptr)
       {
         g_printerr ("Failed to create Uploader thread: %s\n", error->message);
         g_error_free (error);
@@ -86,7 +86,7 @@ namespace Net
   void MessageUploader::PrepareData (gchar       *data_copy,
                                      const gchar *passphrase)
   {
-    if (data_copy == NULL)
+    if (data_copy == nullptr)
     {
       g_error ("MessageUploader::PrepareData ==> data_copy NULL");
     }
@@ -102,7 +102,7 @@ namespace Net
     else
     {
       SetDataCopy (data_copy);
-      _iv = NULL;
+      _iv = nullptr;
     }
   }
 
@@ -124,7 +124,7 @@ namespace Net
       if (_http_header)
       {
         curl_slist_free_all (_http_header);
-        _http_header = NULL;
+        _http_header = nullptr;
       }
 
       if (_iv)
@@ -208,9 +208,9 @@ namespace Net
       }
 
       g_free (uploader->_iv);
-      uploader->_iv = NULL;
+      uploader->_iv = nullptr;
     }
 
-    return NULL;
+    return nullptr;
   }
 }

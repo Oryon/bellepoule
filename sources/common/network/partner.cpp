@@ -30,8 +30,8 @@ namespace Net
     _role       = message->GetInteger ("role");
     _partner_id = message->GetInteger ("partner");
 
-    _passphrase256 = NULL;
-    _uploader      = NULL;
+    _passphrase256 = nullptr;
+    _uploader      = nullptr;
     _listener      = listener;
 
     {
@@ -119,7 +119,7 @@ namespace Net
       printf (CYAN "*** CONN_CLOSED ***\n");
 
       _uploader->Release ();
-      _uploader = NULL;
+      _uploader = nullptr;
 
       _listener->OnPartnerLeaved (this);
     }

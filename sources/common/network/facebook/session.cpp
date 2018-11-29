@@ -29,7 +29,7 @@ namespace Net
                       consumer_key,
                       consumer_secret)
   {
-    _user_id = NULL;
+    _user_id = nullptr;
 
   }
 

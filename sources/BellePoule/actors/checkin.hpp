@@ -51,7 +51,7 @@ namespace People
 
       void LoadList (xmlXPathContext *xml_context,
                      const gchar     *from_node,
-                     const gchar     *player_class = NULL);
+                     const gchar     *player_class = nullptr);
 
       Player *LoadPlayer (xmlNode     *xml_node,
                           const gchar *player_class,
@@ -73,10 +73,10 @@ namespace People
 
       Form *CreateForm (Filter      *filter,
                         const gchar *player_class,
-                        Module      *player_owner = NULL);
+                        Module      *player_owner = nullptr);
 
     public:
-      void RaiseForm (GtkWindow *over = NULL);
+      void RaiseForm (GtkWindow *over = nullptr);
 
       void on_players_list_row_activated (GtkTreePath *path);
 
@@ -132,7 +132,7 @@ namespace People
                      const gchar *player_class,
                      const gchar *player_class_xml_tag,
                      const gchar *players_class_xml_tag,
-                     Player      *owner = NULL);
+                     Player      *owner = nullptr);
 
       void OnPlugged ();
 

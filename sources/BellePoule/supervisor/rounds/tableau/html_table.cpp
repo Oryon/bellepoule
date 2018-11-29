@@ -31,7 +31,7 @@ namespace Table
     : Object ("HtmlTable")
   {
     _owner        = owner;
-    _table        = NULL;
+    _table        = nullptr;
     _table_width  = 0;
     _table_height = 0;
   }
@@ -65,17 +65,17 @@ namespace Table
   {
     _table[row*_table_width + column] = match;
 
-    match->SetData (NULL, "HtmlTable::row", (void *) row);
-    match->SetData (NULL, "HtmlTable::col", (void *) column);
+    match->SetData (nullptr, "HtmlTable::row", (void *) row);
+    match->SetData (nullptr, "HtmlTable::col", (void *) column);
   }
 
   // --------------------------------------------------------------------------------
   void HtmlTable::Connect (Match *m1,
                            Match *m2)
   {
-    guint row1 = m1->GetUIntData (NULL, "HtmlTable::row");
-    guint row2 = m2->GetUIntData (NULL, "HtmlTable::row");
-    guint col2 = m2->GetUIntData (NULL, "HtmlTable::col");
+    guint row1 = m1->GetUIntData (nullptr, "HtmlTable::row");
+    guint row2 = m2->GetUIntData (nullptr, "HtmlTable::row");
+    guint col2 = m2->GetUIntData (nullptr, "HtmlTable::col");
 
     if (row1 > row2)
     {

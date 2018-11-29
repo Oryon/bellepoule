@@ -36,9 +36,9 @@ namespace Oauth
     _status         = READY;
     _http_method    = http_method;
     _url            = g_strdup_printf ("%s/%s", session->GetApiUri (), signature);
-    _header_list    = NULL;
-    _parameter_list = NULL;
-    _parser         = NULL;
+    _header_list    = nullptr;
+    _parameter_list = nullptr;
+    _parser         = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -136,12 +136,12 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   gchar *Request::GetParameters ()
   {
-    gchar *parameters = NULL;
+    gchar *parameters = nullptr;
 
     if (_parameter_list)
     {
       GList   *current          = _parameter_list;
-      GString *parameter_string = g_string_new (NULL);
+      GString *parameter_string = g_string_new (nullptr);
 
       for (guint i = 0; current; i++)
       {
@@ -170,7 +170,7 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   gboolean Request::LoadJson (const gchar *json)
   {
-    if (_parser == NULL)
+    if (_parser == nullptr)
     {
       _parser = json_parser_new ();
     }
@@ -178,13 +178,13 @@ namespace Oauth
     return json_parser_load_from_data (_parser,
                                        json,
                                        -1,
-                                       NULL);
+                                       nullptr);
   }
 
   // --------------------------------------------------------------------------------
   gchar *Request::GetJsonAtPath (const gchar *path)
   {
-    gchar *result = NULL;
+    gchar *result = nullptr;
 
     if (_parser)
     {
@@ -193,7 +193,7 @@ namespace Oauth
 
       json_path_compile (jpath,
                          path,
-                         NULL);
+                         nullptr);
 
       node = json_path_match (jpath,
                               json_parser_get_root (_parser));
@@ -206,7 +206,7 @@ namespace Oauth
         json_generator_set_root (generator,
                                  node);
 
-        quoted_str = json_generator_to_data (generator, NULL);
+        quoted_str = json_generator_to_data (generator, nullptr);
 
         if (quoted_str)
         {
@@ -214,7 +214,7 @@ namespace Oauth
 
           if (segments)
           {
-            for (guint i = 0; segments[i] != NULL; i++)
+            for (guint i = 0; segments[i] != nullptr; i++)
             {
               if (*segments[i] != '\0')
               {
@@ -242,7 +242,7 @@ namespace Oauth
   {
     if (_header_list)
     {
-      struct curl_slist *curl_header = NULL;
+      struct curl_slist *curl_header = nullptr;
       GList             *current     = _header_list;
 
       while (current)
@@ -259,7 +259,7 @@ namespace Oauth
       return curl_header;
     }
 
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -268,7 +268,7 @@ namespace Oauth
   {
     printf ("%s\n\n\n", body);
 
-    if (body == NULL)
+    if (body == nullptr)
     {
       _status = NETWORK_ERROR;
     }

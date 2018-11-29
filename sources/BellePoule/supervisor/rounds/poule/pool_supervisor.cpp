@@ -49,9 +49,9 @@ namespace Pool
       Stage (stage_class),
       Module ("pool_supervisor.glade")
   {
-    _allocator      = NULL;
-    _displayed_pool = NULL;
-    _max_score      = NULL;
+    _allocator      = nullptr;
+    _displayed_pool = nullptr;
+    _max_score      = nullptr;
 
     _current_round_owner = new Object ("Pool::Supervisor.owner");
 
@@ -168,7 +168,7 @@ namespace Pool
     {
       Pool *pool = _allocator->GetPool (p);
 
-      pool->RegisterStatusListener (NULL);
+      pool->RegisterStatusListener (nullptr);
     }
 
     Object::TryToRelease (_allocator);
@@ -225,7 +225,7 @@ namespace Pool
       if (_displayed_pool)
       {
         _displayed_pool->UnPlug ();
-        _displayed_pool = NULL;
+        _displayed_pool = nullptr;
       }
 
       gtk_list_store_clear (_pool_liststore);
@@ -390,7 +390,7 @@ namespace Pool
 
     if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_pool_liststore),
                                        &iter,
-                                       NULL,
+                                       nullptr,
                                        pool->GetNumber () - 1))
     {
       GdkPixbuf *pixbuf = pool->GetStatusPixbuf ();
@@ -436,7 +436,7 @@ namespace Pool
                           gettext ("Bout without winner!"));
       }
     }
-    return NULL;
+    return nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -463,7 +463,7 @@ namespace Pool
     if (_displayed_pool)
     {
       _displayed_pool->UnPlug ();
-      _displayed_pool = NULL;
+      _displayed_pool = nullptr;
     }
 
     if (pool)
@@ -622,7 +622,7 @@ namespace Pool
     else if (   (GetStageView (operation) == STAGE_VIEW_RESULT)
              || (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE))
     {
-      GList *pools = NULL;
+      GList *pools = nullptr;
 
       if (_print_all_pool)
       {
@@ -630,7 +630,7 @@ namespace Pool
         {
           Pool *pool = _allocator->GetPool (page_nr*POOL_PAGE_DENSITY + i);
 
-          if (pool == NULL)
+          if (pool == nullptr)
           {
             break;
           }
@@ -681,7 +681,7 @@ namespace Pool
             pool->Wipe ();
 
             current = g_list_next (current);
-            if (current == NULL)
+            if (current == nullptr)
             {
               goto rendering;
             }
@@ -746,7 +746,7 @@ rendering:
 
             goo_canvas_render (canvas,
                                cr,
-                               NULL,
+                               nullptr,
                                1.0);
             cairo_restore (cr);
           }
@@ -860,7 +860,7 @@ rendering:
   // --------------------------------------------------------------------------------
   void Supervisor::Load (xmlNode *xml_node)
   {
-    LoadAttendees (NULL);
+    LoadAttendees (nullptr);
 
     LoadConfiguration (xml_node);
 
@@ -901,7 +901,7 @@ rendering:
   // --------------------------------------------------------------------------------
   GSList *Supervisor::GetCurrentClassification ()
   {
-    GSList *result = NULL;
+    GSList *result = nullptr;
 
     for (guint p = 0; p < _allocator->GetNbPools (); p++)
     {
@@ -952,7 +952,7 @@ rendering:
     GSList              *result;
     GSList              *current;
     guint                previous_rank   = 0;
-    Player              *previous_player = NULL;
+    Player              *previous_player = nullptr;
 
     if (CompareFunction)
     {

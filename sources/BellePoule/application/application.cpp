@@ -57,8 +57,8 @@ Application::Application (Net::Ring::Role     role,
                           char             ***argv)
   : Object ("Application")
 {
-  _language    = NULL;
-  _main_module = NULL;
+  _language    = nullptr;
+  _main_module = nullptr;
 
   g_setenv ("SUDO_ASKPASS",
             "/usr/bin/ssh-askpass",
@@ -117,7 +117,7 @@ Application::Application (Net::Ring::Role     role,
 
 #if defined(DEBUG)
       g_log_set_default_handler (LogHandler,
-                                 NULL);
+                                 nullptr);
 #endif
 
 #ifdef CODE_BLOCKS
@@ -283,7 +283,7 @@ void Application::Prepare ()
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "team", "Equipe", gettext ("team"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValues (NULL, NULL, NULL, NULL);
+    desc->AddDiscreteValues (nullptr, nullptr, nullptr, NULL);
     desc->EnableSorting ();
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", gettext ("last name"));
@@ -306,7 +306,7 @@ void Application::Prepare ()
     desc->_rights             = AttributeDesc::PRIVATE;
     desc->_free_value_allowed = FALSE;
     desc->_favorite_look      = AttributeDesc::SHORT_TEXT;
-    desc->AddDiscreteValues ("X", gettext ("Educ"),  NULL,
+    desc->AddDiscreteValues ("X", gettext ("Educ"),  nullptr,
                              "F", gettext ("Foil"),  NULL,
                              "E", gettext ("Epée"),  NULL,
                              "S", gettext ("Sabre"), NULL, NULL);
@@ -532,7 +532,7 @@ void Application::OnDownloaderData (Net::Downloader  *downloader,
                                    data,
                                    strlen (data) + 1,
                                    G_KEY_FILE_NONE,
-                                   NULL))
+                                   nullptr))
     {
       gboolean     new_version_detected = FALSE;
       const gchar *local_version        = VERSION;
@@ -545,15 +545,15 @@ void Application::OnDownloaderData (Net::Downloader  *downloader,
       remote_version = g_key_file_get_string (version_file,
                                               VERSION_BRANCH,
                                               "version",
-                                              NULL);
+                                              nullptr);
       remote_revision = g_key_file_get_string (version_file,
                                                VERSION_BRANCH,
                                                "revision",
-                                               NULL);
+                                               nullptr);
       remote_maturity = g_key_file_get_string (version_file,
                                                VERSION_BRANCH,
                                                "maturity",
-                                               NULL);
+                                               nullptr);
 
       if (remote_version && remote_revision && remote_maturity)
       {
@@ -584,7 +584,7 @@ void Application::OnDownloaderData (Net::Downloader  *downloader,
           char *stable_version = g_key_file_get_string (version_file,
                                                         "STABLE",
                                                         "version",
-                                                        NULL);
+                                                        nullptr);
           if (stable_version && g_strcmp0 (remote_version, stable_version) <= 0)
           {
             new_version_detected = TRUE;
@@ -608,13 +608,13 @@ void Application::OnDownloaderData (Net::Downloader  *downloader,
   }
 
   _version_downloader->Release ();
-  _version_downloader = NULL;
+  _version_downloader = nullptr;
 }
 
 // --------------------------------------------------------------------------------
 const gchar *Application::GetSecretKey (const gchar *authentication_scheme)
 {
-  return NULL;
+  return nullptr;
 }
 
 // --------------------------------------------------------------------------------
@@ -630,21 +630,21 @@ void Application::AboutDialogActivateLinkFunc (GtkAboutDialog *about,
                  NULL,
                  SW_SHOWNORMAL);
 #else
-  gtk_show_uri (NULL,
+  gtk_show_uri (nullptr,
                 link,
                 GDK_CURRENT_TIME,
-                NULL);
+                nullptr);
 #endif
 }
 
 // --------------------------------------------------------------------------------
 void Application::OnOpenUserManual ()
 {
-  gchar *uri           = NULL;
+  gchar *uri           = nullptr;
   gchar *language_code = g_key_file_get_string (Global::_user_config->_key_file,
                                                 "Tournament",
                                                 "interface_language",
-                                                NULL);
+                                                nullptr);
 
   if (language_code)
   {
@@ -654,13 +654,13 @@ void Application::OnOpenUserManual ()
                      G_FILE_TEST_EXISTS) == FALSE)
     {
       g_free (uri);
-      uri = NULL;
+      uri = nullptr;
     }
 
     g_free (language_code);
   }
 
-  if (uri == NULL)
+  if (uri == nullptr)
   {
     uri = g_build_filename (Global::_share_dir, "resources", "translations", "user_manual.pdf", NULL);
   }
@@ -677,10 +677,10 @@ void Application::OnOpenUserManual ()
   {
     gchar *full_uri = g_build_filename ("file://", uri, NULL);
 
-    gtk_show_uri (NULL,
+    gtk_show_uri (nullptr,
                   full_uri,
                   GDK_CURRENT_TIME,
-                  NULL);
+                  nullptr);
     g_free (full_uri);
   }
 #endif
@@ -819,10 +819,10 @@ extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *m
                  NULL,
                  SW_SHOWNORMAL);
 #else
-  gtk_show_uri (NULL,
+  gtk_show_uri (nullptr,
                 "http://betton.escrime.free.fr/index.php/bellepoule-telechargement",
                 GDK_CURRENT_TIME,
-                NULL);
+                nullptr);
 #endif
 }
 
@@ -838,10 +838,10 @@ extern "C" G_MODULE_EXPORT void on_translate_menuitem_activate (GtkWidget *w,
                  NULL,
                  SW_SHOWNORMAL);
 #else
-  gtk_show_uri (NULL,
+  gtk_show_uri (nullptr,
                 "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
                 GDK_CURRENT_TIME,
-                NULL);
+                nullptr);
 #endif
 }
 
@@ -860,7 +860,7 @@ extern "C" G_MODULE_EXPORT void on_about_menuitem_activate (GtkWidget *w,
 extern "C" G_MODULE_EXPORT void on_user_manual_activate (GtkWidget *w,
                                                          Object    *owner)
 {
-  Application *a = (Application *) owner->GetPtrData (NULL,
+  Application *a = (Application *) owner->GetPtrData (nullptr,
                                                       "application");
 
   a->OnOpenUserManual ();
@@ -886,7 +886,7 @@ extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
                                                           GdkEvent  *event,
                                                           Object    *owner)
 {
-  Application *a = (Application *) owner->GetPtrData (NULL,
+  Application *a = (Application *) owner->GetPtrData (nullptr,
                                                       "application");
 
   a->OnQuit (GTK_WINDOW (gtk_widget_get_toplevel (w)));
