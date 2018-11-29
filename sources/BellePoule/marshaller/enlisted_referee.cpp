@@ -74,13 +74,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void EnlistedReferee::OnRemovedFromSlot (EnlistedReferee *referee,
-                                           Slot            *slot)
+  void EnlistedReferee::OnRemovedFromSlot (Slot *slot)
   {
-    referee->_slots = g_list_remove (referee->_slots,
-                                     slot);
+    _slots = g_list_remove (_slots,
+                            slot);
 
-    referee->_work_load -= slot->GetDuration () / G_TIME_SPAN_MINUTE;
+    _work_load -= slot->GetDuration () / G_TIME_SPAN_MINUTE;
   }
 
   // --------------------------------------------------------------------------------

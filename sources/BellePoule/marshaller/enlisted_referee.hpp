@@ -48,8 +48,7 @@ namespace Marshaller
 
       void SetAllRefereWorkload (gint all_referee_workload);
 
-      static void OnRemovedFromSlot (EnlistedReferee *referee,
-                                     Slot            *slot);
+      void OnRemovedFromSlot (Slot *slot);
 
       static gint CompareWorkload (EnlistedReferee *a,
                                    EnlistedReferee *b);

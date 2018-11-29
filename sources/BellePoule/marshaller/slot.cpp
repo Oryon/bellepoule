@@ -301,16 +301,15 @@ namespace Marshaller
   {
     if (job)
     {
+      while (_referee_list)
+      {
+        EnlistedReferee *referee = (EnlistedReferee *) _referee_list->data;
+
+        RemoveReferee (referee);
+      }
+
       _job_list = g_list_remove (_job_list,
                                  job);
-
-      {
-        g_list_foreach (_referee_list,
-                        (GFunc) EnlistedReferee::OnRemovedFromSlot,
-                        this);
-        g_list_free (_referee_list);
-        _referee_list = nullptr;
-      }
 
       RefreshJobStatus (job);
 
@@ -359,20 +358,13 @@ namespace Marshaller
     _referee_list = g_list_remove (_referee_list,
                                    referee);
 
+    for (GList *current = _job_list; current; current = g_list_next (current))
     {
-      GList *current = _job_list;
+      Job *job = (Job *) current->data;
 
-      while (current)
-      {
-        Job *job = (Job *) current->data;
-
-        job->RemoveReferee (referee);
-        EnlistedReferee::OnRemovedFromSlot (referee,
-                                            this);
-        RefreshJobStatus (job);
-
-        current = g_list_next (current);
-      }
+      job->RemoveReferee (referee);
+      referee->OnRemovedFromSlot (this);
+      RefreshJobStatus (job);
     }
 
     _piste->OnSlotUpdated (this);
