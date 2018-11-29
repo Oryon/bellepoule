@@ -145,13 +145,16 @@ namespace Marshaller
     {
       if (duration > 0)
       {
-        //_slot->SetDuration (duration);
+        if (duration < _regular_duration)
+        {
+          _slot->SetDuration (duration);
+        }
         _over = TRUE;
       }
       else if (_over == TRUE)
       {
         _over = FALSE;
-        //_slot->SetDuration (_regular_duration);
+        _slot->SetDuration (_regular_duration);
       }
     }
   }

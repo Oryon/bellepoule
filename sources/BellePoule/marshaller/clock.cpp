@@ -49,14 +49,14 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Clock::Set (GDateTime *to)
   {
-#if 0
+//#if defined(DEBUG)
     _offset = g_date_time_difference (to,
                                       _absolute);
     OnTimeout (this);
 
     Disclose ("BellePoule2D::ClockOffset");
     Spread ();
-#endif
+//#endif
   }
 
   // --------------------------------------------------------------------------------

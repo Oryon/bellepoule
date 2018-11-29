@@ -698,7 +698,6 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::AlterCurrentTime ()
   {
-//#if defined(DEBUG)
     GDateTime *cursor = _timeline->RetreiveCursorTime (TRUE);
 
     _clock->Set (cursor);
@@ -706,7 +705,6 @@ namespace Marshaller
     g_date_time_unref (cursor);
 
     Redraw ();
-//#endif
   }
 
   // --------------------------------------------------------------------------------
