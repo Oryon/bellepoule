@@ -56,5 +56,5 @@ class Data : public Object
     gboolean  _valid;
     gchar    *_string;
 
-    virtual ~Data ();
+    ~Data () override;
 };

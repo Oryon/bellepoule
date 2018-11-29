@@ -139,7 +139,7 @@ class Module : public virtual Object
 
     void ResetCursor ();
 
-    virtual ~Module ();
+    ~Module () override;
 
     void Raise (GtkDialog *dialog,
                 GtkWindow *over);

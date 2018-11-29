@@ -55,6 +55,7 @@
 			<Add option="-Wno-variadic-macros" />
 			<Add option="-Wno-deprecated-declarations" />
 			<Add option="-Wno-vla" />
+			<Add option="-Wsuggest-override" />
 			<Add option="-fPIC" />
 			<Add option="-pthread" />
 			<Add option="-DDEBUG" />

@@ -23,6 +23,7 @@ class Player;
 namespace Marshaller
 {
   class RefereePool;
+  class Job;
 
   class JobDetails : public People::PlayersList
   {
@@ -49,36 +50,36 @@ namespace Marshaller
       Listener           *_listener;
       Job                *_job;
 
-      void OnPlugged ();
+      void OnPlugged () override;
 
-      virtual ~JobDetails ();
+      ~JobDetails () override;
 
-      void OnPlayerRemoved (Player *player);
+      void OnPlayerRemoved (Player *player) override;
 
       void CellDataFunc (GtkTreeViewColumn *tree_column,
                          GtkCellRenderer   *cell,
                          GtkTreeModel      *tree_model,
-                         GtkTreeIter       *iter);
+                         GtkTreeIter       *iter) override;
     private:
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,
                           GtkSelectionData *selection_data,
                           guint             key,
-                          guint             time);
+                          guint             time) override;
 
       Object *GetDropObjectFromRef (guint32 ref,
-                                    guint   key);
+                                    guint   key) override;
 
       gboolean OnDragMotion (GtkWidget      *widget,
                              GdkDragContext *drag_context,
                              gint            x,
                              gint            y,
-                             guint           time);
+                             guint           time) override;
 
       gboolean OnDragDrop (GtkWidget      *widget,
                            GdkDragContext *drag_context,
                            gint            x,
                            gint            y,
-                           guint           time);
+                           guint           time) override;
   };
 }

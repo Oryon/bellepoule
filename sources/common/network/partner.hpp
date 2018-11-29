@@ -60,8 +60,8 @@ namespace Net
       gchar           *_passphrase256;
       Listener        *_listener;
 
-      ~Partner ();
+      ~Partner () override;
 
-      void OnUploadStatus (MessageUploader::PeerStatus peer_status);
+      void OnUploadStatus (MessageUploader::PeerStatus peer_status) override;
   };
 }

@@ -31,9 +31,9 @@ namespace Net
       VerifyCredentials (Oauth::Session *session);
 
     private:
-      virtual ~VerifyCredentials ();
+      ~VerifyCredentials () override;
 
       void ParseResponse (GHashTable  *header,
-                          const gchar *body);
+                          const gchar *body) override;
   };
 }

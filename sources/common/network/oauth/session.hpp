@@ -53,7 +53,7 @@ namespace Oauth
       const gchar *GetAuthorizationPage ();
 
     protected:
-      virtual ~Session ();
+      ~Session () override;
 
     private:
       gchar *_service;

@@ -93,7 +93,7 @@ namespace Marshaller
 
       Slot *GetSlotAt (GDateTime *time);
 
-      Slot *GetSlotAfter (Slot *from);
+      Slot *GetSlotAfter (Slot *from) override;
 
       void DisplayAtTime (GDateTime *time);
 
@@ -153,11 +153,11 @@ namespace Marshaller
       gboolean         _blocked;
       Clock           *_clock;
 
-      ~Piste ();
+      ~Piste () override;
 
-      void Focus ();
+      void Focus () override;
 
-      void Unfocus ();
+      void Unfocus () override;
 
       void SetColor (const gchar *color);
 

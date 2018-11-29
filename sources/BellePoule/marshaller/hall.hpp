@@ -104,9 +104,9 @@ namespace Marshaller
       guint        _job_key;
       JsonFile    *_json_file;
 
-      ~Hall ();
+      ~Hall () override;
 
-      void OnPlugged ();
+      void OnPlugged () override;
 
       void CancelSelection ();
 
@@ -129,13 +129,13 @@ namespace Marshaller
                                   Job   *job);
 
       Object *GetDropObjectFromRef (guint32 ref,
-                                    guint   key);
+                                    guint   key) override;
 
       void DropObject (Object   *object,
                        DropZone *source_zone,
-                       DropZone *target_zone);
+                       DropZone *target_zone) override;
 
-      void OnNewTime (const gchar *time);
+      void OnNewTime (const gchar *time) override;
 
       static gboolean OnButtonPress (GooCanvasItem  *goo_rect,
                                      GooCanvasItem  *target,
@@ -158,31 +158,31 @@ namespace Marshaller
       gboolean OnCursorMotion (GdkEventMotion *event);
 
       void OnPisteButtonEvent (Piste          *piste,
-                               GdkEventButton *event);
+                               GdkEventButton *event) override;
 
       void OnPisteMotionEvent (Piste          *piste,
-                               GdkEventMotion *event);
+                               GdkEventMotion *event) override;
 
-      void OnPisteDirty ();
+      void OnPisteDirty () override;
 
-      gboolean OnBatchAssignmentRequest (Batch *batch);
+      gboolean OnBatchAssignmentRequest (Batch *batch) override;
 
-      void OnBatchAssignmentCancel (Batch *batch);
+      void OnBatchAssignmentCancel (Batch *batch) override;
 
-      void OnJobOverlapWarning (Batch *batch);
+      void OnJobOverlapWarning (Batch *batch) override;
 
-      void OnTimelineCursorMoved ();
+      void OnTimelineCursorMoved () override;
 
-      void OnTimelineCursorChanged ();
+      void OnTimelineCursorChanged () override;
 
-      void OnJobBoardUpdated (Competition *competition);
+      void OnJobBoardUpdated (Competition *competition) override;
 
-      void OnJobBoardFocus (guint focus);
+      void OnJobBoardFocus (guint focus) override;
 
-      void OnJobMove (Job *job);
+      void OnJobMove (Job *job) override;
 
       gboolean DroppingIsAllowed (Object   *floating_object,
-                                  DropZone *in_zone);
+                                  DropZone *in_zone) override;
 
       gboolean DroppingIsAllowed (Object *floating_object,
                                   Piste  *piste);
@@ -195,7 +195,7 @@ namespace Marshaller
 
       gboolean Redraw ();
 
-      void OnDragAndDropEnd ();
+      void OnDragAndDropEnd () override;
 
       void StopMovingJob ();
 
@@ -205,11 +205,11 @@ namespace Marshaller
                                gint              y,
                                GtkSelectionData *data,
                                guint             key,
-                               guint             time);
+                               guint             time) override;
 
-      void FeedJsonBuilder (JsonBuilder *builder);
+      void FeedJsonBuilder (JsonBuilder *builder) override;
 
-      gboolean ReadJson (JsonReader *reader);
+      gboolean ReadJson (JsonReader *reader) override;
 
       void SetWarningColors (const gchar *warning);
 

@@ -27,9 +27,9 @@ namespace Net
                       const gchar    *tweet);
 
     private:
-      virtual ~StatusesUpdate ();
+      ~StatusesUpdate () override;
 
       void ParseResponse (GHashTable  *header,
-                          const gchar *body);
+                          const gchar *body) override;
   };
 }

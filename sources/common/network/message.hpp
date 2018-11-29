@@ -37,7 +37,7 @@ namespace Net
 
       guint GetNetID ();
 
-      void Recall ();
+      void Recall () override;
 
       void SetPassPhrase256 (const gchar *passphrase256);
 
@@ -75,7 +75,7 @@ namespace Net
 
       void Dump (gboolean regular = TRUE);
 
-      void Spread ();
+      void Spread () override;
 
       void ResetSpread ();
 
@@ -89,6 +89,6 @@ namespace Net
 
       Message ();
 
-      virtual ~Message ();
+      ~Message () override;
   };
 }

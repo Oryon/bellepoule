@@ -30,9 +30,9 @@ namespace Net
 
       virtual void UploadFile (const gchar *file_path);
 
-      virtual ~FileUploader ();
+      ~FileUploader () override;
 
-      virtual void SetCurlOptions (CURL *curl);
+      void SetCurlOptions (CURL *curl) override;
 
       const gchar *GetWWW ();
 
@@ -50,7 +50,7 @@ namespace Net
 
       void PushMessage (Message *message);
 
-      virtual const gchar *GetUrl ();
+      const gchar *GetUrl () override;
 
       static gpointer ThreadFunction (FileUploader *uploader);
 

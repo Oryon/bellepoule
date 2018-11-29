@@ -30,7 +30,7 @@ namespace Oauth
                  const gchar *http_method);
 
       protected:
-        ~Request ();
+        ~Request () override;
 
         void SetBearer (const gchar *bearer);
     };

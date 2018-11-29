@@ -44,31 +44,31 @@ namespace People
                         Data *default_classification,
                         Data *manual_classification);
 
-      void ConvertFromBaseToResult ();
+      void ConvertFromBaseToResult () override;
 
       void OnImportRanking ();
 
       void OnConfigChanged ();
 
-      void Add (Player *player);
+      void Add (Player *player) override;
 
     private:
-      void OnLocked ();
+      void OnLocked () override;
 
-      void OnUnLocked ();
+      void OnUnLocked () override;
 
-      void OnListChanged ();
+      void OnListChanged () override;
 
-      void OnLoadingCompleted ();
+      void OnLoadingCompleted () override;
 
-      void FillInConfig ();
+      void FillInConfig () override;
 
-      void ApplyConfig ();
+      void ApplyConfig () override;
 
       void ApplyConfig (Team *team);
 
       guint PreparePrint (GtkPrintOperation *operation,
-                          GtkPrintContext   *context);
+                          GtkPrintContext   *context) override;
 
     private:
       static const gchar *_class_name;
@@ -82,42 +82,42 @@ namespace People
 
       static Stage *CreateInstance (StageClass *stage_class);
 
-      void Monitor (Player *player);
+      void Monitor (Player *player) override;
 
-      void OnAttendeeToggled (Player *attendee);
+      void OnAttendeeToggled (Player *attendee) override;
 
-      gboolean IsOver ();
+      gboolean IsOver () override;
 
       void UpdateChecksum ();
 
-      GSList *GetCurrentClassification ();
+      GSList *GetCurrentClassification () override;
 
-      void Load (xmlNode *xml_node);
+      void Load (xmlNode *xml_node) override;
 
       void OnPlayerLoaded (Player *player,
-                           Player *owner);
+                           Player *owner) override;
 
-      void SaveAttendees (XmlScheme *xml_scheme);
+      void SaveAttendees (XmlScheme *xml_scheme) override;
 
       void SavePlayer (XmlScheme   *xml_scheme,
                        const gchar *player_class,
-                       Player      *player);
+                       Player      *player) override;
 
       void RegisterNewTeam (Team *team);
 
       void OnFormEvent (Player          *player,
-                        Form::FormEvent  event);
+                        Form::FormEvent  event) override;
 
       Team *GetTeam (const gchar *name);
 
-      void SetTeamEvent (gboolean team_event);
+      void SetTeamEvent (gboolean team_event) override;
 
-      void OnPlayerRemoved (Player *player);
+      void OnPlayerRemoved (Player *player) override;
 
       void OnAttendingChanged (Player *player,
                                guint   value);
 
-      void FeedParcel (Net::Message *parcel);
+      void FeedParcel (Net::Message *parcel) override;
 
       void EnableDragAndDrop ();
 
@@ -127,22 +127,22 @@ namespace People
                           GdkDragContext   *drag_context,
                           GtkSelectionData *selection_data,
                           guint             key,
-                          guint             time);
+                          guint             time) override;
 
       Object *GetDropObjectFromRef (guint32 ref,
-                                    guint   key);
+                                    guint   key) override;
 
       gboolean OnDragMotion (GtkWidget      *widget,
                              GdkDragContext *drag_context,
                              gint            x,
                              gint            y,
-                             guint           time);
+                             guint           time) override;
 
       gboolean OnDragDrop (GtkWidget      *widget,
                            GdkDragContext *drag_context,
                            gint            x,
                            gint            y,
-                           guint           time);
+                           guint           time) override;
 
       static gboolean AbsentPlayerFilter (Player      *player,
                                           PlayersList *owner);
@@ -163,19 +163,19 @@ namespace People
       void TogglePlayerAttr (Player              *player,
                              Player::AttributeId *attr_id,
                              gboolean             new_value,
-                             gboolean             popup_on_error = FALSE);
+                             gboolean             popup_on_error = FALSE) override;
 
       void CellDataFunc (GtkTreeViewColumn *tree_column,
                          GtkCellRenderer   *cell,
                          GtkTreeModel      *tree_model,
-                         GtkTreeIter       *iter);
+                         GtkTreeIter       *iter) override;
 
-      gboolean PlayerIsPrintable (Player *player);
+      gboolean PlayerIsPrintable (Player *player) override;
 
       void DrawConfig (GtkPrintOperation *operation,
                        GtkPrintContext   *context,
-                       gint               page_nr);
+                       gint               page_nr) override;
 
-      virtual ~CheckinSupervisor ();
+      ~CheckinSupervisor () override;
   };
 }

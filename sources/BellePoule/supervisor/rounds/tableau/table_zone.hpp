@@ -61,6 +61,6 @@ namespace Table
     private:
       GNode *_node;
 
-      virtual ~TableZone ();
+      ~TableZone () override;
   };
 }

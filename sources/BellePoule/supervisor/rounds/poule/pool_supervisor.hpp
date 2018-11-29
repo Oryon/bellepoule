@@ -48,24 +48,24 @@ namespace Pool
       void OnForRefereesClicked (GtkToggleButton *toggle_button);
 
     private:
-      void Display ();
-      void Garnish ();
-      void OnLocked ();
-      void OnUnLocked ();
+      void Display () override;
+      void Garnish () override;
+      void OnLocked () override;
+      void OnUnLocked () override;
       void RetrievePools ();
       void Manage (Pool *pool);
-      void Save (XmlScheme *xml_scheme);
+      void Save (XmlScheme *xml_scheme) override;
 
     private:
       void OnPoolSelected (Pool *pool);
 
       static Stage *CreateInstance (StageClass *stage_class);
 
-      void FillInConfig ();
-      void ApplyConfig ();
-      Stage *GetInputProvider ();
-      gboolean IsOver ();
-      Error *GetError ();
+      void FillInConfig () override;
+      void ApplyConfig () override;
+      Stage *GetInputProvider () override;
+      gboolean IsOver () override;
+      Error *GetError () override;
 
     private:
       static const gchar *_class_name;
@@ -80,47 +80,47 @@ namespace Pool
       guint           _pool_v_density;
       guint           _pool_h_density;
 
-      virtual ~Supervisor ();
+      ~Supervisor () override;
 
       void SetPrintPoolDensity ();
 
-      void OnAttrListUpdated ();
+      void OnAttrListUpdated () override;
 
-      void OnPlugged ();
+      void OnPlugged () override;
 
-      void OnUnPlugged ();
+      void OnUnPlugged () override;
 
-      void Load (xmlNode *xml_node);
+      void Load (xmlNode *xml_node) override;
 
-      void DumpToHTML (FILE *file);
+      void DumpToHTML (FILE *file) override;
 
-      GSList *GetCurrentClassification ();
+      GSList *GetCurrentClassification () override;
 
       GSList *EvaluateClassification (GSList           *list,
                                       Object           *rank_owner,
                                       GCompareDataFunc  CompareFunction);
 
-      void SetInputProvider (Stage *input_provider);
+      void SetInputProvider (Stage *input_provider) override;
 
-      gchar *GetPrintName ();
+      gchar *GetPrintName () override;
 
       guint PreparePrint (GtkPrintOperation *operation,
-                          GtkPrintContext   *context);
+                          GtkPrintContext   *context) override;
 
       void DrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
-                     gint               page_nr);
+                     gint               page_nr) override;
 
       void OnEndPrint (GtkPrintOperation *operation,
-                       GtkPrintContext   *context);
+                       GtkPrintContext   *context) override;
 
-      gboolean OnMessage (Net::Message *message);
+      gboolean OnMessage (Net::Message *message) override;
 
       gboolean OnHttpPost (const gchar *command,
                            const gchar **ressource,
                            const gchar *data);
 
-      void OnPoolStatus (Pool *pool);
+      void OnPoolStatus (Pool *pool) override;
 
       static gint CompareCurrentRoundClassification (Player     *A,
                                                      Player     *B,

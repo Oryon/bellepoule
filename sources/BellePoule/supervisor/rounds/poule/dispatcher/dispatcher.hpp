@@ -19,6 +19,7 @@
 #include <glib.h>
 
 #include "util/object.hpp"
+#include "util/attribute_desc.hpp"
 
 namespace Pool
 {
@@ -41,7 +42,7 @@ namespace Pool
                               guint    *b_id,
                               gboolean *rest_error);
 
-      void Dump ();
+      void Dump () override;
 
     private:
       GList *_pair_list;
@@ -49,7 +50,7 @@ namespace Pool
       gchar *_name;
       GList *_opponent_list;
 
-      virtual ~Dispatcher ();
+      ~Dispatcher () override;
 
       void Reset ();
 

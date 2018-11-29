@@ -68,11 +68,11 @@ namespace Table
 
       void Hide ();
 
-      void FeedParcel (Net::Message *parcel);
+      void FeedParcel (Net::Message *parcel) override;
 
-      void Spread ();
+      void Spread () override;
 
-      void Recall ();
+      void Recall () override;
 
       void ClearRoadmaps ();
 
@@ -128,7 +128,7 @@ namespace Table
       guint         _free_node_index;
       const gchar  *_xml_player_tag;
 
-      virtual ~Table ();
+      ~Table () override;
 
       static gint CompareMatchNumber (Match *a,
                                       Match *b);
@@ -138,8 +138,8 @@ namespace Table
 
       void SimplifyLooserTree (GSList **list);
 
-      gchar *GetAnnounce ();
+      gchar *GetAnnounce () override;
 
-      Error *SpawnError ();
+      Error *SpawnError () override;
   };
 }

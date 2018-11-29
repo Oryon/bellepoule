@@ -28,7 +28,7 @@ class Timekeeper : public Object
   private:
     GTimeVal _last_timeval;
 
-    virtual ~Timekeeper ();
+    ~Timekeeper () override;
 
     void GetTimevalDiff (GTimeVal *result,
                          GTimeVal *x,

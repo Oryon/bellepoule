@@ -25,7 +25,7 @@ class Glade : public Object
   public:
     Glade (const gchar *file_name,
            Object      *owner);
-    virtual ~Glade ();
+    ~Glade () override;
 
     GtkWidget *GetRootWidget    ();
     GtkWidget *GetWidget        (const gchar *name);

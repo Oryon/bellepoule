@@ -109,7 +109,7 @@ namespace Marshaller
       guint      _duration_span;
       gboolean   _over;
 
-      ~Job ();
+      ~Job () override;
 
       void MakeRefereeParcel ();
   };

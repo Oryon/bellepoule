@@ -17,6 +17,7 @@
 #pragma once
 
 #include "util/object.hpp"
+#include "util/attribute_desc.hpp"
 
 class Player;
 class Match;

@@ -53,7 +53,7 @@ class Application :
                  int                *argc,
                  char            ***argv);
 
-    virtual ~Application ();
+    ~Application () override;
 
   private:
     Net::Ring::Role  _role;
@@ -61,7 +61,7 @@ class Application :
     Net::Downloader *_version_downloader;
 
     void OnDownloaderData (Net::Downloader  *downloader,
-                           const gchar      *data);
+                           const gchar      *data) override;
 
     virtual const gchar *GetSecretKey (const gchar *authentication_scheme);
 

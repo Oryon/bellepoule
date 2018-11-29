@@ -65,7 +65,7 @@ namespace Net
       gchar          *_name;
       gboolean        _oob_authentication;
 
-      ~Advertiser ();
+      ~Advertiser () override;
 
       void SetSession (Oauth::Session *session);
 
@@ -96,13 +96,13 @@ namespace Net
 
       void SwitchOff ();
 
-      void Use ();
+      void Use () override;
 
-      void Drop ();
+      void Drop () override;
 
       virtual gboolean IsOopCapable ();
 
-      void OnServerResponse (Oauth::Request *request);
+      void OnServerResponse (Oauth::Request *request) override;
 
       virtual void PublishMessage (const gchar *message) = 0;
 

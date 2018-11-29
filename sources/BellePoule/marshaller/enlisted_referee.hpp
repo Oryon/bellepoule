@@ -56,7 +56,7 @@ namespace Marshaller
 
       void DisplayJobs ();
 
-      Slot *GetSlotAfter (Slot *from);
+      Slot *GetSlotAfter (Slot *from) override;
 
     private:
       GList       *_slots;
@@ -64,6 +64,6 @@ namespace Marshaller
       gint         _work_load;
       JobBoard    *_job_board;
 
-      virtual ~EnlistedReferee ();
+      ~EnlistedReferee () override;
   };
 }

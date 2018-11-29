@@ -36,7 +36,7 @@ namespace Net
     private:
       gchar *_iv;
 
-      virtual ~Cryptor ();
+      ~Cryptor () override;
 
       guchar *GenerateIv ();
   };

@@ -99,9 +99,9 @@ namespace Marshaller
       GDateTime *_end;
       GTimeSpan  _duration;
 
-      virtual ~Slot ();
+      ~Slot () override;
 
-      void OnObjectDeleted (Object *object);
+      void OnObjectDeleted (Object *object) override;
 
       void SetStartTime (GDateTime *time);
 

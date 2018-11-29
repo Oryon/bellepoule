@@ -33,13 +33,13 @@ namespace Oauth
                  const gchar    *sub_url,
                  const gchar    *http_method);
 
-        virtual void ParseResponse (GHashTable  *header,
-                                    const gchar *body);
+        void ParseResponse (GHashTable  *header,
+                                    const gchar *body) override;
 
-        virtual struct curl_slist *GetHeader ();
+        struct curl_slist *GetHeader () override;
 
       protected:
-        ~Request ();
+        ~Request () override;
 
         gchar *ExtractParsedField (const gchar *field_desc,
                                    const gchar *field_name);

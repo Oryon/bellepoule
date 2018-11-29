@@ -38,7 +38,7 @@ namespace Oauth
       void UpLoadRequest (Request *request);
 
     protected:
-      virtual ~Uploader ();
+      ~Uploader () override;
 
     private:
       Listener           *_listener;
@@ -51,9 +51,9 @@ namespace Oauth
 
       static gboolean OnThreadDone (Uploader *uploader);
 
-      void SetCurlOptions (CURL *curl);
+      void SetCurlOptions (CURL *curl) override;
 
-      const gchar *GetUrl ();
+      const gchar *GetUrl () override;
 
       static size_t OnResponseHeader (char     *buffer,
                                       size_t    size,

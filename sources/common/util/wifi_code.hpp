@@ -50,7 +50,7 @@ class WifiCode : public FlashCode
 
     gchar *GetNetwork ();
 
-    virtual ~WifiCode ();
+    ~WifiCode () override;
 
-    gchar *GetText ();
+    gchar *GetText () override;
 };

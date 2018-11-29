@@ -67,9 +67,9 @@ namespace Marshaller
       gdouble        _slideout_origin;
       gboolean       _button_pressed;
 
-      ~Timeline ();
+      ~Timeline () override;
 
-      void OnPlugged ();
+      void OnPlugged () override;
 
       void DrawTimes ();
 

@@ -27,7 +27,7 @@ class Fencer : public Player
 
     static Player *CreateInstance ();
 
-    const gchar *GetXmlTag ();
+    const gchar *GetXmlTag () override;
 
     void SetTeam (Team *team);
 
@@ -40,7 +40,7 @@ class Fencer : public Player
 
     Fencer ();
 
-    virtual ~Fencer ();
+    ~Fencer () override;
 
-    Player *Clone ();
+    Player *Clone () override;
 };

@@ -32,7 +32,7 @@ namespace People
       GHashTable *_rank_table;
       guint       _worst_rank;
 
-      virtual ~RankImporter ();
+      ~RankImporter () override;
 
       void LoadTxt (const gchar *filename);
 

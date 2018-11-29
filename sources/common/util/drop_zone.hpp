@@ -53,5 +53,5 @@ class DropZone : public Object
 
     DropZone (Module *container);
 
-    virtual ~DropZone ();
+    ~DropZone () override;
 };

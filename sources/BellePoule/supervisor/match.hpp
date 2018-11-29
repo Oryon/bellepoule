@@ -161,11 +161,11 @@ class Match : public Object,
     void Save (XmlScheme *xml_scheme,
                Player    *fencer);
 
-    void FeedParcel (Net::Message *parcel);
+    void FeedParcel (Net::Message *parcel) override;
 
     void Init (Data *max_score);
 
-    virtual ~Match ();
+    ~Match () override;
 
-    Error *SpawnError ();
+    Error *SpawnError () override;
 };

@@ -17,6 +17,8 @@
 #pragma once
 
 #include "util/object.hpp"
+#include "util/player.hpp"
+
 #include "../swapper.hpp"
 
 namespace NeoSwapper
@@ -30,29 +32,29 @@ namespace NeoSwapper
       static Pool::Swapper *Create (Object *owner);
 
     private:
-      void Delete ();
+      void Delete () override;
 
       void Configure (GSList *zones,
-                      GSList *criteria_list);
+                      GSList *criteria_list) override;
 
-      void Swap (GSList *fencer_list);
+      void Swap (GSList *fencer_list) override;
 
       void MoveFencer (Player         *player,
                        Pool::PoolZone *from_pool_zone,
-                       Pool::PoolZone *to_pool_zone);
+                       Pool::PoolZone *to_pool_zone) override;
 
-      void CheckCurrentDistribution ();
+      void CheckCurrentDistribution () override;
 
-      guint HasErrors ();
+      guint HasErrors () override;
 
-      gboolean IsAnError (Player *fencer);
+      gboolean IsAnError (Player *fencer) override;
 
-      guint GetMoved ();
+      guint GetMoved () override;
 
     private:
       Swapper (Object *rank_attr_id);
 
-      virtual ~Swapper ();
+      ~Swapper () override;
 
       void Clean ();
 
@@ -66,7 +68,7 @@ namespace NeoSwapper
       void DeletePoolTable ();
 
       void InjectFencer (Player *fencer,
-                         guint   pool_id);
+                         guint   pool_id) override;
 
       FencerProxy *ManageFencer (Player    *player,
                                  PoolProxy *pool_proxy);

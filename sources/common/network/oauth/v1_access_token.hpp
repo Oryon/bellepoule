@@ -29,7 +29,7 @@ namespace Oauth
                      const gchar    *pin);
 
       private:
-        virtual ~AccessToken ();
+        ~AccessToken () override;
     };
   }
 }

@@ -109,7 +109,7 @@ namespace Marshaller
       GtkWidget    *_cancel_button;
       gboolean      _loading;
 
-      virtual ~Batch ();
+      ~Batch () override;
 
       void RecallList (GList *list);
 
@@ -119,6 +119,6 @@ namespace Marshaller
                           GdkDragContext   *drag_context,
                           GtkSelectionData *data,
                           guint             key,
-                          guint             time);
+                          guint             time) override;
   };
 }

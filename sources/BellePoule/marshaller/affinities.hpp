@@ -52,7 +52,7 @@ namespace Marshaller
       GList        *_checksums;
       GList        *_shareholders;
 
-      ~Affinities ();
+      ~Affinities () override;
 
       void SetAffinity (Player      *player,
                         const gchar *affinity);

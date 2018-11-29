@@ -52,5 +52,5 @@ class Error : public Object
     gchar *_guilty_party;
     gchar *_reason;
 
-    virtual ~Error ();
+    ~Error () override;
 };

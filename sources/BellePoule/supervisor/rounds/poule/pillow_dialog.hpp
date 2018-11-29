@@ -22,6 +22,7 @@
 #include "util/object.hpp"
 
 class Module;
+class Attribute;
 
 namespace People
 {
@@ -75,10 +76,10 @@ namespace Pool
       GList           *_postponed_revert;
       GtkWindow       *_parent_window;
 
-      virtual ~PillowDialog ();
+      ~PillowDialog () override;
 
       void OnFormEvent (Player                  *player,
-                        People::Form::FormEvent  event);
+                        People::Form::FormEvent  event) override;
 
       static void OnAttendingChanged (Player    *player,
                                       Attribute *attr,

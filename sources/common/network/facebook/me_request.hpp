@@ -26,9 +26,9 @@ namespace Net
       MeRequest (Oauth::Session *session);
 
     private:
-      virtual ~MeRequest ();
+      ~MeRequest () override;
 
       void ParseResponse (GHashTable  *header,
-                          const gchar *body);
+                          const gchar *body) override;
   };
 }

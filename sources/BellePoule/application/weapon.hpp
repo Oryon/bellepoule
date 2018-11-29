@@ -56,5 +56,5 @@ class Weapon : public Object
     gchar *_greg_image;
     guint  _standard_duration_sec;
 
-    virtual ~Weapon ();
+    ~Weapon () override;
 };

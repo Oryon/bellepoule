@@ -32,7 +32,7 @@ class FlashCode : public Object
   protected:
     gchar *_text;
 
-    virtual ~FlashCode ();
+    ~FlashCode () override;
 
   private:
     static void DestroyPixbuf (guchar   *pixels,

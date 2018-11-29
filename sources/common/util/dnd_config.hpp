@@ -65,5 +65,5 @@ class DndConfig : public Object
     Object        *_floating_object;
     Listener      *_peer_listener;
 
-    ~DndConfig ();
+    ~DndConfig () override;
 };

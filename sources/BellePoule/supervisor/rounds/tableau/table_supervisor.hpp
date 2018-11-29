@@ -58,10 +58,10 @@ namespace Table
       static const gchar *_xml_class_name;
 
     private:
-      void OnLocked ();
-      void OnUnLocked ();
-      void OnPlugged ();
-      void OnUnPlugged ();
+      void OnLocked () override;
+      void OnUnLocked () override;
+      void OnPlugged () override;
+      void OnUnPlugged () override;
 
     private:
       static const guint NONE         = 0;
@@ -79,9 +79,9 @@ namespace Table
       GSList             *_blackcardeds;
       Data               *_fenced_places;
 
-      void Display ();
+      void Display () override;
 
-      void Garnish ();
+      void Garnish () override;
 
       void CreateTableSets ();
 
@@ -95,44 +95,44 @@ namespace Table
       void HideTableSet (TableSet    *table_set,
                          GtkTreeIter *iter);
 
-      void OnAttrListUpdated ();
+      void OnAttrListUpdated () override;
 
-      gboolean OnMessage (Net::Message *message);
+      gboolean OnMessage (Net::Message *message) override;
 
-      gboolean IsOver ();
+      gboolean IsOver () override;
 
-      Error *GetError ();
+      Error *GetError () override;
 
-      GSList *GetCurrentClassification ();
+      GSList *GetCurrentClassification () override;
 
       static Stage *CreateInstance (StageClass *stage_class);
 
       TableSet *GetTableSet (gchar *id);
 
-      void Recall ();
+      void Recall () override;
 
-      void Save (XmlScheme *xml_scheme);
+      void Save (XmlScheme *xml_scheme) override;
 
       static gboolean SaveTableSet (GtkTreeModel *model,
                                     GtkTreePath  *path,
                                     GtkTreeIter  *iter,
                                     XmlScheme    *xml_scheme);
 
-      void SaveConfiguration (XmlScheme *xml_scheme);
+      void SaveConfiguration (XmlScheme *xml_scheme) override;
 
-      void Load (xmlNode *xml_node);
+      void Load (xmlNode *xml_node) override;
 
-      void LoadConfiguration (xmlNode *xml_node);
+      void LoadConfiguration (xmlNode *xml_node) override;
 
       gboolean OnHttpPost (const gchar *command,
                            const gchar **ressource,
                            const gchar *data);
 
-      void DumpToHTML (FILE *file);
+      void DumpToHTML (FILE *file) override;
 
-      void FillInConfig ();
+      void FillInConfig () override;
 
-      void ApplyConfig ();
+      void ApplyConfig () override;
 
       gboolean TableSetIsFenced (TableSet *table_set);
 
@@ -142,20 +142,20 @@ namespace Table
 
       void OnTableSetSelected (TableSet *table_set);
 
-      gchar *GetPrintName ();
+      gchar *GetPrintName () override;
 
-      GList *GetBookSections (StageView view);
+      GList *GetBookSections (StageView view) override;
 
       guint PreparePrint (GtkPrintOperation *operation,
-                          GtkPrintContext   *context);
+                          GtkPrintContext   *context) override;
 
       void DrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
-                     gint               page_nr);
+                     gint               page_nr) override;
 
       void DrawConfig (GtkPrintOperation *operation,
                        GtkPrintContext   *context,
-                       gint               page_nr);
+                       gint               page_nr) override;
 
       static gboolean ProcessMessage (GtkTreeModel    *model,
                                       GtkTreePath     *path,
@@ -197,11 +197,11 @@ namespace Table
                                       GtkTreeIter  *iter,
                                       Supervisor   *ts);
 
-      void OnTableSetStatusUpdated (TableSet *table_set);
+      void OnTableSetStatusUpdated (TableSet *table_set) override;
 
       void OnTableSetDisplayed (TableSet *table_set,
-                                Table    *from);
+                                Table    *from) override;
 
-      virtual ~Supervisor ();
+      ~Supervisor () override;
   };
 }

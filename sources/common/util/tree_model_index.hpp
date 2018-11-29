@@ -37,5 +37,5 @@ class TreeModelIndex : public Object
     GHashTable   *_hash_table;
     GHashFunc     _key_type;
 
-    virtual ~TreeModelIndex ();
+    ~TreeModelIndex () override;
 };

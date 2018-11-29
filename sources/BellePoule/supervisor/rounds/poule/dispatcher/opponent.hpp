@@ -71,6 +71,6 @@ namespace Pool
       guint   _max_fitness;
       GList  *_opponent_list;
 
-      virtual ~Opponent ();
+      ~Opponent () override;
   };
 }

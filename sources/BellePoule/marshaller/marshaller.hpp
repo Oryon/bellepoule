@@ -37,13 +37,13 @@ namespace Marshaller
 
       void Start ();
 
-      gboolean OnMessage (Net::Message *message);
+      gboolean OnMessage (Net::Message *message) override;
 
-      void OnExposeWeapon (const gchar *weapon_code);
+      void OnExposeWeapon (const gchar *weapon_code) override;
 
       void OnRefereeListCollapse ();
 
-      const gchar *GetSecretKey (const gchar *authentication_scheme);
+      const gchar *GetSecretKey (const gchar *authentication_scheme) override;
 
       void OnMenuDialog (const gchar *dialog);
 
@@ -64,28 +64,28 @@ namespace Marshaller
       SmartPhones *_smartphones;
       gboolean     _print_meal_tickets;
 
-      virtual ~Marshaller ();
+      ~Marshaller () override;
 
       void OnEvent (const gchar *event);
 
-      void OnBlur ();
+      void OnBlur () override;
 
-      void OnUnBlur ();
+      void OnUnBlur () override;
 
-      void OnOpenCheckin (People::RefereesList *referee_list);
+      void OnOpenCheckin (People::RefereesList *referee_list) override;
 
       void OnRefereeUpdated (People::RefereesList *referee_list,
-                             Player               *referee);
+                             Player               *referee) override;
 
       guint PreparePrint (GtkPrintOperation *operation,
-                          GtkPrintContext   *context);
+                          GtkPrintContext   *context) override;
 
       void DrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
-                     gint               page_nr);
+                     gint               page_nr) override;
 
       GList *GetRefereeList ();
 
-      void OnHanshakeResult (Net::Ring::HandshakeResult result);
+      void OnHanshakeResult (Net::Ring::HandshakeResult result) override;
   };
 }

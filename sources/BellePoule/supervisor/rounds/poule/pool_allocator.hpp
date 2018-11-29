@@ -26,7 +26,11 @@
 
 class Data;
 class Player;
-class PlayersList;
+
+namespace People
+{
+  class PlayersList;
+}
 
 namespace Pool
 {
@@ -45,7 +49,7 @@ namespace Pool
 
       Allocator (StageClass *stage_class);
 
-      void Save (XmlScheme *xml_scheme);
+      void Save (XmlScheme *xml_scheme) override;
 
       void SaveHeader (XmlScheme *xml_scheme);
 
@@ -75,25 +79,25 @@ namespace Pool
 
     private:
       gboolean WarnLocking () override;
-      void OnLocked ();
-      void OnUnLocked ();
-      void Reset ();
+      void OnLocked () override;
+      void OnUnLocked () override;
+      void Reset () override;
       void ClearConfigurations ();
-      GSList *GetCurrentClassification ();
-      void LoadConfiguration (xmlNode *xml_node);
-      void SaveConfiguration (XmlScheme *xml_scheme);
+      GSList *GetCurrentClassification () override;
+      void LoadConfiguration (xmlNode *xml_node) override;
+      void SaveConfiguration (XmlScheme *xml_scheme) override;
 
     private:
       guint PreparePrint (GtkPrintOperation *operation,
-                          GtkPrintContext   *context);
+                          GtkPrintContext   *context) override;
       void DrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
-                     gint               page_nr);
-      gchar *GetPrintName ();
+                     gint               page_nr) override;
+      gchar *GetPrintName () override;
 
       void DrawConfig (GtkPrintOperation *operation,
                        GtkPrintContext   *context,
-                       gint               page_nr);
+                       gint               page_nr) override;
 
     private:
       typedef struct
@@ -132,54 +136,54 @@ namespace Pool
       void CreatePools ();
       void DeletePools ();
       void SetUpCombobox ();
-      void Display ();
+      void Display () override;
       void RefreshDisplay ();
-      void Garnish ();
+      void Garnish () override;
       void FillPoolTable (PoolZone *zone);
       void DisplayPlayer (Player *player, guint indice, GooCanvasItem *table, PoolZone *zone, GList *layout_list);
       void FixUpTablesBounds ();
       void RegisterConfig (Configuration *config);
-      const gchar *GetInputProviderClient ();
+      const gchar *GetInputProviderClient () override;
 
-      gboolean OnMessage (Net::Message *message);
+      gboolean OnMessage (Net::Message *message) override;
 
       void OnPoolRoadmap (Pool         *pool,
                           Net::Message *message);
 
-      void Recall ();
+      void Recall () override;
 
       void SpreadJobs ();
 
       void RecallJobs ();
 
-      void FeedParcel (Net::Message *parcel);
+      void FeedParcel (Net::Message *parcel) override;
 
       gint GetNbMatchs ();
 
-      void OnAttrListUpdated ();
+      void OnAttrListUpdated () override;
 
-      gboolean IsOver ();
+      gboolean IsOver () override;
 
-      Error *GetError ();
+      Error *GetError () override;
 
-      void OnPlugged ();
+      void OnPlugged () override;
 
-      void OnUnPlugged ();
+      void OnUnPlugged () override;
 
       void OnPartnerJoined (Net::Partner *partner,
-                            gboolean      joined);
+                            gboolean      joined) override;
 
       void DisplaySwapperError ();
 
       static Stage *CreateInstance (StageClass *stage_class);
 
-      void Load (xmlNode *xml_node);
+      void Load (xmlNode *xml_node) override;
 
       void SelectConfig (guint nb_pool);
 
-      void ApplyConfig ();
+      void ApplyConfig () override;
 
-      void FillInConfig ();
+      void FillInConfig () override;
 
       Pool *GetPoolOf (GSList *drop_zone);
 
@@ -187,26 +191,26 @@ namespace Pool
 
       void DropObject (Object   *object,
                        DropZone *source_zone,
-                       DropZone *target_zone);
+                       DropZone *target_zone) override;
 
       Object *GetDropObjectFromRef (guint32 ref,
-                                    guint   key);
+                                    guint   key) override;
 
-      gboolean DragingIsForbidden (Object *object);
+      gboolean DragingIsForbidden (Object *object) override;
 
-      GString *GetFloatingImage (Object *floating_object);
+      GString *GetFloatingImage (Object *floating_object) override;
 
-      void DumpToHTML (FILE *file);
+      void DumpToHTML (FILE *file) override;
 
       static void OnSwappingToggled (GtkToggleButton *togglebutton,
                                      Allocator       *allocator);
 
       gboolean OnAttendeeToggled (PillowDialog *from,
                                   Player       *attendee,
-                                  gboolean      attending);
+                                  gboolean      attending) override;
 
-      void ShareAttendees (Stage *with);
+      void ShareAttendees (Stage *with) override;
 
-      virtual ~Allocator ();
+      ~Allocator () override;
   };
 }

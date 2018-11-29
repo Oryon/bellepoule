@@ -72,5 +72,5 @@ class Score : public Object
     Status  _status;
     Status  _backup_status;
 
-    virtual ~Score ();
+    ~Score () override;
 };

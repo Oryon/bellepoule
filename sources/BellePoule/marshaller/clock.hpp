@@ -46,12 +46,12 @@ namespace Marshaller
       GTimeSpan  _offset;
       GDateTime *_absolute;
 
-      ~Clock ();
+      ~Clock () override;
 
       void SetupTimeout ();
 
       static gboolean OnTimeout (Clock *clock);
 
-      void FeedParcel (Net::Message *parcel);
+      void FeedParcel (Net::Message *parcel) override;
   };
 }

@@ -53,7 +53,7 @@ class XmlScheme : public virtual Object
     virtual void WriteCustom (const gchar *what);
 
   protected:
-    virtual ~XmlScheme ();
+    ~XmlScheme () override;
 
   private:
     xmlTextWriter *_xml_writer;

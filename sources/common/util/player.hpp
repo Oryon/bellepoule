@@ -109,7 +109,7 @@ class Player : public Object, Net::MessageUploader::Listener
 
     gchar *GetName ();
     void SetName (const gchar *name);
-    void Dump ();
+    void Dump () override;
     FlashCode *GetFlashCode ();
 
     void SetPartner (Net::Partner *partner);
@@ -117,7 +117,7 @@ class Player : public Object, Net::MessageUploader::Listener
     void NotifyChangesToPartners ();
 
   public:
-    virtual void FeedParcel (Net::Message *parcel);
+    void FeedParcel (Net::Message *parcel) override;
 
     gboolean SendMessage (Net::Message *message,
                           const gchar  *address);
@@ -151,7 +151,7 @@ class Player : public Object, Net::MessageUploader::Listener
 
     virtual Player *Clone () = 0;
 
-    virtual ~Player ();
+    ~Player () override;
 
     virtual void SaveAttributes (XmlScheme *xml_scheme,
                                  gboolean   full_profile = FALSE);
@@ -165,7 +165,7 @@ class Player : public Object, Net::MessageUploader::Listener
         _attr_name = nullptr;
       };
 
-      virtual ~Client ()
+      ~Client () override
       {
         g_free (_attr_name);
       };
@@ -191,7 +191,7 @@ class Player : public Object, Net::MessageUploader::Listener
                        guint      step);
 
   private:
-    void OnUploadStatus (Net::MessageUploader::PeerStatus peer_status);
+    void OnUploadStatus (Net::MessageUploader::PeerStatus peer_status) override;
 
     void Use ();
 

@@ -41,7 +41,7 @@ namespace People
                const gchar *base_class,
                const gchar *gathering_class);
 
-      virtual void Add (Player *player);
+      void Add (Player *player) override;
 
       void AddListener (Listener *listener);
 
@@ -92,7 +92,7 @@ namespace People
       Form         *_form;
       TallyCounter *_tally_counter;
 
-      virtual ~Checkin ();
+      ~Checkin () override;
 
       static gboolean PresentPlayerFilter (Player      *player,
                                            PlayersList *owner);
@@ -103,20 +103,20 @@ namespace People
                                const gchar *player_class,
                                Player      *player);
 
-      virtual void OnFormEvent (Player          *player,
-                                Form::FormEvent  event);
+      void OnFormEvent (Player          *player,
+                                Form::FormEvent  event) override;
 
-      void SelectTreeMode ();
+      void SelectTreeMode () override;
 
-      void SelectFlatMode ();
+      void SelectFlatMode () override;
 
-      virtual void OnPlayerRemoved (Player *player);
+      void OnPlayerRemoved (Player *player) override;
 
-      virtual gboolean PlayerIsPrintable (Player *player);
+      gboolean PlayerIsPrintable (Player *player) override;
 
       virtual void RefreshAttendingDisplay ();
 
-      virtual void OnListChanged ();
+      void OnListChanged () override;
 
     private:
       Listener     *_listener;
@@ -134,7 +134,7 @@ namespace People
                      const gchar *players_class_xml_tag,
                      Player      *owner = nullptr);
 
-      void OnPlugged ();
+      void OnPlugged () override;
 
       static void OnAttrAttendingChanged (Player    *player,
                                           Attribute *attr,
@@ -143,7 +143,7 @@ namespace People
 
       gchar *GetFileContent (gchar *filename);
 
-      gchar *GetPrintName ();
+      gchar *GetPrintName () override;
 
       void GuessPlayerOrganization (Player      *player,
                                     const gchar *organization);

@@ -18,8 +18,10 @@
 
 #include <gtk/gtk.h>
 #include <goocanvas.h>
+#include <libxml/xpath.h>
 
 #include "util/canvas_module.hpp"
+#include "util/attribute_desc.hpp"
 #include "../../score_collector.hpp"
 
 class FieTime;
@@ -27,6 +29,8 @@ class Data;
 class Player;
 class ScoreCollector;
 class Match;
+class XmlScheme;
+class Attribute;
 
 namespace Pool
 {
@@ -88,7 +92,7 @@ namespace Pool
       gboolean IsOver ();
       gboolean HasError ();
 
-      gboolean OnMessage (Net::Message *message);
+      gboolean OnMessage (Net::Message *message) override;
 
       void RefreshScoreData ();
 
@@ -96,7 +100,7 @@ namespace Pool
 
       gchar *GetName ();
 
-      void Wipe ();
+      void Wipe () override;
 
       void Save (XmlScheme *xml_scheme);
 
@@ -178,9 +182,9 @@ namespace Pool
       static gint CompareStatus (gchar A,
                                  gchar B);
 
-      void OnPlugged ();
+      void OnPlugged () override;
 
-      void OnUnPlugged ();
+      void OnUnPlugged () override;
 
       void SortPlayers ();
 
@@ -213,7 +217,7 @@ namespace Pool
 
       void OnNewScore (ScoreCollector *score_collector,
                        Match          *match,
-                       Player         *player);
+                       Player         *player) override;
 
       void Timestamp ();
 
@@ -229,7 +233,7 @@ namespace Pool
                              const gchar       *name,
                              gchar             *value);
 
-      void FeedParcel (Net::Message *parcel);
+      void FeedParcel (Net::Message *parcel) override;
 
       static gint CompareMatch (Match *a,
                                 Match *b,
@@ -247,6 +251,6 @@ namespace Pool
                                            Object    *owner,
                                            guint      step);
 
-      virtual ~Pool ();
+      ~Pool () override;
   };
 }

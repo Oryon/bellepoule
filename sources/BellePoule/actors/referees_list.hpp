@@ -53,10 +53,10 @@ namespace People
 
       void OnCheckinClicked ();
 
-      void Add (Player *player);
+      void Add (Player *player) override;
 
     protected:
-      virtual ~RefereesList ();
+      ~RefereesList () override;
 
     private:
       Filter   *_expanded_filter;
@@ -64,20 +64,20 @@ namespace People
       Weapon   *_weapon;
       Listener *_listener;
 
-      void RefreshAttendingDisplay ();
+      void RefreshAttendingDisplay () override;
 
-      void Monitor (Player *referee);
+      void Monitor (Player *referee) override;
 
       void OnPlayerLoaded (Player *referee,
-                           Player *owner);
+                           Player *owner) override;
 
       void OnFormEvent (Player                  *referee,
-                        People::Form::FormEvent  event);
+                        People::Form::FormEvent  event) override;
 
       void TogglePlayerAttr (Player              *player,
                              Player::AttributeId *attr_id,
                              gboolean             new_value,
-                             gboolean             popup_on_error = FALSE);
+                             gboolean             popup_on_error = FALSE) override;
 
       static gboolean RefereeIsVisible (GtkTreeModel *model,
                                         GtkTreeIter  *iter,
@@ -97,15 +97,15 @@ namespace People
                           GdkDragContext   *drag_context,
                           GtkSelectionData *data,
                           guint             key,
-                          guint             time);
+                          guint             time) override;
 
       void DrawContainerPage (GtkPrintOperation *operation,
                               GtkPrintContext   *context,
-                              gint               page_nr);
+                              gint               page_nr) override;
 
       void CellDataFunc (GtkTreeViewColumn *tree_column,
                          GtkCellRenderer   *cell,
                          GtkTreeModel      *tree_model,
-                         GtkTreeIter       *iter);
+                         GtkTreeIter       *iter) override;
   };
 }

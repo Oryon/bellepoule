@@ -46,7 +46,7 @@ namespace Pool
 
       guint GetBFitness ();
 
-      void Dump ();
+      void Dump () override;
 
       gboolean HasOpponent (Opponent *o);
 
@@ -56,6 +56,6 @@ namespace Pool
       gint      _a_fitness;
       gint      _b_fitness;
 
-      virtual ~Pair ();
+      ~Pair () override;
   };
 }

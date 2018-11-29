@@ -50,33 +50,33 @@ namespace People
 
       static Stage *CreateInstance (StageClass *stage_class);
 
-      void Load (xmlNode *xml_node);
+      void Load (xmlNode *xml_node) override;
 
-      void SaveAttendees (XmlScheme *xml_scheme);
+      void SaveAttendees (XmlScheme *xml_scheme) override;
 
-      void Display ();
+      void Display () override;
 
-      GSList *GetCurrentClassification ();
+      GSList *GetCurrentClassification () override;
 
-      gboolean HasItsOwnRanking ();
+      gboolean HasItsOwnRanking () override;
 
       void GiveShortListAFinalRank ();
 
       guint PreparePrint (GtkPrintOperation *operation,
-                          GtkPrintContext   *context);
+                          GtkPrintContext   *context) override;
 
       void DrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
-                     gint               page_nr);
+                     gint               page_nr) override;
 
       void OnEndPrint (GtkPrintOperation *operation,
-                       GtkPrintContext   *context);
+                       GtkPrintContext   *context) override;
 
-      gchar *GetPrintName ();
+      gchar *GetPrintName () override;
 
-      void DumpToHTML (FILE *file);
+      void DumpToHTML (FILE *file) override;
 
-      virtual ~GeneralClassification ();
+      ~GeneralClassification () override;
 
       static void on_place_entry_insert_text (GtkEntry              *entry,
                                               const gchar           *text,

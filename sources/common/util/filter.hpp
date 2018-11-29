@@ -101,7 +101,7 @@ class Filter : public Object
     GtkWidget    *_dialog;
     GtkListStore *_look_store;
 
-    virtual ~Filter ();
+    ~Filter () override;
 
     void ApplyList (gchar **list);
 

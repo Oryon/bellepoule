@@ -90,7 +90,7 @@ namespace People
       guint      _page_count;
       Page      *_pages;
 
-      virtual ~Form ();
+      ~Form () override;
 
       void ReadAndWipe (Player *player);
 

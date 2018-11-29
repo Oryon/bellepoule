@@ -26,9 +26,9 @@ namespace Net
       DebugTokenRequest (Oauth::Session *session);
 
     private:
-      virtual ~DebugTokenRequest ();
+      ~DebugTokenRequest () override;
 
       void ParseResponse (GHashTable  *header,
-                          const gchar *body);
+                          const gchar *body) override;
   };
 }

@@ -17,8 +17,11 @@
 #pragma once
 
 #include <gtk/gtk.h>
+#include <libxml/parser.h>
+#include <libxml/xpath.h>
 
 #include "util/module.hpp"
+#include "network/advertiser.hpp"
 
 namespace People
 {
@@ -44,6 +47,7 @@ class Weapon;
 class Category;
 class Schedule;
 class XmlScheme;
+class Player;
 
 class Contest : public Module
 {
@@ -51,7 +55,7 @@ class Contest : public Module
     Contest (GList    *advertisers,
              gboolean  for_duplication = FALSE);
 
-    virtual ~Contest ();
+    ~Contest () override;
 
     static void Init ();
 
@@ -91,13 +95,13 @@ class Contest : public Module
 
     Player *GetRefereeFromRef (guint ref);
 
-    State GetState ();
+    State GetState () override;
 
-    gboolean OnMessage (Net::Message *message);
+    gboolean OnMessage (Net::Message *message) override;
 
     void TweetFeeder (Net::Advertiser::Feeder *feeder);
 
-    void MakeDirty ();
+    void MakeDirty () override;
 
     guint        GetNetID           ();
     gchar       *GetOrganizer       ();
@@ -124,7 +128,7 @@ class Contest : public Module
     {
       Time (const gchar *name);
 
-      virtual ~Time ();
+      ~Time () override;
 
       void Load (gchar *attr);
       void Save (XmlScheme   *xml_scheme,
@@ -205,19 +209,19 @@ class Contest : public Module
 
     void OnDrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
-                     gint               page_nr);
+                     gint               page_nr) override;
 
     void DrawPage (GtkPrintOperation *operation,
                    GtkPrintContext   *context,
-                   gint               page_nr);
+                   gint               page_nr) override;
 
     void ChooseColor ();
 
     static gboolean OnSaveTimeout (Contest *contest);
 
-    void OnPlugged ();
+    void OnPlugged () override;
 
-    void FeedParcel (Net::Message *parcel);
+    void FeedParcel (Net::Message *parcel) override;
 
     void AddFileToRecentManager (const gchar *filename);
 
@@ -225,7 +229,7 @@ class Contest : public Module
 
   private:
     void OnBeginPrint (GtkPrintOperation *operation,
-                       GtkPrintContext   *context);
+                       GtkPrintContext   *context) override;
     void OnEndPrint (GtkPrintOperation *operation,
-                     GtkPrintContext   *context);
+                     GtkPrintContext   *context) override;
 };

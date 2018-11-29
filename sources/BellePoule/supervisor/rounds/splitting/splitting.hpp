@@ -40,19 +40,19 @@ namespace People
       static const gchar *_xml_class_name;
 
     private:
-      void OnLocked ();
+      void OnLocked () override;
 
-      void OnUnLocked ();
+      void OnUnLocked () override;
 
-      void Display ();
+      void Display () override;
 
-      void OnUnPlugged ();
+      void OnUnPlugged () override;
 
-      GSList *GetCurrentClassification ();
+      GSList *GetCurrentClassification () override;
 
-      void SaveAttendees (XmlScheme *xml_scheme);
+      void SaveAttendees (XmlScheme *xml_scheme) override;
 
-      void Load (xmlNode *xml_node);
+      void Load (xmlNode *xml_node) override;
 
     private:
       static Tournament *_tournament;
@@ -62,14 +62,14 @@ namespace People
       static gboolean PresentPlayerFilter (Player      *player,
                                            PlayersList *owner);
 
-      virtual ~Splitting ();
+      ~Splitting () override;
 
-      void Garnish ();
+      void Garnish () override;
 
-      void Reset ();
+      void Reset () override;
 
       GSList *GetRemainingList ();
 
-      gchar *GetPrintName ();
+      gchar *GetPrintName () override;
   };
 }

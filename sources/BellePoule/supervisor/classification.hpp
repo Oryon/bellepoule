@@ -39,13 +39,13 @@ class Classification : public People::PlayersList
   private:
     guint _fff_place_shifting;
 
-    void OnPlugged ();
+    void OnPlugged () override;
 
     void WriteFFFString (FILE        *file,
                          Player      *player,
                          const gchar *attr_name);
 
-    virtual ~Classification ();
+    ~Classification () override;
 
-    gboolean IsTableBorder (guint place);
+    gboolean IsTableBorder (guint place) override;
 };

@@ -34,13 +34,13 @@ class CanvasModule : public Module
   protected:
     CanvasModule (const gchar *glade_file,
                   const gchar *root = nullptr);
-    virtual ~CanvasModule ();
+    ~CanvasModule () override;
 
     static void WipeItem (GooCanvasItem *item);
 
     virtual void Wipe ();
-    virtual void OnPlugged ();
-    virtual void OnUnPlugged ();
+    void OnPlugged () override;
+    void OnUnPlugged () override;
 
     GooCanvas *CreateCanvas ();
     GooCanvas *GetCanvas ();
@@ -61,17 +61,17 @@ class CanvasModule : public Module
     void RestoreZoomFactor ();
 
   protected:
-    virtual guint PreparePrint (GtkPrintOperation *operation,
-                                GtkPrintContext   *context);
-    virtual void DrawPage (GtkPrintOperation *operation,
+    guint PreparePrint (GtkPrintOperation *operation,
+                                GtkPrintContext   *context) override;
+    void DrawPage (GtkPrintOperation *operation,
                            GtkPrintContext   *context,
-                           gint               page_nr);
-    virtual gboolean PreparePreview (GtkPrintOperation        *operation,
+                           gint               page_nr) override;
+    gboolean PreparePreview (GtkPrintOperation        *operation,
                                      GtkPrintOperationPreview *preview,
                                      GtkPrintContext          *context,
-                                     GtkWindow                *parent);
-    virtual void OnEndPrint (GtkPrintOperation *operation,
-                             GtkPrintContext   *context);
+                                     GtkWindow                *parent) override;
+    void OnEndPrint (GtkPrintOperation *operation,
+                             GtkPrintContext   *context) override;
 
   protected:
     GSList *_drop_zones;
@@ -122,17 +122,17 @@ class CanvasModule : public Module
                            GdkDragContext *drag_context,
                            gint            x,
                            gint            y,
-                           guint           time);
+                           guint           time) override;
 
     void OnDragLeave (GtkWidget      *widget,
                       GdkDragContext *drag_context,
-                      guint           time);
+                      guint           time) override;
 
     gboolean OnDragDrop (GtkWidget      *widget,
                          GdkDragContext *drag_context,
                          gint            x,
                          gint            y,
-                         guint           time);
+                         guint           time) override;
 
     virtual gboolean OnButtonPress (GooCanvasItem  *item,
                                     GooCanvasItem  *target,

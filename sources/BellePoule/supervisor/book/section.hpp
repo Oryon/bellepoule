@@ -26,5 +26,5 @@ class BookSection : public virtual Object
     BookSection (const gchar *title);
 
   protected:
-    virtual ~BookSection ();
+    ~BookSection () override;
 };

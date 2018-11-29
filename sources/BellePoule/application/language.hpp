@@ -27,7 +27,7 @@ class Language : public Object
                    GtkMenuShell *menu_shell);
 
   private:
-    virtual ~Language ();
+    ~Language () override;
 
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);

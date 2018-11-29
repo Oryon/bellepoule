@@ -34,7 +34,7 @@ namespace Oauth
 
       const gchar *GetHeaderForm ();
 
-      void Dump ();
+      void Dump () override;
 
       static gint Compare (Field *a,
                            Field *b);
@@ -50,6 +50,6 @@ namespace Oauth
       gchar *_quoted_parcel;
       gchar *_header_form;
 
-      virtual ~Field ();
+      ~Field () override;
   };
 }

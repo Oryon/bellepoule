@@ -152,7 +152,7 @@ class Stage : public virtual Object,
 
     virtual void Save (XmlScheme *xml_scheme);
 
-    virtual void Dump ();
+    void Dump () override;
 
     virtual void ApplyConfig ();
 
@@ -199,7 +199,7 @@ class Stage : public virtual Object,
 
     Stage (StageClass *stage_class);
 
-    virtual ~Stage ();
+    ~Stage () override;
 
     void SignalStatusUpdate ();
 
@@ -263,7 +263,7 @@ class Stage : public virtual Object,
 
     void InitQualifiedForm ();
 
-    gchar *GetAnnounce ();
+    gchar *GetAnnounce () override;
 
     void SaveFilters (XmlScheme   *xml_scheme,
                       const gchar *as = "");

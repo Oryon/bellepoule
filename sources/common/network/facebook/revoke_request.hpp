@@ -26,6 +26,6 @@ namespace Net
       RevokeRequest (Oauth::Session *session);
 
     private:
-      virtual ~RevokeRequest ();
+      ~RevokeRequest () override;
   };
 }

@@ -182,7 +182,7 @@ class AttributeDesc : public Object
                    const gchar *xml_name,
                    const gchar *user_name);
 
-    virtual ~AttributeDesc ();
+    ~AttributeDesc () override;
 
     static gboolean DiscreteFilterForCombobox (GtkTreeModel *model,
                                                GtkTreeIter  *iter,

@@ -79,9 +79,9 @@ namespace Marshaller
       GtkWidget  *_take_off_button;
       GtkWidget  *_move_button;
 
-      ~JobBoard ();
+      ~JobBoard () override;
 
-      void OnObjectDeleted (Object *object);
+      void OnObjectDeleted (Object *object) override;
 
       void SetHeader ();
 
@@ -98,12 +98,12 @@ namespace Marshaller
 
       void SetSensitivity ();
 
-      void OnPlayerAdded (Player *player);
+      void OnPlayerAdded (Player *player) override;
 
-      void OnPlayerRemoved (Player *player);
+      void OnPlayerRemoved (Player *player) override;
 
-      JobDetails *GetPairedOf (JobDetails *of);
+      JobDetails *GetPairedOf (JobDetails *of) override;
 
-      void OnJobUpdated (Job *job);
+      void OnJobUpdated (Job *job) override;
   };
 }

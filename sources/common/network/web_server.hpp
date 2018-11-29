@@ -44,7 +44,7 @@ namespace Net
       gboolean  _on;
       gboolean  _failed;
 
-      virtual ~WebServer ();
+      ~WebServer () override;
 
       void Prepare ();
 

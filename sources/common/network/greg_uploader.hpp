@@ -46,15 +46,15 @@ namespace Net
       gchar                *_local_file;
       gchar                *_remote_file;
 
-      virtual ~GregUploader ();
+      ~GregUploader () override;
 
-      void UploadFile (const gchar *file_path);
+      void UploadFile (const gchar *file_path) override;
 
-      const gchar *GetUrl ();
+      const gchar *GetUrl () override;
 
-      void SetCurlOptions (CURL *curl);
+      void SetCurlOptions (CURL *curl) override;
 
-      void Looper ();
+      void Looper () override;
 
       static void FeedFormField (GQuark        quark,
                                  const gchar  *value,

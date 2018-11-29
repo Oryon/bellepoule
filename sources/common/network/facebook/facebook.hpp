@@ -26,23 +26,23 @@ namespace Net
       Facebook ();
 
     private:
-      ~Facebook ();
+      ~Facebook () override;
 
-      void Reset ();
+      void Reset () override;
 
-      void PublishMessage (const gchar *message);
+      void PublishMessage (const gchar *message) override;
 
-      void CheckAuthorization ();
+      void CheckAuthorization () override;
 
-      void ClaimForAuthorization ();
+      void ClaimForAuthorization () override;
 
-      gboolean HandleRequestResponse (Oauth::Request *request);
+      gboolean HandleRequestResponse (Oauth::Request *request) override;
 
 #ifdef WEBKIT
       gboolean OnRedirect (WebKitNetworkRequest    *request,
-                           WebKitWebPolicyDecision *policy_decision);
+                           WebKitWebPolicyDecision *policy_decision) override;
 #endif
 
-      gboolean IsOopCapable ();
+      gboolean IsOopCapable () override;
   };
 }

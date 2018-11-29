@@ -40,7 +40,7 @@ namespace Marshaller
       Net::WifiNetwork *_wifi_network;
       WifiCode         *_admin_wifi_code;
 
-      virtual ~SmartPhones ();
+      ~SmartPhones () override;
 
       static void RefreshScannerCode (GtkEditable *widget,
                                       SmartPhones *smartphones);

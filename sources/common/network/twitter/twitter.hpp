@@ -31,19 +31,19 @@ namespace Net
       Twitter ();
 
     private:
-      ~Twitter ();
+      ~Twitter () override;
 
-      void PublishMessage (const gchar *message);
+      void PublishMessage (const gchar *message) override;
 
-      gboolean HandleRequestResponse (Oauth::Request *request);
+      gboolean HandleRequestResponse (Oauth::Request *request) override;
 
-      void CheckAuthorization ();
+      void CheckAuthorization () override;
 
-      void ClaimForAuthorization ();
+      void ClaimForAuthorization () override;
 
 #ifdef WEBKIT
       gboolean OnRedirect (WebKitNetworkRequest    *request,
-                           WebKitWebPolicyDecision *policy_decision);
+                           WebKitWebPolicyDecision *policy_decision) override;
 #endif
   };
 }

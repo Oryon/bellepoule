@@ -36,6 +36,6 @@ namespace NeoSwapper
 
       guint _request_count;
 
-      ~ListCrawler ();
+      ~ListCrawler () override;
   };
 }

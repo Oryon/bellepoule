@@ -35,6 +35,6 @@ namespace Net
     private:
       gchar *_user_id;
 
-      virtual ~Session ();
+      ~Session () override;
   };
 }

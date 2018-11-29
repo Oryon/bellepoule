@@ -51,5 +51,5 @@ class Attendees : public Object
     GSList   *_presents = nullptr;
     GSList   *_absents  = nullptr;
 
-    virtual ~Attendees ();
+    ~Attendees () override;
 };

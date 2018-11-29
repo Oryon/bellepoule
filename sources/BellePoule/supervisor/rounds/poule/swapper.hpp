@@ -18,6 +18,8 @@
 
 #include <gtk/gtk.h>
 
+class Player;
+
 namespace Pool
 {
   class PoolZone;

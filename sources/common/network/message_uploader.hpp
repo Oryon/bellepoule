@@ -47,7 +47,7 @@ namespace Net
       void PushMessage (Message *message);
 
     protected:
-      ~MessageUploader ();
+      ~MessageUploader () override;
 
     private:
       struct ThreadData
@@ -73,9 +73,9 @@ namespace Net
                         const gchar *passphrase);
 
     private:
-      void SetCurlOptions (CURL *curl);
+      void SetCurlOptions (CURL *curl) override;
 
-      const gchar *GetUrl ();
+      const gchar *GetUrl () override;
   };
 
 }

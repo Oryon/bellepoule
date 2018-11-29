@@ -76,10 +76,10 @@ namespace People
           void Wipe ();
 
         private:
-          ~StoreObject ();
+          ~StoreObject () override;
       };
 
-      ~PlayersStore ();
+      ~PlayersStore () override;
 
       void Append (StoreObject *store,
                    Player      *player,

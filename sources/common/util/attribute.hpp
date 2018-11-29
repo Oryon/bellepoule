@@ -70,7 +70,7 @@ class Attribute : public Object
     AttributeDesc *_desc;
 
     Attribute (AttributeDesc *desc);
-    virtual ~Attribute ();
+    ~Attribute () override;
 };
 
 // --------------------------------------------------------------------------------
@@ -79,35 +79,35 @@ class TextAttribute : public Attribute
   public:
      TextAttribute (AttributeDesc *desc);
 
-    char *GetStrValue ();
+    char *GetStrValue () override;
 
   private:
     gchar *_value;
 
-    virtual ~TextAttribute ();
+    ~TextAttribute () override;
 
-    void SetValue (const gchar *value);
+    void SetValue (const gchar *value) override;
 
-    void SetValue (guint value);
+    void SetValue (guint value) override;
 
-    gboolean EntryIsTextBased ();
+    gboolean EntryIsTextBased () override;
 
-    gchar *GetUserImage (AttributeDesc::Look look);
+    gchar *GetUserImage (AttributeDesc::Look look) override;
 
-    gchar *GetXmlImage ();
+    gchar *GetXmlImage () override;
 
-    GdkPixbuf *GetPixbuf ();
+    GdkPixbuf *GetPixbuf () override;
 
     void TreeStoreSet (GtkTreeStore        *store,
                        GtkTreeIter         *iter,
                        gint                 column,
-                       AttributeDesc::Look  look);
+                       AttributeDesc::Look  look) override;
 
-    gint CompareWith (Attribute *with);
+    gint CompareWith (Attribute *with) override;
 
-    gint CompareWith (const gchar *with);
+    gint CompareWith (const gchar *with) override;
 
-    Attribute *Duplicate ();
+    Attribute *Duplicate () override;
 };
 
 
@@ -117,35 +117,35 @@ class BooleanAttribute : public Attribute
   public:
     BooleanAttribute (AttributeDesc *desc);
 
-    guint GetUIntValue ();
+    guint GetUIntValue () override;
 
   private:
     gboolean _value;
 
-    virtual ~BooleanAttribute ();
+    ~BooleanAttribute () override;
 
-    void SetValue (const gchar *value);
+    void SetValue (const gchar *value) override;
 
-    void SetValue (guint value);
+    void SetValue (guint value) override;
 
-    gboolean EntryIsTextBased ();
+    gboolean EntryIsTextBased () override;
 
-    gchar *GetUserImage (AttributeDesc::Look look);
+    gchar *GetUserImage (AttributeDesc::Look look) override;
 
-    gchar *GetXmlImage ();
+    gchar *GetXmlImage () override;
 
-    GdkPixbuf *GetPixbuf ();
+    GdkPixbuf *GetPixbuf () override;
 
     void TreeStoreSet (GtkTreeStore        *store,
                        GtkTreeIter         *iter,
                        gint                 column,
-                       AttributeDesc::Look  look);
+                       AttributeDesc::Look  look) override;
 
-    gint CompareWith (Attribute *with);
+    gint CompareWith (Attribute *with) override;
 
-    gint CompareWith (const gchar *with);
+    gint CompareWith (const gchar *with) override;
 
-    Attribute *Duplicate ();
+    Attribute *Duplicate () override;
 };
 
 // --------------------------------------------------------------------------------
@@ -154,35 +154,35 @@ class IntAttribute : public Attribute
   public:
     IntAttribute (AttributeDesc *desc);
 
-    gint GetIntValue ();
+    gint GetIntValue () override;
 
-    guint GetUIntValue ();
+    guint GetUIntValue () override;
 
   private:
     guint _value;
 
-    virtual ~IntAttribute ();
+    ~IntAttribute () override;
 
-    void SetValue (const gchar *value);
+    void SetValue (const gchar *value) override;
 
-    void SetValue (guint value);
+    void SetValue (guint value) override;
 
-    gboolean EntryIsTextBased ();
+    gboolean EntryIsTextBased () override;
 
-    gchar *GetUserImage (AttributeDesc::Look look);
+    gchar *GetUserImage (AttributeDesc::Look look) override;
 
-    gchar *GetXmlImage ();
+    gchar *GetXmlImage () override;
 
-    GdkPixbuf *GetPixbuf ();
+    GdkPixbuf *GetPixbuf () override;
 
     void TreeStoreSet (GtkTreeStore        *store,
                        GtkTreeIter         *iter,
                        gint                 column,
-                       AttributeDesc::Look  look);
+                       AttributeDesc::Look  look) override;
 
-    gint CompareWith (Attribute *with);
+    gint CompareWith (Attribute *with) override;
 
-    gint CompareWith (const gchar *with);
+    gint CompareWith (const gchar *with) override;
 
-    Attribute *Duplicate ();
+    Attribute *Duplicate () override;
 };

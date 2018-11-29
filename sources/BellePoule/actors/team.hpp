@@ -28,7 +28,7 @@ class Team : public Player
 
     static Player *CreateInstance ();
 
-    const gchar *GetXmlTag ();
+    const gchar *GetXmlTag () override;
 
     void AddMember (Player *member);
 
@@ -51,7 +51,7 @@ class Team : public Player
   protected:
     Team ();
 
-    virtual ~Team ();
+    ~Team () override;
 
   private:
     static const gchar *_class_name;
@@ -63,12 +63,12 @@ class Team : public Player
     Data     *_manual_classification;
     gboolean  _enable_member_saving;
 
-    Player *Clone ();
+    Player *Clone () override;
 
-    void Load (xmlNode *xml_node);
+    void Load (xmlNode *xml_node) override;
 
     void Save (XmlScheme *xml_scheme,
-               gboolean   full_profile = FALSE);
+               gboolean   full_profile = FALSE) override;
 
     void SaveMembers (XmlScheme *xml_scheme);
 };

@@ -58,6 +58,6 @@ namespace Net
 
       static gboolean OnThreadDone (Downloader *downloader);
 
-      virtual ~Downloader ();
+      ~Downloader () override;
   };
 }

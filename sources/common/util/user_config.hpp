@@ -36,5 +36,5 @@ class UserConfig : public Object
     gboolean  _read_only;
     gchar    *_file_path;
 
-    virtual ~UserConfig ();
+    ~UserConfig () override;
 };

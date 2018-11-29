@@ -62,7 +62,7 @@ namespace Net
       Cryptor           *_cryptor;
       gchar             *_iv;
 
-      virtual ~HttpServer ();
+      ~HttpServer () override;
 
       static gboolean DeferedPost (RequestBody *request_body);
 

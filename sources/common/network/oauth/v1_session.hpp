@@ -32,7 +32,7 @@ namespace Oauth
                  const gchar *consumer_key,
                  const gchar *consumer_secret);
 
-        void Reset ();
+        void Reset () override;
 
       public:
         void SetTokenSecret (const gchar *token_secret);
@@ -42,7 +42,7 @@ namespace Oauth
       private:
         GString *_signing_key;
 
-        virtual ~Session ();
+        ~Session () override;
     };
   }
 }

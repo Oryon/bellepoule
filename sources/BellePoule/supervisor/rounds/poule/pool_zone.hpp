@@ -33,13 +33,13 @@ namespace Pool
       PoolZone (Module *container,
                 Pool   *pool);
 
-      void Draw (GooCanvasItem *root_item);
+      void Draw (GooCanvasItem *root_item) override;
 
       Pool *GetPool ();
 
     private:
       Pool *_pool;
 
-      virtual ~PoolZone ();
+      ~PoolZone () override;
   };
 }

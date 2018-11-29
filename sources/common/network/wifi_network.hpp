@@ -44,6 +44,6 @@ namespace Net
       gchar *_passphrase;
       gchar *_encryption;
 
-      virtual ~WifiNetwork ();
+      ~WifiNetwork () override;
   };
 }

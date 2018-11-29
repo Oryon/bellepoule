@@ -44,7 +44,7 @@ class JsonFile : public Object
     guint     _tag;
     gchar    *_path;
 
-    ~JsonFile ();
+    ~JsonFile () override;
 
     static gboolean OnTimeout (JsonFile *json_file);
 };

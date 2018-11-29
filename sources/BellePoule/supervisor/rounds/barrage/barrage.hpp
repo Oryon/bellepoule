@@ -34,15 +34,15 @@ namespace People
       static const gchar *_xml_class_name;
 
     private:
-      void Display ();
+      void Display () override;
 
-      void OnPlugged ();
+      void OnPlugged () override;
 
-      void Garnish ();
+      void Garnish () override;
 
-      GSList *GetCurrentClassification ();
+      GSList *GetCurrentClassification () override;
 
-      void Load (xmlNode *xml_node);
+      void Load (xmlNode *xml_node) override;
 
     private:
       guint _ties_count;
@@ -59,6 +59,6 @@ namespace People
                                          Object    *object,
                                          guint      step);
 
-      virtual ~Barrage ();
+      ~Barrage () override;
   };
 }

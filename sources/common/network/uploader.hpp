@@ -48,7 +48,7 @@ namespace Net
       size_t  _size;
       size_t  _size_processed;
 
-      ~Body ();
+      ~Body () override;
   };
 
   class Uploader : public Object
@@ -58,7 +58,7 @@ namespace Net
 
     protected:
 
-      virtual ~Uploader ();
+      ~Uploader () override;
 
       CURLcode Upload ();
 

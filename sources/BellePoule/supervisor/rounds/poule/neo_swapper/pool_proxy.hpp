@@ -65,6 +65,6 @@ namespace NeoSwapper
     private:
       guint _criteria_count;
 
-      ~PoolProxy ();
+      ~PoolProxy () override;
   };
 }

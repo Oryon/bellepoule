@@ -48,7 +48,7 @@ namespace AskFred
         GData       *_populations;
         guint        _population_count;
 
-        ~IdFixer ();
+        ~IdFixer () override;
     };
 
     class Round : public Object
@@ -66,7 +66,7 @@ namespace AskFred
       private:
         GData *_table;
 
-        ~Round ();
+        ~Round () override;
     };
 
     class Element : public Object
@@ -113,7 +113,7 @@ namespace AskFred
         GList       *_outline;
         Round       *_round;
 
-        ~Element ();
+        ~Element () override;
     };
 
     class Scheme : public XmlScheme
@@ -141,7 +141,7 @@ namespace AskFred
 
         Mode _mode;
 
-        virtual ~Scheme ();
+        ~Scheme () override;
 
         gboolean FlushElement (Element *element,
                                Element *parent);
@@ -156,28 +156,28 @@ namespace AskFred
 
         Element *PushElement (const gchar *name);
 
-        gboolean SaveFencersAndTeamsSeparatly ();
+        gboolean SaveFencersAndTeamsSeparatly () override;
 
-        const gchar *Translate (const gchar *term);
+        const gchar *Translate (const gchar *term) override;
 
         const gchar *TranslateValue (const gchar *term,
-                                     const gchar *value);
+                                     const gchar *value) override;
 
         const gchar *TranslateVValue (const gchar *term,
                                       const gchar *format_value,
-                                      va_list      argptr);
+                                      va_list      argptr) override;
 
         void RemoveNonBreakingSpaces (guchar *term);
 
-        void StartElement (const gchar *name);
+        void StartElement (const gchar *name) override;
 
         void Flush (GNode *from);
 
-        void EndElement ();
+        void EndElement () override;
 
         void EndElement (const char *name);
 
-        void WriteCustom (const gchar *what);
+        void WriteCustom (const gchar *what) override;
 
         static void WriteClub (GQuark   quark,
                                gchar   *id,

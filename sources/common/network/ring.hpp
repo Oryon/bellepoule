@@ -101,7 +101,7 @@ namespace Net
             Listener  *listener,
             GtkWidget  *partner_indicator);
 
-      virtual ~Ring ();
+      ~Ring () override;
 
     private:
       static const guint  ANNOUNCE_PORT = 35830;
@@ -127,9 +127,9 @@ namespace Net
 
       gboolean RoleIsAcceptable (Role partner_role);
 
-      const gchar *GetSecretKey (const gchar *authentication_scheme);
+      const gchar *GetSecretKey (const gchar *authentication_scheme) override;
 
-      gboolean OnMessage (Net::Message *message);
+      gboolean OnMessage (Net::Message *message) override;
 
       void Remove (Partner *partner);
 
@@ -147,7 +147,7 @@ namespace Net
 
       void GuessIpV4Addresses ();
 
-      void OnObjectDeleted (Object *object);
+      void OnObjectDeleted (Object *object) override;
 
       void DisplayIndicator ();
 
@@ -160,9 +160,9 @@ namespace Net
 
       const gchar *GetRoleImage ();
 
-      void OnPartnerKilled (Partner *partener);
+      void OnPartnerKilled (Partner *partener) override;
 
-      void OnPartnerLeaved (Partner *partener);
+      void OnPartnerLeaved (Partner *partener) override;
 
       static gboolean SendHeartbeat (Ring *ring);
   };

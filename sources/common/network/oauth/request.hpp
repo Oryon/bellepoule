@@ -70,7 +70,7 @@ namespace Oauth
       GList   *_header_list;
       GList   *_parameter_list;
 
-      ~Request ();
+      ~Request () override;
 
       gboolean LoadJson (const gchar *json);
 

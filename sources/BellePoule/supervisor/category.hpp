@@ -44,7 +44,7 @@ class Category : public Object
     gint         _id;
     gchar       *_fallback;
 
-    virtual ~Category ();
+    ~Category () override;
 
     void RefreshComboBox ();
 };

@@ -40,7 +40,7 @@ namespace Table
                     const gchar *title      = nullptr,
                     Table       *from_table = nullptr);
 
-      void Dump ();
+      void Dump () override;
 
       void SetResolutions (gdouble source_resolution,
                            gdouble target_resolution);
@@ -93,6 +93,6 @@ namespace Table
       GooCanvasBounds  _canvas_bounds;
       guint            _current_page;
 
-      virtual ~PrintSession ();
+      ~PrintSession () override;
   };
 }

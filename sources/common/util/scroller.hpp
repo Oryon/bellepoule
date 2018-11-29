@@ -41,7 +41,7 @@ class Scroller : public Object
     guint          _metronome;
     gdouble        _step;
 
-    ~Scroller ();
+    ~Scroller () override;
 
     gdouble GetScrollStep (gdouble dist);
 

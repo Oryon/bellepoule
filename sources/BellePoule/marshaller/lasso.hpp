@@ -41,6 +41,6 @@ namespace Marshaller
       gdouble          _y;
       GooCanvasBounds  _bounds;
 
-      virtual ~Lasso ();
+      ~Lasso () override;
   };
 }

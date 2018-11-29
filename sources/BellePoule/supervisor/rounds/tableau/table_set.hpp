@@ -87,16 +87,16 @@ namespace Table
 
       GList *GetBookSections (Stage::StageView view);
 
-      gchar *GetPrintName ();
+      gchar *GetPrintName () override;
 
       guint PreparePrint (GtkPrintOperation *operation,
-                          GtkPrintContext   *context);
+                          GtkPrintContext   *context) override;
 
       void DrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
-                     gint               page_nr);
+                     gint               page_nr) override;
 
-      void Wipe ();
+      void Wipe () override;
 
       void Display ();
 
@@ -116,7 +116,7 @@ namespace Table
 
       void Save (XmlScheme *xml_scheme);
 
-      void DumpToHTML (FILE *file);
+      void DumpToHTML (FILE *file) override;
 
       void SetPlayerToMatch (Match  *to_match,
                              Player *player,
@@ -146,13 +146,13 @@ namespace Table
 
       Error::Provider *GetFirstError ();
 
-      void Recall ();
+      void Recall () override;
 
       gboolean RecallRoadmapAllowed (Table *for_table);
 
       void RecallRoadmaps ();
 
-      gboolean OnMessage (Net::Message *message);
+      gboolean OnMessage (Net::Message *message) override;
 
       gboolean OnHttpPost (const gchar *command,
                            const gchar **ressource,
@@ -203,9 +203,9 @@ namespace Table
 
       GooCanvasItem *GetQuickScore (const gchar *container);
 
-      void OnPlugged ();
+      void OnPlugged () override;
 
-      void OnUnPlugged ();
+      void OnUnPlugged () override;
 
       void CreateTree ();
 
@@ -227,7 +227,7 @@ namespace Table
                             guint          row);
 
       void OnPartnerJoined (Net::Partner *partner,
-                            gboolean      joined);
+                            gboolean      joined) override;
 
       static gboolean Stuff (GNode    *node,
                              TableSet *table_set);
@@ -261,7 +261,7 @@ namespace Table
 
       void OnNewScore (ScoreCollector *score_collector,
                        Match          *match,
-                       Player         *player);
+                       Player         *player) override;
 
       gint ComparePreviousRankPlayer (Player  *A,
                                       Player  *B,
@@ -314,7 +314,7 @@ namespace Table
                                              GdkEventButton *event,
                                              TableSet       *table_set);
 
-      virtual ~TableSet ();
+      ~TableSet () override;
 
     private:
       GtkPrintOperationPreview *_preview;
@@ -327,14 +327,14 @@ namespace Table
       gboolean PreparePreview (GtkPrintOperation        *operation,
                                GtkPrintOperationPreview *preview,
                                GtkPrintContext          *context,
-                               GtkWindow                *parent);
+                               GtkWindow                *parent) override;
 
       void OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
                                  GtkPrintContext          *context,
-                                 GtkPageSetup             *page_setup);
+                                 GtkPageSetup             *page_setup) override;
 
       void OnPreviewReady (GtkPrintOperationPreview *preview,
-                           GtkPrintContext          *context);
+                           GtkPrintContext          *context) override;
 
       static gboolean on_preview_expose (GtkWidget      *drawing_area,
                                          GdkEventExpose *event,

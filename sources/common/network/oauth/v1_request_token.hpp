@@ -31,7 +31,7 @@ namespace Oauth
         gchar *GetPinCodeUrl ();
 
       private:
-        virtual ~RequestToken ();
+        ~RequestToken () override;
     };
   }
 }

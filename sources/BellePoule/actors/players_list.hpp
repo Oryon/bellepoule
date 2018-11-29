@@ -44,9 +44,9 @@ namespace People
 
       void Wipe ();
 
-      void SetFilter (Filter *filter);
+      void SetFilter (Filter *filter) override;
 
-      void OnAttrListUpdated ();
+      void OnAttrListUpdated () override;
 
       void Update (Player *player);
 
@@ -56,13 +56,13 @@ namespace People
 
       GList *RetreiveSelectedPlayers ();
 
-      virtual guint PreparePrint (GtkPrintOperation *operation,
-                                  GtkPrintContext   *context);
-      virtual void DrawPage (GtkPrintOperation *operation,
+      guint PreparePrint (GtkPrintOperation *operation,
+                                  GtkPrintContext   *context) override;
+      void DrawPage (GtkPrintOperation *operation,
                              GtkPrintContext   *context,
-                             gint               page_nr);
-      virtual void OnEndPrint (GtkPrintOperation *operation,
-                               GtkPrintContext   *context);
+                             gint               page_nr) override;
+      void OnEndPrint (GtkPrintOperation *operation,
+                               GtkPrintContext   *context) override;
       void DrawBarePage (GtkPrintOperation *operation,
                          GtkPrintContext   *context,
                          gint               page_nr);
@@ -74,13 +74,13 @@ namespace People
       void Disclose (const gchar *as,
                      Object      *extra_feeder = nullptr);
 
-      void Conceal ();
+      void Conceal () override;
 
-      void Spread ();
+      void Spread () override;
 
-      void Recall ();
+      void Recall () override;
 
-      void DumpToHTML (FILE *file);
+      void DumpToHTML (FILE *file) override;
 
       GtkUIManager *GetUiManager ();
 
@@ -102,7 +102,7 @@ namespace People
 
       typedef gboolean (*CustomFilter) (Player *player, PlayersList *owner);
 
-      virtual ~PlayersList ();
+      ~PlayersList () override;
 
       void UpdateHierarchy (Player *player);
 

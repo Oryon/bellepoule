@@ -23,6 +23,7 @@
 class Contest;
 class Publication;
 class Glade;
+class Player;
 
 class Tournament : public Module,
                    public Net::Ring::Listener,
@@ -69,9 +70,9 @@ class Tournament : public Module,
 
     Publication *GetPublication ();
 
-    gboolean OnMessage (Net::Message *message);
+    gboolean OnMessage (Net::Message *message) override;
 
-    const gchar *GetSecretKey (const gchar *authentication_scheme);
+    const gchar *GetSecretKey (const gchar *authentication_scheme) override;
 
   public:
     const Player *GetPlayer (guint CompetitionId,
@@ -85,17 +86,17 @@ class Tournament : public Module,
     Publication    *_publication;
     GList          *_advertisers;
 
-    virtual ~Tournament ();
+    ~Tournament () override;
 
     Contest *GetContest (guint netid);
 
     void SetBackupLocation (gchar *location);
 
-    void OnHanshakeResult (Net::Ring::HandshakeResult result);
+    void OnHanshakeResult (Net::Ring::HandshakeResult result) override;
 
     static gboolean RecentFileExists (const GtkRecentFilterInfo *filter_info,
                                       Tournament                *tournament);
 
     void OnWebServerState (gboolean in_progress,
-                           gboolean on);
+                           gboolean on) override;
 };

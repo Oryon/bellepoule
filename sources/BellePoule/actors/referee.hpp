@@ -25,7 +25,7 @@ class Referee : public Player
 
     static Player *CreateInstance ();
 
-    const gchar *GetXmlTag ();
+    const gchar *GetXmlTag () override;
 
     void GiveAnId ();
 
@@ -35,13 +35,13 @@ class Referee : public Player
 
     Referee ();
 
-    virtual ~Referee ();
+    ~Referee () override;
 
   private:
     static const gchar *_iv;
 
-    Player *Clone ();
+    Player *Clone () override;
 
     void SaveAttributes (XmlScheme *xml_scheme,
-                         gboolean   full_profile);
+                         gboolean   full_profile) override;
 };

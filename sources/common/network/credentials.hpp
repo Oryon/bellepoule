@@ -36,8 +36,8 @@ namespace Net
       gchar *_key;
       gchar *_name;
 
-      virtual ~Credentials ();
+      ~Credentials () override;
 
-      gchar *GetText ();
+      gchar *GetText () override;
   };
 }

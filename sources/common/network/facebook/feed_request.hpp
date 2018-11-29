@@ -27,9 +27,9 @@ namespace Net
                    const gchar    *message);
 
     private:
-      virtual ~FeedRequest ();
+      ~FeedRequest () override;
 
       void ParseResponse (GHashTable  *header,
-                          const gchar *body);
+                          const gchar *body) override;
   };
 }

@@ -28,6 +28,6 @@ namespace Marshaller
                   gchar *batch);
 
     private:
-      ~EndOfBurst ();
+      ~EndOfBurst () override;
   };
 }

@@ -25,7 +25,7 @@ class SensitivityTrigger : public Object
   public:
     SensitivityTrigger ();
 
-    virtual ~SensitivityTrigger ();
+    ~SensitivityTrigger () override;
 
     void AddWidget (GtkWidget *w);
 

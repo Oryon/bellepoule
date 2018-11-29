@@ -60,7 +60,7 @@ class Schedule : public Module,
 
     void Save (XmlScheme *xml_scheme);
 
-    void DumpToHTML (FILE *file);
+    void DumpToHTML (FILE *file) override;
 
     void Load (xmlDoc               *doc,
                const gchar          *contest_keyword,
@@ -75,7 +75,7 @@ class Schedule : public Module,
 
     void OnPrint ();
 
-    gboolean OnMessage (Net::Message *message);
+    gboolean OnMessage (Net::Message *message) override;
 
     void SetTeamEvent (gboolean team_event);
 
@@ -144,13 +144,13 @@ class Schedule : public Module,
     void GiveName (Stage *stage);
 
     guint PreparePrint (GtkPrintOperation *operation,
-                        GtkPrintContext   *context);
+                        GtkPrintContext   *context) override;
 
     void DrawPage (GtkPrintOperation *operation,
                    GtkPrintContext   *context,
-                   gint               page_nr);
+                   gint               page_nr) override;
 
-    void OnStageStatusChanged (Stage *stage);
+    void OnStageStatusChanged (Stage *stage) override;
 
     static void on_row_selected (GtkWidget *widget,
                                  GdkEvent  *event,
@@ -163,8 +163,8 @@ class Schedule : public Module,
   private:
     Book *_book;
 
-    virtual ~Schedule ();
-    void OnPlugged ();
+    ~Schedule () override;
+    void OnPlugged () override;
     void PlugStage (Stage *stage);
     void RefreshStageName (Stage *stage);
     void RemoveFromNotebook (Stage *stage);

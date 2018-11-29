@@ -41,15 +41,15 @@ class BellPouleApp : public Application
   private:
     Tournament *_tournament;
 
-    virtual ~BellPouleApp ();
+    ~BellPouleApp () override;
 
-    void Prepare ();
+    void Prepare () override;
 
     void Start (int                   argc,
                 char                **argv,
-                Net::Ring::Listener  *ring_listener);
+                Net::Ring::Listener  *ring_listener) override;
 
-    void OnQuit (GtkWindow *window);
+    void OnQuit (GtkWindow *window) override;
 };
 
 // --------------------------------------------------------------------------------

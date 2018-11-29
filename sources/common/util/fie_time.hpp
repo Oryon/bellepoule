@@ -36,7 +36,7 @@ class FieTime : public Object
     gchar     *_xml_image;
     GDateTime *_g_date_time;
 
-    virtual ~FieTime ();
+    ~FieTime () override;
 
     void MakeImages (GDateTime *date_time);
 };

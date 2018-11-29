@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 
+#include "util/dnd_config.hpp"
 #include "actors/checkin.hpp"
 
 namespace People
@@ -53,7 +54,7 @@ namespace Marshaller
       void RefreshAvailability (Timeline *timeline,
                                 GList    *pistes);
 
-      void Spread ();
+      void Spread () override;
 
       void ExpandAll ();
 
@@ -71,9 +72,9 @@ namespace Marshaller
       GList    *_piste_list;
       GdkColor *_free_color;
 
-      ~RefereePool ();
+      ~RefereePool () override;
 
-      gboolean OnPlayerListRowActivated (People::Checkin *checkin);
+      gboolean OnPlayerListRowActivated (People::Checkin *checkin) override;
 
       static void OnDisplayJobs (GtkWidget            *w,
                                  People::RefereesList *referee_list);

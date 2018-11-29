@@ -24,11 +24,11 @@ class NullTeam : public Team
     NullTeam ();
 
   private:
-    virtual ~NullTeam ();
+    ~NullTeam () override;
 
-    void SetAttendingFromMembers ();
+    void SetAttendingFromMembers () override;
 
-    void SetAttributesFromMembers ();
+    void SetAttributesFromMembers () override;
 
-    gboolean IsSticky ();
+    gboolean IsSticky () override;
 };

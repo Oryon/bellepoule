@@ -33,13 +33,13 @@ namespace Marshaller
     private:
       Marshaller *_marshaller;
 
-      virtual ~MarshallerApp ();
+      ~MarshallerApp () override;
 
-      void Prepare ();
+      void Prepare () override;
 
       void Start (int                   argc,
                   char                **argv,
-                  Net::Ring::Listener  *ring_listener);
+                  Net::Ring::Listener  *ring_listener) override;
   };
 
   // --------------------------------------------------------------------------------
