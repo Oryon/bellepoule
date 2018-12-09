@@ -49,7 +49,7 @@ void Book::Prepare (GtkPrintOperation *operation,
     Stage  *stage  = (Stage *) current_stage->data;
     Module *module = dynamic_cast <Module *> (stage);
 
-    for (guint view = 1; view < Stage::N_STAGE_VIEW; view++)
+    for (guint view = 1; view < (guint) Stage::StageView::N_STAGE_VIEW; view++)
     {
       GList *sections        = stage->GetBookSections ((Stage::StageView) view);
       GList *current_section = sections;

@@ -39,7 +39,7 @@ namespace Net
     Oauth::V1::Request::ParseResponse (header,
                                        body);
 
-    if (GetStatus () == REJECTED)
+    if (GetStatus () == Status::REJECTED)
     {
       if (LoadJson (body))
       {

@@ -188,7 +188,7 @@ namespace People
     DisableSensitiveWidgets ();
     SetSensitiveState (FALSE);
 
-    if (GetState () == OPERATIONAL)
+    if (GetState () == State::OPERATIONAL)
     {
       Contest             *contest = _contest->Duplicate ();
       GSList              *current = GetShortList ();

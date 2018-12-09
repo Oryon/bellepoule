@@ -22,12 +22,12 @@
 class Canvas
 {
   public:
-    typedef enum
+    enum class Alignment
     {
       START,
       MIDDLE,
       END
-    } Alignment;
+    };
 
     static void PutInTable (GooCanvasItem *table,
                             GooCanvasItem *item,

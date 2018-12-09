@@ -40,13 +40,13 @@
 
 namespace Marshaller
 {
-  typedef enum
+  enum class OverlapColumnId
   {
     ICON_id,
     MESSAGE_ptr,
     BATCH_ptr,
     COLOR_str
-  } OverlapColumnId;
+  };
 
   // --------------------------------------------------------------------------------
   Hall::Hall (RefereePool *referee_pool,
@@ -417,7 +417,7 @@ namespace Marshaller
 
         gtk_tree_model_get (GTK_TREE_MODEL (overlap_store),
                             &iter,
-                            BATCH_ptr, &current_batch,
+                            OverlapColumnId::BATCH_ptr, &current_batch,
                             -1);
 
         if (current_batch == batch)
@@ -1515,7 +1515,7 @@ namespace Marshaller
 
       gtk_tree_model_get (GTK_TREE_MODEL (overlap_store),
                           &iter,
-                          BATCH_ptr, &current_batch,
+                          OverlapColumnId::BATCH_ptr, &current_batch,
                           -1);
 
       if (current_batch == batch)
@@ -1544,9 +1544,9 @@ namespace Marshaller
                                                   batch->GetName ());
 
       gtk_list_store_set (overlap_store, &iter,
-                          MESSAGE_ptr,   name,
-                          COLOR_str,     color,
-                          BATCH_ptr,     batch,
+                          OverlapColumnId::MESSAGE_ptr,   name,
+                          OverlapColumnId::COLOR_str,     color,
+                          OverlapColumnId::BATCH_ptr,     batch,
                           -1);
 
       g_free (name);
@@ -1778,8 +1778,8 @@ namespace Marshaller
                              &iter,
                              path);
     gtk_tree_model_get (model, &iter,
-                        MESSAGE_ptr, &message,
-                        BATCH_ptr,   &batch,
+                        OverlapColumnId::MESSAGE_ptr, &message,
+                        OverlapColumnId::BATCH_ptr,   &batch,
                         -1);
 
     {

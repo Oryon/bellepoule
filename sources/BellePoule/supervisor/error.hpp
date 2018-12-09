@@ -23,11 +23,11 @@
 class Error : public Object
 {
   public:
-    typedef enum
+    enum class Level
     {
-      LEVEL_ERROR,
-      LEVEL_WARNING
-    } Level;
+      MAJOR,
+      WARNING
+    };
 
     class Provider
     {

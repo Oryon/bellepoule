@@ -55,7 +55,7 @@ class BellPouleApp : public Application
 // --------------------------------------------------------------------------------
 BellPouleApp::BellPouleApp (int    *argc,
                             char ***argv)
-  : Application (Net::Ring::RESOURCE_USER, "BellePoule", argc, argv)
+  : Application (Net::Ring::Role::RESOURCE_USER, "BellePoule", argc, argv)
 {
 }
 

@@ -37,7 +37,7 @@ Chapter::Chapter (Module           *module,
   section->Retain ();
   _section = section;
 
-  if (stage_view == Stage::STAGE_VIEW_CLASSIFICATION)
+  if (stage_view == Stage::StageView::CLASSIFICATION)
   {
     _name = g_strdup_printf ("%s\n\n"
                              "<span size=\"xx-small\">%s</span>",

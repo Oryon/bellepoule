@@ -300,10 +300,10 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void PillowDialog::OnFormEvent (Player                  *player,
-                                  People::Form::FormEvent  event)
+  void PillowDialog::OnFormEvent (Player              *player,
+                                  People::Form::Event  event)
   {
-    if (event == People::Form::NEW_PLAYER)
+    if (event == People::Form::Event::NEW_PLAYER)
     {
       player->SetChangeCbk ("attending",
                             (Player::OnChange) OnAttendingChanged,

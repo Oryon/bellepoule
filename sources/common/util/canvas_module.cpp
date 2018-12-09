@@ -254,7 +254,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
       Attribute            *attr;
       Player::AttributeId  *attr_id;
 
-      if (attr_layout->_desc->_scope == AttributeDesc::LOCAL)
+      if (attr_layout->_desc->_scope == AttributeDesc::Scope::LOCAL)
       {
         attr_id = new Player::AttributeId (attr_layout->_desc->_code_name,
                                            GetDataOwner ());
@@ -420,7 +420,7 @@ void CanvasModule::DrawPage (GtkPrintOperation *operation,
     gdouble canvas_h;
     gdouble paper_w  = gtk_print_context_get_width (context);
     gdouble paper_h  = gtk_print_context_get_height (context);
-    gdouble header_h = GetPrintHeaderSize (context, ON_SHEET);
+    gdouble header_h = GetPrintHeaderSize (context, SizeReferential::ON_SHEET);
     gdouble footer_h = 2 * paper_w  / 100;
 
     {

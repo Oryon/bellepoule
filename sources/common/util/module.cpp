@@ -441,7 +441,7 @@ Module::State Module::GetState ()
   }
   else
   {
-    return OPERATIONAL;
+    return State::OPERATIONAL;
   }
 }
 
@@ -659,7 +659,7 @@ gdouble Module::GetPrintHeaderSize (GtkPrintContext *context,
 {
   gdouble size = PRINT_HEADER_FRAME_HEIGHT + 2.0;
 
-  if (referential == ON_SHEET)
+  if (referential == SizeReferential::ON_SHEET)
   {
     return GetSizeOnSheet (context,
                            size);
@@ -676,7 +676,7 @@ gdouble Module::GetPrintBodySize (GtkPrintContext *context,
   gdouble paper_h = gtk_print_context_get_height (context);
   gdouble size    = paper_h*100.0/paper_w - GetPrintHeaderSize (context, referential);
 
-  if (referential == ON_SHEET)
+  if (referential == SizeReferential::ON_SHEET)
   {
     return GetSizeOnSheet (context,
                            size);
@@ -898,9 +898,9 @@ GtkTreeModel *Module::GetStatusModel ()
 
         gtk_tree_model_get (desc->_discrete_model,
                             &iter,
-                            AttributeDesc::DISCRETE_XML_IMAGE_str, &xml_image,
-                            AttributeDesc::DISCRETE_LONG_TEXT_str, &user_image,
-                            AttributeDesc::DISCRETE_ICON_pix,      &icon, -1);
+                            AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &xml_image,
+                            AttributeDesc::DiscreteColumnId::LONG_TEXT_str, &user_image,
+                            AttributeDesc::DiscreteColumnId::ICON_pix,      &icon, -1);
         if (   (g_strcmp0 ("Q", xml_image) == 0)
             || (g_strcmp0 ("A", xml_image) == 0)
             || (g_strcmp0 ("E", xml_image) == 0))
@@ -909,9 +909,9 @@ GtkTreeModel *Module::GetStatusModel ()
 
           gtk_tree_store_append (GTK_TREE_STORE (_status_model), &pool_iter, nullptr);
           gtk_tree_store_set (GTK_TREE_STORE (_status_model), &pool_iter,
-                              AttributeDesc::DISCRETE_XML_IMAGE_str, xml_image,
-                              AttributeDesc::DISCRETE_LONG_TEXT_str, user_image,
-                              AttributeDesc::DISCRETE_ICON_pix,      icon,
+                              AttributeDesc::DiscreteColumnId::XML_IMAGE_str, xml_image,
+                              AttributeDesc::DiscreteColumnId::LONG_TEXT_str, user_image,
+                              AttributeDesc::DiscreteColumnId::ICON_pix,      icon,
                               -1);
         }
 

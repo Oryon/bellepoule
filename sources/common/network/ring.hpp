@@ -33,19 +33,19 @@ namespace Net
                public Partner::Listener
   {
     public:
-      typedef enum
+      enum class HandshakeResult
       {
         CHALLENGE_PASSED,
         BACKUP_CHALLENGE_PASSED,
         AUTHENTICATION_FAILED,
         ROLE_REJECTED
-      } HandshakeResult;
+      };
 
-      typedef enum
+      enum class Role
       {
         RESOURCE_MANAGER,
         RESOURCE_USER
-      } Role;
+      };
 
       struct PartnerListener
       {

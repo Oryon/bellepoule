@@ -110,11 +110,11 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Partner::OnUploadStatus (MessageUploader::PeerStatus peer_status)
   {
-    if (peer_status == MessageUploader::CONN_ERROR)
+    if (peer_status == MessageUploader::PeerStatus::CONN_ERROR)
     {
       _listener->OnPartnerKilled (this);
     }
-    else if (peer_status == MessageUploader::CONN_CLOSED)
+    else if (peer_status == MessageUploader::PeerStatus::CONN_CLOSED)
     {
       printf (CYAN "*** CONN_CLOSED ***\n");
 

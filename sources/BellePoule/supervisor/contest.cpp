@@ -255,7 +255,7 @@ Contest::Contest (GList    *advertisers,
   _minimum_team_size      = new Data ("TailleMinimaleEquipe",   3);
   _default_classification = new Data ("ClassementDefautEquipe", 9999);
 
-  _state = OPERATIONAL;
+  _state = State::OPERATIONAL;
 
   _checkin_time = new Time ("checkin");
   _scratch_time = new Time ("scratch");
@@ -599,7 +599,7 @@ void Contest::LoadFencerFile (const gchar *filename)
 // --------------------------------------------------------------------------------
 void Contest::LoadXmlDoc (xmlDoc *doc)
 {
-  _state = LOADING;
+  _state = State::LOADING;
 
   {
     gboolean     score_stuffing_policy  = FALSE;
@@ -902,7 +902,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
   FillInProperties ();
 
-  _state = OPERATIONAL;
+  _state = State::OPERATIONAL;
   _schedule->OnLoadingCompleted ();
 }
 
@@ -911,7 +911,7 @@ Contest::~Contest ()
 {
   Recall ();
 
-  _state = LEAVING;
+  _state = State::LEAVING;
 
   // www
 #ifndef DEBUG
@@ -2005,7 +2005,7 @@ gboolean Contest::OnMessage (Net::Message *message)
 // --------------------------------------------------------------------------------
 void Contest::TweetFeeder (Net::Advertiser::Feeder *feeder)
 {
-  if (_state == OPERATIONAL)
+  if (_state == State::OPERATIONAL)
   {
     g_list_foreach (_advertisers,
                     (GFunc) Net::Advertiser::TweetFeeder,
@@ -2169,7 +2169,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
 
     cairo_translate (cr,
                      0.0,
-                     GetPrintHeaderSize (context, ON_SHEET));
+                     GetPrintHeaderSize (context, SizeReferential::ON_SHEET));
   }
 }
 

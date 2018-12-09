@@ -39,7 +39,7 @@ namespace Marshaller
         virtual void     OnJobOverlapWarning      (Batch *batch) = 0;
       };
 
-      enum Status
+      enum class Status
       {
         UNCOMPLETED,
         CONCEALED,

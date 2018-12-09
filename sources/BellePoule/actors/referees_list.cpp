@@ -146,8 +146,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void RefereesList::OnFormEvent (Player                  *referee,
-                                  People::Form::FormEvent  event)
+  void RefereesList::OnFormEvent (Player              *referee,
+                                  People::Form::Event  event)
   {
     ((Referee*) referee)->GiveAnId ();
 
@@ -414,7 +414,7 @@ namespace People
 
       cairo_translate (cr,
                        0.0,
-                       GetPrintHeaderSize (context, ON_SHEET));
+                       GetPrintHeaderSize (context, SizeReferential::ON_SHEET));
     }
   }
 

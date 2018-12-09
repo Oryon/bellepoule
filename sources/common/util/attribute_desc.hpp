@@ -26,29 +26,29 @@ class TreeModelIndex;
 class AttributeDesc : public Object
 {
   public:
-    typedef enum
+    enum class Uniqueness
     {
       SINGULAR,
       NOT_SINGULAR
-    } Uniqueness;
+    };
 
-    typedef enum
+    enum class Rights
     {
       PUBLIC,
       PRIVATE
-    } Rights;
+    };
 
-    typedef enum
+    enum class Persistency
     {
       PERSISTENT,
       NOT_PERSISTENT
-    } Persistency;
+    };
 
-    typedef enum
+    enum class Scope
     {
       GLOBAL,
       LOCAL
-    } Scope;
+    };
 
     typedef enum
     {
@@ -59,17 +59,17 @@ class AttributeDesc : public Object
       NB_LOOK
     } Look;
 
-    typedef enum
+    enum class DiscreteColumnId
     {
-      DISCRETE_CODE_uint,
-      DISCRETE_XML_IMAGE_str,
-      DISCRETE_LONG_TEXT_str,
-      DISCRETE_SHORT_TEXT_str,
-      DISCRETE_ICON_pix,
-      DISCRETE_SELECTOR_str,
+      CODE_uint,
+      XML_IMAGE_str,
+      LONG_TEXT_str,
+      SHORT_TEXT_str,
+      ICON_pix,
+      SELECTOR_str,
 
       NB_DISCRETE_COLUMNS
-    } DiscreteColumnId;
+    };
 
     typedef gboolean (*CriteriaFunc) (AttributeDesc *desc);
 
@@ -188,12 +188,12 @@ class AttributeDesc : public Object
                                                GtkTreeIter  *iter,
                                                GtkComboBox  *selector);
 
-    void *GetDiscreteData (guint from_code,
-                           guint column);
+    void *GetDiscreteData (guint            from_code,
+                           DiscreteColumnId column);
 
-    void *GetDiscreteData (const gchar *from_user_image,
-                           guint        image_type,
-                           guint        column);
+    void *GetDiscreteData (const gchar      *from_user_image,
+                           DiscreteColumnId  image_type,
+                           DiscreteColumnId  column);
 
     void AddDiscreteValues (const gchar *dir,
                             const gchar *selector);

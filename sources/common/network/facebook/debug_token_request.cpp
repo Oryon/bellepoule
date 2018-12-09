@@ -47,7 +47,7 @@ namespace Net
     Oauth::Request::ParseResponse (header,
                                    body);
 
-    if (GetStatus () == ACCEPTED)
+    if (GetStatus () == Status::ACCEPTED)
     {
       if (LoadJson (body))
       {

@@ -71,8 +71,8 @@ namespace People
       void OnPlayerLoaded (Player *referee,
                            Player *owner) override;
 
-      void OnFormEvent (Player                  *referee,
-                        People::Form::FormEvent  event) override;
+      void OnFormEvent (Player              *referee,
+                        People::Form::Event  event) override;
 
       void TogglePlayerAttr (Player              *player,
                              Player::AttributeId *attr_id,

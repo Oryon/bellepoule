@@ -26,12 +26,12 @@ namespace Net
   class MessageUploader : public Uploader
   {
     public:
-      typedef enum
+      enum class PeerStatus
       {
         CONN_OK,
         CONN_ERROR,
         CONN_CLOSED
-      } PeerStatus;
+      };
 
       struct Listener
       {

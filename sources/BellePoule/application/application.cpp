@@ -274,15 +274,15 @@ void Application::Prepare ()
     AttributeDesc *desc;
 
     desc = AttributeDesc::Declare (G_TYPE_UINT, "ref", "ID", (gchar *) "ref");
-    desc->_rights = AttributeDesc::PRIVATE;
+    desc->_rights = AttributeDesc::Rights::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_UINT, "plugin_ID", "PluginID", (gchar *) "PluginID");
-    desc->_rights = AttributeDesc::PRIVATE;
+    desc->_rights = AttributeDesc::Rights::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_UINT, "final_rank", "Classement", gettext ("place"));
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "team", "Equipe", gettext ("team"));
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc->AddDiscreteValues (nullptr, nullptr, nullptr, NULL);
     desc->EnableSorting ();
 
@@ -295,15 +295,15 @@ void Application::Prepare ()
     desc->_compare_func = (GCompareFunc) CompareDate;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "Sexe", gettext ("gender"));
-    desc->_uniqueness         = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness         = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc->_free_value_allowed = FALSE;
     desc->_favorite_look      = AttributeDesc::GRAPHICAL;
     desc->AddDiscreteValues ("M", gettext ("Male"), "resources/glade/images/male.png",
                              "F", gettext ("Female"), "resources/glade/images/female.png", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "weapon", "Arme", gettext ("weapon"));
-    desc->_uniqueness         = AttributeDesc::NOT_SINGULAR;
-    desc->_rights             = AttributeDesc::PRIVATE;
+    desc->_uniqueness         = AttributeDesc::Uniqueness::NOT_SINGULAR;
+    desc->_rights             = AttributeDesc::Rights::PRIVATE;
     desc->_free_value_allowed = FALSE;
     desc->_favorite_look      = AttributeDesc::SHORT_TEXT;
     desc->AddDiscreteValues ("X", gettext ("Educ"),  nullptr,
@@ -312,37 +312,37 @@ void Application::Prepare ()
                              "S", gettext ("Sabre"), NULL, NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->AddDiscreteValueSelector ("countries");
     AttributeDesc::AddSwappable (desc);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "region", "Region", gettext ("region"));
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc->AddLocalizedDiscreteValues ("regions");
     AttributeDesc::AddSwappable (desc);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc->AddLocalizedDiscreteValues ("ligues");
     AttributeDesc::AddSwappable (desc);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", gettext ("club"));
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc->AddLocalizedDiscreteValues ("clubs");
     AttributeDesc::AddSwappable (desc);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
     desc = AttributeDesc::Declare (G_TYPE_UINT, "workload_rate", "Activite", gettext ("rate"));
-    desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
+    desc->_persistency    = AttributeDesc::Persistency::NOT_PERSISTENT;
     desc->_favorite_look  = AttributeDesc::GRAPHICAL;
-    desc->_rights         = AttributeDesc::PRIVATE;
+    desc->_rights         = AttributeDesc::Rights::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "category", "Categorie", gettext ("level"));
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_UINT, "ranking", "Ranking", gettext ("ranking"));
     desc->_compare_func = (GCompareFunc) CompareRanking;
@@ -350,16 +350,16 @@ void Application::Prepare ()
     desc = AttributeDesc::Declare (G_TYPE_STRING, "rating", "Rating", gettext ("rating"));
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
-    desc->_uniqueness    = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness    = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
-    desc->_persistency   = AttributeDesc::NOT_PERSISTENT;
+    desc->_persistency   = AttributeDesc::Persistency::NOT_PERSISTENT;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exported"));
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "global_status", "Statut", gettext ("global status"));
-    desc->_scope  = AttributeDesc::GLOBAL;
-    desc->_rights = AttributeDesc::PRIVATE;
+    desc->_scope  = AttributeDesc::Scope::GLOBAL;
+    desc->_rights = AttributeDesc::Rights::PRIVATE;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->AddDiscreteValues ("Q", gettext ("Qualified"),     "resources/glade/images/normal.png",
                              "N", gettext ("Not qualified"), "resources/glade/images/exit.png",
@@ -368,7 +368,7 @@ void Application::Prepare ()
                              "F", gettext ("Forfeit"),       "resources/glade/images/normal.png", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "status", "Statut", gettext ("status"));
-    desc->_scope = AttributeDesc::LOCAL;
+    desc->_scope = AttributeDesc::Scope::LOCAL;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->AddDiscreteValues ("Q", gettext ("Qualified"),     "resources/glade/images/normal.png",
                              "N", gettext ("Not qualified"), "resources/glade/images/exit.png",
@@ -377,70 +377,70 @@ void Application::Prepare ()
                              "F", gettext ("Forfeit"),       "resources/glade/images/normal.png", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "custom1", "Divers1", (gchar *) "♥");
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc = AttributeDesc::Declare (G_TYPE_STRING, "custom2", "Divers2", (gchar *) "♣");
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc = AttributeDesc::Declare (G_TYPE_STRING, "custom3", "Divers3", (gchar *) "♠");
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc = AttributeDesc::Declare (G_TYPE_STRING, "custom4", "Divers4", (gchar *) "♦");
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "cyphered_password", "MotDePasseChiffre", gettext ("cyphered password"));
-    desc->_rights = AttributeDesc::PRIVATE;
+    desc->_rights = AttributeDesc::Rights::PRIVATE;
 
     // Not persistent data
     {
       desc = AttributeDesc::Declare (G_TYPE_STRING, "IP", "IP", gettext ("IP address"));
-      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-      desc->_rights      = AttributeDesc::PRIVATE;
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_rights      = AttributeDesc::Rights::PRIVATE;
 
       desc = AttributeDesc::Declare (G_TYPE_STRING, "password", "MotDePasse", gettext ("Password"));
-      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-      desc->_rights      = AttributeDesc::PRIVATE;
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_rights      = AttributeDesc::Rights::PRIVATE;
 
       desc = AttributeDesc::Declare (G_TYPE_UINT, "pool_nr", "PoolID", gettext ("pool #"));
-      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-      desc->_scope       = AttributeDesc::LOCAL;
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::Scope::LOCAL;
 
       desc = AttributeDesc::Declare (G_TYPE_UINT, "victories_count", "Victoires", gettext ("Victories"));
-      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-      desc->_scope       = AttributeDesc::LOCAL;
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::Scope::LOCAL;
 
       desc = AttributeDesc::Declare (G_TYPE_UINT, "bouts_count", "Assauts", gettext ("Bouts"));
-      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-      desc->_scope       = AttributeDesc::LOCAL;
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::Scope::LOCAL;
 
       desc = AttributeDesc::Declare (G_TYPE_UINT, "victories_ratio", "RatioVictoires", gettext ("Vict./Bouts (‰)"));
-      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-      desc->_scope       = AttributeDesc::LOCAL;
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::Scope::LOCAL;
 
       desc = AttributeDesc::Declare (G_TYPE_INT, "indice", "Indice", gettext ("index"));
-      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-      desc->_scope       = AttributeDesc::LOCAL;
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::Scope::LOCAL;
 
       desc = AttributeDesc::Declare (G_TYPE_UINT, "HS", "TD", gettext ("Hits scored"));
-      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-      desc->_scope       = AttributeDesc::LOCAL;
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::Scope::LOCAL;
 
       desc = AttributeDesc::Declare (G_TYPE_UINT, "rank", "rank", gettext ("place"));
-      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-      desc->_rights      = AttributeDesc::PRIVATE;
-      desc->_scope       = AttributeDesc::LOCAL;
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_rights      = AttributeDesc::Rights::PRIVATE;
+      desc->_scope       = AttributeDesc::Scope::LOCAL;
 
       desc = AttributeDesc::Declare (G_TYPE_UINT, "stage_start_rank", "RangDeDepart", gettext ("Round start rank"));
-      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-      desc->_rights      = AttributeDesc::PRIVATE;
-      desc->_scope       = AttributeDesc::LOCAL;
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_rights      = AttributeDesc::Rights::PRIVATE;
+      desc->_scope       = AttributeDesc::Scope::LOCAL;
 
       desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "promoted", "Promu", gettext ("promoted"));
-      desc->_persistency   = AttributeDesc::NOT_PERSISTENT;
-      desc->_scope         = AttributeDesc::LOCAL;
+      desc->_persistency   = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_scope         = AttributeDesc::Scope::LOCAL;
       desc->_favorite_look = AttributeDesc::GRAPHICAL;
 
       desc = AttributeDesc::Declare (G_TYPE_STRING, "connection", "Connexion", gettext ("connection"));
-      desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
-      desc->_rights         = AttributeDesc::PRIVATE;
-      desc->_scope          = AttributeDesc::GLOBAL;
+      desc->_persistency    = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_rights         = AttributeDesc::Rights::PRIVATE;
+      desc->_scope          = AttributeDesc::Scope::GLOBAL;
       desc->_favorite_look  = AttributeDesc::GRAPHICAL;
       desc->AddDiscreteValues ("Broken",  gettext ("Broken"),  "resources/glade/images/red.png",
                                "Waiting", gettext ("Waiting"), "resources/glade/images/orange.png",
@@ -791,9 +791,9 @@ void Application::LogHandler (const gchar    *log_domain,
 // --------------------------------------------------------------------------------
 gboolean Application::IsCsvReady (AttributeDesc *desc)
 {
-  return (   (desc->_scope       == AttributeDesc::GLOBAL)
-          && (desc->_rights      == AttributeDesc::PUBLIC)
-          && (desc->_persistency == AttributeDesc::PERSISTENT)
+  return (   (desc->_scope       == AttributeDesc::Scope::GLOBAL)
+          && (desc->_rights      == AttributeDesc::Rights::PUBLIC)
+          && (desc->_persistency == AttributeDesc::Persistency::PERSISTENT)
           && (g_ascii_strcasecmp (desc->_code_name, "final_rank") != 0)
           && (g_ascii_strcasecmp (desc->_code_name, "IP") != 0)
           && (g_ascii_strcasecmp (desc->_code_name, "exported")   != 0));

@@ -28,12 +28,12 @@ class Glade;
 class Module : public virtual Object
 {
   public:
-    typedef enum
+    enum class State
     {
       LOADING,
       OPERATIONAL,
       LEAVING
-    } State;
+    };
 
     guint32 _rand_seed;
 
@@ -106,11 +106,11 @@ class Module : public virtual Object
     DndConfig *_dnd_config;
 
   protected:
-    typedef enum
+    enum class SizeReferential
     {
       ON_SHEET,
       NORMALIZED
-    } SizeReferential;
+    };
 
     Filter           *_filter;
     Glade            *_glade;

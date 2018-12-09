@@ -72,24 +72,24 @@ class Filter : public Object
     static void PreventPersistence ();
 
   private:
-    typedef enum
+    enum class StoreAttrColumn
     {
-      ATTR_VISIBILITY_bool = 0,
-      ATTR_USER_NAME_str,
-      ATTR_XML_NAME_ptr,
-      ATTR_LOOK_IMAGE_str,
-      ATTR_LOOK_VALUE_uint,
-
-      NUM_ATTR_COLS
-    } StoreAttrColumn;
-
-    typedef enum
-    {
-      LOOK_IMAGE_str = 0,
+      VISIBILITY_bool = 0,
+      USER_NAME_str,
+      XML_NAME_ptr,
+      LOOK_IMAGE_str,
       LOOK_VALUE_uint,
 
+      NUM_ATTR_COLS
+    };
+
+    enum class StoreLookColumn
+    {
+      IMAGE_str = 0,
+      VALUE_uint,
+
       NUM_LOOK_COLS
-    } StoreLookColumn;
+    };
 
     static gboolean _no_persistence;
 

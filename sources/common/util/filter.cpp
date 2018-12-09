@@ -45,16 +45,16 @@ Filter::Filter (const gchar *name,
   {
     GtkTreeIter iter;
 
-    _look_store = gtk_list_store_new (NUM_LOOK_COLS,
-                                      G_TYPE_STRING, // LOOK_IMAGE_str
-                                      G_TYPE_UINT);  // LOOK_VALUE_uint
+    _look_store = gtk_list_store_new ((gint) StoreLookColumn::NUM_LOOK_COLS,
+                                      G_TYPE_STRING, // IMAGE_str
+                                      G_TYPE_UINT);  // VALUE_uint
 
     for (guint i = 0; i < AttributeDesc::NB_LOOK; i++)
     {
       gtk_list_store_append (_look_store, &iter);
       gtk_list_store_set (_look_store, &iter,
-                          LOOK_IMAGE_str,  gettext (look_images[i]),
-                          LOOK_VALUE_uint, i,
+                          StoreLookColumn::IMAGE_str,  gettext (look_images[i]),
+                          StoreLookColumn::VALUE_uint, i,
                           -1);
     }
   }
@@ -62,12 +62,12 @@ Filter::Filter (const gchar *name,
   {
     GSList *current = attr_list;
 
-    _attr_filter_store = gtk_list_store_new (NUM_ATTR_COLS,
-                                             G_TYPE_BOOLEAN, // ATTR_VISIBILITY_bool
-                                             G_TYPE_STRING,  // ATTR_USER_NAME_str
-                                             G_TYPE_POINTER, // ATTR_XML_NAME_ptr
-                                             G_TYPE_STRING,  // ATTR_LOOK_IMAGE_str
-                                             G_TYPE_UINT);   // ATTR_LOOK_VALUE_uint
+    _attr_filter_store = gtk_list_store_new ((gint) StoreAttrColumn::NUM_ATTR_COLS,
+                                             G_TYPE_BOOLEAN, // VISIBILITY_bool
+                                             G_TYPE_STRING,  // USER_NAME_str
+                                             G_TYPE_POINTER, // XML_NAME_ptr
+                                             G_TYPE_STRING,  // LOOK_IMAGE_str
+                                             G_TYPE_UINT);   // LOOK_VALUE_uint
 
     while (current)
     {
@@ -76,11 +76,11 @@ Filter::Filter (const gchar *name,
 
       gtk_list_store_append (_attr_filter_store, &iter);
       gtk_list_store_set (_attr_filter_store, &iter,
-                          ATTR_USER_NAME_str,   desc->_user_name,
-                          ATTR_XML_NAME_ptr,    desc->_code_name,
-                          ATTR_VISIBILITY_bool, FALSE,
-                          ATTR_LOOK_IMAGE_str,  gettext (look_images[desc->_favorite_look]),
-                          ATTR_LOOK_VALUE_uint, desc->_favorite_look,
+                          StoreAttrColumn::USER_NAME_str,   desc->_user_name,
+                          StoreAttrColumn::XML_NAME_ptr,    desc->_code_name,
+                          StoreAttrColumn::VISIBILITY_bool, FALSE,
+                          StoreAttrColumn::LOOK_IMAGE_str,  gettext (look_images[desc->_favorite_look]),
+                          StoreAttrColumn::LOOK_VALUE_uint, desc->_favorite_look,
                           -1);
       current = g_slist_next (current);
     }
@@ -194,8 +194,8 @@ void Filter::ShowAttribute (const gchar *name)
 
     gtk_tree_model_get (GTK_TREE_MODEL (_attr_filter_store),
                         &iter,
-                        ATTR_VISIBILITY_bool, &current_visibility,
-                        ATTR_XML_NAME_ptr,    &current_name,
+                        StoreAttrColumn::VISIBILITY_bool, &current_visibility,
+                        StoreAttrColumn::XML_NAME_ptr,    &current_name,
                         -1);
 
     if (current_visibility == TRUE)
@@ -213,7 +213,7 @@ void Filter::ShowAttribute (const gchar *name)
 
       gtk_list_store_set (GTK_LIST_STORE (_attr_filter_store),
                           &iter,
-                          ATTR_VISIBILITY_bool, TRUE, -1);
+                          StoreAttrColumn::VISIBILITY_bool, TRUE, -1);
       gtk_list_store_move_before (GTK_LIST_STORE (_attr_filter_store),
                                   &iter,
                                   sibling);
@@ -272,7 +272,7 @@ void Filter::ApplyList (gchar **list)
     {
       gtk_list_store_set (GTK_LIST_STORE (_attr_filter_store),
                           &iter,
-                          ATTR_VISIBILITY_bool, FALSE, -1);
+                          StoreAttrColumn::VISIBILITY_bool, FALSE, -1);
 
       iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_attr_filter_store),
                                                 &iter);
@@ -391,7 +391,7 @@ void Filter::SelectAttributes ()
                                                      -1,
                                                      gettext ("Visibility"),
                                                      renderer,
-                                                     "active", ATTR_VISIBILITY_bool,
+                                                     "active", StoreAttrColumn::VISIBILITY_bool,
                                                      NULL);
       }
 
@@ -403,7 +403,7 @@ void Filter::SelectAttributes ()
                                                      -1,
                                                      gettext ("Data"),
                                                      renderer,
-                                                     "text", ATTR_USER_NAME_str,
+                                                     "text", StoreAttrColumn::USER_NAME_str,
                                                      NULL);
       }
 
@@ -413,7 +413,7 @@ void Filter::SelectAttributes ()
 
         g_object_set (G_OBJECT (renderer),
                       "model",       _look_store,
-                      "text-column", LOOK_IMAGE_str,
+                      "text-column", StoreLookColumn::IMAGE_str,
                       "editable",    TRUE,
                       "has-entry",   FALSE,
                       NULL);
@@ -423,7 +423,7 @@ void Filter::SelectAttributes ()
                                                      -1,
                                                      gettext ("Look"),
                                                      renderer,
-                                                     "text", ATTR_LOOK_IMAGE_str,
+                                                     "text", StoreAttrColumn::LOOK_IMAGE_str,
                                                      NULL);
       }
 
@@ -462,9 +462,9 @@ void Filter::UpdateAttrList (gboolean save_it)
 
       gtk_tree_model_get (GTK_TREE_MODEL (_attr_filter_store),
                           &iter,
-                          ATTR_VISIBILITY_bool, &current_visibility,
-                          ATTR_XML_NAME_ptr,    &current_name,
-                          ATTR_LOOK_VALUE_uint, &curent_look,
+                          StoreAttrColumn::VISIBILITY_bool, &current_visibility,
+                          StoreAttrColumn::XML_NAME_ptr,    &current_name,
+                          StoreAttrColumn::LOOK_VALUE_uint, &curent_look,
                           -1);
 
       if (current_visibility == TRUE)
@@ -549,7 +549,7 @@ void Filter::OnVisibilityToggled (GtkCellRendererToggle *cell,
     }
     gtk_list_store_set (GTK_LIST_STORE (filter->_attr_filter_store),
                         &iter,
-                        ATTR_VISIBILITY_bool, visibility,
+                        StoreAttrColumn::VISIBILITY_bool, visibility,
                         -1);
   }
 
@@ -567,8 +567,8 @@ void Filter::OnLookChanged (GtkCellRendererCombo *combo,
 
   gtk_tree_model_get (GTK_TREE_MODEL (filter->_look_store),
                       new_iter,
-                      LOOK_IMAGE_str,  &look_image,
-                      LOOK_VALUE_uint, &look_value,
+                      StoreLookColumn::IMAGE_str,  &look_image,
+                      StoreLookColumn::VALUE_uint, &look_value,
                       -1);
 
   {
@@ -582,8 +582,8 @@ void Filter::OnLookChanged (GtkCellRendererCombo *combo,
 
     gtk_list_store_set (GTK_LIST_STORE (filter->_attr_filter_store),
                         &iter,
-                        ATTR_LOOK_IMAGE_str,  look_image,
-                        ATTR_LOOK_VALUE_uint, look_value, -1);
+                        StoreAttrColumn::LOOK_IMAGE_str,  look_image,
+                        StoreAttrColumn::LOOK_VALUE_uint, look_value, -1);
   }
 
   g_free (look_image);

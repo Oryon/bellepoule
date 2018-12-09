@@ -78,8 +78,8 @@ namespace Pool
 
       ~PillowDialog () override;
 
-      void OnFormEvent (Player                  *player,
-                        People::Form::FormEvent  event) override;
+      void OnFormEvent (Player              *player,
+                        People::Form::Event  event) override;
 
       static void OnAttendingChanged (Player    *player,
                                       Attribute *attr,

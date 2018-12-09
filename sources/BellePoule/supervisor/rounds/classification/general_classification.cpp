@@ -452,7 +452,7 @@ namespace People
   guint GeneralClassification::PreparePrint (GtkPrintOperation *operation,
                                              GtkPrintContext   *context)
   {
-    if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+    if (GetStageView (operation) == StageView::CLASSIFICATION)
     {
       return 0;
     }

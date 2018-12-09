@@ -164,7 +164,7 @@ namespace People
       {
         AttributeDesc *attr_desc = (AttributeDesc *) current->data;
 
-        if (attr_desc->_rights == AttributeDesc::PUBLIC)
+        if (attr_desc->_rights == AttributeDesc::Rights::PUBLIC)
         {
           {
             GtkWidget *w = gtk_label_new (attr_desc->_user_name);
@@ -199,7 +199,7 @@ namespace People
                     completion = gtk_entry_completion_new ();
 
                     g_object_set (G_OBJECT (value_w),
-                                  "entry-text-column", AttributeDesc::DISCRETE_LONG_TEXT_str,
+                                  "entry-text-column", AttributeDesc::DiscreteColumnId::LONG_TEXT_str,
                                   NULL);
                   }
                   else
@@ -212,7 +212,7 @@ namespace People
 
                     gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), text_renderer, TRUE);
                     gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (value_w), text_renderer,
-                                                    "text", AttributeDesc::DISCRETE_LONG_TEXT_str, NULL);
+                                                    "text", AttributeDesc::DiscreteColumnId::LONG_TEXT_str, NULL);
                   }
 
                   {
@@ -221,7 +221,7 @@ namespace People
                     gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), pixbuf_renderer, FALSE);
                     gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (value_w),
                                                     pixbuf_renderer,
-                                                    "pixbuf", AttributeDesc::DISCRETE_ICON_pix,
+                                                    "pixbuf", AttributeDesc::DiscreteColumnId::ICON_pix,
                                                     NULL);
                   }
 
@@ -243,7 +243,7 @@ namespace People
                     gtk_entry_completion_set_model (completion,
                                                     model);
                     gtk_entry_completion_set_text_column (completion,
-                                                          AttributeDesc::DISCRETE_LONG_TEXT_str);
+                                                          (gint) AttributeDesc::DiscreteColumnId::LONG_TEXT_str);
                     gtk_entry_completion_set_inline_completion (completion,
                                                                 TRUE);
                     g_object_set (G_OBJECT (completion),
@@ -335,7 +335,7 @@ namespace People
         gchar *current_value;
 
         gtk_tree_model_get (model, &iter,
-                            AttributeDesc::DISCRETE_LONG_TEXT_str, &current_value,
+                            AttributeDesc::DiscreteColumnId::LONG_TEXT_str, &current_value,
                             -1);
 
         if (current_value)
@@ -369,7 +369,7 @@ namespace People
     gchar *value;
 
     gtk_tree_model_get (model, iter,
-                        AttributeDesc::DISCRETE_LONG_TEXT_str, &value,
+                        AttributeDesc::DiscreteColumnId::LONG_TEXT_str, &value,
                         -1);
     SetSelectorValue (combobox,
                       value);
@@ -415,13 +415,13 @@ namespace People
       if (_player_to_update)
       {
         listener->OnFormEvent (player,
-                               UPDATE_PLAYER);
+                               Event::UPDATE_PLAYER);
         OnCloseButtonClicked ();
       }
       else
       {
         listener->OnFormEvent (player,
-                               NEW_PLAYER);
+                               Event::NEW_PLAYER);
         if (_close_on_add)
         {
           OnCloseButtonClicked ();
@@ -472,7 +472,7 @@ namespace People
                                      gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)));
         }
 
-        if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
+        if (attr_desc->_uniqueness == AttributeDesc::Uniqueness::SINGULAR)
         {
           gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
                                         FALSE);
@@ -492,7 +492,7 @@ namespace People
               {
                 gchar *value     = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
                 g_strstrip (value);
-                if (value[0] || (attr_desc->_uniqueness == AttributeDesc::SINGULAR))
+                if (value[0] || (attr_desc->_uniqueness == AttributeDesc::Uniqueness::SINGULAR))
                 {
                   gchar *xml_image = attr_desc->GetDiscreteXmlImage (value);
 
@@ -507,7 +507,7 @@ namespace People
                 g_free (value);
               }
 
-              if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
+              if (attr_desc->_uniqueness == AttributeDesc::Uniqueness::SINGULAR)
               {
                 gtk_entry_set_text (GTK_ENTRY (w), "");
               }
@@ -535,7 +535,7 @@ namespace People
             gchar *value = g_strdup (gtk_entry_get_text (GTK_ENTRY (w)));
 
             g_strstrip (value);
-            if (value[0] || (attr_desc->_uniqueness == AttributeDesc::SINGULAR))
+            if (value[0] || (attr_desc->_uniqueness == AttributeDesc::Uniqueness::SINGULAR))
             {
               player->SetAttributeValue (attr_id,
                                          value);
@@ -547,7 +547,7 @@ namespace People
             g_free (value);
           }
 
-          if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
+          if (attr_desc->_uniqueness == AttributeDesc::Uniqueness::SINGULAR)
           {
             gtk_entry_set_text (GTK_ENTRY (w), "");
           }
@@ -686,7 +686,7 @@ namespace People
         attr      = player->GetAttribute (attr_id);
 
         if (   (attr == nullptr)
-            && (attr_desc->_uniqueness == AttributeDesc::NOT_SINGULAR))
+            && (attr_desc->_uniqueness == AttributeDesc::Uniqueness::NOT_SINGULAR))
         {
           GtkEntry *entry = nullptr;
 

@@ -453,28 +453,28 @@ gdouble Canvas::GetDeltaAlign (gdouble   item_1,
   gdouble delta       = 0.0;
   gdouble with_anchor = with_1;
 
-  if (with_alignment == START)
+  if (with_alignment == Alignment::START)
   {
     with_anchor = with_1;
   }
-  else if (with_alignment == MIDDLE)
+  else if (with_alignment == Alignment::MIDDLE)
   {
     with_anchor = (with_2 - with_1)/2;
   }
-  else if (with_alignment == END)
+  else if (with_alignment == Alignment::END)
   {
     with_anchor = with_2;
   }
 
-  if (item_alignment == START)
+  if (item_alignment == Alignment::START)
   {
     delta = with_anchor - item_1;
   }
-  else if (item_alignment == MIDDLE)
+  else if (item_alignment == Alignment::MIDDLE)
   {
     delta = with_anchor - (item_2 - item_1)/2;
   }
-  else if (item_alignment == END)
+  else if (item_alignment == Alignment::END)
   {
     delta = with_anchor - item_2;
   }

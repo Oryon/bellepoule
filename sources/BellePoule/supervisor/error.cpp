@@ -64,7 +64,7 @@ gchar *Error::GetText ()
 // --------------------------------------------------------------------------------
 const gchar *Error::GetColor ()
 {
-  if (_level == Error::LEVEL_WARNING)
+  if (_level == Level::WARNING)
   {
     return "#e3d42b";
   }

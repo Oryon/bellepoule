@@ -164,12 +164,12 @@ namespace Pool
       StatusListener  *_status_listener;
 
     private:
-      typedef enum
+      enum class CombinedOperation
       {
         NONE,
         AVERAGE,
         SUM
-      } CombinedOperation;
+      };
 
       static gint _ComparePlayer (Player *A,
                                   Player *B,

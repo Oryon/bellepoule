@@ -79,7 +79,7 @@ namespace Net
       void DisplayAuthorizationPage ();
 
     private:
-      enum State
+      enum class State
       {
         WARMUP,
         OFF,

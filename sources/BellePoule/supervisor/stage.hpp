@@ -47,14 +47,14 @@ class Stage : public virtual Object,
       virtual void OnStageStatusChanged (Stage *stage) = 0;
     };
 
-    typedef enum
+    enum class StageView
     {
-      STAGE_VIEW_UNDEFINED,
-      STAGE_VIEW_RESULT,
-      STAGE_VIEW_CLASSIFICATION,
+      UNDEFINED,
+      RESULT,
+      CLASSIFICATION,
 
       N_STAGE_VIEW
-    } StageView;
+    };
 
     typedef enum
     {

@@ -33,7 +33,7 @@ namespace Oauth
     : Object ("Oauth::Request")
   {
     _session        = session;
-    _status         = READY;
+    _status         = Status::READY;
     _http_method    = http_method;
     _url            = g_strdup_printf ("%s/%s", session->GetApiUri (), signature);
     _header_list    = nullptr;
@@ -77,7 +77,7 @@ namespace Oauth
   // --------------------------------------------------------------------------------
   void Request::ForgiveError ()
   {
-    _status = ACCEPTED;
+    _status = Status::ACCEPTED;
   }
 
   // --------------------------------------------------------------------------------
@@ -270,17 +270,17 @@ namespace Oauth
 
     if (body == nullptr)
     {
-      _status = NETWORK_ERROR;
+      _status = Status::NETWORK_ERROR;
     }
     else if (g_strstr_len (body,
                            -1,
                            "error"))
     {
-      _status = REJECTED;
+      _status = Status::REJECTED;
     }
     else
     {
-      _status = ACCEPTED;
+      _status = Status::ACCEPTED;
     }
   }
 }

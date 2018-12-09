@@ -36,13 +36,13 @@ AttributeDesc::AttributeDesc (GType        type,
   _code_name          = g_strdup (code_name);
   _xml_name           = g_strdup (xml_name);
   _user_name          = g_strdup (user_name);
-  _uniqueness         = SINGULAR;
+  _uniqueness         = Uniqueness::SINGULAR;
   _favorite_look      = LONG_TEXT;
   _short_length       = 3;
-  _persistency        = PERSISTENT;
-  _scope              = GLOBAL;
+  _persistency        = Persistency::PERSISTENT;
+  _scope              = Scope::GLOBAL;
   _free_value_allowed = TRUE;
-  _rights             = PUBLIC;
+  _rights             = Rights::PUBLIC;
   _discrete_model     = nullptr;
   _compare_func       = nullptr;
   _has_selector       = FALSE;
@@ -157,7 +157,7 @@ gboolean AttributeDesc::DiscreteFilterForCombobox (GtkTreeModel *model,
       GtkTreeModel *selector_model = gtk_combo_box_get_model (selector);
 
       gtk_tree_model_get (selector_model, &selector_iter,
-                          DISCRETE_XML_IMAGE_str, &selector_country, -1);
+                          DiscreteColumnId::XML_IMAGE_str, &selector_country, -1);
     }
   }
 
@@ -166,7 +166,7 @@ gboolean AttributeDesc::DiscreteFilterForCombobox (GtkTreeModel *model,
     gchar *country;
 
     gtk_tree_model_get (model, iter,
-                        DISCRETE_SELECTOR_str, &country,
+                        DiscreteColumnId::SELECTOR_str, &country,
                         -1);
 
     if (country)
@@ -230,10 +230,10 @@ gint AttributeDesc::CompareTextColumn (GtkTreeModel *model,
   gchar    *b_image;
 
   gtk_tree_model_get (model, a,
-                      DISCRETE_XML_IMAGE_str, (void *) &a_image,
+                      DiscreteColumnId::XML_IMAGE_str, (void *) &a_image,
                       -1);
   gtk_tree_model_get (model, b,
-                      DISCRETE_XML_IMAGE_str, (void *) &b_image,
+                      DiscreteColumnId::XML_IMAGE_str, (void *) &b_image,
                       -1);
   result = g_strcmp0 (a_image, b_image);
 
@@ -247,13 +247,13 @@ gint AttributeDesc::CompareTextColumn (GtkTreeModel *model,
 void AttributeDesc::EnableSorting ()
 {
   gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_discrete_model),
-                                   DISCRETE_LONG_TEXT_str,
+                                   (gint) DiscreteColumnId::LONG_TEXT_str,
                                    (GtkTreeIterCompareFunc) CompareTextColumn,
                                    nullptr,
                                    nullptr);
 
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_discrete_model),
-                                        DISCRETE_LONG_TEXT_str,
+                                        (gint) DiscreteColumnId::LONG_TEXT_str,
                                         GTK_SORT_ASCENDING);
 }
 
@@ -347,7 +347,7 @@ gchar *AttributeDesc::GetDiscreteXmlImage (const gchar *from_user_image)
       gchar *xml_image;
 
       gtk_tree_model_get (_discrete_model, &iter,
-                          DISCRETE_XML_IMAGE_str, (void *) &xml_image,
+                          DiscreteColumnId::XML_IMAGE_str, (void *) &xml_image,
                           -1);
       return xml_image;
     }
@@ -360,7 +360,7 @@ gchar *AttributeDesc::GetDiscreteXmlImage (const gchar *from_user_image)
 gchar *AttributeDesc::GetDiscreteUserImage (guint from_code)
 {
   return (gchar *) GetDiscreteData (from_code,
-                                    DISCRETE_LONG_TEXT_str);
+                                    DiscreteColumnId::LONG_TEXT_str);
 }
 
 // --------------------------------------------------------------------------------
@@ -384,20 +384,20 @@ GtkTreeIter *AttributeDesc::GetDiscreteIter (const gchar *from_user_image)
 GdkPixbuf *AttributeDesc::GetDiscretePixbuf (guint from_code)
 {
   return (GdkPixbuf *) GetDiscreteData (from_code,
-                                        DISCRETE_ICON_pix);
+                                        DiscreteColumnId::ICON_pix);
 }
 
 // --------------------------------------------------------------------------------
 GdkPixbuf *AttributeDesc::GetDiscretePixbuf (const gchar *from_value)
 {
   return (GdkPixbuf *) GetDiscreteData (from_value,
-                                        DISCRETE_SHORT_TEXT_str,
-                                        DISCRETE_ICON_pix);
+                                        DiscreteColumnId::SHORT_TEXT_str,
+                                        DiscreteColumnId::ICON_pix);
 }
 
 // --------------------------------------------------------------------------------
-void *AttributeDesc::GetDiscreteData (guint from_code,
-                                      guint column)
+void *AttributeDesc::GetDiscreteData (guint            from_code,
+                                      DiscreteColumnId column)
 {
   if (_discrete_model)
   {
@@ -419,26 +419,26 @@ void *AttributeDesc::GetDiscreteData (guint from_code,
 }
 
 // --------------------------------------------------------------------------------
-void *AttributeDesc::GetDiscreteData (const gchar *from_user_image,
-                                      guint        image_type,
-                                      guint        column)
+void *AttributeDesc::GetDiscreteData (const gchar      *from_user_image,
+                                      DiscreteColumnId  image_type,
+                                      DiscreteColumnId  column)
 {
   if (_discrete_model)
   {
     GtkTreeIter iter;
     gboolean    iter_is_valid = FALSE;
 
-    if (image_type == DISCRETE_SHORT_TEXT_str)
+    if (image_type == DiscreteColumnId::SHORT_TEXT_str)
     {
       iter_is_valid = _discrete_short_text_index->GetIterFromKey (from_user_image,
                                                                   &iter);
     }
-    else if (image_type == DISCRETE_LONG_TEXT_str)
+    else if (image_type == DiscreteColumnId::LONG_TEXT_str)
     {
       iter_is_valid = _discrete_long_text_index->GetIterFromKey (from_user_image,
                                                                  &iter);
     }
-    else if (image_type == DISCRETE_XML_IMAGE_str)
+    else if (image_type == DiscreteColumnId::XML_IMAGE_str)
     {
       iter_is_valid = _discrete_xml_index->GetIterFromKey (from_user_image,
                                                            &iter);
@@ -471,7 +471,7 @@ gchar *AttributeDesc::GetXmlImage (gchar *user_image)
       gchar *current_xml_image;
 
       gtk_tree_model_get (_discrete_model, &iter,
-                          DISCRETE_XML_IMAGE_str, &current_xml_image,
+                          DiscreteColumnId::XML_IMAGE_str, &current_xml_image,
                           -1);
       return current_xml_image;
     }
@@ -484,15 +484,15 @@ gchar *AttributeDesc::GetXmlImage (gchar *user_image)
 gchar *AttributeDesc::GetUserImage (GtkTreeIter *iter,
                                     Look         look)
 {
-  gint column;
+  DiscreteColumnId column;
 
   if (look == SHORT_TEXT)
   {
-    column = DISCRETE_SHORT_TEXT_str;
+    column = DiscreteColumnId::SHORT_TEXT_str;
   }
   else if (look == LONG_TEXT)
   {
-    column = DISCRETE_LONG_TEXT_str;
+    column = DiscreteColumnId::LONG_TEXT_str;
   }
   else
   {
@@ -523,7 +523,7 @@ gchar *AttributeDesc::GetXmlImage (GtkTreeIter *iter)
     gchar *image;
 
     gtk_tree_model_get (_discrete_model, iter,
-                        DISCRETE_XML_IMAGE_str, &image, -1);
+                        DiscreteColumnId::XML_IMAGE_str, &image, -1);
     if (image)
     {
       return image;
@@ -546,16 +546,16 @@ gchar *AttributeDesc::GetUserImage (gchar *xml_image,
       if (_discrete_xml_index->GetIterFromKey (xml_image,
                                                &iter))
       {
-        gint   column;
-        gchar *current_user_image;
+        DiscreteColumnId  column;
+        gchar            *current_user_image;
 
         if (look == SHORT_TEXT)
         {
-          column = DISCRETE_SHORT_TEXT_str;
+          column = DiscreteColumnId::SHORT_TEXT_str;
         }
         else if (look == LONG_TEXT)
         {
-          column = DISCRETE_LONG_TEXT_str;
+          column = DiscreteColumnId::LONG_TEXT_str;
         }
         else
         {
@@ -602,10 +602,10 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
         gchar *undivadable_image = GetUndivadableText (user_image);
 
         gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                            DISCRETE_CODE_uint,      xml_image[0],
-                            DISCRETE_XML_IMAGE_str,  xml_image,
-                            DISCRETE_LONG_TEXT_str,  undivadable_image,
-                            DISCRETE_SHORT_TEXT_str, xml_image, -1);
+                            DiscreteColumnId::CODE_uint,      xml_image[0],
+                            DiscreteColumnId::XML_IMAGE_str,  xml_image,
+                            DiscreteColumnId::LONG_TEXT_str,  undivadable_image,
+                            DiscreteColumnId::SHORT_TEXT_str, xml_image, -1);
 
         _discrete_code_index->SetIterToKey (&iter,
                                             (const void *) xml_image[0]);
@@ -641,7 +641,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
         }
 
         gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                            DISCRETE_ICON_pix, pixbuf, -1);
+                            DiscreteColumnId::ICON_pix, pixbuf, -1);
         if (pixbuf)
         {
           g_object_unref (pixbuf);
@@ -663,7 +663,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
 // --------------------------------------------------------------------------------
 void AttributeDesc::CreateDiscreteModel ()
 {
-  _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (NB_DISCRETE_COLUMNS,
+  _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new ((gint) DiscreteColumnId::NB_DISCRETE_COLUMNS,
                                                         G_TYPE_UINT,     // DISCRETE_CODE_uint
                                                         G_TYPE_STRING,   // DISCRETE_XML_IMAGE_str
                                                         G_TYPE_STRING,   // DISCRETE_LONG_TEXT_str
@@ -780,7 +780,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
           // Selector
           {
             gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                                DISCRETE_SELECTOR_str, selector,
+                                DiscreteColumnId::SELECTOR_str, selector,
                                 -1);
           }
 
@@ -791,7 +791,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
             {
               undivadable_text = GetUndivadableText (tokens[i]);
               gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                                  DISCRETE_XML_IMAGE_str, undivadable_text,
+                                  DiscreteColumnId::XML_IMAGE_str, undivadable_text,
                                   -1);
               _discrete_xml_index->SetIterToKey (&iter,
                                                  undivadable_text);
@@ -807,7 +807,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
                   GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (pixbuf_file_png, nullptr);
 
                   gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                                      DISCRETE_ICON_pix, pixbuf, -1);
+                                      DiscreteColumnId::ICON_pix, pixbuf, -1);
                 }
                 g_free (pixbuf_file_png);
                 g_free (pixbuf_file);
@@ -823,7 +823,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
                 undivadable_text = GetUndivadableText (tokens[i+1]);
               }
               gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                                  DISCRETE_SHORT_TEXT_str, undivadable_text,
+                                  DiscreteColumnId::SHORT_TEXT_str, undivadable_text,
                                   -1);
               _discrete_short_text_index->SetIterToKey (&iter,
                                                         undivadable_text);
@@ -839,7 +839,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
               }
 
               gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                                  DISCRETE_LONG_TEXT_str, undivadable_text,
+                                  DiscreteColumnId::LONG_TEXT_str, undivadable_text,
                                   -1);
               _discrete_long_text_index->SetIterToKey (&iter,
                                                        undivadable_text);
@@ -860,7 +860,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
               for (guint s = 0; subtokens[s] != nullptr; s++)
               {
                 gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                                    DISCRETE_CODE_uint, atoi (subtokens[s]),
+                                    DiscreteColumnId::CODE_uint, atoi (subtokens[s]),
                                     -1);
                 _discrete_code_index->SetIterToKey (&iter,
                                                     GUINT_TO_POINTER (atoi (subtokens[s])));

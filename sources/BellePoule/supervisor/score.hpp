@@ -57,7 +57,7 @@ class Score : public Object
     gboolean IsConsistentWith (Score *with);
 
   private:
-    typedef enum
+    enum class Status
     {
       UNKNOWN,
       VICTORY,
@@ -65,7 +65,7 @@ class Score : public Object
       WITHDRAWAL,
       BLACK_CARD,
       OPPONENT_OUT
-    } Status;
+    };
 
     Data   *_max;
     guint   _score;

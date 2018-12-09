@@ -21,15 +21,15 @@
 
 #include "publication.hpp"
 
-typedef enum
+enum class FTPColumn
 {
-  FTP_NAME_str,
-  FTP_PIXBUF_pix,
-  FTP_FTP_str,
-  FTP_USER_str,
-  FTP_PASSWD_str,
-  FTP_WWW_str
-} FTPColumn;
+  NAME_str,
+  PIXBUF_pix,
+  FTP_str,
+  USER_str,
+  PASSWD_str,
+  WWW_str
+};
 
 // --------------------------------------------------------------------------------
 Publication::Publication (Glade *glade)
@@ -51,12 +51,12 @@ Publication::Publication (Glade *glade)
     g_free (path);
     gtk_list_store_append (model, &iter);
     gtk_list_store_set (model, &iter,
-                        FTP_NAME_str,   "<b><big>Escrime Info  </big></b>",
-                        FTP_PIXBUF_pix, pixbuf,
-                        FTP_FTP_str,    "escrime-info.com",
-                        FTP_USER_str,   "GREG",
-                        FTP_PASSWD_str, "cul qui gratte au couché doigt qui sent au levé",
-                        FTP_WWW_str,    "http://www.escrime-info.com",
+                        FTPColumn::NAME_str,   "<b><big>Escrime Info  </big></b>",
+                        FTPColumn::PIXBUF_pix, pixbuf,
+                        FTPColumn::FTP_str,    "escrime-info.com",
+                        FTPColumn::USER_str,   "GREG",
+                        FTPColumn::PASSWD_str, "cul qui gratte au couché doigt qui sent au levé",
+                        FTPColumn::WWW_str,    "http://www.escrime-info.com",
                         -1);
     g_object_unref (pixbuf);
   }
@@ -107,10 +107,10 @@ void Publication::OnRemoteHostChanged (GtkEditable *widget,
 
     gtk_tree_model_get (gtk_combo_box_get_model (combo),
                         &iter,
-                        FTP_FTP_str,    &ftp,
-                        FTP_USER_str,   &user,
-                        FTP_PASSWD_str, &passwd,
-                        FTP_WWW_str,    &www,
+                        FTPColumn::FTP_str,    &ftp,
+                        FTPColumn::USER_str,   &user,
+                        FTPColumn::PASSWD_str, &passwd,
+                        FTPColumn::WWW_str,    &www,
                         -1);
 
     gtk_entry_set_text (GTK_ENTRY (publication->_glade->GetWidget ("user_entry")),

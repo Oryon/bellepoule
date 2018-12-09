@@ -103,7 +103,7 @@ void Player::UpdateFrom (Player *from)
     AttributeDesc *desc;
 
     desc = (AttributeDesc *) current_desc->data;
-    if (desc->_scope == AttributeDesc::GLOBAL)
+    if (desc->_scope == AttributeDesc::Scope::GLOBAL)
     {
       AttributeId  attr_id (desc->_code_name);
       Attribute   *attr = from->GetAttribute (&attr_id);
@@ -131,7 +131,7 @@ Player::AttributeId *Player::AttributeId::Create (AttributeDesc *desc,
   {
     return nullptr;
   }
-  else if (desc->_scope == AttributeDesc::GLOBAL)
+  else if (desc->_scope == AttributeDesc::Scope::GLOBAL)
   {
     return new Player::AttributeId (desc->_code_name);
   }
@@ -509,9 +509,9 @@ void Player::SaveAttributes (XmlScheme *xml_scheme,
   {
     AttributeDesc *desc = (AttributeDesc *) current->data;
 
-    if (   (desc->_scope == AttributeDesc::GLOBAL)
+    if (   (desc->_scope == AttributeDesc::Scope::GLOBAL)
         && (   full_profile
-            || (desc->_persistency == AttributeDesc::PERSISTENT)))
+            || (desc->_persistency == AttributeDesc::Persistency::PERSISTENT)))
     {
       gboolean saving_allowed = TRUE;
 
@@ -793,7 +793,7 @@ void Player::OnUploadStatus (Net::MessageUploader::PeerStatus peer_status)
 {
   Player::AttributeId connection_attr_id ("connection");
 
-  if (peer_status == Net::MessageUploader::CONN_ERROR)
+  if (peer_status == Net::MessageUploader::PeerStatus::CONN_ERROR)
   {
     SetAttributeValue (&connection_attr_id,
                        "Broken");

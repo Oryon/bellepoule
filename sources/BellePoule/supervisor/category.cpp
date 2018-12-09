@@ -76,12 +76,10 @@ const gchar *Category::_xml_alias[_nb_category] =
   "V34"
 };
 
-typedef enum
+enum class ComboCategoryColumnId
 {
-  COMBO_CATEGORY_DISPLAY_NAME_str,
-
-  NB_COMBO_CATEGORY_COLUMNS
-} ComboCategoryColumnId;
+  DISPLAY_NAME_str
+};
 
 // --------------------------------------------------------------------------------
 Category::Category (GtkWidget *combo_box)
@@ -102,7 +100,7 @@ Category::Category (GtkWidget *combo_box)
       gtk_list_store_append (GTK_LIST_STORE (model),
                              &iter);
       gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-                          COMBO_CATEGORY_DISPLAY_NAME_str, gettext (_display_image[i]),
+                          ComboCategoryColumnId::DISPLAY_NAME_str, gettext (_display_image[i]),
                           -1);
     }
   }

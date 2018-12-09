@@ -269,7 +269,7 @@ void Tournament::OnShowAccessCode (gboolean with_steps)
 // --------------------------------------------------------------------------------
 void Tournament::OnHanshakeResult (Net::Ring::HandshakeResult result)
 {
-  if (result == Net::Ring::AUTHENTICATION_FAILED)
+  if (result == Net::Ring::HandshakeResult::AUTHENTICATION_FAILED)
   {
     OnShowAccessCode (TRUE);
   }

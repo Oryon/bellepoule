@@ -103,8 +103,8 @@ namespace People
                                const gchar *player_class,
                                Player      *player);
 
-      void OnFormEvent (Player          *player,
-                                Form::FormEvent  event) override;
+      void OnFormEvent (Player      *player,
+                        Form::Event  event) override;
 
       void SelectTreeMode () override;
 

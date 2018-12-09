@@ -690,7 +690,7 @@ namespace People
     {
       renderer = gtk_cell_renderer_toggle_new ();
 
-      if (   (desc->_rights == AttributeDesc::PUBLIC)
+      if (   (desc->_rights == AttributeDesc::Rights::PUBLIC)
           && ((_rights & MODIFIABLE) || attr_modifiable))
       {
         g_object_set (renderer,
@@ -1106,7 +1106,7 @@ namespace People
                      &canvas_h);
 
       {
-        gdouble free_area = GetPrintBodySize (context, NORMALIZED);
+        gdouble free_area = GetPrintBodySize (context, SizeReferential::NORMALIZED);
 
         _nb_player_per_page = guint (players_count * free_area/_print_scale / canvas_h) - 1;
       }
@@ -1823,7 +1823,7 @@ namespace People
               Player::AttributeId *attr_id;
               Attribute           *attr;
 
-              if (attr_desc->_scope == AttributeDesc::GLOBAL)
+              if (attr_desc->_scope == AttributeDesc::Scope::GLOBAL)
               {
                 attr_id = new Player::AttributeId  (attr_desc->_code_name);
               }

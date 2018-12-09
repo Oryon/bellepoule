@@ -41,19 +41,13 @@ namespace Table
   const gchar *Supervisor::_class_name     = N_("Table");
   const gchar *Supervisor::_xml_class_name = "PhaseDeTableaux";
 
-  typedef enum
+  enum class DisplayColumnId
   {
-    FROM_NAME_COLUMN,
-    FROM_STATUS_COLUMN
-  } FromColumnId;
-
-  typedef enum
-  {
-    TABLE_SET_NAME_COLUMN_str,
-    TABLE_SET_TABLE_COLUMN_ptr,
-    TABLE_SET_STATUS_COLUMN_str,
-    TABLE_SET_VISIBILITY_COLUMN_bool
-  } DisplayColumnId;
+    TABLE_SET_NAME_str,
+    TABLE_SET_TABLE_ptr,
+    TABLE_SET_STATUS_str,
+    TABLE_SET_VISIBILITY_bool
+  };
 
   // --------------------------------------------------------------------------------
   Supervisor::Supervisor (StageClass *stage_class)
@@ -169,7 +163,7 @@ namespace Table
     _table_set_filter    = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("table_set_treemodelfilter"));
 
     gtk_tree_model_filter_set_visible_column (_table_set_filter,
-                                              TABLE_SET_VISIBILITY_COLUMN_bool);
+                                              (gint) DisplayColumnId::TABLE_SET_VISIBILITY_bool);
   }
 
   // --------------------------------------------------------------------------------
@@ -270,7 +264,7 @@ namespace Table
     TableSet *table_set;
 
     gtk_tree_model_get (model, iter,
-                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                         -1);
     if (table_set->GetFirstPlace () == 1)
     {
@@ -294,7 +288,7 @@ namespace Table
     TableSet *table_set;
 
     gtk_tree_model_get (model, iter,
-                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                         -1);
 
     return table_set->OnMessage (message);
@@ -340,7 +334,7 @@ namespace Table
           gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
                                          &iter);
           gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                              TABLE_SET_TABLE_COLUMN_ptr, &first_table_set,
+                              DisplayColumnId::TABLE_SET_TABLE_ptr, &first_table_set,
                               -1);
 
           if (first_table_set)
@@ -391,7 +385,7 @@ namespace Table
                                  GtkTreeIter *iter)
   {
     gtk_tree_store_set (_table_set_treestore, iter,
-                        TABLE_SET_VISIBILITY_COLUMN_bool, TRUE,
+                        DisplayColumnId::TABLE_SET_VISIBILITY_bool, TRUE,
                         -1);
   }
 
@@ -400,7 +394,7 @@ namespace Table
                                  GtkTreeIter *iter)
   {
     gtk_tree_store_set (_table_set_treestore, iter,
-                        TABLE_SET_VISIBILITY_COLUMN_bool, FALSE,
+                        DisplayColumnId::TABLE_SET_VISIBILITY_bool, FALSE,
                         -1);
 
     if (_displayed_table_set && (_displayed_table_set == table_set))
@@ -443,7 +437,7 @@ namespace Table
     TableSet *table_set;
 
     gtk_tree_model_get (model, iter,
-                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                         -1);
 
     if (ts->TableSetIsFenced (table_set))
@@ -479,7 +473,7 @@ namespace Table
     TableSet *table_set;
 
     gtk_tree_model_get (model, iter,
-                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                         -1);
 
     table_set->Recall ();
@@ -499,7 +493,7 @@ namespace Table
                                  path))
     {
       gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                          TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                          DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                           -1);
     }
 
@@ -517,7 +511,7 @@ namespace Table
     TableSet *table_set;
 
     gtk_tree_model_get (model, iter,
-                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                         -1);
     if (table_set)
     {
@@ -722,7 +716,7 @@ namespace Table
     TableSet *table_set;
 
     gtk_tree_model_get (model, iter,
-                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                         -1);
     table_set->Save (xml_scheme);
 
@@ -763,9 +757,9 @@ namespace Table
       table_set->SetListener (this);
 
       gtk_tree_store_set (_table_set_treestore, &iter,
-                          TABLE_SET_NAME_COLUMN_str,        table_set->GetName (),
-                          TABLE_SET_TABLE_COLUMN_ptr,       table_set,
-                          TABLE_SET_VISIBILITY_COLUMN_bool, 0,
+                          DisplayColumnId::TABLE_SET_NAME_str,        table_set->GetName (),
+                          DisplayColumnId::TABLE_SET_TABLE_ptr,       table_set,
+                          DisplayColumnId::TABLE_SET_VISIBILITY_bool, 0,
                           -1);
     }
 
@@ -804,25 +798,25 @@ namespace Table
     if (table_set->IsOver ())
     {
       gtk_tree_store_set (_table_set_treestore, &iter,
-                          TABLE_SET_STATUS_COLUMN_str, GTK_STOCK_APPLY,
+                          DisplayColumnId::TABLE_SET_STATUS_str, GTK_STOCK_APPLY,
                           -1);
     }
     else if (table_set->HasError ())
     {
       gtk_tree_store_set (_table_set_treestore, &iter,
-                          TABLE_SET_STATUS_COLUMN_str, GTK_STOCK_DIALOG_WARNING,
+                          DisplayColumnId::TABLE_SET_STATUS_str, GTK_STOCK_DIALOG_WARNING,
                           -1);
     }
     else if (table_set->GetNbTables () > 0)
     {
       gtk_tree_store_set (_table_set_treestore, &iter,
-                          TABLE_SET_STATUS_COLUMN_str, GTK_STOCK_EXECUTE,
+                          DisplayColumnId::TABLE_SET_STATUS_str, GTK_STOCK_EXECUTE,
                           -1);
     }
     else
     {
       gtk_tree_store_set (_table_set_treestore, &iter,
-                          TABLE_SET_STATUS_COLUMN_str, NULL,
+                          DisplayColumnId::TABLE_SET_STATUS_str, NULL,
                           -1);
     }
 
@@ -877,7 +871,7 @@ namespace Table
       TableSet *defeated_table_set;
 
       gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &defeated_iter,
-                          TABLE_SET_TABLE_COLUMN_ptr, &defeated_table_set,
+                          DisplayColumnId::TABLE_SET_TABLE_ptr, &defeated_table_set,
                           -1);
 
       if (defeated_table_set)
@@ -966,7 +960,7 @@ namespace Table
     TableSet *table_set;
 
     gtk_tree_model_get (model, iter,
-                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                         -1);
 
     if (data)
@@ -1148,7 +1142,7 @@ namespace Table
     GSList   *current_result;
 
     gtk_tree_model_get (model, iter,
-                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                         -1);
     current_result = table_set->GetCurrentClassification ();
 
@@ -1203,7 +1197,7 @@ namespace Table
     gtk_tree_path_free (path);
 
     gtk_tree_model_get (GTK_TREE_MODEL (_table_set_filter), &iter,
-                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                        DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                         -1);
 
     if (_displayed_table_set != table_set)
@@ -1257,7 +1251,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   GList *Supervisor::GetBookSections (StageView view)
   {
-    if (view == STAGE_VIEW_RESULT)
+    if (view == StageView::RESULT)
     {
       if (_displayed_table_set)
       {
@@ -1273,7 +1267,7 @@ namespace Table
   guint Supervisor::PreparePrint (GtkPrintOperation *operation,
                                   GtkPrintContext   *context)
   {
-    if (   (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+    if (   (GetStageView (operation) == StageView::CLASSIFICATION)
         || gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
     {
       Classification *classification = GetClassification ();
@@ -1300,11 +1294,11 @@ namespace Table
   {
     gboolean print_classification = FALSE;
 
-    if (GetStageView (operation) == STAGE_VIEW_UNDEFINED)
+    if (GetStageView (operation) == StageView::UNDEFINED)
     {
       print_classification = gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton")));
     }
-    if (GetStageView (operation) == Stage::STAGE_VIEW_CLASSIFICATION)
+    if (GetStageView (operation) == StageView::CLASSIFICATION)
     {
       print_classification = TRUE;
     }

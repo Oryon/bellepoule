@@ -103,7 +103,7 @@ namespace Table
     Player::AttributeId *attr_id;
     Attribute           *attr;
 
-    if (desc->_scope == AttributeDesc::LOCAL)
+    if (desc->_scope == AttributeDesc::Scope::LOCAL)
     {
       attr_id = new Player::AttributeId (desc->_code_name,
                                          _owner);

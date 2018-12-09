@@ -832,7 +832,7 @@ namespace Table
     gchar *guilty_party = GetImage ();
     Error *error;
 
-    error = new Error (Error::LEVEL_WARNING,
+    error = new Error (Error::Level::WARNING,
                        guilty_party,
                        gettext ("Referees allocation \n ongoing"));
 

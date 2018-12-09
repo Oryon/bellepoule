@@ -34,11 +34,11 @@ namespace Pool
   const gchar *Supervisor::_class_name     = N_ ("Pools");
   const gchar *Supervisor::_xml_class_name = "TourDePoules";
 
-  typedef enum
+  enum class ColumnId
   {
-    NAME_COLUMN,
-    STATUS_COLUMN
-  } ColumnId;
+    NAME,
+    STATUS
+  };
 
   extern "C" G_MODULE_EXPORT void on_pool_combobox_changed (GtkWidget *widget,
                                                             Object    *owner);
@@ -361,7 +361,7 @@ namespace Pool
                            &iter);
 
     gtk_list_store_set (_pool_liststore, &iter,
-                        NAME_COLUMN, pool->GetName (),
+                        ColumnId::NAME, pool->GetName (),
                         -1);
 
     {
@@ -396,7 +396,7 @@ namespace Pool
       GdkPixbuf *pixbuf = pool->GetStatusPixbuf ();
 
       gtk_list_store_set (_pool_liststore, &iter,
-                          STATUS_COLUMN, pixbuf,
+                          ColumnId::STATUS, pixbuf,
                           -1);
       if (pixbuf)
       {
@@ -431,7 +431,7 @@ namespace Pool
 
       if (pool->HasError ())
       {
-        return new Error (Error::LEVEL_ERROR,
+        return new Error (Error::Level::MAJOR,
                           pool->GetName (),
                           gettext ("Bout without winner!"));
       }
@@ -547,7 +547,7 @@ namespace Pool
   guint Supervisor::PreparePrint (GtkPrintOperation *operation,
                                   GtkPrintContext   *context)
   {
-    if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+    if (GetStageView (operation) == StageView::CLASSIFICATION)
     {
       Classification *classification = GetClassification ();
 
@@ -564,7 +564,7 @@ namespace Pool
       _displayed_pool->Wipe ();
     }
 
-    if (GetStageView (operation) == STAGE_VIEW_RESULT)
+    if (GetStageView (operation) == StageView::RESULT)
     {
       _print_all_pool = TRUE;
     }
@@ -575,7 +575,7 @@ namespace Pool
     {
       GtkWidget *w = _glade->GetWidget ("for_referees_radiobutton");
 
-      if (   (GetStageView (operation) == STAGE_VIEW_UNDEFINED)
+      if (   (GetStageView (operation) == StageView::UNDEFINED)
           && gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
       {
         g_object_set_data (G_OBJECT (operation), "print_for_referees", (void *) TRUE);
@@ -608,7 +608,7 @@ namespace Pool
                        context,
                        page_nr);
 
-    if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+    if (GetStageView (operation) == StageView::CLASSIFICATION)
     {
       Classification *classification = GetClassification ();
 
@@ -619,7 +619,7 @@ namespace Pool
                                       page_nr);
       }
     }
-    else if (   (GetStageView (operation) == STAGE_VIEW_RESULT)
+    else if (   (GetStageView (operation) == StageView::RESULT)
              || (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE))
     {
       GList *pools = nullptr;
@@ -698,7 +698,7 @@ rendering:
           gdouble canvas_h;
           gdouble paper_w  = gtk_print_context_get_width (context);
           gdouble paper_h  = gtk_print_context_get_height (context);
-          gdouble header_h = GetPrintHeaderSize (context, NORMALIZED);
+          gdouble header_h = GetPrintHeaderSize (context, SizeReferential::NORMALIZED);
 
           {
             GooCanvasBounds bounds;

@@ -263,7 +263,7 @@ namespace Net
       Message *message = new Message ("Ring::Farewell");
 
       message->Set ("partner", _partner_id);
-      message->Set ("role",    _role);
+      message->Set ("role",    (guint) _role);
 
       _quit_countdown = 0;
       for (GList *current = _partner_list; current; current = _partner_list)
@@ -289,7 +289,7 @@ namespace Net
   {
     Message *message = new Message ("Ring::Announcement");
 
-    message->Set ("role",         _role);
+    message->Set ("role",         (guint) _role);
     message->Set ("ip_address",   _unicast_address);
     message->Set ("unicast_port", _unicast_port);
     message->Set ("partner",      _partner_id);
@@ -428,7 +428,7 @@ namespace Net
                 {
                   ring->Add (partner);
                   ring->SendHandshake (partner,
-                                       CHALLENGE_PASSED);
+                                       HandshakeResult::CHALLENGE_PASSED);
                 }
                 else
                 {
@@ -441,12 +441,12 @@ namespace Net
                                            ring->_credentials))
                   {
                     ring->SendHandshake (partner,
-                                         BACKUP_CHALLENGE_PASSED);
+                                         HandshakeResult::BACKUP_CHALLENGE_PASSED);
                   }
                   else
                   {
                     ring->SendHandshake (partner,
-                                         AUTHENTICATION_FAILED);
+                                         HandshakeResult::AUTHENTICATION_FAILED);
                   }
 
                   g_free (backup_challenge);
@@ -463,7 +463,7 @@ namespace Net
             else
             {
               ring->SendHandshake (partner,
-                                   ROLE_REJECTED);
+                                   HandshakeResult::ROLE_REJECTED);
             }
 
             partner->Release ();
@@ -515,7 +515,7 @@ namespace Net
     {
       UserConfig *partner_config;
 
-      if (_role == RESOURCE_USER)
+      if (_role == Role::RESOURCE_USER)
       {
         partner_config = new UserConfig ("BellePoule2D", TRUE);
       }
@@ -558,15 +558,15 @@ namespace Net
   {
     Message *message = new Message ("Ring::Handshake");
 
-    if ((result == CHALLENGE_PASSED) || (result == BACKUP_CHALLENGE_PASSED))
+    if ((result == HandshakeResult::CHALLENGE_PASSED) || (result == HandshakeResult::BACKUP_CHALLENGE_PASSED))
     {
-      message->Set ("role",         _role);
+      message->Set ("role",         (guint) _role);
       message->Set ("ip_address",   _unicast_address);
       message->Set ("unicast_port", _unicast_port);
       message->Set ("partner",      _partner_id);
     }
 
-    message->Set ("response", result);
+    message->Set ("response", (guint) result);
 
     message->SetFitness (1);
     partner->SendMessage (message);
@@ -576,9 +576,9 @@ namespace Net
   // -------------------------------------------------------------------------------
   gboolean Ring::RoleIsAcceptable (Role partner_role)
   {
-    if (partner_role == RESOURCE_MANAGER)
+    if (partner_role == Role::RESOURCE_MANAGER)
     {
-      if (_role == RESOURCE_MANAGER)
+      if (_role == Role::RESOURCE_MANAGER)
       {
         return FALSE;
       }
@@ -587,7 +587,7 @@ namespace Net
       {
         Partner *p = (Partner *) current->data;
 
-        if (p->HasRole (RESOURCE_MANAGER))
+        if (p->HasRole ((guint) Role::RESOURCE_MANAGER))
         {
           return FALSE;
         }
@@ -814,11 +814,11 @@ namespace Net
   // --------------------------------------------------------------------------------
   const gchar *Ring::GetRoleImage ()
   {
-    if (_role == RESOURCE_MANAGER)
+    if (_role == Role::RESOURCE_MANAGER)
     {
       return "RESOURCE_MANAGER";
     }
-    else if (_role == RESOURCE_USER)
+    else if (_role == Role::RESOURCE_USER)
     {
       return "RESOURCE_USER";
     }
@@ -852,7 +852,7 @@ namespace Net
     {
       HandshakeResult response = (HandshakeResult) message->GetInteger ("response");
 
-      if (response == BACKUP_CHALLENGE_PASSED)
+      if (response == HandshakeResult::BACKUP_CHALLENGE_PASSED)
       {
         Credentials *credentials = RetreiveBackupCredentials ();
 
@@ -862,7 +862,7 @@ namespace Net
       }
       else
       {
-        if (response == CHALLENGE_PASSED)
+        if (response == HandshakeResult::CHALLENGE_PASSED)
         {
           Partner *partner = new Partner (message,
                                           this);

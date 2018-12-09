@@ -31,12 +31,12 @@
 
 namespace Marshaller
 {
-  typedef enum
+  enum class BatchStoreColumnId
   {
-    BATCH_NAME_COLUMN_str,
-    BATCH_VISIBILITY_COLUMN_bool,
-    BATCH_BATCH_COLUMN_void
-  } BatchStoreColumnId;
+    BATCH_NAME_str,
+    BATCH_VISIBILITY_bool,
+    BATCH_void
+  };
 
   // --------------------------------------------------------------------------------
   Competition::Competition (guint            id,
@@ -78,7 +78,7 @@ namespace Marshaller
       _batch_store_filter = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("batch_store_filter"));
 
       gtk_tree_model_filter_set_visible_column (_batch_store_filter,
-                                                BATCH_VISIBILITY_COLUMN_bool);
+                                                (gint) BatchStoreColumnId::BATCH_VISIBILITY_bool);
     }
   }
 
@@ -144,9 +144,8 @@ namespace Marshaller
     {
       gboolean visible;
 
-      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store),
-                          iter,
-                          BATCH_VISIBILITY_COLUMN_bool, &visible,
+      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store), iter,
+                          BatchStoreColumnId::BATCH_VISIBILITY_bool, &visible,
                           -1);
       gtk_tree_iter_free (iter);
 
@@ -207,8 +206,8 @@ namespace Marshaller
                                &iter);
 
         gtk_list_store_set (_batch_store, &iter,
-                            BATCH_NAME_COLUMN_str,   batch->GetName (),
-                            BATCH_BATCH_COLUMN_void, batch,
+                            BatchStoreColumnId::BATCH_NAME_str, batch->GetName (),
+                            BatchStoreColumnId::BATCH_void,     batch,
                             -1);
       }
 
@@ -241,7 +240,7 @@ namespace Marshaller
     if (iter)
     {
       gtk_list_store_set (_batch_store, iter,
-                          BATCH_VISIBILITY_COLUMN_bool, 1,
+                          BatchStoreColumnId::BATCH_VISIBILITY_bool, 1,
                           -1);
 
       if (gtk_combo_box_get_active_iter (_combobox,
@@ -268,15 +267,14 @@ namespace Marshaller
       if (gtk_combo_box_get_active_iter (_combobox,
                                          &active_iter))
       {
-        gtk_tree_model_get (GTK_TREE_MODEL (_batch_store_filter),
-                            &active_iter,
-                            BATCH_BATCH_COLUMN_void, &active_batch,
+        gtk_tree_model_get (GTK_TREE_MODEL (_batch_store_filter), &active_iter,
+                            BatchStoreColumnId::BATCH_void, &active_batch,
                             -1);
       }
 
-      gtk_list_store_set (_batch_store,
-                          iter,
-                          BATCH_VISIBILITY_COLUMN_bool, FALSE);
+      gtk_list_store_set (_batch_store, iter,
+                          BatchStoreColumnId::BATCH_VISIBILITY_bool, FALSE,
+                          -1);
 
       if (active_batch == batch)
       {
@@ -322,9 +320,8 @@ namespace Marshaller
     {
       Batch *current_batch;
 
-      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store),
-                          &iter,
-                          BATCH_BATCH_COLUMN_void, &current_batch,
+      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store), &iter,
+                          BatchStoreColumnId::BATCH_void, &current_batch,
                           -1);
 
       if (batch == current_batch)
@@ -575,9 +572,8 @@ namespace Marshaller
     {
       Batch *batch;
 
-      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store_filter),
-                          &iter,
-                          BATCH_BATCH_COLUMN_void, &batch,
+      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store_filter), &iter,
+                          BatchStoreColumnId::BATCH_void, &batch,
                           -1);
       return batch;
     }
@@ -602,21 +598,21 @@ namespace Marshaller
   {
     if (batch == GetCurrentBatch ())
     {
-      if (status == Batch::UNCOMPLETED)
+      if (status == Batch::Status::UNCOMPLETED)
       {
         gtk_widget_set_visible (_batch_image,
                                 TRUE);
         gtk_widget_set_visible (_spread_button,
                                 FALSE);
       }
-      else if (status == Batch::CONCEALED)
+      else if (status == Batch::Status::CONCEALED)
       {
         gtk_widget_set_visible (_batch_image,
                                 FALSE);
         gtk_widget_set_visible (_spread_button,
                                 TRUE);
       }
-      else if (status == Batch::DISCLOSED)
+      else if (status == Batch::Status::DISCLOSED)
       {
         gtk_widget_set_visible (_batch_image,
                                 FALSE);

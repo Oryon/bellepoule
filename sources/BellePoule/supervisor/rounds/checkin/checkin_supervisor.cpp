@@ -229,7 +229,7 @@ namespace People
   guint CheckinSupervisor::PreparePrint (GtkPrintOperation *operation,
                                          GtkPrintContext   *context)
   {
-    if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+    if (GetStageView (operation) == StageView::CLASSIFICATION)
     {
       return 0;
     }
@@ -461,7 +461,7 @@ namespace People
             }
 
             // Give the player a reference
-            if (GetState () == OPERATIONAL)
+            if (GetState () == State::OPERATIONAL)
             {
               p->SetRef (ref);
               ref++;
@@ -1146,10 +1146,10 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::OnFormEvent (Player          *player,
-                                       Form::FormEvent  event)
+  void CheckinSupervisor::OnFormEvent (Player      *player,
+                                       Form::Event  event)
   {
-    if (event == Form::NEW_PLAYER)
+    if (event == Form::Event::NEW_PLAYER)
     {
       if (player->Is ("Team"))
       {

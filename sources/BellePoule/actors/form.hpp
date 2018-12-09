@@ -27,16 +27,16 @@ namespace People
   class Form : public Module
   {
     public:
-      typedef enum
+      enum class Event
       {
         UPDATE_PLAYER,
         NEW_PLAYER
-      } FormEvent;
+      };
 
       struct Listener
       {
-        virtual void OnFormEvent (Player    *player,
-                                  FormEvent  event) = 0;
+        virtual void OnFormEvent (Player *player,
+                                  Event   event) = 0;
       };
 
     public:

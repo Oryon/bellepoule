@@ -122,12 +122,12 @@ namespace AskFred
         Scheme (const gchar *filename);
 
       private:
-        typedef enum
+        enum class Mode
         {
-          COLLECTING_MODE,
-          POST_COLLECTING_MODE,
-          FLUSHING_MODE
-        } Mode;
+          COLLECTING,
+          POST_COLLECTING,
+          FLUSHING
+        };
 
         static GData *_element_base;
 

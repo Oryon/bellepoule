@@ -78,13 +78,13 @@ namespace Oauth
 
       if (body == nullptr)
       {
-        _status = NETWORK_ERROR;
+        _status = Status::NETWORK_ERROR;
       }
       else if (g_strstr_len (body,
                              -1,
                              "errors"))
       {
-        _status = REJECTED;
+        _status = Status::REJECTED;
       }
       else
       {
@@ -120,7 +120,7 @@ namespace Oauth
 
           g_strfreev (fields);
         }
-        _status = ACCEPTED;
+        _status = Status::ACCEPTED;
       }
     }
 

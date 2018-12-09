@@ -154,7 +154,7 @@ namespace Net
     data->_message->Release ();
     g_free (data);
 
-    if (peer_status != CONN_OK)
+    if (peer_status != PeerStatus::CONN_OK)
     {
       uploader->_listener->OnUploadStatus (peer_status);
     }
@@ -170,12 +170,12 @@ namespace Net
       ThreadData *data = new ThreadData ();
 
       data->_uploader    = uploader;
-      data->_peer_status = CONN_OK;
+      data->_peer_status = PeerStatus::CONN_OK;
       data->_message     = (Message *) g_async_queue_pop (uploader->_message_queue);
 
       if (data->_message->Is ("MessageUploader::stop_sending"))
       {
-        data->_peer_status = CONN_CLOSED;
+        data->_peer_status = PeerStatus::CONN_CLOSED;
 
         g_idle_add ((GSourceFunc) OnMessageUsed,
                     data);
@@ -192,12 +192,12 @@ namespace Net
 
         if (curl_code != CURLE_OK)
         {
-          data->_peer_status = CONN_ERROR;
+          data->_peer_status = PeerStatus::CONN_ERROR;
           g_print (RED "[Uploader Error] " ESC "%s\n", curl_easy_strerror (curl_code));
         }
         else
         {
-          data->_peer_status = CONN_OK;
+          data->_peer_status = PeerStatus::CONN_OK;
 #ifdef UPLOADER_DEBUG
           g_print (YELLOW "[Uploader] " ESC "Done\n");
 #endif

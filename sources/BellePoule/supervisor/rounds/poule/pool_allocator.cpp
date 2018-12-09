@@ -48,18 +48,18 @@ namespace Pool
 {
 #define VALUE_INIT {0,{{0}}}
 
-  typedef enum
+  enum class ComboboxColumn
   {
-    POOL_SIZE_COL,
-    NB_POOLS_COL,
-    BEST_PIXMAP_COL
-  } ComboboxColumn;
+    POOL_SIZE,
+    NB_POOLS,
+    BEST_PIXMAP
+  };
 
-  typedef enum
+  enum class SwappingColumn
   {
-    CRITERIA_COL,
-    CRITERIA_NAME_COL
-  } SwappingColumn;
+    CRITERIA,
+    CRITERIA_NAME
+  };
 
   extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
                                                                 Object    *owner);
@@ -177,7 +177,7 @@ namespace Pool
       {
         AttributeDesc *attr_desc = (AttributeDesc *) attr->data;
 
-        if (attr_desc->_uniqueness == AttributeDesc::NOT_SINGULAR)
+        if (attr_desc->_uniqueness == AttributeDesc::Uniqueness::NOT_SINGULAR)
         {
           GtkWidget *check = gtk_check_button_new_with_label (attr_desc->_user_name);
 
@@ -245,16 +245,16 @@ namespace Pool
             AttributeDesc *attr_desc  = (AttributeDesc *) current->data;
             GSList        *swappables = AttributeDesc::GetSwappableList ();
 
-            if (   (attr_desc->_rights     == AttributeDesc::PUBLIC)
-                && (attr_desc->_uniqueness == AttributeDesc::NOT_SINGULAR))
+            if (   (attr_desc->_rights     == AttributeDesc::Rights::PUBLIC)
+                && (attr_desc->_uniqueness == AttributeDesc::Uniqueness::NOT_SINGULAR))
             {
               if (g_slist_find (swappables,
                                 current->data) == nullptr)
               {
                 gtk_list_store_append (swapping_store, &iter);
                 gtk_list_store_set (swapping_store, &iter,
-                                    CRITERIA_COL,      attr_desc,
-                                    CRITERIA_NAME_COL, attr_desc->_user_name,
+                                    SwappingColumn::CRITERIA,      attr_desc,
+                                    SwappingColumn::CRITERIA_NAME, attr_desc->_user_name,
                                     -1);
               }
             }
@@ -894,7 +894,7 @@ namespace Pool
                 while (iter_is_valid)
                 {
                   gtk_tree_model_get (store, &iter,
-                                      CRITERIA_COL, &attr_desc,
+                                      SwappingColumn::CRITERIA, &attr_desc,
                                       -1);
 
                   if (g_strcmp0 (tokens[i], attr_desc->_code_name) == 0)
@@ -1135,7 +1135,7 @@ namespace Pool
         gchar *nb_pool_text = g_strdup_printf ("%d", config->_nb_pool);
 
         gtk_list_store_set (_combobox_store, &iter,
-                            NB_POOLS_COL, nb_pool_text,
+                            ComboboxColumn::NB_POOLS, nb_pool_text,
                             -1);
         g_free (nb_pool_text);
       }
@@ -1153,7 +1153,7 @@ namespace Pool
         }
 
         gtk_list_store_set (_combobox_store, &iter,
-                            POOL_SIZE_COL, pool_size_text,
+                            ComboboxColumn::POOL_SIZE, pool_size_text,
                             -1);
         g_free (pool_size_text);
       }
@@ -1228,7 +1228,7 @@ namespace Pool
                                          best_index))
       {
         gtk_list_store_set (_combobox_store, &iter,
-                            BEST_PIXMAP_COL, GTK_STOCK_ABOUT,
+                            ComboboxColumn::BEST_PIXMAP, GTK_STOCK_ABOUT,
                             -1);
       }
     }
@@ -1987,7 +1987,7 @@ namespace Pool
       if (pool->GetUIntData (this, "is_balanced") == 0)
       {
         RecallJobs ();
-        return new Error (Error::LEVEL_ERROR,
+        return new Error (Error::Level::MAJOR,
                           pool->GetName (),
                           gettext ("Wrong fencers count!"));
       }
@@ -2002,7 +2002,7 @@ namespace Pool
         if (   (pool->GetPiste ()       == 0)
             || (pool->GetRefereeList () == nullptr))
         {
-          return new Error (Error::LEVEL_WARNING,
+          return new Error (Error::Level::WARNING,
                             nullptr,
                             gettext ("Referees allocation \n ongoing"));
         }
@@ -2022,7 +2022,7 @@ namespace Pool
   guint Allocator::PreparePrint (GtkPrintOperation *operation,
                                  GtkPrintContext   *context)
   {
-    if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+    if (GetStageView (operation) == StageView::CLASSIFICATION)
     {
       return 0;
     }
@@ -2031,7 +2031,7 @@ namespace Pool
       gdouble canvas_w;
       gdouble paper_w  = gtk_print_context_get_width (context);
       gdouble paper_h  = gtk_print_context_get_height (context);
-      gdouble header_h = GetPrintHeaderSize (context, ON_SHEET);
+      gdouble header_h = GetPrintHeaderSize (context, SizeReferential::ON_SHEET);
 
       {
         GooCanvasBounds bounds;
@@ -2499,7 +2499,7 @@ namespace Pool
   void Allocator::OnSwappingToggled (GtkToggleButton *togglebutton,
                                      Allocator       *allocator)
   {
-    if (allocator->_contest->GetState () == OPERATIONAL)
+    if (allocator->_contest->GetState () == State::OPERATIONAL)
     {
       GtkWidget *parent   = allocator->_glade->GetWidget ("regular_swapping_hbox");
       GList     *siblings = gtk_container_get_children (GTK_CONTAINER (parent));
@@ -2546,7 +2546,7 @@ namespace Pool
             AttributeDesc *desc;
 
             gtk_tree_model_get (store, &iter,
-                                CRITERIA_COL, &desc,
+                                SwappingColumn::CRITERIA, &desc,
                                 -1);
 
             allocator->_swapping_criteria_list = g_slist_prepend (allocator->_swapping_criteria_list,

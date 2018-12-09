@@ -175,13 +175,13 @@ namespace Marshaller
       g_free (icon_file);
 
       Canvas::VAlign (_cone,
-                      Canvas::MIDDLE,
+                      Canvas::Alignment::MIDDLE,
                       _root_item,
-                      Canvas::MIDDLE);
+                      Canvas::Alignment::MIDDLE);
       Canvas::HAlign (_cone,
-                      Canvas::MIDDLE,
+                      Canvas::Alignment::MIDDLE,
                       _root_item,
-                      Canvas::MIDDLE);
+                      Canvas::Alignment::MIDDLE);
     }
 
     // Finish
@@ -200,14 +200,14 @@ namespace Marshaller
       g_free (icon_file);
 
       Canvas::VAlign (_finish,
-                      Canvas::MIDDLE,
+                      Canvas::Alignment::MIDDLE,
                       _root_item,
-                      Canvas::END,
+                      Canvas::Alignment::END,
                       -15.0);
       Canvas::HAlign (_finish,
-                      Canvas::MIDDLE,
+                      Canvas::Alignment::MIDDLE,
                       _root_item,
-                      Canvas::MIDDLE);
+                      Canvas::Alignment::MIDDLE);
     }
 
     // Shutter

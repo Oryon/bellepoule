@@ -34,14 +34,14 @@
 
 namespace Marshaller
 {
-  typedef enum
+  enum class ColumnId
   {
     NAME_str,
     JOB_ptr,
     JOB_color,
     JOB_status,
     JOB_warning_color
-  } ColumnId;
+  };
 
   // --------------------------------------------------------------------------------
     Batch::Batch (Net::Message *message,
@@ -61,7 +61,7 @@ namespace Marshaller
     _cancel_button = _glade->GetWidget ("cancel_toolbutton");
 
     _competition->SetBatchStatus (this,
-                                  DISCLOSED);
+                                  Status::DISCLOSED);
 
     _id        = message->GetNetID ();
     _stage     = message->GetInteger ("stage");
@@ -139,9 +139,8 @@ namespace Marshaller
       {
         Job *job;
 
-        gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
-                            &iter,
-                            JOB_ptr, &job,
+        gtk_tree_model_get (GTK_TREE_MODEL (_job_store), &iter,
+                            ColumnId::JOB_ptr, &job,
                             -1);
 
         job->Release ();
@@ -236,12 +235,12 @@ namespace Marshaller
       if (_loading == FALSE)
       {
         _competition->SetBatchStatus (this,
-                                      CONCEALED);
+                                      Status::CONCEALED);
       }
       else
       {
         _competition->SetBatchStatus (this,
-                                      DISCLOSED);
+                                      Status::DISCLOSED);
       }
     }
     else
@@ -253,7 +252,7 @@ namespace Marshaller
       }
 
       _competition->SetBatchStatus (this,
-                                    UNCOMPLETED);
+                                    Status::UNCOMPLETED);
     }
 
     if (_scheduled_list == nullptr)
@@ -286,8 +285,8 @@ namespace Marshaller
                                  &iter,
                                  (GtkTreePath *) current->data);
         gtk_tree_model_get (model, &iter,
-                            JOB_ptr,
-                            &job, -1);
+                            ColumnId::JOB_ptr, &job,
+                            -1);
 
         result = g_list_append (result,
                                 job);
@@ -313,9 +312,8 @@ namespace Marshaller
     {
       Job *current_job;
 
-      gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
-                          &iter,
-                          JOB_ptr, &current_job,
+      gtk_tree_model_get (GTK_TREE_MODEL (_job_store), &iter,
+                          ColumnId::JOB_ptr, &current_job,
                           -1);
 
       if (current_job == job)
@@ -336,9 +334,9 @@ namespace Marshaller
                                                     (GCompareFunc) Job::CompareStartTime);
           }
 
-          gtk_list_store_set (_job_store,        &iter,
-                              JOB_status,        NULL,
-                              JOB_warning_color, Affinities::GetColor (kinship),
+          gtk_list_store_set (_job_store, &iter,
+                              ColumnId::JOB_status,        NULL,
+                              ColumnId::JOB_warning_color, Affinities::GetColor (kinship),
                               -1);
         }
         else
@@ -356,9 +354,9 @@ namespace Marshaller
                                                   (GCompareFunc) Job::CompareSiblingOrder);
           }
 
-          gtk_list_store_set (_job_store,        &iter,
-                              JOB_status,        GTK_STOCK_DIALOG_QUESTION,
-                              JOB_warning_color, NULL,
+          gtk_list_store_set (_job_store, &iter,
+                              ColumnId::JOB_status,        GTK_STOCK_DIALOG_QUESTION,
+                              ColumnId::JOB_warning_color, NULL,
                               -1);
         }
 
@@ -400,9 +398,8 @@ namespace Marshaller
     {
       Job *current_job;
 
-      gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
-                          &iter,
-                          JOB_ptr, &current_job,
+      gtk_tree_model_get (GTK_TREE_MODEL (_job_store), &iter,
+                          ColumnId::JOB_ptr, &current_job,
                           -1);
 
       if (message->GetNetID () == current_job->GetNetID ())
@@ -438,9 +435,8 @@ namespace Marshaller
     {
       Job *current_job;
 
-      gtk_tree_model_get (GTK_TREE_MODEL (_job_store),
-                          &iter,
-                          JOB_ptr, &current_job,
+      gtk_tree_model_get (GTK_TREE_MODEL (_job_store), &iter,
+                          ColumnId::JOB_ptr, &current_job,
                           -1);
 
       if (current_job->GetNetID () == netid)
@@ -539,9 +535,9 @@ namespace Marshaller
 
             job->SetName (name);
             gtk_list_store_set (_job_store, &iter,
-                                NAME_str,   name,
-                                JOB_ptr,    job,
-                                JOB_status, GTK_STOCK_DIALOG_QUESTION,
+                                ColumnId::NAME_str,   name,
+                                ColumnId::JOB_ptr,    job,
+                                ColumnId::JOB_status, GTK_STOCK_DIALOG_QUESTION,
                                 -1);
             g_free (name);
 
@@ -680,7 +676,7 @@ namespace Marshaller
     }
 
     _competition->SetBatchStatus (this,
-                                  DISCLOSED);
+                                  Status::DISCLOSED);
   }
 
   // --------------------------------------------------------------------------------
@@ -705,8 +701,8 @@ namespace Marshaller
                              &iter,
                              path);
     gtk_tree_model_get (model, &iter,
-                        JOB_ptr,
-                        &job, -1);
+                        ColumnId::JOB_ptr, &job,
+                        -1);
 
     _job_board->Display (job);
   }

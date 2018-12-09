@@ -36,7 +36,7 @@ namespace Net
     : Object ("Advertiser"),
       Module ("advertiser.glade")
   {
-    _state            = WARMUP;
+    _state            = State::WARMUP;
     _title            = nullptr;
     _link             = nullptr;
     _session          = nullptr;
@@ -159,7 +159,7 @@ namespace Net
                         id);
 
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton),
-                                  (_state == ON));
+                                  (_state == State::ON));
   }
 
   // --------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Advertiser::SwitchOff ()
   {
-    _state = OFF;
+    _state = State::OFF;
   }
 
   // --------------------------------------------------------------------------------
@@ -233,7 +233,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Advertiser::Publish (const gchar *event)
   {
-    if ((_state == ON) && _title)
+    if ((_state == State::ON) && _title)
     {
       gchar *message;
 
@@ -393,38 +393,38 @@ namespace Net
   {
     _pending_response = FALSE;
 
-    if (request->GetStatus () == Oauth::Request::NETWORK_ERROR)
+    if (request->GetStatus () == Oauth::Request::Status::NETWORK_ERROR)
     {
-      _state = OFF;
+      _state = State::OFF;
       DisplayId ("Network error!");
     }
-    else if (request->GetStatus () == Oauth::Request::REJECTED)
+    else if (request->GetStatus () == Oauth::Request::Status::REJECTED)
     {
-      if (_state == WARMUP)
+      if (_state == State::WARMUP)
       {
-        _state = OFF;
+        _state = State::OFF;
       }
-      else if (_state == OFF)
+      else if (_state == State::OFF)
       {
-        _state = WAITING_FOR_TOKEN;
+        _state = State::WAITING_FOR_TOKEN;
         _session->Reset ();
         ClaimForAuthorization ();
       }
       else
       {
-        _state = OFF;
+        _state = State::OFF;
         DisplayId ("Access denied!");
       }
     }
     else if (HandleRequestResponse (request) == FALSE)
     {
-      if (_state == WARMUP)
+      if (_state == State::WARMUP)
       {
-        _state = OFF;
+        _state = State::OFF;
       }
       else
       {
-        _state = ON;
+        _state = State::ON;
       }
       DisplayId (_session->GetAccountId ());
     }

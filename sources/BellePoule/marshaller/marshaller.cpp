@@ -149,11 +149,11 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Marshaller::OnHanshakeResult (Net::Ring::HandshakeResult result)
   {
-    if (result == Net::Ring::AUTHENTICATION_FAILED)
+    if (result == Net::Ring::HandshakeResult::AUTHENTICATION_FAILED)
     {
       OnShowAccessCode (TRUE);
     }
-    else if (result == Net::Ring::ROLE_REJECTED)
+    else if (result == Net::Ring::HandshakeResult::ROLE_REJECTED)
     {
       GtkWidget *dialog = _glade->GetWidget ("join_rejected_dialog");
 

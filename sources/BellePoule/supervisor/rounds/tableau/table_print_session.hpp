@@ -28,12 +28,12 @@ namespace Table
   class PrintSession : public BookSection
   {
     public:
-      typedef enum
+      enum class Type
       {
         SCORE_SHEETS,
         DISPLAYED_TABLES,
         ALL_TABLES
-      } Type;
+      };
 
     public:
       PrintSession (Type         type,

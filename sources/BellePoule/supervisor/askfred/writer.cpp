@@ -345,7 +345,7 @@ namespace AskFred
       : Object ("AskFred::XmlScheme"),
       XmlScheme (filename)
     {
-      _mode         = COLLECTING_MODE;
+      _mode         = Mode::COLLECTING;
       _current_node = nullptr;
       _rounds       = nullptr;
 
@@ -716,7 +716,7 @@ namespace AskFred
                                           const gchar *format_value,
                                           va_list      argptr)
     {
-      if (_mode == COLLECTING_MODE)
+      if (_mode == Mode::COLLECTING)
       {
         Element *element = (Element *) _current_node->data;
         gchar   *value   = g_strdup_vprintf (format_value,
@@ -744,7 +744,7 @@ namespace AskFred
         parent = (Element *) _current_node->parent->data;
       }
 
-      if (_mode == COLLECTING_MODE)
+      if (_mode == Mode::COLLECTING)
       {
         owner->AddToOutline (term,
                              value);
@@ -1150,7 +1150,7 @@ namespace AskFred
     // --------------------------------------------------------------------------------
     void Scheme::Flush (GNode *from)
     {
-      _mode = POST_COLLECTING_MODE;
+      _mode = Mode::POST_COLLECTING;
       g_node_traverse (from,
                        G_PRE_ORDER,
                        G_TRAVERSE_LEAVES,
@@ -1158,7 +1158,7 @@ namespace AskFred
                        (GNodeTraverseFunc) CheckVisibilityNodeFunc,
                        this);
 
-      _mode = FLUSHING_MODE;
+      _mode = Mode::FLUSHING;
       g_node_traverse (from,
                        G_PRE_ORDER,
                        G_TRAVERSE_ALL,
@@ -1170,7 +1170,7 @@ namespace AskFred
     // --------------------------------------------------------------------------------
     void Scheme::EndElement ()
     {
-      if (_mode == COLLECTING_MODE)
+      if (_mode == Mode::COLLECTING)
       {
         _current_node = _current_node->parent;
 

@@ -819,10 +819,10 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::OnFormEvent (Player          *player,
-                             Form::FormEvent  event)
+  void Checkin::OnFormEvent (Player      *player,
+                             Form::Event  event)
   {
-    if (event == Form::NEW_PLAYER)
+    if (event == Form::Event::NEW_PLAYER)
     {
       {
         Player::AttributeId  attending_attr_id ("attending");

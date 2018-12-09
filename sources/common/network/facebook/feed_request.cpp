@@ -51,7 +51,7 @@ namespace Net
     Oauth::Request::ParseResponse (header,
                                    body);
 
-    if (GetStatus () == ACCEPTED)
+    if (GetStatus () == Status::ACCEPTED)
     {
       if (LoadJson (body))
       {
@@ -61,7 +61,7 @@ namespace Net
         g_free (id);
       }
     }
-    else if (GetStatus () == REJECTED)
+    else if (GetStatus () == Status::REJECTED)
     {
       if (LoadJson (body))
       {

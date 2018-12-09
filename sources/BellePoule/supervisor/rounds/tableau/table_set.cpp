@@ -52,18 +52,13 @@ namespace Table
   const gdouble TableSet::_score_rect_h  = 20.0;
   const gdouble TableSet::_table_spacing = 10.0;
 
-  typedef enum
+  enum class QuickMatchSearchColumnId
   {
-    CUTTING_NAME_COLUMN
-  } DisplayColumnId;
-
-  typedef enum
-  {
-    QUICK_MATCH_NAME_COLUMN_str,
-    QUICK_MATCH_COLUMN_ptr,
-    QUICK_MATCH_PATH_COLUMN_str,
-    QUICK_MATCH_VISIBILITY_COLUMN_bool
-  } QuickSearchColumnId;
+    MATCH_NAME_str,
+    MATCH_ptr,
+    MATCH_PATH_str,
+    MATCH_VISIBILITY_bool
+  };
 
   // --------------------------------------------------------------------------------
   TableSet::TableSet (Supervisor *supervisor,
@@ -148,7 +143,7 @@ namespace Table
                                           (GtkCellLayoutDataFunc) SetQuickSearchRendererSensitivity,
                                           this, nullptr);
       gtk_tree_model_filter_set_visible_column (_quick_search_filter,
-                                                QUICK_MATCH_VISIBILITY_COLUMN_bool);
+                                                (gint) QuickMatchSearchColumnId::MATCH_VISIBILITY_bool);
     }
 
     _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
@@ -815,8 +810,8 @@ namespace Table
                                     &table_iter,
                                     nullptr);
             gtk_tree_store_set (_quick_search_treestore, &table_iter,
-                                QUICK_MATCH_NAME_COLUMN_str,        image,
-                                QUICK_MATCH_VISIBILITY_COLUMN_bool, 1,
+                                QuickMatchSearchColumnId::MATCH_NAME_str,        image,
+                                QuickMatchSearchColumnId::MATCH_VISIBILITY_bool, 1,
                                 -1);
             g_free (image);
           }
@@ -1853,7 +1848,7 @@ namespace Table
 
           gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
                               &iter,
-                              QUICK_MATCH_COLUMN_ptr, &match,
+                              QuickMatchSearchColumnId::MATCH_ptr, &match,
                               -1);
           if (match)
           {
@@ -2101,7 +2096,7 @@ namespace Table
 
         gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_treestore),
                             &iter,
-                            QUICK_MATCH_COLUMN_ptr, &match,
+                            QuickMatchSearchColumnId::MATCH_ptr, &match,
                             -1);
         if (match)
         {
@@ -2383,20 +2378,20 @@ namespace Table
           gchar *name_string = g_strdup_printf ("%s / %s", A_name, B_name);
 
           gtk_tree_store_set (_quick_search_treestore, &iter,
-                              QUICK_MATCH_PATH_COLUMN_str,        to_match->GetName (),
-                              QUICK_MATCH_NAME_COLUMN_str,        name_string,
-                              QUICK_MATCH_COLUMN_ptr,             to_match,
-                              QUICK_MATCH_VISIBILITY_COLUMN_bool, 1,
+                              QuickMatchSearchColumnId::MATCH_PATH_str,        to_match->GetName (),
+                              QuickMatchSearchColumnId::MATCH_NAME_str,        name_string,
+                              QuickMatchSearchColumnId::MATCH_ptr,             to_match,
+                              QuickMatchSearchColumnId::MATCH_VISIBILITY_bool, 1,
                               -1);
           g_free (name_string);
         }
         else
         {
           gtk_tree_store_set (_quick_search_treestore, &iter,
-                              QUICK_MATCH_PATH_COLUMN_str,        NULL,
-                              QUICK_MATCH_NAME_COLUMN_str,        NULL,
-                              QUICK_MATCH_COLUMN_ptr,             NULL,
-                              QUICK_MATCH_VISIBILITY_COLUMN_bool, 0,
+                              QuickMatchSearchColumnId::MATCH_PATH_str,        NULL,
+                              QuickMatchSearchColumnId::MATCH_NAME_str,        NULL,
+                              QuickMatchSearchColumnId::MATCH_ptr,             NULL,
+                              QuickMatchSearchColumnId::MATCH_VISIBILITY_bool, 0,
                               -1);
         }
 
@@ -2683,7 +2678,7 @@ namespace Table
 
       gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
                           &iter,
-                          QUICK_MATCH_COLUMN_ptr, &match,
+                          QuickMatchSearchColumnId::MATCH_ptr, &match,
                           -1);
 
       if (match)
@@ -2775,7 +2770,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   GList *TableSet::GetBookSections (Stage::StageView view)
   {
-    if (view == Stage::STAGE_VIEW_RESULT)
+    if (view == Stage::StageView::RESULT)
     {
       GList *sections   = nullptr;
       guint  nb_section;
@@ -2788,7 +2783,7 @@ namespace Table
         gchar        *title = _supervisor->GetFullName ();
         PrintSession *section;
 
-        section = new PrintSession (PrintSession::ALL_TABLES,
+        section = new PrintSession (PrintSession::Type::ALL_TABLES,
                                     title,
                                     _tables[(_nb_tables-1) - i*3]);
 
@@ -2821,11 +2816,11 @@ namespace Table
     gdouble       paper_h       = gtk_print_context_get_height (context);
     guint         nb_page;
 
-    if (print_session->GetType () != PrintSession::SCORE_SHEETS)
+    if (print_session->GetType () != PrintSession::Type::SCORE_SHEETS)
     {
       guint nb_row = 32;
 
-      if (print_session->GetType () == PrintSession::ALL_TABLES)
+      if (print_session->GetType () == PrintSession::Type::ALL_TABLES)
       {
         ChangeFromTable (print_session->GetFromTable ());
       }
@@ -2912,7 +2907,7 @@ namespace Table
 
       print_session->SetPaperSize (paper_w,
                                    paper_h,
-                                   GetPrintHeaderSize (context, ON_SHEET));
+                                   GetPrintHeaderSize (context, SizeReferential::ON_SHEET));
     }
     else
     {
@@ -3164,16 +3159,16 @@ namespace Table
     cairo_t      *cr            = gtk_print_context_get_cairo_context (context);
     Module       *container     = dynamic_cast <Module *> (_supervisor);
 
-    if (print_session->GetType () != PrintSession::SCORE_SHEETS)
+    if (print_session->GetType () != PrintSession::Type::SCORE_SHEETS)
     {
-      if (print_session->GetType () == PrintSession::ALL_TABLES)
+      if (print_session->GetType () == PrintSession::Type::ALL_TABLES)
       {
         ChangeFromTable (print_session->GetFromTable ());
       }
 
       print_session->SetPaperSize (paper_w,
                                    paper_h,
-                                   GetPrintHeaderSize (context, ON_SHEET));
+                                   GetPrintHeaderSize (context, SizeReferential::ON_SHEET));
 
       print_session->ProcessCurrentPage (page_nr);
 
@@ -3334,18 +3329,18 @@ namespace Table
             }
 
             Canvas::HAlign (name_item,
-                            Canvas::START,
+                            Canvas::Alignment::START,
                             flash_item,
-                            Canvas::START);
+                            Canvas::Alignment::START);
             Canvas::Anchor (name_item,
                             nullptr,
                             flash_item,
                             5);
 
             Canvas::HAlign (referee_group,
-                            Canvas::START,
+                            Canvas::Alignment::START,
                             flash_item,
-                            Canvas::START);
+                            Canvas::Alignment::START);
 
             goo_canvas_rect_new (strip_group,
                                  0.0,
@@ -3388,9 +3383,9 @@ namespace Table
             }
 
             Canvas::HAlign (strip_group,
-                            Canvas::START,
+                            Canvas::Alignment::START,
                             referee_group,
-                            Canvas::START);
+                            Canvas::Alignment::START);
             Canvas::Anchor (strip_group,
                             nullptr,
                             referee_group,
@@ -3418,9 +3413,9 @@ namespace Table
                             nullptr,
                             10);
             Canvas::VAlign (match_table,
-                            Canvas::START,
+                            Canvas::Alignment::START,
                             title_group,
-                            Canvas::START);
+                            Canvas::Alignment::START);
           }
 
           g_free (font);
@@ -3615,7 +3610,7 @@ namespace Table
     gchar        *title         = _supervisor->GetFullName ();
     PrintSession *print_session;
 
-    print_session = new PrintSession (PrintSession::DISPLAYED_TABLES,
+    print_session = new PrintSession (PrintSession::Type::DISPLAYED_TABLES,
                                       title,
                                       _from_table);
     PrintPreview (print_name,
@@ -3649,7 +3644,7 @@ namespace Table
       GtkWidget    *w             = _glade->GetWidget ("table_all_radiobutton");
       gboolean      all_sheet     = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
       gchar        *print_name    = GetPrintName ();
-      PrintSession *print_session = new PrintSession (PrintSession::SCORE_SHEETS);
+      PrintSession *print_session = new PrintSession (PrintSession::Type::SCORE_SHEETS);
 
       LookForMatchToPrint (table,
                            all_sheet);
@@ -3684,7 +3679,7 @@ namespace Table
                                    TableSet       *table_set)
   {
     gchar        *print_name    = table_set->GetPrintName ();
-    PrintSession *print_session = new PrintSession (PrintSession::SCORE_SHEETS);
+    PrintSession *print_session = new PrintSession (PrintSession::Type::SCORE_SHEETS);
 
     g_slist_free (table_set->_match_to_print);
     table_set->_match_to_print = nullptr;
@@ -3713,7 +3708,7 @@ namespace Table
                                    &iter);
     gtk_tree_model_get (GetStatusModel (),
                         &iter,
-                        AttributeDesc::DISCRETE_XML_IMAGE_str, &code,
+                        AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &code,
                         -1);
 
     if (code && *code !='Q')
@@ -3773,7 +3768,7 @@ namespace Table
 
         gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, FALSE);
         gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo),
-                                        cell, "pixbuf", AttributeDesc::DISCRETE_ICON_pix,
+                                        cell, "pixbuf", AttributeDesc::DiscreteColumnId::ICON_pix,
                                         NULL);
 
         goo_canvas_widget_new (table_set->GetRootItem (),
@@ -3808,7 +3803,7 @@ namespace Table
         {
           gtk_tree_model_get (table_set->GetStatusModel (),
                               &iter,
-                              AttributeDesc::DISCRETE_XML_IMAGE_str, &code,
+                              AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &code,
                               -1);
           if (current_status == code[0])
           {

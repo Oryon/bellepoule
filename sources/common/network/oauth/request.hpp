@@ -29,7 +29,7 @@ namespace Oauth
   class Request : public virtual Object
   {
       public:
-        enum Status
+        enum class Status
         {
           READY,
           NETWORK_ERROR,

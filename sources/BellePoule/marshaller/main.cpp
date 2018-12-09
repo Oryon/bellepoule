@@ -45,7 +45,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   MarshallerApp::MarshallerApp (int    *argc,
                                 char ***argv)
-    : Application (Net::Ring::RESOURCE_MANAGER, "BellePoule2D", argc, argv)
+    : Application (Net::Ring::Role::RESOURCE_MANAGER, "BellePoule2D", argc, argv)
   {
   }
 

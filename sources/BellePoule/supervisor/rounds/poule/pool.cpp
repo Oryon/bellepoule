@@ -679,9 +679,9 @@ namespace Pool
         }
 
         Canvas::HAlign (referee_group,
-                        Canvas::START,
+                        Canvas::Alignment::START,
                         _title_table,
-                        Canvas::START);
+                        Canvas::Alignment::START);
         Canvas::Anchor (referee_group,
                         nullptr,
                         _title_table,
@@ -726,9 +726,9 @@ namespace Pool
         }
 
         Canvas::HAlign (piste_group,
-                        Canvas::START,
+                        Canvas::Alignment::START,
                         referee_group,
-                        Canvas::START);
+                        Canvas::Alignment::START);
         Canvas::Anchor (piste_group,
                         nullptr,
                         referee_group,
@@ -892,9 +892,9 @@ namespace Pool
                                      0,
                                      y);
           Canvas::VAlign (player_table,
-                          Canvas::END,
+                          Canvas::Alignment::END,
                           grid,
-                          Canvas::START);
+                          Canvas::Alignment::START);
         }
 
         // Players (horizontally)
@@ -1035,7 +1035,7 @@ namespace Pool
 
               gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), cell, FALSE);
               gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w),
-                                              cell, "pixbuf", AttributeDesc::DISCRETE_ICON_pix,
+                                              cell, "pixbuf", AttributeDesc::DiscreteColumnId::ICON_pix,
                                               NULL);
 
               g_object_set_data (G_OBJECT (w), "player",  player);
@@ -1110,9 +1110,9 @@ namespace Pool
         }
 
         Canvas::VAlign (grid_group,
-                        Canvas::START,
+                        Canvas::Alignment::START,
                         title_group,
-                        Canvas::START,
+                        Canvas::Alignment::START,
                         cell_h/2);
 
         Canvas::Anchor (dashboard_group,
@@ -1128,9 +1128,9 @@ namespace Pool
         if (print_for_referees)
         {
           Canvas::HAlign (grid_group,
-                          Canvas::START,
+                          Canvas::Alignment::START,
                           dashboard_body,
-                          Canvas::START,
+                          Canvas::Alignment::START,
                           -((gdouble) cell_h)/2.0);
         }
         else
@@ -1140,9 +1140,9 @@ namespace Pool
           goo_canvas_item_get_bounds (grid_header,
                                       &grid_header_bounds);
           Canvas::HAlign (grid_group,
-                          Canvas::START,
+                          Canvas::Alignment::START,
                           dashboard_body,
-                          Canvas::START,
+                          Canvas::Alignment::START,
                           -((gdouble) cell_h)/4.0 - (grid_header_bounds.y2 - grid_header_bounds.y1));
         }
       }
@@ -1345,9 +1345,9 @@ namespace Pool
                         nullptr,
                         cell_w/2);
         Canvas::VAlign (match_main_table,
-                        Canvas::START,
+                        Canvas::Alignment::START,
                         grid_group,
-                        Canvas::START);
+                        Canvas::Alignment::START);
       }
     }
 
@@ -1739,22 +1739,22 @@ namespace Pool
       RefreshAttribute (player_a,
                         "victories_count",
                         victories,
-                        SUM);
+                        CombinedOperation::SUM);
 
       RefreshAttribute (player_a,
                         "bouts_count",
                         GetNbPlayers () - _nb_drop -1,
-                        SUM);
+                        CombinedOperation::SUM);
 
       RefreshAttribute (player_a,
                         "indice",
                         hits_scored+hits_received,
-                        SUM);
+                        CombinedOperation::SUM);
 
       RefreshAttribute (player_a,
                         "HS",
                         hits_scored,
-                        SUM);
+                        CombinedOperation::SUM);
 
       // Ratio
       {
@@ -1791,7 +1791,7 @@ namespace Pool
         RefreshAttribute (player_a,
                           "victories_ratio",
                           current_round_ratio,
-                          NONE,
+                          CombinedOperation::NONE,
                           combined_ratio);
       }
 
@@ -1884,17 +1884,17 @@ namespace Pool
 
         if (source_attr)
         {
-          if (operation == AVERAGE)
+          if (operation == CombinedOperation::AVERAGE)
           {
             player->SetAttributeValue (&combined_rounds_attr_id,
                                        (source_attr->GetUIntValue () + value) / 2);
           }
-          else if (operation == SUM)
+          else if (operation == CombinedOperation::SUM)
           {
             player->SetAttributeValue (&combined_rounds_attr_id,
                                        source_attr->GetUIntValue () + value);
           }
-          else if (operation == NONE)
+          else if (operation == CombinedOperation::NONE)
           {
             player->SetAttributeValue (&combined_rounds_attr_id,
                                        combined_value);
@@ -1980,7 +1980,7 @@ namespace Pool
             {
               gtk_tree_model_get (GetStatusModel (),
                                   &iter,
-                                  AttributeDesc::DISCRETE_XML_IMAGE_str, &code,
+                                  AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &code,
                                   -1);
               if (g_strcmp0 (text, code) == 0)
               {
@@ -2500,7 +2500,7 @@ namespace Pool
     Player::AttributeId *attr_id;
     Attribute           *attr;
 
-    if (desc->_scope == AttributeDesc::LOCAL)
+    if (desc->_scope == AttributeDesc::Scope::LOCAL)
     {
       attr_id = new Player::AttributeId (desc->_code_name,
                                          _owner);
@@ -2816,7 +2816,7 @@ namespace Pool
                                    &iter);
     gtk_tree_model_get (GetStatusModel (),
                         &iter,
-                        AttributeDesc::DISCRETE_XML_IMAGE_str, &code,
+                        AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &code,
                         -1);
 
     if (code && *code !='Q')

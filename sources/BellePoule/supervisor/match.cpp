@@ -842,7 +842,7 @@ Error *Match::SpawnError ()
   gchar *guilty_party = g_strdup_printf (gettext ("Match %s"), GetName ());
   Error *error;
 
-  error = new Error (Error::LEVEL_ERROR,
+  error = new Error (Error::Level::MAJOR,
                      guilty_party,
                      gettext ("No winner!"));
 

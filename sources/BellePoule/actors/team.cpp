@@ -115,8 +115,8 @@ void Team::SetAttributesFromMembers ()
   {
     AttributeDesc *attr_desc = (AttributeDesc *) current_desc->data;
 
-    if (   (attr_desc->_uniqueness  == AttributeDesc::NOT_SINGULAR)
-        && (attr_desc->_persistency == AttributeDesc::PERSISTENT)
+    if (   (attr_desc->_uniqueness  == AttributeDesc::Uniqueness::NOT_SINGULAR)
+        && (attr_desc->_persistency == AttributeDesc::Persistency::PERSISTENT)
         && (g_strcmp0 (attr_desc->_code_name, "team") != 0))
     {
       AttributeId  attr_id (attr_desc->_code_name);
