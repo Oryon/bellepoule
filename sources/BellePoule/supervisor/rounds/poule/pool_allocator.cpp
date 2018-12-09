@@ -148,6 +148,8 @@ namespace Pool
                                           "victories_count",
                                           "bouts_count",
                                           "victories_ratio",
+                                          "strip",
+                                          "time",
                                           NULL);
       filter = new Filter (GetKlassName (),
                            attr_list);
@@ -230,6 +232,8 @@ namespace Pool
         filter->ShowAttribute ("first_name");
         filter->ShowAttribute ("club");
         filter->ShowAttribute ("pool_nr");
+        filter->ShowAttribute ("strip");
+        filter->ShowAttribute ("time");
 
         _fencer_list->SetFilter    (filter);
         _fencer_list->SetDataOwner (this);
@@ -507,15 +511,13 @@ namespace Pool
         {
           Pool *source_pool = source_pool_zone->GetPool ();
 
-          source_pool->RemoveFencer (floating_object,
-                                     this);
+          source_pool->RemoveFencer (floating_object);
         }
 
         {
           Pool *target_pool = target_pool_zone->GetPool ();
 
-          target_pool->AddFencer (floating_object,
-                                  this);
+          target_pool->AddFencer (floating_object);
         }
 
         {
@@ -999,6 +1001,7 @@ namespace Pool
                                      GetXmlPlayerTag (),
                                      _rand_seed,
                                      GetNetID (),
+                                     this,
                                      "competition", _contest->GetNetID (),
                                      "stage",       _parcel->GetNetID (),
                                      "batch",       _parcel->GetNetID (),
@@ -1032,8 +1035,7 @@ namespace Pool
 
               if (player)
               {
-                current_pool->AddFencer (player,
-                                         this);
+                current_pool->AddFencer (player);
               }
               xmlFree (attr);
             }
@@ -1271,6 +1273,7 @@ namespace Pool
                                   GetXmlPlayerTag (),
                                   _rand_seed,
                                   GetNetID (),
+                                  this,
                                   "competition", _contest->GetNetID (),
                                   "stage",       _parcel->GetNetID (),
                                   "batch",       _parcel->GetNetID (),
@@ -1329,8 +1332,7 @@ namespace Pool
           player->RemoveData (this,
                               "swapped_from");
 #endif
-          pool->AddFencer (player,
-                           this);
+          pool->AddFencer (player);
         }
       }
       g_free (pool_table);
@@ -2323,6 +2325,13 @@ namespace Pool
           }
         }
       }
+
+      for (GSList *current = pool->GetFencerList (); current; current = g_slist_next (current))
+      {
+        Player *fencer = (Player *) current->data;
+
+        _fencer_list->Update (fencer);
+      }
     }
 
     MakeDirty ();
@@ -2590,8 +2599,7 @@ namespace Pool
 
           _fencer_list->Remove (attendee);
 
-          pool->RemoveFencer (attendee,
-                              this);
+          pool->RemoveFencer (attendee);
 
           attendee->RemoveData (this,
                                 "injected");
@@ -2660,6 +2668,8 @@ namespace Pool
       SignalStatusUpdate ();
       MakeDirty ();
     }
+
+    _fencer_list->Update (attendee);
 
     return TRUE;
   }

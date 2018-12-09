@@ -422,6 +422,14 @@ void Application::Prepare ()
       desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::Scope::LOCAL;
 
+      desc = AttributeDesc::Declare (G_TYPE_STRING, "strip", "Piste", gettext ("strip"));
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::Scope::LOCAL;
+
+      desc = AttributeDesc::Declare (G_TYPE_STRING, "time", "Heure", gettext ("time"));
+      desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::Scope::LOCAL;
+
       desc = AttributeDesc::Declare (G_TYPE_UINT, "rank", "rank", gettext ("place"));
       desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
       desc->_rights      = AttributeDesc::Rights::PRIVATE;

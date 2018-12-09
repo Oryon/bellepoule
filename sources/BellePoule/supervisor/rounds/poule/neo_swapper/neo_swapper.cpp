@@ -299,8 +299,7 @@ namespace NeoSwapper
         fencer->_player->SetData (_owner,
                                   "original_pool",
                                   (void *) (i+1));
-        pool_proxy->_pool->AddFencer (fencer->_player,
-                                      _owner);
+        pool_proxy->_pool->AddFencer (fencer->_player);
 
         current = g_list_next (current);
       }

@@ -68,6 +68,8 @@ namespace People
                                           "victories_count",
                                           "bouts_count",
                                           "victories_ratio",
+                                          "strip",
+                                          "time",
                                           NULL);
 
       {

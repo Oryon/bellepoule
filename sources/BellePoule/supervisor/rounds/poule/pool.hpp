@@ -59,14 +59,15 @@ namespace Pool
             const gchar *xml_player_tag,
             guint32      rand_seed,
             guint        stage_id,
+            Object      *rank_owner,
             ...);
 
       guint    GetPiste         ();
       FieTime *GetStartTime     ();
-      void     AddFencer        (Player *player, Object *rank_owner);
+      void     AddFencer        (Player *player);
       void     AddReferee       (Player *player);
       void     CreateMatchs     (GSList *affinity_criteria_list);
-      void     RemoveFencer     (Player *player, Object *rank_owner);
+      void     RemoveFencer     (Player *player);
       void     RemoveReferee    (Player *player);
       void     RemoveAllReferee ();
       guint    GetNbPlayers     ();
@@ -137,12 +138,13 @@ namespace Pool
       static gboolean  _match_id_watermarked;
       Object          *_combined_rounds_owner;
       Object          *_previous_combined_round;
+      Object          *_rank_owner;
       Data            *_max_score;
       guint            _number;
       GSList          *_fencer_list;
       GSList          *_sorted_fencer_list;
       GSList          *_referee_list;
-      guint            _piste;
+      guint            _strip;
       FieTime         *_start_time;
       guint            _duration_sec;
       ScoreCollector  *_score_collector;
@@ -188,7 +190,8 @@ namespace Pool
 
       void SortPlayers ();
 
-      void RefreshStrength (Object *rank_owner);
+      void RefreshStrength ();
+
       Player *GetPlayer (guint   i,
                          GSList *in_list);
 
@@ -220,6 +223,13 @@ namespace Pool
                        Player         *player) override;
 
       void Timestamp ();
+
+      void SetRoadmap (guint    strip,
+                       FieTime *start_time);
+
+      void SetRoadmapTo (Player  *fencer,
+                         guint    strip,
+                         FieTime *start_time);
 
       void RefreshDashBoard ();
 

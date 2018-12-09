@@ -46,6 +46,7 @@ namespace Pool
               const gchar *xml_player_tag,
               guint32      rand_seed,
               guint        stage_id,
+              Object      *rank_owner,
               ...)
     : Object ("Pool"),
       CanvasModule ("pool.glade", "canvas_scrolled_window")
@@ -53,7 +54,7 @@ namespace Pool
       _number                = number;
       _fencer_list           = nullptr;
       _referee_list          = nullptr;
-      _piste                 = 0;
+      _strip                 = 0;
       _start_time            = nullptr;
       _duration_sec          = 0;
       _sorted_fencer_list    = nullptr;
@@ -71,6 +72,7 @@ namespace Pool
       _xml_player_tag        = xml_player_tag;
       _strength              = 0;
       _strength_contributors = 0;
+      _rank_owner            = rank_owner;
 
       _status_listener       = nullptr;
 
@@ -90,7 +92,7 @@ namespace Pool
     {
       va_list ap;
 
-      va_start (ap, stage_id);
+      va_start (ap, rank_owner);
       while (gchar *key = va_arg (ap, gchar *))
       {
         guint value = va_arg (ap, guint);
@@ -135,7 +137,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   guint Pool::GetPiste ()
   {
-    return _piste;
+    return _strip;
   }
 
   // --------------------------------------------------------------------------------
@@ -324,8 +326,7 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::AddFencer (Player *player,
-                        Object *rank_owner)
+  void Pool::AddFencer (Player *player)
   {
     if (player == nullptr)
     {
@@ -337,14 +338,18 @@ namespace Pool
                           player) == nullptr))
     {
       {
-        Player::AttributeId attr_id ("pool_nr", rank_owner);
+        Player::AttributeId attr_id ("pool_nr", _rank_owner);
 
         player->SetAttributeValue (&attr_id,
                                    GetNumber ());
       }
 
+      SetRoadmapTo (player,
+                    _strip,
+                    _start_time);
+
       {
-        Player::AttributeId attr_id ("stage_start_rank", rank_owner);
+        Player::AttributeId attr_id ("stage_start_rank", _rank_owner);
 
         attr_id.MakeRandomReady (_rand_seed);
         _fencer_list = g_slist_insert_sorted_with_data (_fencer_list,
@@ -353,25 +358,29 @@ namespace Pool
                                                         &attr_id);
       }
 
-      RefreshStrength (rank_owner);
+      RefreshStrength ();
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::RemoveFencer (Player *player,
-                           Object *rank_owner)
+  void Pool::RemoveFencer (Player *player)
   {
     if (g_slist_find (_fencer_list,
                       player))
     {
+      SetRoadmapTo (player,
+                    0,
+                    nullptr);
+
       _fencer_list = g_slist_remove (_fencer_list,
                                      player);
-      RefreshStrength (rank_owner);
+
+      RefreshStrength ();
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::RefreshStrength (Object *rank_owner)
+  void Pool::RefreshStrength ()
   {
 #ifdef DEBUG
     GSList *current = _fencer_list;
@@ -380,7 +389,7 @@ namespace Pool
     for (guint i = 0 ; current && (i < _strength_contributors); i++)
     {
       Player              *player = (Player *) current->data;
-      Player::AttributeId  attr_id ("stage_start_rank", rank_owner);
+      Player::AttributeId  attr_id ("stage_start_rank", _rank_owner);
       Attribute           *stage_start_rank = player->GetAttribute (&attr_id);
 
       if (stage_start_rank)
@@ -705,10 +714,10 @@ namespace Pool
                              "font", BP_FONT "bold 30.0px",
                              NULL);
 
-        if (_piste)
+        if (_strip)
         {
           gchar *piste = g_strdup_printf ("%02d%c%c@%c%c%s",
-                                          _piste,
+                                          _strip,
                                           0xC2, 0xA0, // non breaking space
                                           0xC2, 0xA0, // non breaking space
                                           _start_time->GetImage ());
@@ -2097,23 +2106,62 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Pool::SetRoadmapTo (Player  *fencer,
+                           guint    strip,
+                           FieTime *start_time)
+  {
+    Player::AttributeId strip_attr_id ("strip", _rank_owner);
+    Player::AttributeId time_attr_id  ("time",  _rank_owner);
+
+    fencer->SetAttributeValue (&strip_attr_id,
+                               strip);
+    if (start_time)
+    {
+      fencer->SetAttributeValue (&time_attr_id,
+                                 start_time->GetImage ());
+    }
+    else
+    {
+      fencer->SetAttributeValue (&time_attr_id,
+                                 "");
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::SetRoadmap (guint    strip,
+                         FieTime *start_time)
+  {
+    _strip = strip;
+
+    Object::TryToRelease (_start_time);
+    _start_time = start_time;
+
+    for (GSList *current = _fencer_list; current; current = g_slist_next (current))
+    {
+      Player *fencer = (Player *) current->data;
+
+      SetRoadmapTo (fencer,
+                    _strip,
+                    _start_time);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Pool::OnMessage (Net::Message *message)
   {
     if (message->Is ("BellePoule2D::Roadmap"))
     {
       if (message->GetInteger ("source") == _parcel->GetNetID ())
       {
-        _piste = 0;
-
-        Object::TryToRelease (_start_time);
-        _start_time = nullptr;
+        SetRoadmap (0,
+                    nullptr);
 
         if (message->GetFitness () > 0)
         {
           gchar *start_time = message->GetString  ("start_time");
 
-          _piste      = message->GetInteger ("piste");
-          _start_time = new FieTime (start_time);
+          SetRoadmap (message->GetInteger ("piste"),
+                      new FieTime (start_time));
           g_free (start_time);
         }
 
@@ -2244,10 +2292,10 @@ namespace Pool
     xml_scheme->WriteFormatAttribute ("NetID",
                                       "%x", _parcel->GetNetID ());
 
-    if (_piste)
+    if (_strip)
     {
       xml_scheme->WriteFormatAttribute ("Piste",
-                                        "%d", _piste);
+                                        "%d", _strip);
     }
 
     if (_start_time)
@@ -2365,7 +2413,7 @@ namespace Pool
     attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Piste");
     if (attr)
     {
-      _piste = atoi (attr);
+      _strip = atoi (attr);
       xmlFree (attr);
     }
 

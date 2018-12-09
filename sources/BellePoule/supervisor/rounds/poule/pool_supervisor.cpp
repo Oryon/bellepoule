@@ -96,6 +96,8 @@ namespace Pool
                                           "victories_count",
                                           "bouts_count",
                                           "victories_ratio",
+                                          "strip",
+                                          "time",
                                           NULL);
       filter = new Filter (GetKlassName (),
                            attr_list);
@@ -130,6 +132,8 @@ namespace Pool
                                             "workload_rate",
                                             "promoted",
                                             "team",
+                                            "strip",
+                                            "time",
                                             NULL);
         filter = new Filter (GetKlassName (),
                              attr_list);
