@@ -240,11 +240,10 @@ namespace Pool
 
         // Extra swapping
         {
-          GSList       *current        = filter->GetAttrList ();
           GtkListStore *swapping_store = GTK_LIST_STORE (_glade->GetGObject ("swapping_liststore"));
           GtkTreeIter   iter;
 
-          while (current)
+          for (GSList *current = filter->GetAttrList (); current; current = g_slist_next (current))
           {
             AttributeDesc *attr_desc  = (AttributeDesc *) current->data;
             GSList        *swappables = AttributeDesc::GetSwappableList ();
@@ -262,8 +261,6 @@ namespace Pool
                                     -1);
               }
             }
-
-            current = g_slist_next (current);
           }
 
           {
@@ -383,9 +380,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gboolean Allocator::OnMessage (Net::Message *message)
   {
-    GSList *current = _drop_zones;
-
-    while (current)
+    for (GSList *current = _drop_zones; current; current = g_slist_next (current))
     {
       Pool *pool = GetPoolOf (current);
 
@@ -439,8 +434,6 @@ namespace Pool
           return TRUE;
         }
       }
-
-      current = g_slist_next (current);
     }
 
     return FALSE;
@@ -449,15 +442,11 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::SpreadJobs ()
   {
-    GSList *current = _drop_zones;
-
-    while (current)
+    for (GSList *current = _drop_zones; current; current = g_slist_next (current))
     {
       Pool *pool = GetPoolOf (current);
 
       pool->Spread ();
-
-      current = g_slist_next (current);
     }
   }
 
@@ -472,15 +461,11 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::RecallJobs ()
   {
-    GSList *current = _drop_zones;
-
-    while (current)
+    for (GSList *current = _drop_zones; current; current = g_slist_next (current))
     {
       Pool *pool = GetPoolOf (current);
 
       pool->Recall ();
-
-      current = g_slist_next (current);
     }
   }
 
@@ -663,15 +648,10 @@ namespace Pool
         _main_table = goo_canvas_group_new (root,
                                             NULL);
 
+        for (GSList *current = _drop_zones; current; current = g_slist_next (current))
         {
-          GSList *current = _drop_zones;
+          FillPoolTable ((PoolZone *) current->data);
 
-          while (current)
-          {
-            FillPoolTable ((PoolZone *) current->data);
-
-            current = g_slist_next (current);
-          }
         }
       }
     }
@@ -862,10 +842,9 @@ namespace Pool
             if (*tokens[i] != '\0')
             {
               gboolean       is_regular = FALSE;
-              GList         *current    = siblings;
               AttributeDesc *attr_desc;
 
-              while (current)
+              for (GList *current = siblings; current; current = g_list_next (current))
               {
                 GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (current->data);
 
@@ -881,8 +860,6 @@ namespace Pool
                   is_regular = TRUE;
                   break;
                 }
-
-                current = g_list_next (current);
               }
 
               if (is_regular == FALSE)
@@ -1035,7 +1012,19 @@ namespace Pool
 
               if (player)
               {
-                current_pool->AddFencer (player);
+                gchar *position_attr = (gchar *) xmlGetProp (n, BAD_CAST "NoDansLaPoule");
+                gint  position       = -1;
+
+                if (position_attr)
+                {
+                  position = g_ascii_strtoull (position_attr,
+                                               nullptr,
+                                               10);
+                }
+                current_pool->AddFencer (player,
+                                         position);
+
+                xmlFree (position_attr);
               }
               xmlFree (attr);
             }
@@ -1107,16 +1096,11 @@ namespace Pool
 
     Stage::SaveAttendees (xml_scheme);
 
+    for (GSList *current = _drop_zones; current; current = g_slist_next (current))
     {
-      GSList *current = _drop_zones;
+      Pool *pool = GetPoolOf (current);
 
-      while (current)
-      {
-        Pool *pool = GetPoolOf (current);
-
-        pool->Save (xml_scheme);
-        current = g_slist_next (current);
-      }
+      pool->Save (xml_scheme);
     }
 
     xml_scheme->EndElement ();
@@ -1242,6 +1226,7 @@ namespace Pool
     GSList *current_player = GetShortList ();
 
     _fencer_list->Wipe ();
+
     while (current_player)
     {
       _fencer_list->Add ((Player *) current_player->data);
@@ -1448,14 +1433,11 @@ namespace Pool
   void Allocator::FixUpTablesBounds ()
   {
     {
-      GSList *current_zone = _drop_zones;
-
-      while (current_zone)
+      for (GSList *current_zone = _drop_zones; current_zone; current_zone = g_slist_next (current_zone))
       {
-        Pool   *pool           = GetPoolOf (current_zone);
-        GSList *current_fencer = pool->GetFencerList ();
+        Pool *pool = GetPoolOf (current_zone);
 
-        while (current_fencer)
+        for (GSList *current_fencer = pool->GetFencerList (); current_fencer; current_fencer = g_slist_next (current_fencer))
         {
           Player        *fencer      = (Player *) current_fencer->data;
           GooCanvasItem *status_item = (GooCanvasItem *) fencer->GetPtrData (this, "status_item");
@@ -1478,17 +1460,12 @@ namespace Pool
                           "pixbuf", NULL,
                           NULL);
           }
-          current_fencer = g_slist_next (current_fencer);
         }
-
-        current_zone = g_slist_next (current_zone);
       }
     }
     if (_selected_config)
     {
-      GSList *current = _drop_zones;
-
-      while (current)
+      for (GSList *current = _drop_zones; current; current = g_slist_next (current))
       {
         PoolZone        *zone  = (PoolZone *) current->data;
         Pool            *pool  = GetPoolOf (current);
@@ -1526,8 +1503,6 @@ namespace Pool
                       bounds.y1,
                       bounds.x2 - bounds.x1,
                       bounds.y2 - bounds.y1);
-
-        current = g_slist_next (current);
       }
     }
   }
@@ -1683,41 +1658,29 @@ namespace Pool
       guint p = 0;
 
       // Referees
+      for (GSList *current = pool->GetRefereeList (); current; current = g_slist_next (current))
       {
-        GSList *current = pool->GetRefereeList ();
+        Player *player = (Player *) current->data;
 
-        while (current)
-        {
-          Player *player = (Player *) current->data;
-
-          DisplayPlayer (player,
-                         p,
-                         table,
-                         zone,
-                         layout_list);
-          p++;
-
-          current = g_slist_next (current);
-        }
+        DisplayPlayer (player,
+                       p,
+                       table,
+                       zone,
+                       layout_list);
+        p++;
       }
 
       // Fencers
+      for (GSList *current = pool->GetFencerList (); current; current = g_slist_next (current))
       {
-        GSList *current = pool->GetFencerList ();
+        Player *player = (Player *) current->data;
 
-        while (current)
-        {
-          Player *player = (Player *) current->data;
-
-          DisplayPlayer (player,
-                         p,
-                         table,
-                         zone,
-                         layout_list);
-          p++;
-
-          current = g_slist_next (current);
-        }
+        DisplayPlayer (player,
+                       p,
+                       table,
+                       zone,
+                       layout_list);
+        p++;
       }
     }
 
@@ -1887,15 +1850,12 @@ namespace Pool
   {
     if (_drop_zones)
     {
-      GSList *current = _drop_zones;
-
-      while (current)
+      for (GSList *current = _drop_zones; current; current = g_slist_next (current))
       {
         Pool *pool = GetPoolOf (current);
 
         Object::TryToRelease ((PoolZone *) current->data);
         Object::TryToRelease (pool);
-        current = g_slist_next (current);
       }
 
       g_slist_free (_drop_zones);
@@ -1963,9 +1923,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gboolean Allocator::IsOver ()
   {
-    GSList *current = _drop_zones;
-
-    while (current)
+    for (GSList *current = _drop_zones; current; current = g_slist_next (current))
     {
       Pool *pool = GetPoolOf (current);
 
@@ -1973,7 +1931,6 @@ namespace Pool
       {
         return FALSE;
       }
-      current = g_slist_next (current);
     }
 
     return TRUE;
@@ -2448,16 +2405,11 @@ namespace Pool
   {
     DisableSensitiveWidgets ();
 
+    for (GSList *current = _drop_zones; current; current = g_slist_next (current))
     {
-      GSList *current = _drop_zones;
+      Pool *pool = GetPoolOf (current);
 
-      while (current)
-      {
-        Pool *pool = GetPoolOf (current);
-
-        pool->CreateMatchs (_swapping_criteria_list);
-        current = g_slist_next (current);
-      }
+      pool->CreateMatchs (_swapping_criteria_list);
     }
   }
 
@@ -2477,16 +2429,12 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::OnAttrListUpdated ()
   {
-    GSList *current = _drop_zones;
-
     _max_w = 0;
     _max_h = 0;
 
-    while (current)
+    for (GSList *current = _drop_zones; current; current = g_slist_next (current))
     {
       FillPoolTable ((PoolZone *) current->data);
-
-      current = g_slist_next (current);
     }
     FixUpTablesBounds ();
   }

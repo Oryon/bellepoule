@@ -151,14 +151,11 @@ namespace Pool
   {
     if (_score_collector)
     {
-      GList *current = _match_list;
-
-      while (current)
+      for (GList *current = _match_list; current; current = g_list_next (current))
       {
         Match *match = (Match *) current->data;
 
         _score_collector->RemoveCollectingPoints (match);
-        current = g_list_next (current);
       }
 
       _score_collector->Release ();
@@ -176,15 +173,12 @@ namespace Pool
 
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      Player *player  = (Player *) g_slist_nth_data (_fencer_list, i);
-      GSList *current = _display_data;
+      Player *player = (Player *) g_slist_nth_data (_fencer_list, i);
 
-      while (current)
+      for (GSList *current = _display_data; current; current = g_slist_next (current))
       {
         player->RemoveData (GetDataOwner (),
                             (gchar *) current->data);
-
-        current = g_slist_next (current);
       }
     }
 
@@ -197,9 +191,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::Stuff ()
   {
-    GList *current = _match_list;
-
-    while (current)
+    for (GList *current = _match_list; current; current = g_list_next (current))
     {
       Match  *match;
       Player *A;
@@ -222,7 +214,6 @@ namespace Pool
         match->SetScore (A, score, FALSE);
         match->SetScore (B, _max_score->_value, TRUE);
       }
-      current = g_list_next (current);
     }
 
     RefreshScoreData ();
@@ -288,9 +279,8 @@ namespace Pool
     {
       Player::AttributeId  current_round_attr_id   ("pool_nr", GetDataOwner ());
       Player::AttributeId  combined_rounds_attr_id ("pool_nr", _combined_rounds_owner);
-      GSList              *current = _fencer_list;
 
-      while (current)
+      for (GSList *current = _fencer_list; current; current = g_slist_next (current))
       {
         Player *player = (Player *) current->data;
 
@@ -298,7 +288,6 @@ namespace Pool
                                    _number);
         player->SetAttributeValue (&combined_rounds_attr_id,
                                    _number);
-        current = g_slist_next (current);
       }
     }
   }
@@ -326,7 +315,8 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::AddFencer (Player *player)
+  void Pool::AddFencer (Player *player,
+                        gint    position)
   {
     if (player == nullptr)
     {
@@ -356,6 +346,17 @@ namespace Pool
                                                         player,
                                                         (GCompareDataFunc) Player::Compare,
                                                         &attr_id);
+
+        // Assumption is done that fencers are loaded sorted.
+        if (position >= 0)
+        {
+          _sorted_fencer_list = g_slist_append (_sorted_fencer_list,
+                                                player);
+        }
+        else
+        {
+          SortPlayers ();
+        }
       }
 
       RefreshStrength ();
@@ -374,6 +375,7 @@ namespace Pool
 
       _fencer_list = g_slist_remove (_fencer_list,
                                      player);
+      SortPlayers ();
 
       RefreshStrength ();
     }
@@ -425,17 +427,15 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::CreateMatchs (GSList *affinity_criteria_list)
   {
-    AttributeDesc *affinity_criteria = nullptr;
-
-    if (affinity_criteria_list)
-    {
-      affinity_criteria = (AttributeDesc *) affinity_criteria_list->data;
-    }
-
-    SortPlayers ();
-
     if (_match_list == nullptr)
     {
+      AttributeDesc *affinity_criteria = nullptr;
+
+      if (affinity_criteria_list)
+      {
+        affinity_criteria = (AttributeDesc *) affinity_criteria_list->data;
+      }
+
       _dispatcher->SetAffinityCriteria (affinity_criteria,
                                         _sorted_fencer_list);
       _dispatcher->Dump ();
@@ -475,9 +475,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::CopyPlayersStatus (Object *from)
   {
-    GSList *current = _fencer_list;
-
-    while (current)
+    for (GSList *current = _fencer_list; current; current = g_slist_next (current))
     {
       Player::AttributeId  attr_id ("status", from);
       Player              *player      = (Player *) current->data;
@@ -493,8 +491,6 @@ namespace Pool
         DropPlayer (player,
                     status);
       }
-
-      current = g_slist_next (current);
     }
 
     RefreshScoreData ();
@@ -510,10 +506,9 @@ namespace Pool
   // --------------------------------------------------------------------------------
   guint Pool::GetNbMatchs (Player *of)
   {
-    guint   nb_matchs = GetNbPlayers () - 1;
-    GSList *current   = _fencer_list;
+    guint nb_matchs = GetNbPlayers () - 1;
 
-    while (current)
+    for (GSList *current   = _fencer_list; current; current = g_slist_next (current))
     {
       Player::AttributeId attr_id ("status", GetDataOwner ());
       Player              *player      = (Player *) current->data;
@@ -535,8 +530,6 @@ namespace Pool
           }
         }
       }
-
-      current = g_slist_next (current);
     }
 
     return nb_matchs;
@@ -1638,9 +1631,7 @@ namespace Pool
     }
     else
     {
-      GSList *current = _referee_list;
-
-      while (current)
+      for (GSList *current = _referee_list; current; current = g_slist_next (current))
       {
         Player              *referee = (Player *) current->data;
         Player::AttributeId  connection_attr_id  ("connection");
@@ -1657,8 +1648,6 @@ namespace Pool
             break;
           }
         }
-
-        current = g_slist_next (current);
       }
 
       if (_status_pixbuf == nullptr)
@@ -2088,9 +2077,7 @@ namespace Pool
   Match *Pool::GetMatch (Player *A,
                          Player *B)
   {
-    GList *current = _match_list;
-
-    while (current)
+    for (GList *current = _match_list; current; current = g_list_next (current))
     {
       Match *match = (Match *) current->data;
 
@@ -2099,7 +2086,6 @@ namespace Pool
       {
         return match;
       }
-      current = g_list_next (current);
     }
 
     return nullptr;
@@ -2282,8 +2268,6 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::Save (XmlScheme *xml_scheme)
   {
-    GSList *working_list;
-
     xml_scheme->StartElement ("Poule");
 
     xml_scheme->WriteFormatAttribute ("ID",
@@ -2310,23 +2294,14 @@ namespace Pool
                                         "%d", _duration_sec);
     }
 
-    if (_sorted_fencer_list)
     {
-      working_list = _sorted_fencer_list;
-    }
-    else
-    {
-      working_list = _fencer_list;
-    }
-
-    {
-      GSList              *current = working_list;
       Player::AttributeId  attr_id ("", GetDataOwner ());
-      Attribute           *attr;
+      GSList              *current = _sorted_fencer_list;
 
-      for (guint i = 0; current != nullptr; i++)
+      for (guint i = 1; current != nullptr; i++)
       {
-        Player *player = (Player *) current->data;
+        Attribute *attr;
+        Player    *player = (Player *) current->data;
 
         xml_scheme->StartElement (player->GetXmlTag ());
 
@@ -2334,8 +2309,7 @@ namespace Pool
                                            "%d", player->GetRef ());
 
         xml_scheme->WriteFormatAttribute ("NoDansLaPoule",
-                                           "%d", g_slist_index (working_list,
-                                                                player) + 1);
+                                           "%d", i);
         xml_scheme->WriteFormatAttribute ("NbVictoires",
                                            "%d", player->GetIntData (GetDataOwner (),
                                                                      "Victories"));
@@ -2365,32 +2339,21 @@ namespace Pool
       }
     }
 
+    for (GSList *current = _referee_list; current; current = g_slist_next (current))
     {
-      GSList *current = _referee_list;
+      Player *referee = (Player *) current->data;
 
-      while (current)
-      {
-        Player *referee = (Player *) current->data;
-
-        xml_scheme->StartElement (referee->GetXmlTag ());
-        xml_scheme->WriteFormatAttribute ("REF",
-                                          "%d", referee->GetRef ());
-        xml_scheme->EndElement ();
-
-        current = g_slist_next (current);
-      }
+      xml_scheme->StartElement (referee->GetXmlTag ());
+      xml_scheme->WriteFormatAttribute ("REF",
+                                        "%d", referee->GetRef ());
+      xml_scheme->EndElement ();
     }
 
+    for (GList *current = _match_list; current; current = g_list_next (current))
     {
-      GList *current = _match_list;
+      Match *match = (Match *) current->data;
 
-      while (current)
-      {
-        Match *match = (Match *) current->data;
-
-        match->Save (xml_scheme);
-        current = g_list_next (current);
-      }
+      match->Save (xml_scheme);
     }
 
     xml_scheme->EndElement ();
@@ -2692,14 +2655,11 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::CleanScores ()
   {
-    GList *current = _match_list;
-
-    while (current)
+    for (GList *current = _match_list; current; current = g_list_next (current))
     {
       Match *match = (Match *) current->data;
 
       match->CleanScore ();
-      current = g_list_next (current);
     }
 
     if (_match_list)
@@ -2743,17 +2703,12 @@ namespace Pool
 
     FreeFullGList (Match, _match_list);
 
+    for (GSList *current = _fencer_list; current; current = g_slist_next (current))
     {
-      GSList *current = _fencer_list;
+      Player              *player         = (Player *) current->data;
+      Player::AttributeId  status_attr_id = Player::AttributeId ("status", GetDataOwner ());
 
-      while (current)
-      {
-        Player              *player         = (Player *) current->data;
-        Player::AttributeId  status_attr_id = Player::AttributeId ("status", GetDataOwner ());
-
-        player->RemoveAttribute (&status_attr_id);
-        current = g_slist_next (current);
-      }
+      player->RemoveAttribute (&status_attr_id);
     }
   }
 

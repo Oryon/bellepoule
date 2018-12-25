@@ -64,7 +64,7 @@ namespace Pool
 
       guint    GetPiste         ();
       FieTime *GetStartTime     ();
-      void     AddFencer        (Player *player);
+      void     AddFencer        (Player *player, gint position = -1);
       void     AddReferee       (Player *player);
       void     CreateMatchs     (GSList *affinity_criteria_list);
       void     RemoveFencer     (Player *player);
