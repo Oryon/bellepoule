@@ -198,18 +198,15 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void EnlistedReferee::DisplayJobs ()
   {
-    GList *current_slot = _slots;
+    _job_board->Clean   ();
 
-    while (current_slot)
+    for (GList *current = _slots; current; current = g_list_next (current))
     {
-      Slot *slot = (Slot *) current_slot->data;
+      Slot *slot = (Slot *) current->data;
 
       _job_board->AddJobs (slot->GetJobList ());
-
-      current_slot = g_list_next (current_slot);
     }
 
     _job_board->Display ();
-    _job_board->Clean   ();
   }
 }
