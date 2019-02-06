@@ -478,8 +478,16 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::ImportFFF (gchar *filename)
   {
-    gchar  *file_content = GetFileContent (filename);
-    gchar  *utf8_content;
+    gchar       *file_content = GetFileContent (filename);
+    gchar       *utf8_content;
+    const gchar *encoding     = "UTF-8";
+
+    if (g_strstr_len (file_content,
+                      -1,
+                      "FFF;WIN;"))
+    {
+      encoding = "ISO-8859-1";
+    }
 
     {
       GError *error         = nullptr;
@@ -488,8 +496,8 @@ namespace People
       utf8_content = g_convert (file_content,
                                 -1,
                                 "UTF-8",
-                                "ISO-8859-1",
-                                nullptr,
+                                encoding,
+                                NULL,
                                 &bytes_written,
                                 &error);
       g_free (file_content);
@@ -500,7 +508,7 @@ namespace People
                                                     GTK_DIALOG_DESTROY_WITH_PARENT,
                                                     GTK_MESSAGE_ERROR,
                                                     GTK_BUTTONS_CLOSE,
-                                                    gettext ("The imported FFF file is not ISO-8859 encoded."));
+                                                    gettext ("The imported FFF file has encoding errors."));
         RunDialog (GTK_DIALOG (dialog));
         gtk_widget_destroy (dialog);
         g_error_free (error);
