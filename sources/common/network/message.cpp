@@ -253,16 +253,10 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Message::Remove (const gchar *field)
   {
-    GError *error = nullptr;
-
-    if (g_key_file_remove_key (_key_file,
-                               "Body",
-                               field,
-                               &error) == FALSE)
-    {
-      g_warning ("Message::Remove: %s", error->message);
-      g_clear_error (&error);
-    }
+    g_key_file_remove_key (_key_file,
+                           "Body",
+                           field,
+                           nullptr);
   }
 
   // --------------------------------------------------------------------------------

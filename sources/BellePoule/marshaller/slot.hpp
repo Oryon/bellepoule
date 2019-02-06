@@ -68,6 +68,8 @@ namespace Marshaller
 
       gboolean IsOver ();
 
+      gboolean Swap (Slot *with);
+
       gboolean TimeIsInside (GDateTime *time);
 
       void FixOverlaps (gboolean dry_run);

@@ -1139,7 +1139,7 @@ namespace Marshaller
       {
         GList *job_list;
         GList *referee_list;
-        GList *current_job;
+        GList *sticky_slots = nullptr;
 
         // All the jobs?
         {
@@ -1170,11 +1170,10 @@ namespace Marshaller
           }
         }
 
-        current_job = job_list;
-        while (current_job)
+        for (GList *current = job_list; current; current = g_list_next (current))
         {
           GList *free_slots = nullptr;
-          Job   *job        = (Job *) current_job->data;
+          Job   *job        = (Job *) current->data;
           Slot  *job_slot   = job->GetSlot ();
 
           if (job_slot)
@@ -1182,15 +1181,15 @@ namespace Marshaller
             job_slot->Retain ();
             free_slots = g_list_append (free_slots,
                                         job_slot);
+            sticky_slots = g_list_prepend (sticky_slots,
+                                           job_slot);
           }
           else
           {
             free_slots = GetFreePisteSlots (job->GetRegularDuration ());
           }
 
-          GList *current_slot = free_slots;
-
-          while (current_slot)
+          for (GList *current_slot = free_slots; current_slot; current_slot = g_list_next (current_slot))
           {
             Slot *slot = (Slot *) current_slot->data;
 
@@ -1200,13 +1199,12 @@ namespace Marshaller
             {
               break;
             }
-
-            current_slot = g_list_next (current_slot);
           }
           FreeFullGList (Slot, free_slots);
-
-          current_job = g_list_next (current_job);
         }
+
+        PreservePiste (job_list,
+                       sticky_slots);
 
         {
           Job  *first = (Job *) job_list->data;
@@ -1222,6 +1220,7 @@ namespace Marshaller
 
         g_list_free (job_list);
         g_list_free (referee_list);
+        g_list_free (sticky_slots);
 
         _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
       }
@@ -1233,6 +1232,73 @@ namespace Marshaller
     }
 
     return done;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::PreservePiste (GList *jobs,
+                            GList *sticky_slots)
+  {
+    GList *swap_list = nullptr;
+
+    for (GList *current = jobs; current; current = g_list_next (current))
+    {
+      Job  *job      = (Job *) current->data;
+      Slot *now_slot = job->GetSlot ();
+
+      if (g_list_find (sticky_slots,
+                       now_slot) == nullptr)
+      {
+        GList *referees = now_slot->GetRefereeList ();
+
+        if (referees)
+        {
+          EnlistedReferee *referee     = (EnlistedReferee *) referees->data;
+          Slot            *before_slot = referee->GetSlotJustBefore (now_slot);
+
+          if (before_slot)
+          {
+            swap_list = g_list_append (swap_list,
+                                       now_slot);
+          }
+        }
+      }
+    }
+
+    {
+      GList *swappable_list = g_list_copy (swap_list);
+
+      while (swap_list)
+      {
+        Slot            *slot_a            = (Slot *) swap_list->data;
+        EnlistedReferee *referee_a         = (EnlistedReferee *) slot_a->GetRefereeList ()->data;
+        Slot            *before_slot_a     = referee_a->GetSlotJustBefore (slot_a);
+        Piste           *piste_needed_by_a = (Piste *) before_slot_a->GetPiste ();
+
+        for (GList *b = swappable_list; b; b = g_list_next (b))
+        {
+          Slot *slot_b = (Slot *) b->data;
+
+          if (slot_b->GetPiste () == piste_needed_by_a)
+          {
+            if (slot_a->Swap (slot_b))
+            {
+              slot_a = nullptr;
+              swap_list = g_list_remove (swap_list,
+                                         slot_b);
+              swappable_list = g_list_remove (swappable_list,
+                                              slot_b);
+              break;
+            }
+          }
+        }
+
+        swap_list = g_list_remove (swap_list,
+                                   slot_a);
+      }
+      g_list_free (swappable_list);
+    }
+
+    g_list_free (swap_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -1337,17 +1403,15 @@ namespace Marshaller
                                     Slot  *slot,
                                     Job   *job)
   {
-    GList     *current_referee;
+    GTimeSpan  duration    = job->GetRegularDuration ();
+    gboolean   result      = FALSE;
     GList     *sorted_list;
-    GTimeSpan  duration        = job->GetRegularDuration ();
-    gboolean   result          = FALSE;
 
     sorted_list = g_list_sort_with_data (g_list_copy (referee_list),
                                          (GCompareDataFunc) CompareReferee,
                                          job->GetFencerList ());
 
-    current_referee = sorted_list;
-    while (current_referee)
+    for (GList *current_referee = sorted_list; current_referee; current_referee = g_list_next (current_referee))
     {
       EnlistedReferee *referee      = (EnlistedReferee *) current_referee->data;
       Slot            *referee_slot = referee->GetAvailableSlotFor (slot,
@@ -1366,8 +1430,6 @@ namespace Marshaller
         referee_slot->Release ();
         break;
       }
-
-      current_referee = g_list_next (current_referee);
     }
 
     g_list_free (sorted_list);

@@ -115,21 +115,15 @@ namespace Marshaller
                                        slot->GetStartTime (),
                                        duration);
 
+      for (GList *current = free_slots; current; current = g_list_next (current))
       {
-        GList *current = free_slots;
+        Slot *referee_slot = (Slot *) current->data;
 
-        while (current)
+        if (slot->CanWrap (referee_slot))
         {
-          Slot *referee_slot = (Slot *) current->data;
-
-          if (slot->CanWrap (referee_slot))
-          {
-            available_slot = referee_slot;
-            available_slot->Retain ();
-            break;
-          }
-
-          current = g_list_next (current);
+          available_slot = referee_slot;
+          available_slot->Retain ();
+          break;
         }
       }
 
@@ -178,6 +172,23 @@ namespace Marshaller
       if (node)
       {
         return (Slot *) node->data;
+      }
+    }
+
+    return nullptr;
+  }
+
+  // --------------------------------------------------------------------------------
+  Slot *EnlistedReferee::GetSlotJustBefore (Slot *before)
+  {
+    for (GList *current = _slots; current; current = g_list_next (current))
+    {
+      Slot *slot = (Slot *) current->data;
+
+      if (g_date_time_compare (slot->GetEndTime (),
+                               before->GetStartTime ()) == 0)
+      {
+        return slot;
       }
     }
 

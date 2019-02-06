@@ -216,5 +216,8 @@ namespace Marshaller
       void RefreshBookDate ();
 
       void AlignSelectedOnGrid ();
+
+      void PreservePiste (GList *jobs,
+                          GList *sticky_slots);
   };
 }

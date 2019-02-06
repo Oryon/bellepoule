@@ -57,6 +57,8 @@ namespace Marshaller
 
       Slot *GetSlotAfter (Slot *from) override;
 
+      Slot *GetSlotJustBefore (Slot *before);
+
     private:
       GList       *_slots;
       AttributeId *_workload_rate_attr_id;
