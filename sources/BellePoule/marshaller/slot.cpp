@@ -312,37 +312,41 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Slot::AddJob (Job *job)
   {
-    SetDuration (job->GetRegularDuration ());
-
+    if (g_list_find (_job_list,
+                     job) == nullptr)
     {
-      gboolean assigned_to_piste = (_job_list != nullptr);
-
-      _job_list = g_list_append (_job_list,
-                                 job);
-
-      job->AddObjectListener (this);
-      job->SetSlot           (this);
+      SetDuration (job->GetRegularDuration ());
 
       {
-        job->SetPiste (_piste->GetId (),
-                       _fie_time->GetXmlImage ());
+        gboolean assigned_to_piste = (_job_list != nullptr);
 
-        if (_referee_list)
+        _job_list = g_list_append (_job_list,
+                                   job);
+
+        job->AddObjectListener (this);
+        job->SetSlot           (this);
+
         {
-          EnlistedReferee *referee = (EnlistedReferee *) _referee_list->data;
+          job->SetPiste (_piste->GetId (),
+                         _fie_time->GetXmlImage ());
 
-          job->AddReferee (referee->GetRef ());
+          if (_referee_list)
+          {
+            EnlistedReferee *referee = (EnlistedReferee *) _referee_list->data;
+
+            job->AddReferee (referee->GetRef ());
+          }
         }
+
+        RefreshJobStatus (job);
+
+        if (assigned_to_piste == FALSE)
+        {
+          _piste->OnSlotAssigned (this);
+        }
+
+        _piste->OnSlotUpdated (this);
       }
-
-      RefreshJobStatus (job);
-
-      if (assigned_to_piste == FALSE)
-      {
-        _piste->OnSlotAssigned (this);
-      }
-
-      _piste->OnSlotUpdated (this);
     }
   }
 
