@@ -548,4 +548,15 @@ namespace Marshaller
 
     jb->OnCloseClicked ();
   }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_dialog_delete_event (GtkWidget *widget,
+                                                              GdkEvent  *event,
+                                                              Object    *owner)
+  {
+    JobBoard *jb = dynamic_cast <JobBoard *> (owner);
+
+    jb->OnCloseClicked ();
+    return TRUE;
+  }
 }

@@ -108,9 +108,11 @@ namespace Marshaller
     {
       return FALSE;
     }
-
-    if (   (g_date_time_compare (_start, with->_start) != 0)
-        || (g_date_time_compare (_end,   with->_end)   != 0))
+    else if (g_date_time_compare (_start, with->_start) != 0)
+    {
+      return FALSE;
+    }
+    else if (_end && with->_end && g_date_time_compare (_end, with->_end) != 0)
     {
       return FALSE;
     }
@@ -656,14 +658,38 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Slot::Dump (Slot *what)
   {
-    printf ("%s .. ", g_date_time_format (what->_start, "%R"));
-    if (what->_end)
     {
-      printf ("%s\n" ESC, g_date_time_format (what->_end, "%R"));
+      gchar *start = g_date_time_format (what->_start, "%R");
+
+      printf ("%s .. ", start);
+      g_free (start);
+
+      if (what->_end)
+      {
+        gchar *end = g_date_time_format (what->_end, "%R");
+
+        printf ("%s" ESC, end);
+        g_free (end);
+      }
+      else
+      {
+        printf ("~");
+      }
     }
-    else
+
+    if (what->_piste)
     {
-      printf ("~\n");
+      printf (" Piste %d", what->_piste->GetId ());
     }
+
+    if (what->_referee_list)
+    {
+      gchar *name = ((Player *) what->_referee_list->data)->GetName ();
+
+      printf (" %s", name);
+      g_free (name);
+    }
+
+    printf ("\n");
   }
 }

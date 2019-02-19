@@ -1274,20 +1274,34 @@ namespace Marshaller
         Slot            *before_slot_a     = referee_a->GetSlotJustBefore (slot_a);
         Piste           *piste_needed_by_a = (Piste *) before_slot_a->GetPiste ();
 
-        for (GList *b = swappable_list; b; b = g_list_next (b))
+        if (piste_needed_by_a != slot_a->GetPiste ())
         {
-          Slot *slot_b = (Slot *) b->data;
+          Slot *free_slot = piste_needed_by_a->GetFreeSlot (slot_a->GetStartTime (),
+                                                            slot_a->GetDuration ());
 
-          if (slot_b->GetPiste () == piste_needed_by_a)
+          if (free_slot)
           {
-            if (slot_a->Swap (slot_b))
+            slot_a->Swap (free_slot);
+            slot_a->Release ();
+          }
+          else
+          {
+            for (GList *b = swappable_list; b; b = g_list_next (b))
             {
-              slot_a = nullptr;
-              swap_list = g_list_remove (swap_list,
-                                         slot_b);
-              swappable_list = g_list_remove (swappable_list,
-                                              slot_b);
-              break;
+              Slot *slot_b = (Slot *) b->data;
+
+              if (slot_b->GetPiste () == piste_needed_by_a)
+              {
+                if (slot_a->Swap (slot_b))
+                {
+                  slot_a = nullptr;
+                  swap_list = g_list_remove (swap_list,
+                                             slot_b);
+                  swappable_list = g_list_remove (swappable_list,
+                                                  slot_b);
+                  break;
+                }
+              }
             }
           }
         }
