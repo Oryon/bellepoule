@@ -192,7 +192,7 @@ namespace People
 
     if (GetState () == State::OPERATIONAL)
     {
-      Contest             *contest = _contest->Duplicate ();
+      Contest             *contest = _contest->Duplicate (GetName ());
       GSList              *current = GetShortList ();
       Player::AttributeId  exported_attr ("exported");
 

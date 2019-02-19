@@ -250,6 +250,7 @@ Contest::Contest (GList    *advertisers,
                                      "Competiton",
                                      "default_location",
                                      nullptr);
+  _label = g_strdup ("");
 
   _manual_classification  = new Data ("ClassementManuel",       (guint) (for_duplication == TRUE));
   _minimum_team_size      = new Data ("TailleMinimaleEquipe",   3);
@@ -838,6 +839,14 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
           xmlFree (attr);
         }
 
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Label");
+        if (attr)
+        {
+          g_free (_label);
+          _label = g_strdup (attr);
+          xmlFree (attr);
+        }
+
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ScoreAleatoire");
         if (attr)
         {
@@ -935,6 +944,7 @@ Contest::~Contest ()
   g_free (_source);
   g_free (_web_site);
   g_free (_location);
+  g_free (_label);
 
   Object::TryToRelease (_manual_classification);
   Object::TryToRelease (_minimum_team_size);
@@ -1077,13 +1087,18 @@ void Contest::AskForSettings ()
 }
 
 // --------------------------------------------------------------------------------
-Contest *Contest::Duplicate ()
+Contest *Contest::Duplicate (const gchar *label)
 {
   Contest *contest = new Contest (_advertisers, TRUE);
 
   contest->_schedule->CreateDefault (TRUE);
   contest->_derived = TRUE;
 
+  if (label)
+  {
+    g_free (contest->_label);
+    contest->_label = g_strdup (label);
+  }
   if (_authority)
   {
     contest->_authority = g_strdup (_authority);
@@ -1116,6 +1131,36 @@ Contest *Contest::Duplicate ()
   contest->_minimum_team_size->Copy (_minimum_team_size);
 
   contest->FillInProperties ();
+
+  for (gboolean ready_for_greg = FALSE; ready_for_greg == FALSE;)
+  {
+    gtk_dialog_run (GTK_DIALOG (contest->_properties_dialog));
+    contest->ReadProperties ();
+    gtk_widget_hide (contest->_properties_dialog);
+
+    if (contest->_label[0] == '\0')
+    {
+      GtkWidget *dialog = gtk_message_dialog_new (NULL,
+                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                  GTK_MESSAGE_WARNING,
+                                                  GTK_BUTTONS_YES_NO,
+                                                  gettext ("GREG alert"));
+
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+                                                gettext ("It's recommended to give a label when publication on GREG (www.escrime-info.com) is intended.\n\n"
+                                                         "Re-open the form to fill it in?"));
+
+      if (gtk_dialog_run (GTK_DIALOG (dialog)) != GTK_RESPONSE_YES)
+      {
+        ready_for_greg = TRUE;
+      }
+      gtk_widget_destroy (dialog);
+    }
+    else
+    {
+      ready_for_greg = TRUE;
+    }
+  }
 
   return contest;
 }
@@ -1209,6 +1254,26 @@ void Contest::ChooseColor ()
 
   _gdk_color = gdk_color_copy ((GdkColor *) g_list_nth_data (_color_list,
                                                              color_to_use));
+
+  if (_gdk_color)
+  {
+    GtkWidget *tab      = _glade->GetWidget ("eventbox");
+    GtkWidget *colorbox = _glade->GetWidget ("colorbox");
+
+    gtk_widget_modify_bg (tab,
+                          GTK_STATE_NORMAL,
+                          _gdk_color);
+    gtk_widget_modify_bg (tab,
+                          GTK_STATE_ACTIVE,
+                          _gdk_color);
+
+    gtk_widget_modify_bg (colorbox,
+                          GTK_STATE_NORMAL,
+                          _gdk_color);
+    gtk_widget_modify_bg (colorbox,
+                          GTK_STATE_ACTIVE,
+                          _gdk_color);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1345,6 +1410,9 @@ void Contest::FillInProperties ()
   gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("location_entry")),
                       _location);
 
+  gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("label_entry")))),
+                      _label);
+
   gtk_combo_box_set_active (GTK_COMBO_BOX (_weapon_combo),
                             _weapon->GetIndex ());
 
@@ -1395,9 +1463,19 @@ void Contest::ReadProperties ()
   g_free (_location);
   _location = g_strdup (str);
 
-  _weapon   = Weapon::GetFromIndex (gtk_combo_box_get_active (GTK_COMBO_BOX (_weapon_combo)));
-  _gender   = gtk_combo_box_get_active (GTK_COMBO_BOX (_gender_combo));
-  _level    = gtk_combo_box_get_active (GTK_COMBO_BOX (_level_combo));
+  entry = GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("label_entry"))));
+  str = (gchar *) gtk_entry_get_text (entry);
+  if (str[0] != '\0')
+  {
+    str = g_strstrip (str);
+  }
+  g_free (_label);
+  _label = g_strdup (str);
+
+  _weapon = Weapon::GetFromIndex (gtk_combo_box_get_active (GTK_COMBO_BOX (_weapon_combo)));
+  _gender = gtk_combo_box_get_active (GTK_COMBO_BOX (_gender_combo));
+  _level  = gtk_combo_box_get_active (GTK_COMBO_BOX (_level_combo));
+
 
   _category->ReadUserChoice ();
 
@@ -1453,6 +1531,9 @@ void Contest::ReadProperties ()
                              _location);
     }
   }
+
+  gtk_label_set_text  (GTK_LABEL (_glade->GetWidget ("banner")),
+                       "");
 
   _schedule->ApplyNewConfig ();
   Spread ();
@@ -1510,18 +1591,6 @@ void Contest::DisplayProperties ()
     gtk_label_set_text (GTK_LABEL (w),
                         gettext (level_image[_level]));
   }
-
-  if (_gdk_color)
-  {
-    GtkWidget *tab = _glade->GetWidget ("eventbox");
-
-    gtk_widget_modify_bg (tab,
-                          GTK_STATE_NORMAL,
-                          _gdk_color);
-    gtk_widget_modify_bg (tab,
-                          GTK_STATE_ACTIVE,
-                          _gdk_color);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1560,7 +1629,7 @@ void Contest::Publish ()
       {
         greg_uploader->SetTeamEvent    (_team_event);
         greg_uploader->SetDate         (_day, _month, _year);
-        greg_uploader->SetLocation     (_location);
+        greg_uploader->SetLocation     (_location, _label);
         greg_uploader->SetLevel        (level_xml_image[_level]);
         greg_uploader->SetDivision     ("");
         greg_uploader->SetRunningState (_schedule->IsOver ());
@@ -1730,6 +1799,8 @@ void Contest::SaveHeader (XmlScheme *xml_scheme)
 
     xml_scheme->WriteAttribute ("Lieu",
                                 _location);
+    xml_scheme->WriteAttribute ("Label",
+                                _label);
   }
 
   _schedule->SavePeoples (xml_scheme,
@@ -2222,6 +2293,9 @@ extern "C" G_MODULE_EXPORT void on_properties_toolbutton_clicked (GtkWidget *wid
 // --------------------------------------------------------------------------------
 void Contest::on_properties_toolbutton_clicked ()
 {
+  gtk_label_set_text  (GTK_LABEL (_glade->GetWidget ("banner")),
+                       "");
+
   RunDialog (GTK_DIALOG (_properties_dialog));
   ReadProperties ();
   MakeDirty ();
@@ -2336,10 +2410,34 @@ guint Contest::GetNetID ()
 // --------------------------------------------------------------------------------
 gchar *Contest::GetDefaultFileName ()
 {
-  return g_strdup_printf ("%s-%s-%s-%s.cotcot", _name,
-                          _weapon->GetImage (),
-                          gettext (gender_image[_gender]),
-                          _category->GetDisplayImage ());
+  gchar   *filename;
+  GString *string = g_string_new (nullptr);
+
+  string = g_string_append (string, _name);
+
+  string = g_string_append_c (string, '-');
+  string = g_string_append (string, gettext (_weapon->GetImage ()));
+
+  string = g_string_append_c (string, '-');
+  string = g_string_append (string, gettext (gender_image[_gender]));
+
+  string = g_string_append_c (string, '-');
+  string = g_string_append (string, _category->GetDisplayImage ());
+
+  if (_label && (_label[0] != '\0'))
+  {
+    string = g_string_append_c (string, '-');
+    string = g_string_append (string, _label);
+  }
+
+  string = g_string_append (string, ".cotcot");
+
+  filename = string->str;
+
+  g_string_free (string,
+                 FALSE);
+
+  return filename;
 }
 
 // --------------------------------------------------------------------------------

@@ -29,7 +29,7 @@ namespace Net
       void SetTeamEvent    (gboolean     is_team_event);
       void SetRunningState (gboolean     is_over);
       void SetDate         (guint        day, guint month, guint year);
-      void SetLocation     (const gchar *location);
+      void SetLocation     (const gchar *location, const gchar *label);
       void SetLevel        (const gchar *level);
       void SetDivision     (const gchar *division);
       void SetWeapon       (const gchar *weapon);

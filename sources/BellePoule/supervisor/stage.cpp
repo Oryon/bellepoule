@@ -312,6 +312,18 @@ void Stage::ApplyConfig ()
 
         SetName (name);
       }
+      else
+      {
+        GtkWidget *combobox = GTK_WIDGET (module->GetGObject ("name_combobox"));
+
+        if (combobox)
+        {
+          GtkEntry *child = GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)));
+          gchar    *name  = (gchar *) gtk_entry_get_text (child);
+
+          SetName (name);
+        }
+      }
     }
 
     {
@@ -353,6 +365,21 @@ void Stage::FillInConfig ()
       {
         gtk_entry_set_text (w,
                             GetName ());
+      }
+      else
+      {
+        GtkWidget *combobox = GTK_WIDGET (module->GetGObject ("name_combobox"));
+
+        if (combobox)
+        {
+          GtkEntry *child = GTK_ENTRY (gtk_bin_get_child (GTK_BIN (combobox)));
+
+          if (child)
+          {
+            gtk_entry_set_text (child,
+                                GetName ());
+          }
+        }
       }
     }
 

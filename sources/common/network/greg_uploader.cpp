@@ -207,16 +207,37 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void GregUploader::SetLocation (const gchar *location)
+  void GregUploader::SetLocation (const gchar *location,
+                                  const gchar *label)
   {
+    gchar *lieu = nullptr;
+
     if (location && (location[0] != '\0'))
     {
       _has_location = TRUE;
+
+      {
+        GString *string = g_string_new (nullptr);
+
+        string = g_string_append (string, location);
+
+        if (label && (label[0] != '\0'))
+        {
+          string = g_string_append_c (string, '[');
+          string = g_string_append (string, label);
+          string = g_string_append_c (string, ']');
+        }
+
+        lieu = string->str;
+
+        g_string_free (string,
+                       FALSE);
+      }
     }
 
     g_datalist_set_data_full (&_form_fields,
                               "lieu",
-                              g_strdup (location),
+                              lieu,
                               g_free);
   }
 

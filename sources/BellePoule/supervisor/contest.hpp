@@ -63,7 +63,7 @@ class Contest : public Module
 
     void AskForSettings ();
 
-    Contest *Duplicate ();
+    Contest *Duplicate (const gchar *label = nullptr);
 
     void LoadAskFred (AskFred::Reader::Event *askfred,
                       const gchar            *dirname);
@@ -161,6 +161,7 @@ class Contest : public Module
     gchar                *_organizer;
     gchar                *_source;
     gchar                *_location;
+    gchar                *_label;
     gchar                *_web_site;
     Category             *_category;
     guint                 _level;
