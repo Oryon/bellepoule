@@ -19,6 +19,7 @@
 #include "util/canvas_module.hpp"
 #include "util/player.hpp"
 #include "util/fie_time.hpp"
+#include "util/attribute.hpp"
 #include "../../match.hpp"
 
 #include "table_zone.hpp"
@@ -115,12 +116,31 @@ namespace Table
               }
 
               {
-                gchar *name = referee->GetName ();
+                GooCanvasItem *item;
+                gchar         *name      = referee->GetName ();
+                GString       *full_name = g_string_new (name);
+                Player::AttributeId  first_name_attr_id ("first_name");
+                Attribute *first_name  = referee->GetAttribute (&first_name_attr_id);
 
-                GooCanvasItem *item = Canvas::PutTextInTable (referee_table,
-                                                              name,
-                                                              i,
-                                                              1);
+                if (first_name)
+                {
+                  gchar *image = first_name->GetUserImage (AttributeDesc::LONG_TEXT);
+
+                  g_string_append_c (full_name, ' ');
+                  g_string_append   (full_name, image);
+                  g_free (image);
+                }
+
+                {
+                  gchar *undivadable = GetUndivadableText (full_name->str);
+
+                  item = Canvas::PutTextInTable (referee_table,
+                                                 undivadable,
+                                                 i,
+                                                 1);
+                  g_free (undivadable);
+                }
+
                 Canvas::SetTableItemAttribute (item, "x-align", 1.0);
                 Canvas::SetTableItemAttribute (item, "y-align", 0.5);
                 g_object_set (item,
@@ -128,6 +148,8 @@ namespace Table
                               "fill-color", "DarkGreen",
                               NULL);
 
+                g_string_free (full_name,
+                               TRUE);
                 g_free (name);
               }
 

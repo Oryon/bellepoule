@@ -292,7 +292,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
 
           if (g_match_info_matches (match_info))
           {
-            gchar   *word = g_match_info_fetch (match_info, 0);
+            gchar *word = g_match_info_fetch (match_info, 0);
 
             font_height = g_ascii_strtod (word,
                                           nullptr);

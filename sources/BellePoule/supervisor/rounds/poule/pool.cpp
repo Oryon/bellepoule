@@ -666,18 +666,42 @@ namespace Pool
         if (_referee_list)
         {
           Player *referee = (Player *) _referee_list->data;
-          gchar  *name    = referee->GetName ();
 
-          goo_canvas_text_new (referee_group,
-                               name,
-                               5.0,
-                               cell_h/2.0,
-                               -1,
-                               GTK_ANCHOR_W,
-                               "fill-color", "DarkGreen",
-                               "font", BP_FONT "bold 25.0px",
-                               NULL);
-          g_free (name);
+          {
+            gchar *name = referee->GetName ();
+
+            goo_canvas_text_new (referee_group,
+                                 name,
+                                 5.0,
+                                 cell_h/3.0,
+                                 -1,
+                                 GTK_ANCHOR_W,
+                                 "fill-color", "DarkGreen",
+                                 "font", BP_FONT "bold 25.0px",
+                                 NULL);
+            g_free (name);
+          }
+
+          {
+            Player::AttributeId  first_name_attr_id ("first_name");
+            Attribute *attribute = referee->GetAttribute (&first_name_attr_id);
+
+            if (attribute)
+            {
+              gchar *first_name = attribute->GetUserImage (AttributeDesc::LONG_TEXT);
+
+              goo_canvas_text_new (referee_group,
+                                   first_name,
+                                   20.0,
+                                   2.4*cell_h/3.0,
+                                   -1,
+                                   GTK_ANCHOR_W,
+                                   "fill-color", "DarkGreen",
+                                   "font", BP_FONT "bold 15.0px",
+                                   NULL);
+              g_free (first_name);
+            }
+          }
         }
 
         Canvas::HAlign (referee_group,

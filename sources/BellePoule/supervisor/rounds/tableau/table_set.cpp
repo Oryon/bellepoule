@@ -3251,8 +3251,10 @@ namespace Table
           GooCanvasItem *flash_item;
           GooCanvasItem *title_group = goo_canvas_group_new (match_group, NULL);
           gchar         *font        = g_strdup_printf (BP_FONT "Bold %fpx", 3.5/2.0*(PRINT_FONT_HEIGHT));
+          gchar         *small_font  = g_strdup_printf (BP_FONT "Bold %fpx", 3.5/3.5*(PRINT_FONT_HEIGHT));
 
           Canvas::NormalyzeDecimalNotation (font);
+          Canvas::NormalyzeDecimalNotation (small_font);
 
           match->SetData (this, "printed", (void *) TRUE);
 
@@ -3306,25 +3308,50 @@ namespace Table
                                  -1,
                                  GTK_ANCHOR_W,
                                  "fill-color", "Grey",
-                                 "font", font,
+                                 "font", small_font,
                                  NULL);
             {
-              GSList *referee = match->GetRefereeList ();
+              GSList *referees = match->GetRefereeList ();
 
-              if (referee)
+              if (referees)
               {
-                gchar *name = ((Player *) (referee->data))->GetName ();
+                Player *referee = (Player *) referees->data;
 
-                goo_canvas_text_new (referee_group,
-                                     name,
-                                     30.0,
-                                     3.2,
-                                     -1,
-                                     GTK_ANCHOR_W,
-                                     "fill-color", "DarkGreen",
-                                     "font", font,
-                                     NULL);
-                g_free (name);
+                {
+                  gchar *name = referee->GetName ();
+
+                  goo_canvas_text_new (referee_group,
+                                       name,
+                                       30.0,
+                                       2.6,
+                                       -1,
+                                       GTK_ANCHOR_W,
+                                       "fill-color", "DarkGreen",
+                                       "font", font,
+                                       NULL);
+                  g_free (name);
+                }
+
+                {
+                  Player::AttributeId  first_name_attr_id ("first_name");
+                  Attribute *attribute = referee->GetAttribute (&first_name_attr_id);
+
+                  if (attribute)
+                  {
+                    gchar *first_name = attribute->GetUserImage (AttributeDesc::LONG_TEXT);
+
+                    goo_canvas_text_new (referee_group,
+                                         first_name,
+                                         32.0,
+                                         5.0,
+                                         -1,
+                                         GTK_ANCHOR_W,
+                                         "fill-color", "DarkGreen",
+                                         "font", small_font,
+                                         NULL);
+                    g_free (first_name);
+                  }
+                }
               }
             }
 
@@ -3357,14 +3384,14 @@ namespace Table
                                  -1,
                                  GTK_ANCHOR_W,
                                  "fill-color", "Grey",
-                                 "font", font,
+                                 "font", small_font,
                                  NULL);
 
             if (match->GetPiste ())
             {
               FieTime *start_time = match->GetStartTime ();
 
-              gchar *piste = g_strdup_printf ("#%02d%c%c@%c%c%s",
+              gchar *piste = g_strdup_printf ("%02d%c%c@%c%c%s",
                                               match->GetPiste (),
                                               0xC2, 0xA0, // non breaking space
                                               0xC2, 0xA0, // non breaking space
@@ -3373,7 +3400,7 @@ namespace Table
               goo_canvas_text_new (strip_group,
                                    piste,
                                    5.0,
-                                   4.0,
+                                   3.2,
                                    -1,
                                    GTK_ANCHOR_W,
                                    "fill-color", "DarkGreen",
@@ -3419,6 +3446,7 @@ namespace Table
           }
 
           g_free (font);
+          g_free (small_font);
         }
 
         Canvas::FitToContext (match_group,
