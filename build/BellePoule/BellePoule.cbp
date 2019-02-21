@@ -731,6 +731,18 @@
 		<Unit filename="../../sources/common/network/ring.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+    <Unit filename="../../sources/common/network/shell/shell_server.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+    <Unit filename="../../sources/common/network/shell/shell_server.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+    <Unit filename="../../sources/common/network/shell/shell.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+    <Unit filename="../../sources/common/network/shell/shell.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/twitter/statuses_update_request.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

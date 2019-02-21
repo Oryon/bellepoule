@@ -74,7 +74,7 @@ namespace Marshaller
 
       void FixOverlaps (gboolean dry_run);
 
-      static void Dump (Slot *what);
+      void Dump () override;
 
       static gint CompareAvailbility (Slot *a,
                                       Slot *b);

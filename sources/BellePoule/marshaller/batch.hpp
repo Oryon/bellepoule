@@ -76,7 +76,7 @@ namespace Marshaller
 
       const gchar *GetName ();
 
-      GList *RetreiveCurrentSelection ();
+      GList *RetreivePendingSelected ();
 
       void OnAssign ();
 

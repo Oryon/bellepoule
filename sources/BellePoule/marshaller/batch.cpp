@@ -262,7 +262,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  GList *Batch::RetreiveCurrentSelection ()
+  GList *Batch::RetreivePendingSelected ()
   {
     GList            *result    = nullptr;
     GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("competition_treeview"));
@@ -270,13 +270,11 @@ namespace Marshaller
 
     if (selection)
     {
-      GList        *current;
       GtkTreeModel *model          = gtk_tree_view_get_model (tree_view);
       GList        *selection_list = gtk_tree_selection_get_selected_rows (selection,
                                                                            nullptr);
 
-      current = selection_list;
-      while (current)
+      for (GList *current = selection_list; current; current = g_list_next (current))
       {
         GtkTreeIter  iter;
         Job         *job;
@@ -288,10 +286,12 @@ namespace Marshaller
                             ColumnId::JOB_ptr, &job,
                             -1);
 
-        result = g_list_append (result,
-                                job);
-
-        current = g_list_next (current);
+        if (g_list_find (_pending_list,
+                         job))
+        {
+          result = g_list_append (result,
+                                  job);
+        }
       }
 
       g_list_free_full (selection_list,
@@ -602,7 +602,7 @@ namespace Marshaller
                              guint             key,
                              guint             time)
   {
-    GList   *selected = RetreiveCurrentSelection ();
+    GList   *selected = RetreivePendingSelected ();
     Job     *job      = (Job *) selected->data;
     guint32  job_ref  = job->GetNetID ();
 

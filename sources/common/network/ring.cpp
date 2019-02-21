@@ -29,6 +29,7 @@
 #include "message.hpp"
 #include "cryptor.hpp"
 #include "ring.hpp"
+#include "shell/shell_server.hpp"
 
 //#define MULTICAST_ANNOUNCE
 #define WITH_BACKUP_CREDENTIALS
@@ -72,6 +73,11 @@ namespace Net
       ChangePassphrase (passphrase);
       g_free (passphrase);
     }
+
+    // Debug service
+#ifdef DEBUG
+    _shell_server = new Net::ShellServer (1234);
+#endif
 
     // Unicast listener
     _http_server = new Net::HttpServer (this,
@@ -132,6 +138,8 @@ namespace Net
   {
     _credentials->Release ();
     _http_server->Release ();
+
+    Object::TryToRelease (_shell_server);
 
     g_free (_unicast_address);
     g_object_unref (_announce_address);

@@ -1151,7 +1151,7 @@ namespace Marshaller
           }
           else
           {
-            job_list = batch->RetreiveCurrentSelection ();
+            job_list = batch->RetreivePendingSelected ();
           }
         }
 

@@ -477,7 +477,6 @@ namespace Marshaller
   {
     if (g_date_time_compare (_start, time) <= 0)
     {
-      if (_start == nullptr) Dump (this);
       GDateTime *end_time = g_date_time_add (_start,
                                              GetDuration  ());
 
@@ -656,17 +655,17 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Slot::Dump (Slot *what)
+  void Slot::Dump ()
   {
     {
-      gchar *start = g_date_time_format (what->_start, "%R");
+      gchar *start = g_date_time_format (_start, "%R");
 
       printf ("%s .. ", start);
       g_free (start);
 
-      if (what->_end)
+      if (_end)
       {
-        gchar *end = g_date_time_format (what->_end, "%R");
+        gchar *end = g_date_time_format (_end, "%R");
 
         printf ("%s" ESC, end);
         g_free (end);
@@ -677,14 +676,14 @@ namespace Marshaller
       }
     }
 
-    if (what->_piste)
+    if (_piste)
     {
-      printf (" Piste %d", what->_piste->GetId ());
+      printf (" Piste %d", _piste->GetId ());
     }
 
-    if (what->_referee_list)
+    if (_referee_list)
     {
-      gchar *name = ((Player *) what->_referee_list->data)->GetName ();
+      gchar *name = ((Player *) _referee_list->data)->GetName ();
 
       printf (" %s", name);
       g_free (name);

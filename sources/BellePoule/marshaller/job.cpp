@@ -352,8 +352,8 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Job::Dump (Job *what)
+  void Job::Dump ()
   {
-    printf ("%s::%s\n", what->_batch->GetName (), what->_name);
+    printf ("%s::%s\n", _batch->GetName (), _name);
   }
 }

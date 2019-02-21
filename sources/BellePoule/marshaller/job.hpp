@@ -91,7 +91,7 @@ namespace Marshaller
       static gint CompareSiblingOrder (Job *a,
                                        Job *b);
 
-      static void Dump (Job *what);
+      void Dump () override;
 
     private:
       guint      _sibling_order;
