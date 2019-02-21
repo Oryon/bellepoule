@@ -68,13 +68,15 @@ namespace Marshaller
 
       gboolean IsOver ();
 
-      gboolean Swap (Slot *with);
+      void Swap (Slot *with);
 
       gboolean TimeIsInside (GDateTime *time);
 
       void FixOverlaps (gboolean dry_run);
 
       void Dump () override;
+
+      gboolean Equals (Slot *to);
 
       static gint CompareAvailbility (Slot *a,
                                       Slot *b);

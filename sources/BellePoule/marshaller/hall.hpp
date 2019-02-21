@@ -217,6 +217,8 @@ namespace Marshaller
 
       void AlignSelectedOnGrid ();
 
+      void FixAffinities (GList *jobs);
+
       void PreservePiste (GList *jobs,
                           GList *sticky_slots);
   };

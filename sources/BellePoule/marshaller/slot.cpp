@@ -102,58 +102,56 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Slot::Swap (Slot *with)
+  gboolean Slot::Equals (Slot *to)
   {
-    if (this == with)
+    if (g_date_time_compare (_start, to->_start) != 0)
     {
       return FALSE;
     }
-    else if (g_date_time_compare (_start, with->_start) != 0)
+    else if (_end && to->_end && g_date_time_compare (_end, to->_end) != 0)
     {
       return FALSE;
-    }
-    else if (_end && with->_end && g_date_time_compare (_end, with->_end) != 0)
-    {
-      return FALSE;
-    }
-    else
-    {
-      GList *job_list          = g_list_copy (_job_list);
-      GList *referee_list      = g_list_copy (_referee_list);
-      GList *with_job_list     = g_list_copy (with->_job_list);
-      GList *with_referee_list = g_list_copy (with->_referee_list);
-
-      Retain ();
-      with->Retain ();
-
-      Cancel       ();
-      with->Cancel ();
-
-      for (GList *current = job_list; current; current = g_list_next (current))
-      {
-        with->AddJob ((Job *) current->data);
-      }
-      for (GList *current = with_job_list; current; current = g_list_next (current))
-      {
-        AddJob ((Job *) current->data);
-      }
-
-      for (GList *current = referee_list; current; current = g_list_next (current))
-      {
-        with->AddReferee ((EnlistedReferee *) current->data);
-      }
-      for (GList *current = with_referee_list; current; current = g_list_next (current))
-      {
-        AddReferee ((EnlistedReferee *) current->data);
-      }
-
-      g_list_free (job_list);
-      g_list_free (referee_list);
-      g_list_free (with_job_list);
-      g_list_free (with_referee_list);
     }
 
     return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Slot::Swap (Slot *with)
+  {
+    GList *job_list          = g_list_copy (_job_list);
+    GList *referee_list      = g_list_copy (_referee_list);
+    GList *with_job_list     = g_list_copy (with->_job_list);
+    GList *with_referee_list = g_list_copy (with->_referee_list);
+
+    Retain ();
+    with->Retain ();
+
+    Cancel       ();
+    with->Cancel ();
+
+    for (GList *current = job_list; current; current = g_list_next (current))
+    {
+      with->AddJob ((Job *) current->data);
+    }
+    for (GList *current = with_job_list; current; current = g_list_next (current))
+    {
+      AddJob ((Job *) current->data);
+    }
+
+    for (GList *current = referee_list; current; current = g_list_next (current))
+    {
+      with->AddReferee ((EnlistedReferee *) current->data);
+    }
+    for (GList *current = with_referee_list; current; current = g_list_next (current))
+    {
+      AddReferee ((EnlistedReferee *) current->data);
+    }
+
+    g_list_free (job_list);
+    g_list_free (referee_list);
+    g_list_free (with_job_list);
+    g_list_free (with_referee_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -334,9 +332,7 @@ namespace Marshaller
 
           if (_referee_list)
           {
-            EnlistedReferee *referee = (EnlistedReferee *) _referee_list->data;
-
-            job->AddReferee (referee->GetRef ());
+            job->OnRefereeAdded ();
           }
         }
 
@@ -398,7 +394,7 @@ namespace Marshaller
       {
         Job *job = (Job *) current->data;
 
-        job->AddReferee (referee->GetRef ());
+        job->OnRefereeAdded ();
         RefreshJobStatus (job);
 
         current = g_list_next (current);
@@ -418,7 +414,7 @@ namespace Marshaller
     {
       Job *job = (Job *) current->data;
 
-      job->RemoveReferee (referee);
+      job->OnRefereeRemoved ();
       referee->OnRemovedFromSlot (this);
       RefreshJobStatus (job);
     }
@@ -683,7 +679,7 @@ namespace Marshaller
 
     if (_referee_list)
     {
-      gchar *name = ((Player *) _referee_list->data)->GetName ();
+      gchar *name = ((EnlistedReferee *) _referee_list->data)->GetName ();
 
       printf (" %s", name);
       g_free (name);

@@ -37,7 +37,6 @@ namespace Marshaller
   {
     _listener         = nullptr;
     _fencer_list      = nullptr;
-    _referee_list     = nullptr;
     _gdk_color        = gdk_color_copy (gdk_color);
     _name             = nullptr;
     _batch            = batch;
@@ -79,7 +78,6 @@ namespace Marshaller
     gdk_color_free (_gdk_color);
 
     FreeFullGList (Player, _fencer_list);
-    g_list_free   (_referee_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -176,15 +174,24 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Job::MakeRefereeParcel ()
   {
-    if (_referee_list)
+    GList *referee_list = nullptr;
+
+    if (_slot)
     {
-      gsize length           = g_list_length (_referee_list);
+      referee_list = _slot->GetRefereeList ();
+    }
+
+    if (referee_list)
+    {
+      gsize length           = g_list_length (referee_list);
       guint referees[length];
 
       for (guint i = 0; i < length; i++)
       {
-        referees[i] = GPOINTER_TO_UINT (g_list_nth_data (_referee_list,
-                                                         i));
+        Player *referee = (Player *) g_list_nth_data (referee_list,
+                                                      i);
+
+        referees[i] = referee->GetRef ();
       }
 
       _parcel->SetList ("referees",
@@ -198,11 +205,8 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Job::AddReferee (guint referee_ref)
+  void Job::OnRefereeAdded ()
   {
-    _referee_list = g_list_append (_referee_list,
-                                   GUINT_TO_POINTER (referee_ref));
-
     MakeRefereeParcel ();
 
     if (_listener)
@@ -212,18 +216,9 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Job::RemoveReferee (Player *referee)
+  void Job::OnRefereeRemoved ()
   {
-    GList *node = g_list_find (_referee_list,
-                               GUINT_TO_POINTER (referee->GetRef ()));
-
-    if (node)
-    {
-      _referee_list = g_list_delete_link (_referee_list,
-                                          node);
-
-      MakeRefereeParcel ();
-    }
+    MakeRefereeParcel ();
   }
 
   // --------------------------------------------------------------------------------
@@ -308,52 +303,57 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  guint Job::GetKinship (Player *with_referre)
+  {
+    guint       worst              = 0;
+    Affinities *referee_affinities = (Affinities *) with_referre->GetPtrData (nullptr,
+                                                                              "affinities");
+
+    for (GList *fencers = GetFencerList (); fencers; fencers = g_list_next (fencers))
+    {
+      Affinities *fencer_affinities;
+      Player     *fencer            = (Player *) fencers->data;
+
+      fencer_affinities = (Affinities *) fencer->GetPtrData (nullptr,
+                                                             "affinities");
+
+      if (fencer_affinities)
+      {
+        guint kinship = fencer_affinities->KinshipWith (referee_affinities);
+
+        if (kinship > worst)
+        {
+          worst = kinship;
+        }
+      }
+    }
+
+    return worst;
+  }
+
+  // --------------------------------------------------------------------------------
   void Job::RefreshStatus ()
   {
-    GList *referees = nullptr;
+    _kinship = 0;
 
     if (_slot)
     {
-      referees = _slot->GetRefereeList ();
-    }
-
-    _kinship = 0;
-    while (referees)
-    {
-      Affinities *referee_affinities;
-      Player     *referee            = (Player *) referees->data;
-      GList      *fencers            = GetFencerList ();
-
-      referee_affinities = (Affinities *) referee->GetPtrData (nullptr,
-                                                               "affinities");
-      while (fencers)
+      for (GList *referees = _slot->GetRefereeList (); referees; referees = g_list_next (referees))
       {
-        Affinities *fencer_affinities;
-        Player     *fencer            = (Player *) fencers->data;
-        guint       kinship;
+        Player *referee = (Player *) referees->data;
+        guint   kinship = GetKinship (referee);
 
-        fencer_affinities = (Affinities *) fencer->GetPtrData (nullptr,
-                                                               "affinities");
-
-        if (fencer_affinities)
+        if (kinship > _kinship)
         {
-          kinship = fencer_affinities->KinshipWith (referee_affinities);
-          if (kinship > _kinship)
-          {
-            _kinship = kinship;
-          }
+          _kinship = kinship;
         }
-
-        fencers = g_list_next (fencers);
       }
-
-      referees = g_list_next (referees);
     }
   }
 
   // --------------------------------------------------------------------------------
   void Job::Dump ()
   {
-    printf ("%s::%s\n", _batch->GetName (), _name);
+    printf ("%s::%s (%d)\n", _batch->GetName (), _name, _kinship);
   }
 }

@@ -1203,6 +1203,8 @@ namespace Marshaller
           FreeFullGList (Slot, free_slots);
         }
 
+        FixAffinities (job_list);
+
         PreservePiste (job_list,
                        sticky_slots);
 
@@ -1232,6 +1234,62 @@ namespace Marshaller
     }
 
     return done;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Hall::FixAffinities (GList *jobs)
+  {
+    for (GList *a = jobs; a; a = g_list_next (a))
+    {
+      Job   *job_a      = (Job *) a->data;
+      Slot  *slot_a     = job_a->GetSlot ();
+      GList *referees_a = slot_a->GetRefereeList ();
+
+      if (g_list_length (referees_a) == 1)
+      {
+        EnlistedReferee *referee_a = (EnlistedReferee *) referees_a->data;
+
+        for (GList *b = jobs; b; b = g_list_next (b))
+        {
+          if (a != b)
+          {
+            Job  *job_b  = (Job *) b->data;
+            Slot *slot_b = job_b->GetSlot ();
+
+            if (slot_a->Equals (slot_b))
+            {
+              GList *referees_b = slot_b->GetRefereeList ();
+
+              if (g_list_length (referees_b) == 1)
+              {
+                EnlistedReferee *referee_b = (EnlistedReferee *) referees_b->data;
+                gint             delta_a   = job_a->GetKinship (referee_b) - job_a->GetKinship ();
+                gint             delta_b   = job_b->GetKinship (referee_a) - job_b->GetKinship ();
+
+                if ((delta_a + delta_b) < 0)
+                {
+                  slot_a->RemoveReferee ((EnlistedReferee *) referee_a);
+                  slot_b->RemoveReferee ((EnlistedReferee *) referee_b);
+
+                  if (   referee_a->IsAvailableFor (slot_b, slot_b->GetDuration ())
+                      && referee_b->IsAvailableFor (slot_a, slot_a->GetDuration ()))
+                  {
+                    slot_a->AddReferee (referee_b);
+                    slot_b->AddReferee (referee_a);
+                  }
+                  else
+                  {
+                    slot_a->AddReferee (referee_a);
+                    slot_b->AddReferee (referee_b);
+                  }
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1290,17 +1348,18 @@ namespace Marshaller
             {
               Slot *slot_b = (Slot *) b->data;
 
-              if (slot_b->GetPiste () == piste_needed_by_a)
+              if (   (slot_b != slot_a)
+                  && (slot_b->GetPiste () == piste_needed_by_a)
+                  && slot_b->Equals (slot_a))
               {
-                if (slot_a->Swap (slot_b))
-                {
-                  slot_a = nullptr;
-                  swap_list = g_list_remove (swap_list,
-                                             slot_b);
-                  swappable_list = g_list_remove (swappable_list,
-                                                  slot_b);
-                  break;
-                }
+                slot_a->Swap (slot_b);
+
+                slot_a = nullptr;
+                swap_list = g_list_remove (swap_list,
+                                           slot_b);
+                swappable_list = g_list_remove (swappable_list,
+                                                slot_b);
+                break;
               }
             }
           }

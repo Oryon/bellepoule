@@ -70,9 +70,9 @@ namespace Marshaller
 
       guint GetNetID ();
 
-      void AddReferee (guint referee_ref);
+      void OnRefereeAdded ();
 
-      void RemoveReferee (Player *referee);
+      void OnRefereeRemoved ();
 
       void SetPiste (guint        piste_id,
                      const gchar *start_time);
@@ -84,6 +84,8 @@ namespace Marshaller
       guint GetKinship ();
 
       void RefreshStatus ();
+
+      guint GetKinship (Player *with_referre);
 
       static gint CompareStartTime (Job *a,
                                     Job *b);
@@ -101,7 +103,6 @@ namespace Marshaller
       Batch     *_batch;
       Slot      *_slot;
       GList     *_fencer_list;
-      GList     *_referee_list;
       Listener  *_listener;
       guint      _kinship;
       guint      _workload_units;
