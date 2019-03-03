@@ -26,7 +26,7 @@ namespace Net
 {
   class Message;
   class Credentials;
-  class ShellServer;
+  class ConsoleServer;
 
   class Ring : public Object,
                public Object::Listener,
@@ -123,7 +123,7 @@ namespace Net
       Credentials    *_credentials;
       HttpServer     *_http_server;
       gint            _quit_countdown;
-      ShellServer    *_shell_server = nullptr;
+      ConsoleServer  *_console_server = nullptr;
 
       void Add (Partner *partner);
 

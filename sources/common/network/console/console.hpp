@@ -17,26 +17,36 @@
 #pragma once
 
 #include "util/object.hpp"
-#include "shell.hpp"
 
 namespace Net
 {
-  class ShellServer : public Object,
-                      public Shell::Listener
+  class Console : public Object
   {
     public:
-      ShellServer (guint port);
+      struct Listener
+      {
+        virtual void OnCommand     (Console *console, const gchar *command) = 0;
+        virtual void OnShellClosed (Console *console) = 0;
+      };
 
-      void OnShellClosed (Shell *shell) override;
+    public:
+      Console (GSocket  *socket,
+               Listener *listener);
+
+      void Echo (const gchar *message);
 
     private:
-      GList   *_clients           = nullptr;
-      GSource *_connection_source = nullptr;
+      Listener *_listener;
+      GSocket  *_socket;
+      GSource  *_source;
+      GString  *_command;
 
-      ~ShellServer () override;
+      ~Console () override;
 
-      static gboolean OnNewClient (GSocket      *socket,
-                                   GIOCondition  condition,
-                                   ShellServer  *server);
+      void EchoPrompt ();
+
+      static gboolean OnSocketEvent (GSocket      *socket,
+                                     GIOCondition  condition,
+                                     Console      *console);
   };
 }

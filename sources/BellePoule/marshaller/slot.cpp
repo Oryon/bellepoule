@@ -653,38 +653,41 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Slot::Dump ()
   {
+    GString *message = g_string_new ("");
     {
       gchar *start = g_date_time_format (_start, "%R");
 
-      printf ("%s .. ", start);
+      g_string_append_printf (message, "%s .. ", start);
       g_free (start);
 
       if (_end)
       {
         gchar *end = g_date_time_format (_end, "%R");
 
-        printf ("%s" ESC, end);
+        g_string_append_printf (message, "%s" ESC, end);
         g_free (end);
       }
       else
       {
-        printf ("~");
+        g_string_append_c (message, '~');
       }
     }
 
     if (_piste)
     {
-      printf (" Piste %d", _piste->GetId ());
+      g_string_append_printf (message, " Piste %d", _piste->GetId ());
     }
 
     if (_referee_list)
     {
       gchar *name = ((EnlistedReferee *) _referee_list->data)->GetName ();
 
-      printf (" %s", name);
+      g_string_append_printf (message, " %s", name);
       g_free (name);
     }
 
-    printf ("\n");
+    g_debug ("%s", message->str);
+    g_string_free (message,
+                   TRUE);
   }
 }

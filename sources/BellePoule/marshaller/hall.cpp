@@ -21,6 +21,7 @@
 #include "util/attribute_desc.hpp"
 #include "util/filter.hpp"
 #include "util/player.hpp"
+#include "network/console/console_server.hpp"
 #include "actors/referees_list.hpp"
 #include "application/weapon.hpp"
 
@@ -71,6 +72,10 @@ namespace Marshaller
 
     _lasso = new Lasso ();
     _clock = new Clock (this);
+
+    Net::ConsoleServer::ExposeVariable ("fix-affinities",  1);
+    Net::ConsoleServer::ExposeVariable ("preserve-piste",  1);
+    Net::ConsoleServer::ExposeVariable ("clock-alterable", 0);
 
     {
       _timeline = new Timeline (_clock,
@@ -696,15 +701,18 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::AlterCurrentTime ()
+  void Hall::AlterClock ()
   {
-    GDateTime *cursor = _timeline->RetreiveCursorTime (TRUE);
+    if (Net::ConsoleServer::VariableIsSet ("clock-alterable"))
+    {
+      GDateTime *cursor = _timeline->RetreiveCursorTime (TRUE);
 
-    _clock->Set (cursor);
+      _clock->Set (cursor);
 
-    g_date_time_unref (cursor);
+      g_date_time_unref (cursor);
 
-    Redraw ();
+      Redraw ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1239,50 +1247,53 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::FixAffinities (GList *jobs)
   {
-    for (GList *a = jobs; a; a = g_list_next (a))
+    if (Net::ConsoleServer::VariableIsSet ("fix-affinities"))
     {
-      Job   *job_a      = (Job *) a->data;
-      Slot  *slot_a     = job_a->GetSlot ();
-      GList *referees_a = slot_a->GetRefereeList ();
-
-      if (g_list_length (referees_a) == 1)
+      for (GList *a = jobs; a; a = g_list_next (a))
       {
-        EnlistedReferee *referee_a = (EnlistedReferee *) referees_a->data;
+        Job   *job_a      = (Job *) a->data;
+        Slot  *slot_a     = job_a->GetSlot ();
+        GList *referees_a = slot_a->GetRefereeList ();
 
-        for (GList *b = jobs; b; b = g_list_next (b))
+        if (g_list_length (referees_a) == 1)
         {
-          if (a != b)
+          EnlistedReferee *referee_a = (EnlistedReferee *) referees_a->data;
+
+          for (GList *b = jobs; b; b = g_list_next (b))
           {
-            Job  *job_b  = (Job *) b->data;
-            Slot *slot_b = job_b->GetSlot ();
-
-            if (slot_a->Equals (slot_b))
+            if (a != b)
             {
-              GList *referees_b = slot_b->GetRefereeList ();
+              Job  *job_b  = (Job *) b->data;
+              Slot *slot_b = job_b->GetSlot ();
 
-              if (g_list_length (referees_b) == 1)
+              if (slot_a->Equals (slot_b))
               {
-                EnlistedReferee *referee_b = (EnlistedReferee *) referees_b->data;
-                gint             delta_a   = job_a->GetKinship (referee_b) - job_a->GetKinship ();
-                gint             delta_b   = job_b->GetKinship (referee_a) - job_b->GetKinship ();
+                GList *referees_b = slot_b->GetRefereeList ();
 
-                if ((delta_a + delta_b) < 0)
+                if (g_list_length (referees_b) == 1)
                 {
-                  slot_a->RemoveReferee ((EnlistedReferee *) referee_a);
-                  slot_b->RemoveReferee ((EnlistedReferee *) referee_b);
+                  EnlistedReferee *referee_b = (EnlistedReferee *) referees_b->data;
+                  gint             delta_a   = job_a->GetKinship (referee_b) - job_a->GetKinship ();
+                  gint             delta_b   = job_b->GetKinship (referee_a) - job_b->GetKinship ();
 
-                  if (   referee_a->IsAvailableFor (slot_b, slot_b->GetDuration ())
-                      && referee_b->IsAvailableFor (slot_a, slot_a->GetDuration ()))
+                  if ((delta_a + delta_b) < 0)
                   {
-                    slot_a->AddReferee (referee_b);
-                    slot_b->AddReferee (referee_a);
+                    slot_a->RemoveReferee ((EnlistedReferee *) referee_a);
+                    slot_b->RemoveReferee ((EnlistedReferee *) referee_b);
+
+                    if (   referee_a->IsAvailableFor (slot_b, slot_b->GetDuration ())
+                        && referee_b->IsAvailableFor (slot_a, slot_a->GetDuration ()))
+                    {
+                      slot_a->AddReferee (referee_b);
+                      slot_b->AddReferee (referee_a);
+                    }
+                    else
+                    {
+                      slot_a->AddReferee (referee_a);
+                      slot_b->AddReferee (referee_b);
+                    }
+                    break;
                   }
-                  else
-                  {
-                    slot_a->AddReferee (referee_a);
-                    slot_b->AddReferee (referee_b);
-                  }
-                  break;
                 }
               }
             }
@@ -1296,82 +1307,85 @@ namespace Marshaller
   void Hall::PreservePiste (GList *jobs,
                             GList *sticky_slots)
   {
-    GList *swap_list = nullptr;
-
-    for (GList *current = jobs; current; current = g_list_next (current))
+    if (Net::ConsoleServer::VariableIsSet ("preserve-piste"))
     {
-      Job  *job      = (Job *) current->data;
-      Slot *now_slot = job->GetSlot ();
+      GList *swap_list = nullptr;
 
-      if (g_list_find (sticky_slots,
-                       now_slot) == nullptr)
+      for (GList *current = jobs; current; current = g_list_next (current))
       {
-        GList *referees = now_slot->GetRefereeList ();
+        Job  *job      = (Job *) current->data;
+        Slot *now_slot = job->GetSlot ();
 
-        if (referees)
+        if (g_list_find (sticky_slots,
+                         now_slot) == nullptr)
         {
-          EnlistedReferee *referee     = (EnlistedReferee *) referees->data;
-          Slot            *before_slot = referee->GetSlotJustBefore (now_slot);
+          GList *referees = now_slot->GetRefereeList ();
 
-          if (before_slot)
+          if (referees)
           {
-            swap_list = g_list_append (swap_list,
-                                       now_slot);
-          }
-        }
-      }
-    }
+            EnlistedReferee *referee     = (EnlistedReferee *) referees->data;
+            Slot            *before_slot = referee->GetSlotJustBefore (now_slot);
 
-    {
-      GList *swappable_list = g_list_copy (swap_list);
-
-      while (swap_list)
-      {
-        Slot            *slot_a            = (Slot *) swap_list->data;
-        EnlistedReferee *referee_a         = (EnlistedReferee *) slot_a->GetRefereeList ()->data;
-        Slot            *before_slot_a     = referee_a->GetSlotJustBefore (slot_a);
-        Piste           *piste_needed_by_a = (Piste *) before_slot_a->GetPiste ();
-
-        if (piste_needed_by_a != slot_a->GetPiste ())
-        {
-          Slot *free_slot = piste_needed_by_a->GetFreeSlot (slot_a->GetStartTime (),
-                                                            slot_a->GetDuration ());
-
-          if (free_slot)
-          {
-            slot_a->Swap (free_slot);
-            slot_a->Release ();
-          }
-          else
-          {
-            for (GList *b = swappable_list; b; b = g_list_next (b))
+            if (before_slot)
             {
-              Slot *slot_b = (Slot *) b->data;
-
-              if (   (slot_b != slot_a)
-                  && (slot_b->GetPiste () == piste_needed_by_a)
-                  && slot_b->Equals (slot_a))
-              {
-                slot_a->Swap (slot_b);
-
-                slot_a = nullptr;
-                swap_list = g_list_remove (swap_list,
-                                           slot_b);
-                swappable_list = g_list_remove (swappable_list,
-                                                slot_b);
-                break;
-              }
+              swap_list = g_list_append (swap_list,
+                                         now_slot);
             }
           }
         }
-
-        swap_list = g_list_remove (swap_list,
-                                   slot_a);
       }
-      g_list_free (swappable_list);
-    }
 
-    g_list_free (swap_list);
+      {
+        GList *swappable_list = g_list_copy (swap_list);
+
+        while (swap_list)
+        {
+          Slot            *slot_a            = (Slot *) swap_list->data;
+          EnlistedReferee *referee_a         = (EnlistedReferee *) slot_a->GetRefereeList ()->data;
+          Slot            *before_slot_a     = referee_a->GetSlotJustBefore (slot_a);
+          Piste           *piste_needed_by_a = (Piste *) before_slot_a->GetPiste ();
+
+          if (piste_needed_by_a != slot_a->GetPiste ())
+          {
+            Slot *free_slot = piste_needed_by_a->GetFreeSlot (slot_a->GetStartTime (),
+                                                              slot_a->GetDuration ());
+
+            if (free_slot)
+            {
+              slot_a->Swap (free_slot);
+              slot_a->Release ();
+            }
+            else
+            {
+              for (GList *b = swappable_list; b; b = g_list_next (b))
+              {
+                Slot *slot_b = (Slot *) b->data;
+
+                if (   (slot_b != slot_a)
+                    && (slot_b->GetPiste () == piste_needed_by_a)
+                    && slot_b->Equals (slot_a))
+                {
+                  slot_a->Swap (slot_b);
+
+                  slot_a = nullptr;
+                  swap_list = g_list_remove (swap_list,
+                                             slot_b);
+                  swappable_list = g_list_remove (swappable_list,
+                                                  slot_b);
+                  break;
+                }
+              }
+            }
+          }
+
+          swap_list = g_list_remove (swap_list,
+                                     slot_a);
+        }
+        g_list_free (swappable_list);
+      }
+
+      g_list_free (swap_list);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1973,7 +1987,7 @@ namespace Marshaller
   {
     Hall *h = dynamic_cast <Hall *> (owner);
 
-    h->AlterCurrentTime ();
+    h->AlterClock ();
   }
 
   // --------------------------------------------------------------------------------

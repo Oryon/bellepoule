@@ -29,7 +29,7 @@
 #include "message.hpp"
 #include "cryptor.hpp"
 #include "ring.hpp"
-#include "shell/shell_server.hpp"
+#include "console/console_server.hpp"
 
 //#define MULTICAST_ANNOUNCE
 #define WITH_BACKUP_CREDENTIALS
@@ -74,9 +74,15 @@ namespace Net
       g_free (passphrase);
     }
 
-    // Debug service
 #ifdef DEBUG
-    _shell_server = new Net::ShellServer (1234);
+    if (_role == Role::RESOURCE_MANAGER)
+    {
+      _console_server = new Net::ConsoleServer (1234);
+    }
+    else
+    {
+      _console_server = new Net::ConsoleServer (4321);
+    }
 #endif
 
     // Unicast listener
@@ -139,7 +145,7 @@ namespace Net
     _credentials->Release ();
     _http_server->Release ();
 
-    Object::TryToRelease (_shell_server);
+    Object::TryToRelease (_console_server);
 
     g_free (_unicast_address);
     g_object_unref (_announce_address);

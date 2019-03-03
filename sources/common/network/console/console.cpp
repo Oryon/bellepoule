@@ -14,14 +14,14 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "shell.hpp"
+#include "console.hpp"
 
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  Shell::Shell (GSocket  *socket,
-                Listener *listener)
-    : Object ("Shell")
+  Console::Console (GSocket  *socket,
+                    Listener *listener)
+    : Object ("Console")
   {
     _command  = g_string_new ("");
     _listener = listener;
@@ -41,34 +41,21 @@ namespace Net
     }
 
     {
-      const gchar *logo = "\n"
-        "                           .,,,,,,,,,,,,,,,'.         \n"
-        "                          'kKXXNNNNNNXXXXX0o.         \n"
-        "                          ,k000KXXXXXXXX0o'           \n"
-        "                          ,O00000KXXXX0o'             \n"
-        "                          ,OKK0KK0KKOo'               \n"
-        "                          ,OKKKKKK0d;.                \n"
-        "                          ,OKKKKKxc;lo,.              \n"
-        "                          ,OXKKOxodkkkkd;.            \n"
-        "                          ,OK0OkO00OOOOOOx;.          \n"
-        "                          ,O000000000000000x:'.       \n"
-        "                         'okO00KKKKKKKKKKK0000;       \n"
-        "                       'oOOdoook0KK00000000OO0:       \n"
-        "                     'lOKKOdoolclk000000OOOO00:       \n"
-        "                   .lOK000kddddoccok000OOO0000c       \n"
-        "                 .lk000000kxdddddoc:clxOO0OOOOc       \n"
-        "               .cx00000000Oxxxxxxo;.  .:xOOOOO:       \n"
-        "             .ckOOOOO00000Okkkkd:.      .:xOOOc       \n"
-        "          .cdk000OOOOOO0OOOOxdc.          .:xOc       \n"
-        "        .ck0000O00OOOOOOOOkl..              .'.       \n"
-        "        .,,'',''''''''''''.                           \n"
-        "\n"
-        "mmmmm         \"\"#    \"\"#           mmmmm                \"\"#          \n"
-        "#    #  mmm     #      #     mmm   #   \"#  mmm   m   m    #     mmm  \n"
-        "#mmmm\" #\"  #    #      #    #\"  #  #mmm#\" #\" \"#  #   #    #    #\"  # \n"
-        "#    # #\"\"\"\"    #      #    #\"\"\"\"  #      #   #  #   #    #    #\"\"\"\" \n"
-        "#mmmm\" \"#mm\"    \"mm    \"mm  \"#mm\"  #      \"#m#\"  \"mm\"#    \"mm  \"#mm\" \n"
-        "\n";
+      const gchar *logo =
+        "                              \n"
+        "             .dkkOOOOkk:.     \n"
+        "             .O00KXXKx,       \n"
+        "             .0KK0Kx,         \n"
+        "             .0K0xol:.        \n"
+        "             .00kkOOOOo.      \n"
+        "             .O00K0K000Ol.    \n"
+        "           .lxddkKK000000'    \n"
+        "         'd0KOdollx00OO00'    \n"
+        "       'oO000Oxddd:,cxOOO'    \n"
+        "     'lkOO000Okxc.    ,dO'    \n"
+        "   ;d000OOOOOOc.        ,.    \n"
+        "   ...........                \n"
+        "                              \n";
 
       Echo       (logo);
       EchoPrompt ();
@@ -76,19 +63,17 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  Shell::~Shell ()
+  Console::~Console ()
   {
     g_string_free (_command,
                    TRUE);
 
     g_source_destroy (_source);
     g_object_unref   (_socket);
-
-    printf ("<<<  Released  >>>\n");
   }
 
   // --------------------------------------------------------------------------------
-  void Shell::Echo (const gchar *message)
+  void Console::Echo (const gchar *message)
   {
     for (size_t size = strlen (message) + 1; size > 0;)
     {
@@ -116,15 +101,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Shell::EchoPrompt ()
+  void Console::EchoPrompt ()
   {
     Echo ("BellePoule> ");
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Shell::OnSocketEvent (GSocket      *socket,
-                                 GIOCondition  condition,
-                                 Shell       *shell)
+  gboolean Console::OnSocketEvent (GSocket      *socket,
+                                   GIOCondition  condition,
+                                   Console       *console)
   {
     GError  *error  = nullptr;
     gchar    buffer[512];
@@ -144,7 +129,7 @@ namespace Net
 
     if (received <= 0)
     {
-      shell->_listener->OnShellClosed (shell);
+      console->_listener->OnShellClosed (console);
     }
     else
     {
@@ -154,25 +139,17 @@ namespace Net
 
         if (c == '\n')
         {
-          if (g_strcmp0 (shell->_command->str,
-                         "help\r") == 0)
-          {
-            shell->Echo ("retained    dump a summary of the retained objects.\n");
-          }
-          else if (g_strcmp0 (shell->_command->str,
-                              "retained\r") == 0)
-          {
-            Object::DumpList ();
-          }
+          console->_listener->OnCommand (console,
+                                         console->_command->str);
 
-          g_string_free (shell->_command,
+          g_string_free (console->_command,
                          TRUE);
-          shell->_command = g_string_new ("");
-          shell->EchoPrompt ();
+          console->_command = g_string_new ("");
+          console->EchoPrompt ();
         }
         else
         {
-          g_string_append_c (shell->_command,
+          g_string_append_c (console->_command,
                              c);
         }
       }

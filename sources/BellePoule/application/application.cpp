@@ -760,6 +760,13 @@ void Application::LogHandler (const gchar    *log_domain,
                               const gchar    *message,
                               gpointer        user_data)
 {
+  const gchar *domain = "BellePoule";
+
+  if (log_domain)
+  {
+    domain = log_domain;
+  }
+
   switch (log_level)
   {
     case G_LOG_FLAG_FATAL:
@@ -768,7 +775,7 @@ void Application::LogHandler (const gchar    *log_domain,
     case G_LOG_LEVEL_WARNING:
     case G_LOG_FLAG_RECURSION:
     {
-      g_print (RED "[%s]" ESC " %s\n", log_domain, message);
+      g_print (RED "[%s]" ESC " %s\n", domain, message);
     }
     break;
 
@@ -778,7 +785,7 @@ void Application::LogHandler (const gchar    *log_domain,
     case G_LOG_LEVEL_MASK:
     default:
     {
-      g_print (BLUE "[%s]" ESC " %s\n", log_domain, message);
+      g_print (BLUE "[%s]" ESC " %s\n", domain, message);
     }
     break;
   }

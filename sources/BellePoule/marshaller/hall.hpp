@@ -67,7 +67,7 @@ namespace Marshaller
 
       void RemoveSelected ();
 
-      void AlterCurrentTime ();
+      void AlterClock ();
 
       void ManageCompetition (Net::Message *message,
                               GtkNotebook  *notebook);

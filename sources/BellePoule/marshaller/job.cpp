@@ -354,6 +354,6 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Job::Dump ()
   {
-    printf ("%s::%s (%d)\n", _batch->GetName (), _name, _kinship);
+    g_debug ("%s::%s (%d)", _batch->GetName (), _name, _kinship);
   }
 }
