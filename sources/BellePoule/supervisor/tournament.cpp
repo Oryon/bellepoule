@@ -18,6 +18,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <libxml/xpath.h>
+#include <zip.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -112,7 +113,7 @@ Tournament::~Tournament ()
   _publication->Release ();
   Contest::Cleanup ();
 
-  FreeFullGList(Net::Advertiser, _advertisers);
+  FreeFullGList (Net::Advertiser, _advertisers);
 }
 
 // --------------------------------------------------------------------------------
@@ -178,6 +179,31 @@ void Tournament::Start (gchar *filename)
   }
 
   _web_server = new Net::WebServer (this);
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::CreateNewContest (GtkWidget *from)
+{
+  if (from == _glade->GetWidget ("new_empty"))
+  {
+    gtk_dialog_response (GTK_DIALOG (_glade->GetWidget ("new_messagedialog")),
+                         'E');
+  }
+  else if (from == _glade->GetWidget ("new_xml"))
+  {
+    gtk_dialog_response (GTK_DIALOG (_glade->GetWidget ("new_messagedialog")),
+                         'X');
+  }
+  else if (from == _glade->GetWidget ("new_zip"))
+  {
+    gtk_dialog_response (GTK_DIALOG (_glade->GetWidget ("new_messagedialog")),
+                         'Z');
+  }
+  else if (from == _glade->GetWidget ("new_askfred"))
+  {
+    gtk_dialog_response (GTK_DIALOG (_glade->GetWidget ("new_messagedialog")),
+                         'A');
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -488,17 +514,103 @@ Contest *Tournament::GetContest (const gchar *filename)
 // --------------------------------------------------------------------------------
 void Tournament::OnNew ()
 {
-  Contest *contest = new Contest (_advertisers);
+  Contest *contest = nullptr;
 
-  Manage (contest);
-  contest->AskForSettings ();
+  {
+    GtkWidget *dialog   = _glade->GetWidget ("new_messagedialog");
+    guint      response = RunDialog (GTK_DIALOG (dialog));
 
-  Plug (contest,
-        nullptr);
+    gtk_widget_hide (dialog);
+
+    if (response == 'E')
+    {
+      contest = new Contest (_advertisers);
+    }
+    else if (response == 'X')
+    {
+      OnOpen (nullptr,
+              "*.xml");
+    }
+    else if (response == 'Z')
+    {
+      OnOpen (nullptr,
+              "*.zip");
+    }
+    else if (response == 'A')
+    {
+      OnOpen (nullptr,
+              "*.frd");
+    }
+  }
+
+  if (contest)
+  {
+    Manage (contest);
+    contest->AskForSettings ();
+
+    Plug (contest,
+          nullptr);
+  }
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnOpen (gchar *current_folder)
+GtkFileFilter *Tournament::GetFileFilter (const gchar *name,
+                                          ...)
+{
+  va_list        ap;
+  GtkFileFilter *filter      = gtk_file_filter_new ();
+  GString       *name_string = nullptr;
+
+  va_start (ap, name);
+  while (gchar *pattern = va_arg (ap, char *))
+  {
+    gchar *pattern_upper = g_ascii_strup (pattern, -1);
+
+    if (name)
+    {
+      if (name_string == nullptr)
+      {
+        name_string = g_string_new (name);
+
+        g_string_append (name_string,
+                         " (");
+      }
+      else
+      {
+        g_string_append (name_string,
+                         ", ");
+      }
+
+      g_string_append (name_string,
+                       pattern);
+    }
+
+    gtk_file_filter_add_pattern (filter,
+                                 pattern);
+    gtk_file_filter_add_pattern (filter,
+                                 pattern_upper);
+
+    g_free (pattern_upper);
+  }
+  va_end (ap);
+
+  if (name_string)
+  {
+    g_string_append (name_string,
+                     ")");
+    gtk_file_filter_set_name (filter,
+                              name_string->str);
+
+    g_string_free (name_string,
+                   TRUE);
+  }
+
+  return filter;
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnOpen (gchar       *current_folder,
+                         const gchar *filter_suffix)
 {
   GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a competion file to open... "),
                                                     nullptr,
@@ -509,19 +621,58 @@ void Tournament::OnOpen (gchar *current_folder)
                                                     GTK_RESPONSE_ACCEPT,
                                                     NULL);
 
+  if (filter_suffix)
   {
-    GtkFileFilter *filter = gtk_file_filter_new ();
+    {
+      GtkFileFilter *filter = GetFileFilter ("",
+                                             filter_suffix,
+                                             nullptr);
 
-    gtk_file_filter_set_name (filter,
-                              gettext ("Competition files (.cotcot / .xml / .frd)"));
-    gtk_file_filter_add_pattern (filter,
-                                 "*.cotcot");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.xml");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.XML");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.frd");
+      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                   filter);
+    }
+
+    {
+      GtkFileFilter *filter = GetFileFilter (gettext ("Competition files"),
+                                             "*.zip",
+                                             "*.xml",
+                                             "*.frd",
+                                             nullptr);
+
+      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                   filter);
+    }
+  }
+  else
+  {
+    {
+      GtkFileFilter *filter = GetFileFilter (gettext ("BellePoule files"),
+                                             "*.cotcot",
+                                             nullptr);
+
+      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                   filter);
+    }
+
+    {
+      GtkFileFilter *filter = GetFileFilter (gettext ("Competition files"),
+                                             "*.cotcot",
+                                             "*.zip",
+                                             "*.xml",
+                                             "*.frd",
+                                             nullptr);
+
+      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                   filter);
+    }
+  }
+
+  {
+    GtkFileFilter *filter = GetFileFilter (gettext ("Fencer files"),
+                                           "*.fff",
+                                           "*.csv",
+                                           nullptr);
+
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                  filter);
   }
@@ -643,9 +794,9 @@ void Tournament::OnOpenTemplate ()
 #ifdef WINDOWS_TEMPORARY_PATCH
     uri = g_locale_from_utf8 (filename,
                               -1,
-                              NULL,
-                              NULL,
-                              NULL);
+                              nullptr,
+                              nullptr,
+                              nullptr);
 
     ShellExecute (NULL,
                   "open",
@@ -725,8 +876,86 @@ void Tournament::OpenUriContest (const gchar *uri)
         gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                                   "Adjust the imported data if needed and \ndon't forget to save all the created events!");
 
-        RunDialog (GTK_DIALOG(dialog));
+        RunDialog (GTK_DIALOG (dialog));
         gtk_widget_destroy (dialog);
+      }
+    }
+    else if (g_str_has_suffix (uri,
+                               ".zip"))
+    {
+      struct zip *archive;
+
+      {
+        gchar *locale_uri = g_locale_from_utf8 (uri,
+                                                -1,
+                                                nullptr,
+                                                nullptr,
+                                                nullptr);
+
+        archive = zip_open (locale_uri,
+                            ZIP_CHECKCONS,
+                            nullptr);
+        g_free (locale_uri);
+      }
+
+      if (archive)
+      {
+        guint count = zip_get_num_files (archive);
+
+        for (guint id = 0; id < count; id++)
+        {
+          const gchar *name = zip_get_name (archive,
+                                            id,
+                                            ZIP_FL_UNCHANGED);
+
+          if (g_str_has_suffix (name,
+                                ".XML"))
+          {
+            struct zip_stat file_stat;
+
+            zip_stat_index (archive,
+                            id,
+                            0,
+                            &file_stat);
+
+            if (zip_stat (archive,
+                          file_stat.name,
+                          0,
+                          &file_stat) != -1)
+            {
+              struct zip_file *xml = zip_fopen (archive,
+                                                file_stat.name,
+                                                ZIP_FL_UNCHANGED);
+
+              if (xml)
+              {
+                guchar *content = g_new0 (guchar, file_stat.size+1);
+
+                if (zip_fread (xml,
+                               content,
+                               file_stat.size) != -1)
+                {
+                  Contest *contest = new Contest (_advertisers);
+
+                  contest->LoadXmlString (content);
+
+                  Manage (contest);
+                  Plug (contest,
+                        nullptr);
+                }
+
+                g_free (content);
+                zip_fclose (xml);
+
+                break;
+              }
+            }
+
+            break;
+          }
+        }
+
+        zip_close (archive);
       }
     }
     else
@@ -742,7 +971,7 @@ void Tournament::OpenUriContest (const gchar *uri)
         {
           contest = new Contest (_advertisers);
 
-          contest->LoadXml (uri);
+          contest->LoadXmlFile (uri);
 
           Manage (contest);
           Plug (contest,
@@ -787,7 +1016,8 @@ void Tournament::OnOpenExample ()
   {
     gchar *example_dirname = g_build_filename (Global::_share_dir, "Exemples", NULL);
 
-    OnOpen (example_dirname);
+    OnOpen (example_dirname,
+            nullptr);
     g_free (example_dirname);
   }
 }
@@ -1027,7 +1257,8 @@ extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
-  t->OnOpen ();
+  t->OnOpen (nullptr,
+             nullptr);
 }
 
 // --------------------------------------------------------------------------------
@@ -1134,3 +1365,11 @@ extern "C" G_MODULE_EXPORT void on_access_code_activate (GtkWidget *w,
   t->OnShowAccessCode (FALSE);
 }
 
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_new_clicked (GtkWidget *w,
+                                                Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->CreateNewContest (w);
+}

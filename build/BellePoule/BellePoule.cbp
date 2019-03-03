@@ -121,6 +121,7 @@
 			<Add library="qrencode" />
 			<Add library="json-glib-1.0" />
 			<Add library="webkitgtk-1.0" />
+			<Add library="zip" />
 		</Linker>
 		<Unit filename="../../sources/BellePoule/actors/checkin.cpp">
 			<Option target="Lib_Debug" />
@@ -581,6 +582,18 @@
 		<Unit filename="../../sources/common/network/advertiser.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/console/console.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/console/console.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/console/console_server.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/console/console_server.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/credentials.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
@@ -729,18 +742,6 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/ring.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-    <Unit filename="../../sources/common/network/console/console_server.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-    <Unit filename="../../sources/common/network/console/console_server.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-    <Unit filename="../../sources/common/network/console/console.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-    <Unit filename="../../sources/common/network/console/console.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/twitter/statuses_update_request.cpp">

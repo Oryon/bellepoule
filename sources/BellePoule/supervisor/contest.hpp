@@ -68,7 +68,9 @@ class Contest : public Module
     void LoadAskFred (AskFred::Reader::Event *askfred,
                       const gchar            *dirname);
 
-    void LoadXml (const gchar *filename);
+    void LoadXmlString (const guchar *string);
+
+    void LoadXmlFile (const gchar *filename);
 
     void LoadFencerFile (const gchar *filename);
 

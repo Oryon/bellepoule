@@ -292,6 +292,7 @@ Source: "{#MINGW}\bin\libhogweed-4-2.dll"; DestDir: "{app}\bin"; Flags: ignoreve
 Source: "{#MINGW}\bin\libnettle-6-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libtasn1-6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libp11-kit-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libzip-4.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
 Source: "{#MINGW}\lib\gio\modules\libgiognutls.dll"; DestDir: "{app}\lib\gio\modules"; Flags: ignoreversion
 

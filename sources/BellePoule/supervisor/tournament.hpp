@@ -38,7 +38,8 @@ class Tournament : public Module,
 
     void OnNew ();
 
-    void OnOpen (gchar *current_folder = NULL);
+    void OnOpen (gchar       *current_folder,
+                 const gchar *filter_suffix);
 
     void OnRecent ();
 
@@ -74,6 +75,8 @@ class Tournament : public Module,
 
     const gchar *GetSecretKey (const gchar *authentication_scheme) override;
 
+    void CreateNewContest (GtkWidget *from);
+
   public:
     const Player *GetPlayer (guint CompetitionId,
                              guint PlayerId);
@@ -99,4 +102,7 @@ class Tournament : public Module,
 
     void OnWebServerState (gboolean in_progress,
                            gboolean on) override;
+
+    GtkFileFilter *GetFileFilter (const gchar *name,
+                                  ...);
 };

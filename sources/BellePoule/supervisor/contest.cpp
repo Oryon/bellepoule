@@ -487,7 +487,43 @@ void Contest::LoadAskFred (AskFred::Reader::Event *askfred,
 }
 
 // --------------------------------------------------------------------------------
-void Contest::LoadXml (const gchar *filename)
+void Contest::LoadXmlString (const guchar *string)
+{
+  {
+    xmlDoc *doc = xmlParseDoc (string);
+
+    if (doc)
+    {
+      LoadXmlDoc (doc);
+
+      if (_save_timeout_id > 0)
+      {
+        g_source_remove (_save_timeout_id);
+      }
+
+      xmlFreeDoc (doc);
+    }
+  }
+
+  if ((_filename == nullptr) && (_read_only == FALSE))
+  {
+    GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
+                                                                  nullptr,
+                                                                  GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                                  GTK_STOCK_CANCEL,  GTK_RESPONSE_CANCEL,
+                                                                  GTK_STOCK_SAVE_AS, GTK_RESPONSE_ACCEPT,
+                                                                  NULL));
+
+    GetSaveFileName (chooser,
+                     "default_dir_name");
+    gtk_widget_destroy (chooser);
+  }
+
+  Save ();
+}
+
+// --------------------------------------------------------------------------------
+void Contest::LoadXmlFile (const gchar *filename)
 {
   if (g_path_is_absolute (filename) == FALSE)
   {
