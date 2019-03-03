@@ -343,46 +343,55 @@ package: prepare_staging $(prepare_linux) $(prepare_osx) prepare_sources $(prepa
 	rm -rf `find $(PACKAGE) -name ".*.swp"`
 	find $(PACKAGE)/$(RELEASE) -type f -exec chmod a-x {} \;
 
+define prepare_osx_func
+	cp -rf osx/$(PRODUCT).app $(PACKAGE)/$(RELEASE)/$(1).app
+	sed -i 's/__VERSION__/$(subst $\",,$(LONG_VERSION))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
+	sed -i 's/__EXECUTABLE__/$(subst $\",,$(1))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
+	sed -i 's/__NAME__/$(subst $\",,$(2))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
+	sed -i 's/__IDENTIFIER__/$(subst $\",,$(1))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
+	sed -i 's/__ICNS__/$(subst $\",,$(1))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
+	cp $(OSX_CROSS)/../relocated/*.dylib $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Frameworks
+	cp $(OSX_CROSS)/../loaders/*.so $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/lib/gdk-pixbuf-2.0/2.10.0/loaders
+	cp $(OSX_CROSS)/../printbackends/*.so $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/lib/gtk-2.0/2.10.0/printbackends
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fr/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/fr/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fr/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/nl/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/nl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/nl/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pl/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/pl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pl/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ca/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/ca/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ca/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/de/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/de/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/de/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ru/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/ru/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ru/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ar/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/ar/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ar/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/es/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/es/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/es/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/it/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/it/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/it/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ko/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/ko/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ko/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pt/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/pt/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pt/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sv/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/sv/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sv/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ja/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/ja/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ja/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/hu/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/hu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/hu/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sl/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/sl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sl/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/eu/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/eu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/eu/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fa/LC_MESSAGES
+	cp $(OSX_CROSS)/share/locale/fa/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fa/LC_MESSAGES/gtk20r.mo
+endef
+
 prepare_osx:
-	cp -rf osx/$(PRODUCT).app $(PACKAGE)/$(RELEASE)
-	sed -i 's/__VERSION__/$(subst $\",,$(LONG_VERSION))/' $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Info.plist
-	cp $(OSX_CROSS)/../relocated/*.dylib $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Frameworks
-	cp $(OSX_CROSS)/../loaders/*.so $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/lib/gdk-pixbuf-2.0/2.10.0/loaders
-	cp $(OSX_CROSS)/../printbackends/*.so $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/lib/gtk-2.0/2.10.0/printbackends
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/fr/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/fr/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/fr/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/nl/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/nl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/nl/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/pl/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/pl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/pl/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ca/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/ca/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ca/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/de/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/de/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/de/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ru/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/ru/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ru/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ar/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/ar/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ar/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/es/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/es/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/es/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/it/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/it/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/it/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ko/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/ko/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ko/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/pt/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/pt/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/pt/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/sv/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/sv/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/sv/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ja/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/ja/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/ja/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/hu/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/hu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/hu/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/sl/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/sl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/sl/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/eu/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/eu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/eu/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/fa/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/fa/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/share/locale/fa/LC_MESSAGES/gtk20r.mo
+	$(call prepare_osx_func,$(PRODUCT)-supervisor,BellePoule)
+	$(call prepare_osx_func,$(PRODUCT)-marshaller,BellePoule2D)
 
 prepare_arch:
 	git clone --quiet git+ssh://aur@aur.archlinux.org/$(PRODUCT).git $(PACKAGE)/$(RELEASE)/arch
@@ -432,6 +441,13 @@ prepare_windows_resources:
 
 prepare_osx_resources: prepare_resources
 	cp -f ../../resources/gtkrc.osx $(RESOURCES)/gtkrc
+	tar -C $(PACKAGE)/$(RELEASE)/$(PRODUCT).app            -cf $(PACKAGE)/$(RELEASE)/resources.tar .
+	tar -C $(PACKAGE)/$(RELEASE)/$(PRODUCT)-supervisor.app -xf $(PACKAGE)/$(RELEASE)/resources.tar
+	tar -C $(PACKAGE)/$(RELEASE)/$(PRODUCT)-marshaller.app -xf $(PACKAGE)/$(RELEASE)/resources.tar
+	rm -rf $(PACKAGE)/$(RELEASE)/$(PRODUCT).app
+	rm -rf $(PACKAGE)/$(RELEASE)/resources.tar
+	png2icns $(PACKAGE)/$(RELEASE)/$(PRODUCT)-supervisor.app/Contents/Resources/$(PRODUCT)-supervisor.icns ../../resources/glade/images/supervisor.png
+	png2icns $(PACKAGE)/$(RELEASE)/$(PRODUCT)-marshaller.app/Contents/Resources/$(PRODUCT)-marshaller.icns ../../resources/glade/images/marshaller.png
 
 prepare_resources:
 	mkdir -p $(RESOURCES)/translations
@@ -532,25 +548,28 @@ build_windows: all
 publish_windows:
 	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/Output/$(PRODUCT)-$(VERSION_MAJOR)-$(VERSION_MINOR)-$(VERSION_MATURITY)-win.exe; quit"
 
-build_osx: all
-	cp $(OUTPUT)/$(PRODUCT)-supervisor $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-supervisor
-	cp $(OUTPUT)/$(PRODUCT)-marshaller $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-marshaller
-	mkdir $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)
-	cp $(OUTPUT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
-	chmod a+x $(PRODUCT).app/Contents/MacOS/$(PRODUCT)*
-	find $(PRODUCT).app/Contents/Frameworks -type f -printf "%f\n" | while read lib;\
+define build_osx_func
+	cp $(OUTPUT)/$(1) $(1).app/Contents/MacOS/$(1)
+	mkdir $(1).app/Contents/Resources/lib/$(PRODUCT)
+	cp $(OUTPUT)/lib$(PRODUCT).dylib $(1).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
+	chmod a+x $(1).app/Contents/MacOS/$(PRODUCT)*
+	find $(1).app/Contents/Frameworks -type f -printf "%f\n" | while read lib;\
 		do \
-		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-supervisor; \
-		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-marshaller; \
-		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib; \
+		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(1).app/Contents/MacOS/$(1); \
+		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(1).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib; \
 		done
-	install_name_tool -id @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
-	install_name_tool -change $(OUTPUT)/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-supervisor
-	install_name_tool -change $(OUTPUT)/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(PRODUCT).app/Contents/MacOS/$(PRODUCT)-marshaller
-	zip -qr $(PRODUCT)-$(subst .,-,$(LONG_VERSION))-osx.zip $(PRODUCT).app
+	install_name_tool -id @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(1).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
+	install_name_tool -change $(OUTPUT)/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(1).app/Contents/MacOS/$(1)
+	zip -qr $(1)-$(subst .,-,$(LONG_VERSION))-osx.zip $(1).app
+endef
+
+build_osx: all
+	$(call build_osx_func,$(PRODUCT)-supervisor)
+	$(call build_osx_func,$(PRODUCT)-marshaller)
 
 publish_osx:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable $(PRODUCT)-$(subst .,-,$(LONG_VERSION))-osx.zip; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable $(PRODUCT)-supervisor-$(subst .,-,$(LONG_VERSION))-osx.zip; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable $(PRODUCT)-marshaller-$(subst .,-,$(LONG_VERSION))-osx.zip; quit"
 
 build_ubuntu:
 	debuild -us -uc --lintian-opts --color always
