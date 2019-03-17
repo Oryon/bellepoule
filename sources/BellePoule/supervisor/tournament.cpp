@@ -623,17 +623,10 @@ void Tournament::OnOpen (gchar       *current_folder,
 
   if (filter_suffix)
   {
+    if (g_strcmp0 (filter_suffix, "examples") == 0)
     {
-      GtkFileFilter *filter = GetFileFilter ("",
-                                             filter_suffix,
-                                             nullptr);
-
-      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                   filter);
-    }
-
-    {
-      GtkFileFilter *filter = GetFileFilter (gettext ("Competition files"),
+      GtkFileFilter *filter = GetFileFilter (gettext ("Example files"),
+                                             "*.cotcot",
                                              "*.zip",
                                              "*.xml",
                                              "*.frd",
@@ -641,6 +634,28 @@ void Tournament::OnOpen (gchar       *current_folder,
 
       gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                    filter);
+    }
+    else
+    {
+      {
+        GtkFileFilter *filter = GetFileFilter ("",
+                                               filter_suffix,
+                                               nullptr);
+
+        gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                     filter);
+      }
+
+      {
+        GtkFileFilter *filter = GetFileFilter (gettext ("Competition files"),
+                                               "*.zip",
+                                               "*.xml",
+                                               "*.frd",
+                                               nullptr);
+
+        gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                     filter);
+      }
     }
   }
   else
@@ -1017,7 +1032,7 @@ void Tournament::OnOpenExample ()
     gchar *example_dirname = g_build_filename (Global::_share_dir, "Exemples", NULL);
 
     OnOpen (example_dirname,
-            nullptr);
+            "examples");
     g_free (example_dirname);
   }
 }

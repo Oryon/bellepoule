@@ -99,9 +99,7 @@ Source: "path_dependent_files\gdk-pixbuf.loaders"; DestDir: "{app}\etc\gtk-2.0";
 Source: "path_dependent_files\pango.modules"; DestDir: "{app}\etc\pango"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\pango\pango.modules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 
 ;Exemple de fichiers
-Source: "..\..\..\Exemples\exemple.cotcot"; DestDir: "{app}\share\{#PRODUCT}\Exemples";             Flags: ignoreversion
-Source: "..\..\..\Exemples\FFE\*";          DestDir: "{app}\share\{#PRODUCT}\Exemples\FFE";         Flags: ignoreversion
-Source: "..\..\..\Exemples\Classements\*";  DestDir: "{app}\share\{#PRODUCT}\Exemples\Classements"; Flags: ignoreversion
+Source: "..\..\..\Exemples\*"; DestDir: "{app}\share\{#PRODUCT}\Exemples"; Flags: ignoreversion recursesubdirs
 
 ;Documentation
 Source: "..\..\..\resources\translations\user_manual.pdf"; DestDir: "{app}\share\{#PRODUCT}\resources\translations"; Flags: ignoreversion

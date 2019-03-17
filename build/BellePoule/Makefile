@@ -408,17 +408,7 @@ prepare_ubuntu: prepare_debian prepare_changelog prepare_control prepare_rules p
 
 prepare_examples:
 	mkdir -p $(EXAMPLES)
-	cp -f  ../../Exemples/exemple.cotcot      $(EXAMPLES)
-	mkdir -p $(EXAMPLES)/FFE
-	cp -rf ../../Exemples/FFE/Individuelle.XML $(EXAMPLES)/FFE
-	cp -rf ../../Exemples/FFE/ParEquipe.XML    $(EXAMPLES)/FFE
-	cp -rf ../../Exemples/FFE/Fencers.FFF      $(EXAMPLES)/FFE
-	cp -rf ../../Exemples/FFE/Referees.txt     $(EXAMPLES)/FFE
-	mkdir -p $(EXAMPLES)/Classements
-	cp -rf ../../Exemples/Classements/EHBEN.TXT $(EXAMPLES)/Classements
-	cp -rf ../../Exemples/Classements/EHBEN.xml $(EXAMPLES)/Classements
-	cp -rf ../../Exemples/Classements/FHBEN.xml $(EXAMPLES)/Classements
-	cp -rf ../../Exemples/Classements/FHBEN.xml $(EXAMPLES)/Classements
+	cp -rf ../../Exemples/* $(EXAMPLES)
 	find $(EXAMPLES) -type f -exec chmod a-x {} \;
 
 prepare_www:
