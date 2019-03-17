@@ -74,7 +74,7 @@ const gchar *Contest::gender_xml_image[_nb_gender] =
 {
   "M",
   "F",
-  "FM"
+  "X"
 };
 
 const gchar *Contest::gender_xml_alias[_nb_gender] =
