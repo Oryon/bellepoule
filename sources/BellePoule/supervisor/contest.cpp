@@ -1234,22 +1234,28 @@ void Contest::ManageReferee (Net::Message *message)
         referee->Load (xml_nodeset->nodeTab[0]);
 
         weapon_attr = referee->GetAttribute (&weapon_attr_id);
-        if (   weapon_attr
-            && g_strrstr (weapon_attr->GetStrValue (), _weapon->GetXmlImage ()))
+        if (weapon_attr)
         {
-          Player *old = _referees_list->GetPlayerFromRef (referee->GetRef ());
+          gchar *upper = g_ascii_strup (weapon_attr->GetStrValue (),
+                                        -1);
 
-          if (old)
+          if (g_strrstr (upper, _weapon->GetXmlImage ()))
           {
-            old->UpdateFrom (referee);
-            old->RefreshParcel ();
-          }
-          else
-          {
-            _referees_list->Add (referee);
-          }
+            Player *old = _referees_list->GetPlayerFromRef (referee->GetRef ());
 
-          MakeDirty ();
+            if (old)
+            {
+              old->UpdateFrom (referee);
+              old->RefreshParcel ();
+            }
+            else
+            {
+              _referees_list->Add (referee);
+            }
+
+            MakeDirty ();
+          }
+          g_free (upper);
         }
 
         referee->Release ();

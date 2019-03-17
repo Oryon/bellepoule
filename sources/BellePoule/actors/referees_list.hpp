@@ -83,15 +83,10 @@ namespace People
                                         GtkTreeIter  *iter,
                                         RefereesList *referee_list);
 
-      static void OnConnectionChanged (Player    *referee,
-                                       Attribute *attr,
-                                       Object    *owner,
-                                       guint      step);
-
-      static void OnParticipationRateChanged (Player    *referee,
-                                              Attribute *attr,
-                                              Object    *owner,
-                                              guint      step);
+      static void OnRefereeChanged (Player    *referee,
+                                    Attribute *attr,
+                                    Object    *owner,
+                                    guint      step);
 
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,

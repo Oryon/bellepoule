@@ -208,10 +208,13 @@ namespace People
     Checkin::Monitor (referee);
 
     referee->SetChangeCbk ("connection",
-                           (Player::OnChange) OnConnectionChanged,
+                           (Player::OnChange) OnRefereeChanged,
                            this);
     referee->SetChangeCbk ("workload_rate",
-                           (Player::OnChange) OnParticipationRateChanged,
+                           (Player::OnChange) OnRefereeChanged,
+                           this);
+    referee->SetChangeCbk ("weapon",
+                           (Player::OnChange) OnRefereeChanged,
                            this);
   }
 
@@ -220,21 +223,32 @@ namespace People
   {
     if (_weapon)
     {
-      Player::AttributeId  weapon_attr_id ("weapon");
+      Player::AttributeId weapon_attr_id ("weapon");
       Attribute *weapon_attr = player->GetAttribute (&weapon_attr_id);
       Referee   *referee     = (Referee*) player;
+      GString   *digest      = nullptr;
 
-      if (   (weapon_attr == nullptr)
-          || (g_strrstr (weapon_attr->GetStrValue (), _weapon->GetXmlImage ()) == nullptr))
+      if (weapon_attr)
       {
-        GString *digest = g_string_new (nullptr);
+        gchar *upper = g_ascii_strup (weapon_attr->GetStrValue (),
+                                      -1);
 
-        if (weapon_attr)
+        if ((g_strrstr (upper, _weapon->GetXmlImage ()) == nullptr))
         {
+          digest = g_string_new (nullptr);
           digest = g_string_append (digest,
                                     weapon_attr->GetStrValue ());
         }
 
+        g_free (upper);
+      }
+      else
+      {
+        digest = g_string_new (nullptr);
+      }
+
+      if (digest)
+      {
         digest = g_string_append (digest,
                                   _weapon->GetXmlImage ());
 
@@ -275,21 +289,10 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void RefereesList::OnConnectionChanged (Player    *referee,
-                                          Attribute *attr,
-                                          Object    *owner,
-                                          guint      step)
-  {
-    Checkin *checkin = dynamic_cast <Checkin *> (owner);
-
-    checkin->Update (referee);
-  }
-
-  // --------------------------------------------------------------------------------
-  void RefereesList::OnParticipationRateChanged (Player    *referee,
-                                                 Attribute *attr,
-                                                 Object    *owner,
-                                                 guint      step)
+  void RefereesList::OnRefereeChanged (Player    *referee,
+                                       Attribute *attr,
+                                       Object    *owner,
+                                       guint      step)
   {
     Checkin *checkin = dynamic_cast <Checkin *> (owner);
 
@@ -449,6 +452,33 @@ namespace People
                       "weight-set",     FALSE,
                       "foreground-set", FALSE,
                       NULL);
+      }
+
+      {
+        Player::AttributeId  weapon_attr_id ("weapon");
+        Attribute           *weapon_attr = referee->GetAttribute (&weapon_attr_id);
+        gchar               *weapons     = weapon_attr->GetStrValue ();
+
+        for (gchar *w = weapons; *w != '\0'; w++)
+        {
+          if (g_ascii_toupper (w[0]) == GetWeaponCode ()[0])
+          {
+            if (g_ascii_isupper (w[0]))
+            {
+              g_object_set (cell,
+                            "strikethrough-set", FALSE,
+                            NULL);
+            }
+            else
+            {
+              g_object_set (cell,
+                            "strikethrough-set", TRUE,
+                            "strikethrough",     TRUE,
+                            NULL);
+            }
+            break;
+          }
+        }
       }
     }
   }

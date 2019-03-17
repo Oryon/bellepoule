@@ -89,7 +89,7 @@ namespace People
           {
             static GtkActionEntry entries[] =
             {
-              {"CopyAction", GTK_STOCK_COPY, gettext ("Copy"), nullptr, nullptr, G_CALLBACK (OnCopySelection)},
+              {"CopyAction", GTK_STOCK_COPY, gettext ("Copy"), nullptr, nullptr, G_CALLBACK (OnCopySelection)}
             };
 
             AddPopupEntries ("PlayersList::CopyAction",
@@ -101,7 +101,7 @@ namespace People
           {
             static GtkActionEntry entries[] =
             {
-              {"PasteCloneAction", GTK_STOCK_PASTE, gettext ("Paste"), nullptr, nullptr, G_CALLBACK (OnPasteCloneSelection)},
+              {"PasteCloneAction", GTK_STOCK_PASTE, gettext ("Paste"), nullptr, nullptr, G_CALLBACK (OnPasteCloneSelection)}
             };
 
             AddPopupEntries ("PlayersList::PasteCloneAction",
@@ -113,7 +113,7 @@ namespace People
           {
             static GtkActionEntry entries[] =
             {
-              {"PasteLinkAction", GTK_STOCK_PASTE, gettext ("Paste (link)"), nullptr, nullptr, G_CALLBACK (OnPasteLinkSelection)},
+              {"PasteLinkAction", GTK_STOCK_PASTE, gettext ("Paste (link)"), nullptr, nullptr, G_CALLBACK (OnPasteLinkSelection)}
             };
 
             AddPopupEntries ("PlayersList::PasteLinkAction",
@@ -125,7 +125,7 @@ namespace People
           {
             static GtkActionEntry entries[] =
             {
-              {"RemoveAction", GTK_STOCK_REMOVE, gettext ("Remove"), nullptr, nullptr, G_CALLBACK (OnRemoveSelection)},
+              {"RemoveAction", GTK_STOCK_REMOVE, gettext ("Remove"), nullptr, nullptr, G_CALLBACK (OnRemoveSelection)}
             };
 
             AddPopupEntries ("PlayersList::RemoveAction",

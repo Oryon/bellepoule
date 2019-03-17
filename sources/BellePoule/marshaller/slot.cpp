@@ -387,18 +387,12 @@ namespace Marshaller
 
     referee->AddSlot (this);
 
+    for (GList *current = _job_list; current; current = g_list_next (current))
     {
-      GList *current = _job_list;
+      Job *job = (Job *) current->data;
 
-      while (current)
-      {
-        Job *job = (Job *) current->data;
-
-        job->OnRefereeAdded ();
-        RefreshJobStatus (job);
-
-        current = g_list_next (current);
-      }
+      job->OnRefereeAdded ();
+      RefreshJobStatus (job);
     }
 
     _piste->OnSlotUpdated (this);

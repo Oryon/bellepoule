@@ -74,6 +74,7 @@ namespace Marshaller
           "  <popup name='PopupMenu'>\n"
           "    <separator/>\n"
           "    <menuitem action='JobListAction'/>\n"
+          "    <menuitem action='ActivateAction'/>\n"
           "  </popup>\n"
           "</ui>";
 
@@ -92,10 +93,22 @@ namespace Marshaller
       {
         static GtkActionEntry entries[] =
         {
-          {"JobListAction", GTK_STOCK_JUSTIFY_FILL, gettext ("Display jobs"), nullptr, nullptr, G_CALLBACK (OnDisplayJobs)}
+          {"JobListAction",  GTK_STOCK_JUSTIFY_FILL, gettext ("Display jobs"), nullptr, nullptr, G_CALLBACK (OnDisplayJobs)}
         };
 
         list->AddPopupEntries ("RefereesList::JobActions",
+                               G_N_ELEMENTS (entries),
+                               entries);
+      }
+
+      // Popup
+      {
+        static GtkActionEntry entries[] =
+        {
+          {"ActivateAction", GTK_STOCK_MEDIA_PAUSE, gettext ("Available/Not available"), nullptr, nullptr, G_CALLBACK (OnToggleAvailability)}
+        };
+
+        list->AddPopupEntries ("RefereesList::ActivateAction",
                                G_N_ELEMENTS (entries),
                                entries);
       }
@@ -137,18 +150,14 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   People::RefereesList *RefereePool::GetListOf (const gchar *weapon)
   {
-    GList *current_weapon = _list_by_weapon;
-
-    while (current_weapon)
+    for (GList *current = _list_by_weapon; current; current = g_list_next (current))
     {
-      People::RefereesList *referee_list = (People::RefereesList *) current_weapon->data;
+      People::RefereesList *referee_list = (People::RefereesList *) current->data;
 
-      if (g_strcmp0 (referee_list->GetWeaponCode (), weapon) == 0)
+      if (g_ascii_strcasecmp (referee_list->GetWeaponCode (), weapon) == 0)
       {
         return referee_list;
       }
-
-      current_weapon = g_list_next (current_weapon);
     }
 
     return nullptr;
@@ -175,26 +184,19 @@ namespace Marshaller
   {
     People::RefereesList *referee_list         = GetListOf (weapon_code);
     gint                  all_referee_workload = 0;
-    GList                *current_referee;
 
-    current_referee = referee_list->GetList ();
-    while (current_referee)
+    for (GList *current = referee_list->GetList (); current; current = g_list_next (current))
     {
-      EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+      EnlistedReferee *referee = (EnlistedReferee *) current->data;
 
       all_referee_workload += referee->GetWorkload ();
-
-      current_referee = g_list_next (current_referee);
     }
 
-    current_referee = referee_list->GetList ();
-    while (current_referee)
+    for (GList *current = referee_list->GetList (); current; current = g_list_next (current))
     {
-      EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+      EnlistedReferee *referee = (EnlistedReferee *) current->data;
 
       referee->SetAllRefereWorkload (all_referee_workload);
-
-      current_referee = g_list_next (current_referee);
     }
   }
 
@@ -398,10 +400,10 @@ namespace Marshaller
             submitted_referee->Load (xml_nodeset->nodeTab[0]);
 
             {
-              Player::AttributeId   weapon_attr_id ("weapon");
-              Attribute            *weapon_attr  = submitted_referee->GetAttribute (&weapon_attr_id);
+              Player::AttributeId  weapon_attr_id ("weapon");
+              Attribute           *weapon_attr  = submitted_referee->GetAttribute (&weapon_attr_id);
 
-              weapon = g_strdup (weapon_attr->GetStrValue ());
+              weapon = weapon_attr->GetStrValue ();
             }
 
             ref = submitted_referee->GetRef ();
@@ -434,7 +436,6 @@ namespace Marshaller
           }
 
           new_referee->Release ();
-          g_free (weapon);
         }
 
         xmlXPathFreeObject  (xml_object);
@@ -465,7 +466,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void RefereePool::OnDisplayJobs (GtkWidget            *w,
+  void RefereePool::OnDisplayJobs (GtkWidget            *widget,
                                    People::RefereesList *referee_list)
   {
     GList *selection = referee_list->RetreiveSelectedPlayers ();
@@ -477,6 +478,41 @@ namespace Marshaller
       referee->DisplayJobs ();
 
       g_list_free (selection);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereePool::OnToggleAvailability (GtkWidget            *widget,
+                                          People::RefereesList *referee_list)
+  {
+    GList *selection = referee_list->RetreiveSelectedPlayers ();
+
+    if (selection)
+    {
+      EnlistedReferee     *referee = (EnlistedReferee *) selection->data;
+      Player::AttributeId  weapon_attr_id ("weapon");
+      Attribute           *weapon_attr = referee->GetAttribute (&weapon_attr_id);
+      gchar               *weapons     = weapon_attr->GetStrValue ();
+
+      for (gchar *w = weapons; *w != '\0'; w++)
+      {
+        if (g_ascii_toupper (w[0]) == referee_list->GetWeaponCode ()[0])
+        {
+          if (g_ascii_isupper (w[0]))
+          {
+            w[0] = g_ascii_tolower (w[0]);
+          }
+          else
+          {
+            w[0] = g_ascii_toupper (w[0]);
+          }
+
+          referee->SetAttributeValue (&weapon_attr_id,
+                                      weapons);
+          referee->Spread ();
+          break;
+        }
+      }
     }
   }
 }

@@ -76,8 +76,11 @@ namespace Marshaller
 
       gboolean OnPlayerListRowActivated (People::Checkin *checkin) override;
 
-      static void OnDisplayJobs (GtkWidget            *w,
+      static void OnDisplayJobs (GtkWidget            *widget,
                                  People::RefereesList *referee_list);
+
+      static void OnToggleAvailability (GtkWidget            *widget,
+                                        People::RefereesList *referee_list);
 
       static void SpreadWeapon (People::RefereesList *list,
                                 RefereePool          *rp);

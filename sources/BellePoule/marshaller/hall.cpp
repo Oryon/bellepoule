@@ -336,9 +336,21 @@ namespace Marshaller
       {
         Player::AttributeId  weapon_attr_id ("weapon");
         Attribute           *weapon_attr = referee->GetAttribute (&weapon_attr_id);
+        gchar               *weapons     = weapon_attr->GetStrValue ();
 
         piste->AddReferee (referee);
-        _referee_pool->RefreshWorkload (weapon_attr->GetStrValue ());
+
+        {
+          gchar *weapon_code = g_new0 (gchar, 2);
+
+          for (guint i = 0; weapons[i] != '\0'; i++)
+          {
+            weapon_code[0] = weapons[i];
+            _referee_pool->RefreshWorkload (weapon_code);
+          }
+          g_free (weapon_code);
+        }
+
         Redraw ();
       }
     }
@@ -1167,15 +1179,34 @@ namespace Marshaller
         {
           People::RefereesList *checkin_list = _referee_pool->GetListOf (competition->GetWeaponCode ());
           GtkToggleButton      *all_referees = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_referees"));
+          const gchar          *weapon       = competition->GetWeaponCode ();
+          GList                *raw_list;
 
           if (gtk_toggle_button_get_active (all_referees))
           {
-            referee_list = g_list_copy (checkin_list->GetList ());
+            raw_list = g_list_copy (checkin_list->GetList ());
           }
           else
           {
-            referee_list = checkin_list->RetreiveSelectedPlayers ();
+            raw_list = checkin_list->RetreiveSelectedPlayers ();
           }
+
+          referee_list = nullptr;
+          for (GList *current = g_list_last (raw_list); current; current = g_list_previous (current))
+          {
+            EnlistedReferee     *referee = (EnlistedReferee *) current->data;
+            Player::AttributeId  weapon_attr_id ("weapon");
+            Attribute           *weapon_attr = referee->GetAttribute (&weapon_attr_id);
+
+            if (weapon_attr && (g_strrstr (weapon_attr->GetStrValue (),
+                                           weapon) != nullptr))
+            {
+              referee_list = g_list_prepend (referee_list,
+                                             referee);
+            }
+          }
+
+          g_list_free (raw_list);
         }
 
         for (GList *current = job_list; current; current = g_list_next (current))
@@ -1744,8 +1775,19 @@ namespace Marshaller
     {
       if (referee)
       {
-        return referee->IsAvailableFor (slot,
-                                        slot->GetDuration ());
+        Job                 *piste_job   = (Job *) (slot->GetJobList ())->data;
+        Batch               *batch       = piste_job->GetBatch ();
+        Competition         *competition = batch->GetCompetition ();
+        const gchar         *weapon      = competition->GetWeaponCode ();
+        Player::AttributeId  weapon_attr_id ("weapon");
+        Attribute           *weapon_attr = referee->GetAttribute (&weapon_attr_id);
+
+        if (weapon_attr && (g_strrstr (weapon_attr->GetStrValue (),
+                                       weapon) != nullptr))
+        {
+          return referee->IsAvailableFor (slot,
+                                          slot->GetDuration ());
+        }
       }
       else if (job)
       {
