@@ -74,6 +74,8 @@ namespace Marshaller
           "  <popup name='PopupMenu'>\n"
           "    <separator/>\n"
           "    <menuitem action='JobListAction'/>\n"
+          "    <separator name=\"Seperator\"/>\n"
+          "    <menuitem action='DeActivateAction'/>\n"
           "    <menuitem action='ActivateAction'/>\n"
           "  </popup>\n"
           "</ui>";
@@ -105,7 +107,19 @@ namespace Marshaller
       {
         static GtkActionEntry entries[] =
         {
-          {"ActivateAction", GTK_STOCK_MEDIA_PAUSE, gettext ("Available/Not available"), nullptr, nullptr, G_CALLBACK (OnToggleAvailability)}
+          {"DeActivateAction", GTK_STOCK_STRIKETHROUGH, gettext ("Not available"), nullptr, nullptr, G_CALLBACK (OnMakeRefereeNotAvailable)}
+        };
+
+        list->AddPopupEntries ("RefereesList::DeActivateAction",
+                               G_N_ELEMENTS (entries),
+                               entries);
+      }
+
+      // Popup
+      {
+        static GtkActionEntry entries[] =
+        {
+          {"ActivateAction", GTK_STOCK_ITALIC, gettext ("Available"), nullptr, nullptr, G_CALLBACK (OnMakeRefereeAvailable)}
         };
 
         list->AddPopupEntries ("RefereesList::ActivateAction",
@@ -482,39 +496,69 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void RefereePool::OnToggleAvailability (GtkWidget            *widget,
-                                          People::RefereesList *referee_list)
+  void RefereePool::SetRefereeAvailability (People::RefereesList *referee_list,
+                                            gboolean              available)
   {
     GList *selection = referee_list->RetreiveSelectedPlayers ();
 
-    if (selection)
+    for (GList *current = selection; current; current = g_list_next (current))
     {
-      EnlistedReferee     *referee = (EnlistedReferee *) selection->data;
+      EnlistedReferee     *referee = (EnlistedReferee *) current->data;
       Player::AttributeId  weapon_attr_id ("weapon");
       Attribute           *weapon_attr = referee->GetAttribute (&weapon_attr_id);
       gchar               *weapons     = weapon_attr->GetStrValue ();
+      gchar               *w;
 
-      for (gchar *w = weapons; *w != '\0'; w++)
+      for (w = weapons; *w != '\0'; w++)
       {
         if (g_ascii_toupper (w[0]) == referee_list->GetWeaponCode ()[0])
         {
-          if (g_ascii_isupper (w[0]))
+          if (available)
           {
-            w[0] = g_ascii_tolower (w[0]);
+            if (g_ascii_islower (w[0]))
+            {
+              w[0] = g_ascii_toupper (w[0]);
+              break;
+            }
           }
           else
           {
-            w[0] = g_ascii_toupper (w[0]);
+            if (g_ascii_isupper (w[0]))
+            {
+              w[0] = g_ascii_tolower (w[0]);
+              break;
+            }
           }
-
-          referee->SetAttributeValue (&weapon_attr_id,
-                                      weapons);
-          gtk_widget_queue_draw (referee_list->GetRootWidget ());
-
-          referee->Spread ();
-          break;
         }
       }
+
+      if (*w != '\0')
+      {
+        referee->SetAttributeValue (&weapon_attr_id,
+                                    weapons);
+
+        referee->Spread ();
+      }
     }
+
+
+    gtk_widget_queue_draw (referee_list->GetRootWidget ());
+    g_list_free (selection);
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereePool::OnMakeRefereeNotAvailable (GtkWidget            *widget,
+                                               People::RefereesList *referee_list)
+  {
+    SetRefereeAvailability (referee_list,
+                            FALSE);
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereePool::OnMakeRefereeAvailable (GtkWidget            *widget,
+                                            People::RefereesList *referee_list)
+  {
+    SetRefereeAvailability (referee_list,
+                            TRUE);
   }
 }

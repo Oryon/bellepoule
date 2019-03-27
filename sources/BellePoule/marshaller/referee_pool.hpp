@@ -79,8 +79,14 @@ namespace Marshaller
       static void OnDisplayJobs (GtkWidget            *widget,
                                  People::RefereesList *referee_list);
 
-      static void OnToggleAvailability (GtkWidget            *widget,
-                                        People::RefereesList *referee_list);
+      static void SetRefereeAvailability (People::RefereesList *referee_list,
+                                          gboolean              available);
+
+      static void OnMakeRefereeAvailable (GtkWidget            *widget,
+                                          People::RefereesList *referee_list);
+
+      static void OnMakeRefereeNotAvailable (GtkWidget            *widget,
+                                             People::RefereesList *referee_list);
 
       static void SpreadWeapon (People::RefereesList *list,
                                 RefereePool          *rp);
