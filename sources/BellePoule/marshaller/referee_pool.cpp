@@ -509,6 +509,8 @@ namespace Marshaller
 
           referee->SetAttributeValue (&weapon_attr_id,
                                       weapons);
+          gtk_widget_queue_draw (referee_list->GetRootWidget ());
+
           referee->Spread ();
           break;
         }
