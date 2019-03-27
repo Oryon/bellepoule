@@ -42,6 +42,10 @@ namespace People
     _weapon   = nullptr;
     _listener = listener;
 
+    g_object_set (_tree_view,
+                  "rules-hint", FALSE,
+                  NULL);
+
     {
       GSList *attr_list;
 
@@ -322,6 +326,10 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::Expand ()
   {
+    g_object_set (_tree_view,
+                  "rules-hint", TRUE,
+                  NULL);
+
     {
       GtkWidget *panel = _glade->GetWidget ("edit_panel");
 
@@ -345,6 +353,10 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::Collapse ()
   {
+    g_object_set (_tree_view,
+                  "rules-hint", FALSE,
+                  NULL);
+
     {
       GtkWidget *panel = _glade->GetWidget ("edit_panel");
 
