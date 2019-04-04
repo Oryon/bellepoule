@@ -24,6 +24,7 @@
 #include "actors/player_factory.hpp"
 #include "actors/tally_counter.hpp"
 #include "tally_counter.hpp"
+#include "source.hpp"
 
 #include "checkin.hpp"
 
@@ -41,6 +42,7 @@ namespace People
     _base_class      = base_class;
     _gathering_class = gathering_class;
     _listener        = nullptr;
+    _source          = new Source ();
 
     RefreshAttendingDisplay ();
   }
@@ -50,6 +52,7 @@ namespace People
   {
     Object::TryToRelease (_form);
     _tally_counter->Release ();
+    _source->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -419,17 +422,12 @@ namespace People
         }
 
         MuteListChanges (TRUE);
-        if (   g_str_has_suffix (filename, ".fff")
-            || g_str_has_suffix (filename, ".FFF"))
-        {
-          ImportFFF (filename);
-        }
-        else
-        {
-          ImportCSV (filename);
-        }
+        Import (filename);
         MuteListChanges (FALSE);
+
         NotifyListChanged ();
+
+        g_free (filename);
       }
     }
 
@@ -437,7 +435,23 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Checkin::GetFileContent (gchar *filename)
+  void Checkin::Import (const gchar *filename)
+  {
+    if (   g_str_has_suffix (filename, ".fff")
+        || g_str_has_suffix (filename, ".FFF"))
+    {
+      ImportFFF (filename);
+    }
+    else
+    {
+      ImportCSV (filename);
+    }
+
+    _source->SetUrl (filename);
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Checkin::GetFileContent (const gchar *filename)
   {
     gchar *file_content = nullptr;
     gchar *raw_file;
@@ -476,7 +490,7 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::ImportFFF (gchar *filename)
+  void Checkin::ImportFFF (const gchar *filename)
   {
     gchar       *file_content = GetFileContent (filename);
     gchar       *utf8_content;
@@ -698,7 +712,7 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::ImportCSV (gchar *filename)
+  void Checkin::ImportCSV (const gchar *filename)
   {
     gchar  *file_content = GetFileContent (filename);
     gchar  *utf8_content;

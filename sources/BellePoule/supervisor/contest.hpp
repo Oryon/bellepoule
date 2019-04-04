@@ -105,6 +105,8 @@ class Contest : public Module
 
     void MakeDirty () override;
 
+    void ReloadFencers ();
+
     guint        GetNetID           ();
     gchar       *GetOrganizer       ();
     gchar       *GetDate            ();

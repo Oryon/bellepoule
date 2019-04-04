@@ -1347,6 +1347,14 @@ void Contest::MakeDirty ()
 }
 
 // --------------------------------------------------------------------------------
+void Contest::ReloadFencers ()
+{
+  People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
+
+  checkin->ReloadFencers ();
+}
+
+// --------------------------------------------------------------------------------
 void Contest::Init ()
 {
   GdkColor *color;

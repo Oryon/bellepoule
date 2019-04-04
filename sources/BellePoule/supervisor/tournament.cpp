@@ -1110,6 +1110,23 @@ void Tournament::OnRecent ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnReload ()
+{
+    GtkWidget *dialog = _glade->GetWidget ("reload_dialog");
+
+    if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_YES)
+    {
+      for (GList *current = _contest_list; current; current = g_list_next (current))
+      {
+        Contest *contest = (Contest *) current->data;
+
+        contest->ReloadFencers ();
+      }
+    }
+    gtk_widget_hide (dialog);
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnMenuDialog (const gchar *dialog)
 {
   {
@@ -1301,6 +1318,15 @@ extern "C" G_MODULE_EXPORT void on_recent_menuitem_activate (GtkWidget *w,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnRecent ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_reload_menuitem_activate (GtkWidget *w,
+                                                             Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnReload ();
 }
 
 // --------------------------------------------------------------------------------

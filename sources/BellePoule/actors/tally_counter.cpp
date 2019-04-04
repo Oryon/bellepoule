@@ -25,18 +25,24 @@ namespace People
   TallyCounter::TallyCounter ()
     : Object ("TallyCounter")
   {
-    _normal_mode._total_count   = 0;
-    _normal_mode._present_count = 0;
+    Reset ();
 
-    _team_mode._total_count   = 0;
-    _team_mode._present_count = 0;
-
-    _team_mode_enabled  = FALSE;
+    _team_mode_enabled = FALSE;
   }
 
   // --------------------------------------------------------------------------------
   TallyCounter::~TallyCounter ()
   {
+  }
+
+  // --------------------------------------------------------------------------------
+  void TallyCounter::Reset ()
+  {
+    _normal_mode._total_count   = 0;
+    _normal_mode._present_count = 0;
+
+    _team_mode._total_count   = 0;
+    _team_mode._present_count = 0;
   }
 
   // --------------------------------------------------------------------------------

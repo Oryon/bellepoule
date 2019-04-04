@@ -177,6 +177,12 @@
 		<Unit filename="../../sources/BellePoule/actors/referees_list.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/source.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/source.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/actors/tally_counter.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>

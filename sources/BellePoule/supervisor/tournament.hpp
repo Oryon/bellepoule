@@ -43,6 +43,8 @@ class Tournament : public Module,
 
     void OnRecent ();
 
+    void OnReload ();
+
     void OnMenuDialog (const gchar *dialog);
 
     void OnOpenExample ();

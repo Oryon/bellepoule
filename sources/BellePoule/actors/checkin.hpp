@@ -27,6 +27,7 @@ class XmlScheme;
 namespace People
 {
   class TallyCounter;
+  class Source;
 
   class Checkin : public PlayersList, public Form::Listener
   {
@@ -63,9 +64,9 @@ namespace People
       void SaveList (XmlScheme   *xml_scheme,
                      const gchar *player_class);
 
-      void ImportCSV (gchar *filename);
+      void ImportCSV (const gchar *filename);
 
-      void ImportFFF (gchar *filename);
+      void ImportFFF (const gchar *filename);
 
       virtual void ConvertFromBaseToResult ();
 
@@ -91,6 +92,7 @@ namespace People
     protected:
       Form         *_form;
       TallyCounter *_tally_counter;
+      Source       *_source;
 
       ~Checkin () override;
 
@@ -118,6 +120,8 @@ namespace People
 
       void OnListChanged () override;
 
+      void Import (const gchar *filename);
+
     private:
       Listener     *_listener;
       gboolean      _print_attending;
@@ -141,7 +145,7 @@ namespace People
                                           Object    *owner,
                                           guint      step);
 
-      gchar *GetFileContent (gchar *filename);
+      gchar *GetFileContent (const gchar *filename);
 
       gchar *GetPrintName () override;
 

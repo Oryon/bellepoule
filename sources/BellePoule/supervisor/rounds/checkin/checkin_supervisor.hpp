@@ -52,6 +52,8 @@ namespace People
 
       void Add (Player *player) override;
 
+      void ReloadFencers ();
+
     private:
       void OnLocked () override;
 
@@ -91,6 +93,10 @@ namespace People
       void UpdateChecksum ();
 
       GSList *GetCurrentClassification () override;
+
+      void LoadConfiguration (xmlNode *xml_node) override;
+
+      void SaveConfiguration (XmlScheme *xml_scheme) override;
 
       void Load (xmlNode *xml_node) override;
 

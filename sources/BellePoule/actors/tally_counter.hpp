@@ -44,6 +44,8 @@ namespace People
 
       void DisableTeamMode ();
 
+      void Reset ();
+
     private:
       struct Mode
       {

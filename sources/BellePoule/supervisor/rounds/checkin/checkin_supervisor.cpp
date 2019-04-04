@@ -29,6 +29,7 @@
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
 #include "actors/null_team.hpp"
+#include "actors/source.hpp"
 #include "../../contest.hpp"
 #include "../../schedule.hpp"
 
@@ -198,6 +199,27 @@ namespace People
     LoadConfiguration (xml_node);
   }
 
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::LoadConfiguration (xmlNode *xml_node)
+  {
+    gchar *attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Source");
+
+    _source->Load (attr);
+    xmlFree (attr);
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::SaveConfiguration (XmlScheme *xml_scheme)
+  {
+    gchar *source = _source->Serialize ();
+
+    if (source)
+    {
+      xml_scheme->WriteAttribute ("Source",
+                                  source);
+      g_free (source);
+    }
+  }
 
   // --------------------------------------------------------------------------------
   gboolean CheckinSupervisor::PlayerIsPrintable (Player *player)
@@ -347,6 +369,20 @@ namespace People
       Checkin::SavePlayer (xml_scheme,
                            player_class,
                            player);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::ReloadFencers ()
+  {
+    if (Locked () == FALSE)
+    {
+      if (_source->HasUpdates ())
+      {
+        Wipe ();
+        _tally_counter->Reset ();
+        Import (_source->GetUrl ());
+      }
     }
   }
 
