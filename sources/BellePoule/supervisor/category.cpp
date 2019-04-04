@@ -33,7 +33,9 @@ const gchar *Category::_display_image[Category::_nb_category] =
   N_ ("Veteran 2"),
   N_ ("Veteran 3"),
   N_ ("Veteran 4"),
-  N_ ("Veteran 3+4")
+  N_ ("Veteran 5"),
+  N_ ("Veteran 3+4"),
+  N_ ("Veteran 4+5")
 };
 
 const gchar *Category::_xml_image[_nb_category] =
@@ -53,7 +55,9 @@ const gchar *Category::_xml_image[_nb_category] =
   "V2",
   "V3",
   "V4",
-  "V34"
+  "V5",
+  "V34",
+  "V45"
 };
 
 const gchar *Category::_xml_alias[_nb_category] =
@@ -73,7 +77,9 @@ const gchar *Category::_xml_alias[_nb_category] =
   "V2",
   "V3",
   "V4",
-  "V34"
+  "V5",
+  "V34",
+  "V45"
 };
 
 enum class ComboCategoryColumnId
