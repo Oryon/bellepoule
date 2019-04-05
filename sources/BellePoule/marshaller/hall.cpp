@@ -1480,20 +1480,20 @@ namespace Marshaller
           Player     *fencer       = (Player *) fencer_list->data;
           Affinities *f_affinities = (Affinities *) fencer->GetPtrData (nullptr, "affinities");
 
-          for (guint i = 1; i <= affinity_count; i = i<<1)
+          for (guint i = 0; i < affinity_count; i++)
           {
             guint kinship;
 
             kinship = a_affinities->KinshipWith (f_affinities);
-            if (kinship & i)
+            if (kinship & 1<<i)
             {
-              a_kinship[i-1]++;
+              a_kinship[i]++;
             }
 
             kinship = b_affinities->KinshipWith (f_affinities);
-            if (kinship & i)
+            if (kinship & 1<<i)
             {
-              b_kinship[i-1]++;
+              b_kinship[i]++;
             }
           }
           fencer_list = g_list_next (fencer_list);

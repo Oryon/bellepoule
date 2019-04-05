@@ -32,15 +32,9 @@ namespace Marshaller
     _checksums    = nullptr;
     _shareholders = nullptr;
 
+    for (GList *current = g_list_last (_titles); current; current = g_list_previous (current))
     {
-      GList *current = g_list_last (_titles);
-
-      while (current)
-      {
-        SetAffinity (player, (const gchar *) current->data);
-
-        current = g_list_previous (current);
-      }
+      SetAffinity (player, (const gchar *) current->data);
     }
   }
 
