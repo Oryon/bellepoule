@@ -417,7 +417,7 @@ namespace Marshaller
               Player::AttributeId  weapon_attr_id ("weapon");
               Attribute           *weapon_attr  = submitted_referee->GetAttribute (&weapon_attr_id);
 
-              weapon = weapon_attr->GetStrValue ();
+              weapon = g_strdup (weapon_attr->GetStrValue ());
             }
 
             ref = submitted_referee->GetRef ();
@@ -449,6 +449,7 @@ namespace Marshaller
             }
           }
 
+          g_free (weapon);
           new_referee->Release ();
         }
 
