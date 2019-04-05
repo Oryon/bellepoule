@@ -197,17 +197,22 @@ namespace Marshaller
     Attribute           *attr   = player->GetAttribute (&attr_id);
     guint64              digest = 0;
 
-    if (attr && attr->GetStrValue ())
+    if (attr)
     {
-      gchar *checksum = g_compute_checksum_for_string (G_CHECKSUM_SHA1,
-                                                       attr->GetStrValue (),
-                                                       -1);
+      gchar *value = attr->GetStrValue ();
 
-      checksum[8] = 0;
-      digest = g_ascii_strtoull (checksum,
-                                 nullptr,
-                                 16);
-      g_free (checksum);
+      if (value && value[0] != '\0')
+      {
+        gchar *checksum = g_compute_checksum_for_string (G_CHECKSUM_SHA1,
+                                                         value,
+                                                         -1);
+
+        checksum[8] = 0;
+        digest = g_ascii_strtoull (checksum,
+                                   nullptr,
+                                   16);
+        g_free (checksum);
+      }
     }
 
     _checksums = g_list_prepend (_checksums,
