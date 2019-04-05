@@ -222,6 +222,8 @@ class Contest : public Module
 
     void ChooseColor ();
 
+    void PaintColor ();
+
     static gboolean OnSaveTimeout (Contest *contest);
 
     void OnPlugged () override;

@@ -702,6 +702,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
             _gdk_color = nullptr;
           }
           xmlFree (attr);
+
+          PaintColor ();
         }
         if (_gdk_color == nullptr)
         {
@@ -1297,6 +1299,12 @@ void Contest::ChooseColor ()
   _gdk_color = gdk_color_copy ((GdkColor *) g_list_nth_data (_color_list,
                                                              color_to_use));
 
+  PaintColor ();
+}
+
+// --------------------------------------------------------------------------------
+void Contest::PaintColor ()
+{
   if (_gdk_color)
   {
     GtkWidget *tab      = _glade->GetWidget ("eventbox");
