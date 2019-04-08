@@ -19,24 +19,32 @@
 #include "fie_time.hpp"
 
 // --------------------------------------------------------------------------------
-FieTime::FieTime (GDateTime *time)
+FieTime::FieTime (GDateTime *datetime)
   : Object ("FieTime")
 {
-  _g_date_time = g_date_time_ref (time);
-  MakeImages (time);
+  _g_date_time = g_date_time_ref (datetime);
+  MakeImages (datetime);
 }
 
 // --------------------------------------------------------------------------------
-FieTime::FieTime (const gchar *time)
+FieTime::FieTime (const gchar *date,
+                  const gchar *time)
   : Object ("FieTime")
 {
+  gint day    = -1;
+  gint month  = -1;
+  gint year   = -1;
+  gint hour   = -1;
+  gint minute = -1;
+
   _image       = nullptr;
-  _xml_image   = nullptr;
+  _xml_date    = nullptr;
+  _xml_time    = nullptr;
   _g_date_time = nullptr;
 
   {
-    gchar **tokens = g_strsplit_set (time,
-                                     ". :",
+    gchar **tokens = g_strsplit_set (date,
+                                     ".",
                                      0);
 
     if (tokens)
@@ -48,20 +56,52 @@ FieTime::FieTime (const gchar *time)
         token_count++;
       }
 
-      if (token_count == 5)
+      if (token_count == 3)
       {
-        // JJ.MM.AAAA HH:MI
-        _g_date_time = g_date_time_new_local (atoi (tokens[2]),
-                                              atoi (tokens[1]),
-                                              atoi (tokens[0]),
-                                              atoi (tokens[3]),
-                                              atoi (tokens[4]),
-                                              0.0);
-        MakeImages (_g_date_time);
+        // JJ.MM.AAAA
+         year  = atoi (tokens[2]);
+         month = atoi (tokens[1]);
+         day   = atoi (tokens[0]);
       }
 
       g_strfreev (tokens);
     }
+  }
+
+  {
+    gchar **tokens = g_strsplit_set (time,
+                                     ":",
+                                     0);
+
+    if (tokens)
+    {
+      guint token_count = 0;
+
+      while (tokens[token_count] != nullptr)
+      {
+        token_count++;
+      }
+
+      if (token_count == 2)
+      {
+        // HH:MI
+        hour   = atoi (tokens[0]);
+        minute = atoi (tokens[1]);
+      }
+
+      g_strfreev (tokens);
+    }
+  }
+
+  if ((year != -1) && (month != -1) && (day != -1) && (hour != -1) && (minute != -1))
+  {
+    _g_date_time = g_date_time_new_local (year,
+                                          month,
+                                          day,
+                                          hour,
+                                          minute,
+                                          0.0);
+    MakeImages (_g_date_time);
   }
 }
 
@@ -69,7 +109,8 @@ FieTime::FieTime (const gchar *time)
 FieTime::~FieTime ()
 {
   g_free (_image);
-  g_free (_xml_image);
+  g_free (_xml_date);
+  g_free (_xml_time);
 
   if (_g_date_time)
   {
@@ -83,8 +124,10 @@ void FieTime::MakeImages (GDateTime *date_time)
   _image = g_date_time_format (date_time,
                                "%k:%M");
 
-  _xml_image = g_date_time_format (date_time,
-                                   "%d.%m.%Y %R");
+  _xml_date = g_date_time_format (date_time,
+                                  "%d.%m.%Y");
+  _xml_time = g_date_time_format (date_time,
+                                  "%R");
 }
 
 // --------------------------------------------------------------------------------
@@ -100,7 +143,13 @@ const gchar *FieTime::GetImage ()
 }
 
 // --------------------------------------------------------------------------------
-const gchar *FieTime::GetXmlImage ()
+const gchar *FieTime::GetXmlDate ()
 {
-  return _xml_image;
+  return _xml_date;
+}
+
+// --------------------------------------------------------------------------------
+const gchar *FieTime::GetXmlTime ()
+{
+  return _xml_time;
 }

@@ -223,9 +223,11 @@ namespace Marshaller
 
   // --------------------------------------------------------------------------------
   void Job::SetPiste (guint        piste_id,
+                      const gchar *start_date,
                       const gchar *start_time)
   {
     _parcel->Set ("piste",      piste_id);
+    _parcel->Set ("start_date", start_date);
     _parcel->Set ("start_time", start_time);
 
     if (_listener)
@@ -240,6 +242,7 @@ namespace Marshaller
     _parcel->Recall ();
 
     _parcel->Remove ("piste");
+    _parcel->Remove ("start_date");
     _parcel->Remove ("start_time");
     _parcel->Remove ("referees");
 

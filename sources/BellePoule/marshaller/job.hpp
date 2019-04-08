@@ -75,6 +75,7 @@ namespace Marshaller
       void OnRefereeRemoved ();
 
       void SetPiste (guint        piste_id,
+                     const gchar *start_date,
                      const gchar *start_time);
 
       void ResetRoadMap ();

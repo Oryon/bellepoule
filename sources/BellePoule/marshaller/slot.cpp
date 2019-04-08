@@ -244,7 +244,8 @@ namespace Marshaller
                                TRUE);
 
             dependent_job->SetPiste (_piste->GetId (),
-                           slot->_fie_time->GetXmlImage ());
+                                     slot->_fie_time->GetXmlDate (),
+                                     slot->_fie_time->GetXmlTime ());
             dependent_job->Spread ();
           }
         }
@@ -328,7 +329,8 @@ namespace Marshaller
 
         {
           job->SetPiste (_piste->GetId (),
-                         _fie_time->GetXmlImage ());
+                         _fie_time->GetXmlDate (),
+                         _fie_time->GetXmlTime ());
 
           if (_referee_list)
           {

@@ -437,7 +437,9 @@ void Match::Save (XmlScheme *xml_scheme)
     if (_start_time)
     {
       xml_scheme->WriteFormatAttribute ("Date",
-                                        "%s", _start_time->GetXmlImage ());
+                                        "%s", _start_time->GetXmlDate ());
+      xml_scheme->WriteFormatAttribute ("Heure",
+                                        "%s", _start_time->GetXmlTime ());
     }
 
     if (_duration_sec > 0)

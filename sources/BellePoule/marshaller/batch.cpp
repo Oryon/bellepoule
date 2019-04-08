@@ -523,11 +523,18 @@ namespace Marshaller
               xmlFree (attr);
             }
 
-            attr = (gchar *) xmlGetProp (root_node, BAD_CAST "Date");
-            if (attr)
             {
-              *start_time = new FieTime (attr);
-              xmlFree (attr);
+              gchar *date = (gchar *) xmlGetProp (root_node, BAD_CAST "Date");
+              gchar *time = (gchar *) xmlGetProp (root_node, BAD_CAST "Heure");
+
+              if (date && time)
+              {
+                *start_time = new FieTime (date,
+                                           time);
+              }
+
+              xmlFree (date);
+              xmlFree (time);
             }
 
             gtk_list_store_append (_job_store,

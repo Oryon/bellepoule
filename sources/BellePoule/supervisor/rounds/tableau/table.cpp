@@ -524,11 +524,17 @@ namespace Table
             xmlFree (attr);
           }
 
-          attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
-          if (attr)
           {
-            match->SetStartTime (new FieTime (attr));
-            xmlFree (attr);
+            gchar *date = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
+            gchar *time = (gchar *) xmlGetProp (xml_node, BAD_CAST "Heure");
+
+            if (date && time)
+            {
+              match->SetStartTime (new FieTime (date, time));
+            }
+
+            xmlFree (date);
+            xmlFree (time);
           }
 
           attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Duree");

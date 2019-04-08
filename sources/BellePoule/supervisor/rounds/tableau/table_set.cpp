@@ -2051,12 +2051,14 @@ namespace Table
 
           if (referee_refs && (message->GetFitness () > 0))
           {
+            gchar  *start_date = message->GetString ("start_date");
             gchar  *start_time = message->GetString ("start_time");
 
-            match->SetStartTime    (new FieTime (start_time));
+            match->SetStartTime    (new FieTime (start_date, start_time));
             match->SetDurationSpan (message->GetInteger ("duration_span"));
             match->SetPiste        (message->GetInteger ("piste"));
 
+            g_free (start_date);
             g_free (start_time);
 
             for (guint i = 0; i < referee_count; i++)

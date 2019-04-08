@@ -2168,10 +2168,14 @@ namespace Pool
 
         if (message->GetFitness () > 0)
         {
+          gchar *start_date = message->GetString  ("start_date");
           gchar *start_time = message->GetString  ("start_time");
 
           SetRoadmap (message->GetInteger ("piste"),
-                      new FieTime (start_time));
+                      new FieTime (start_date,
+                                   start_time));
+
+          g_free (start_date);
           g_free (start_time);
         }
 
@@ -2309,7 +2313,9 @@ namespace Pool
     if (_start_time)
     {
       xml_scheme->WriteFormatAttribute ("Date",
-                                        "%s", _start_time->GetXmlImage ());
+                                        "%s", _start_time->GetXmlDate ());
+      xml_scheme->WriteFormatAttribute ("Heure",
+                                        "%s", _start_time->GetXmlTime ());
     }
 
     if (_duration_sec > 0)
@@ -2404,13 +2410,18 @@ namespace Pool
       xmlFree (attr);
     }
 
-    attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
-    if (attr)
     {
-      Object::TryToRelease (_start_time);
-      _start_time = new FieTime (attr);
+      gchar *date = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
+      gchar *time = (gchar *) xmlGetProp (xml_node, BAD_CAST "Heure");
 
-      xmlFree (attr);
+      if (date && time)
+      {
+        Object::TryToRelease (_start_time);
+        _start_time = new FieTime (date, time);
+      }
+
+      xmlFree (date);
+      xmlFree (time);
     }
 
     attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Duree");

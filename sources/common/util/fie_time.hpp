@@ -21,19 +21,23 @@
 class FieTime : public Object
 {
   public:
-    FieTime (GDateTime *time);
+    FieTime (GDateTime *datetime);
 
-    FieTime (const gchar *time);
+    FieTime (const gchar *date,
+             const gchar *time);
 
     const gchar *GetImage ();
 
-    const gchar *GetXmlImage ();
+    const gchar *GetXmlDate ();
+
+    const gchar *GetXmlTime ();
 
     GDateTime *GetGDateTime ();
 
   private:
     gchar     *_image;
-    gchar     *_xml_image;
+    gchar     *_xml_date;
+    gchar     *_xml_time;
     GDateTime *_g_date_time;
 
     ~FieTime () override;
