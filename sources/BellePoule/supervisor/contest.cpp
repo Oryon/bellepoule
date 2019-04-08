@@ -262,6 +262,22 @@ Contest::Contest (GList    *advertisers,
   _scratch_time = new Time ("scratch");
   _start_time   = new Time ("start");
 
+  {
+    GtkComboBox  *combo = GTK_COMBO_BOX (_glade->GetWidget ("color_combobox"));
+    GtkTreeModel *model = gtk_combo_box_get_model (combo);
+
+    for (GList *current = _color_list; current; current = g_list_next (current))
+    {
+      GtkTreeIter iter;
+
+      gtk_list_store_append (GTK_LIST_STORE (model),
+                             &iter);
+      gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+                          0, gdk_color_to_string  ((GdkColor *) current->data),
+                          -1);
+    }
+  }
+
   ChooseColor ();
 
   _properties_dialog = _glade->GetWidget ("properties_dialog");
@@ -702,12 +718,14 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
             _gdk_color = nullptr;
           }
           xmlFree (attr);
-
-          PaintColor ();
         }
         if (_gdk_color == nullptr)
         {
           ChooseColor ();
+        }
+        else
+        {
+          PaintColor ();
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Championnat");
@@ -1307,22 +1325,59 @@ void Contest::PaintColor ()
 {
   if (_gdk_color)
   {
-    GtkWidget *tab      = _glade->GetWidget ("eventbox");
-    GtkWidget *colorbox = _glade->GetWidget ("colorbox");
+    {
+      GtkWidget *tab      = _glade->GetWidget ("eventbox");
+      GtkWidget *colorbox = _glade->GetWidget ("colorbox");
 
-    gtk_widget_modify_bg (tab,
-                          GTK_STATE_NORMAL,
-                          _gdk_color);
-    gtk_widget_modify_bg (tab,
-                          GTK_STATE_ACTIVE,
-                          _gdk_color);
+      gtk_widget_modify_bg (tab,
+                            GTK_STATE_NORMAL,
+                            _gdk_color);
+      gtk_widget_modify_bg (tab,
+                            GTK_STATE_ACTIVE,
+                            _gdk_color);
 
-    gtk_widget_modify_bg (colorbox,
-                          GTK_STATE_NORMAL,
-                          _gdk_color);
-    gtk_widget_modify_bg (colorbox,
-                          GTK_STATE_ACTIVE,
-                          _gdk_color);
+      gtk_widget_modify_bg (colorbox,
+                            GTK_STATE_NORMAL,
+                            _gdk_color);
+      gtk_widget_modify_bg (colorbox,
+                            GTK_STATE_ACTIVE,
+                            _gdk_color);
+    }
+
+    {
+      GtkComboBox  *combo         = GTK_COMBO_BOX (_glade->GetWidget ("color_combobox"));
+      GtkTreeModel *model         = gtk_combo_box_get_model (combo);
+      GtkTreeIter   iter;
+      gboolean      iter_is_valid;
+      gboolean      not_found = TRUE;
+
+      iter_is_valid = gtk_tree_model_get_iter_first (model,
+                                                     &iter);
+
+      while (iter_is_valid && not_found)
+      {
+        gchar    *color_name;
+        GdkColor  color;
+
+        gtk_tree_model_get (model, &iter,
+                            0, &color_name, -1);
+        if (gdk_color_parse (color_name,
+                             &color))
+        {
+          if (gdk_color_equal (_gdk_color,
+                               &color))
+          {
+            gtk_combo_box_set_active_iter (combo,
+                                           &iter);
+            not_found = FALSE;
+          }
+        }
+        g_free (color_name);
+
+        iter_is_valid = gtk_tree_model_iter_next (model,
+                                                  &iter);
+      }
+    }
   }
 }
 
@@ -1607,6 +1662,36 @@ void Contest::ReadTeamProperty ()
   {
     _team_event = event;
     _schedule->SetTeamEvent (_team_event);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::OnColorChanged (GtkComboBox *widget)
+{
+  GtkTreeIter iter;
+
+  if (gtk_combo_box_get_active_iter (widget,
+                                     &iter))
+  {
+    GtkTreeModel *model      = gtk_combo_box_get_model (widget);
+    gchar        *color_name;
+    GdkColor      color;
+
+    gtk_tree_model_get (model, &iter,
+                        0, &color_name, -1);
+    if (gdk_color_parse (color_name,
+                         &color))
+    {
+      if (gdk_color_equal (_gdk_color,
+                           &color) == FALSE)
+      {
+        gdk_color_free (_gdk_color);
+        _gdk_color = gdk_color_copy (&color);
+
+        PaintColor ();
+      }
+    }
+    g_free (color_name);
   }
 }
 
@@ -2556,4 +2641,14 @@ extern "C" G_MODULE_EXPORT void on_team_radiobutton_toggled (GtkToggleToolButton
   Contest *c = dynamic_cast <Contest *> (owner);
 
   c->ReadTeamProperty ();
+}
+
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_color_combobox_changed (GtkComboBox *widget,
+                                                           Object      *owner)
+{
+  Contest *c = dynamic_cast <Contest *> (owner);
+
+  c->OnColorChanged (widget);
 }

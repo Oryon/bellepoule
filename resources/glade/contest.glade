@@ -94,6 +94,12 @@
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
+  <object class="GtkListStore" id="color_liststore">
+    <columns>
+      <!-- column-name color -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkImage" id="image4">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -1134,20 +1140,52 @@ stuffing</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEventBox" id="colorbox">
+                      <object class="GtkHBox" id="hbox7">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkLabel" id="banner">
+                          <object class="GtkEventBox" id="colorbox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="ypad">10</property>
-                            <property name="label" translatable="yes">New competition</property>
-                            <attributes>
-                              <attribute name="weight" value="bold"/>
-                              <attribute name="scale" value="2"/>
-                            </attributes>
+                            <child>
+                              <object class="GtkLabel" id="banner">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="ypad">10</property>
+                                <property name="label" translatable="yes">New competition</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                  <attribute name="scale" value="2"/>
+                                </attributes>
+                              </object>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="color_combobox">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="model">color_liststore</property>
+                            <signal name="changed" handler="on_color_combobox_changed" swapped="no"/>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext1">
+                                <property name="text">          </property>
+                              </object>
+                              <attributes>
+                                <attribute name="background">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>

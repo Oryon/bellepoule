@@ -69,6 +69,7 @@ namespace Net
 
     if (_thread)
     {
+      // TODO: Use mutexes to manage not responding servers
       g_thread_join (_thread);
     }
   }
@@ -112,6 +113,9 @@ namespace Net
       curl_easy_setopt (curl_handle, CURLOPT_WRITEFUNCTION, AddText);
       curl_easy_setopt (curl_handle, CURLOPT_WRITEDATA,     downloader);
       curl_easy_setopt (curl_handle, CURLOPT_USERAGENT,     "libcurl-agent/1.0");
+
+      // TODO: Use mutexes to manage not responding servers
+      curl_easy_setopt (curl_handle, CURLOPT_TIMEOUT,       5L);
 
 #if 0
       curl_easy_setopt (curl_handle, CURLOPT_FOLLOWLOCATION, 1);

@@ -107,6 +107,8 @@ class Contest : public Module
 
     void ReloadFencers ();
 
+    void OnColorChanged (GtkComboBox *widget);
+
     guint        GetNetID           ();
     gchar       *GetOrganizer       ();
     gchar       *GetDate            ();
