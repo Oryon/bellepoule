@@ -35,6 +35,7 @@ RELEASE      = $(PRODUCT)_$(VERSION)
 LONG_VERSION = $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)
 DATE         = $(shell date -R)
 OSX_CROSS    = $(HOME)/Project/Cross/Osxcross/target/macports/pkgs/opt/local
+INSTALL_NAME_TOOL = $(HOME)/Project/Cross/Osxcross/build/cctools-895-ld64-274.2_8e9c3f2/cctools/misc/install_name_tool
 
 GTK = gtk+-2.0
 GOO = goocanvas
@@ -413,7 +414,7 @@ prepare_examples:
 
 prepare_www:
 	mkdir $(PACKAGE)/$(RELEASE)/www
-	cp -rf ../../sources/www/*\.* $(PACKAGE)/$(RELEASE)/www
+	cp -rf ../../sources/www/cognac/* $(PACKAGE)/$(RELEASE)/www
 	rm -rf $(PACKAGE)/$(RELEASE)/www/cotcot
 	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
 	sed -i 's/bellepoule/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
@@ -545,11 +546,11 @@ define build_osx_func
 	chmod a+x $(1).app/Contents/MacOS/$(PRODUCT)*
 	find $(1).app/Contents/Frameworks -type f -printf "%f\n" | while read lib;\
 		do \
-		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(1).app/Contents/MacOS/$(1); \
-		install_name_tool -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(1).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib; \
+		$(INSTALL_NAME_TOOL) -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(1).app/Contents/MacOS/$(1); \
+		$(INSTALL_NAME_TOOL) -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(1).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib; \
 		done
-	install_name_tool -id @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(1).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
-	install_name_tool -change $(OUTPUT)/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(1).app/Contents/MacOS/$(1)
+	$(INSTALL_NAME_TOOL) -id @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(1).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
+	$(INSTALL_NAME_TOOL) -change $(OUTPUT)/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(1).app/Contents/MacOS/$(1)
 	zip -qr $(1)-$(subst .,-,$(LONG_VERSION))-osx.zip $(1).app
 endef
 

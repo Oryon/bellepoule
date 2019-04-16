@@ -132,7 +132,9 @@ Name: "{app}\share\{#PRODUCT}\webserver\LightTPD\www\cotcot"; Permissions:everyo
 
 [Files]
 Source: "{#WEBSERVER}\*"; DestDir: "{app}\share\{#PRODUCT}\webserver"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\sources\www\*"; DestDir: "{app}\share\{#PRODUCT}\webserver\LightTPD\www"; Flags: ignoreversion
+Source: "..\..\..\sources\www\cognac\*"; DestDir: "{app}\share\{#PRODUCT}\webserver\LightTPD\www"; Flags: ignoreversion
+Source: "..\..\..\sources\www\cognac\flags\*"; DestDir: "{app}\share\{#PRODUCT}\webserver\LightTPD\www\flags"; Flags: ignoreversion
+Source: "..\..\..\sources\www\cognac\nbproject\*"; DestDir: "{app}\share\{#PRODUCT}\webserver\LightTPD\www\nbproject"; Flags: ignoreversion
 Source: "..\..\..\scripts\wwwstart.bat"; DestDir: "{app}\share\{#PRODUCT}\scripts"; Flags: ignoreversion
 Source: "..\..\..\scripts\wwwstop.bat"; DestDir: "{app}\share\{#PRODUCT}\scripts"; Flags: ignoreversion
 

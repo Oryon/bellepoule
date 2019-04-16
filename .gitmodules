@@ -1,0 +1,3 @@
+[submodule "sources/www/cognac"]
+	path = sources/www/cognac
+	url = https://github.com/radepee/cot2html.git
