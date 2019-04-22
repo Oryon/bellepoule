@@ -343,7 +343,14 @@ namespace Table
 
           if (first_table_set)
           {
-            first_table_set->SetAttendees (g_slist_copy (short_list));
+            Player::AttributeId  attr_id   = Player::AttributeId ("stage_start_rank", this);
+            GSList              *attendees = g_slist_copy (short_list);
+
+            attendees = g_slist_sort_with_data (attendees,
+                                                (GCompareDataFunc) Player::Compare,
+                                                &attr_id);
+
+            first_table_set->SetAttendees (attendees);
             _displayed_table_set = first_table_set;
           }
         }
