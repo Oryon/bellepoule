@@ -366,9 +366,9 @@ namespace NeoSwapper
       {
         PoolProxy *pool = (PoolProxy *) current->data;
 
-        if (FencerCanGoTo (shadow_fencer,
-                           pool,
-                           _criteria_count))
+        if ((_criteria_count == 0) || FencerCanGoTo (shadow_fencer,
+                                                     pool,
+                                                     _criteria_count-1))
         {
           PoolProxy *smallest = (PoolProxy *) pools_by_size->data;
 
