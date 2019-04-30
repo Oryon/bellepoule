@@ -77,8 +77,6 @@ namespace Net
 
       void Spread () override;
 
-      void ResetSpread ();
-
       gboolean IsSpread ();
 
     private:

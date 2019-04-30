@@ -85,6 +85,8 @@ namespace Net
     }
 #endif
 
+    Net::ConsoleServer::ExposeVariable ("heartbeat", 1);
+
     // Unicast listener
     _http_server = new Net::HttpServer (this,
                                         _unicast_port);
@@ -1042,18 +1044,21 @@ namespace Net
   // --------------------------------------------------------------------------------
   gboolean Ring::SendHeartbeat (Ring *ring)
   {
-    Message *heartbeat = new Message ("Ring::Heartbeat");
-
-    heartbeat->Set ("partner", ring->_partner_id);
-
-    for (GList *current = ring->_partner_list; current; current = g_list_next (current))
+    if (Net::ConsoleServer::VariableIsSet ("heartbeat"))
     {
-      Partner *partner = (Partner *) current->data;
+      Message *heartbeat = new Message ("Ring::Heartbeat");
 
-      partner->SendMessage (heartbeat);
+      heartbeat->Set ("partner", ring->_partner_id);
+
+      for (GList *current = ring->_partner_list; current; current = g_list_next (current))
+      {
+        Partner *partner = (Partner *) current->data;
+
+        partner->SendMessage (heartbeat);
+      }
+
+      heartbeat->Release ();
     }
-
-    heartbeat->Release ();
 
     return G_SOURCE_CONTINUE;
   }

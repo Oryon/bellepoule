@@ -351,9 +351,8 @@ namespace Table
       for (guint i = 0; i < _nb_tables; i ++)
       {
         _tables[i]->_is_over         = TRUE;
-        _tables[i]->_ready_to_fence  = TRUE;
+        _tables[i]->_ready_to_fence  = FALSE;
         _tables[i]->_has_all_roadmap = TRUE;
-        _tables[i]->_roadmap_count   = 0;
         _tables[i]->_first_error     = nullptr;
         if (_tables[i]->_status_item && (quick == FALSE))
         {
@@ -398,7 +397,7 @@ namespace Table
           icon = g_strdup (GTK_STOCK_APPLY);
         }
 
-        if (_is_active && table->_ready_to_fence)
+        if (_is_active && (table->_ready_to_fence || table->_is_over))
         {
           table->Spread ();
         }
@@ -794,7 +793,7 @@ namespace Table
 
         if (size <= nb_players)
         {
-          _tables[t]->ConfigureExtensions ();
+          //_tables[t]->ConfigureExtensions ();
         }
 
         if (t > 0)
@@ -972,10 +971,7 @@ namespace Table
           {
             left_table->_first_error = data->_match;
           }
-        }
-        else
-        {
-          left_table->_ready_to_fence = FALSE;
+          left_table->_ready_to_fence = TRUE;
         }
 
         if (   table_set->_has_marshaller
@@ -983,10 +979,6 @@ namespace Table
                 || (data->_match->GetStartTime () == nullptr)))
         {
           left_table->_has_all_roadmap = FALSE;
-        }
-        else
-        {
-          left_table->_roadmap_count++;
         }
 
         left_table->_is_over = FALSE;
@@ -2034,6 +2026,10 @@ namespace Table
   {
     if (message->Is ("BellePoule2D::EndOfBurst"))
     {
+      for (guint t = 1; t < _nb_tables; t++)
+      {
+        RefreshTableStatus (t == _nb_tables-1);
+      }
       Display ();
     }
     else if (message->Is ("BellePoule2D::Roadmap"))
@@ -2076,9 +2072,6 @@ namespace Table
           }
 
           RefreshParcel ();
-          RefreshTableStatus (t == _nb_tables-1);
-
-          table->Spread ();
 
           return TRUE;
         }
@@ -3505,9 +3498,8 @@ namespace Table
   // --------------------------------------------------------------------------------
   gboolean TableSet::RecallRoadmapAllowed (Table *for_table)
   {
-    if (   (for_table->_is_over         == FALSE)
-        && (for_table->_ready_to_fence  == TRUE)
-        && (for_table->_has_all_roadmap == TRUE))
+    if (   (for_table->_is_over        == FALSE)
+        && (for_table->_ready_to_fence == TRUE))
     {
       return _has_marshaller;
     }

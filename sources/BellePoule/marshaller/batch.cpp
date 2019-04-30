@@ -40,7 +40,8 @@ namespace Marshaller
     JOB_ptr,
     JOB_color,
     JOB_status,
-    JOB_warning_color
+    JOB_warning_color,
+    JOB_visibility
   };
 
   // --------------------------------------------------------------------------------
@@ -67,7 +68,14 @@ namespace Marshaller
     _stage     = message->GetInteger ("stage");
     _batch_ref = message->GetString  ("batch");
 
-    _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
+    {
+      GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("treemodelfilter"));
+
+      gtk_tree_model_filter_set_visible_column (filter,
+                                                (gint) ColumnId::JOB_visibility);
+
+      _job_store  = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
+    }
 
     _job_board = new JobBoard ();
 
@@ -452,6 +460,36 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Batch::UpdateJob (Net::Message *message)
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
+                                                               &iter);
+
+    while (iter_is_valid)
+    {
+      Job *job;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_job_store), &iter,
+                          ColumnId::JOB_ptr, &job,
+                          -1);
+
+      if (message->GetNetID () == job->GetNetID ())
+      {
+        job->Update (message);
+
+        gtk_list_store_set (_job_store, &iter,
+                            ColumnId::JOB_visibility, job->NeedRoadmap (),
+                            -1);
+        break;
+      }
+
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
+                                                &iter);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   Job *Batch::Load (Net::Message  *message,
                     guint         *piste_id,
                     GList        **referees,
@@ -542,9 +580,10 @@ namespace Marshaller
 
             job->SetName (name);
             gtk_list_store_set (_job_store, &iter,
-                                ColumnId::NAME_str,   name,
-                                ColumnId::JOB_ptr,    job,
-                                ColumnId::JOB_status, GTK_STOCK_DIALOG_QUESTION,
+                                ColumnId::NAME_str,       name,
+                                ColumnId::JOB_ptr,        job,
+                                ColumnId::JOB_status,     GTK_STOCK_DIALOG_QUESTION,
+                                ColumnId::JOB_visibility, job->NeedRoadmap (),
                                 -1);
             g_free (name);
 

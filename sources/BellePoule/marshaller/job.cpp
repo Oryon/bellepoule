@@ -47,6 +47,7 @@ namespace Marshaller
     _regular_duration = 0;
     _over             = FALSE;
     _workload_units   = message->GetInteger ("workload_units");
+    _need_roadmap     = message->GetInteger ("claim_roadmap");
 
     if (message->GetInteger ("duration_span"))
     {
@@ -84,6 +85,18 @@ namespace Marshaller
   void Job::SetName (const gchar *name)
   {
     _name = g_strdup (name);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Job::NeedRoadmap ()
+  {
+    return _need_roadmap;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Job::Update (Net::Message *message)
+  {
+    _need_roadmap = message->GetInteger ("claim_roadmap");
   }
 
   // --------------------------------------------------------------------------------

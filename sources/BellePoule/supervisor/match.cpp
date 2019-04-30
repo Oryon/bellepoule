@@ -72,6 +72,8 @@ void Match::Init (Data *max_score)
   _duration_sec  = 0;
   _duration_span = 1;
   _piste         = 0;
+  _claim_roadmap = TRUE;
+  _dirty         = TRUE;
 
   _max_score = max_score;
 
@@ -106,6 +108,11 @@ gboolean Match::IsDropped ()
 void Match::SetOpponent (guint   position,
                          Player *fencer)
 {
+  if (_opponents[position]._fencer != fencer)
+  {
+    _dirty = TRUE;
+  }
+
   _opponents[position]._fencer   = fencer;
   _opponents[position]._is_known = TRUE;
 
@@ -594,7 +601,12 @@ void Match::ChangeIdChain (guint batch_id,
 // --------------------------------------------------------------------------------
 void Match::SetPiste (guint piste)
 {
-  _piste = piste;
+  if (_piste != piste)
+  {
+    _piste         = piste;
+    _claim_roadmap = (_piste == 0);
+    _dirty = TRUE;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -836,6 +848,9 @@ void Match::FeedParcel (Net::Message *parcel)
 
   parcel->Set ("duration_span",
                _duration_span);
+
+  parcel->Set ("claim_roadmap",
+               _claim_roadmap);
 }
 
 // --------------------------------------------------------------------------------
@@ -851,6 +866,28 @@ Error *Match::SpawnError ()
   g_free (guilty_party);
 
   return error;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Match::IsDirty ()
+{
+  return _dirty;
+}
+
+// --------------------------------------------------------------------------------
+void Match::Spread ()
+{
+  Object::Spread ();
+
+  _dirty = FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Match::Recall ()
+{
+  Object::Recall ();
+
+  _dirty = TRUE;
 }
 
 // --------------------------------------------------------------------------------

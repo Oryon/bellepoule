@@ -47,7 +47,6 @@ namespace Table
     _is_over            = FALSE;
     _ready_to_fence     = FALSE;
     _has_all_roadmap    = FALSE;
-    _roadmap_count      = 0;
     _status_item        = nullptr;
     _header_item        = nullptr;
     _defeated_table_set = nullptr;
@@ -717,34 +716,41 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Table::FeedParcel (Net::Message *parcel)
   {
-    parcel->Set ("done", _has_all_roadmap);
+    parcel->Set ("done", _has_all_roadmap || _is_over);
   }
 
   // --------------------------------------------------------------------------------
   void Table::Spread ()
   {
-    if (_parcel->GetInteger ("done") != (guint) _has_all_roadmap)
+    gboolean dirty = FALSE;
+
+    if (_parcel->GetInteger ("done") != (guint) (_has_all_roadmap || _is_over))
     {
-      _parcel->ResetSpread ();
+      dirty = TRUE;
     }
 
-    if (_parcel->IsSpread () == FALSE)
+    for (GSList *current = _match_list; current; current = g_slist_next (current))
+    {
+      Match *match = (Match *) current->data;
+
+      if (match->GetOpponent (0) && match->GetOpponent (1) && match->IsDirty ())
+      {
+        dirty = TRUE;
+        break;
+      }
+    }
+
+    if (dirty)
     {
       Object::Spread ();
 
+      for (GSList *current = _match_list; current; current = g_slist_next (current))
       {
-        GSList *current = _match_list;
+        Match *match = (Match *) current->data;
 
-        while (current)
+        if (match->GetOpponent (0) && match->GetOpponent (1) && match->IsDirty ())
         {
-          Match *match = (Match *) current->data;
-
-          if (match->GetOpponent (0) && match->GetOpponent (1))
-          {
-            match->Spread ();
-          }
-
-          current = g_slist_next (current);
+          match->Spread ();
         }
       }
     }

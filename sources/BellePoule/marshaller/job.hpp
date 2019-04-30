@@ -42,6 +42,10 @@ namespace Marshaller
 
       void SetName (const gchar *name);
 
+      gboolean NeedRoadmap ();
+
+      void Update (Net::Message *message);
+
       void SetWeapon (Weapon *weapon);
 
       void SetListener (Listener *listener);
@@ -110,6 +114,7 @@ namespace Marshaller
       GTimeSpan  _regular_duration;
       guint      _duration_span;
       gboolean   _over;
+      gboolean   _need_roadmap;
 
       ~Job () override;
 

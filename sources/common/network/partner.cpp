@@ -91,6 +91,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Partner::SendMessage (Message *message)
   {
+    message->Dump (FALSE);
     message->SetPassPhrase256 (_passphrase256);
     _uploader->PushMessage (message);
   }

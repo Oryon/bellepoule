@@ -847,7 +847,7 @@ namespace Table
                                 previous != nullptr);
 
       gtk_widget_set_sensitive (_glade->GetWidget ("next_button"),
-                                next && next->_ready_to_fence);
+                                next && (next->_ready_to_fence || next->_is_over));
 
       gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("from_label")),
                           from->GetMiniName ());
