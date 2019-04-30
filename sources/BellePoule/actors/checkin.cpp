@@ -43,6 +43,8 @@ namespace People
     _gathering_class = gathering_class;
     _listener        = nullptr;
     _source          = new Source ();
+    _print_attending = TRUE;
+    _print_missing   = TRUE;
 
     RefreshAttendingDisplay ();
   }
@@ -1074,6 +1076,9 @@ namespace People
       name = GetPrintName ();
       Print (name);
       g_free (name);
+
+      _print_attending = TRUE;
+      _print_missing   = TRUE;
     }
 
     gtk_widget_hide (print_dialog);
