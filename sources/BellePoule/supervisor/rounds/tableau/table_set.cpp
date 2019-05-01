@@ -2831,6 +2831,11 @@ namespace Table
         }
       }
 
+      if (_from_table->GetSize () <= 1)
+      {
+        return 0;
+      }
+
       nb_page = _from_table->GetSize ()/nb_row + (_from_table->GetSize()%nb_row != 0);
       print_session->Begin (nb_page);
 
