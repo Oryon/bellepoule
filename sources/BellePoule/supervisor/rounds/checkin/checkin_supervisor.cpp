@@ -268,9 +268,25 @@ namespace People
                                       gint               page_nr)
   {
     {
-      gchar *text = g_strdup_printf ("%s : %d",
-                                     gettext ("Expected fencers"),
-                                     _tally_counter->GetTotalFencerCount ());
+      gchar  *text;
+      GValue  gvalue = {0,{{0}}};
+
+      g_value_init (&gvalue, G_TYPE_STRING);
+      g_object_get_property (G_OBJECT (operation), "export-filename", &gvalue);
+
+      // PDF case
+      if (g_value_get_string (&gvalue))
+      {
+        text = g_strdup_printf ("%s : %d",
+                                gettext ("Present fencers"),
+                                _tally_counter->GetPresentsCount ());
+      }
+      else
+      {
+        text = g_strdup_printf ("%s : %d",
+                                gettext ("Expected fencers"),
+                                _tally_counter->GetTotalFencerCount ());
+      }
 
       DrawConfigLine (operation,
                       context,
