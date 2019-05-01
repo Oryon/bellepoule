@@ -1346,21 +1346,18 @@ namespace Table
 
       if (_fenced_places->_value == ALL_PLACES)
       {
-        text = g_strdup_printf ("%s : %s",
-                                gettext ("Fenced places"),
-                                gettext ("All"));
+        text = g_strdup_printf ("%s",
+                                gettext ("All places fenced"));
       }
       else if (_fenced_places->_value == THIRD_PLACES)
       {
-        text = g_strdup_printf ("%s : %s",
-                                gettext ("Fenced places"),
-                                gettext ("Third place"));
+        text = g_strdup_printf ("%s",
+                                gettext ("Fence off for third place"));
       }
       else
       {
-        text = g_strdup_printf ("%s : %s",
-                                gettext ("Fenced places"),
-                                gettext ("None"));
+        text = g_strdup_printf ("%s",
+                                gettext ("No fence off for third place"));
       }
 
 

@@ -173,7 +173,7 @@
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkRadioButton" id="no_radiobutton">
-                        <property name="label" translatable="yes">None</property>
+                        <property name="label" translatable="yes">No fence off for third place</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -188,7 +188,7 @@
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="third_place_radiobutton">
-                        <property name="label" translatable="yes">Third place</property>
+                        <property name="label" translatable="yes">Fence off for third place</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -203,7 +203,7 @@
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="all_places_radiobutton">
-                        <property name="label" translatable="yes">All</property>
+                        <property name="label" translatable="yes">All places fenced</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
