@@ -389,13 +389,20 @@ namespace Marshaller
     guint        id          = message->GetNetID ();
     Competition *competition = GetCompetition (id);
 
-    if (competition && (competition->GetBatches () == nullptr))
+    if (competition)
     {
-      _competition_list = g_list_remove (_competition_list,
-                                         competition);
+      if (competition->GetBatches () == nullptr)
+      {
+        _competition_list = g_list_remove (_competition_list,
+                                           competition);
 
-      _timeline->RemoveCompetition (competition);
-      competition->Release ();
+        _timeline->RemoveCompetition (competition);
+        competition->Release ();
+      }
+      else
+      {
+        competition->Freeze ();
+      }
     }
   }
 

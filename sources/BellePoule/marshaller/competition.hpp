@@ -66,6 +66,8 @@ namespace Marshaller
 
       void OnChangeBatch ();
 
+      void Freeze ();
+
     private:
       guint               _id;
       GdkColor           *_gdk_color;

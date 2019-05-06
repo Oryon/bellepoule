@@ -156,8 +156,22 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  void Competition::Freeze ()
+  {
+    gtk_widget_set_visible (_glade->GetWidget ("batch_combobox"),
+                            FALSE);
+    gtk_widget_set_visible (_glade->GetWidget ("batch_vbox"),
+                            FALSE);
+  }
+
+  // --------------------------------------------------------------------------------
   void Competition::SetProperties (Net::Message *message)
   {
+    gtk_widget_set_visible (_glade->GetWidget ("batch_combobox"),
+                            TRUE);
+    gtk_widget_set_visible (_glade->GetWidget ("batch_vbox"),
+                            TRUE);
+
     SetProperty (message, "gender");
     SetProperty (message, "weapon");
     SetProperty (message, "category");

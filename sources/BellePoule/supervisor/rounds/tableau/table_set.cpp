@@ -2013,7 +2013,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::Recall ()
   {
-    for (guint t = 1; t < _nb_tables; t++)
+    for (guint t = 0; t < _nb_tables; t++)
     {
       Table *table = _tables[t];
 
