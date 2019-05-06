@@ -497,6 +497,13 @@ namespace Marshaller
             {
               Piste *piste = GetPiste (piste_id);
 
+              if (piste == nullptr)
+              {
+                piste = AddPiste ();
+
+                piste->SetId (piste_id);
+              }
+
               if (piste)
               {
                 GTimeSpan  duration = job->GetRegularDuration ();
@@ -688,19 +695,25 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::RemoveSelected ()
   {
-    GList *current = _selected_piste_list;
+    GList *removed = nullptr;
 
-    while (current)
+    for (GList *current = _selected_piste_list; current; current = g_list_next (current))
     {
       Piste *piste = (Piste *) current->data;
 
-      RemovePiste (piste);
-
-      current = g_list_next (current);
+      if (piste->GetSlots () == nullptr)
+      {
+        removed = g_list_prepend (removed,
+                                  current);
+        RemovePiste (piste);
+      }
     }
 
-    g_list_free (_selected_piste_list);
-    _selected_piste_list = nullptr;
+    for (GList *current = removed; current; current = g_list_next (current))
+    {
+      _selected_piste_list = g_list_delete_link (_selected_piste_list,
+                                                 (GList *) current->data);
+    }
 
     Redraw ();
   }
@@ -1139,7 +1152,7 @@ namespace Marshaller
       RunDialog (GTK_DIALOG (error_dialog));
       gtk_widget_hide (error_dialog);
     }
-    else
+    else if (_piste_list)
     {
       GtkWidget *dialog = _glade->GetWidget ("job_dialog");
 
