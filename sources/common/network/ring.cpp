@@ -331,10 +331,10 @@ namespace Net
 
         if (credentials)
         {
-          gchar       *backup_iv;
-          gchar       *backup_challenge  = cryptor->Encrypt (SECRET,
-                                                             credentials->GetKey (),
-                                                             &backup_iv);
+          gchar *backup_iv;
+          gchar *backup_challenge = cryptor->Encrypt (SECRET,
+                                                      credentials->GetKey (),
+                                                      &backup_iv);
 
           message->Set ("backup_challenge", backup_challenge);
           message->Set ("backup_iv",        backup_iv);
@@ -452,9 +452,9 @@ namespace Net
                   gchar *backup_challenge = message->GetString ("backup_challenge");
                   gchar *backup_iv        = message->GetString ("backup_iv");
 
-                  if (ring->DecryptSecret (backup_challenge,
-                                           backup_iv,
-                                           ring->_credentials))
+                  if (backup_challenge && backup_iv && ring->DecryptSecret (backup_challenge,
+                                                                            backup_iv,
+                                                                            ring->_credentials))
                   {
                     ring->SendHandshake (partner,
                                          HandshakeResult::BACKUP_CHALLENGE_PASSED);
@@ -549,9 +549,9 @@ namespace Net
     if (partner_pass)
     {
       credentials = new Credentials (GetRoleImage (),
-                                      _unicast_address,
-                                      _unicast_port,
-                                      partner_pass);
+                                     _unicast_address,
+                                     _unicast_port,
+                                     partner_pass);
 
       g_free (partner_pass);
     }
@@ -1029,6 +1029,11 @@ namespace Net
       _unicast_address  = g_inet_address_to_string (loopback);
       broadcast_address = _unicast_address;
       g_object_unref (loopback);
+    }
+
+    if (_credentials)
+    {
+      _credentials->SetIpAddress (_unicast_address);
     }
 
     if (broadcast_address)

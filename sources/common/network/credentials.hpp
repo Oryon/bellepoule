@@ -30,6 +30,8 @@ namespace Net
 
       const gchar *GetKey ();
 
+      void SetIpAddress (const gchar *address);
+
     private:
       guint  _port;
       gchar *_ip;

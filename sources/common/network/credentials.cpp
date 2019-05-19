@@ -52,6 +52,13 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void Credentials::SetIpAddress (const gchar *address)
+  {
+    g_free (_ip);
+    _ip = g_strdup (address);
+  }
+
+  // --------------------------------------------------------------------------------
   gchar *Credentials::GetText ()
   {
     return g_strdup_printf ("%s:%s:%d:%s",
