@@ -349,6 +349,12 @@ gint Object::GetIntData (Object      *owner,
 }
 
 // --------------------------------------------------------------------------------
+Net::Message *Object::GetParcel ()
+{
+  return _parcel;
+}
+
+// --------------------------------------------------------------------------------
 Net::Message *Object::Disclose (const gchar *as)
 {
   if (_parcel == nullptr)

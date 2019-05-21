@@ -136,6 +136,8 @@ class Object
 
     void RefreshParcel ();
 
+    Net::Message *GetParcel ();
+
     const gchar *GetKlassName ();
 
     virtual void FeedParcel (Net::Message *parcel);

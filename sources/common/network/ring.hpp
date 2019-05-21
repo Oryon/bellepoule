@@ -70,6 +70,9 @@ namespace Net
 
       void Leave ();
 
+      void InjectMessage (Message *message,
+                          Message *after);
+
       void SpreadMessage (Message *message);
 
       void RecallMessage (Message *message);

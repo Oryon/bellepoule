@@ -1271,6 +1271,14 @@ void Contest::ManageReferee (Net::Message *message)
             else
             {
               _referees_list->Add (referee);
+
+              {
+                Net::Message *parcel = referee->Disclose ("BellePoule::Referee");
+
+                referee->FeedParcel (parcel);
+                Net::Ring::_broker->InjectMessage (parcel,
+                                                   this->GetParcel ());
+              }
             }
 
             MakeDirty ();

@@ -679,6 +679,27 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
+  void Ring::InjectMessage (Message *message,
+                            Message *after)
+  {
+    GList *node = g_list_find (_message_list,
+                               after);
+
+    if (node)
+    {
+      message->SetFitness (1);
+      message->AddObjectListener (this);
+
+      if (node)
+      {
+        _message_list = g_list_insert_before (_message_list,
+                                              node,
+                                              message);
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------------------
   void Ring::SpreadMessage (Message *message)
   {
     if (g_list_find (_message_list,
