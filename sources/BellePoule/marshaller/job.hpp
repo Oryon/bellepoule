@@ -74,6 +74,8 @@ namespace Marshaller
 
       guint GetNetID ();
 
+      guint GetDisplayPosition ();
+
       void OnRefereeAdded ();
 
       void OnRefereeRemoved ();
@@ -104,6 +106,7 @@ namespace Marshaller
       guint      _sibling_order;
       gchar     *_name;
       guint      _netid;
+      guint      _position;
       GdkColor  *_gdk_color;
       Batch     *_batch;
       Slot      *_slot;

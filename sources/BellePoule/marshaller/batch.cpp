@@ -41,7 +41,7 @@ namespace Marshaller
     JOB_color,
     JOB_status,
     JOB_warning_color,
-    JOB_visibility
+    JOB_position
   };
 
   // --------------------------------------------------------------------------------
@@ -68,14 +68,7 @@ namespace Marshaller
     _stage     = message->GetInteger ("stage");
     _batch_ref = message->GetString  ("batch");
 
-    {
-      GtkTreeModelFilter *filter = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("treemodelfilter"));
-
-      gtk_tree_model_filter_set_visible_column (filter,
-                                                (gint) ColumnId::JOB_visibility);
-
-      _job_store  = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
-    }
+    _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
     _job_board = new JobBoard ();
 
@@ -462,31 +455,6 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Batch::UpdateJob (Net::Message *message)
   {
-    GtkTreeIter iter;
-    gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_job_store),
-                                                               &iter);
-
-    while (iter_is_valid)
-    {
-      Job *job;
-
-      gtk_tree_model_get (GTK_TREE_MODEL (_job_store), &iter,
-                          ColumnId::JOB_ptr, &job,
-                          -1);
-
-      if (message->GetNetID () == job->GetNetID ())
-      {
-        job->Update (message);
-
-        gtk_list_store_set (_job_store, &iter,
-                            ColumnId::JOB_visibility, job->NeedRoadmap (),
-                            -1);
-        break;
-      }
-
-      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_job_store),
-                                                &iter);
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -580,12 +548,23 @@ namespace Marshaller
 
             job->SetName (name);
             gtk_list_store_set (_job_store, &iter,
-                                ColumnId::NAME_str,       name,
-                                ColumnId::JOB_ptr,        job,
-                                ColumnId::JOB_status,     GTK_STOCK_DIALOG_QUESTION,
-                                ColumnId::JOB_visibility, job->NeedRoadmap (),
+                                ColumnId::NAME_str,     name,
+                                ColumnId::JOB_ptr,      job,
+                                ColumnId::JOB_position, job->GetDisplayPosition (),
+                                ColumnId::JOB_status,   GTK_STOCK_DIALOG_QUESTION,
                                 -1);
             g_free (name);
+
+            {
+              GtkTreeSortable *sortable = GTK_TREE_SORTABLE (_glade->GetWidget ("treemodelsort"));
+
+              gtk_tree_sortable_set_sort_column_id (sortable,
+                                                    GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
+                                                    GTK_SORT_ASCENDING);
+              gtk_tree_sortable_set_sort_column_id (sortable,
+                                                    (int) ColumnId::JOB_position,
+                                                    GTK_SORT_ASCENDING);
+            }
 
             _pending_list = g_list_append (_pending_list,
                                            job);

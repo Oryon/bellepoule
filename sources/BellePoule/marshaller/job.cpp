@@ -41,6 +41,7 @@ namespace Marshaller
     _name             = nullptr;
     _batch            = batch;
     _netid            = message->GetNetID ();
+    _position         = message->GetInteger ("display_position");
     _sibling_order    = sibling_order;
     _slot             = nullptr;
     _kinship          = 0;
@@ -269,6 +270,12 @@ namespace Marshaller
   guint Job::GetNetID ()
   {
     return _netid;
+  }
+
+  // --------------------------------------------------------------------------------
+  guint Job::GetDisplayPosition ()
+  {
+    return _position;
   }
 
   // --------------------------------------------------------------------------------

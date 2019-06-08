@@ -159,7 +159,6 @@ class Match : public Object,
     FieTime  *_start_time;
     guint     _duration_sec;
     guint     _duration_span;
-    gboolean  _claim_roadmap;
     gboolean  _dirty;
 
     static GTimeSpan _clock_offset;

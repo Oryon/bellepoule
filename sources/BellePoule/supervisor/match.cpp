@@ -72,7 +72,6 @@ void Match::Init (Data *max_score)
   _duration_sec  = 0;
   _duration_span = 1;
   _piste         = 0;
-  _claim_roadmap = TRUE;
   _dirty         = TRUE;
 
   _max_score = max_score;
@@ -603,8 +602,7 @@ void Match::SetPiste (guint piste)
 {
   if (_piste != piste)
   {
-    _piste         = piste;
-    _claim_roadmap = (_piste == 0);
+    _piste = piste;
     _dirty = TRUE;
   }
 }
@@ -849,8 +847,8 @@ void Match::FeedParcel (Net::Message *parcel)
   parcel->Set ("duration_span",
                _duration_span);
 
-  parcel->Set ("claim_roadmap",
-               _claim_roadmap);
+  parcel->Set ("display_position",
+               _number);
 }
 
 // --------------------------------------------------------------------------------

@@ -2286,8 +2286,8 @@ namespace Pool
     parcel->Set ("xml", (const gchar *) xml_buffer->content);
     xmlBufferFree (xml_buffer);
 
-    parcel->Set ("claim_roadmap",
-                 TRUE);
+    parcel->Set ("display_position",
+                 _number);
 
     parcel->Set ("duration_sec",
                  _duration_sec);
