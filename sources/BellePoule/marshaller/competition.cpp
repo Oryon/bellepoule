@@ -25,30 +25,26 @@
 #include "actors/fencer.hpp"
 #include "actors/team.hpp"
 #include "affinities.hpp"
+#include "batch_panel.hpp"
 #include "batch.hpp"
 
 #include "competition.hpp"
 
 namespace Marshaller
 {
-  enum class BatchStoreColumnId
-  {
-    BATCH_NAME_str,
-    BATCH_VISIBILITY_bool,
-    BATCH_void
-  };
-
   // --------------------------------------------------------------------------------
   Competition::Competition (guint            id,
                             Batch::Listener *listener)
     : Object ("Competition"),
     Module ("competition.glade")
   {
-    _fencer_list = nullptr;
-    _batches     = nullptr;
-    _weapon      = nullptr;
-    _id          = id;
-    _gdk_color   = g_new (GdkColor, 1);
+    _fencer_list   = nullptr;
+    _batches       = nullptr;
+    _weapon        = nullptr;
+    _current_batch = nullptr;
+    _id            = id;
+    _gdk_color     = g_new (GdkColor, 1);
+    _radio_group   = GTK_RADIO_BUTTON (_glade->GetWidget ("batch_group"));
 
     _batch_listener = listener;
 
@@ -65,21 +61,10 @@ namespace Marshaller
       g_object_unref (animation);
     }
 
-    _batch_image   = _glade->GetWidget ("batch_image");
-    _spread_button = _glade->GetWidget ("spread_button");
-
+    _batch_image = _glade->GetWidget ("batch_image");
     gtk_widget_set_visible (_batch_image,   FALSE);
-    gtk_widget_set_visible (_spread_button, FALSE);
 
-    _combobox = GTK_COMBO_BOX (_glade->GetWidget ("batch_combobox"));
-
-    {
-      _batch_store        = GTK_LIST_STORE (_glade->GetGObject ("batch_store"));
-      _batch_store_filter = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("batch_store_filter"));
-
-      gtk_tree_model_filter_set_visible_column (_batch_store_filter,
-                                                (gint) BatchStoreColumnId::BATCH_VISIBILITY_bool);
-    }
+    _batch_table = GTK_TABLE (_glade->GetWidget ("batch_table"));
   }
 
   // --------------------------------------------------------------------------------
@@ -90,7 +75,6 @@ namespace Marshaller
 
     FreeFullGList (Player, _fencer_list);
 
-    gtk_list_store_clear (_batch_store);
     FreeFullGList (Batch, _batches);
 
     g_free (_weapon);
@@ -138,39 +122,33 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   gboolean Competition::BatchIsModifiable (Batch *batch)
   {
-    GtkTreeIter *iter = GetBatchIter (batch);
+    BatchPanel *panel = GetBatchPanel (batch);
 
-    if (iter)
-    {
-      gboolean visible;
-
-      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store), iter,
-                          BatchStoreColumnId::BATCH_VISIBILITY_bool, &visible,
-                          -1);
-      gtk_tree_iter_free (iter);
-
-      return visible;
-    }
-
-    return FALSE;
+    return panel->IsVisible ();
   }
 
   // --------------------------------------------------------------------------------
   void Competition::Freeze ()
   {
-    gtk_widget_set_visible (_glade->GetWidget ("batch_combobox"),
+    gtk_widget_set_visible (_glade->GetWidget ("batch_table"),
                             FALSE);
     gtk_widget_set_visible (_glade->GetWidget ("batch_vbox"),
                             FALSE);
   }
 
   // --------------------------------------------------------------------------------
-  void Competition::SetProperties (Net::Message *message)
+  void Competition::UnFreeze ()
   {
-    gtk_widget_set_visible (_glade->GetWidget ("batch_combobox"),
+    gtk_widget_set_visible (_glade->GetWidget ("batch_table"),
                             TRUE);
     gtk_widget_set_visible (_glade->GetWidget ("batch_vbox"),
                             TRUE);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Competition::SetProperties (Net::Message *message)
+  {
+    UnFreeze ();
 
     SetProperty (message, "gender");
     SetProperty (message, "weapon");
@@ -214,15 +192,14 @@ namespace Marshaller
                          _batch_listener);
 
       {
-        GtkTreeIter iter;
+        BatchPanel *panel = new BatchPanel (_batch_table,
+                                            _radio_group,
+                                            batch,
+                                            this);
 
-        gtk_list_store_append (_batch_store,
-                               &iter);
-
-        gtk_list_store_set (_batch_store, &iter,
-                            BatchStoreColumnId::BATCH_NAME_str, batch->GetName (),
-                            BatchStoreColumnId::BATCH_void,     batch,
-                            -1);
+        batch->SetData (this,
+                        "batch_panel",
+                        panel);
       }
 
       _batches = g_list_append (_batches,
@@ -240,122 +217,90 @@ namespace Marshaller
     }
     else
     {
-      ExposeBatch (batch);
+      ExposeBatch (batch,
+                   message->GetInteger ("expected_jobs"),
+                   message->GetInteger ("ready_jobs"));
     }
 
     return batch;
   }
 
   // --------------------------------------------------------------------------------
-  void Competition::ExposeBatch (Batch *batch)
+  void Competition::ExposeBatch (Batch *batch,
+                                 guint  expected_jobs,
+                                 guint  ready_jobs)
   {
-    GtkTreeIter *iter = GetBatchIter (batch);
+    BatchPanel *panel = GetBatchPanel (batch);
 
-    if (iter)
+    panel->Expose (expected_jobs,
+                   ready_jobs);
+
+    if (_current_batch == nullptr)
     {
-      gtk_list_store_set (_batch_store, iter,
-                          BatchStoreColumnId::BATCH_VISIBILITY_bool, 1,
-                          -1);
-
-      if (gtk_combo_box_get_active_iter (_combobox,
-                                         iter) == FALSE)
-      {
-        gtk_combo_box_set_active (_combobox,
-                                  0);
-      }
-
-      gtk_tree_iter_free (iter);
+      panel->SetActive ();
     }
+
+    UnFreeze ();
   }
 
   // --------------------------------------------------------------------------------
   void Competition::MaskBatch (Batch *batch)
   {
-    GtkTreeIter *iter = GetBatchIter (batch);
-
-    if (iter)
     {
-      GtkTreeIter  active_iter;
-      Batch       *active_batch = nullptr;
+      BatchPanel *panel = GetBatchPanel (batch);
 
-      if (gtk_combo_box_get_active_iter (_combobox,
-                                         &active_iter))
+      panel->Mask ();
+    }
+
+    if (_current_batch == batch)
+    {
+      _current_batch = nullptr;
+
+      for (GList *current = g_list_last (_batches); current; current = g_list_previous (current))
       {
-        gtk_tree_model_get (GTK_TREE_MODEL (_batch_store_filter), &active_iter,
-                            BatchStoreColumnId::BATCH_void, &active_batch,
-                            -1);
+        Batch      *current_batch = (Batch *) current->data;
+        BatchPanel *panel         = GetBatchPanel (current_batch);
+
+        if (panel->IsVisible ())
+        {
+          panel->SetActive ();
+          return;
+        }
       }
 
-      gtk_list_store_set (_batch_store, iter,
-                          BatchStoreColumnId::BATCH_VISIBILITY_bool, FALSE,
-                          -1);
-
-      if (active_batch == batch)
-      {
-        gtk_combo_box_set_active (_combobox,
-                                  0);
-      }
-
-      gtk_tree_iter_free (iter);
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_radio_group),
+                                    TRUE);
+      Freeze ();
     }
   }
 
   // --------------------------------------------------------------------------------
   void Competition::DeleteBatch (Net::Message *message)
   {
-    Batch *batch = GetBatch (message->GetNetID ());
+    Batch      *batch = GetBatch (message->GetNetID ());
+    BatchPanel *panel = GetBatchPanel (batch);
+
+    MaskBatch (batch);
+    panel->Release ();
 
     _batches = g_list_remove (_batches,
                               batch);
-
-    {
-      GtkTreeIter *iter = GetBatchIter (batch);
-
-      if (iter)
-      {
-        gtk_list_store_remove (_batch_store,
-                               iter);
-        gtk_tree_iter_free (iter);
-      }
-    }
 
     batch->UnPlug ();
     batch->Release ();
   }
 
   // --------------------------------------------------------------------------------
-  GtkTreeIter *Competition::GetBatchIter (Batch *batch)
+  BatchPanel *Competition::GetBatchPanel (Batch *batch)
   {
-    GtkTreeIter iter;
-    gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_batch_store),
-                                                               &iter);
-
-    while (iter_is_valid)
-    {
-      Batch *current_batch;
-
-      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store), &iter,
-                          BatchStoreColumnId::BATCH_void, &current_batch,
-                          -1);
-
-      if (batch == current_batch)
-      {
-        return gtk_tree_iter_copy (&iter);
-      }
-
-      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_batch_store),
-                                                &iter);
-    }
-
-    return nullptr;
+    return (BatchPanel *) batch->GetPtrData (this,
+                                             "batch_panel");
   }
 
   // --------------------------------------------------------------------------------
   Batch *Competition::GetBatch (guint id)
   {
-    GList *current = _batches;
-
-    while (current)
+    for (GList *current = _batches; current; current = g_list_next (current))
     {
       Batch *batch = (Batch *) current->data;
 
@@ -363,8 +308,6 @@ namespace Marshaller
       {
         return batch;
       }
-
-      current = g_list_next (current);
     }
 
     return nullptr;
@@ -445,9 +388,8 @@ namespace Marshaller
         {
           Team       *team            = (Team *) player;
           Affinities *team_affinities = (Affinities *) team->GetPtrData (nullptr, "affinities");
-          xmlNode    *child           = xml_node->children;
 
-          while (child)
+          for (xmlNode *child = xml_node->children; child; child = child->next)
           {
             Fencer *fencer = (Fencer *) PlayerFactory::CreatePlayer ("Fencer");
 
@@ -464,8 +406,6 @@ namespace Marshaller
                                (GDestroyNotify) Affinities::Destroy);
               affinities->ShareWith (team_affinities);
             }
-
-            child = child->next;
           }
         }
 
@@ -506,10 +446,9 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Competition::DeleteFencer (Net::Message *message)
   {
-    guint  id      = message->GetNetID ();
-    GList *current = _fencer_list;
+    guint id = message->GetNetID ();
 
-    while (current)
+    for (GList *current = _fencer_list; current; current = g_list_next (current))
     {
       Player *fencer     = (Player *) current->data;
       guint   current_id = fencer->GetIntData (this, "netid");
@@ -521,17 +460,13 @@ namespace Marshaller
                                            current);
         break;
       }
-
-      current = g_list_next (current);
     }
   }
 
   // --------------------------------------------------------------------------------
   Player *Competition::GetFencer (guint ref)
   {
-    GList *current = _fencer_list;
-
-    while (current)
+    for (GList *current = _fencer_list; current; current = g_list_next (current))
     {
       Player *fencer = (Player *) current->data;
 
@@ -539,20 +474,15 @@ namespace Marshaller
       {
         return fencer;
       }
-
-      current = g_list_next (current);
     }
 
     return nullptr;
   }
 
   // --------------------------------------------------------------------------------
-  void Competition::OnChangeBatch ()
+  void Competition::OnBatchSelected (Batch *batch)
   {
-    Batch *batch   = GetCurrentBatch ();
-    GList *current = _batches;
-
-    while (current)
+    for (GList *current = _batches; current; current = g_list_next (current))
     {
       Batch *current_batch = (Batch *) current->data;
 
@@ -564,93 +494,33 @@ namespace Marshaller
       {
         gtk_widget_hide (current_batch->GetRootWidget ());
       }
-      current = g_list_next (current);
     }
 
     if (batch == nullptr)
     {
       gtk_widget_set_visible (_batch_image,
                               FALSE);
-      gtk_widget_set_visible (_spread_button,
-                              FALSE);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  Batch *Competition::GetCurrentBatch ()
-  {
-    GtkTreeIter iter;
-
-    if (gtk_combo_box_get_active_iter (_combobox,
-                                       &iter))
-    {
-      Batch *batch;
-
-      gtk_tree_model_get (GTK_TREE_MODEL (_batch_store_filter), &iter,
-                          BatchStoreColumnId::BATCH_void, &batch,
-                          -1);
-      return batch;
     }
 
-    return nullptr;
-  }
-
-  // --------------------------------------------------------------------------------
-  void Competition::OnSpread ()
-  {
-    Batch *batch = GetCurrentBatch ();
-
-    if (batch)
-    {
-      batch->OnValidateAssign ();
-    }
+    _current_batch = batch;
   }
 
   // --------------------------------------------------------------------------------
   void Competition::SetBatchStatus (Batch         *batch,
                                     Batch::Status  status)
   {
-    if (batch == GetCurrentBatch ())
+    if (batch == _current_batch)
     {
-      if (status == Batch::Status::UNCOMPLETED)
+      if (status == Batch::Status::INCOMPLETE)
       {
         gtk_widget_set_visible (_batch_image,
                                 TRUE);
-        gtk_widget_set_visible (_spread_button,
-                                FALSE);
       }
-      else if (status == Batch::Status::CONCEALED)
+      else
       {
         gtk_widget_set_visible (_batch_image,
-                                FALSE);
-        gtk_widget_set_visible (_spread_button,
-                                TRUE);
-      }
-      else if (status == Batch::Status::DISCLOSED)
-      {
-        gtk_widget_set_visible (_batch_image,
-                                FALSE);
-        gtk_widget_set_visible (_spread_button,
                                 FALSE);
       }
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_spread_button_clicked (GtkToolButton *widget,
-                                                            Object        *owner)
-  {
-    Competition *c = dynamic_cast <Competition *> (owner);
-
-    c->OnSpread ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_batch_combobox_changed (GtkComboBox *widget,
-                                                             Object      *owner)
-  {
-    Competition *c = dynamic_cast <Competition *> (owner);
-
-    c->OnChangeBatch ();
   }
 }

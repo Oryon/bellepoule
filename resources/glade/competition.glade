@@ -8,19 +8,6 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">images/apply.gif</property>
   </object>
-  <object class="GtkListStore" id="batch_store">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name visible -->
-      <column type="gboolean"/>
-      <!-- column-name batch -->
-      <column type="gpointer"/>
-    </columns>
-  </object>
-  <object class="GtkTreeModelFilter" id="batch_store_filter">
-    <property name="child_model">batch_store</property>
-  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <child>
@@ -32,22 +19,47 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkComboBox" id="batch_combobox">
+              <object class="GtkRadioButton" id="batch_group">
+                <property name="label" translatable="yes">radiobutton</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="active">True</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkViewport" id="viewport1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="model">batch_store_filter</property>
-                <signal name="changed" handler="on_batch_combobox_changed" swapped="no"/>
                 <child>
-                  <object class="GtkCellRendererText" id="cellrenderertext1"/>
-                  <attributes>
-                    <attribute name="text">0</attribute>
-                  </attributes>
+                  <object class="GtkTable" id="batch_table">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="column_spacing">5</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -67,7 +79,7 @@
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -144,20 +156,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkButton" id="spread_button">
-                    <property name="label" translatable="yes">Valider</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="image">apply_animation</property>
-                    <signal name="clicked" handler="on_spread_button_clicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="pack_type">end</property>
-                    <property name="position">0</property>
-                  </packing>
+                  <placeholder/>
                 </child>
                 <child>
                   <object class="GtkImage" id="batch_image">

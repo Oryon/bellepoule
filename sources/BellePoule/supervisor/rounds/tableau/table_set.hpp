@@ -192,7 +192,6 @@ namespace Table
       gboolean                 *_row_filled;
       HtmlTable                *_html_table;
       GdkPixbuf                *_printer_pixbuf;
-      gboolean                  _has_marshaller;
       Filter                   *_right_filter;
 
       Listener *_listener;

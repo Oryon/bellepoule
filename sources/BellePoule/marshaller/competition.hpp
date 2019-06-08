@@ -19,13 +19,15 @@
 #include <libxml/xpath.h>
 
 #include "util/module.hpp"
+#include "batch_panel.hpp"
 
 class Player;
 class Batch;
 
 namespace Marshaller
 {
-  class Competition : public Module
+  class Competition : public Module,
+                      public BatchPanel::Listener
   {
     public:
       Competition (guint            id,
@@ -62,38 +64,37 @@ namespace Marshaller
       void SetBatchStatus (Batch         *batch,
                            Batch::Status  status);
 
-      void OnSpread ();
-
-      void OnChangeBatch ();
-
       void Freeze ();
 
+      void UnFreeze ();
+
     private:
-      guint               _id;
-      GdkColor           *_gdk_color;
-      GList              *_fencer_list;
-      gchar              *_weapon;
-      GData              *_properties;
-      GList              *_batches;
-      Batch::Listener    *_batch_listener;
-      GtkWidget          *_batch_image;
-      GtkWidget          *_spread_button;
-      GtkListStore       *_batch_store;
-      GtkTreeModelFilter *_batch_store_filter;
-      GtkComboBox        *_combobox;
+      guint            _id;
+      GdkColor        *_gdk_color;
+      GList           *_fencer_list;
+      gchar           *_weapon;
+      GData           *_properties;
+      GList           *_batches;
+      Batch::Listener *_batch_listener;
+      GtkWidget       *_batch_image;
+      GtkTable        *_batch_table;
+      Batch           *_current_batch;
+      GtkRadioButton  *_radio_group;
 
       virtual ~Competition ();
 
       void SetProperty (Net::Message *message,
                         const gchar  *property);
 
-      void ExposeBatch (Batch *batch);
+      void ExposeBatch (Batch *batch,
+                        guint  expected_jobs,
+                        guint  ready_jobs);
 
       void MaskBatch (Batch *batch);
 
-      GtkTreeIter *GetBatchIter (Batch *batch);
+      BatchPanel *GetBatchPanel (Batch *batch);
 
-      Batch *GetCurrentBatch ();
+      void OnBatchSelected (Batch *batch) override;
 
       gboolean LoadFencer (xmlXPathContext *xml_context,
                            Net::Message    *message,

@@ -70,6 +70,11 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Job::~Job ()
   {
+    Net::Message *parcel = _parcel;
+
+    // Prevent from being spread
+    _parcel = nullptr;
+
     if (_slot)
     {
       _slot->RemoveJob (this);
@@ -79,6 +84,8 @@ namespace Marshaller
     gdk_color_free (_gdk_color);
 
     FreeFullGList (Player, _fencer_list);
+
+    _parcel = parcel;
   }
 
   // --------------------------------------------------------------------------------
@@ -175,33 +182,36 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Job::MakeRefereeParcel ()
   {
-    GList *referee_list = nullptr;
-
-    if (_slot)
+    if (_parcel)
     {
-      referee_list = _slot->GetRefereeList ();
-    }
+      GList *referee_list = nullptr;
 
-    if (referee_list)
-    {
-      gsize length           = g_list_length (referee_list);
-      guint referees[length];
-
-      for (guint i = 0; i < length; i++)
+      if (_slot)
       {
-        Player *referee = (Player *) g_list_nth_data (referee_list,
-                                                      i);
-
-        referees[i] = referee->GetRef ();
+        referee_list = _slot->GetRefereeList ();
       }
 
-      _parcel->SetList ("referees",
-                        referees,
-                        length);
-    }
-    else
-    {
-      _parcel->Remove ("referees");
+      if (referee_list)
+      {
+        gsize length           = g_list_length (referee_list);
+        guint referees[length];
+
+        for (guint i = 0; i < length; i++)
+        {
+          Player *referee = (Player *) g_list_nth_data (referee_list,
+                                                        i);
+
+          referees[i] = referee->GetRef ();
+        }
+
+        _parcel->SetList ("referees",
+                          referees,
+                          length);
+      }
+      else
+      {
+        _parcel->Remove ("referees");
+      }
     }
   }
 
@@ -296,11 +306,11 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Job::HasReferees ()
+  gboolean Job::HasPiste ()
   {
     if (_slot)
     {
-      return _slot->GetRefereeList () != nullptr;
+      return _slot->GetPiste () != nullptr;
     }
 
     return FALSE;

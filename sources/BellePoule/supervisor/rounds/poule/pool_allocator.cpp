@@ -464,11 +464,14 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::FeedParcel (Net::Message *parcel)
   {
+    guint  pool_count = g_slist_length (_drop_zones);
     Stage *next_stage = GetNextStage ();
 
-    parcel->Set ("competition", _contest->GetNetID ());
-    parcel->Set ("name",        GetName ());
-    parcel->Set ("done",        next_stage->Locked ());
+    parcel->Set ("competition",   _contest->GetNetID ());
+    parcel->Set ("name",          GetName ());
+    parcel->Set ("done",          next_stage->Locked ());
+    parcel->Set ("ready_jobs",    pool_count);
+    parcel->Set ("expected_jobs", pool_count);
   }
 
   // --------------------------------------------------------------------------------

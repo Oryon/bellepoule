@@ -46,7 +46,6 @@ namespace Table
     _first_error        = nullptr;
     _is_over            = FALSE;
     _ready_to_fence     = FALSE;
-    _has_all_roadmap    = FALSE;
     _status_item        = nullptr;
     _header_item        = nullptr;
     _defeated_table_set = nullptr;
@@ -87,15 +86,13 @@ namespace Table
       va_end (ap);
 
       {
-        gchar *image = GetImage ();
-        gchar *name  = g_strdup_printf ("T%d-%s",
+        gchar *name  = g_strdup_printf ("%d:%s",
                                         first_place,
-                                        image);
+                                        _mini_name);
 
         _parcel->Set ("name", name);
 
         g_free (name);
-        g_free (image);
       }
     }
   }
@@ -722,7 +719,8 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Table::Spread ()
   {
-    gboolean dirty = FALSE;
+    gboolean dirty       = FALSE;
+    guint    match_count = 0;
 
     if (_parcel->GetInteger ("done") != (guint) (_is_over))
     {
@@ -733,11 +731,25 @@ namespace Table
     {
       Match *match = (Match *) current->data;
 
-      if (match->GetOpponent (0) && match->GetOpponent (1) && match->IsDirty ())
+      if (match->GetOpponent (0) && match->GetOpponent (1))
       {
-        dirty = TRUE;
-        break;
+        if (match->IsDirty ())
+        {
+          dirty = TRUE;
+        }
+        match_count++;
       }
+    }
+
+    if (_left_table)
+    {
+      _parcel->Set ("ready_jobs",    match_count);
+      _parcel->Set ("expected_jobs", _size/2);
+    }
+    else
+    {
+      _parcel->Set ("ready_jobs",    match_count);
+      _parcel->Set ("expected_jobs", match_count);
     }
 
     if (dirty)

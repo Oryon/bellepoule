@@ -794,6 +794,7 @@ void Match::AddReferee (Player *referee)
   {
     _referee_list = g_slist_prepend (_referee_list,
                                      referee);
+    _dirty = TRUE;
   }
 }
 
@@ -804,6 +805,7 @@ void Match::RemoveReferee (Player *referee)
   {
     _referee_list = g_slist_remove (_referee_list,
                                     referee);
+    _dirty = TRUE;
   }
 }
 
@@ -814,6 +816,7 @@ void Match::RemoveAllReferees ()
   {
     g_slist_free (_referee_list);
     _referee_list = nullptr;
+    _dirty        = TRUE;
   }
 }
 

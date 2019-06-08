@@ -365,10 +365,10 @@ namespace Marshaller
       _job_list = g_list_remove (_job_list,
                                  job);
 
-      RefreshJobStatus (job);
-
       job->RemoveObjectListener (this);
       job->SetSlot              (nullptr);
+
+      RefreshJobStatus (job);
 
       _piste->OnSlotUpdated (this);
 

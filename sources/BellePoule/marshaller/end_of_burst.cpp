@@ -30,10 +30,33 @@ namespace Marshaller
     _parcel->Set ("competition", competition_id);
     _parcel->Set ("stage",       stage);
     _parcel->Set ("batch",       batch);
+
+    _suspended = FALSE;
   }
 
   // --------------------------------------------------------------------------------
   EndOfBurst::~EndOfBurst ()
   {
+  }
+
+  // --------------------------------------------------------------------------------
+  void EndOfBurst::Spread ()
+  {
+    if (_suspended == FALSE)
+    {
+      Object::Spread ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void EndOfBurst::Suspend ()
+  {
+    _suspended = TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void EndOfBurst::Resume ()
+  {
+    _suspended = FALSE;
   }
 }

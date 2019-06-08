@@ -106,7 +106,6 @@ namespace Table
       Error::Provider *_first_error;
       gboolean         _is_over;
       gboolean         _ready_to_fence;
-      gboolean         _has_all_roadmap;
       GooCanvasItem   *_status_item;
       GooCanvasItem   *_header_item;
       TableSet        *_defeated_table_set;

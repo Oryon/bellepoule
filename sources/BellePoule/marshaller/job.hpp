@@ -82,7 +82,7 @@ namespace Marshaller
 
       void ResetRoadMap ();
 
-      gboolean HasReferees ();
+      gboolean HasPiste ();
 
       guint GetKinship ();
 

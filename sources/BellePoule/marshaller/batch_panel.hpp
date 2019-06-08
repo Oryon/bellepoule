@@ -20,22 +20,43 @@
 
 namespace Marshaller
 {
-  class EndOfBurst : public Object
+  class Batch;
+
+  class BatchPanel : public Object
   {
     public:
-      EndOfBurst (guint  competition_id,
-                  guint  stage,
-                  gchar *batch);
+      struct Listener
+      {
+        virtual void OnBatchSelected (Batch *batch) = 0;
+      };
 
-      void Suspend ();
+    public:
+      BatchPanel (GtkTable       *table,
+                  GtkRadioButton *radio_group,
+                  Batch          *batch,
+                  Listener       *listener);
 
-      void Resume ();
+      void Expose (guint expected_jobs,
+                   guint ready_jobs);
 
-      void Spread () override;
+      void Mask ();
+
+      gboolean IsVisible ();
+
+      void SetActive ();
 
     private:
-      gboolean _suspended;
+      Listener  *_listener;
+      Batch     *_batch;
+      GtkWidget *_separator;
+      GtkWidget *_label;
+      GtkWidget *_radio;
+      GtkWidget *_progress;
+      GtkWidget *_status;
 
-      ~EndOfBurst () override;
+      ~BatchPanel () override;
+
+      static void OnToggled (GtkToggleButton *button,
+                             BatchPanel      *panel);
   };
 }

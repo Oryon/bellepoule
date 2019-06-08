@@ -56,13 +56,12 @@ namespace Marshaller
     _scheduled_list = nullptr;
     _pending_list   = nullptr;
     _competition    = competition;
-    _loading        = FALSE;
 
     _assign_button = _glade->GetWidget ("assign_toolbutton");
     _cancel_button = _glade->GetWidget ("cancel_toolbutton");
 
     _competition->SetBatchStatus (this,
-                                  Status::DISCLOSED);
+                                  Status::COMPLETE);
 
     _id        = message->GetNetID ();
     _stage     = message->GetInteger ("stage");
@@ -71,6 +70,10 @@ namespace Marshaller
     _job_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
     _job_board = new JobBoard ();
+
+    _eob = new EndOfBurst (_competition->GetId (),
+                           _stage,
+                           _batch_ref);
 
     {
       GtkTreeView *treeview = GTK_TREE_VIEW (_glade->GetWidget ("competition_treeview"));
@@ -125,6 +128,8 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Batch::~Batch ()
   {
+    Mute ();
+
     g_list_free (_scheduled_list);
     _scheduled_list = nullptr;
 
@@ -158,12 +163,8 @@ namespace Marshaller
     _job_board->Release ();
 
     g_free (_batch_ref);
-  }
 
-  // --------------------------------------------------------------------------------
-  void Batch::CloseLoading ()
-  {
-    _loading = FALSE;
+    _eob->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -182,6 +183,18 @@ namespace Marshaller
   const gchar *Batch::GetName ()
   {
     return _name;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Batch::Mute ()
+  {
+    _eob->Suspend ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Batch::UnMute ()
+  {
+    _eob->Resume ();
   }
 
   // --------------------------------------------------------------------------------
@@ -209,18 +222,16 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::RecallList (GList *list)
+  void Batch::Recall ()
   {
-    GList *current = list;
-
-    while (current)
+    for (GList *current = _scheduled_list; current; current = g_list_next (current))
     {
       Job *job = (Job *) current->data;
 
       job->Recall ();
-
-      current = g_list_next (current);
     }
+
+    _eob->Spread ();
   }
 
   // --------------------------------------------------------------------------------
@@ -233,33 +244,21 @@ namespace Marshaller
     {
       gtk_widget_set_sensitive (_assign_button, FALSE);
 
-      if (_loading == FALSE)
-      {
-        _competition->SetBatchStatus (this,
-                                      Status::CONCEALED);
-      }
-      else
-      {
-        _competition->SetBatchStatus (this,
-                                      Status::DISCLOSED);
-      }
+      _competition->SetBatchStatus (this,
+                                    Status::COMPLETE);
     }
     else
     {
-      if (_loading == FALSE)
-      {
-        RecallList (_scheduled_list);
-        RecallList (_pending_list);
-      }
-
       _competition->SetBatchStatus (this,
-                                    Status::UNCOMPLETED);
+                                    Status::INCOMPLETE);
     }
 
     if (_scheduled_list == nullptr)
     {
       gtk_widget_set_sensitive (_cancel_button, FALSE);
     }
+
+    _eob->Spread ();
   }
 
   // --------------------------------------------------------------------------------
@@ -319,7 +318,7 @@ namespace Marshaller
 
       if (current_job == job)
       {
-        if (job->HasReferees ())
+        if (job->HasPiste ())
         {
           guint  kinship = job->GetKinship ();
           GList *node    = g_list_find (_pending_list,
@@ -334,6 +333,8 @@ namespace Marshaller
                                                     job,
                                                     (GCompareFunc) Job::CompareStartTime);
           }
+
+          job->Spread ();
 
           gtk_list_store_set (_job_store, &iter,
                               ColumnId::JOB_status,        NULL,
@@ -353,6 +354,8 @@ namespace Marshaller
             _pending_list = g_list_insert_sorted (_pending_list,
                                                   job,
                                                   (GCompareFunc) Job::CompareSiblingOrder);
+
+            job->Recall ();
           }
 
           gtk_list_store_set (_job_store, &iter,
@@ -463,8 +466,6 @@ namespace Marshaller
     *piste_id   = 0;
     *referees   = nullptr;
     *start_time = nullptr;
-
-    _loading = TRUE;
 
     {
       gchar     *xml = message->GetString ("xml");
@@ -677,7 +678,7 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::OnValidateAssign ()
+  void Batch::Spread ()
   {
     for (GList *current = _scheduled_list; current; current = g_list_next (current))
     {
@@ -686,17 +687,7 @@ namespace Marshaller
       job->Spread ();
     }
 
-    {
-      Object *eob = new EndOfBurst (_competition->GetId (),
-                                    _stage,
-                                    _batch_ref);
-
-      eob->Spread ();
-      eob->Release ();
-    }
-
-    _competition->SetBatchStatus (this,
-                                  Status::DISCLOSED);
+    _eob->Spread ();
   }
 
   // --------------------------------------------------------------------------------

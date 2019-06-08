@@ -28,6 +28,7 @@ namespace Marshaller
   class Competition;
   class Job;
   class JobBoard;
+  class EndOfBurst;
 
   class Batch : public Module
   {
@@ -41,9 +42,8 @@ namespace Marshaller
 
       enum class Status
       {
-        UNCOMPLETED,
-        CONCEALED,
-        DISCLOSED
+        INCOMPLETE,
+        COMPLETE
       };
 
     public:
@@ -58,7 +58,9 @@ namespace Marshaller
                  GList        **referees,
                  FieTime      **start_time);
 
-      void CloseLoading ();
+      void Mute ();
+
+      void UnMute ();
 
       void OnNewJobStatus (Job *job);
 
@@ -84,7 +86,9 @@ namespace Marshaller
 
       void OnCancelAssign ();
 
-      void OnValidateAssign ();
+      void Recall () override;
+
+      void Spread () override;
 
       gboolean IsModifiable ();
 
@@ -107,11 +111,10 @@ namespace Marshaller
       JobBoard     *_job_board;
       GtkWidget    *_assign_button;
       GtkWidget    *_cancel_button;
-      gboolean      _loading;
+      guint         _expected_jobs;
+      EndOfBurst   *_eob;
 
       ~Batch () override;
-
-      void RecallList (GList *list);
 
       void RefreshControlPanel ();
 

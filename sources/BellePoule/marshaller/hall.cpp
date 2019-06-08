@@ -484,6 +484,7 @@ namespace Marshaller
           GList   *referees;
           FieTime *start_time = nullptr;
 
+          batch->Mute ();
           job = batch->Load (message,
                              &piste_id,
                              &referees,
@@ -511,8 +512,6 @@ namespace Marshaller
 
                 if (slot)
                 {
-                  gboolean has_referees = FALSE;
-
                   slot->AddJob (job);
 
                   for (GList *current = referees; current; current = g_list_next (current))
@@ -521,27 +520,19 @@ namespace Marshaller
 
                     if (referee)
                     {
-                      has_referees = TRUE;
                       slot->AddReferee (referee);
                     }
                   }
 
-                  if (has_referees)
-                  {
-                    job->SetRealDuration (real_duration);
-                    Redraw ();
-                  }
-                  else
-                  {
-                    slot->Release ();
-                  }
+                  job->SetRealDuration (real_duration);
+                  Redraw ();
                 }
               }
               start_time->Release ();
             }
           }
 
-          batch->CloseLoading ();
+          batch->UnMute ();
           g_list_free (referees);
 
           _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
@@ -857,15 +848,11 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::CancelSelection ()
   {
-    GList *current = _selected_piste_list;
-
-    while (current)
+    for (GList *current = _selected_piste_list; current; current = g_list_next (current))
     {
       Piste *current_piste = (Piste *) current->data;
 
       current_piste->UnSelect ();
-
-      current = g_list_next (current);
     }
 
     g_list_free (_selected_piste_list);
@@ -1229,6 +1216,8 @@ namespace Marshaller
           g_list_free (raw_list);
         }
 
+        batch->Mute ();
+
         for (GList *current = job_list; current; current = g_list_next (current))
         {
           GList *free_slots = nullptr;
@@ -1290,6 +1279,9 @@ namespace Marshaller
 
       _referee_pool->RefreshAvailability (_timeline,
                                           _piste_list);
+
+      batch->UnMute ();
+      batch->Spread ();
     }
 
     return done;
@@ -1683,22 +1675,24 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Hall::OnBatchAssignmentCancel (Batch *batch)
   {
-    Competition *competition   = batch->GetCompetition ();
-    GList       *current_piste = _piste_list;
-
-    while (current_piste)
+    batch->Mute ();
     {
-      Piste *piste = (Piste *) current_piste->data;
+      Competition *competition = batch->GetCompetition ();
 
-      piste->RemoveBatch (batch);
+      for (GList *current_piste = _piste_list; current_piste; current_piste = g_list_next (current_piste))
+      {
+        Piste *piste = (Piste *) current_piste->data;
 
-      current_piste = g_list_next (current_piste);
+        piste->RemoveBatch (batch);
+      }
+
+      Redraw ();
+      _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
+
+      _listener->OnExposeWeapon (competition->GetWeaponCode ());
     }
-
-    Redraw ();
-    _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
-
-    _listener->OnExposeWeapon (competition->GetWeaponCode ());
+    batch->UnMute ();
+    batch->Recall ();
   }
 
   // --------------------------------------------------------------------------------

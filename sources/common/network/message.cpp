@@ -143,11 +143,8 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Message::Recall ()
   {
-    if (_spread)
-    {
-      Ring::_broker->RecallMessage (this);
-      _spread = FALSE;
-    }
+    Ring::_broker->RecallMessage (this);
+    _spread = FALSE;
   }
 
   // --------------------------------------------------------------------------------

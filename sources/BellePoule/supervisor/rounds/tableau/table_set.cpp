@@ -87,7 +87,6 @@ namespace Table
     _loaded         = FALSE;
     _is_active      = FALSE;
     _html_table     = new HtmlTable (supervisor_module);
-    _has_marshaller = FALSE;
     _from_table     = nullptr;
     _to_table       = nullptr;
 
@@ -350,10 +349,9 @@ namespace Table
 
       for (guint i = 0; i < _nb_tables; i ++)
       {
-        _tables[i]->_is_over         = TRUE;
-        _tables[i]->_ready_to_fence  = FALSE;
-        _tables[i]->_has_all_roadmap = TRUE;
-        _tables[i]->_first_error     = nullptr;
+        _tables[i]->_is_over        = TRUE;
+        _tables[i]->_ready_to_fence = FALSE;
+        _tables[i]->_first_error    = nullptr;
         if (_tables[i]->_status_item && (quick == FALSE))
         {
           WipeItem (_tables[i]->_status_item);
@@ -371,20 +369,12 @@ namespace Table
       for (guint t = 0; t < _nb_tables; t++)
       {
         gchar *icon;
-        Table *table      = _tables[t];
-        Table *left_table = table->GetLeftTable ();
+        Table *table = _tables[_nb_tables-t-1];
 
         if (table->_first_error)
         {
           icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
           _first_error = table->_first_error;
-          _is_over     = FALSE;
-        }
-        else if (   ((left_table == nullptr) || left_table->_is_over)
-                 && (table->_has_all_roadmap == FALSE))
-        {
-          icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
-          _first_error = table;
           _is_over     = FALSE;
         }
         else if (table->_is_over == FALSE)
@@ -972,13 +962,6 @@ namespace Table
             left_table->_first_error = data->_match;
           }
           left_table->_ready_to_fence = TRUE;
-        }
-
-        if (   table_set->_has_marshaller
-            && (   (data->_match->GetPiste () == 0)
-                || (data->_match->GetStartTime () == nullptr)))
-        {
-          left_table->_has_all_roadmap = FALSE;
         }
 
         left_table->_is_over = FALSE;
@@ -2041,14 +2024,14 @@ namespace Table
 
         if (match)
         {
-          gsize    referee_count;
-          guint   *referee_refs = message->GetIntegerList ("referees", &referee_count);
-          Contest *contest      = _supervisor->GetContest ();
+          Contest *contest = _supervisor->GetContest ();
 
-          if (referee_refs && (message->GetFitness () > 0))
+          if (message->GetFitness () > 0)
           {
-            gchar  *start_date = message->GetString ("start_date");
-            gchar  *start_time = message->GetString ("start_time");
+            gsize  referee_count;
+            guint *referee_refs  = message->GetIntegerList ("referees", &referee_count);
+            gchar *start_date    = message->GetString ("start_date");
+            gchar *start_time    = message->GetString ("start_time");
 
             match->SetStartTime    (new FieTime (start_date, start_time));
             match->SetDurationSpan (message->GetInteger ("duration_span"));
@@ -2057,6 +2040,7 @@ namespace Table
             g_free (start_date);
             g_free (start_time);
 
+            match->RemoveAllReferees ();
             for (guint i = 0; i < referee_count; i++)
             {
               Player *referee = contest->GetRefereeFromRef (referee_refs[i]);
@@ -2070,8 +2054,6 @@ namespace Table
             match->SetStartTime (nullptr);
             match->RemoveAllReferees ();
           }
-
-          RefreshParcel ();
 
           return TRUE;
         }
@@ -3491,8 +3473,6 @@ namespace Table
   void TableSet::OnPartnerJoined (Net::Partner *partner,
                                   gboolean      joined)
   {
-    _has_marshaller = joined;
-
     if (_main_table)
     {
       RefreshTableStatus ();

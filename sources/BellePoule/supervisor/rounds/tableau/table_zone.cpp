@@ -56,11 +56,10 @@ namespace Table
 
       if (data->_match)
       {
-        GSList  *current    = data->_match->GetRefereeList ();
         guint    piste      = data->_match->GetPiste ();
         FieTime *start_time = data->_match->GetStartTime ();
 
-        if (current && piste && start_time)
+        if (piste && start_time)
         {
           {
             gchar *roadmap = g_strdup_printf ("%s %d%c%c@%c%c%s",
@@ -89,17 +88,18 @@ namespace Table
           }
 
           {
-            GooCanvasItem *referee_table = goo_canvas_table_new (table,
-                                                                 NULL);
+            GSList        *current_referee = data->_match->GetRefereeList ();
+            GooCanvasItem *referee_table   = goo_canvas_table_new (table,
+                                                                   NULL);
             Canvas::PutInTable (table,
                                 referee_table,
                                 row + 1,
                                 column);
             Canvas::SetTableItemAttribute (referee_table, "right-padding", 2.0);
 
-            for (guint i = 0; current != nullptr; i++)
+            for (guint i = 0; current_referee != nullptr; i++)
             {
-              Player *referee = (Player *) current->data;
+              Player *referee = (Player *) current_referee->data;
 
               {
                 static gchar *referee_icon = nullptr;
@@ -153,7 +153,7 @@ namespace Table
                 g_free (name);
               }
 
-              current = g_slist_next (current);
+              current_referee = g_slist_next (current_referee);
             }
           }
 
