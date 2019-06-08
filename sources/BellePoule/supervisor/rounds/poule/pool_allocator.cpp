@@ -44,6 +44,10 @@
 
 #include "pool_allocator.hpp"
 
+#ifdef DEBUG
+#define DEBUG_SWAPPING
+#endif
+
 namespace Pool
 {
 #define VALUE_INIT {0,{{0}}}
@@ -536,17 +540,7 @@ namespace Pool
     {
       if (player->Is ("Fencer"))
       {
-        if (Locked ())
-        {
-          return TRUE;
-        }
-        if (_has_marshaller)
-        {
-          Pool *pool = GetPool (0);
-
-          return pool->GetRefereeList () != nullptr;
-        }
-        return FALSE;
+        return Locked ();
       }
     }
 
@@ -761,8 +755,6 @@ namespace Pool
           return;
         }
       }
-
-      RefreshDisplay ();
     }
   }
 
@@ -1945,7 +1937,6 @@ namespace Pool
 
       if (pool->GetUIntData (this, "is_balanced") == 0)
       {
-        RecallJobs ();
         return new Error (Error::Level::MAJOR,
                           pool->GetName (),
                           gettext ("Wrong fencers count!"));
