@@ -313,7 +313,7 @@ void Application::Prepare ()
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::Uniqueness::NOT_SINGULAR;
-    desc->_favorite_look = AttributeDesc::GRAPHICAL;
+    desc->_favorite_look = AttributeDesc::SHORT_TEXT;
     desc->AddDiscreteValueSelector ("countries");
     AttributeDesc::AddSwappable (desc);
 
