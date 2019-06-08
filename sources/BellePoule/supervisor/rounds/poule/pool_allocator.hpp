@@ -78,7 +78,6 @@ namespace Pool
       void OnPrintClicked ();
 
     private:
-      gboolean WarnLocking () override;
       void OnLocked () override;
       void OnUnLocked () override;
       void Reset () override;

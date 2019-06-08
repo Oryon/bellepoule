@@ -476,7 +476,6 @@ namespace Marshaller
         if (job)
         {
           job->SetRealDuration (real_duration);
-          batch->UpdateJob (message);
           Redraw ();
         }
         else

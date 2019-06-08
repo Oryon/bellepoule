@@ -716,7 +716,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Table::FeedParcel (Net::Message *parcel)
   {
-    parcel->Set ("done", _has_all_roadmap || _is_over);
+    parcel->Set ("done", _is_over);
   }
 
   // --------------------------------------------------------------------------------
@@ -724,7 +724,7 @@ namespace Table
   {
     gboolean dirty = FALSE;
 
-    if (_parcel->GetInteger ("done") != (guint) (_has_all_roadmap || _is_over))
+    if (_parcel->GetInteger ("done") != (guint) (_is_over))
     {
       dirty = TRUE;
     }

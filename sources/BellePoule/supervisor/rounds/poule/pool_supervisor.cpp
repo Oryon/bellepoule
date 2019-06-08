@@ -257,6 +257,10 @@ namespace Pool
         return pool->OnMessage (message);
       }
     }
+    else if (message->Is ("BellePoule2D::Roadmap"))
+    {
+      OnPoolSelected (_displayed_pool);
+    }
 
     return FALSE;
   }
@@ -1020,7 +1024,7 @@ rendering:
                                                             Object    *owner)
   {
     Supervisor *p          = dynamic_cast <Supervisor *> (owner);
-    gint            pool_index = gtk_combo_box_get_active (GTK_COMBO_BOX (widget));
+    gint        pool_index = gtk_combo_box_get_active (GTK_COMBO_BOX (widget));
 
     p->OnPoolSelected (pool_index);
   }

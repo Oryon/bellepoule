@@ -148,10 +148,6 @@ namespace Table
 
       void Recall () override;
 
-      gboolean RecallRoadmapAllowed (Table *for_table);
-
-      void RecallRoadmaps ();
-
       gboolean OnMessage (Net::Message *message) override;
 
       gboolean OnHttpPost (const gchar *command,

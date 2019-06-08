@@ -248,18 +248,16 @@ void Stage::Display ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Stage::WarnLocking ()
-{
-  return TRUE;
-}
-
-// --------------------------------------------------------------------------------
 void Stage::Lock ()
 {
   _locked = TRUE;
   OnLocked ();
   SetResult ();
-  Spread ();
+
+  if (GetInputProvider ())
+  {
+    _previous->Spread ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -269,7 +267,11 @@ void Stage::UnLock ()
 
   _locked = FALSE;
   OnUnLocked ();
-  Spread ();
+
+  if (GetInputProvider ())
+  {
+    _previous->Spread ();
+  }
 }
 
 // --------------------------------------------------------------------------------

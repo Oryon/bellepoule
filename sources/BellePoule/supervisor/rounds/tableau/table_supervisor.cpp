@@ -851,9 +851,6 @@ namespace Table
 
       gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("from_label")),
                           from->GetMiniName ());
-
-      gtk_widget_set_sensitive (_glade->GetWidget ("redo_toolitem"),
-                                table_set->RecallRoadmapAllowed (from));
     }
   }
 
@@ -1076,25 +1073,6 @@ namespace Table
   {
     _displayed_table_set->OnStuffClicked ();
     OnAttrListUpdated ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void Supervisor::OnRecallRoadmaps ()
-  {
-    GtkWidget *dialog;
-
-    dialog = gtk_message_dialog_new (nullptr,
-                                     GTK_DIALOG_DESTROY_WITH_PARENT,
-                                     GTK_MESSAGE_QUESTION,
-                                     GTK_BUTTONS_OK_CANCEL,
-                                     gettext ("Cancel the referee & strip assignments?"));
-
-    if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
-    {
-      _displayed_table_set->RecallRoadmaps ();
-    }
-
-    gtk_widget_destroy (dialog);
   }
 
   // --------------------------------------------------------------------------------
@@ -1465,15 +1443,6 @@ namespace Table
     Supervisor *t = dynamic_cast <Supervisor *> (owner);
 
     t->OnNextClicked ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_redo_toolitem_clicked (GtkWidget *widget,
-                                                            Object    *owner)
-  {
-    Supervisor *t = dynamic_cast <Supervisor *> (owner);
-
-    t->OnRecallRoadmaps ();
   }
 
   // --------------------------------------------------------------------------------

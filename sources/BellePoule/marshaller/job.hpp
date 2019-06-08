@@ -42,10 +42,6 @@ namespace Marshaller
 
       void SetName (const gchar *name);
 
-      gboolean NeedRoadmap ();
-
-      void Update (Net::Message *message);
-
       void SetWeapon (Weapon *weapon);
 
       void SetListener (Listener *listener);

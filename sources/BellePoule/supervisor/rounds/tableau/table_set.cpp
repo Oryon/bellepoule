@@ -3501,27 +3501,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TableSet::RecallRoadmapAllowed (Table *for_table)
-  {
-    if (   (for_table->_is_over        == FALSE)
-        && (for_table->_ready_to_fence == TRUE))
-    {
-      return _has_marshaller;
-    }
-
-    return FALSE;
-  }
-
-  // --------------------------------------------------------------------------------
-  void TableSet::RecallRoadmaps ()
-  {
-    _from_table->Recall ();
-    _from_table->ClearRoadmaps ();
-    _from_table->Spread ();
-    Display ();
-  }
-
-  // --------------------------------------------------------------------------------
   void TableSet::DrawPlayerMatch (GooCanvasItem *table,
                                   Match         *match,
                                   Player        *player,

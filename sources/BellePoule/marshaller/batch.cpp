@@ -453,11 +453,6 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Batch::UpdateJob (Net::Message *message)
-  {
-  }
-
-  // --------------------------------------------------------------------------------
   Job *Batch::Load (Net::Message  *message,
                     guint         *piste_id,
                     GList        **referees,

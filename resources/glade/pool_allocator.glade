@@ -284,42 +284,6 @@
       </object>
     </child>
   </object>
-  <object class="GtkMessageDialog" id="roadmap_alert_dialog">
-    <property name="can_focus">False</property>
-    <property name="border_width">5</property>
-    <property name="type_hint">dialog</property>
-    <property name="skip_taskbar_hint">True</property>
-    <property name="message_type">question</property>
-    <property name="buttons">yes-no</property>
-    <property name="text" translatable="yes">Strip &amp; referees warning</property>
-    <property name="secondary_text" translatable="yes">Pools have no assigned strip/referee.
-Go to the next stage anyway?</property>
-    <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox2">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area2">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkListStore" id="swapping_liststore">
     <columns>
       <!-- column-name criteria -->

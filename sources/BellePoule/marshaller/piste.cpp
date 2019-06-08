@@ -665,11 +665,8 @@ namespace Marshaller
 
           if (job->GetBatch () == batch)
           {
-            if (job->NeedRoadmap ())
-            {
-              slot->RemoveJob (job);
-              job->ResetRoadMap ();
-            }
+            slot->RemoveJob (job);
+            job->ResetRoadMap ();
           }
 
           current_job = g_list_next (current_job);

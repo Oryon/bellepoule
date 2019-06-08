@@ -435,6 +435,13 @@ namespace Pool
         {
           OnPoolRoadmap (pool,
                          message);
+
+          if (Locked ())
+          {
+            Stage *next_stage = GetNextStage ();
+
+            next_stage->OnMessage (message);
+          }
           return TRUE;
         }
       }
@@ -457,9 +464,11 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::FeedParcel (Net::Message *parcel)
   {
+    Stage *next_stage = GetNextStage ();
+
     parcel->Set ("competition", _contest->GetNetID ());
     parcel->Set ("name",        GetName ());
-    parcel->Set ("done",        Locked ());
+    parcel->Set ("done",        next_stage->Locked ());
   }
 
   // --------------------------------------------------------------------------------
@@ -2363,32 +2372,6 @@ namespace Pool
     Allocator *pa = dynamic_cast <Allocator *> (owner);
 
     pa->OnPrintClicked ();
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Allocator::WarnLocking ()
-  {
-    if (_has_marshaller)
-    {
-      for (GSList *current = _drop_zones; current; current = g_slist_next (current))
-      {
-        Pool *pool = GetPoolOf (current);
-
-        if (   (pool->GetPiste ()       == 0)
-            || (pool->GetRefereeList () == nullptr))
-        {
-          GtkWidget *dialog = _glade->GetWidget ("roadmap_alert_dialog");
-          gboolean   response;
-
-          response = RunDialog (GTK_DIALOG (dialog));
-          gtk_widget_hide (dialog);
-
-          return response == GTK_RESPONSE_YES;
-        }
-      }
-    }
-
-    return TRUE;
   }
 
   // --------------------------------------------------------------------------------

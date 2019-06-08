@@ -44,7 +44,6 @@ namespace Table
       void OnPreviousClicked ();
       void OnNextClicked ();
       void OnInputToggled (GtkWidget *widget);
-      void OnRecallRoadmaps ();
       void OnPrintTableSet ();
       void OnPrintTableScoreSheets ();
       void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);

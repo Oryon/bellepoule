@@ -58,8 +58,6 @@ namespace Marshaller
                  GList        **referees,
                  FieTime      **start_time);
 
-      void UpdateJob (Net::Message *message);
-
       void CloseLoading ();
 
       void OnNewJobStatus (Job *job);

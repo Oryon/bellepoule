@@ -115,8 +115,6 @@ class Stage : public virtual Object,
 
     virtual Stage *GetInputProvider ();
 
-    virtual gboolean WarnLocking ();
-
     void Lock ();
 
     void UnLock ();
