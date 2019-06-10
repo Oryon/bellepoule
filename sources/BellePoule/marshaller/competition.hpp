@@ -103,5 +103,7 @@ namespace Marshaller
       Player *LoadNode (xmlNode      *xml_node,
                         Net::Message *message,
                         const gchar  *code_name);
+
+      void DeleteBatch (Batch *batch);
   };
 }

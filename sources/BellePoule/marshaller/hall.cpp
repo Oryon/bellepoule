@@ -1488,55 +1488,56 @@ namespace Marshaller
                              EnlistedReferee *b,
                              GList           *fencer_list)
   {
-    gint result = EnlistedReferee::CompareWorkload (a, b);
+    guint       result       = 0;
+    Affinities *a_affinities = (Affinities *) a->GetPtrData (nullptr, "affinities");
+    Affinities *b_affinities = (Affinities *) b->GetPtrData (nullptr, "affinities");
 
-    if (result == 0)
+    if (a_affinities && b_affinities)
     {
-      Affinities *a_affinities = (Affinities *) a->GetPtrData (nullptr, "affinities");
-      Affinities *b_affinities = (Affinities *) b->GetPtrData (nullptr, "affinities");
+      guint  affinity_count = g_list_length (Affinities::GetTitles ());
+      guint *a_kinship      = g_new0 (guint, affinity_count);
+      guint *b_kinship      = g_new0 (guint, affinity_count);
 
-      if (a_affinities && b_affinities)
+      while (fencer_list)
       {
-        guint  affinity_count = g_list_length (Affinities::GetTitles ());
-        guint *a_kinship      = g_new0 (guint, affinity_count);
-        guint *b_kinship      = g_new0 (guint, affinity_count);
-
-        while (fencer_list)
-        {
-          Player     *fencer       = (Player *) fencer_list->data;
-          Affinities *f_affinities = (Affinities *) fencer->GetPtrData (nullptr, "affinities");
-
-          for (guint i = 0; i < affinity_count; i++)
-          {
-            guint kinship;
-
-            kinship = a_affinities->KinshipWith (f_affinities);
-            if (kinship & 1<<i)
-            {
-              a_kinship[i]++;
-            }
-
-            kinship = b_affinities->KinshipWith (f_affinities);
-            if (kinship & 1<<i)
-            {
-              b_kinship[i]++;
-            }
-          }
-          fencer_list = g_list_next (fencer_list);
-        }
+        Player     *fencer       = (Player *) fencer_list->data;
+        Affinities *f_affinities = (Affinities *) fencer->GetPtrData (nullptr, "affinities");
 
         for (guint i = 0; i < affinity_count; i++)
         {
-          if (a_kinship[i] != b_kinship[i])
+          guint kinship;
+
+          kinship = a_affinities->KinshipWith (f_affinities);
+          if (kinship & 1<<i)
           {
-            result = a_kinship[i] - b_kinship[i];
-            break;
+            a_kinship[i]++;
+          }
+
+          kinship = b_affinities->KinshipWith (f_affinities);
+          if (kinship & 1<<i)
+          {
+            b_kinship[i]++;
           }
         }
-
-        g_free (a_kinship);
-        g_free (b_kinship);
+        fencer_list = g_list_next (fencer_list);
       }
+
+      for (guint i = 0; i < affinity_count; i++)
+      {
+        if (a_kinship[i] != b_kinship[i])
+        {
+          result = a_kinship[i] - b_kinship[i];
+          break;
+        }
+      }
+
+      g_free (a_kinship);
+      g_free (b_kinship);
+    }
+
+    if (result == 0)
+    {
+      result = EnlistedReferee::CompareWorkload (a, b);
     }
 
     return result;
@@ -1554,6 +1555,13 @@ namespace Marshaller
     sorted_list = g_list_sort_with_data (g_list_copy (referee_list),
                                          (GCompareDataFunc) CompareReferee,
                                          job->GetFencerList ());
+
+    for (GList *current_referee = sorted_list; current_referee; current_referee = g_list_next (current_referee))
+    {
+      EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
+
+      printf ("  - %s\n", referee->GetName ());
+    }
 
     for (GList *current_referee = sorted_list; current_referee; current_referee = g_list_next (current_referee))
     {

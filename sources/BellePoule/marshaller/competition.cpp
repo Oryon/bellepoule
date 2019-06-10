@@ -75,7 +75,12 @@ namespace Marshaller
 
     FreeFullGList (Player, _fencer_list);
 
-    FreeFullGList (Batch, _batches);
+    while (_batches)
+    {
+      Batch *batch = (Batch *) _batches->data;
+
+      DeleteBatch (batch);
+    }
 
     g_free (_weapon);
   }
@@ -277,7 +282,14 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Competition::DeleteBatch (Net::Message *message)
   {
-    Batch      *batch = GetBatch (message->GetNetID ());
+    Batch *batch = GetBatch (message->GetNetID ());
+
+    DeleteBatch (batch);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Competition::DeleteBatch (Batch *batch)
+  {
     BatchPanel *panel = GetBatchPanel (batch);
 
     MaskBatch (batch);
