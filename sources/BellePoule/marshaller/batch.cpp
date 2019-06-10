@@ -60,8 +60,8 @@ namespace Marshaller
     _assign_button = _glade->GetWidget ("assign_toolbutton");
     _cancel_button = _glade->GetWidget ("cancel_toolbutton");
 
-    _competition->SetBatchStatus (this,
-                                  Status::COMPLETE);
+    _status = Status::INCOMPLETE;
+    _competition->OnNewBatchStatus (this);
 
     _id        = message->GetNetID ();
     _stage     = message->GetInteger ("stage");
@@ -168,6 +168,12 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
+  Batch::Status Batch::GetStatus ()
+  {
+    return _status;
+  }
+
+  // --------------------------------------------------------------------------------
   guint Batch::GetId ()
   {
     return _id;
@@ -244,14 +250,13 @@ namespace Marshaller
     {
       gtk_widget_set_sensitive (_assign_button, FALSE);
 
-      _competition->SetBatchStatus (this,
-                                    Status::COMPLETE);
+      _status = Status::COMPLETE;
     }
     else
     {
-      _competition->SetBatchStatus (this,
-                                    Status::INCOMPLETE);
+      _status = Status::INCOMPLETE;
     }
+    _competition->OnNewBatchStatus (this);
 
     if (_scheduled_list == nullptr)
     {

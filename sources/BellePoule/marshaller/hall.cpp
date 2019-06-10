@@ -1185,17 +1185,20 @@ namespace Marshaller
         // All the referees?
         {
           People::RefereesList *checkin_list = _referee_pool->GetListOf (competition->GetWeaponCode ());
-          GtkToggleButton      *all_referees = GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_referees"));
           const gchar          *weapon       = competition->GetWeaponCode ();
           GList                *raw_list;
 
-          if (gtk_toggle_button_get_active (all_referees))
+          if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_referees"))))
           {
             raw_list = g_list_copy (checkin_list->GetList ());
           }
-          else
+          else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("selected_referees"))))
           {
             raw_list = checkin_list->RetreiveSelectedPlayers ();
+          }
+          else
+          {
+            raw_list = nullptr;
           }
 
           referee_list = nullptr;
@@ -1237,17 +1240,28 @@ namespace Marshaller
             free_slots = GetFreePisteSlots (job->GetRegularDuration ());
           }
 
-          for (GList *current_slot = free_slots; current_slot; current_slot = g_list_next (current_slot))
+          if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("no_referee"))))
           {
-            Slot *slot = (Slot *) current_slot->data;
+            Slot *slot = (Slot *) free_slots->data;
 
-            if (SetFreeRefereeFor (referee_list,
-                                   slot,
-                                   job))
+            slot->Retain ();
+            slot->AddJob (job);
+          }
+          else
+          {
+            for (GList *current_slot = free_slots; current_slot; current_slot = g_list_next (current_slot))
             {
-              break;
+              Slot *slot = (Slot *) current_slot->data;
+
+              if (SetFreeRefereeFor (referee_list,
+                                     slot,
+                                     job))
+              {
+                break;
+              }
             }
           }
+
           FreeFullGList (Slot, free_slots);
         }
 

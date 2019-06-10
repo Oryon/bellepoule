@@ -61,8 +61,7 @@ namespace Marshaller
 
       gboolean BatchIsModifiable (Batch *batch);
 
-      void SetBatchStatus (Batch         *batch,
-                           Batch::Status  status);
+      void OnNewBatchStatus (Batch *batch);
 
       void Freeze ();
 

@@ -45,6 +45,8 @@ namespace Marshaller
 
       void SetActive ();
 
+      void RefreshStatus ();
+
     private:
       Listener  *_listener;
       Batch     *_batch;

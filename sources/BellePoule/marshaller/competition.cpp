@@ -62,7 +62,7 @@ namespace Marshaller
     }
 
     _batch_image = _glade->GetWidget ("batch_image");
-    gtk_widget_set_visible (_batch_image,   FALSE);
+    gtk_widget_set_visible (_batch_image, FALSE);
 
     _batch_table = GTK_TABLE (_glade->GetWidget ("batch_table"));
   }
@@ -506,20 +506,34 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  void Competition::SetBatchStatus (Batch         *batch,
-                                    Batch::Status  status)
+  void Competition::OnNewBatchStatus (Batch *batch)
   {
-    if (batch == _current_batch)
     {
-      if (status == Batch::Status::INCOMPLETE)
+      gtk_widget_set_visible (_batch_image,
+                              FALSE);
+
+      for (GList *current = _batches; current; current = g_list_next (current))
       {
-        gtk_widget_set_visible (_batch_image,
-                                TRUE);
+        Batch *current_batch = (Batch *) current->data;
+
+        if (BatchIsModifiable (current_batch))
+        {
+          if (current_batch->GetStatus () == Batch::Status::INCOMPLETE)
+          {
+            gtk_widget_set_visible (_batch_image,
+                                    TRUE);
+            break;
+          }
+        }
       }
-      else
+    }
+
+    {
+      BatchPanel *panel = GetBatchPanel (batch);
+
+      if (panel)
       {
-        gtk_widget_set_visible (_batch_image,
-                                FALSE);
+        panel->RefreshStatus ();
       }
     }
   }

@@ -92,7 +92,7 @@ namespace Marshaller
       }
 
       {
-        _status = gtk_image_new_from_stock (GTK_STOCK_OK,
+        _status = gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION,
                                             GTK_ICON_SIZE_MENU);
         gtk_table_attach (table, _status,
                           2, 3,
@@ -143,7 +143,6 @@ namespace Marshaller
     gtk_widget_show (_label);
     gtk_widget_show (_radio);
     gtk_widget_show (_progress);
-    gtk_widget_show (_status);
 
     {
       GString *text = g_string_new ("<span size=\"small\"");
@@ -166,6 +165,8 @@ namespace Marshaller
 
     gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (_progress),
                                    (gdouble) ready_jobs / (gdouble) expected_jobs);
+
+    RefreshStatus ();
   }
 
   // --------------------------------------------------------------------------------
@@ -194,6 +195,22 @@ namespace Marshaller
     if (gtk_toggle_button_get_active (button))
     {
       panel->_listener->OnBatchSelected (panel->_batch);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void BatchPanel::RefreshStatus ()
+  {
+    if (IsVisible ())
+    {
+      if (_batch->GetStatus () == Batch::Status::INCOMPLETE)
+      {
+        gtk_widget_show (_status);
+      }
+      else
+      {
+        gtk_widget_hide (_status);
+      }
     }
   }
 }

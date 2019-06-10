@@ -96,6 +96,8 @@ namespace Marshaller
 
       void FixOverlapWarnings ();
 
+      Status GetStatus ();
+
       void on_competition_treeview_row_activated (GtkTreePath *path);
 
     private:
@@ -113,6 +115,7 @@ namespace Marshaller
       GtkWidget    *_cancel_button;
       guint         _expected_jobs;
       EndOfBurst   *_eob;
+      Status        _status;
 
       ~Batch () override;
 
