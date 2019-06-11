@@ -293,7 +293,10 @@ namespace Marshaller
     BatchPanel *panel = GetBatchPanel (batch);
 
     MaskBatch (batch);
+
     panel->Release ();
+    batch->RemoveData (this,
+                       "batch_panel");
 
     _batches = g_list_remove (_batches,
                               batch);

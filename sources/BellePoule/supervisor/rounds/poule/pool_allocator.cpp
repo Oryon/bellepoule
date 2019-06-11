@@ -435,15 +435,30 @@ namespace Pool
         {
           OnPoolRoadmap (pool,
                          message);
-
-          if (Locked ())
-          {
-            Stage *next_stage = GetNextStage ();
-
-            next_stage->OnMessage (message);
-          }
           return TRUE;
         }
+      }
+      else if (message->Is ("BellePoule2D::EndOfBurst"))
+      {
+        MakeDirty ();
+        SignalStatusUpdate ();
+
+        for (GSList *current_zone = _drop_zones; current_zone; current_zone = g_slist_next (current_zone))
+        {
+          PoolZone *zone = (PoolZone *) current_zone->data;
+
+          FillPoolTable (zone);
+        }
+
+        FixUpTablesBounds ();
+
+        if (Locked ())
+        {
+          Stage *next_stage = GetNextStage ();
+
+          next_stage->OnMessage (message);
+        }
+        return TRUE;
       }
     }
 
@@ -468,6 +483,7 @@ namespace Pool
     Stage *next_stage = GetNextStage ();
 
     parcel->Set ("competition",   _contest->GetNetID ());
+    parcel->Set ("stage",         GetNetID ());
     parcel->Set ("name",          GetName ());
     parcel->Set ("done",          next_stage->Locked ());
     parcel->Set ("ready_jobs",    pool_count);
@@ -1486,8 +1502,8 @@ namespace Pool
           }
 
           {
-            guint row    = (pool->GetNumber () - 1) % nb_rows;
-            guint column = (pool->GetNumber () - 1) / nb_rows;
+            guint column = (pool->GetNumber () - 1) % 2;
+            guint row    = (pool->GetNumber () - 1) / 2;
 
             goo_canvas_item_get_bounds (table,
                                         &bounds);
@@ -2264,41 +2280,30 @@ namespace Pool
   void Allocator::OnPoolRoadmap (Pool         *pool,
                                  Net::Message *message)
   {
-    PoolZone *zone = (PoolZone *) g_slist_nth_data (_drop_zones,
-                                                    pool->GetNumber () - 1);
+    pool->RemoveAllReferee ();
 
+    if (message->GetFitness () > 0)
     {
-      pool->RemoveAllReferee ();
+      gsize   length;
+      guint  *ref     = message->GetIntegerList ("referees", &length);
 
-      if (message->GetFitness () > 0)
+      for (guint i = 0; i < length; i++)
       {
-        gsize   length;
-        guint  *ref     = message->GetIntegerList ("referees", &length);
+        Player *referee = (Player *) _contest->GetRefereeFromRef (ref[i]);
 
-        for (guint i = 0; i < length; i++)
+        if (referee)
         {
-          Player *referee = (Player *) _contest->GetRefereeFromRef (ref[i]);
-
-          if (referee)
-          {
-            pool->AddReferee (referee);
-          }
+          pool->AddReferee (referee);
         }
-      }
-
-      for (GSList *current = pool->GetFencerList (); current; current = g_slist_next (current))
-      {
-        Player *fencer = (Player *) current->data;
-
-        _fencer_list->Update (fencer);
       }
     }
 
-    MakeDirty ();
-    SignalStatusUpdate ();
+    for (GSList *current = pool->GetFencerList (); current; current = g_slist_next (current))
+    {
+      Player *fencer = (Player *) current->data;
 
-    FillPoolTable (zone);
-    FixUpTablesBounds ();
+      _fencer_list->Update (fencer);
+    }
   }
 
   // --------------------------------------------------------------------------------

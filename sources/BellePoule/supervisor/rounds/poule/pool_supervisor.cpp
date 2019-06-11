@@ -257,7 +257,7 @@ namespace Pool
         return pool->OnMessage (message);
       }
     }
-    else if (message->Is ("BellePoule2D::Roadmap"))
+    else if (message->Is ("BellePoule2D::EndOfBurst"))
     {
       OnPoolSelected (_displayed_pool);
     }

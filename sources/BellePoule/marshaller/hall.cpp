@@ -565,7 +565,10 @@ namespace Marshaller
 
       if (batch)
       {
+        batch->Mute ();
         batch->RemoveJob (message);
+        batch->UnMute ();
+
         _referee_pool->RefreshWorkload (competition->GetWeaponCode ());
         Redraw ();
       }
