@@ -44,8 +44,8 @@ namespace Marshaller
                                       0,
                                       0,
                                       0,
-                                      -g_date_time_get_minute (now) - START_MARGING/G_TIME_SPAN_MINUTE,
-                                      -g_date_time_get_second (now));
+                                      -g_date_time_get_minute  (now) - START_MARGING/G_TIME_SPAN_MINUTE,
+                                      -g_date_time_get_seconds (now));
 
       _cursor = g_date_time_difference (now,
                                         _origin);
@@ -385,9 +385,7 @@ namespace Marshaller
     {
       if (tl->_button_press_origin == tl->_slideout_origin)
       {
-        GTimeSpan new_cursor = event->x / tl->_time_scale;
-
-        tl->TranslateCursor ((new_cursor - tl->_cursor) * tl->_time_scale);
+        tl->TranslateCursor (event->x - (tl->_cursor * tl->_time_scale));
 
         {
           GTimeSpan rectification = tl->GetTimeRectification (tl->_cursor);
@@ -403,8 +401,8 @@ namespace Marshaller
           GDateTime *new_origin;
           GTimeSpan  time_span = 0;
 
-          time_span += g_date_time_get_minute (tl->_origin) * G_TIME_SPAN_MINUTE;
-          time_span += g_date_time_get_second (tl->_origin) * G_TIME_SPAN_SECOND;
+          time_span += g_date_time_get_minute  (tl->_origin) * G_TIME_SPAN_MINUTE;
+          time_span += g_date_time_get_seconds (tl->_origin) * G_TIME_SPAN_SECOND;
 
           rectification = tl->GetTimeRectification (time_span);
 
@@ -589,9 +587,19 @@ namespace Marshaller
   void Timeline::RefreshCursorTime ()
   {
     GDateTime *time = RetreiveCursorTime ();
-    gchar     *text = g_strdup_printf (" <span weight=\"bold\" background=\"black\" foreground=\"white\"> %02d:%02d </span>",
-                                       g_date_time_get_hour   (time),
-                                       g_date_time_get_minute (time));
+    gchar     *text;
+
+#ifdef DEBUG
+    text = g_strdup_printf (" <span weight=\"bold\" background=\"black\" foreground=\"white\"> %02d:%02d:%f </span>",
+                            g_date_time_get_hour    (time),
+                            g_date_time_get_minute  (time),
+                            g_date_time_get_seconds (time));
+#else
+    text = g_strdup_printf (" <span weight=\"bold\" background=\"black\" foreground=\"white\"> %02d:%02d </span>",
+                            g_date_time_get_hour    (time),
+                            g_date_time_get_minute  (time));
+#endif
+
 
     g_object_set (G_OBJECT (_goo_cursor_time),
                   "text", text,
