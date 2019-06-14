@@ -588,6 +588,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/tournament.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/zipper.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/zipper.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/advertiser.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

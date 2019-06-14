@@ -76,6 +76,8 @@ class Contest : public Module
 
     void AttachTo (GtkNotebook *to);
 
+    void Archive (const gchar *title);
+
     void Save ();
 
     void SaveHeader (XmlScheme *xml_scheme);

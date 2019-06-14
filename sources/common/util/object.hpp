@@ -154,6 +154,8 @@ class Object
 
     static void Track (const gchar *klass);
 
+    void MakeLocaleFilenameFromUtf8 (gchar **filename);
+
   protected:
     FlashCode    *_flash_code;
     Net::Message *_parcel;

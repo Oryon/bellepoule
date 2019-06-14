@@ -1543,6 +1543,7 @@ void Schedule::on_next_stage_toolbutton_clicked ()
 {
   Stage *stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
 
+  _contest->Archive (stage->GetName ());
   stage->Lock ();
   DisplayLocks ();
 

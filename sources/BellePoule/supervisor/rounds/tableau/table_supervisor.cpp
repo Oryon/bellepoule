@@ -932,6 +932,16 @@ namespace Table
 
     OnTableSetStatusUpdated (table_set);
     _contest->TweetFeeder (table);
+
+    {
+      Table *right_table = table->GetRightTable ();
+
+      if (   right_table
+          && ((right_table->_is_over == FALSE) || (right_table->GetSize () == 1)))
+      {
+        _contest->Archive (table->GetMiniName ());
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

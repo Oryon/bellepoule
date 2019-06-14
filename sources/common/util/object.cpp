@@ -439,6 +439,17 @@ void Object::Dump ()
 }
 
 // --------------------------------------------------------------------------------
+void Object::MakeLocaleFilenameFromUtf8 (gchar **filename)
+{
+#ifdef WIN32
+  gchar *locale_filename = g_win32_locale_filename_from_utf8 (*filename);
+
+  g_free (*filename);
+  *filename = locale_filename;
+#endif
+}
+
+// --------------------------------------------------------------------------------
 void Object::DumpList ()
 {
 #ifdef DEBUG

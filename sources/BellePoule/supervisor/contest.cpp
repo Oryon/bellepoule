@@ -52,6 +52,7 @@
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "publication.hpp"
 #include "schedule.hpp"
+#include "zipper.hpp"
 
 #include "application/version.h"
 #include "application/weapon.hpp"
@@ -1795,6 +1796,34 @@ void Contest::Publish ()
 
       uploader->UploadFile (_filename);
       uploader->Release ();
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::Archive (const gchar *title)
+{
+  if (_state == State::OPERATIONAL)
+  {
+    Save ();
+
+    if (_filename)
+    {
+      gchar *zip_name = g_strdup (_filename);
+      gchar *suffix   = g_strrstr (zip_name, ".cotcot");
+
+      if (suffix)
+      {
+        g_sprintf (suffix, ".zip");
+
+        {
+          Zipper *zipper = new Zipper (zip_name);
+
+          zipper->Archive2 (_filename, title);
+          zipper->Release ();
+        }
+      }
+      g_free (zip_name);
     }
   }
 }
