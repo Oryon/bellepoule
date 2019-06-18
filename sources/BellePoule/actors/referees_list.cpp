@@ -57,6 +57,7 @@ namespace People
                                           "IP",
                                           "password",
 #endif
+                                          "incident",
                                           "HS",
                                           "exported",
                                           "final_rank",

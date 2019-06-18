@@ -913,16 +913,14 @@ rendering:
 
     for (guint p = 0; p < _allocator->GetNbPools (); p++)
     {
-      Pool   *pool           = _allocator->GetPool (p);
-      GSList *current_player = pool->GetFencerList ();
+      Pool *pool = _allocator->GetPool (p);
 
-      while (current_player)
+      for (GSList *current = pool->GetSortedFencerList (); current; current = g_slist_next (current))
       {
-        Player *player = (Player *) current_player->data;
+        Player *player = (Player *) current->data;
 
         result = g_slist_prepend (result,
                                   player);
-        current_player = g_slist_next (current_player);
       }
     }
 

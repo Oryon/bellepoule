@@ -399,13 +399,12 @@ namespace NeoSwapper
 
     if (stage_start_rank == nullptr)
     {
-#ifdef DEBUG
-      g_error ("Swapper: %s no start rank !!!", player->GetName ());
-#else
-      g_warning ("Swapper: %s no start rank !!!", player->GetName ());
-#endif
+      return new FencerProxy (player,
+                              0xFF,
+                              pool_proxy,
+                              _criteria_count);
     }
-
+    else
     {
       FencerProxy *fencer = new FencerProxy (player,
                                              stage_start_rank->GetUIntValue (),
@@ -440,8 +439,6 @@ namespace NeoSwapper
 
       return fencer;
     }
-
-    return nullptr;
   }
 
   // --------------------------------------------------------------------------------

@@ -357,6 +357,13 @@ void Application::Prepare ()
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exported"));
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
 
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "incident", "Incident", gettext ("incident"));
+    desc->_scope         = AttributeDesc::Scope::GLOBAL;
+    desc->_favorite_look = AttributeDesc::GRAPHICAL;
+    desc->_rights        = AttributeDesc::Rights::PRIVATE;
+    desc->AddDiscreteValues ("A", gettext ("Absent"),    "resources/glade/images/minus.png",
+                             "R", gettext ("Latecomer"), "resources/glade/images/plus.png", NULL);
+
     desc = AttributeDesc::Declare (G_TYPE_STRING, "global_status", "Statut", gettext ("global status"));
     desc->_scope  = AttributeDesc::Scope::GLOBAL;
     desc->_rights = AttributeDesc::Rights::PRIVATE;

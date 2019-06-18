@@ -1177,10 +1177,23 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::Setup ()
   {
+    guint nb_players = 0;
+
+    for (GSList *current = GetShortList (); current; current = g_slist_next (current))
+    {
+      Player              *fencer = (Player *) current->data;
+      Player::AttributeId  incidend_id  ("incident");
+      Attribute           *incident  = fencer->GetAttribute (&incidend_id);
+
+      if ((incident == nullptr) || (incident->GetStrValue ()[0] != 'A'))
+      {
+        nb_players++;
+      }
+    }
+
     ClearConfigurations ();
 
     {
-      guint           nb_players    = g_slist_length (GetShortList ());
       Configuration  *config        = nullptr;
       guint           max_pool_size = Dispatcher::_MAX_POOL_SIZE;
 
@@ -1468,17 +1481,24 @@ namespace Pool
                           "pixbuf", _warning_pixbuf,
                           NULL);
           }
-          else if (fencer->GetUIntData (this, "original_pool") != pool->GetNumber ())
-          {
-            g_object_set (G_OBJECT (status_item),
-                          "pixbuf", _moved_pixbuf,
-                          NULL);
-          }
           else
           {
-            g_object_set (G_OBJECT (status_item),
-                          "pixbuf", NULL,
-                          NULL);
+            Player::AttributeId  incidend_id  ("incident");
+            Attribute           *incident  = fencer->GetAttribute (&incidend_id);
+
+            if (   (incident && incident->GetStrValue ()[0] == 'R')
+                || (fencer->GetUIntData (this, "original_pool") == pool->GetNumber ()))
+            {
+              g_object_set (G_OBJECT (status_item),
+                            "pixbuf", NULL,
+                            NULL);
+            }
+            else
+            {
+              g_object_set (G_OBJECT (status_item),
+                            "pixbuf", _moved_pixbuf,
+                            NULL);
+            }
           }
         }
       }
@@ -1775,19 +1795,6 @@ namespace Pool
                            "status_item",
                            status_item);
         }
-
-        if (player->GetUIntData (this, "injected"))
-        {
-          static gchar  *injected_icon = nullptr;
-
-          if (injected_icon == nullptr)
-          {
-            injected_icon = g_build_filename (Global::_share_dir, "resources/glade/images/plus.png", NULL);
-          }
-          Canvas::PutIconInTable (table,
-                                  injected_icon,
-                                  indice+1, 2);
-        }
       }
 
       for (guint i = 0; layout_list != nullptr; i++)
@@ -1815,7 +1822,7 @@ namespace Pool
           {
             item = Canvas::PutPixbufInTable (table,
                                              pixbuf,
-                                             indice+1, i+3);
+                                             indice+1, i+2);
           }
           else
           {
@@ -1823,9 +1830,28 @@ namespace Pool
 
             if (image)
             {
+              Player::AttributeId  incidend_id  ("incident");
+              Attribute           *incident   = player->GetAttribute (&incidend_id);
+              GString             *text       = g_string_new (image);
+              gboolean             use_markup = FALSE;
+
+              if (incident && incident->GetStrValue ()[0] == 'A')
+              {
+                g_string_prepend (text, "<s>");
+                g_string_append  (text, "</s>");
+
+                use_markup = TRUE;
+              }
+
               item = Canvas::PutTextInTable (table,
-                                             image,
-                                             indice+1, i+3);
+                                             text->str,
+                                             indice+1, i+2);
+
+              g_object_set (G_OBJECT (item),
+                            "use-markup", use_markup,
+                            NULL);
+
+              g_string_free (text, TRUE);
               g_free (image);
             }
           }
@@ -1835,7 +1861,7 @@ namespace Pool
         {
           item = Canvas::PutTextInTable (table,
                                          " ",
-                                         indice+1, i+3);
+                                         indice+1, i+2);
         }
 
         if (item)
@@ -2514,6 +2540,13 @@ namespace Pool
                                          gboolean      attending)
   {
     PoolZone *zone;
+    Player::AttributeId  incident_attr_id ("incident");
+    Attribute           *incident_attribute = attendee->GetAttribute (&incident_attr_id);
+
+    if (incident_attribute)
+    {
+      attendee->RemoveAttribute (&incident_attr_id);
+    }
 
     if (attending == FALSE)
     {
@@ -2525,14 +2558,17 @@ namespace Pool
 
         if (pool)
         {
-          _attendees->Toggle (attendee);
-
-          _fencer_list->Remove (attendee);
-
-          pool->RemoveFencer (attendee);
-
-          attendee->RemoveData (this,
-                                "injected");
+          if (incident_attribute == nullptr)
+          {
+            attendee->SetAttributeValue (&incident_attr_id,
+                                         "A");
+            pool->DismissFencer (attendee);
+          }
+          else
+          {
+            _fencer_list->Remove (attendee);
+            pool->RemoveFencer (attendee);
+          }
 
           if (from == _absent_dialog)
           {
@@ -2540,6 +2576,8 @@ namespace Pool
                                from->GetRevertContext (),
                                (void *) pool->GetNumber ());
           }
+
+          _attendees->Toggle (attendee);
         }
       }
       else
@@ -2549,17 +2587,19 @@ namespace Pool
     }
     else
     {
+      if (incident_attribute == nullptr)
+      {
+        _fencer_list->Add (attendee);
+        attendee->SetAttributeValue (&incident_attr_id,
+                                     "R");
+      }
+
       _attendees->Toggle (attendee);
       RetrieveAttendees ();
-
-      _fencer_list->Add (attendee);
 
       if (from == _latecomer_dialog)
       {
         _swapper->InjectFencer (attendee);
-        attendee->SetData (this,
-                           "injected",
-                           (void *) TRUE);
       }
       else
       {
@@ -2569,6 +2609,16 @@ namespace Pool
       }
 
       zone = GetPoolOf (attendee);
+
+      if (incident_attribute)
+      {
+        Pool *pool = zone->GetPool ();
+
+        if (pool)
+        {
+          pool->AllowFencer (attendee);
+        }
+      }
     }
 
     {

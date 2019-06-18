@@ -315,6 +315,15 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Pool::FencerIsAbsent (Player *fencer)
+  {
+    Player::AttributeId  incidend_id  ("incident");
+    Attribute           *incident  = fencer->GetAttribute (&incidend_id);
+
+    return (incident && incident->GetStrValue ()[0] == 'A');
+    }
+
+  // --------------------------------------------------------------------------------
   void Pool::AddFencer (Player *player,
                         gint    position)
   {
@@ -347,15 +356,18 @@ namespace Pool
                                                         (GCompareDataFunc) Player::Compare,
                                                         &attr_id);
 
-        // Assumption is done that fencers are loaded sorted.
-        if (position >= 0)
+        if (FencerIsAbsent (player) == FALSE)
         {
-          _sorted_fencer_list = g_slist_append (_sorted_fencer_list,
-                                                player);
-        }
-        else
-        {
-          SortPlayers ();
+          // Assumption is done that fencers are loaded sorted.
+          if (position >= 0)
+          {
+            _sorted_fencer_list = g_slist_append (_sorted_fencer_list,
+                                                  player);
+          }
+          else
+          {
+            SortPlayers ();
+          }
         }
       }
 
@@ -376,6 +388,42 @@ namespace Pool
       _fencer_list = g_slist_remove (_fencer_list,
                                      player);
       SortPlayers ();
+
+      RefreshStrength ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::DismissFencer (Player *player)
+  {
+    if (g_slist_find (_sorted_fencer_list,
+                      player))
+    {
+      SetRoadmapTo (player,
+                    0,
+                    nullptr);
+
+      _sorted_fencer_list = g_slist_remove (_sorted_fencer_list,
+                                            player);
+
+      RefreshStrength ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::AllowFencer (Player *player)
+  {
+    if (g_slist_find (_sorted_fencer_list,
+                      player) == nullptr)
+    {
+      _sorted_fencer_list = g_slist_insert_sorted_with_data (_sorted_fencer_list,
+                                                             player,
+                                                             (GCompareDataFunc) _ComparePlayerWithFullRandom,
+                                                             (void *) this);
+
+      SetRoadmapTo (player,
+                    _strip,
+                    _start_time);
 
       RefreshStrength ();
     }
@@ -475,7 +523,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::CopyPlayersStatus (Object *from)
   {
-    for (GSList *current = _fencer_list; current; current = g_slist_next (current))
+    for (GSList *current = _sorted_fencer_list; current; current = g_slist_next (current))
     {
       Player::AttributeId  attr_id ("status", from);
       Player              *player      = (Player *) current->data;
@@ -500,7 +548,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   guint Pool::GetNbPlayers ()
   {
-    return g_slist_length (_fencer_list);
+    return g_slist_length (_sorted_fencer_list);
   }
 
   // --------------------------------------------------------------------------------
@@ -508,7 +556,7 @@ namespace Pool
   {
     guint nb_matchs = GetNbPlayers () - 1;
 
-    for (GSList *current   = _fencer_list; current; current = g_slist_next (current))
+    for (GSList *current = _fencer_list; current; current = g_slist_next (current))
     {
       Player::AttributeId attr_id ("status", GetDataOwner ());
       Player              *player      = (Player *) current->data;
@@ -520,7 +568,8 @@ namespace Pool
 
         if (   (status[0] == 'A')
             || (status[0] == 'F')
-            || (status[0] == 'E'))
+            || (status[0] == 'E')
+            || FencerIsAbsent (player))
         {
           nb_matchs--;
 
@@ -538,7 +587,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   guint Pool::GetNbMatchs ()
   {
-    guint nb_players = g_slist_length (_fencer_list);
+    guint nb_players = g_slist_length (_sorted_fencer_list);
 
     return ((nb_players*nb_players - nb_players) / 2);
   }
@@ -547,6 +596,12 @@ namespace Pool
   GSList *Pool::GetFencerList ()
   {
     return _fencer_list;
+  }
+
+  // --------------------------------------------------------------------------------
+  GSList *Pool::GetSortedFencerList ()
+  {
+    return _sorted_fencer_list;
   }
 
   // --------------------------------------------------------------------------------
@@ -1385,7 +1440,9 @@ namespace Pool
 
     if (print_for_referees == FALSE)
     {
-      for (guint i = 0; i < GetNbPlayers (); i++)
+      guint nb_players = GetNbPlayers ();
+
+      for (guint i = 0; i < nb_players; i++)
       {
         Player    *player;
         GtkWidget *w;
@@ -2146,7 +2203,7 @@ namespace Pool
     Object::TryToRelease (_start_time);
     _start_time = start_time;
 
-    for (GSList *current = _fencer_list; current; current = g_slist_next (current))
+    for (GSList *current = _sorted_fencer_list; current; current = g_slist_next (current))
     {
       Player *fencer = (Player *) current->data;
 
@@ -2328,48 +2385,65 @@ namespace Pool
     }
 
     {
-      Player::AttributeId  attr_id ("", GetDataOwner ());
-      GSList              *current = _sorted_fencer_list;
+      GSList *fencers = g_slist_copy (_sorted_fencer_list);
 
-      for (guint i = 1; current != nullptr; i++)
+      for (GSList *current = _fencer_list; current; current = g_slist_next (current))
       {
-        Attribute *attr;
-        Player    *player = (Player *) current->data;
-
-        xml_scheme->StartElement (player->GetXmlTag ());
-
-        xml_scheme->WriteFormatAttribute ("REF",
-                                           "%d", player->GetRef ());
-
-        xml_scheme->WriteFormatAttribute ("NoDansLaPoule",
-                                           "%d", i);
-        xml_scheme->WriteFormatAttribute ("NbVictoires",
-                                           "%d", player->GetIntData (GetDataOwner (),
-                                                                     "Victories"));
-        xml_scheme->WriteFormatAttribute ("NbMatches",
-                                           "%d", GetNbMatchs (player));
-
-        attr_id._name = (gchar *) "HS";
-        attr = player->GetAttribute (&attr_id);
-        if (attr)
+        if (g_slist_find (_sorted_fencer_list,
+                          current->data) == nullptr)
         {
-          gint  indice;
-          guint HS;
-
-          HS = player->GetAttribute (&attr_id)->GetUIntValue ();
-          xml_scheme->WriteFormatAttribute ("TD",
-                                             "%d", HS);
-          attr_id._name = (gchar *) "indice";
-          indice = player->GetAttribute (&attr_id)->GetUIntValue ();
-          xml_scheme->WriteFormatAttribute ("TR",
-                                             "%d", HS - indice);
+          fencers = g_slist_append (fencers,
+                                    current->data);
         }
-        xml_scheme->WriteFormatAttribute ("RangPoule",
-                                           "%d", player->GetIntData (this,
-                                                                     "Rank"));
-        xml_scheme->EndElement ();
-        current = g_slist_next (current);
       }
+
+      {
+        Player::AttributeId  attr_id ("", GetDataOwner ());
+        GSList              *current = fencers;
+
+        for (guint i = 1; current != nullptr; i++)
+        {
+          Attribute *attr;
+          Player    *player = (Player *) current->data;
+
+          xml_scheme->StartElement (player->GetXmlTag ());
+
+          xml_scheme->WriteFormatAttribute ("REF",
+                                            "%d", player->GetRef ());
+
+          xml_scheme->WriteFormatAttribute ("NoDansLaPoule",
+                                            "%d", i);
+
+          xml_scheme->WriteFormatAttribute ("NbVictoires",
+                                            "%d", player->GetIntData (GetDataOwner (),
+                                                                      "Victories"));
+          xml_scheme->WriteFormatAttribute ("NbMatches",
+                                            "%d", GetNbMatchs (player));
+
+          attr_id._name = (gchar *) "HS";
+          attr = player->GetAttribute (&attr_id);
+          if (attr)
+          {
+            gint  indice;
+            guint HS;
+
+            HS = player->GetAttribute (&attr_id)->GetUIntValue ();
+            xml_scheme->WriteFormatAttribute ("TD",
+                                              "%d", HS);
+            attr_id._name = (gchar *) "indice";
+            indice = player->GetAttribute (&attr_id)->GetUIntValue ();
+            xml_scheme->WriteFormatAttribute ("TR",
+                                              "%d", HS - indice);
+          }
+          xml_scheme->WriteFormatAttribute ("RangPoule",
+                                            "%d", player->GetIntData (this,
+                                                                      "Rank"));
+          xml_scheme->EndElement ();
+          current = g_slist_next (current);
+        }
+      }
+
+      g_slist_free (fencers);
     }
 
     for (GSList *current = _referee_list; current; current = g_slist_next (current))
@@ -2724,12 +2798,20 @@ namespace Pool
   void Pool::SortPlayers ()
   {
     g_slist_free (_sorted_fencer_list);
+    _sorted_fencer_list = nullptr;
 
-    _sorted_fencer_list = g_slist_copy (_fencer_list);
+    for (GSList *current = _fencer_list; current; current = g_slist_next (current))
+    {
+      Player *fencer = (Player *) current->data;
 
-    _sorted_fencer_list = g_slist_sort_with_data (_sorted_fencer_list,
-                                                  (GCompareDataFunc) _ComparePlayerWithFullRandom,
-                                                  (void *) this);
+      if (FencerIsAbsent (fencer) == FALSE)
+      {
+        _sorted_fencer_list = g_slist_insert_sorted_with_data (_sorted_fencer_list,
+                                                               fencer,
+                                                               (GCompareDataFunc) _ComparePlayerWithFullRandom,
+                                                               (void *) this);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

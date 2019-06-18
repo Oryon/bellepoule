@@ -485,49 +485,41 @@ namespace People
     _checksum_list = nullptr;
 
     {
-      Player::AttributeId  attr_id ("attending");
-      GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
-      GList               *current_player = _player_list;
-      guint                ref            = 1;
-      guint                absent_ref     = 10000;
+      GChecksum *checksum   = g_checksum_new (G_CHECKSUM_MD5);
+      guint      ref        = 1;
+      guint      absent_ref = 10000;
 
-      while (current_player)
+      for (GList *current_player = _player_list; current_player; current_player = g_list_next (current_player))
       {
         Player *p = (Player *) current_player->data;
 
-        if (p)
+        if (PlayerBelongsToEarlyList (p))
         {
-          Attribute *attending = p->GetAttribute (&attr_id);
+          _checksum_list = g_slist_prepend (_checksum_list, p);
 
-          if (attending && attending->GetUIntValue ())
+          // Let the player contribute to the checksum
           {
-            _checksum_list = g_slist_prepend (_checksum_list, p);
+            gchar *name = p->GetName ();
 
-            // Let the player contribute to the checksum
-            {
-              gchar *name = p->GetName ();
-
-              name[0] = g_ascii_toupper (name[0]);
-              g_checksum_update (checksum,
-                                 (guchar *) name,
-                                 1);
-              g_free (name);
-            }
-
-            // Give the player a reference
-            if (GetState () == State::OPERATIONAL)
-            {
-              p->SetRef (ref);
-              ref++;
-            }
+            name[0] = g_ascii_toupper (name[0]);
+            g_checksum_update (checksum,
+                               (guchar *) name,
+                               1);
+            g_free (name);
           }
-          else
+
+          // Give the player a reference
+          if (GetState () == State::OPERATIONAL)
           {
-            p->SetRef (absent_ref);
-            absent_ref++;
+            p->SetRef (ref);
+            ref++;
           }
         }
-        current_player = g_list_next (current_player);
+        else
+        {
+          p->SetRef (absent_ref);
+          absent_ref++;
+        }
       }
 
       _checksum_list = g_slist_reverse (_checksum_list);
@@ -548,9 +540,27 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::PlayerBelongsToEarlyList (Player *fencer)
+  {
+    Player::AttributeId  incidend_id  ("incident");
+    Attribute           *incident  = fencer->GetAttribute (&incidend_id);
+
+    if (incident)
+    {
+      return incident->GetStrValue ()[0] == 'A';
+    }
+    else
+    {
+      Player::AttributeId  attending_id ("attending");
+      Attribute           *attending = fencer->GetAttribute (&attending_id);
+
+      return attending && attending->GetUIntValue ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void CheckinSupervisor::UpdateRanking ()
   {
-    guint                nb_player = g_list_length (_player_list);
     Player::AttributeId *ranking_id;
 
     {
@@ -564,18 +574,18 @@ namespace People
                                           ranking_id);
 
     {
-      Player *previous_player  = nullptr;
-      GList  *current_player   = _player_list;
-      gint    stage_start_rank = 0;
-      guint   nb_present       = 1;
+      Player::AttributeId  stage_start_rank_id ("stage_start_rank", this);
+      Player::AttributeId  rank_id             ("rank", this);
+      guint                nb_player        = g_list_length (_player_list);
+      Player              *previous_player  = nullptr;
+      gint                 stage_start_rank = 0;
+      guint                nb_present       = 1;
 
-      while (current_player)
+      for (GList *current_player = _player_list; current_player; current_player = g_list_next (current_player))
       {
-        Player::AttributeId  stage_start_rank_id ("stage_start_rank", this);
-        Player::AttributeId  rank_id             ("rank", this);
-        Player              *p = (Player *) current_player->data;
+        Player *p = (Player *) current_player->data;
 
-        if (PresentPlayerFilter (p, this))
+        if (PlayerBelongsToEarlyList (p))
         {
           if (   previous_player
               && (Player::Compare (previous_player, p, ranking_id) == 0))
@@ -604,8 +614,6 @@ namespace People
                                 nb_player);
         }
         Update (p);
-
-        current_player = g_list_next (current_player);
       }
     }
     ranking_id->Release ();
@@ -866,24 +874,25 @@ namespace People
   // --------------------------------------------------------------------------------
   GSList *CheckinSupervisor::GetCurrentClassification ()
   {
-    GSList *presents = CreateCustomList (PresentPlayerFilter, this);
+    GSList *all_involved = CreateCustomList (AllInvolvedPlayerFilter, this);
 
-    if (presents)
+    if (all_involved)
     {
       Player::AttributeId attr_id ("rank", this);
 
       attr_id.MakeRandomReady (_rand_seed);
-      presents = g_slist_sort_with_data (presents,
-                                       (GCompareDataFunc) Player::Compare,
-                                       &attr_id);
-
-      _attendees->SetPresents (presents);
+      all_involved = g_slist_sort_with_data (all_involved,
+                                             (GCompareDataFunc) Player::Compare,
+                                             &attr_id);
     }
+
+    _attendees->SetPresents (CreateCustomList (PresentPlayerFilter,
+                                               this));
 
     _attendees->SetAbsents (CreateCustomList (AbsentPlayerFilter,
                                               this));
 
-    return presents;
+    return all_involved;
   }
 
   // --------------------------------------------------------------------------------
@@ -900,6 +909,18 @@ namespace People
     SetPopupVisibility ("PlayersList::PasteCloneAction", TRUE);
     _form->UnLock ();
     EnableDragAndDrop ();
+
+    {
+      Player::AttributeId incident_attr_id ("incident");
+
+      for (GList *current = _player_list; current; current = g_list_next (current))
+      {
+        Player *fencer = (Player *) current->data;
+
+        fencer->RemoveAttribute (&incident_attr_id);
+        Update (fencer);
+      }
+    }
 
     Recall ();
   }
@@ -1241,18 +1262,12 @@ namespace People
     RankImporter *importer = new RankImporter (Global::_user_config->_key_file);
 
     MuteListChanges (TRUE);
+    for (GList *current = _player_list; current; current = g_list_next (current))
     {
-      GList *current = _player_list;
+      Player *fencer = (Player *) current->data;
 
-      while (current)
-      {
-        Player *fencer = (Player *) current->data;
-
-        importer->ModifyRank (fencer);
-        Update (fencer);
-
-        current = g_list_next (current);
-      }
+      importer->ModifyRank (fencer);
+      Update (fencer);
     }
     MuteListChanges (FALSE);
 

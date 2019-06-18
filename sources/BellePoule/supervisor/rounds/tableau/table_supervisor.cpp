@@ -84,6 +84,7 @@ namespace Table
                                           "ref",
                                           "plugin_ID",
 #endif
+                                          "incident",
                                           "IP",
                                           "password",
                                           "cyphered_password",
@@ -127,6 +128,7 @@ namespace Table
                                           "ref",
                                           "plugin_ID",
 #endif
+                                          "incident",
                                           "IP",
                                           "password",
                                           "cyphered_password",

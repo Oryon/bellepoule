@@ -60,6 +60,7 @@ namespace People
                                           "ref",
                                           "plugin_ID",
 #endif
+                                          "incident",
                                           "IP",
                                           "password",
                                           "cyphered_password",

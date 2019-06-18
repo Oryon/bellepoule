@@ -320,6 +320,26 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Checkin::AllInvolvedPlayerFilter (Player      *player,
+                                             PlayersList *owner)
+  {
+    Player::AttributeId  incidend_id ("incident");
+    Attribute           *incident = player->GetAttribute (&incidend_id);
+
+    if (incident)
+    {
+      return TRUE;
+    }
+    else
+    {
+      Player::AttributeId  attending_id ("attending");
+      Attribute           *attending = player->GetAttribute (&attending_id);
+
+      return ((attending == nullptr) || (attending->GetUIntValue () == TRUE));
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Checkin::OnImport ()
   {
     GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a fencer file to import..."),

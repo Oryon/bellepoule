@@ -129,6 +129,8 @@ namespace People
 
       void DisableDragAndDrop ();
 
+      gboolean PlayerBelongsToEarlyList (Player *fencer);
+
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,
                           GtkSelectionData *selection_data,

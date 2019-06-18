@@ -65,9 +65,11 @@ namespace Pool
       guint    GetPiste         ();
       FieTime *GetStartTime     ();
       void     AddFencer        (Player *player, gint position = -1);
+      void     AllowFencer      (Player *player);
       void     AddReferee       (Player *player);
       void     CreateMatchs     (GSList *affinity_criteria_list);
       void     RemoveFencer     (Player *player);
+      void     DismissFencer    (Player *player);
       void     RemoveReferee    (Player *player);
       void     RemoveAllReferee ();
       guint    GetNbPlayers     ();
@@ -119,6 +121,8 @@ namespace Pool
                                GooCanvas         *canvas);
 
       GSList *GetFencerList ();
+
+      GSList *GetSortedFencerList ();
 
       GSList *GetRefereeList ();
 
@@ -189,6 +193,8 @@ namespace Pool
       void OnUnPlugged () override;
 
       void SortPlayers ();
+
+      gboolean FencerIsAbsent (Player *fencer);
 
       void RefreshStrength ();
 
