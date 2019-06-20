@@ -24,9 +24,10 @@ namespace Table
   Page::Page ()
     : Object ("Page")
   {
-    _matches       = nullptr;
-    _current_match = nullptr;
-    _accepted_size = 0;
+    _matches             = nullptr;
+    _current_match       = nullptr;
+    _accepted_size       = 0;
+    _current_match_index = 0;
   }
 
   // --------------------------------------------------------------------------------
@@ -49,12 +50,25 @@ namespace Table
       Match *match = (Match *) _current_match->data;
 
       _current_match = g_list_next (_current_match);
+      _current_match_index++;
       return match;
     }
 
     return nullptr;
   }
 
+  // --------------------------------------------------------------------------------
+  gboolean Page::CutterMarkReached ()
+  {
+    if (_accepted_size)
+    {
+      if (_current_match)
+      {
+        return (_current_match_index % _accepted_size) == 0;
+      }
+    }
+    return FALSE;
+  }
 
   // --------------------------------------------------------------------------------
   GList *Page::FillWith (GList *what)
@@ -65,10 +79,12 @@ namespace Table
       {
         if (what)
         {
+          GList *node = what;
+
           what = g_list_remove_link (what,
-                                     what);
+                                     node);
           _matches = g_list_append (_matches,
-                                    what->data);
+                                    node->data);
         }
         else
         {

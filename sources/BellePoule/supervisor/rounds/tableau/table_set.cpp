@@ -3408,6 +3408,49 @@ namespace Table
                             Canvas::Alignment::START);
           }
 
+          if (page->CutterMarkReached ())
+          {
+            GooCanvasItem *line;
+
+            {
+              GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 3.0, 0.8);
+              line = goo_canvas_polyline_new_line (match_group,
+                                                   0.0,   0.0,
+                                                   105.0, 0.0,
+                                                   "line-width",   0.5,
+                                                   "line-dash",    dash,
+                                                   "stroke-color", "fuchsia",
+                                                   NULL);
+              Canvas::Anchor (line,
+                              match_group,
+                              nullptr,
+                              5);
+              goo_canvas_line_dash_unref (dash);
+            }
+
+            {
+              GooCanvasItem *scissors;
+              gchar         *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "images", "scissors.png", NULL);
+              GdkPixbuf     *pixbuf    = gdk_pixbuf_new_from_file (icon_file, nullptr);
+
+              scissors = goo_canvas_image_new (match_group,
+                                               pixbuf,
+                                               0.0,
+                                               0.0,
+                                               NULL);
+              goo_canvas_item_scale (scissors,
+                                     0.14,
+                                     0.14);
+              g_object_unref (pixbuf);
+              g_free (icon_file);
+
+              Canvas::HAlign (scissors,
+                              Canvas::Alignment::MIDDLE,
+                              line,
+                              Canvas::Alignment::START);
+            }
+          }
+
           g_free (font);
           g_free (small_font);
         }

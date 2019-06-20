@@ -35,10 +35,13 @@ namespace Table
 
       Match *GetNextMatch ();
 
+      gboolean CutterMarkReached ();
+
     private:
       guint  _accepted_size;
       GList *_matches;
       GList *_current_match;
+      guint  _current_match_index;
 
       ~Page ();
   };
