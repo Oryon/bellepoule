@@ -43,6 +43,7 @@
 #include "table_zone.hpp"
 #include "table.hpp"
 #include "table_print_session.hpp"
+#include "sheet_compositor.hpp"
 
 #include "table_set.hpp"
 
@@ -66,31 +67,31 @@ namespace Table
                       guint       first_place,
                       GtkRange   *zoomer)
     : Object ("TableSet"),
-      CanvasModule ("table.glade")
+    CanvasModule ("table.glade")
   {
     Module *supervisor_module = dynamic_cast <Module *> (supervisor);
 
-    _supervisor     = supervisor;
-    _filter         = supervisor_module->GetFilter ();
-    _main_table     = nullptr;
-    _tree_root      = nullptr;
-    _tables         = nullptr;
-    _match_to_print = nullptr;
-    _nb_tables      = 0;
-    _locked         = FALSE;
-    _id             = id;
-    _attendees      = nullptr;
-    _withdrawals    = nullptr;
-    _first_error    = nullptr;
-    _is_over        = FALSE;
-    _first_place    = first_place;
-    _loaded         = FALSE;
-    _is_active      = FALSE;
-    _html_table     = new HtmlTable (supervisor_module);
-    _from_table     = nullptr;
-    _to_table       = nullptr;
+    _supervisor       = supervisor;
+    _filter           = supervisor_module->GetFilter ();
+    _main_table       = nullptr;
+    _tree_root        = nullptr;
+    _tables           = nullptr;
+    _sheet_compositor = new SheetCompositor ();
+    _nb_tables        = 0;
+    _locked           = FALSE;
+    _id               = id;
+    _attendees        = nullptr;
+    _withdrawals      = nullptr;
+    _first_error      = nullptr;
+    _is_over          = FALSE;
+    _first_place      = first_place;
+    _loaded           = FALSE;
+    _is_active        = FALSE;
+    _html_table       = new HtmlTable (supervisor_module);
+    _from_table       = nullptr;
+    _to_table         = nullptr;
 
-    _listener       = nullptr;
+    _listener         = nullptr;
 
     SetZoomer (zoomer);
     ZoomTo (1.0);
@@ -171,13 +172,12 @@ namespace Table
 
     Object::TryToRelease (_quick_score_collector);
     Object::TryToRelease (_score_collector);
+    Object::TryToRelease (_sheet_compositor);
 
     g_free (_short_name);
 
     g_slist_free (_attendees);
     g_slist_free (_withdrawals);
-
-    g_slist_free (_match_to_print);
 
     g_free (_id);
 
@@ -1801,8 +1801,7 @@ namespace Table
   void TableSet::LookForMatchToPrint (Table    *table_to_print,
                                       gboolean  all_sheet)
   {
-    g_slist_free (_match_to_print);
-    _match_to_print = nullptr;
+    _sheet_compositor->Reset ();
 
     {
       GtkTreeIter parent;
@@ -1835,9 +1834,7 @@ namespace Table
 
               if (all_sheet || (already_printed != TRUE))
               {
-                _match_to_print = g_slist_insert_sorted (_match_to_print,
-                                                         match,
-                                                         (GCompareFunc) Match::Compare);
+                _sheet_compositor->AddMatch (match);
               }
             }
           }
@@ -2893,24 +2890,8 @@ namespace Table
     }
     else
     {
-      guint nb_match;
-
-      if (paper_w > paper_h)
-      {
-        _nb_match_per_sheet = 2;
-      }
-      else
-      {
-        _nb_match_per_sheet = 4;
-      }
-
-      nb_match = g_slist_length (_match_to_print);
-      nb_page  = nb_match/_nb_match_per_sheet;
-
-      if (nb_match%_nb_match_per_sheet != 0)
-      {
-        nb_page++;
-      }
+      nb_page = _sheet_compositor->GetPageCount (paper_w,
+                                                 paper_h);
     }
 
     return nb_page;
@@ -3197,14 +3178,15 @@ namespace Table
     }
     else
     {
-      GooCanvas *canvas  = Canvas::CreatePrinterCanvas (context);
-      GSList    *current_match;
+      Match     *match;
+      GooCanvas *canvas             = Canvas::CreatePrinterCanvas (context);
+      guint      nb_match_per_sheet = _sheet_compositor->MatchPerSheet ();
+      Page      *page               = _sheet_compositor->GetPage (page_nr);
 
       cairo_save (cr);
 
-      current_match = g_slist_nth (_match_to_print,
-                                   _nb_match_per_sheet*page_nr);
-      for (guint i = 0; current_match && (i < _nb_match_per_sheet); i++)
+      match = page->GetNextMatch ();
+      for (guint i = 0; match && (i < nb_match_per_sheet); i++)
       {
         GooCanvasItem *match_group;
 
@@ -3216,7 +3198,7 @@ namespace Table
 
           cairo_matrix_init_translate (&matrix,
                                        0.0,
-                                       i*(100.0/_nb_match_per_sheet) * paper_h/paper_w);
+                                       i*(100.0/nb_match_per_sheet) * paper_h/paper_w);
 
           g_object_set_data (G_OBJECT (operation), "operation_matrix", (void *) &matrix);
 
@@ -3226,7 +3208,6 @@ namespace Table
         }
 
         {
-          Match         *match  = (Match *) current_match->data;
           Player        *A      = match->GetOpponent (0);
           Player        *B      = match->GetOpponent (1);
           GooCanvasItem *name_item;
@@ -3242,7 +3223,7 @@ namespace Table
 
           // Flash code
           {
-            gdouble    offset     = i *((100.0/_nb_match_per_sheet) *paper_h/paper_w) + (PRINT_HEADER_FRAME_HEIGHT + 7.0);
+            gdouble    offset     = i *((100.0/nb_match_per_sheet) *paper_h/paper_w) + (PRINT_HEADER_FRAME_HEIGHT + 7.0);
             FlashCode *flash_code = match->GetFlashCode ();
             GdkPixbuf *pixbuf     = flash_code->GetPixbuf ();
 
@@ -3434,7 +3415,7 @@ namespace Table
         Canvas::FitToContext (match_group,
                               context);
 
-        current_match = g_slist_next (current_match);
+        match = page->GetNextMatch ();
       }
 
       goo_canvas_render (canvas,
@@ -3667,11 +3648,8 @@ namespace Table
     gchar        *print_name    = table_set->GetPrintName ();
     PrintSession *print_session = new PrintSession (PrintSession::Type::SCORE_SHEETS);
 
-    g_slist_free (table_set->_match_to_print);
-    table_set->_match_to_print = nullptr;
-
-    table_set->_match_to_print = g_slist_prepend (table_set->_match_to_print,
-                                                  g_object_get_data (G_OBJECT (item), "match_to_print"));
+    table_set->_sheet_compositor->Reset ();
+    table_set->_sheet_compositor->AddMatch ((Match *) g_object_get_data (G_OBJECT (item), "match_to_print"));
 
     table_set->Print (print_name,
                       print_session);

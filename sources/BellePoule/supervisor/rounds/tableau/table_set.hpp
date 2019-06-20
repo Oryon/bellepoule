@@ -36,6 +36,7 @@ namespace Table
   class Table;
   class HtmlTable;
   class PrintSession;
+  class SheetCompositor;
 
   class TableSet :
     public CanvasModule,
@@ -160,39 +161,38 @@ namespace Table
 
       static const gdouble _table_spacing;
 
-      gchar                    *_short_name;
-      Supervisor               *_supervisor;
-      GNode                    *_tree_root;
-      guint                     _nb_tables;
-      GtkTreeStore             *_quick_search_treestore;
-      GtkTreeModelFilter       *_quick_search_filter;
-      GooCanvasItem            *_main_table;
-      GooCanvasItem            *_quick_score_A;
-      GooCanvasItem            *_quick_score_B;
-      Data                     *_max_score;
-      ScoreCollector           *_score_collector;
-      ScoreCollector           *_quick_score_collector;
-      xmlNode                  *_xml_node;
-      Table                    **_tables;
-      GSList                   *_result_list;
-      GSList                   *_match_to_print;
-      GSList                   *_attendees;
-      GSList                   *_withdrawals;
-      gboolean                  _locked;
-      guint                     _nb_match_per_sheet;
-      gchar                    *_id;
-      Error::Provider          *_first_error;
-      gboolean                  _is_over;
-      gboolean                  _loaded;
-      guint                     _first_place;
-      gboolean                  _is_active;
-      GtkPageSetup             *_page_setup;
-      Table                    *_from_table;
-      Table                    *_to_table;
-      gboolean                 *_row_filled;
-      HtmlTable                *_html_table;
-      GdkPixbuf                *_printer_pixbuf;
-      Filter                   *_right_filter;
+      gchar               *_short_name;
+      Supervisor          *_supervisor;
+      GNode               *_tree_root;
+      guint                _nb_tables;
+      GtkTreeStore        *_quick_search_treestore;
+      GtkTreeModelFilter  *_quick_search_filter;
+      GooCanvasItem       *_main_table;
+      GooCanvasItem       *_quick_score_A;
+      GooCanvasItem       *_quick_score_B;
+      Data                *_max_score;
+      ScoreCollector      *_score_collector;
+      ScoreCollector      *_quick_score_collector;
+      xmlNode             *_xml_node;
+      Table              **_tables;
+      GSList              *_result_list;
+      SheetCompositor     *_sheet_compositor;
+      GSList              *_attendees;
+      GSList              *_withdrawals;
+      gboolean             _locked;
+      gchar               *_id;
+      Error::Provider     *_first_error;
+      gboolean             _is_over;
+      gboolean             _loaded;
+      guint                _first_place;
+      gboolean             _is_active;
+      GtkPageSetup        *_page_setup;
+      Table               *_from_table;
+      Table               *_to_table;
+      gboolean            *_row_filled;
+      HtmlTable           *_html_table;
+      GdkPixbuf           *_printer_pixbuf;
+      Filter              *_right_filter;
 
       Listener *_listener;
 

@@ -528,6 +528,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/html_table.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/sheet_compositor.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/sheet_compositor.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

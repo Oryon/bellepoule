@@ -34,6 +34,9 @@ class FieTime : public Object
 
     GDateTime *GetGDateTime ();
 
+    static gint Compare (FieTime *A,
+                         FieTime *B);
+
   private:
     gchar     *_image;
     gchar     *_xml_date;

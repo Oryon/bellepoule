@@ -126,6 +126,8 @@ class Match : public Object,
 
     GSList *GetRefereeList ();
 
+    Player *GetFirstReferee ();
+
     void Timestamp ();
 
     void Spread () override;

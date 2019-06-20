@@ -460,20 +460,14 @@ void Match::Save (XmlScheme *xml_scheme)
                                         "%d", _duration_span);
     }
 
+    for (GSList *current = _referee_list; current; current = g_slist_next (current))
     {
-      GSList *current = _referee_list;
+      Player *referee = (Player *) current->data;
 
-      while (current)
-      {
-        Player *referee = (Player *) current->data;
-
-        xml_scheme->StartElement (referee->GetXmlTag ());
-        xml_scheme->WriteFormatAttribute ("REF",
-                                          "%d", referee->GetRef ());
-        xml_scheme->EndElement ();
-
-        current = g_slist_next (current);
-      }
+      xml_scheme->StartElement (referee->GetXmlTag ());
+      xml_scheme->WriteFormatAttribute ("REF",
+                                        "%d", referee->GetRef ());
+      xml_scheme->EndElement ();
     }
 
     for (guint i = 0; i < 2; i++)
@@ -827,6 +821,17 @@ GSList *Match::GetRefereeList ()
 }
 
 // --------------------------------------------------------------------------------
+Player *Match::GetFirstReferee ()
+{
+  if (_referee_list)
+  {
+    return (Player *) _referee_list->data;
+  }
+
+  return nullptr;
+}
+
+// --------------------------------------------------------------------------------
 void Match::FeedParcel (Net::Message *parcel)
 {
   xmlBuffer *xml_buffer = xmlBufferCreate ();
@@ -954,8 +959,8 @@ gint Match::Compare (Match *A,
     return result;
   }
 
-  result = g_strcmp0 (A->_name_space, B->_name_space);
-  if (result != 0)
+  result = FieTime::Compare (A->_start_time, B->_start_time);
+  if (result)
   {
     return result;
   }
