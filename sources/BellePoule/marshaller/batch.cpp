@@ -51,11 +51,12 @@ namespace Marshaller
     : Object ("Batch"),
     Module ("batch.glade")
   {
-    _name           = message->GetString ("name");
-    _listener       = listener;
-    _scheduled_list = nullptr;
-    _pending_list   = nullptr;
-    _competition    = competition;
+    _name                  = message->GetString ("name");
+    _listener              = listener;
+    _scheduled_list        = nullptr;
+    _partly_scheduled_list = nullptr;
+    _pending_list          = nullptr;
+    _competition           = competition;
 
     _assign_button = _glade->GetWidget ("assign_toolbutton");
     _cancel_button = _glade->GetWidget ("cancel_toolbutton");
@@ -132,6 +133,9 @@ namespace Marshaller
 
     g_list_free (_scheduled_list);
     _scheduled_list = nullptr;
+
+    g_list_free (_partly_scheduled_list);
+    _partly_scheduled_list = nullptr;
 
     g_list_free (_pending_list);
     _pending_list = nullptr;
@@ -246,7 +250,7 @@ namespace Marshaller
     gtk_widget_set_sensitive (_assign_button, TRUE);
     gtk_widget_set_sensitive (_cancel_button, TRUE);
 
-    if (_pending_list == nullptr)
+    if ((_pending_list == nullptr) && (_partly_scheduled_list == nullptr))
     {
       gtk_widget_set_sensitive (_assign_button, FALSE);
 
@@ -297,10 +301,22 @@ namespace Marshaller
           result = g_list_append (result,
                                   job);
         }
+        else if (g_list_find (_partly_scheduled_list,
+                              job))
+        {
+          result = g_list_append (result,
+                                  job);
+        }
       }
 
       g_list_free_full (selection_list,
                         (GDestroyNotify) gtk_tree_path_free);
+    }
+
+    if (result)
+    {
+      result = g_list_sort (result,
+                            (GCompareFunc) Job::ComparePosition);
     }
 
     return result;
@@ -323,52 +339,70 @@ namespace Marshaller
 
       if (current_job == job)
       {
-        if (job->HasPiste ())
+        guint        kinship = 0;
+        const gchar *status  = nullptr;
+
         {
-          guint  kinship = job->GetKinship ();
-          GList *node    = g_list_find (_pending_list,
-                                        job);
-
-          if (node)
-          {
-            _pending_list = g_list_delete_link (_pending_list,
-                                                node);
-
-            _scheduled_list = g_list_insert_sorted (_scheduled_list,
-                                                    job,
-                                                    (GCompareFunc) Job::CompareStartTime);
-          }
-
-          job->Spread ();
-
-          gtk_list_store_set (_job_store, &iter,
-                              ColumnId::JOB_status,        NULL,
-                              ColumnId::JOB_warning_color, Affinities::GetColor (kinship),
-                              -1);
-        }
-        else
-        {
-          GList *node = g_list_find (_scheduled_list,
+          GList *node = g_list_find (_pending_list,
                                      job);
 
-          if (node)
+          if (job->HasPiste ())
           {
-            _scheduled_list = g_list_delete_link (_scheduled_list,
-                                                  node);
-
-            _pending_list = g_list_insert_sorted (_pending_list,
-                                                  job,
-                                                  (GCompareFunc) Job::CompareSiblingOrder);
-
+            if (node)
+            {
+              _pending_list = g_list_remove (_pending_list,
+                                             job);
+              _scheduled_list = g_list_insert_sorted (_scheduled_list,
+                                                      job,
+                                                      (GCompareFunc) Job::CompareStartTime);
+              job->Spread ();
+            }
+          }
+          else if (node == nullptr)
+          {
+            _scheduled_list = g_list_remove (_scheduled_list,
+                                             job);
+            _partly_scheduled_list = g_list_remove (_partly_scheduled_list,
+                                                    job);
+            _pending_list = g_list_prepend (_pending_list,
+                                            job);
+            status = GTK_STOCK_DIALOG_QUESTION;
             job->Recall ();
           }
-
-          gtk_list_store_set (_job_store, &iter,
-                              ColumnId::JOB_status,        GTK_STOCK_DIALOG_QUESTION,
-                              ColumnId::JOB_warning_color, NULL,
-                              -1);
         }
 
+        {
+          Slot  *slot = job->GetSlot ();
+          GList *node = g_list_find (_partly_scheduled_list,
+                                     job);
+
+          if (slot && slot->GetRefereeList ())
+          {
+            kinship = job->GetKinship ();
+
+            if (node)
+            {
+              _partly_scheduled_list = g_list_remove (_partly_scheduled_list,
+                                                      job);
+              if (status)
+              {
+                status = GTK_STOCK_DIALOG_ERROR;
+              }
+              job->Spread ();
+            }
+          }
+          else if ((node == nullptr) && job->HasPiste ())
+          {
+            _partly_scheduled_list = g_list_prepend (_partly_scheduled_list,
+                                                     job);
+            job->Spread ();
+          }
+        }
+
+        gtk_list_store_set (_job_store, &iter,
+                            ColumnId::JOB_status,        status,
+                            ColumnId::JOB_warning_color, Affinities::GetColor (kinship),
+                            -1);
         break;
       }
 
@@ -393,7 +427,15 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   GList *Batch::RetreivePendingJobs ()
   {
-    return g_list_copy (_pending_list);
+    GList *list = g_list_copy (_pending_list);
+
+    list = g_list_concat (list,
+                          g_list_copy (_partly_scheduled_list));
+
+    list = g_list_sort (list,
+                        (GCompareFunc) Job::ComparePosition);
+
+    return list;
   }
 
   // --------------------------------------------------------------------------------
@@ -418,6 +460,9 @@ namespace Marshaller
 
         _pending_list = g_list_remove (_pending_list,
                                        current_job);
+
+        _partly_scheduled_list = g_list_remove (_partly_scheduled_list,
+                                                current_job);
 
         _scheduled_list = g_list_remove (_scheduled_list,
                                          current_job);
@@ -504,12 +549,9 @@ namespace Marshaller
             GtkTreeIter  iter;
             gchar       *attr;
             gchar       *name;
-            guint        sibling_order;
 
-            sibling_order = g_list_length (_pending_list) + g_list_length (_scheduled_list);
             job = new Job (this,
                            message,
-                           sibling_order,
                            _competition->GetColor ());
 
             attr = (gchar *) xmlGetProp (root_node, BAD_CAST "ID");
@@ -693,6 +735,14 @@ namespace Marshaller
     }
 
     _eob->Spread ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Batch::Dump ()
+  {
+    g_print ("_pending_list          ==> %d\n", g_list_length (_pending_list));
+    g_print ("_partly_scheduled_list ==> %d\n", g_list_length (_partly_scheduled_list));
+    g_print ("_scheduled_list        ==> %d\n", g_list_length (_scheduled_list));
   }
 
   // --------------------------------------------------------------------------------

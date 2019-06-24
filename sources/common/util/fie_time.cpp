@@ -158,17 +158,19 @@ const gchar *FieTime::GetXmlTime ()
 gint FieTime::Compare (FieTime *A,
                        FieTime *B)
 {
-  if (A->_g_date_time && B->_g_date_time)
+  if ((A && A->_g_date_time) && (B && B->_g_date_time))
   {
     return g_date_time_compare (A->_g_date_time,
                                 B->_g_date_time);
   }
-  else if (A->_g_date_time)
+  else if (A && A->_g_date_time)
   {
     return 1;
   }
-  else
+  else if (B && B->_g_date_time)
   {
     return -1;
   }
+
+  return 0;
 }

@@ -109,6 +109,7 @@ namespace Marshaller
       gchar        *_name;
       Listener     *_listener;
       GList        *_scheduled_list;
+      GList        *_partly_scheduled_list;
       GList        *_pending_list;
       JobBoard     *_job_board;
       GtkWidget    *_assign_button;
@@ -126,5 +127,7 @@ namespace Marshaller
                           GtkSelectionData *data,
                           guint             key,
                           guint             time) override;
+
+      void Dump () override;
   };
 }

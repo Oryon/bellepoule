@@ -37,7 +37,6 @@ namespace Marshaller
     public:
       Job (Batch        *batch,
            Net::Message *message,
-           guint         sibling_order,
            GdkColor     *gdk_color);
 
       void SetName (const gchar *name);
@@ -93,13 +92,12 @@ namespace Marshaller
       static gint CompareStartTime (Job *a,
                                     Job *b);
 
-      static gint CompareSiblingOrder (Job *a,
-                                       Job *b);
+      static gint ComparePosition (Job *a,
+                                   Job *b);
 
       void Dump () override;
 
     private:
-      guint      _sibling_order;
       gchar     *_name;
       guint      _netid;
       guint      _position;

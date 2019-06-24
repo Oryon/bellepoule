@@ -31,7 +31,6 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   Job::Job (Batch        *batch,
             Net::Message *message,
-            guint         sibling_order,
             GdkColor     *gdk_color)
     : Object ("Job")
   {
@@ -42,7 +41,6 @@ namespace Marshaller
     _batch            = batch;
     _netid            = message->GetNetID ();
     _position         = message->GetInteger ("display_position");
-    _sibling_order    = sibling_order;
     _slot             = nullptr;
     _kinship          = 0;
     _regular_duration = 0;
@@ -299,10 +297,10 @@ namespace Marshaller
   }
 
   // --------------------------------------------------------------------------------
-  gint Job::CompareSiblingOrder (Job *a,
-                                 Job *b)
+  gint Job::ComparePosition (Job *a,
+                             Job *b)
   {
-    return a->_sibling_order - b->_sibling_order;
+    return a->_position - b->_position;
   }
 
   // --------------------------------------------------------------------------------
