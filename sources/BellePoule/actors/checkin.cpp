@@ -736,31 +736,39 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::ImportCSV (const gchar *filename)
   {
-    gchar  *file_content = GetFileContent (filename);
-    gchar  *utf8_content;
+    gchar *utf8_content;
 
     {
-      GError *error = nullptr;
+      gchar  *file_content = GetFileContent (filename);
+      GError *error        = nullptr;
 
-      utf8_content = g_locale_to_utf8 (file_content,
-                                       -1,
-                                       nullptr,
-                                       nullptr,
-                                       &error);
-      g_free (file_content);
-
-      if (error)
+      if (g_utf8_validate (file_content,
+                           -1,
+                           nullptr))
       {
-        GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
-                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                    GTK_MESSAGE_ERROR,
-                                                    GTK_BUTTONS_CLOSE,
-                                                    "The imported CSV file is probably based on template generated from another computer.\n\n"
-                                                    "Use a template generated from this computer!");
-        RunDialog (GTK_DIALOG (dialog));
-        gtk_widget_destroy (dialog);
-        g_error_free (error);
+        utf8_content = g_strdup (file_content);
       }
+      else
+      {
+        utf8_content = g_locale_to_utf8 (file_content,
+                                         -1,
+                                         nullptr,
+                                         nullptr,
+                                         &error);
+        if (error)
+        {
+          GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                      GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                      GTK_MESSAGE_ERROR,
+                                                      GTK_BUTTONS_CLOSE,
+                                                      "The imported CSV file is probably based on template generated from another computer.\n\n"
+                                                      "Use a template generated from this computer!");
+          RunDialog (GTK_DIALOG (dialog));
+          gtk_widget_destroy (dialog);
+          g_error_free (error);
+        }
+      }
+      g_free (file_content);
     }
 
     if (utf8_content)
