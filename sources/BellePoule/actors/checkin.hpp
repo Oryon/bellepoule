@@ -99,9 +99,6 @@ namespace People
       static gboolean PresentPlayerFilter (Player      *player,
                                            PlayersList *owner);
 
-      static gboolean AllInvolvedPlayerFilter (Player      *player,
-                                               PlayersList *owner);
-
       virtual void Monitor (Player *player);
 
       virtual void SavePlayer (XmlScheme   *xml_scheme,

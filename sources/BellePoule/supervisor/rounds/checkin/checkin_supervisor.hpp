@@ -152,6 +152,9 @@ namespace People
                            gint            y,
                            guint           time) override;
 
+      static gboolean AllInvolvedPlayerFilter (Player      *player,
+                                               PlayersList *owner);
+
       static gboolean AbsentPlayerFilter (Player      *player,
                                           PlayersList *owner);
 

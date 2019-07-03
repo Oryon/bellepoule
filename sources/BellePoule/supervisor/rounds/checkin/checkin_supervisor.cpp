@@ -872,6 +872,31 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::AllInvolvedPlayerFilter (Player      *player,
+                                                       PlayersList *owner)
+  {
+    Player::AttributeId  incidend_id ("incident");
+    Attribute           *incident = player->GetAttribute (&incidend_id);
+
+    if (incident)
+    {
+      CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+      if (player->Is ("team"))
+      {
+        return (supervisor->_contest->IsTeamEvent () == TRUE);
+      }
+      else
+      {
+        return (supervisor->_contest->IsTeamEvent () == FALSE);
+      }
+    }
+
+    return PresentPlayerFilter (player,
+                                owner);
+  }
+
+  // --------------------------------------------------------------------------------
   GSList *CheckinSupervisor::GetCurrentClassification ()
   {
     GSList *all_involved = CreateCustomList (AllInvolvedPlayerFilter, this);
