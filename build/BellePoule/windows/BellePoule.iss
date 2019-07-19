@@ -92,6 +92,7 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\bellepoule (beta)"
 [Files]
 Source: "exe\bellepoulebeta-marshaller.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "exe\bellepoulebeta-supervisor.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "exe\bellepoulebeta-backend.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "..\..\..\resources\gtkrc.windows"; DestDir: "{app}\share\{#PRODUCT}\resources"; DestName: "gtkrc"; Flags: ignoreversion
 Source: "..\cacert.pem"; DestDir: "{app}\share\{#PRODUCT}\resources"; Flags: ignoreversion
 Source: "path_dependent_files\gtk.immodules"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gtk.immodules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
@@ -222,6 +223,8 @@ Source: "..\..\..\resources\localized_data\*"; DestDir: "{app}\share\{#PRODUCT}\
 ; GTK+ dependencies
 ; DLL
 #ifdef MINGW
+Source: "{#MINGW}\bin\gspawn-win32-helper-console.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\gspawn-win32-helper.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libatk-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libcairo-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libcrypto-10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -293,6 +296,8 @@ Source: "{#MINGW}\bin\libnettle-6-2.dll"; DestDir: "{app}\bin"; Flags: ignorever
 Source: "{#MINGW}\bin\libtasn1-6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libp11-kit-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libzip-4.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libwinpthread-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libusb-1.0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
 Source: "{#MINGW}\lib\gio\modules\libgiognutls.dll"; DestDir: "{app}\lib\gio\modules"; Flags: ignoreversion
 

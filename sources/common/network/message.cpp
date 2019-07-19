@@ -251,6 +251,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Message::HasField (const gchar *field)
+  {
+    return g_key_file_has_key (_key_file,
+                               "Body",
+                               field,
+                               nullptr);
+  }
+
+  // --------------------------------------------------------------------------------
   gchar *Message::GetString (const gchar *field)
   {
     return g_key_file_get_string (_key_file,

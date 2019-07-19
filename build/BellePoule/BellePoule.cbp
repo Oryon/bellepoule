@@ -7,32 +7,38 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Lib_Debug">
-				<Option output="debug/BellePoule" prefix_auto="0" extension_auto="1" />
+				<Option output="debug/bellepoule" prefix_auto="0" extension_auto="1" />
 				<Option object_output="debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 			</Target>
 			<Target title="Supervisor_Debug">
-				<Option output="debug/BellePoule" prefix_auto="1" extension_auto="1" />
+				<Option output="debug/supervisor" prefix_auto="1" extension_auto="1" />
 				<Option object_output="debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Linker>
-					<Add library="debug/BellePoule.so" />
+					<Add library="debug/bellepoule.so" />
 				</Linker>
 			</Target>
 			<Target title="Marshaller_Debug">
-				<Option output="debug/Marshaller" prefix_auto="1" extension_auto="1" />
+				<Option output="debug/marshaller" prefix_auto="1" extension_auto="1" />
 				<Option object_output="debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Linker>
-					<Add library="debug/BellePoule.so" />
+					<Add library="debug/bellepoule.so" />
 				</Linker>
+			</Target>
+			<Target title="Backend_Debug">
+				<Option output="debug/backend" prefix_auto="1" extension_auto="1" />
+				<Option object_output="debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
 			</Target>
 		</Build>
 		<VirtualTargets>
-			<Add alias="Debug" targets="Lib_Debug;Marshaller_Debug;Supervisor_Debug;" />
+			<Add alias="Debug" targets="Lib_Debug;Marshaller_Debug;Supervisor_Debug;Backend_Debug;" />
 		</VirtualTargets>
 		<Compiler>
 			<Add option="-Wshadow" />
@@ -92,6 +98,7 @@
 			<Add directory="../../sources/common" />
 			<Add directory="/usr/include/json-glib-1.0" />
 			<Add directory="../../sources/common/network" />
+			<Add directory="/usr/include/libusb-1.0" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--export-dynamic" />
@@ -122,6 +129,7 @@
 			<Add library="json-glib-1.0" />
 			<Add library="webkitgtk-1.0" />
 			<Add library="zip" />
+			<Add library="usb-1.0" />
 		</Linker>
 		<Unit filename="../../sources/BellePoule/actors/checkin.cpp">
 			<Option target="Lib_Debug" />
@@ -215,6 +223,9 @@
 		</Unit>
 		<Unit filename="../../sources/BellePoule/application/weapon.hpp">
 			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/backend/main.cpp">
+			<Option target="Backend_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/marshaller/affinities.cpp">
 			<Option target="Marshaller_Debug" />
@@ -790,6 +801,24 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/uploader.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/usb_broker.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/usb_broker.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/usb_challenge.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/usb_challenge.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/usb_drive.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/usb_drive.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/web_server.cpp">

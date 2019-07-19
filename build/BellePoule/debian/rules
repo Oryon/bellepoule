@@ -19,6 +19,7 @@ endif
 override_dh_fixperms:
 	dh_fixperms
 	chmod 1777 debian/__PRODUCT__/usr/share/__PRODUCT__/webserver/LightTPD/www/cotcot
+	chmod 4755 debian/__PRODUCT__/usr/bin/__PRODUCT__-backend
 
 override_dh_gencontrol:
 	dh_gencontrol -- $(SUBSTVARS)

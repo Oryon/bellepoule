@@ -19,6 +19,7 @@
 #include "util/module.hpp"
 #include "network/ring.hpp"
 #include "network/web_server.hpp"
+#include "network/usb_broker.hpp"
 
 class Contest;
 class Publication;
@@ -98,6 +99,9 @@ class Tournament : public Module,
     void SetBackupLocation (gchar *location);
 
     void OnHanshakeResult (Net::Ring::HandshakeResult result) override;
+
+    void OnUsbEvent (Net::UsbBroker::Event  event,
+                     Net::UsbDrive         *drive) override;
 
     static gboolean RecentFileExists (const GtkRecentFilterInfo *filter_info,
                                       Tournament                *tournament);

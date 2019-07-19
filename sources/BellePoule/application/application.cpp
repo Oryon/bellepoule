@@ -78,13 +78,11 @@ Application::Application (Net::Ring::Role     role,
   // Init
   {
     {
-      gchar *binary_dir;
-
 #ifndef OSX
       {
         gchar *program = g_find_program_in_path ((*argv)[0]);
 
-        binary_dir = g_path_get_dirname (program);
+        Global::_binary_dir = g_path_get_dirname (program);
         g_free (program);
       }
 #else
@@ -107,7 +105,7 @@ Application::Application (Net::Ring::Role     role,
                               kCFStringEncodingUTF8);
         }
 
-        binary_dir = g_build_filename (bundle_dir, "Contents", "MacOS", NULL);
+        Global::_binary_dir = g_build_filename (bundle_dir, "Contents", "MacOS", NULL);
 
         g_free (bundle_dir);
         CFRelease (string_path);
@@ -121,7 +119,7 @@ Application::Application (Net::Ring::Role     role,
 #endif
 
 #ifdef CODE_BLOCKS
-      Global::_share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);
+      Global::_share_dir = g_build_filename (Global::_binary_dir, "..", "..", "..", NULL);
 #else
       {
         gchar  *basename = g_path_get_basename ((*argv)[0]);
@@ -132,9 +130,9 @@ Application::Application (Net::Ring::Role     role,
         if (segments[0])
         {
 #ifdef OSX
-          gchar *root_dir = g_build_filename (binary_dir, "..", "Resources", NULL);
+          gchar *root_dir = g_build_filename (Global::_binary_dir, "..", "Resources", NULL);
 
-          Global::_share_dir = g_build_filename (binary_dir, root_dir, "share", segments[0], NULL);
+          Global::_share_dir = g_build_filename (Global::_binary_dir, root_dir, "share", segments[0], NULL);
 
           {
             gchar *pixbuf_loaders = g_build_filename (root_dir, "etc", "gtk-2.0", "gdk-pixbuf.loaders", NULL);
@@ -148,7 +146,7 @@ Application::Application (Net::Ring::Role     role,
                       xdg_path,
                       TRUE);
 
-            g_chdir (binary_dir);
+            g_chdir (Global::_binary_dir);
 
             g_free (pixbuf_loaders);
             g_free (xdg_path);
@@ -186,7 +184,7 @@ Application::Application (Net::Ring::Role     role,
           }
           g_free (root_dir);
 #else
-          Global::_share_dir = g_build_filename (binary_dir, "..", "share", segments[0], NULL);
+          Global::_share_dir = g_build_filename (Global::_binary_dir, "..", "share", segments[0], NULL);
 #endif
         }
 
@@ -194,8 +192,6 @@ Application::Application (Net::Ring::Role     role,
         g_free     (basename);
       }
 #endif
-
-      g_free (binary_dir);
     }
 
     if (Global::_share_dir)

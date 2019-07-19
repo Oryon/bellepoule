@@ -107,12 +107,13 @@ CFLAGS += -Wswitch-default
 CFLAGS += -Wswitch-enum
 CFLAGS += -Wundef
 CFLAGS += -Wunreachable-code
-
+CFLAGS += -Wsuggest-override
 CFLAGS += -Wno-int-to-pointer-cast
 CFLAGS += -Wno-long-long
 CFLAGS += -Wno-unused-parameter
 CFLAGS += -Wno-variadic-macros
 CFLAGS += -Wno-vla
+CFLAGS += -DPRODUCT=\"$(PRODUCT)\"
 ifeq ($(OUTPUT), Debug)
 CFLAGS += -DDEBUG=1
 endif
@@ -131,7 +132,7 @@ else
 CFLAGS += -fPIC
 endif
 
-CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 libzip $(WEBKIT_LIB))
+CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 libzip $(WEBKIT_LIB) libusb-1.0)
 
 CFLAGS += -Isources/common
 CFLAGS += -Isources/common/network
@@ -148,11 +149,12 @@ LDFLAGS += -L$(OUTPUT)
 ifeq ($(DISTRIB), windows)
 LDFLAGS += -lws2_32
 LDFLAGS += -liphlpapi
+LDFLAGS += -lpthread
 ifeq ($(OUTPUT), Release)
 LDFLAGS += -mwindows
 endif
 endif
-LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 libzip $(WEBKIT_LIB))
+LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 libzip $(WEBKIT_LIB) libusb-1.0)
 
 ifeq ($(DISTRIB), osx)
 LDFLAGS += -headerpad_max_install_names
@@ -181,6 +183,13 @@ else
 GOOCANVAS_LIB     =
 install_goocanvas =
 endif
+
+ifeq ($(DISTRIB), windows)
+	SRC_BACKEND = $(wildcard sources/BellePoule/backend/main-win.cpp)
+else
+	SRC_BACKEND = $(wildcard sources/BellePoule/backend/main.cpp)
+endif
+OBJ_BACKEND = $(SRC_BACKEND:.cpp=.o)
 
 SRC_MARSHALLER = $(wildcard sources/BellePoule/marshaller/*.cpp)
 OBJ_MARSHALLER = $(SRC_MARSHALLER:.cpp=.o)
@@ -224,7 +233,7 @@ endif
 #----------------------------------------------------
 #-- Targets -----------------------------------------
 #----------------------------------------------------
-all: output sources/goocanvas $(OUTPUT)/$(PRODUCT)-marshaller$(EXE) $(OUTPUT)/$(PRODUCT)-supervisor$(EXE)
+all: output sources/goocanvas $(OUTPUT)/$(PRODUCT)-backend$(EXE) $(OUTPUT)/$(PRODUCT)-marshaller$(EXE) $(OUTPUT)/$(PRODUCT)-supervisor$(EXE)
 
 sources/goocanvas:
 	tar xvjf goocanvas.tgz
@@ -250,6 +259,10 @@ $(OUTPUT)/$(PRODUCT)-supervisor$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_SUPERVI
 $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHALLER)
 	@echo -e "\e[1;31m" $@ "\e[0m"
 	@$(CC) -o $@ $(OBJ_MARSHALLER) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(GOOCANVAS_LIB) $(LDFLAGS)
+
+$(OUTPUT)/$(PRODUCT)-backend$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_BACKEND)
+	@echo -e "\e[1;31m" $@ "\e[0m"
+	@$(CC) -o $@ $(OBJ_BACKEND) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(LDFLAGS)
 
 #--
 
@@ -512,6 +525,7 @@ endif
 
 prepare_rules:
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/rules
+	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/overrides
 
 prepare_copyright:
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/copyright
@@ -600,6 +614,9 @@ install: $(install_lighttpd) $(install_goocanvas)
 	mkdir -p $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)
 	install $(OUTPUT)/$(PRODUCT)-supervisor $(DESTDIR)/usr/bin/$(PRODUCT)-supervisor
 	install $(OUTPUT)/$(PRODUCT)-marshaller $(DESTDIR)/usr/bin/$(PRODUCT)-marshaller
+	install $(OUTPUT)/$(PRODUCT)-backend $(DESTDIR)/usr/bin/$(PRODUCT)-backend
+	mkdir -p $(DESTDIR)/usr/share/lintian/overrides
+	install debian/overrides $(DESTDIR)/usr/share/lintian/overrides/$(PRODUCT)
 	install $(OUTPUT)/lib$(PRODUCT).so $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)/lib$(PRODUCT).so
 	mkdir -p $(DESTDIR)/usr/share/applications
 	install --mode=644 debian/$(PRODUCT)-marshaller.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-marshaller.desktop

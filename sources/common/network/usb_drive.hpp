@@ -14,10 +14,31 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "util/user_config.hpp"
+#pragma once
 
-#include "global.hpp"
+#include "util/object.hpp"
 
-UserConfig *Global::_user_config = nullptr;
-gchar      *Global::_share_dir   = nullptr;
-gchar      *Global::_binary_dir  = nullptr;
+namespace Net
+{
+  class UsbDrive : public Object
+  {
+    public:
+      UsbDrive (gchar *slot,
+                gchar *product,
+                gchar *manufacturer,
+                gchar *serial_number);
+
+      const gchar *GetSlot         ();
+      const gchar *GetProduct      ();
+      const gchar *GetManufacturer ();
+      gchar       *GetSerialNumber ();
+
+    private:
+      gchar      *_slot;
+      gchar      *_product;
+      gchar      *_manufacturer;
+      gchar      *_serial_number;
+
+      ~UsbDrive () override;
+  };
+}

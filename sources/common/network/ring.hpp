@@ -21,24 +21,31 @@
 #include <util/object.hpp>
 #include <http_server.hpp>
 #include <partner.hpp>
+#include <usb_broker.hpp>
+#include <usb_challenge.hpp>
 
 namespace Net
 {
   class Message;
   class Credentials;
   class ConsoleServer;
+  class UsbDrive;
 
   class Ring : public Object,
                public Object::Listener,
                public HttpServer::Listener,
-               public Partner::Listener
+               public Partner::Listener,
+               public UsbBroker::Listener,
+               public UsbChallenge::Listener
   {
     public:
       enum class HandshakeResult
       {
+        NOT_APPLICABLE,
         CHALLENGE_PASSED,
         BACKUP_CHALLENGE_PASSED,
         AUTHENTICATION_FAILED,
+        USB_TRUSTED,
         ROLE_REJECTED
       };
 
@@ -56,9 +63,11 @@ namespace Net
 
       struct Listener
       {
-        virtual gboolean     OnMessage        (Net::Message *message)              = 0;
+        virtual gboolean     OnMessage        (Message *message)                   = 0;
         virtual const gchar *GetSecretKey     (const gchar *authentication_scheme) = 0;
         virtual void         OnHanshakeResult (HandshakeResult result)             = 0;
+        virtual void         OnUsbEvent       (UsbBroker::Event  event,
+                                               UsbDrive         *drive)            = 0;
       };
 
     public:
@@ -111,22 +120,25 @@ namespace Net
       static const guint  ANNOUNCE_PORT = 35830;
       static const gchar *SECRET;
 
-      Role            _role;
-      guint           _heartbeat_timer;
-      guint32         _partner_id;
-      gchar          *_unicast_address;
-      guint           _unicast_port;
-      GList          *_partner_list;
-      GList          *_message_list;
-      GtkWidget      *_partner_indicator;
-      GList          *_partner_listeners;
-      Listener       *_listener;
-      GSocketAddress *_announce_address;
-      GSocket        *_announce_socket;
-      Credentials    *_credentials;
-      HttpServer     *_http_server;
-      gint            _quit_countdown;
-      ConsoleServer  *_console_server = nullptr;
+      Role             _role;
+      guint            _heartbeat_timer;
+      guint32          _partner_id;
+      gchar           *_unicast_address;
+      guint            _unicast_port;
+      GList           *_partner_list;
+      GList           *_message_list;
+      GtkWidget       *_partner_indicator;
+      GList           *_partner_listeners;
+      Listener        *_listener;
+      GSocketAddress  *_announce_address;
+      GSocket         *_announce_socket;
+      Credentials     *_credentials;
+      HttpServer      *_http_server;
+      gint             _quit_countdown;
+      UsbBroker       *_usb_broker;
+      HandshakeResult  _handshake_result;
+      UsbDrive        *_trusted_drive;
+      ConsoleServer   *_console_server    = nullptr;
 
       void Add (Partner *partner);
 
@@ -159,6 +171,10 @@ namespace Net
       void SendHandshake (Partner         *partner,
                           HandshakeResult  result);
 
+      gboolean DecryptSecret (Message     *message,
+                              const gchar *type,
+                              Credentials *credentials);
+
       gboolean DecryptSecret (gchar       *crypted,
                               gchar       *iv,
                               Credentials *credentials);
@@ -168,6 +184,14 @@ namespace Net
       void OnPartnerKilled (Partner *partener) override;
 
       void OnPartnerLeaved (Partner *partener) override;
+
+      void OnUsbEvent (UsbBroker::Event  event,
+                       UsbDrive         *drive) override;
+
+      void OnUsbPartnerTrusted (Partner     *partner,
+                                const gchar *key) override;
+
+      void OnUsbPartnerDoubtful (Partner *partner) override;
 
       static gboolean SendHeartbeat (Ring *ring);
   };

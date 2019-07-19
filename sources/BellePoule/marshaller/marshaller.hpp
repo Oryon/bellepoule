@@ -18,6 +18,7 @@
 
 #include "util/module.hpp"
 #include "network/ring.hpp"
+#include "network/usb_broker.hpp"
 #include "actors/referees_list.hpp"
 #include "hall.hpp"
 
@@ -87,5 +88,8 @@ namespace Marshaller
       GList *GetRefereeList ();
 
       void OnHanshakeResult (Net::Ring::HandshakeResult result) override;
+
+      void OnUsbEvent (Net::UsbBroker::Event  event,
+                       Net::UsbDrive         *drive) override;
   };
 }

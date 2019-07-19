@@ -25,6 +25,7 @@ class Global
   public:
     static UserConfig *_user_config;
     static gchar      *_share_dir;
+    static gchar      *_binary_dir;
 
   private:
     Global ();

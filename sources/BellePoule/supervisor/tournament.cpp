@@ -36,6 +36,7 @@
 #include "network/ring.hpp"
 #include "network/web_server.hpp"
 #include "network/message.hpp"
+#include "network/usb_broker.hpp"
 #include "application/version.h"
 #include "application/weapon.hpp"
 #include "actors/form.hpp"
@@ -293,11 +294,45 @@ void Tournament::OnShowAccessCode (gboolean with_steps)
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnUsbEvent (Net::UsbBroker::Event  event,
+                             Net::UsbDrive         *drive)
+{
+  if (event == Net::UsbBroker::Event::STICK_PLUGGED)
+  {
+    gtk_widget_set_sensitive (_glade->GetWidget ("status1"),      TRUE);
+    gtk_widget_set_sensitive (_glade->GetWidget ("number2"),      TRUE);
+    gtk_widget_set_sensitive (_glade->GetWidget ("instruction2"), TRUE);
+  }
+  else if (event == Net::UsbBroker::Event::STICK_UNPLUGGED)
+  {
+    gtk_widget_set_sensitive (_glade->GetWidget ("status2"),      TRUE);
+    gtk_widget_set_sensitive (_glade->GetWidget ("number3"),      TRUE);
+    gtk_widget_set_sensitive (_glade->GetWidget ("instruction3"), TRUE);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnHanshakeResult (Net::Ring::HandshakeResult result)
 {
-  if (result == Net::Ring::HandshakeResult::AUTHENTICATION_FAILED)
+  if (result == Net::Ring::HandshakeResult::CHALLENGE_PASSED)
   {
-    OnShowAccessCode (TRUE);
+    GtkWidget *dialog = _glade->GetWidget ("pairing_dialog");
+
+    gtk_dialog_response (GTK_DIALOG (dialog),
+                         GTK_RESPONSE_OK);
+  }
+  else if (result == Net::Ring::HandshakeResult::AUTHENTICATION_FAILED)
+  {
+    GtkWidget *dialog = _glade->GetWidget ("pairing_dialog");
+
+    if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
+    {
+      gtk_widget_hide (dialog);
+    }
+    else
+    {
+      gtk_main_quit ();
+    }
   }
 }
 

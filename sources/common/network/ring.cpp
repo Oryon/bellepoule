@@ -25,11 +25,14 @@
 #include "util/global.hpp"
 #include "util/user_config.hpp"
 #include "util/wifi_code.hpp"
+#include "console/console_server.hpp"
 #include "credentials.hpp"
 #include "message.hpp"
 #include "cryptor.hpp"
+#include "usb_broker.hpp"
+#include "usb_drive.hpp"
+#include "usb_challenge.hpp"
 #include "ring.hpp"
-#include "console/console_server.hpp"
 
 //#define MULTICAST_ANNOUNCE
 #define WITH_BACKUP_CREDENTIALS
@@ -37,8 +40,7 @@
 namespace Net
 {
   const gchar *Ring::SECRET = "tagada soinsoin";
-
-  Ring *Ring::_broker = nullptr;
+  Ring        *Ring::_broker = nullptr;
 
   // --------------------------------------------------------------------------------
   Ring::Ring (Role       role,
@@ -57,8 +59,12 @@ namespace Net
     _credentials       = nullptr;
     _partner_id        = g_random_int ();
     _quit_countdown    = -1;
+    _handshake_result  = HandshakeResult::NOT_APPLICABLE;
+    _trusted_drive     = nullptr;
 
     _partner_indicator = partner_indicator;
+
+    _usb_broker = new Net::UsbBroker (this);
 
     {
       gchar *passphrase = g_key_file_get_string (Global::_user_config->_key_file,
@@ -144,10 +150,13 @@ namespace Net
   // --------------------------------------------------------------------------------
   Ring::~Ring ()
   {
+    _usb_broker->Release ();
     _credentials->Release ();
     _http_server->Release ();
 
-    Object::TryToRelease (_console_server);
+    TryToRelease (_console_server);
+
+    TryToRelease (_trusted_drive);
 
     g_free (_unicast_address);
     g_object_unref (_announce_address);
@@ -314,34 +323,53 @@ namespace Net
     {
       Cryptor *cryptor = new Cryptor ();
 
-      {
-        gchar *iv;
-        gchar *challenge = cryptor->Encrypt (SECRET,
-                                             _credentials->GetKey (),
-                                             &iv);
-        message->Set ("challenge", challenge);
-        message->Set ("iv", iv);
-
-        g_free (iv);
-        g_free (challenge);
-      }
-
+      if (   (_handshake_result == HandshakeResult::NOT_APPLICABLE)
+          || (_handshake_result == HandshakeResult::BACKUP_CHALLENGE_PASSED)
+          || (_handshake_result == HandshakeResult::USB_TRUSTED))
       {
         Credentials *credentials = RetreiveBackupCredentials ();
 
+        {
+          gchar *iv;
+          gchar *challenge = cryptor->Encrypt (SECRET,
+                                               _credentials->GetKey (),
+                                               &iv);
+          message->Set ("challenge", challenge);
+          message->Set ("iv", iv);
+
+          g_free (iv);
+          g_free (challenge);
+        }
+
         if (credentials)
         {
-          gchar *backup_iv;
-          gchar *backup_challenge = cryptor->Encrypt (SECRET,
-                                                      credentials->GetKey (),
-                                                      &backup_iv);
+          gchar *iv;
+          gchar *challenge = cryptor->Encrypt (SECRET,
+                                               credentials->GetKey (),
+                                               &iv);
 
-          message->Set ("backup_challenge", backup_challenge);
-          message->Set ("backup_iv",        backup_iv);
+          message->Set ("backup_challenge", challenge);
+          message->Set ("backup_iv",        iv);
 
-          g_free (backup_iv);
-          g_free (backup_challenge);
+          g_free (iv);
+          g_free (challenge);
           credentials->Release ();
+        }
+      }
+      else if (_handshake_result == HandshakeResult::AUTHENTICATION_FAILED)
+      {
+        if (_trusted_drive)
+        {
+          gchar *iv;
+          gchar *challenge = cryptor->Encrypt (SECRET,
+                                               _trusted_drive->GetSerialNumber (),
+                                               &iv);
+
+          message->Set ("usb_challenge", challenge);
+          message->Set ("usb_iv",        iv);
+
+          g_free (iv);
+          g_free (challenge);
         }
       }
 
@@ -435,11 +463,8 @@ namespace Net
             {
               if (role != ring->_role)
               {
-                gchar *challenge = message->GetString  ("challenge");
-                gchar *iv         = message->GetString ("iv");
-
-                if (ring->DecryptSecret (challenge,
-                                         iv,
+                if (ring->DecryptSecret (message,
+                                         nullptr,
                                          ring->_credentials))
                 {
                   ring->Add (partner);
@@ -449,31 +474,27 @@ namespace Net
                 else
                 {
 #ifdef WITH_BACKUP_CREDENTIALS
-                  gchar *backup_challenge = message->GetString ("backup_challenge");
-                  gchar *backup_iv        = message->GetString ("backup_iv");
-
-                  if (backup_challenge && backup_iv && ring->DecryptSecret (backup_challenge,
-                                                                            backup_iv,
-                                                                            ring->_credentials))
+                  if (ring->DecryptSecret (message,
+                                           "backup",
+                                           ring->_credentials))
                   {
                     ring->SendHandshake (partner,
                                          HandshakeResult::BACKUP_CHALLENGE_PASSED);
+                  }
+                  else
+#endif
+                  if (message->HasField ("usb_challenge"))
+                  {
+                    UsbChallenge::Monitor (partner,
+                                           message->GetString ("usb_challenge"),
+                                           message->GetString ("usb_iv"));
                   }
                   else
                   {
                     ring->SendHandshake (partner,
                                          HandshakeResult::AUTHENTICATION_FAILED);
                   }
-
-                  g_free (backup_challenge);
-                  g_free (backup_iv);
-#else
-                  ring->SendHandshake (partner,
-                                       AUTHENTICATION_FAILED);
-#endif
                 }
-                g_free (challenge);
-                g_free (iv);
               }
             }
             else
@@ -803,6 +824,44 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Ring::DecryptSecret (Message     *message,
+                                const gchar *type,
+                                Credentials *credentials)
+  {
+    gboolean  result          = FALSE;
+    GString  *challenge_field = g_string_new ("challenge");
+    GString  *iv_field        = g_string_new ("iv");
+
+    if (type)
+    {
+      g_string_prepend_c (challenge_field, '_');
+      g_string_prepend   (challenge_field, type);
+      g_string_prepend_c (iv_field, '_');
+      g_string_prepend   (iv_field, type);
+    }
+
+    {
+      gchar *challenge = message->GetString (challenge_field->str);
+      gchar *iv        = message->GetString (iv_field->str);
+
+      if (challenge && iv)
+      {
+        result = DecryptSecret (challenge,
+                                iv,
+                                credentials);
+      }
+
+      g_free (challenge);
+      g_free (iv);
+    }
+
+    g_string_free (challenge_field, TRUE);
+    g_string_free (iv_field,        TRUE);
+
+    return result;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Ring::DecryptSecret (gchar       *crypted,
                                 gchar       *iv,
                                 Credentials *credentials)
@@ -849,6 +908,54 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void Ring::OnUsbEvent (UsbBroker::Event  event,
+                         UsbDrive         *drive)
+  {
+    if (event == UsbBroker::Event::STICK_PLUGGED)
+    {
+      UsbChallenge::CheckKey (drive->GetSerialNumber (),
+                              SECRET,
+                              this);
+    }
+    else if (event == UsbBroker::Event::STICK_UNPLUGGED)
+    {
+      if (_handshake_result == HandshakeResult::AUTHENTICATION_FAILED)
+      {
+        TryToRelease (_trusted_drive);
+        _trusted_drive = drive;
+        _trusted_drive->Retain ();
+
+        AnnounceAvailability ();
+      }
+    }
+
+    _listener->OnUsbEvent (event,
+                           drive);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Ring::OnUsbPartnerTrusted (Partner     *partner,
+                                  const gchar *key)
+  {
+    Message *message = new Message ("Ring::Handshake");
+
+    message->Set ("response", (guint) HandshakeResult::USB_TRUSTED);
+    message->Set ("password", GetCryptorKey ());
+
+    message->SetFitness (1);
+    message->SetPassPhrase256 (key);
+
+    partner->SendMessage (message);
+    message->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Ring::OnUsbPartnerDoubtful (Partner *partner)
+  {
+    printf ("==>> Doubt !!!!\n");
+  }
+
+  // --------------------------------------------------------------------------------
   const gchar *Ring::GetRoleImage ()
   {
     if (_role == Role::RESOURCE_MANAGER)
@@ -871,7 +978,14 @@ namespace Net
       if (   (g_strcmp0 (authentication_scheme, "/ring") == 0)
           || (g_strcmp0 (authentication_scheme, "/sender/0") == 0))
       {
-        return GetCryptorKey ();
+        if (_trusted_drive)
+        {
+          return _trusted_drive->GetSerialNumber ();
+        }
+        else
+        {
+          return GetCryptorKey ();
+        }
       }
       else
       {
@@ -887,9 +1001,9 @@ namespace Net
   {
     if (message->Is ("Ring::Handshake"))
     {
-      HandshakeResult response = (HandshakeResult) message->GetInteger ("response");
+      _handshake_result = (HandshakeResult) message->GetInteger ("response");
 
-      if (response == HandshakeResult::BACKUP_CHALLENGE_PASSED)
+      if (_handshake_result == HandshakeResult::BACKUP_CHALLENGE_PASSED)
       {
         Credentials *credentials = RetreiveBackupCredentials ();
 
@@ -899,7 +1013,7 @@ namespace Net
       }
       else
       {
-        if (response == HandshakeResult::CHALLENGE_PASSED)
+        if (_handshake_result == HandshakeResult::CHALLENGE_PASSED)
         {
           Partner *partner = new Partner (message,
                                           this);
@@ -908,8 +1022,20 @@ namespace Net
 
           partner->Release ();
         }
+        else if (_handshake_result == HandshakeResult::USB_TRUSTED)
+        {
+          gchar *password = message->GetString ("password");
 
-        _listener->OnHanshakeResult (response);
+          ChangePassphrase (password);
+          g_free (password);
+
+          TryToRelease (_trusted_drive);
+          _trusted_drive = nullptr;
+
+          AnnounceAvailability ();
+        }
+
+        _listener->OnHanshakeResult (_handshake_result);
       }
       return TRUE;
     }

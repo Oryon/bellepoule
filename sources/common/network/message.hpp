@@ -62,6 +62,8 @@ namespace Net
 
       void Remove (const gchar *field);
 
+      gboolean HasField (const gchar *field);
+
       gchar *GetString (const gchar *field);
 
       guint GetInteger (const gchar *field);
