@@ -14,13 +14,14 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef WIN32
-#include "windows.h"
-#endif
-
 #include "util/global.hpp"
+#include "ring.hpp"
 
 #include "web_server.hpp"
+
+#ifdef G_OS_WIN32
+#include "windows.h"
+#endif
 
 namespace Net
 {
@@ -28,167 +29,145 @@ namespace Net
   WebServer::WebServer (Listener *listener)
     : Object ("WebServer")
   {
-    g_mutex_init (&_mutex);
-
-    _in_progress  = FALSE;
-    _on           = FALSE;
-    _failed       = FALSE;
-    _listener     = listener;
+     _listener  = listener;
+     _child_pid = 0;
   }
 
   // --------------------------------------------------------------------------------
   WebServer::~WebServer ()
   {
-    _listener = nullptr;
-
-    g_mutex_lock (&_mutex);
-    ShutDown (this);
-
-    g_mutex_clear (&_mutex);
-  }
-
-  // --------------------------------------------------------------------------------
-  void WebServer::Prepare ()
-  {
-    _failed      = FALSE;
-    _in_progress = TRUE;
-
-    g_idle_add ((GSourceFunc) OnProgress,
-                this);
+    Stop ();
   }
 
   // --------------------------------------------------------------------------------
   void WebServer::Start ()
   {
-    if (g_mutex_trylock (&_mutex))
     {
-      g_thread_try_new ("WebServer::Start",
-                        (GThreadFunc) StartUp,
-                        this,
-                        nullptr);
+      gchar *cmd;
+
+#ifdef G_OS_WIN32
+      cmd = g_build_filename (Global::_share_dir, "scripts", "wwwstart.bat", NULL);
+#else
+      cmd = g_strdup ("killall php");
+#endif
+
+      Execute (cmd);
+      g_free (cmd);
     }
+
+#ifndef G_OS_WIN32
+    {
+      gchar   *working_dir = g_build_filename (Global::_www, "..", nullptr);
+      gchar   *cmd_line    = g_strdup_printf ("php7.0 -S %s%s", Ring::_broker->GetIpV4Address (), Global::_www_port);
+      GError  *error       = nullptr;
+      gchar  **argvp;
+
+      g_shell_parse_argv (cmd_line,
+                          nullptr,
+                          &argvp,
+                          nullptr);
+
+      if (g_spawn_async (working_dir,
+                         argvp,
+                         nullptr,
+                         (GSpawnFlags) (G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH),
+                         nullptr,
+                         nullptr,
+                         &_child_pid,
+                         &error) == FALSE)
+      {
+        g_warning ("g_spawn_async: %s\n", error->message);
+        g_clear_error (&error);
+
+        _listener->OnWebServerState (FALSE,
+                                     FALSE);
+      }
+      else
+      {
+        g_child_watch_add (_child_pid,
+                           (GChildWatchFunc) OnChildStatus,
+                           this);
+        _listener->OnWebServerState (FALSE,
+                                     TRUE);
+      }
+
+      g_strfreev (argvp);
+      g_free (cmd_line);
+      g_free (working_dir);
+    }
+#endif
   }
 
   // --------------------------------------------------------------------------------
   void WebServer::Stop ()
   {
-    if (g_mutex_trylock (&_mutex))
+#ifdef G_OS_WIN32
     {
-      g_thread_try_new ("WebServer::Stop",
-                        (GThreadFunc) ShutDown,
-                        this,
-                        nullptr);
+      gchar *cmd = g_build_filename (Global::_share_dir, "scripts", "wwwstop.bat", NULL);
+
+      Execute (cmd);
+      g_free (cmd);
     }
+#else
+    if (_child_pid)
+    {
+      kill (_child_pid, SIGINT);
+    }
+#endif
   }
 
   // --------------------------------------------------------------------------------
-  void WebServer::Spawn (const gchar *script)
+  void WebServer::Execute (const gchar *cmd)
   {
-    if (_failed == FALSE)
+    GError   *error        = nullptr;
+    gint      exit_status;
+    gboolean  spawn_status;
+
+#ifdef G_OS_WIN32
     {
-      GError   *error       = nullptr;
-      gint      exit_status;
-      gchar    *path        = g_build_filename (Global::_share_dir, "scripts", script, NULL);
-      gchar    *cmd_line;
-      gboolean  spawn_status;
+      guint windows_result;
 
-#ifdef WIN32
-      {
-        guint windows_result;
-
-        cmd_line = g_strdup_printf ("%s.bat", path);
-
-        windows_result = (guint32) ShellExecute (NULL,
-                                                 "open",
-                                                 cmd_line,
-                                                 NULL,
-                                                 Global::_share_dir,
-                                                 SW_HIDE);
-        spawn_status = windows_result > 32;
-        exit_status  = 0;
-      }
+      windows_result = (guint32) ShellExecute (NULL,
+                                               "open",
+                                               cmd,
+                                               NULL,
+                                               Global::_share_dir,
+                                               SW_HIDE);
+      spawn_status = windows_result > 32;
+      exit_status  = 0;
+    }
 #else
-      {
-        cmd_line     = g_strdup_printf ("pkexec %s.sh", path);
-        spawn_status = g_spawn_command_line_sync (cmd_line,
-                                                  nullptr,
-                                                  nullptr,
-                                                  &exit_status,
-                                                  &error);
-      }
+    {
+      spawn_status = g_spawn_command_line_sync (cmd,
+                                                nullptr,
+                                                nullptr,
+                                                &exit_status,
+                                                &error);
+    }
 #endif
 
-      if (spawn_status == FALSE)
-      {
-        _failed = TRUE;
-      }
-      if (exit_status == -1)
-      {
-        g_warning ("%s status: %d", cmd_line, exit_status);
-        _failed = TRUE;
-      }
-      if (error)
-      {
-        g_warning ("%s error: %s", cmd_line, error->message);
-        g_error_free (error);
-        _failed = TRUE;
-      }
-
-      g_free (cmd_line);
-      g_free (path);
+    if (spawn_status == FALSE)
+    {
+      g_warning ("g_spawn_command_line_sync failed");
+    }
+    if (error)
+    {
+      g_warning ("%s error: %s", cmd, error->message);
+      g_error_free (error);
+    }
+    if (exit_status == -1)
+    {
+      g_warning ("%s status: %d", cmd, exit_status);
     }
   }
 
   // --------------------------------------------------------------------------------
-  gpointer WebServer::StartUp (WebServer *server)
+  void WebServer::OnChildStatus (GPid       pid,
+                                 gint       status,
+                                 WebServer *server)
   {
-    if (server->_on == FALSE)
-    {
-      server->Prepare ();
-      server->Spawn ("wwwstart");
-
-      server->_on          = (server->_failed == FALSE);
-      server->_in_progress = FALSE;
-    }
-    g_mutex_unlock (&server->_mutex);
-
-    g_idle_add ((GSourceFunc) OnProgress,
-                server);
-
-    return nullptr;
-  }
-
-  // --------------------------------------------------------------------------------
-  gpointer WebServer::ShutDown (WebServer *server)
-  {
-    if (server->_on)
-    {
-      server->Prepare ();
-      server->Spawn ("wwwstop");
-
-      server->_on          = (server->_failed == TRUE);
-      server->_in_progress = FALSE;
-    }
-    g_mutex_unlock (&server->_mutex);
-
-    if (server->_listener)
-    {
-      g_idle_add ((GSourceFunc) OnProgress,
-                  server);
-    }
-
-    return nullptr;
-  }
-
-  // --------------------------------------------------------------------------------
-  guint WebServer::OnProgress (WebServer *server)
-  {
-    if (server->_listener)
-    {
-      server->_listener->OnWebServerState (server->_in_progress,
-                                           server->_on);
-    }
-
-    return G_SOURCE_REMOVE;
+    g_spawn_close_pid (pid);
+    server->_listener->OnWebServerState (FALSE,
+                                         FALSE);
   }
 }

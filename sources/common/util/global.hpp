@@ -23,9 +23,11 @@ class UserConfig;
 class Global
 {
   public:
-    static UserConfig *_user_config;
-    static gchar      *_share_dir;
-    static gchar      *_binary_dir;
+    static UserConfig  *_user_config;
+    static gchar       *_share_dir;
+    static gchar       *_binary_dir;
+    static gchar       *_www;
+    static const gchar *_www_port;
 
   private:
     Global ();

@@ -38,22 +38,15 @@ namespace Net
       void Stop ();
 
     private:
-      GMutex    _mutex;
+      GPid      _child_pid;
       Listener *_listener;
-      gboolean  _in_progress;
-      gboolean  _on;
-      gboolean  _failed;
 
       ~WebServer () override;
 
-      void Prepare ();
+      void Execute (const gchar *cmd);
 
-      void Spawn (const gchar *script);
-
-      static gpointer StartUp (WebServer *server);
-
-      static gpointer ShutDown (WebServer *server);
-
-      static guint OnProgress (WebServer *owner);
+      static void OnChildStatus (GPid       pid,
+                                 gint       status,
+                                 WebServer *server);
   };
 }

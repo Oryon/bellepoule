@@ -21,3 +21,9 @@
 UserConfig *Global::_user_config = nullptr;
 gchar      *Global::_share_dir   = nullptr;
 gchar      *Global::_binary_dir  = nullptr;
+gchar      *Global::_www         = nullptr;
+#ifdef G_OS_WIN32
+const gchar *Global::_www_port   = "";
+#else
+const gchar *Global::_www_port   = ":8080";
+#endif

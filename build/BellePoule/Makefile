@@ -177,9 +177,11 @@ SRC += $(wildcard sources/BellePoule/application/*.cpp)
 OBJ_LIB += $(SRC:.cpp=.o)
 
 ifeq ($(DISTRIB), bionic)
+GOOCANVAS_SOURCES = sources/goocanvas
 GOOCANVAS_LIB     = sources/goocanvas/src/.libs/libgoocanvas.so
 install_goocanvas = install_goocanvas
 else
+GOOCANVAS_SOURCES =
 GOOCANVAS_LIB     =
 install_goocanvas =
 endif
@@ -227,13 +229,13 @@ SHARED_LIB = $(OUTPUT)/lib$(PRODUCT).so
 endif
 
 STATIC_LIB =
-RPATH      = -Wl,-rpath,$(LIB_FOLDER)/$(PRODUCT)
+RPATH      = '-Wl,-rpath=$$ORIGIN/../lib/$(PRODUCT)'
 endif
 
 #----------------------------------------------------
 #-- Targets -----------------------------------------
 #----------------------------------------------------
-all: output sources/goocanvas $(OUTPUT)/$(PRODUCT)-backend$(EXE) $(OUTPUT)/$(PRODUCT)-marshaller$(EXE) $(OUTPUT)/$(PRODUCT)-supervisor$(EXE)
+all: output $(GOOCANVAS_SOURCES) $(OUTPUT)/$(PRODUCT)-backend$(EXE) $(OUTPUT)/$(PRODUCT)-marshaller$(EXE) $(OUTPUT)/$(PRODUCT)-supervisor$(EXE)
 
 sources/goocanvas:
 	tar xvjf goocanvas.tgz
@@ -345,12 +347,6 @@ publish_staging   = publish_fedora
 prepare_www       = 
 endif
 
-ifneq ("$(wildcard ./99-$(PRODUCT).conf)","")
-install_lighttpd = install_lighttpd
-else
-install_lighttpd = 
-endif
-
 package: prepare_staging $(prepare_linux) $(prepare_osx) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www) $(prepare_goocanvas)
 	rm -rf `find $(PACKAGE) -name "*~*"`
 	rm -rf `find $(PACKAGE) -name "*.swp"`
@@ -426,15 +422,7 @@ prepare_examples:
 	find $(EXAMPLES) -type f -exec chmod a-x {} \;
 
 prepare_www:
-	mkdir $(PACKAGE)/$(RELEASE)/www
-	cp -rf ../../sources/www/cognac/* $(PACKAGE)/$(RELEASE)/www
-	rm -rf $(PACKAGE)/$(RELEASE)/www/cotcot
-	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
-	sed -i 's/bellepoule/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
-	mkdir -p $(PACKAGE)/$(RELEASE)/scripts
-	cp -f  ../../scripts/www*sh $(PACKAGE)/$(RELEASE)/scripts
-	sed -i 's/bellepouledebug/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstart.sh
-	sed -i 's/bellepouledebug/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop.sh
+	cp -rf ../../resources/www.zip $(PACKAGE)/$(RELEASE)
 
 prepare_windows_resources:
 	mkdir -p $(RESOURCES)/glade/images
@@ -609,7 +597,7 @@ publish_arch:
 #----------------------------------------------------
 .PHONY: install clean_sources
 
-install: $(install_lighttpd) $(install_goocanvas)
+install: $(install_goocanvas)
 	mkdir -p $(DESTDIR)/usr/bin
 	mkdir -p $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)
 	install $(OUTPUT)/$(PRODUCT)-supervisor $(DESTDIR)/usr/bin/$(PRODUCT)-supervisor
@@ -622,6 +610,9 @@ install: $(install_lighttpd) $(install_goocanvas)
 	install --mode=644 debian/$(PRODUCT)-marshaller.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-marshaller.desktop
 	install --mode=644 debian/$(PRODUCT)-supervisor.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-supervisor.desktop
 	mkdir -p $(DESTDIR)/usr/share/$(PRODUCT)
+	#www
+	mkdir -p $(DESTDIR)/usr/share/$(PRODUCT)/resources
+	install --mode=644 www.zip $(DESTDIR)/usr/share/$(PRODUCT)/resources
 	#Examples
 	mkdir -p `find Exemples -type d | sed 's?Exemples?$(DESTDIR)/usr/share/$(PRODUCT)/&?'`
 	find Exemples -type f  | while read file;\
@@ -638,21 +629,6 @@ install: $(install_lighttpd) $(install_goocanvas)
 install_goocanvas:
 	mkdir -p $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)
 	install $(GOOCANVAS_LIB)   $(DESTDIR)$(LIB_FOLDER)/$(PRODUCT)/libgoocanvas.so.3
-
-install_lighttpd:
-	mkdir -p $(DESTDIR)/etc/lighttpd/conf-available
-	install --mode=644 99-$(PRODUCT).conf '$(DESTDIR)/etc/lighttpd/conf-available/'99-$(PRODUCT).conf ;
-	mkdir -p `find www -type d | sed 's?www?$(DESTDIR)/usr/share/$(PRODUCT)/webserver/LightTPD/&?'`
-	find www -type f  | while read file;\
-		do \
-		install --mode=644 $$file '$(DESTDIR)/usr/share/$(PRODUCT)/webserver/LightTPD/'$$file ;\
-		done
-	mkdir -p `find scripts -type d | sed 's?scripts?$(DESTDIR)/usr/share/$(PRODUCT)/&?'`
-	find scripts -type f  | while read file;\
-		do \
-		install --mode=755 $$file '$(DESTDIR)/usr/share/$(PRODUCT)/'$$file ;\
-		done
-	install --mode=1777 -d $(DESTDIR)/usr/share/$(PRODUCT)/webserver/LightTPD/www/cotcot
 
 clean_sources:
 	rm -f `find ../../sources -name "*.o"`

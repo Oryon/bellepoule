@@ -1,5 +1,4 @@
 [Desktop Entry]
-Version=4.0
 Type=Application
 Terminal=false
 Exec=/usr/bin/__PRODUCT__-__EXE__ %F

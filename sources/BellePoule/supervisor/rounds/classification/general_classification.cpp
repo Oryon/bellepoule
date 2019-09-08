@@ -194,8 +194,8 @@ namespace People
 
               if (rank_attr)
               {
-              player->SetAttributeValue (&final_rank_attr_id,
-                                         rank_attr->GetUIntValue () - excluded_count);
+                player->SetAttributeValue (&final_rank_attr_id,
+                                           rank_attr->GetUIntValue () - excluded_count);
               }
               else
               {

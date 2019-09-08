@@ -126,11 +126,17 @@ void Tournament::Start (gchar *filename)
 
   // URL QrCode
   {
-    gchar *html_url;
+    GtkWidget *link_button = _glade->GetWidget ("linkbutton");
+    gchar     *html_url;
 
-    html_url = g_strdup_printf ("http://%s/index.php", Net::Ring::_broker->GetIpV4Address ());
+    html_url = g_strdup_printf ("http://%s%s", Net::Ring::_broker->GetIpV4Address (), Global::_www_port);
 
     SetFlashRef (html_url);
+
+    gtk_link_button_set_uri (GTK_LINK_BUTTON (link_button),
+                             html_url);
+    gtk_button_set_label (GTK_BUTTON (link_button),
+                          html_url);
 
     g_free (html_url);
   }
@@ -1290,13 +1296,16 @@ Publication *Tournament::GetPublication ()
 void Tournament::OnWebServerState (gboolean in_progress,
                                    gboolean on)
 {
-  GtkWidget       *hbox       = _glade->GetWidget ("video_toggle_hbox");
-  GtkWidget       *spinner    = _glade->GetWidget ("video_spinner");
-  GtkToggleButton *on_toggle  = GTK_TOGGLE_BUTTON (_glade->GetWidget ("video_on"));
-  GtkToggleButton *off_toggle = GTK_TOGGLE_BUTTON (_glade->GetWidget ("video_off"));
+  GtkWidget       *hbox        = _glade->GetWidget ("video_toggle_hbox");
+  GtkWidget       *spinner     = _glade->GetWidget ("video_spinner");
+  GtkToggleButton *on_toggle   = GTK_TOGGLE_BUTTON (_glade->GetWidget ("video_on"));
+  GtkToggleButton *off_toggle  = GTK_TOGGLE_BUTTON (_glade->GetWidget ("video_off"));
+  GtkWidget       *link_button = _glade->GetWidget ("linkbutton");
 
-  gtk_toggle_button_set_active (on_toggle,  (on == TRUE));
-  gtk_toggle_button_set_active (off_toggle, (on == FALSE));
+  gtk_toggle_button_set_active (on_toggle,   (on == TRUE));
+  gtk_toggle_button_set_active (off_toggle,  (on == FALSE));
+  gtk_widget_set_sensitive     (link_button, (on == TRUE));
+
   if (in_progress == TRUE)
   {
     gtk_widget_set_sensitive (hbox, FALSE);
