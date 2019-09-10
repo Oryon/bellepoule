@@ -42,6 +42,7 @@ namespace Pool
 
   // --------------------------------------------------------------------------------
   Pool::Pool (Data        *max_score,
+              guint        workload,
               guint        number,
               const gchar *xml_player_tag,
               guint32      rand_seed,
@@ -73,6 +74,7 @@ namespace Pool
       _strength              = 0;
       _strength_contributors = 0;
       _rank_owner            = rank_owner;
+      _workload              = workload;
 
       _status_listener       = nullptr;
 
@@ -2350,7 +2352,7 @@ namespace Pool
                  _duration_sec);
 
     parcel->Set ("workload_units",
-                 _max_score->_value * GetNbMatchs ());
+                 _workload);
   }
 
   // --------------------------------------------------------------------------------

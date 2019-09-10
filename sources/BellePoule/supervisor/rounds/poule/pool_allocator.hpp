@@ -188,6 +188,8 @@ namespace Pool
 
       PoolZone *GetPoolOf (Player *of);
 
+      guint GetWorkload ();
+
       void DropObject (Object   *object,
                        DropZone *source_zone,
                        DropZone *target_zone) override;

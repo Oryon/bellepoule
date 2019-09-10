@@ -994,6 +994,7 @@ namespace Pool
             guint number = g_slist_length (_drop_zones);
 
             current_pool = new Pool (_max_score,
+                                     GetWorkload (),
                                      number+1,
                                      GetXmlPlayerTag (),
                                      _rand_seed,
@@ -1287,6 +1288,7 @@ namespace Pool
       for (guint i = 0; i < nb_pool; i++)
       {
         pool_table[i] = new Pool (_max_score,
+                                  GetWorkload (),
                                   i+1,
                                   GetXmlPlayerTag (),
                                   _rand_seed,
@@ -1409,6 +1411,19 @@ namespace Pool
         return _selected_config->_size + 1;
       }
       return _selected_config->_size;
+    }
+
+    return 0;
+  }
+
+  // --------------------------------------------------------------------------------
+  guint Allocator::GetWorkload ()
+  {
+    guint biggest = GetBiggestPoolSize ();
+
+    if (biggest)
+    {
+      return _max_score->_value * ((biggest * (biggest - 1)) / 2);
     }
 
     return 0;

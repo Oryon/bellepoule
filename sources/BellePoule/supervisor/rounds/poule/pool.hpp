@@ -55,6 +55,7 @@ namespace Pool
 
     public:
       Pool (Data        *max_score,
+            guint        workload,
             guint        number,
             const gchar *xml_player_tag,
             guint32      rand_seed,
@@ -166,6 +167,7 @@ namespace Pool
       guint            _strength;
       guint            _strength_contributors;
       Dispatcher      *_dispatcher;
+      guint            _workload;
 
       StatusListener  *_status_listener;
 

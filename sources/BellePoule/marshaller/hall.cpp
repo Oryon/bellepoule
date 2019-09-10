@@ -1371,28 +1371,37 @@ namespace Marshaller
     {
       GList *swap_list = nullptr;
 
-      for (GList *current = jobs; current; current = g_list_next (current))
       {
-        Job  *job      = (Job *) current->data;
-        Slot *now_slot = job->GetSlot ();
+        Slot  *first_slot  = nullptr;
+        GList *sorted_list = g_list_copy (jobs);
 
-        if (g_list_find (sticky_slots,
-                         now_slot) == nullptr)
+        sorted_list = g_list_sort (sorted_list,
+                                   (GCompareFunc) Job::CompareStartTime);
+
+        for (GList *current = sorted_list; current; current = g_list_next (current))
         {
-          GList *referees = now_slot->GetRefereeList ();
+          Job  *job      = (Job *) current->data;
+          Slot *now_slot = job->GetSlot ();
 
-          if (referees)
+          if (now_slot->GetRefereeList ())
           {
-            EnlistedReferee *referee     = (EnlistedReferee *) referees->data;
-            Slot            *before_slot = referee->GetSlotJustBefore (now_slot);
-
-            if (before_slot)
+            if (first_slot == nullptr)
             {
-              swap_list = g_list_append (swap_list,
-                                         now_slot);
+              first_slot = now_slot;
+            }
+            else if (g_list_find (sticky_slots,
+                                  now_slot) == nullptr)
+            {
+              if (Slot::CompareAvailbility (first_slot, now_slot) != 0)
+              {
+                swap_list = g_list_append (swap_list,
+                                           now_slot);
+              }
             }
           }
         }
+
+        g_list_free (sorted_list);
       }
 
       {
@@ -1400,39 +1409,43 @@ namespace Marshaller
 
         while (swap_list)
         {
-          Slot            *slot_a            = (Slot *) swap_list->data;
-          EnlistedReferee *referee_a         = (EnlistedReferee *) slot_a->GetRefereeList ()->data;
-          Slot            *before_slot_a     = referee_a->GetSlotJustBefore (slot_a);
-          Piste           *piste_needed_by_a = (Piste *) before_slot_a->GetPiste ();
+          Slot            *slot_a        = (Slot *) swap_list->data;
+          EnlistedReferee *referee_a     = (EnlistedReferee *) slot_a->GetRefereeList ()->data;
+          Slot            *before_slot_a = referee_a->GetSlotJustBefore (slot_a);
 
-          if (piste_needed_by_a != slot_a->GetPiste ())
+          if (before_slot_a)
           {
-            Slot *free_slot = piste_needed_by_a->GetFreeSlot (slot_a->GetStartTime (),
-                                                              slot_a->GetDuration ());
+            Piste *piste_needed_by_a = (Piste *) before_slot_a->GetPiste ();
 
-            if (free_slot)
+            if (piste_needed_by_a != slot_a->GetPiste ())
             {
-              slot_a->Swap (free_slot);
-              slot_a->Release ();
-            }
-            else
-            {
-              for (GList *b = swappable_list; b; b = g_list_next (b))
+              Slot *free_slot = piste_needed_by_a->GetFreeSlot (slot_a->GetStartTime (),
+                                                                slot_a->GetDuration ());
+
+              if (free_slot)
               {
-                Slot *slot_b = (Slot *) b->data;
-
-                if (   (slot_b != slot_a)
-                    && (slot_b->GetPiste () == piste_needed_by_a)
-                    && slot_b->Equals (slot_a))
+                slot_a->Swap (free_slot);
+                slot_a->Release ();
+              }
+              else
+              {
+                for (GList *b = swappable_list; b; b = g_list_next (b))
                 {
-                  slot_a->Swap (slot_b);
+                  Slot *slot_b = (Slot *) b->data;
 
-                  slot_a = nullptr;
-                  swap_list = g_list_remove (swap_list,
-                                             slot_b);
-                  swappable_list = g_list_remove (swappable_list,
-                                                  slot_b);
-                  break;
+                  if (   (slot_b != slot_a)
+                      && (slot_b->GetPiste () == piste_needed_by_a)
+                      && slot_b->Equals (slot_a))
+                  {
+                    slot_a->Swap (slot_b);
+
+                    slot_a = nullptr;
+                    swap_list = g_list_remove (swap_list,
+                                               slot_b);
+                    swappable_list = g_list_remove (swappable_list,
+                                                    slot_b);
+                    break;
+                  }
                 }
               }
             }
@@ -1558,13 +1571,6 @@ namespace Marshaller
     sorted_list = g_list_sort_with_data (g_list_copy (referee_list),
                                          (GCompareDataFunc) CompareReferee,
                                          job->GetFencerList ());
-
-    for (GList *current_referee = sorted_list; current_referee; current_referee = g_list_next (current_referee))
-    {
-      EnlistedReferee *referee = (EnlistedReferee *) current_referee->data;
-
-      printf ("  - %s\n", referee->GetName ());
-    }
 
     for (GList *current_referee = sorted_list; current_referee; current_referee = g_list_next (current_referee))
     {

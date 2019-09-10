@@ -282,7 +282,6 @@ namespace Marshaller
       GtkTreeModel *model          = gtk_tree_view_get_model (tree_view);
       GList        *selection_list = gtk_tree_selection_get_selected_rows (selection,
                                                                            nullptr);
-
       for (GList *current = selection_list; current; current = g_list_next (current))
       {
         GtkTreeIter  iter;
@@ -670,17 +669,21 @@ namespace Marshaller
                              guint             key,
                              guint             time)
   {
-    GList   *selected = RetreivePendingSelected ();
-    Job     *job      = (Job *) selected->data;
-    guint32  job_ref  = job->GetNetID ();
+    GList *selected = RetreivePendingSelected ();
 
-    gtk_selection_data_set (data,
-                            gtk_selection_data_get_target (data),
-                            32,
-                            (guchar *) &job_ref,
-                            sizeof (job_ref));
+    if (selected)
+    {
+      Job     *job      = (Job *) selected->data;
+      guint32  job_ref  = job->GetNetID ();
 
-    g_list_free (selected);
+      gtk_selection_data_set (data,
+                              gtk_selection_data_get_target (data),
+                              32,
+                              (guchar *) &job_ref,
+                              sizeof (job_ref));
+
+      g_list_free (selected);
+    }
   }
 
   // --------------------------------------------------------------------------------
