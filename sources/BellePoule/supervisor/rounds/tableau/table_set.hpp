@@ -78,9 +78,9 @@ namespace Table
 
       void OnMatchSheetToggled (GtkWidget *widget);
 
-      void OnDisplayToggled (GtkWidget *widget);
-
       void OnSearchMatch ();
+
+      gboolean OnGotoMatch (gint number);
 
       void OnPrint ();
 
@@ -193,6 +193,7 @@ namespace Table
       HtmlTable           *_html_table;
       GdkPixbuf           *_printer_pixbuf;
       Filter              *_right_filter;
+      GooCanvasItem       *_last_search;
 
       Listener *_listener;
 

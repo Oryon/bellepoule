@@ -842,17 +842,32 @@ namespace Table
   {
     if ((_displayed_table_set == nullptr) || (table_set == _displayed_table_set))
     {
-      Table *previous = from->GetLeftTable ();
-      Table *next     = from->GetRightTable ();
+      {
+        Table *previous = from->GetLeftTable ();
+        Table *next     = from->GetRightTable ();
 
-      gtk_widget_set_sensitive (_glade->GetWidget ("previous_button"),
-                                previous != nullptr);
+        gtk_widget_set_sensitive (_glade->GetWidget ("previous_button"),
+                                  previous != nullptr);
 
-      gtk_widget_set_sensitive (_glade->GetWidget ("next_button"),
-                                next && (next->_ready_to_fence || next->_is_over));
+        gtk_widget_set_sensitive (_glade->GetWidget ("next_button"),
+                                  next && (next->_ready_to_fence || next->_is_over));
 
-      gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("from_label")),
-                          from->GetMiniName ());
+        gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("from_label")),
+                            from->GetMiniName ());
+      }
+
+      {
+        gchar *name_space = g_strdup_printf ("%d-%d.", table_set->GetFirstPlace (), from->GetSize ());
+
+        gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("search_namespace")),
+                            name_space);
+        g_free (name_space);
+      }
+
+      {
+        gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("search_entry")),
+                            "");
+      }
     }
   }
 
@@ -1239,6 +1254,42 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  void Supervisor::OnSearchMatch (GtkEditable *editable)
+  {
+    gtk_widget_modify_base (GTK_WIDGET (editable),
+                            GTK_STATE_NORMAL,
+                            nullptr);
+
+    if (_displayed_table_set)
+    {
+      gchar *text = gtk_editable_get_chars (editable,
+                                            0,
+                                            -1);
+
+      if (text && text[0])
+      {
+        gint number = (gint) g_ascii_strtoll (text,
+                                              nullptr,
+                                              10);
+
+        if (_displayed_table_set->OnGotoMatch (number) == FALSE)
+        {
+          GdkColor *color = g_new (GdkColor, 1);
+
+          gdk_color_parse ("#d52323",
+                           color);
+          gtk_widget_modify_base (GTK_WIDGET (editable),
+                                  GTK_STATE_NORMAL,
+                                  color);
+          g_free (color);
+        }
+      }
+
+      g_free (text);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   gchar *Supervisor::GetPrintName ()
   {
     if (_displayed_table_set)
@@ -1464,5 +1515,14 @@ namespace Table
     Supervisor *t = dynamic_cast <Supervisor *> (owner);
 
     t->OnPrintTableScoreSheets ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_search_entry_changed (GtkEditable *editable,
+                                                           Object      *owner)
+  {
+    Supervisor *t = dynamic_cast <Supervisor *> (owner);
+
+    t->OnSearchMatch (editable);
   }
 }

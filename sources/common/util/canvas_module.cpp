@@ -223,6 +223,17 @@ void CanvasModule::RestoreZoomFactor ()
 }
 
 // --------------------------------------------------------------------------------
+void CanvasModule::Swipe (gdouble to_x,
+                          gdouble to_y)
+{
+  gtk_adjustment_set_value (gtk_scrolled_window_get_hadjustment (_scrolled_window),
+                            to_x * _zoom_factor);
+  gtk_adjustment_set_value (gtk_scrolled_window_get_vadjustment (_scrolled_window),
+                            to_y * _zoom_factor);
+  RestoreZoomFactor ();
+}
+
+// --------------------------------------------------------------------------------
 GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
                                              const gchar   *common_markup,
                                              Player        *player,

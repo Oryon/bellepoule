@@ -5,7 +5,7 @@
   <!-- interface-local-resource-path images -->
   <object class="GtkTreeStore" id="match_treestore">
     <columns>
-      <!-- column-name match_name -->
+      <!-- column-name name -->
       <column type="gchararray"/>
       <!-- column-name match -->
       <column type="gpointer"/>
@@ -13,6 +13,8 @@
       <column type="gchararray"/>
       <!-- column-name visibility -->
       <column type="gboolean"/>
+      <!-- column-name node -->
+      <column type="gpointer"/>
     </columns>
   </object>
   <object class="GtkTreeModelFilter" id="match_treemodelfilter">

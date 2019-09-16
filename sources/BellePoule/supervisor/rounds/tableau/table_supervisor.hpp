@@ -46,6 +46,7 @@ namespace Table
       void OnInputToggled (GtkWidget *widget);
       void OnPrintTableSet ();
       void OnPrintTableScoreSheets ();
+      void OnSearchMatch (GtkEditable *editable);
       void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
       void OnTableOver (TableSet *table_set,
                         Table    *table);

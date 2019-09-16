@@ -60,6 +60,9 @@ class CanvasModule : public Module
 
     void RestoreZoomFactor ();
 
+    void Swipe (gdouble to_x,
+                gdouble to_y);
+
   protected:
     guint PreparePrint (GtkPrintOperation *operation,
                                 GtkPrintContext   *context) override;

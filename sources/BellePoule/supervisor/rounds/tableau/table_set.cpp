@@ -58,7 +58,8 @@ namespace Table
     MATCH_NAME_str,
     MATCH_ptr,
     MATCH_PATH_str,
-    MATCH_VISIBILITY_bool
+    MATCH_VISIBILITY_bool,
+    MATCH_NODE_ptr
   };
 
   // --------------------------------------------------------------------------------
@@ -90,6 +91,7 @@ namespace Table
     _html_table       = new HtmlTable (supervisor_module);
     _from_table       = nullptr;
     _to_table         = nullptr;
+    _last_search      = nullptr;
 
     _listener         = nullptr;
 
@@ -1637,6 +1639,9 @@ namespace Table
         gtk_tree_store_append (_quick_search_treestore,
                                &iter,
                                &table_iter);
+        gtk_tree_store_set (_quick_search_treestore, &iter,
+                            QuickMatchSearchColumnId::MATCH_NODE_ptr, node,
+                            -1);
 
         path = gtk_tree_model_get_path (GTK_TREE_MODEL (_quick_search_treestore),
                                         &iter);
@@ -1768,6 +1773,8 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::Wipe ()
   {
+    _last_search = nullptr;
+
     {
       Object::TryToRelease (_score_collector);
 
@@ -2448,21 +2455,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::OnDisplayToggled (GtkWidget *widget)
-  {
-    GtkWidget *vbox = _glade->GetWidget ("display_vbox");
-
-    if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)))
-    {
-      gtk_widget_show (vbox);
-    }
-    else
-    {
-      gtk_widget_hide (vbox);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean TableSet::PlaceIsFenced (guint place)
   {
     if (place == 4)
@@ -2641,18 +2633,76 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  gboolean TableSet::OnGotoMatch (gint number)
+  {
+    gboolean found = FALSE;
+
+    if (_from_table)
+    {
+      GtkTreeIter  parent;
+      GtkTreePath *path = gtk_tree_path_new_from_indices (_from_table->GetNumber (),
+                                                          -1);
+
+      if (gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_filter),
+                                   &parent,
+                                   path))
+      {
+        GtkTreeIter iter;
+        gboolean     iter_is_valid = gtk_tree_model_iter_children (GTK_TREE_MODEL (_quick_search_filter),
+                                                                   &iter,
+                                                                   &parent);
+        while (iter_is_valid)
+        {
+          Match *match;
+
+          gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
+                              &iter,
+                              QuickMatchSearchColumnId::MATCH_ptr, &match,
+                              -1);
+
+          if (match->GetNumber () == number)
+          {
+            found = TRUE;
+            gtk_combo_box_set_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
+                                           &iter);
+            break;
+          }
+
+          iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_quick_search_filter),
+                                                    &iter);
+        }
+      }
+
+      gtk_tree_path_free (path);
+    }
+
+    return found;
+  }
+
+  // --------------------------------------------------------------------------------
   void TableSet::OnSearchMatch ()
   {
     GtkTreeIter iter;
+
+    if (_last_search)
+    {
+      g_object_set (G_OBJECT (_last_search),
+                    "fill-color", "white",
+                    NULL);
+
+      _last_search = nullptr;
+    }
 
     if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
                                        &iter))
     {
       Match *match;
+      GNode *node;
 
       gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
                           &iter,
-                          QuickMatchSearchColumnId::MATCH_ptr, &match,
+                          QuickMatchSearchColumnId::MATCH_ptr,      &match,
+                          QuickMatchSearchColumnId::MATCH_NODE_ptr, &node,
                           -1);
 
       if (match)
@@ -2682,6 +2732,24 @@ namespace Table
           gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerB_label")),
                               name);
           g_free (name);
+
+          {
+            GNode *first_child = g_node_first_child (node);
+
+            if (first_child)
+            {
+              GooCanvasBounds bounds;
+
+              _last_search = ((NodeData *) node->data)->_match_goo_table;
+              g_object_set (G_OBJECT (_last_search),
+                            "fill-color", "yellow",
+                            NULL);
+              goo_canvas_item_get_bounds (((NodeData*) (first_child->data))->_fencer_goo_table,
+                                          &bounds);
+              Swipe (0,
+                     bounds.y1);
+            }
+          }
 
           return;
         }
@@ -3616,19 +3684,30 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::OnPrint ()
   {
-    gchar        *print_name    = GetPrintName ();
-    gchar        *title         = _supervisor->GetFullName ();
-    PrintSession *print_session;
+    if (_last_search)
+    {
+      g_object_set (G_OBJECT (_last_search),
+                    "fill-color", "white",
+                    NULL);
 
-    print_session = new PrintSession (PrintSession::Type::DISPLAYED_TABLES,
-                                      title,
-                                      _from_table);
-    PrintPreview (print_name,
-                  print_session);
+      _last_search = nullptr;
+    }
 
-    print_session->Release ();
-    g_free (title);
-    g_free (print_name);
+    {
+      gchar        *print_name    = GetPrintName ();
+      gchar        *title         = _supervisor->GetFullName ();
+      PrintSession *print_session;
+
+      print_session = new PrintSession (PrintSession::Type::DISPLAYED_TABLES,
+                                        title,
+                                        _from_table);
+      PrintPreview (print_name,
+                    print_session);
+
+      print_session->Release ();
+      g_free (title);
+      g_free (print_name);
+    }
   }
 
   // --------------------------------------------------------------------------------
