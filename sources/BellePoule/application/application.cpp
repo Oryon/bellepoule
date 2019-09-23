@@ -20,14 +20,6 @@
 #include <sys/types.h>
 #include <gdk/gdkkeysyms.h>
 
-#ifdef WINDOWS_TEMPORARY_PATCH
-#  ifndef WIN32_LEAN_AND_MEAN
-#    define WIN32_LEAN_AND_MEAN
-#  endif
-#  include <windows.h>
-#  include <shellapi.h>
-#endif
-
 #ifdef OSX
 #include <execinfo.h>
 #include "CoreFoundation/CoreFoundation.h"
@@ -633,19 +625,7 @@ void Application::AboutDialogActivateLinkFunc (GtkAboutDialog *about,
                                                const gchar    *link,
                                                gpointer        data)
 {
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecuteA (NULL,
-                 "open",
-                 link,
-                 NULL,
-                 NULL,
-                 SW_SHOWNORMAL);
-#else
-  gtk_show_uri (nullptr,
-                link,
-                GDK_CURRENT_TIME,
-                nullptr);
-#endif
+  ShowUri (link);
 }
 
 // --------------------------------------------------------------------------------
@@ -676,25 +656,8 @@ void Application::OnOpenUserManual ()
     uri = g_build_filename (Global::_share_dir, "resources", "translations", "user_manual.pdf", NULL);
   }
 
-
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecute (NULL,
-                "open",
-                uri,
-                NULL,
-                NULL,
-                SW_SHOWNORMAL);
-#else
-  {
-    gchar *full_uri = g_build_filename ("file://", uri, NULL);
-
-    gtk_show_uri (nullptr,
-                  full_uri,
-                  GDK_CURRENT_TIME,
-                  nullptr);
-    g_free (full_uri);
-  }
-#endif
+  ShowUri (uri,
+           "file://");
 
   g_free (uri);
 }
@@ -826,41 +789,42 @@ void Application::OnQuit (GtkWindow *window)
 }
 
 // --------------------------------------------------------------------------------
+void Application::OnOpenWebSite (const gchar *page)
+{
+  const gchar *language = g_getenv ("LANGUAGE");
+  GString     *uri      = g_string_new ("http://betton.escrime.free.fr/fencing-tournament-software/");
+
+  if (g_strcmp0 (language, "fr") == 0)
+  {
+    g_string_append (uri, "fr/");
+  }
+  else
+  {
+    g_string_append (uri, "en/");
+  }
+
+  g_string_append (uri, page);
+
+  Object::ShowUri (uri->str);
+
+  g_string_free (uri,
+                 TRUE);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *menuitem,
                                                                   Object      *owner)
 {
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecuteA (NULL,
-                 "open",
-                 "http://betton.escrime.free.fr/index.php/bellepoule-telechargement",
-                 NULL,
-                 NULL,
-                 SW_SHOWNORMAL);
-#else
-  gtk_show_uri (nullptr,
-                "http://betton.escrime.free.fr/index.php/bellepoule-telechargement",
-                GDK_CURRENT_TIME,
-                nullptr);
-#endif
+  Application *a = dynamic_cast <Application *> (owner);
+
+  a->OnOpenWebSite ("v" VERSION "-alpha");
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_translate_menuitem_activate (GtkWidget *w,
                                                                 Object    *owner)
 {
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecuteA (NULL,
-                 "open",
-                 "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
-                 NULL,
-                 NULL,
-                 SW_SHOWNORMAL);
-#else
-  gtk_show_uri (nullptr,
-                "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
-                GDK_CURRENT_TIME,
-                nullptr);
-#endif
+  Object::ShowUri ("http://betton.escrime.free.fr/fencing-tournament-software/en/translate");
 }
 
 // --------------------------------------------------------------------------------
@@ -882,6 +846,13 @@ extern "C" G_MODULE_EXPORT void on_user_manual_activate (GtkWidget *w,
                                                       "application");
 
   a->OnOpenUserManual ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_release_notes_activate (GtkWidget *w,
+                                                           Object    *owner)
+{
+  Object::ShowUri ("https://git.launchpad.net/bellepoule/log/?h=" VERSION ".0/master");
 }
 
 // --------------------------------------------------------------------------------

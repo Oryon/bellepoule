@@ -119,8 +119,6 @@ CFLAGS += -DDEBUG=1
 endif
 
 ifeq ($(DISTRIB), windows)
-CFLAGS += -DWINDOWS_TEMPORARY_PATCH=1
-CFLAGS += -DWIN32
 CFLAGS += -I$(MINGW)/include
 else ifeq ($(DISTRIB), osx)
 CFLAGS += -DOSX

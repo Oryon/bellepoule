@@ -21,7 +21,7 @@
 
 #define BP_FONT "Sans "
 
-#ifdef WIN32
+#ifdef G_OS_WIN32
 #  define RED     ""
 #  define GREEN   ""
 #  define YELLOW  ""
@@ -155,6 +155,9 @@ class Object
     static void Track (const gchar *klass);
 
     void MakeLocaleFilenameFromUtf8 (gchar **filename);
+
+    static void ShowUri (const gchar *uri,
+                         const gchar *protocol = "");
 
   protected:
     FlashCode    *_flash_code;

@@ -43,6 +43,8 @@ class Application :
 
     void OnOpenUserManual ();
 
+    void OnOpenWebSite (const gchar *page);
+
     virtual void OnQuit (GtkWindow *window);
 
   protected:

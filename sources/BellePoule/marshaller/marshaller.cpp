@@ -16,12 +16,6 @@
 
 #include <locale.h>
 
-#ifdef WINDOWS_TEMPORARY_PATCH
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <shellapi.h>
-#endif
-
 #include "util/drop_zone.hpp"
 #include "util/dnd_config.hpp"
 #include "util/attribute.hpp"
@@ -817,19 +811,7 @@ namespace Marshaller
   extern "C" G_MODULE_EXPORT void on_SmartPoule_button_clicked (GtkButton *widget,
                                                                 gpointer   user_data)
   {
-#ifdef WINDOWS_TEMPORARY_PATCH
-    ShellExecute (NULL,
-                  "open",
-                  "https://play.google.com/store/apps/details?id=betton.escrime.smartpoule",
-                  NULL,
-                  NULL,
-                  SW_SHOWNORMAL);
-#else
-    gtk_show_uri (nullptr,
-                  "https://play.google.com/store/apps/details?id=betton.escrime.smartpoule",
-                  GDK_CURRENT_TIME,
-                  nullptr);
-#endif
+    Object::ShowUri ("https://play.google.com/store/apps/details?id=betton.escrime.smartpoule");
   }
 
   // --------------------------------------------------------------------------------

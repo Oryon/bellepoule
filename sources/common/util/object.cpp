@@ -19,6 +19,14 @@
 #include "flash_code.hpp"
 #include "object.hpp"
 
+#ifdef G_OS_WIN32
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN
+#  endif
+#  include <windows.h>
+#  include <shellapi.h>
+#endif
+
 #ifdef DEBUG
 guint        Object::_nb_objects     = 0;
 GList       *Object::_list           = nullptr;
@@ -191,6 +199,30 @@ gchar *Object::GetUndivadableText (const gchar *text)
   }
 
   return (gchar *) result;
+}
+
+// --------------------------------------------------------------------------------
+void Object::ShowUri (const gchar *uri,
+                      const gchar *protocol)
+{
+#ifdef G_OS_WIN32
+  ShellExecuteA (nullptr,
+                 "open",
+                 uri,
+                 nullptr,
+                 nullptr,
+                 SW_SHOWNORMAL);
+#else
+  {
+    gchar *full_uri = g_build_filename (protocol, uri, NULL);
+
+    gtk_show_uri (nullptr,
+                  full_uri,
+                  GDK_CURRENT_TIME,
+                  nullptr);
+    g_free (full_uri);
+  }
+#endif
 }
 
 // --------------------------------------------------------------------------------
@@ -441,7 +473,7 @@ void Object::Dump ()
 // --------------------------------------------------------------------------------
 void Object::MakeLocaleFilenameFromUtf8 (gchar **filename)
 {
-#ifdef WIN32
+#ifdef G_OS_WIN32
   gchar *locale_filename = g_win32_locale_filename_from_utf8 (*filename);
 
   g_free (*filename);

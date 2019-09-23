@@ -15,11 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <errno.h>
-
 #include <gio/gnetworking.h>
-#ifndef WIN32
-#include <ifaddrs.h>
-#endif
 
 #include "util/object.hpp"
 #include "util/global.hpp"
@@ -33,6 +29,10 @@
 #include "usb_drive.hpp"
 #include "usb_challenge.hpp"
 #include "ring.hpp"
+
+#ifndef G_OS_WIN32
+#include <ifaddrs.h>
+#endif
 
 //#define MULTICAST_ANNOUNCE
 #define WITH_BACKUP_CREDENTIALS
@@ -1075,7 +1075,7 @@ namespace Net
   {
     const gchar *broadcast_address = nullptr;
 
-#ifdef WIN32
+#ifdef G_OS_WIN32
 #if 0
     {
       struct hostent *hostinfo;

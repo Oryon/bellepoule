@@ -20,12 +20,6 @@
 #include <libxml/xpath.h>
 #include <zip.h>
 
-#ifdef WINDOWS_TEMPORARY_PATCH
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <shellapi.h>
-#endif
-
 #include "util/global.hpp"
 #include "util/canvas.hpp"
 #include "util/attribute.hpp"
@@ -847,29 +841,19 @@ void Tournament::OnOpenTemplate ()
   {
     gchar *uri;
 
-#ifdef WINDOWS_TEMPORARY_PATCH
+#ifdef G_OS_WIN32
     uri = g_locale_from_utf8 (filename,
                               -1,
                               nullptr,
                               nullptr,
                               nullptr);
-
-    ShellExecute (NULL,
-                  "open",
-                  uri,
-                  NULL,
-                  NULL,
-                  SW_SHOWNORMAL);
 #else
     uri = g_filename_to_uri (filename,
                              nullptr,
                              nullptr);
-    gtk_show_uri (nullptr,
-                  uri,
-                  GDK_CURRENT_TIME,
-                  nullptr);
 #endif
 
+    ShowUri (uri);
     g_free (uri);
   }
 

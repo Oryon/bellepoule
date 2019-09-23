@@ -89,7 +89,7 @@ namespace Net
                                 nullptr, nullptr,
                                 (MHD_AccessHandlerCallback)         OnMicroHttpRequest,          this,
                                 MHD_OPTION_NOTIFY_COMPLETED,        OnMicroHttpRequestCompleted, this,
-#ifdef WIN32
+#ifdef G_OS_WIN32
                                 MHD_OPTION_LISTENING_ADDRESS_REUSE, SO_REUSEADDR,
 #else
                                 MHD_OPTION_LISTENING_ADDRESS_REUSE, SO_REUSEPORT,

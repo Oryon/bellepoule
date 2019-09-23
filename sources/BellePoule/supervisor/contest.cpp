@@ -26,12 +26,6 @@
 #include <glib/gprintf.h>
 #include <goocanvas.h>
 
-#ifdef WINDOWS_TEMPORARY_PATCH
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <shellapi.h>
-#endif
-
 #include "util/global.hpp"
 #include "util/canvas.hpp"
 #include "util/user_config.hpp"
@@ -2267,19 +2261,7 @@ void Contest::on_web_site_button_clicked ()
 {
   GtkWidget *entry = _glade->GetWidget ("web_site_entry");
 
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecuteA (NULL,
-                 "open",
-                 gtk_entry_get_text (GTK_ENTRY (entry)),
-                 NULL,
-                 NULL,
-                 SW_SHOWNORMAL);
-#else
-  gtk_show_uri (nullptr,
-                gtk_entry_get_text (GTK_ENTRY (entry)),
-                GDK_CURRENT_TIME,
-                nullptr);
-#endif
+  ShowUri (gtk_entry_get_text (GTK_ENTRY (entry)));
 }
 
 // --------------------------------------------------------------------------------

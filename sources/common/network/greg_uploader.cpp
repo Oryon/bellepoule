@@ -104,7 +104,7 @@ namespace Net
 
     if (_current_job == 0)
     {
-#ifdef WIN32
+#ifdef G_OS_WIN32
       _local_file = g_win32_locale_filename_from_utf8 (_file_path);
 #else
       _local_file = g_strdup (_file_path);

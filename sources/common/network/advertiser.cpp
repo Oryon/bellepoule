@@ -14,12 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef WINDOWS_TEMPORARY_PATCH
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <shellapi.h>
-#endif
-
 #include "util/global.hpp"
 #include "util/glade.hpp"
 
@@ -449,25 +443,4 @@ extern "C" G_MODULE_EXPORT void on_entry_icon_press (GtkEntry             *entry
   Net::Advertiser *a = dynamic_cast <Net::Advertiser *> (owner);
 
   a->OnResetAccount ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_pin_url_clicked (GtkWidget *widget,
-                                                    Object    *owner)
-{
-  const gchar *uri = gtk_link_button_get_uri (GTK_LINK_BUTTON (widget));
-
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecute (NULL,
-                "open",
-                uri,
-                NULL,
-                NULL,
-                SW_SHOWNORMAL);
-#else
-  gtk_show_uri (nullptr,
-                uri,
-                GDK_CURRENT_TIME,
-                nullptr);
-#endif
 }

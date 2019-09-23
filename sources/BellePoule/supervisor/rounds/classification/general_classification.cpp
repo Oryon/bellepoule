@@ -413,7 +413,7 @@ namespace People
         }
         else if (export_type == PDF)
         {
-#ifdef WIN32
+#ifdef G_OS_WIN32
           gchar *win32_name = g_win32_locale_filename_from_utf8 (filename);
 
           _contest->PrintPDF (gettext ("General classification"),

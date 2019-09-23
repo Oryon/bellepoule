@@ -2738,16 +2738,20 @@ namespace Table
 
             if (first_child)
             {
-              GooCanvasBounds bounds;
-
               _last_search = ((NodeData *) node->data)->_match_goo_table;
-              g_object_set (G_OBJECT (_last_search),
-                            "fill-color", "yellow",
-                            NULL);
-              goo_canvas_item_get_bounds (((NodeData*) (first_child->data))->_fencer_goo_table,
-                                          &bounds);
-              Swipe (0,
-                     bounds.y1);
+
+              if (_last_search)
+              {
+                GooCanvasBounds bounds;
+
+                g_object_set (G_OBJECT (_last_search),
+                              "fill-color", "yellow",
+                              NULL);
+                goo_canvas_item_get_bounds (((NodeData*) (first_child->data))->_fencer_goo_table,
+                                            &bounds);
+                Swipe (0,
+                       bounds.y1);
+              }
             }
           }
 
