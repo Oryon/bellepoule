@@ -4,3 +4,6 @@
 [submodule "build/BellePoule/appimage/pkg2appimage"]
 	path = build/BellePoule/appimage/pkg2appimage
 	url = https://github.com/AppImage/pkg2appimage.git
+[submodule "build/BellePoule/snap"]
+	path = build/BellePoule/snap
+	url = git@github.com:betonniere/bellepoulebeta.git

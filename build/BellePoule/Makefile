@@ -607,7 +607,6 @@ install: $(install_goocanvas)
 	mkdir -p $(DESTDIR)/usr/share/applications
 	install --mode=644 debian/$(PRODUCT)-marshaller.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-marshaller.desktop
 	install --mode=644 debian/$(PRODUCT)-supervisor.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-supervisor.desktop
-	install --mode=644 debian/$(PRODUCT)-supervisor.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT).desktop
 	mkdir -p $(DESTDIR)/usr/share/$(PRODUCT)
 	#www
 	mkdir -p $(DESTDIR)/usr/share/$(PRODUCT)/resources

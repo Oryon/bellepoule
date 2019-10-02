@@ -7,7 +7,7 @@ ingredients:
     - deb http://archive.ubuntu.com/ubuntu/ xenial main universe
 
   debs:
-    - ../bellepoulebeta_5.0ubuntubeta54~xenial1_amd64.deb
+    - ../bellepoulebeta_5.0ubuntubeta57~xenial1_amd64.deb
 
   script:
     - cp ../../../../resources/glade/images/supervisor.png bellepoulebeta.png
