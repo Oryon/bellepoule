@@ -1,3 +1,6 @@
 [submodule "sources/www/cognac"]
 	path = sources/www/cognac
 	url = https://github.com/radepee/cot2html.git
+[submodule "build/BellePoule/appimage/pkg2appimage"]
+	path = build/BellePoule/appimage/pkg2appimage
+	url = https://github.com/AppImage/pkg2appimage.git

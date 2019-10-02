@@ -1,0 +1,16 @@
+app: bellepoulebeta
+
+ingredients:
+  dist: xenial
+
+  sources:
+    - deb http://archive.ubuntu.com/ubuntu/ xenial main universe
+
+  debs:
+    - ../bellepoulebeta_5.0ubuntubeta54~xenial1_amd64.deb
+
+  script:
+    - cp ../../../../resources/glade/images/supervisor.png bellepoulebeta.png
+
+script:
+  - mv ../bellepoulebeta.png .
