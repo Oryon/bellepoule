@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-23 17:21+0200\n"
-"PO-Revision-Date: 2016-08-23 16:30+0000\n"
+"POT-Creation-Date: 2019-10-03 09:47+0200\n"
+"PO-Revision-Date: 2019-02-07 00:37+0000\n"
 "Last-Translator: Mikael Hiort af Ornäs <lakritslemmel@hotmail.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-02-15 05:53+0000\n"
-"X-Generator: Launchpad (build 18326)\n"
-"Language: sv\n"
+"X-Launchpad-Export-Date: 2019-10-03 06:01+0000\n"
+"X-Generator: Launchpad (build 19066)\n"
 
 msgid "Long text"
 msgstr "Lång text"
@@ -39,20 +39,11 @@ msgstr "Data"
 msgid "Look"
 msgstr "Utseende"
 
-msgid "Split"
-msgstr "Delresultat"
+msgid "Follow the instructions given by "
+msgstr ""
 
-msgid "List of fencers to extract"
-msgstr "Lista över fäktare att skilja ut"
-
-msgid "Choose a rank file to apply..."
-msgstr "Välj en rankningsfil …"
-
-msgid "Rank files: cotcot, xml, txt (France)"
-msgstr "Rankningsfiler: cotcot, xml, txt (Frankrike)"
-
-msgid "All files"
-msgstr "Alla filer"
+msgid "Access denied!"
+msgstr ""
 
 msgid "<b>Smartpoule</b> configuration code"
 msgstr "Konfigurationskod för <b>Smartpoule</b>"
@@ -73,6 +64,12 @@ msgstr "Fäktarfiler"
 msgid "Referee files"
 msgstr "Domarfiler"
 
+msgid "All files"
+msgstr "Alla filer"
+
+msgid "The imported FFF file has encoding errors."
+msgstr ""
+
 msgid "List of registered"
 msgstr "Lista över registrerade"
 
@@ -85,111 +82,20 @@ msgstr "Lista över frånvarande"
 msgid "Fencer list"
 msgstr "Lista över fäktare"
 
-msgid "Barrage"
-msgstr "Utslagningsomgång"
-
 msgid "Copy"
 msgstr "Kopiera"
 
 msgid "Paste"
 msgstr "Klistra in"
 
+msgid "Paste (link)"
+msgstr ""
+
+msgid "Remove"
+msgstr "Ta bort"
+
 msgid "Page"
 msgstr "Sida"
-
-msgid "Check-in"
-msgstr "Inskrivning"
-
-msgid "** Without team **"
-msgstr "** Saknar lag **"
-
-msgid "Expected fencers"
-msgstr "Förväntade fäktare"
-
-msgid "Expected teams"
-msgstr "Förväntade lag"
-
-msgid "Team size"
-msgstr "Lagstorlek"
-
-#, c-format
-msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr "Du har angivit minsta tillåtna lagstorlek till <b>%d</b> fäktare."
-
-msgid "Tick the present players of the team."
-msgstr "Markera de närvarande fäktarna i laget."
-
-msgid "Untick the absent players of the team."
-msgstr "Avmarkera de frånvarande fäktarna i laget."
-
-msgid "General classification"
-msgstr "Slutresultat"
-
-msgid "Choose a target file..."
-msgstr "Välj en målfil …"
-
-msgid "All FFF files (.FFF)"
-msgstr "Alla FFF-filer (*.fff)"
-
-msgid "All PDF files (.PDF)"
-msgstr "Alla PDF-filer (*.pdf)"
-
-msgid "All HTML files (.HTML)"
-msgstr "Alla HTML-filer (*.html)"
-
-msgid "Classification"
-msgstr "Resultatställning"
-
-msgid "Sabre"
-msgstr "Sabel"
-
-msgid "Epée"
-msgstr "Värja"
-
-msgid "Foil"
-msgstr "Florett"
-
-msgid "Educ"
-msgstr "Instruktionsklass"
-
-msgid "Male"
-msgstr "Herr"
-
-msgid "Female"
-msgstr "Dam"
-
-msgid "Mixed"
-msgstr "Mixed"
-
-msgid "League"
-msgstr ""
-
-msgid "Regional"
-msgstr ""
-
-msgid "Open"
-msgstr ""
-
-msgid "World cup"
-msgstr ""
-
-msgid "National championships"
-msgstr ""
-
-msgid "World championships"
-msgstr ""
-
-msgid "Other"
-msgstr ""
-
-msgid "Choose a file..."
-msgstr "Välj en fil …"
-
-msgid "BellePoule files (.cotcot)"
-msgstr "BellePoule-filer (*.cotcot)"
-
-msgid "Close without saving"
-msgstr "Stäng utan att spara"
 
 msgid "U5"
 msgstr "U5"
@@ -203,8 +109,11 @@ msgstr "U9"
 msgid "U11"
 msgstr "Minior (U11)"
 
-msgid "U14"
-msgstr "U14"
+msgid "U13"
+msgstr "U13"
+
+msgid "U15"
+msgstr "U15"
 
 msgid "U17"
 msgstr "Kadett (U17)"
@@ -233,56 +142,88 @@ msgstr "Veteran 60-69"
 msgid "Veteran 4"
 msgstr "Veteran 70-"
 
+msgid "Veteran 5"
+msgstr ""
+
 msgid "Veteran 3+4"
 msgstr "Veteran 60-"
 
-msgid "Meal"
-msgstr "Måltid"
-
-msgid "Drink"
-msgstr "Dryck"
-
-msgid "Dessert"
-msgstr "Efterrätt"
-
-msgid "Coffee"
-msgstr "Kaffe"
-
-msgid "Payment book"
-msgstr "Utbetalade ersättningar"
-
-msgid "Signature"
-msgstr "Underskrift"
-
-msgid "Restart BellePoule for this change to take effect"
-msgstr "Starta om BellePoule för att verkställa ändringen"
+msgid "Veteran 4+5"
+msgstr ""
 
 msgid "Choose a competion file to open... "
 msgstr "Välj en tävlingsfil att öppna … "
 
-msgid "Competition files (.cotcot / .xml)"
-msgstr "Tävlingsfiler (*.cotcot/*.xml)"
+msgid "Example files"
+msgstr ""
 
-msgid "Recently opened files"
-msgstr "Nyligen öppnade filer"
+msgid "Competition files"
+msgstr ""
 
 msgid "BellePoule files"
 msgstr "BellePoule-filer"
 
-msgid "Meal tickets"
-msgstr "Måltidskuponger"
+msgid "Recently opened files"
+msgstr "Nyligen öppnade filer"
 
 msgid "Choose a backup files location..."
 msgstr "Välj en plats för säkerhetskopiefiler …"
 
-msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>Vill du verkligen avsluta BellePoule?</big></b>"
+msgid "Men"
+msgstr ""
 
-msgid "Quit BellePoule?"
-msgstr "Avsluta BellePoule?"
+msgid "Women"
+msgstr ""
 
-msgid "All the unsaved competions will be lost."
-msgstr "Alla tävlingar som ännu inte sparats kommer att gå förlorade."
+msgid "Mixed"
+msgstr "Mixed"
+
+msgid "League"
+msgstr ""
+
+msgid "Regional"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "World cup"
+msgstr ""
+
+msgid "National championships"
+msgstr ""
+
+msgid "World championships"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Choose a file..."
+msgstr "Välj en fil …"
+
+msgid "GREG alert"
+msgstr ""
+
+msgid ""
+"It's recommended to give a label when publication on GREG (www.escrime-info."
+"com) is intended.\n"
+"\n"
+"Re-open the form to fill it in?"
+msgstr ""
+
+msgid "BellePoule files (.cotcot)"
+msgstr "BellePoule-filer (*.cotcot)"
+
+msgid "Close without saving"
+msgstr "Stäng utan att spara"
+
+#, c-format
+msgid "Match %s"
+msgstr "Match %s"
+
+msgid "No winner!"
+msgstr "Ingen segrare!"
 
 #, c-format
 msgid "Round #%d"
@@ -307,8 +248,81 @@ msgstr ""
 "<b><big>På grund av likaresultat är antalet fäktare för stort.\n"
 "Vill du lägga till en utslagningsomgång?</big></b>"
 
-msgid "ref"
-msgstr "Dom."
+msgid "Barrage"
+msgstr "Utslagningsomgång"
+
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr "<b><big>Vill du verkligen avsluta BellePoule?</big></b>"
+
+msgid "Quit BellePoule?"
+msgstr "Avsluta BellePoule?"
+
+msgid "All the unsaved competions will be lost."
+msgstr "Alla tävlingar som ännu inte sparats kommer att gå förlorade."
+
+#, c-format
+msgid "Piste %d"
+msgstr ""
+
+msgid "No time!"
+msgstr ""
+
+msgid "No piste!"
+msgstr ""
+
+msgid "Display jobs"
+msgstr ""
+
+msgid "Not available"
+msgstr ""
+
+msgid "Available"
+msgstr ""
+
+msgid "Pool"
+msgstr ""
+
+msgid "Meal"
+msgstr "Måltid"
+
+msgid "Drink"
+msgstr "Dryck"
+
+msgid "Dessert"
+msgstr "Efterrätt"
+
+msgid "Coffee"
+msgstr "Kaffe"
+
+msgid "Payment book"
+msgstr "Utbetalade ersättningar"
+
+msgid "Signature"
+msgstr "Underskrift"
+
+msgid "Meal tickets"
+msgstr "Måltidskuponger"
+
+#, c-format
+msgid ""
+"<b>%s</b> is delayed.\n"
+"Do you want to postpone the next bouts?\n"
+msgstr ""
+
+msgid "Restart BellePoule for this change to take effect"
+msgstr "Starta om BellePoule för att verkställa ändringen"
+
+msgid "Educ"
+msgstr "Instruktionsklass"
+
+msgid "Foil"
+msgstr "Florett"
+
+msgid "Epée"
+msgstr "Värja"
+
+msgid "Sabre"
+msgstr "Sabel"
 
 msgid "place"
 msgstr "Placering"
@@ -328,8 +342,20 @@ msgstr "Födelsedatum"
 msgid "gender"
 msgstr "Kön"
 
+msgid "Male"
+msgstr "Herr"
+
+msgid "Female"
+msgstr "Dam"
+
+msgid "weapon"
+msgstr ""
+
 msgid "country"
 msgstr "Land"
+
+msgid "region"
+msgstr ""
 
 msgid "league"
 msgstr "Förbund"
@@ -340,9 +366,6 @@ msgstr "Klubb"
 msgid "licence"
 msgstr "Licensnr."
 
-msgid "IP address"
-msgstr "IP-adress"
-
 msgid "rate"
 msgstr "Arbetskvot"
 
@@ -352,11 +375,23 @@ msgstr "Nivå"
 msgid "ranking"
 msgstr "Rankning"
 
+msgid "rating"
+msgstr ""
+
 msgid "presence"
 msgstr "Närvaro"
 
 msgid "exported"
 msgstr "Går vidare"
+
+msgid "incident"
+msgstr ""
+
+msgid "Absent"
+msgstr "Frånvarande"
+
+msgid "Latecomer"
+msgstr ""
 
 msgid "global status"
 msgstr "Global status"
@@ -379,6 +414,15 @@ msgstr "Uppgiven match"
 msgid "status"
 msgstr "Status"
 
+msgid "cyphered password"
+msgstr ""
+
+msgid "IP address"
+msgstr "IP-adress"
+
+msgid "Password"
+msgstr "Lösenord"
+
 msgid "pool #"
 msgstr "Poulenr."
 
@@ -397,23 +441,17 @@ msgstr "Stötindex"
 msgid "Hits scored"
 msgstr "Utdelade stötar"
 
+msgid "strip"
+msgstr ""
+
+msgid "time"
+msgstr ""
+
 msgid "Round start rank"
 msgstr "Omgångens startrankning"
 
 msgid "promoted"
 msgstr "Vidare"
-
-msgid "availability"
-msgstr "Tillgänglighet"
-
-msgid "Busy"
-msgstr "Upptagen"
-
-msgid "Absent"
-msgstr "Frånvarande"
-
-msgid "Free"
-msgstr "Friomgång"
 
 msgid "connection"
 msgstr "Anslutning"
@@ -429,6 +467,61 @@ msgstr "OK"
 
 msgid "Manual"
 msgstr "Manuell"
+
+msgid "Classification"
+msgstr "Resultatställning"
+
+msgid "Piste"
+msgstr "Pist"
+
+msgid "Place #"
+msgstr "Placeringsnr."
+
+msgid "Referee"
+msgstr "Domare"
+
+msgid "Table"
+msgstr "Tabell"
+
+#, c-format
+msgid "%s: score sheets printing"
+msgstr "%s: utskrift av poängformulär"
+
+msgid "Winner"
+msgstr "Vinnare"
+
+msgid "Final"
+msgstr "Final"
+
+msgid "Semi-final"
+msgstr "Semifinal"
+
+#, c-format
+msgid "Table of %d"
+msgstr "Tävlingsschema (%d)"
+
+msgid "OVER"
+msgstr ""
+
+msgid ""
+"Referees allocation \n"
+" ongoing"
+msgstr ""
+
+msgid "Table classification"
+msgstr "Tabellklassificering"
+
+msgid "All places fenced"
+msgstr ""
+
+msgid "Fence off for third place"
+msgstr ""
+
+msgid "No fence off for third place"
+msgstr ""
+
+msgid "Max score"
+msgstr "Maxpoäng"
 
 msgid "Pools arrangement"
 msgstr "Pouleindelning"
@@ -451,18 +544,12 @@ msgstr "Balanserad"
 msgid "Grouped by strength"
 msgstr "Grupperade efter styrka"
 
-msgid "Max score"
-msgstr "Maxpoäng"
+msgid "Impossible to apply with this configuration of pools"
+msgstr ""
 
 #, c-format
 msgid "Pool #%02d"
 msgstr "Poule %02d"
-
-msgid "Referee"
-msgstr "Domare"
-
-msgid "Piste"
-msgstr "Pist"
 
 msgid "Status"
 msgstr "Status"
@@ -488,53 +575,60 @@ msgstr "Pouler"
 msgid "Bout without winner!"
 msgstr "Avslutad utan vinnare!"
 
-msgid "Place #"
-msgstr "Placeringsnr."
+msgid "General classification"
+msgstr "Slutresultat"
 
-msgid "cutting"
-msgstr "Kupong"
+msgid "All FFF files (.FFF)"
+msgstr "Alla FFF-filer (*.fff)"
 
-msgid "Table"
-msgstr "Tabell"
+msgid "All PDF files (.PDF)"
+msgstr "Alla PDF-filer (*.pdf)"
+
+msgid "All HTML files (.HTML)"
+msgstr "Alla HTML-filer (*.html)"
+
+msgid "All AskFred files (.FRD)"
+msgstr ""
+
+msgid "Split"
+msgstr "Delresultat"
+
+msgid "List of fencers to extract"
+msgstr "Lista över fäktare att skilja ut"
+
+msgid "Choose a rank file to apply..."
+msgstr "Välj en rankningsfil …"
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr "Rankningsfiler: cotcot, xml, txt (Frankrike)"
+
+msgid "Check-in"
+msgstr "Inskrivning"
+
+msgid "** Without team **"
+msgstr "** Saknar lag **"
+
+msgid "Present fencers"
+msgstr ""
+
+msgid "Expected fencers"
+msgstr "Förväntade fäktare"
+
+msgid "Expected teams"
+msgstr "Förväntade lag"
+
+msgid "Team size"
+msgstr "Lagstorlek"
 
 #, c-format
-msgid "%s: score sheets printing"
-msgstr "%s: utskrift av poängformulär"
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
+msgstr "Du har angivit minsta tillåtna lagstorlek till <b>%d</b> fäktare."
 
-msgid "Winner"
-msgstr "Vinnare"
+msgid "Tick the present players of the team."
+msgstr "Markera de närvarande fäktarna i laget."
 
-msgid "Final"
-msgstr "Final"
-
-msgid "Semi-final"
-msgstr "Semifinal"
-
-#, c-format
-msgid "Table of %d"
-msgstr "Tävlingsschema (%d)"
-
-#, c-format
-msgid "Match %s"
-msgstr "Match %s"
-
-msgid "No winner!"
-msgstr "Ingen segrare!"
-
-msgid "Table classification"
-msgstr "Tabellklassificering"
-
-msgid "Fenced places"
-msgstr "Placeringsmatcher"
-
-msgid "All"
-msgstr "Alla"
-
-msgid "Third place"
-msgstr "Tredje plats"
-
-msgid "None"
-msgstr "Ingen"
+msgid "Untick the absent players of the team."
+msgstr "Avmarkera de frånvarande fäktarna i laget."
 
 msgid "Fencer list printing"
 msgstr "Utskrift av lista över fäktare"
@@ -575,8 +669,29 @@ msgstr "Tilldelad manuellt"
 msgid "Derived from fencer classification"
 msgstr "Härledd från fäktarens resultatställning"
 
-msgid "when unknown"
-msgstr "om okänd"
+msgid "Extension"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Assign"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Undo"
+msgstr ""
+
+msgid "Match"
+msgstr ""
+
+msgid "<b>Match</b>"
+msgstr "<b>Match</b>"
+
+msgid "<b>Score</b>"
+msgstr "<b>Poäng</b>"
 
 msgid "Table printing"
 msgstr "Utskrift av tabell"
@@ -584,21 +699,15 @@ msgstr "Utskrift av tabell"
 msgid "<b><big>How to print?</big></b>"
 msgstr "<b><big>Hur skriver jag ut?</big></b>"
 
-msgid "The table"
-msgstr "Tabellen"
-
-msgid "Score sheets"
-msgstr "Poängformulär"
-
-msgid "Pending"
-msgstr "Väntande"
+msgid "Bouts/sheet"
+msgstr ""
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
-"<b><big>Vilka poängformulär ur den markerade tabellen vill du skriva "
-"ut?</big></b>"
+"<b><big>Vilka poängformulär ur den markerade tabellen vill du skriva ut?</"
+"big></b>"
 
 msgid "All the score sheets"
 msgstr "Alla poängformulär"
@@ -606,23 +715,8 @@ msgstr "Alla poängformulär"
 msgid "The pending score sheets"
 msgstr "Ännu ej behandlade poängformulär"
 
-msgid "<b>Match</b>"
-msgstr "<b>Match</b>"
-
-msgid "A fencer"
-msgstr "Fäktare A"
-
-msgid "B fencer"
-msgstr "Fäktare B"
-
-msgid "<b>Score</b>"
-msgstr "<b>Poäng</b>"
-
 msgid "Add"
 msgstr "Lägg till"
-
-msgid "Remove"
-msgstr "Ta bort"
 
 msgid "<b>Schedule</b>"
 msgstr "<b>Schema</b>"
@@ -636,6 +730,9 @@ msgstr "Föregående omgång"
 msgid "Next round"
 msgstr "Nästa omgång"
 
+msgid "Choose a target file..."
+msgstr "Välj en målfil …"
+
 msgid "Export to <b>HTML</b>"
 msgstr "Exportera som <b>HTML</b>"
 
@@ -644,6 +741,15 @@ msgstr "Exportera som <b>FFF</b>"
 
 msgid "Export to <b>PDF</b>"
 msgstr "Exportera som <b>PDF</b>"
+
+msgid "Export to <b>FRD</b>"
+msgstr ""
+
+msgid "Place shifting"
+msgstr ""
+
+msgid "Winner's place"
+msgstr ""
 
 msgid "Name"
 msgstr "Namn"
@@ -687,6 +793,24 @@ msgstr "Sammanlagd resultatställning"
 msgid "Single classification"
 msgstr "Enskild resultatställning"
 
+msgid "All"
+msgstr "Alla"
+
+msgid "Selected"
+msgstr ""
+
+msgid "Now"
+msgstr ""
+
+msgid "<b>From?</b>"
+msgstr ""
+
+msgid "label"
+msgstr ""
+
+msgid "Import referee file"
+msgstr "Importera domarfil"
+
 msgid "Content designed for the referees."
 msgstr "Innehåll utformat för domarna."
 
@@ -696,42 +820,44 @@ msgstr "Vidare"
 msgid "Eliminated"
 msgstr "Utslagen"
 
-msgid "Fill in a match"
-msgstr "Fyll i en match"
+msgid "BellePoule - Fencing tournament"
+msgstr "BellePoule - Fäktturnering"
 
-msgid ""
-"Fill in all the scores randomly.\n"
-"To activate/deactivate this button, go to the properties of the competition."
+msgid "File"
+msgstr "Arkiv"
+
+msgid "Referees"
+msgstr "Domare"
+
+msgid "WIFI"
+msgstr "Trådlöst nätverk"
+
+msgid "Score sheet scanner"
+msgstr "Poängformulärläsare"
+
+msgid "Print meal tickets"
+msgstr "Skriv ut måltidskuponger"
+
+msgid "Print payment book"
+msgstr "Skriv ut lista för utbetalade ersättningar"
+
+msgid "New version!"
+msgstr "Ny version!"
+
+msgid "Release notes"
 msgstr ""
-"Fyll i alla poäng slumpmässigt.\n"
-"För att aktivera/inaktivera denna knapp, gå till tävlingsegenskaperna."
 
-msgid "From"
-msgstr "Från"
+msgid "Acces code"
+msgstr ""
 
-msgid "To"
-msgstr "Till"
+msgid "User manual"
+msgstr "Användarhandbok"
 
-msgid "For place"
-msgstr "För placering"
+msgid "Return"
+msgstr ""
 
-msgid "Zoom"
-msgstr "Zooma"
-
-msgid "Mask or unmask some data type as well as define their display order."
-msgstr "Dölj eller visa vissa datatyper, eller bestäm deras visningsordning."
-
-msgid "Print"
-msgstr "Skriv ut"
-
-msgid "Number of pools"
-msgstr "Antal pouler"
-
-msgid "Fencers / pools"
-msgstr "Fäktare/poule"
-
-msgid "Swapping"
-msgstr "Sortering"
+msgid "Matches"
+msgstr ""
 
 msgid ""
 "Fencing tournament management software.\n"
@@ -741,9 +867,6 @@ msgstr ""
 "Administrationsprogram för fäktturneringar.\n"
 "\n"
 "\n"
-
-msgid "WPA"
-msgstr "WPA"
 
 msgid "Security"
 msgstr "Säkerhet"
@@ -760,29 +883,193 @@ msgstr ""
 "De kommer att användas för att automatiskt konfigurera\n"
 "smarttelefonerna som kör <b>SmartPoule</b>."
 
-msgid "User"
-msgstr "Användare"
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
+msgstr ""
+"Skanna in den här koden med <b>SmartPoule</b>\n"
+"för att göra din smarttelefon\n"
+"till en poängformulärläsare."
 
-msgid "Password"
-msgstr "Lösenord"
+msgid "<b>Score sheet scanner</b>"
+msgstr "<b>Poängformulärläsare</b>"
 
-msgid "FTP server"
-msgstr "FTP-server"
+msgid "Connection rejected"
+msgstr ""
 
-msgid "<b>Web site</b>"
-msgstr "<b>Webbplats</b>"
+msgid "BellePoule2D is already operating on the network."
+msgstr ""
 
-msgid "<b>Video server</b>"
-msgstr "<b>Videoserver</b>"
+msgid "Connection to <b>BellePoule</b>"
+msgstr ""
 
-msgid "BellePoule - Fencing tournament"
-msgstr "BellePoule - Fäktturnering"
+msgid "Plug an USB stick."
+msgstr ""
 
-msgid "File"
-msgstr "Arkiv"
+msgid "Unplug it."
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule</b> is running."
+msgstr ""
+
+msgid "Scan this QRCode:"
+msgstr ""
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule2D</b>)."
+msgstr ""
+
+msgid "Fenced places"
+msgstr "Placeringsmatcher"
+
+msgid "Fill in a match"
+msgstr "Fyll i en match"
+
+msgid "Score sheets"
+msgstr "Poängformulär"
+
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+"Fyll i alla poäng slumpmässigt.\n"
+"För att aktivera/inaktivera denna knapp, gå till tävlingsegenskaperna."
+
+msgid "match"
+msgstr ""
+
+msgid "<b>Search</b>"
+msgstr ""
+
+msgid "Zoom"
+msgstr "Zooma"
+
+msgid "From:"
+msgstr ""
+
+msgid "Only the selected"
+msgstr ""
+
+msgid "Pistes"
+msgstr ""
+
+msgid "None"
+msgstr "Ingen"
+
+msgid "<b>No referee available!</b>"
+msgstr ""
+
+msgid "Didn't you forget to check them in?"
+msgstr ""
+
+msgid "Overlap of time slots"
+msgstr ""
+
+msgid "Rotate"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Print"
+msgstr "Skriv ut"
+
+msgid "<span size=\"x-small\">club</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">league</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">country</span>"
+msgstr ""
+
+msgid "Warnings"
+msgstr ""
+
+msgid "Check the fencers you wish to include"
+msgstr ""
+
+msgid "New fencer..."
+msgstr ""
+
+msgid "Uncheck the fencers you wish to withdraw"
+msgstr ""
+
+msgid "Mask or unmask some data type as well as define their display order."
+msgstr "Dölj eller visa vissa datatyper, eller bestäm deras visningsordning."
+
+msgid "Number of pools"
+msgstr "Antal pouler"
+
+msgid "Fencers / pools"
+msgstr "Fäktare/poule"
+
+msgid "Swapping"
+msgstr "Sortering"
+
+msgid "Label "
+msgstr ""
+
+msgid ""
+"Used by GREG to distinguish\n"
+"the competions created from splitting."
+msgstr ""
+
+msgid ""
+"BellePoule needs your agreement\n"
+"to tweet on your behalf"
+msgstr ""
+
+msgid "Click on the link to open a web browser:"
+msgstr ""
+
+msgid "Obtain an authorization code"
+msgstr ""
+
+msgid "on this web site"
+msgstr ""
+
+msgid "Paste the authorization code here:"
+msgstr ""
+
+msgid "BellePoule needs your agreement to post announces on your behalf"
+msgstr ""
+
+msgid "New competition"
+msgstr ""
+
+msgid "Choose a creation method:"
+msgstr ""
+
+msgid "From a XML file"
+msgstr ""
+
+msgid "Empty competition"
+msgstr ""
+
+msgid "From a FFE zip file (extranet)"
+msgstr ""
+
+msgid "From AskFred (.frd)"
+msgstr ""
+
+msgid "Connection to <b>BellePoule2D</b>"
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule2D</b> is running."
+msgstr ""
 
 msgid "Recently opened"
 msgstr "Nyligen öppnade"
+
+msgid "Reload imports..."
+msgstr ""
 
 msgid "Backup"
 msgstr "Säkerhetskopiering"
@@ -796,53 +1083,66 @@ msgstr "Aktivera"
 msgid "Deactivate"
 msgstr "Inaktivera"
 
-msgid "Referees"
-msgstr "Domare"
-
-msgid "Print meal tickets"
-msgstr "Skriv ut måltidskuponger"
-
-msgid "Print payment book"
-msgstr "Skriv ut lista för utbetalade ersättningar"
-
-msgid "Ecosystem"
-msgstr "Nätverk"
-
-msgid "WIFI"
-msgstr "Trådlöst nätverk"
-
-msgid "Score sheet scanner"
-msgstr "Poängformulärläsare"
-
 msgid "Publication"
 msgstr "Publicering"
 
-msgid "New version!"
-msgstr "Ny version!"
+msgid "Setup"
+msgstr ""
+
+msgid "Access code"
+msgstr ""
 
 msgid "Open an example..."
 msgstr "Öppna ett exempel …"
 
-msgid "User manual"
-msgstr "Användarhandbok"
-
 msgid "Fencer file template (.csv)"
 msgstr "Fäktarfilmall (*.csv)"
 
-msgid ""
-"Scan this code with <b>SmartPoule</b>\n"
-"to make your smarphone\n"
-"a score sheet scanner."
-msgstr ""
-"Skanna in den här koden med <b>SmartPoule</b>\n"
-"för att göra din smarttelefon\n"
-"till en poängformulärläsare."
+msgid "User"
+msgstr "Användare"
 
-msgid "<b>Score sheet scanner</b>"
-msgstr "<b>Poängformulärläsare</b>"
+msgid "FTP server"
+msgstr "FTP-server"
+
+msgid "<b>Web site</b>"
+msgstr "<b>Webbplats</b>"
+
+msgid "<b>Announce</b>"
+msgstr ""
+
+msgid "<b>Video server</b>"
+msgstr "<b>Videoserver</b>"
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule</b>)."
+msgstr ""
+
+msgid "Reload the imported fencers?"
+msgstr ""
+
+msgid ""
+"Applicable only on <b>non-started</b> competitions created by importing "
+"fencers."
+msgstr ""
 
 msgid "Form"
 msgstr "Formulär"
+
+msgid "Job"
+msgstr ""
+
+msgid "Take off"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
+msgid "<b>Referee</b>"
+msgstr ""
+
+msgid "<b>Fencers</b>"
+msgstr ""
 
 msgid "Date of competition"
 msgstr "Tävlingsdatum"
@@ -925,11 +1225,5 @@ msgstr "Spara det aktuella tillståndet för tävlingen."
 msgid "To specify the features of the competition."
 msgstr "Anger tävlingens typ och innehåll."
 
-msgid "Man"
-msgstr "Man"
-
-msgid "U16"
-msgstr "Junior (U20)"
-
-msgid "Import referee file"
-msgstr "Importera domarfil"
+#~ msgid "ref"
+#~ msgstr "Dom."

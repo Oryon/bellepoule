@@ -49,7 +49,6 @@ Application::Application (Net::Ring::Role     role,
                           char             ***argv)
   : Object ("Application")
 {
-  _language    = nullptr;
   _main_module = nullptr;
 
   g_setenv ("SUDO_ASKPASS",
@@ -220,6 +219,8 @@ Application::Application (Net::Ring::Role     role,
                                                this);
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
   }
+
+  _language = new Language ();
 }
 
 // --------------------------------------------------------------------------------
@@ -247,14 +248,12 @@ Application::~Application ()
 // --------------------------------------------------------------------------------
 void Application::Prepare ()
 {
-  _language = new Language ();
-
   // Weapon
   {
-    new Weapon ("Educ",  "X", "S", 30);
-    new Weapon ("Foil",  "F", "F", 30);
-    new Weapon ("Epée",  "E", "E", 30);
-    new Weapon ("Sabre", "S", "S", 20);
+    new Weapon (gettext ("Educ"),  "X", "S", 30);
+    new Weapon (gettext ("Foil"),  "F", "F", 30);
+    new Weapon (gettext ("Epée"),  "E", "E", 30);
+    new Weapon (gettext ("Sabre"), "S", "S", 20);
   }
 
   // Attributes definition
@@ -817,7 +816,7 @@ extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *m
 {
   Application *a = dynamic_cast <Application *> (owner);
 
-  a->OnOpenWebSite ("v" VERSION "-alpha");
+  a->OnOpenWebSite ("v" VERSION "-beta");
 }
 
 // --------------------------------------------------------------------------------

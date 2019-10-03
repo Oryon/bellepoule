@@ -511,7 +511,7 @@
                                   <object class="GtkLabel" id="from_label">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">T128</property>
+                                    <property name="label">T128</property>
                                     <attributes>
                                       <attribute name="weight" value="bold"/>
                                       <attribute name="foreground" value="#ffffffffffff"/>
@@ -637,7 +637,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                                           <object class="GtkLabel" id="search_namespace">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="label" translatable="yes">1-256.</property>
+                                            <property name="label">1-256.</property>
                                             <attributes>
                                               <attribute name="weight" value="bold"/>
                                               <attribute name="foreground" value="#818181818181"/>
@@ -656,7 +656,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                                             <property name="max_length">3</property>
                                             <property name="invisible_char">•</property>
                                             <property name="width_chars">3</property>
-                                            <property name="text" translatable="yes">133</property>
+                                            <property name="text">133</property>
                                             <property name="invisible_char_set">True</property>
                                             <property name="primary_icon_activatable">False</property>
                                             <property name="secondary_icon_activatable">False</property>

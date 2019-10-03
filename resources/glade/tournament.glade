@@ -343,7 +343,7 @@
               <object class="GtkLabel" id="number1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">1</property>
+                <property name="label">1</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                   <attribute name="scale" value="3"/>
@@ -380,7 +380,7 @@
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">2</property>
+                <property name="label">2</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                   <attribute name="scale" value="3"/>
@@ -427,7 +427,7 @@
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">3</property>
+                <property name="label">3</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                   <attribute name="scale" value="3"/>
@@ -736,7 +736,7 @@
             </child>
             <child>
               <object class="GtkImageMenuItem" id="ring_menuitem">
-                <property name="label" translatable="yes">BellePoule2D</property>
+                <property name="label">BellePoule2D</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="image">partner_indicator</property>
@@ -1801,7 +1801,7 @@ Public License instead of this License.  But first, please read
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">www</property>
+                            <property name="label">www</property>
                           </object>
                           <packing>
                             <property name="top_attach">3</property>
@@ -1952,7 +1952,7 @@ Public License instead of this License.  But first, please read
                         </child>
                         <child>
                           <object class="GtkLinkButton" id="linkbutton">
-                            <property name="label" translatable="yes">button</property>
+                            <property name="label">button</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
@@ -2049,7 +2049,7 @@ Public License instead of this License.  But first, please read
                   <object class="GtkLabel" id="label13">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">1</property>
+                    <property name="label">1</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                       <attribute name="scale" value="3"/>
@@ -2109,7 +2109,7 @@ Public License instead of this License.  But first, please read
                   <object class="GtkLabel" id="label4">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">2</property>
+                    <property name="label">2</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                       <attribute name="scale" value="3"/>

@@ -86,7 +86,7 @@
                         </child>
                         <child>
                           <object class="GtkRadioButton" id="extension1">
-                            <property name="label" translatable="yes">T32</property>
+                            <property name="label">T32</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -102,7 +102,7 @@
                         </child>
                         <child>
                           <object class="GtkRadioButton" id="extension2">
-                            <property name="label" translatable="yes">T16</property>
+                            <property name="label">T16</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -193,7 +193,7 @@
                 <signal name="row-activated" handler="on_competition_treeview_row_activated" swapped="no"/>
                 <child>
                   <object class="GtkTreeViewColumn" id="treeviewcolumn1">
-                    <property name="title" translatable="yes">Matchs</property>
+                    <property name="title" translatable="yes">Match</property>
                     <child>
                       <object class="GtkCellRendererPixbuf" id="job_status"/>
                       <attributes>

@@ -10,7 +10,7 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">WPA</col>
+        <col id="0">WPA</col>
       </row>
     </data>
   </object>
@@ -23,6 +23,16 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-print</property>
+  </object>
+  <object class="GtkImage" id="image12">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-info</property>
+  </object>
+  <object class="GtkImage" id="image13">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-info</property>
   </object>
   <object class="GtkImage" id="image16">
     <property name="visible">True</property>
@@ -53,16 +63,6 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">software-update-available</property>
-  </object>
-  <object class="GtkImage" id="image13">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-info</property>
-  </object>
-  <object class="GtkImage" id="image12">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-info</property>
   </object>
   <object class="GtkWindow" id="root">
     <property name="can_focus">False</property>
@@ -232,7 +232,7 @@
             </child>
             <child>
               <object class="GtkImageMenuItem" id="ring_menuitem">
-                <property name="label" translatable="yes">BellePoule</property>
+                <property name="label">BellePoule</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="right_justified">True</property>
@@ -1704,7 +1704,7 @@ a score sheet scanner.</property>
               <object class="GtkLabel" id="number1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">1</property>
+                <property name="label">1</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                   <attribute name="scale" value="3"/>
@@ -1741,7 +1741,7 @@ a score sheet scanner.</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">2</property>
+                <property name="label">2</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                   <attribute name="scale" value="3"/>
@@ -1788,7 +1788,7 @@ a score sheet scanner.</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">3</property>
+                <property name="label">3</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                   <attribute name="scale" value="3"/>
@@ -1889,7 +1889,7 @@ a score sheet scanner.</property>
                   <object class="GtkLabel" id="label13">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">1</property>
+                    <property name="label">1</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                       <attribute name="scale" value="3"/>
@@ -1949,7 +1949,7 @@ a score sheet scanner.</property>
                   <object class="GtkLabel" id="label14">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">2</property>
+                    <property name="label">2</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                       <attribute name="scale" value="3"/>

@@ -7,6 +7,8 @@ MO_FILES     = $(wildcard */LC_MESSAGES/$(DOMAIN).mo)
 CPP_FILES    = $(wildcard ../../sources/*/*cpp)
 CPP_FILES   += $(wildcard ../../sources/*/*/*cpp)
 CPP_FILES   += $(wildcard ../../sources/*/*/*/*cpp)
+CPP_FILES   += $(wildcard ../../sources/*/*/*/*/*cpp)
+CPP_FILES   += $(wildcard ../../sources/*/*/*/*/*/*cpp)
 GLADE_FILES  = $(wildcard ../../resources/glade/*glade)
 
 all: $(MO_FILES)
@@ -42,10 +44,10 @@ revert:
          --output-file=$@\
            $(subst /LC_MESSAGES/$(DOMAIN).mo,.po,$@)
 
-to_trunk:
-	cp $(PO_FILES) ../../../trunk/resources/translations
-	cp $(POT_FILE) ../../../trunk/resources/translations
+to_bzr:
+	cp $(PO_FILES) ../../../bazaar/resources/translations
+	cp $(POT_FILE) ../../../bazaar/resources/translations
 
-from_trunk:
-	cp ../../../trunk/resources/translations/$(POT_FILE) .
-	cp ../../../trunk/resources/translations/*.po        .
+from_bzr:
+	cp ../../../bazaar/resources/translations/$(POT_FILE) .
+	cp ../../../bazaar/resources/translations/*.po        .

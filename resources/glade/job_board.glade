@@ -250,7 +250,7 @@
                           <object class="GtkLabel" id="piste_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Piste 1</property>
+                            <property name="label">Piste 1</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                               <attribute name="scale" value="2"/>
@@ -272,7 +272,7 @@
                           <object class="GtkLabel" id="time_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">10:40</property>
+                            <property name="label">10:40</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                               <attribute name="scale" value="2"/>

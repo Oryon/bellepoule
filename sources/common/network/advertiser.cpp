@@ -55,7 +55,7 @@ namespace Net
     }
 
     {
-      GtkMessageDialog *dialog = GTK_MESSAGE_DIALOG (_glade->GetWidget ("request_token_dialog"));
+      GtkMessageDialog *dialog = GTK_MESSAGE_DIALOG (_glade->GetWidget ("webkit_dialog"));
 
       gtk_message_dialog_format_secondary_markup (dialog,
                                                   "%s <b>%s</b> :",
@@ -308,6 +308,7 @@ namespace Net
                         "navigation-policy-decision-requested",
                         G_CALLBACK (OnWebKitRedirect),
                         this);
+      printf ("this ==>> %x\n", this);
 
       webkit_web_view_load_uri (WEBKIT_WEB_VIEW (web_view),
                                 _session->GetAuthorizationPage ());
@@ -372,6 +373,7 @@ namespace Net
                                          WebKitWebPolicyDecision   *policy_decision,
                                          Advertiser                *a)
   {
+    printf ("a ==>> %x\n", a);
     return a->OnRedirect (request,
                           policy_decision);
   }
@@ -407,7 +409,7 @@ namespace Net
       else
       {
         _state = State::OFF;
-        DisplayId ("Access denied!");
+        DisplayId (gettext ("Access denied!"));
       }
     }
     else if (HandleRequestResponse (request) == FALSE)

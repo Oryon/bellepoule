@@ -1358,7 +1358,7 @@ stuffing</property>
                           <object class="GtkLabel" id="contest_weapon_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Sabre</property>
+                            <property name="label">Sabre</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                             </attributes>
@@ -1373,7 +1373,7 @@ stuffing</property>
                           <object class="GtkLabel" id="contest_gender_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Man</property>
+                            <property name="label">Man</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                             </attributes>
@@ -1388,7 +1388,7 @@ stuffing</property>
                           <object class="GtkLabel" id="contest_category_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">U16</property>
+                            <property name="label">U16</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                             </attributes>

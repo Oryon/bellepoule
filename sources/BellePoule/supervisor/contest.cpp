@@ -60,8 +60,8 @@
 
 const gchar *Contest::gender_image[_nb_gender] =
 {
-  N_ ("Male"),
-  N_ ("Female"),
+  N_ ("Men"),
+  N_ ("Women"),
   N_ ("Mixed")
 };
 

@@ -64,7 +64,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -80,7 +79,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
@@ -173,7 +171,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_all_present_button_clicked" swapped="no"/>
                         <child>
                           <object class="GtkHBox" id="hbox2">
@@ -219,7 +216,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_all_absent_button_clicked" swapped="no"/>
                         <child>
                           <object class="GtkHBox" id="hbox3">
@@ -298,7 +294,6 @@
                   <object class="GtkToolButton" id="add_player_button">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="stock_id">gtk-add</property>
                     <signal name="clicked" handler="on_add_player_button_clicked" swapped="no"/>
                   </object>
@@ -311,7 +306,6 @@
                   <object class="GtkToolButton" id="remove_player_button">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="stock_id">gtk-remove</property>
                     <signal name="clicked" handler="on_remove_player_button_clicked" swapped="no"/>
                   </object>
@@ -324,7 +318,6 @@
                   <object class="GtkSeparatorToolItem" id="separatortoolitem2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -335,7 +328,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text">.fff, .csv, .txt</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Import fencers</property>
                     <property name="use_underline">True</property>
                     <property name="icon_widget">image4</property>
@@ -351,7 +343,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text">.cotcot, .xml, .txt</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Import ranking</property>
                     <property name="use_underline">True</property>
                     <property name="icon_widget">image3</property>
@@ -375,7 +366,6 @@
                   <object class="GtkToolButton" id="players_list_filter_button">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Data</property>
                     <property name="stock_id">gtk-index</property>
                     <signal name="clicked" handler="on_players_list_filter_button_clicked" swapped="no"/>
@@ -389,7 +379,6 @@
                   <object class="GtkToolButton" id="checkin_print_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="stock_id">gtk-print</property>
                     <signal name="clicked" handler="on_checkin_print_toolbutton_clicked" swapped="no"/>
                   </object>
@@ -520,7 +509,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
                         <signal name="toggled" handler="on_manual_radiobutton_toggled" swapped="no"/>
@@ -539,7 +527,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="draw_indicator">True</property>
                             <property name="group">manual_radiobutton</property>
                           </object>
@@ -599,7 +586,7 @@
                           <object class="GtkLabel" id="label6">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">)</property>
+                            <property name="label">)</property>
                           </object>
                           <packing>
                             <property name="expand">True</property>

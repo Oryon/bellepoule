@@ -6,16 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2016-08-23 17:21+0200\n"
-"PO-Revision-Date: 2017-03-21 18:20+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-03 09:47+0200\n"
+"PO-Revision-Date: 2019-02-07 00:36+0000\n"
 "Last-Translator: Ibon Santisteban <LiGNUx@gmx.com>\n"
 "Language-Team: Basque <eu@li.org>\n"
+"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-03-22 06:18+0000\n"
-"X-Generator: Launchpad (build 18334)\n"
+"X-Launchpad-Export-Date: 2019-10-03 06:01+0000\n"
+"X-Generator: Launchpad (build 19066)\n"
 
 msgid "Long text"
 msgstr "Testu luzea"
@@ -38,20 +39,11 @@ msgstr "Datuak"
 msgid "Look"
 msgstr "Itxura"
 
-msgid "Split"
-msgstr "Zatitu"
+msgid "Follow the instructions given by "
+msgstr ""
 
-msgid "List of fencers to extract"
-msgstr "Erauziko diren esgrimalarien zerrenda"
-
-msgid "Choose a rank file to apply..."
-msgstr "Hautatu sailkapen fitxategi bat..."
-
-msgid "Rank files: cotcot, xml, txt (France)"
-msgstr "Sailkapen fitxategiak: cotcot, xml, txt (Frantzia)"
-
-msgid "All files"
-msgstr "Fitxategi guztiak"
+msgid "Access denied!"
+msgstr ""
 
 msgid "<b>Smartpoule</b> configuration code"
 msgstr "<b>Smartpoule</b> konfigurazio kodea"
@@ -72,6 +64,12 @@ msgstr "Esgrimalari-fitxategiak"
 msgid "Referee files"
 msgstr "Epaile-fitxategiak"
 
+msgid "All files"
+msgstr "Fitxategi guztiak"
+
+msgid "The imported FFF file has encoding errors."
+msgstr ""
+
 msgid "List of registered"
 msgstr "Erregistratuen zerrenda"
 
@@ -84,111 +82,20 @@ msgstr "Etorri ez direnen zerrenda"
 msgid "Fencer list"
 msgstr "Esgrimalarien zerrenda"
 
-msgid "Barrage"
-msgstr "Berdinketa-haustea"
-
 msgid "Copy"
 msgstr "Kopiatu"
 
 msgid "Paste"
 msgstr "Itsatsi"
 
+msgid "Paste (link)"
+msgstr ""
+
+msgid "Remove"
+msgstr "Kendu"
+
 msgid "Page"
 msgstr "Orria"
-
-msgid "Check-in"
-msgstr "Deialdia"
-
-msgid "** Without team **"
-msgstr "**Talderik gabe**"
-
-msgid "Expected fencers"
-msgstr "Esperotako esgrimalariak"
-
-msgid "Expected teams"
-msgstr "Esperotako taldeak"
-
-msgid "Team size"
-msgstr "Taldearen tamaina"
-
-#, c-format
-msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr "Taldeak gutxienez <b>%d</b> esgrimalariz osatu daitezen ezarri duzu."
-
-msgid "Tick the present players of the team."
-msgstr "Etorri diren taldekideak markatu"
-
-msgid "Untick the absent players of the team."
-msgstr "Etorri ez diren taldekideei marka kendu."
-
-msgid "General classification"
-msgstr "Sailkapen orokorra"
-
-msgid "Choose a target file..."
-msgstr "Hautatu helburuko fitxategi bat..."
-
-msgid "All FFF files (.FFF)"
-msgstr "FFF fitxategi guztiak (.FFF)"
-
-msgid "All PDF files (.PDF)"
-msgstr "PDF fitxategi guztiak (.PDF)"
-
-msgid "All HTML files (.HTML)"
-msgstr "HTML fitxategi guztiak (.HTML)"
-
-msgid "Classification"
-msgstr "Sailkapena"
-
-msgid "Sabre"
-msgstr "Sablea"
-
-msgid "Epée"
-msgstr "Ezpata"
-
-msgid "Foil"
-msgstr "Floretea"
-
-msgid "Educ"
-msgstr "Hezk."
-
-msgid "Male"
-msgstr "Gizona"
-
-msgid "Female"
-msgstr "Emakumea"
-
-msgid "Mixed"
-msgstr "Mistoa"
-
-msgid "League"
-msgstr "Liga"
-
-msgid "Regional"
-msgstr "Lurraldekoa"
-
-msgid "Open"
-msgstr "Irekia"
-
-msgid "World cup"
-msgstr "Mundu kopa"
-
-msgid "National championships"
-msgstr "Txapelketa nazionala"
-
-msgid "World championships"
-msgstr "Mundu txapelketa"
-
-msgid "Other"
-msgstr "Besterik"
-
-msgid "Choose a file..."
-msgstr "Fitxategi bat hautatu..."
-
-msgid "BellePoule files (.cotcot)"
-msgstr "BellePoule fitxategiak (.cotcot)"
-
-msgid "Close without saving"
-msgstr "Itxi gorde gabe"
 
 msgid "U5"
 msgstr "5a"
@@ -202,8 +109,11 @@ msgstr "9a"
 msgid "U11"
 msgstr "11a"
 
-msgid "U14"
-msgstr "14a"
+msgid "U13"
+msgstr "13a"
+
+msgid "U15"
+msgstr "15a"
 
 msgid "U17"
 msgstr "17a"
@@ -232,56 +142,88 @@ msgstr "Beteranoak 3"
 msgid "Veteran 4"
 msgstr "Beteranoak 4"
 
+msgid "Veteran 5"
+msgstr ""
+
 msgid "Veteran 3+4"
 msgstr "Beteranoak 3+4"
 
-msgid "Meal"
-msgstr "Janaria"
-
-msgid "Drink"
-msgstr "Edaria"
-
-msgid "Dessert"
-msgstr "Postrea"
-
-msgid "Coffee"
-msgstr "Kafea"
-
-msgid "Payment book"
-msgstr "Ordainketa-liburua"
-
-msgid "Signature"
-msgstr "Sinadura"
-
-msgid "Restart BellePoule for this change to take effect"
-msgstr "BellePoule berrabiarazi aldaketak eragina izateko"
+msgid "Veteran 4+5"
+msgstr ""
 
 msgid "Choose a competion file to open... "
 msgstr "Hautatu irekitzeko txapelketa-fitxategia... "
 
-msgid "Competition files (.cotcot / .xml)"
-msgstr "Txapelketa fitxategiak (.cotcot / .xml)"
+msgid "Example files"
+msgstr ""
 
-msgid "Recently opened files"
-msgstr "Duela gutxi irekitako fitxategiak"
+msgid "Competition files"
+msgstr ""
 
 msgid "BellePoule files"
 msgstr "BellePoule fitxategiak"
 
-msgid "Meal tickets"
-msgstr "Janari tiketak"
+msgid "Recently opened files"
+msgstr "Duela gutxi irekitako fitxategiak"
 
 msgid "Choose a backup files location..."
 msgstr "Hautatu babes-kopien kokapena..."
 
-msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>Ziur zaude BellePoule itxi nahi duzula?</big></b>"
+msgid "Men"
+msgstr ""
 
-msgid "Quit BellePoule?"
-msgstr "BellePoule itxi?"
+msgid "Women"
+msgstr ""
 
-msgid "All the unsaved competions will be lost."
-msgstr "Gorde gabeko txapelketa guztiak galduko dira"
+msgid "Mixed"
+msgstr "Mistoa"
+
+msgid "League"
+msgstr "Liga"
+
+msgid "Regional"
+msgstr "Lurraldekoa"
+
+msgid "Open"
+msgstr "Irekia"
+
+msgid "World cup"
+msgstr "Mundu kopa"
+
+msgid "National championships"
+msgstr "Txapelketa nazionala"
+
+msgid "World championships"
+msgstr "Mundu txapelketa"
+
+msgid "Other"
+msgstr "Besterik"
+
+msgid "Choose a file..."
+msgstr "Fitxategi bat hautatu..."
+
+msgid "GREG alert"
+msgstr ""
+
+msgid ""
+"It's recommended to give a label when publication on GREG (www.escrime-info."
+"com) is intended.\n"
+"\n"
+"Re-open the form to fill it in?"
+msgstr ""
+
+msgid "BellePoule files (.cotcot)"
+msgstr "BellePoule fitxategiak (.cotcot)"
+
+msgid "Close without saving"
+msgstr "Itxi gorde gabe"
+
+#, c-format
+msgid "Match %s"
+msgstr "Lehia %s"
+
+msgid "No winner!"
+msgstr "Irabazlerik ez!"
 
 #, c-format
 msgid "Round #%d"
@@ -306,8 +248,81 @@ msgstr ""
 "<b><big>Berdinketak direla eta, kuota gainetsi da.\n"
 "Berdinketa hausteko fase bat gehitu nahi duzu?</big></b>"
 
-msgid "ref"
-msgstr "erref"
+msgid "Barrage"
+msgstr "Berdinketa-haustea"
+
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr "<b><big>Ziur zaude BellePoule itxi nahi duzula?</big></b>"
+
+msgid "Quit BellePoule?"
+msgstr "BellePoule itxi?"
+
+msgid "All the unsaved competions will be lost."
+msgstr "Gorde gabeko txapelketa guztiak galduko dira"
+
+#, c-format
+msgid "Piste %d"
+msgstr ""
+
+msgid "No time!"
+msgstr ""
+
+msgid "No piste!"
+msgstr ""
+
+msgid "Display jobs"
+msgstr ""
+
+msgid "Not available"
+msgstr ""
+
+msgid "Available"
+msgstr ""
+
+msgid "Pool"
+msgstr ""
+
+msgid "Meal"
+msgstr "Janaria"
+
+msgid "Drink"
+msgstr "Edaria"
+
+msgid "Dessert"
+msgstr "Postrea"
+
+msgid "Coffee"
+msgstr "Kafea"
+
+msgid "Payment book"
+msgstr "Ordainketa-liburua"
+
+msgid "Signature"
+msgstr "Sinadura"
+
+msgid "Meal tickets"
+msgstr "Janari tiketak"
+
+#, c-format
+msgid ""
+"<b>%s</b> is delayed.\n"
+"Do you want to postpone the next bouts?\n"
+msgstr ""
+
+msgid "Restart BellePoule for this change to take effect"
+msgstr "BellePoule berrabiarazi aldaketak eragina izateko"
+
+msgid "Educ"
+msgstr "Hezk."
+
+msgid "Foil"
+msgstr "Floretea"
+
+msgid "Epée"
+msgstr "Ezpata"
+
+msgid "Sabre"
+msgstr "Sablea"
 
 msgid "place"
 msgstr "postua"
@@ -327,8 +342,20 @@ msgstr "jaiotze-data"
 msgid "gender"
 msgstr "sexua"
 
+msgid "Male"
+msgstr "Gizona"
+
+msgid "Female"
+msgstr "Emakumea"
+
+msgid "weapon"
+msgstr ""
+
 msgid "country"
 msgstr "herrialdea"
+
+msgid "region"
+msgstr ""
 
 msgid "league"
 msgstr "liga"
@@ -339,9 +366,6 @@ msgstr "kluba"
 msgid "licence"
 msgstr "lizentzia"
 
-msgid "IP address"
-msgstr "IP helbidea"
-
 msgid "rate"
 msgstr "ehunekoa"
 
@@ -351,20 +375,32 @@ msgstr "maila"
 msgid "ranking"
 msgstr "sailkapena"
 
+msgid "rating"
+msgstr ""
+
 msgid "presence"
 msgstr "presentzia"
 
 msgid "exported"
 msgstr "esportatua"
 
+msgid "incident"
+msgstr ""
+
+msgid "Absent"
+msgstr "Kanpoan"
+
+msgid "Latecomer"
+msgstr ""
+
 msgid "global status"
 msgstr "egoera globala"
 
 msgid "Qualified"
-msgstr "Sailkatua"
+msgstr "Sailkatuak"
 
 msgid "Not qualified"
-msgstr "Ez sailkatua"
+msgstr "Ez sailkatuak"
 
 msgid "Withdrawal"
 msgstr "Etsitakoa"
@@ -377,6 +413,15 @@ msgstr ""
 
 msgid "status"
 msgstr "egoera"
+
+msgid "cyphered password"
+msgstr ""
+
+msgid "IP address"
+msgstr "IP helbidea"
+
+msgid "Password"
+msgstr "Pasahitza"
 
 msgid "pool #"
 msgstr "ligaxka"
@@ -396,23 +441,17 @@ msgstr "indizea"
 msgid "Hits scored"
 msgstr "Jotako puntuak"
 
+msgid "strip"
+msgstr ""
+
+msgid "time"
+msgstr ""
+
 msgid "Round start rank"
 msgstr "Fase hasieraren sailkapena"
 
 msgid "promoted"
 msgstr "salbuetsia"
-
-msgid "availability"
-msgstr "eskuragai?"
-
-msgid "Busy"
-msgstr "Lanpetuta"
-
-msgid "Absent"
-msgstr "Kanpoan"
-
-msgid "Free"
-msgstr "Libre"
 
 msgid "connection"
 msgstr "konexioa"
@@ -428,6 +467,61 @@ msgstr "Ados"
 
 msgid "Manual"
 msgstr "Eskuzkoa"
+
+msgid "Classification"
+msgstr "Sailkapena"
+
+msgid "Piste"
+msgstr "Pista"
+
+msgid "Place #"
+msgstr "Postua:"
+
+msgid "Referee"
+msgstr "Epailea"
+
+msgid "Table"
+msgstr "Taula"
+
+#, c-format
+msgid "%s: score sheets printing"
+msgstr "%s: emaitza orrien inprimaketa"
+
+msgid "Winner"
+msgstr "Txapelduna"
+
+msgid "Final"
+msgstr "Finala"
+
+msgid "Semi-final"
+msgstr "Finalerdia"
+
+#, c-format
+msgid "Table of %d"
+msgstr "%d-ko taula"
+
+msgid "OVER"
+msgstr ""
+
+msgid ""
+"Referees allocation \n"
+" ongoing"
+msgstr ""
+
+msgid "Table classification"
+msgstr "Taulako sailkapena"
+
+msgid "All places fenced"
+msgstr ""
+
+msgid "Fence off for third place"
+msgstr ""
+
+msgid "No fence off for third place"
+msgstr ""
+
+msgid "Max score"
+msgstr "Gehienezko puntuazioa"
 
 msgid "Pools arrangement"
 msgstr "Ligaxken antolaketa"
@@ -450,18 +544,12 @@ msgstr "Orekatua"
 msgid "Grouped by strength"
 msgstr "Indarraren arabera batu"
 
-msgid "Max score"
-msgstr "Gehienezko puntuazioa"
+msgid "Impossible to apply with this configuration of pools"
+msgstr ""
 
 #, c-format
 msgid "Pool #%02d"
 msgstr "%02d. ligaxka"
-
-msgid "Referee"
-msgstr "Epailea"
-
-msgid "Piste"
-msgstr "Pista"
 
 msgid "Status"
 msgstr "Egoera"
@@ -487,53 +575,60 @@ msgstr "Ligaxkak"
 msgid "Bout without winner!"
 msgstr "Irabazlerik gabeko lehia!"
 
-msgid "Place #"
-msgstr "Postua:"
+msgid "General classification"
+msgstr "Sailkapen orokorra"
 
-msgid "cutting"
-msgstr "moztu"
+msgid "All FFF files (.FFF)"
+msgstr "FFF fitxategi guztiak (.FFF)"
 
-msgid "Table"
-msgstr "Taula"
+msgid "All PDF files (.PDF)"
+msgstr "PDF fitxategi guztiak (.PDF)"
+
+msgid "All HTML files (.HTML)"
+msgstr "HTML fitxategi guztiak (.HTML)"
+
+msgid "All AskFred files (.FRD)"
+msgstr ""
+
+msgid "Split"
+msgstr "Zatitu"
+
+msgid "List of fencers to extract"
+msgstr "Erauziko diren esgrimalarien zerrenda"
+
+msgid "Choose a rank file to apply..."
+msgstr "Hautatu sailkapen fitxategi bat..."
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr "Sailkapen fitxategiak: cotcot, xml, txt (Frantzia)"
+
+msgid "Check-in"
+msgstr "Deialdia"
+
+msgid "** Without team **"
+msgstr "**Talderik gabe**"
+
+msgid "Present fencers"
+msgstr ""
+
+msgid "Expected fencers"
+msgstr "Esperotako esgrimalariak"
+
+msgid "Expected teams"
+msgstr "Esperotako taldeak"
+
+msgid "Team size"
+msgstr "Taldearen tamaina"
 
 #, c-format
-msgid "%s: score sheets printing"
-msgstr "%s: emaitza orrien inprimaketa"
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
+msgstr "Taldeak gutxienez <b>%d</b> esgrimalariz osatu daitezen ezarri duzu."
 
-msgid "Winner"
-msgstr "Txapelduna"
+msgid "Tick the present players of the team."
+msgstr "Etorri diren taldekideak markatu"
 
-msgid "Final"
-msgstr "Finala"
-
-msgid "Semi-final"
-msgstr "Finalerdia"
-
-#, c-format
-msgid "Table of %d"
-msgstr "%d-ko taula"
-
-#, c-format
-msgid "Match %s"
-msgstr "Lehia %s"
-
-msgid "No winner!"
-msgstr "Irabazlerik ez!"
-
-msgid "Table classification"
-msgstr "Taulako sailkapena"
-
-msgid "Fenced places"
-msgstr "Lehiatuko diren postuak"
-
-msgid "All"
-msgstr "Guztiak"
-
-msgid "Third place"
-msgstr "Hirugarren postua"
-
-msgid "None"
-msgstr "Bat ere ez"
+msgid "Untick the absent players of the team."
+msgstr "Etorri ez diren taldekideei marka kendu."
 
 msgid "Fencer list printing"
 msgstr "Esgrimalarien zerrenda inprimaketa"
@@ -574,8 +669,29 @@ msgstr "Eskuz esleituak"
 msgid "Derived from fencer classification"
 msgstr "Esgrimalarien sailkapenetik deribatua"
 
-msgid "when unknown"
-msgstr "ezezaguna denean"
+msgid "Extension"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Assign"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Undo"
+msgstr ""
+
+msgid "Match"
+msgstr ""
+
+msgid "<b>Match</b>"
+msgstr "<b>Lehia</b>"
+
+msgid "<b>Score</b>"
+msgstr "<b>Puntuazioa</b>"
 
 msgid "Table printing"
 msgstr "Taula inprimaketa"
@@ -583,18 +699,12 @@ msgstr "Taula inprimaketa"
 msgid "<b><big>How to print?</big></b>"
 msgstr "<b><big>Nola inprimatu?</big></b>"
 
-msgid "The table"
-msgstr "Taula"
-
-msgid "Score sheets"
-msgstr "Emaitza-orriak"
-
-msgid "Pending"
-msgstr "Lehiatzeke"
+msgid "Bouts/sheet"
+msgstr ""
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
 "<b><big>Taula honetako zein emaitza-orri inprimatu nahi duzu?</big></b>"
 
@@ -604,23 +714,8 @@ msgstr "Emaitza-orri guztiak"
 msgid "The pending score sheets"
 msgstr "Lehiatzeke daudenen emaitza-orriak"
 
-msgid "<b>Match</b>"
-msgstr "<b>Lehia</b>"
-
-msgid "A fencer"
-msgstr "A esgrimalaria"
-
-msgid "B fencer"
-msgstr "B esgrimalaria"
-
-msgid "<b>Score</b>"
-msgstr "<b>Puntuazioa</b>"
-
 msgid "Add"
 msgstr "Gehitu"
-
-msgid "Remove"
-msgstr "Kendu"
 
 msgid "<b>Schedule</b>"
 msgstr "<b>Programa</b>"
@@ -634,6 +729,9 @@ msgstr "Aurreko fasea"
 msgid "Next round"
 msgstr "Hurrengo fasea"
 
+msgid "Choose a target file..."
+msgstr "Hautatu helburuko fitxategi bat..."
+
 msgid "Export to <b>HTML</b>"
 msgstr "<b>HTML</b>-ra esportatu"
 
@@ -642,6 +740,15 @@ msgstr "<b>FFF</b>-ra esportatu"
 
 msgid "Export to <b>PDF</b>"
 msgstr "<b>PDF</b>-ra esportatu"
+
+msgid "Export to <b>FRD</b>"
+msgstr ""
+
+msgid "Place shifting"
+msgstr ""
+
+msgid "Winner's place"
+msgstr ""
 
 msgid "Name"
 msgstr "Izena"
@@ -685,6 +792,24 @@ msgstr "Sailkapen konbinatua"
 msgid "Single classification"
 msgstr "Sailkapen bakuna"
 
+msgid "All"
+msgstr "Guztiak"
+
+msgid "Selected"
+msgstr ""
+
+msgid "Now"
+msgstr ""
+
+msgid "<b>From?</b>"
+msgstr ""
+
+msgid "label"
+msgstr ""
+
+msgid "Import referee file"
+msgstr "Epaile fitxategia inportatu"
+
 msgid "Content designed for the referees."
 msgstr "Epaileentzako diseinatutako edukia."
 
@@ -694,43 +819,44 @@ msgstr "Salbuetsia"
 msgid "Eliminated"
 msgstr "Kanporatua"
 
-msgid "Fill in a match"
-msgstr "Lehia bat bete"
+msgid "BellePoule - Fencing tournament"
+msgstr "BellePoule - Esgrima txapelketa"
 
-msgid ""
-"Fill in all the scores randomly.\n"
-"To activate/deactivate this button, go to the properties of the competition."
+msgid "File"
+msgstr "Fitxategia"
+
+msgid "Referees"
+msgstr "Epaileak"
+
+msgid "WIFI"
+msgstr "WIFI"
+
+msgid "Score sheet scanner"
+msgstr "Emaitza-orri eskanerra"
+
+msgid "Print meal tickets"
+msgstr "Inprimatu janari-tiketak"
+
+msgid "Print payment book"
+msgstr "Inprimatu ordainketa liburua"
+
+msgid "New version!"
+msgstr "Bertsio berria!"
+
+msgid "Release notes"
 msgstr ""
-"Puntuazio guztiak ausaz bete.\n"
-"Botoi hau (des)gaitzeko, txapelketaren ezarpenetara jo."
 
-msgid "From"
-msgstr "Nondik"
-
-msgid "To"
-msgstr "Nora"
-
-msgid "For place"
-msgstr "Postu honetarako"
-
-msgid "Zoom"
-msgstr "Handipena"
-
-msgid "Mask or unmask some data type as well as define their display order."
+msgid "Acces code"
 msgstr ""
-"Datu mota batzuk erakutsi ala izkutatu, hala nola haien ordena aldatu."
 
-msgid "Print"
-msgstr "Inprimatu"
+msgid "User manual"
+msgstr "Erabiltzaile-gida"
 
-msgid "Number of pools"
-msgstr "Ligaxka kopurua"
+msgid "Return"
+msgstr ""
 
-msgid "Fencers / pools"
-msgstr "Esgrimalariak ligaxkako"
-
-msgid "Swapping"
-msgstr "Trukaketa"
+msgid "Matches"
+msgstr ""
 
 msgid ""
 "Fencing tournament management software.\n"
@@ -740,9 +866,6 @@ msgstr ""
 "Esgrimako txapelketak kudeatzeko softwarea.\n"
 "\n"
 "\n"
-
-msgid "WPA"
-msgstr "WPA"
 
 msgid "Security"
 msgstr "Segurtasuna"
@@ -759,29 +882,193 @@ msgstr ""
 "Hauek automatikoki erabiliko dira\n"
 "<b>Smartpoule</b> darabilen Smartphoneak konfiguratzeko"
 
-msgid "User"
-msgstr "Erabiltzailea"
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
+msgstr ""
+"<b>SmartPoule</b>-n bidez kode hau eskaneatu\n"
+"zure smartphone-a\n"
+"emaitza-orri bilakatzeko."
 
-msgid "Password"
-msgstr "Pasahitza"
+msgid "<b>Score sheet scanner</b>"
+msgstr "<b>Emaitza-orri eskanerra</b>"
 
-msgid "FTP server"
-msgstr "FTP zerbitzaria"
+msgid "Connection rejected"
+msgstr ""
 
-msgid "<b>Web site</b>"
-msgstr "<b>Webgunea</b>"
+msgid "BellePoule2D is already operating on the network."
+msgstr ""
 
-msgid "<b>Video server</b>"
-msgstr "<b>Bideo-zerbitzaria</b>"
+msgid "Connection to <b>BellePoule</b>"
+msgstr ""
 
-msgid "BellePoule - Fencing tournament"
-msgstr "BellePoule - Esgrima txapelketa"
+msgid "Plug an USB stick."
+msgstr ""
 
-msgid "File"
-msgstr "Fitxategia"
+msgid "Unplug it."
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule</b> is running."
+msgstr ""
+
+msgid "Scan this QRCode:"
+msgstr ""
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule2D</b>)."
+msgstr ""
+
+msgid "Fenced places"
+msgstr "Lehiatuko diren postuak"
+
+msgid "Fill in a match"
+msgstr "Lehia bat bete"
+
+msgid "Score sheets"
+msgstr "Emaitza-orriak"
+
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+"Puntuazio guztiak ausaz bete.\n"
+"Botoi hau (des)gaitzeko, txapelketaren ezarpenetara jo."
+
+msgid "match"
+msgstr ""
+
+msgid "<b>Search</b>"
+msgstr ""
+
+msgid "Zoom"
+msgstr "Handipena"
+
+msgid "From:"
+msgstr ""
+
+msgid "Only the selected"
+msgstr ""
+
+msgid "Pistes"
+msgstr ""
+
+msgid "None"
+msgstr "Bat ere ez"
+
+msgid "<b>No referee available!</b>"
+msgstr ""
+
+msgid "Didn't you forget to check them in?"
+msgstr ""
+
+msgid "Overlap of time slots"
+msgstr ""
+
+msgid "Rotate"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Print"
+msgstr "Inprimatu"
+
+msgid "<span size=\"x-small\">club</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">league</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">country</span>"
+msgstr ""
+
+msgid "Warnings"
+msgstr ""
+
+msgid "Check the fencers you wish to include"
+msgstr ""
+
+msgid "New fencer..."
+msgstr ""
+
+msgid "Uncheck the fencers you wish to withdraw"
+msgstr ""
+
+msgid "Mask or unmask some data type as well as define their display order."
+msgstr "Datu mota batzuk erakutsi ala izkutatu, hala nola haien ordena aldatu."
+
+msgid "Number of pools"
+msgstr "Ligaxka kopurua"
+
+msgid "Fencers / pools"
+msgstr "Esgrimalariak ligaxkako"
+
+msgid "Swapping"
+msgstr "Trukaketa"
+
+msgid "Label "
+msgstr ""
+
+msgid ""
+"Used by GREG to distinguish\n"
+"the competions created from splitting."
+msgstr ""
+
+msgid ""
+"BellePoule needs your agreement\n"
+"to tweet on your behalf"
+msgstr ""
+
+msgid "Click on the link to open a web browser:"
+msgstr ""
+
+msgid "Obtain an authorization code"
+msgstr ""
+
+msgid "on this web site"
+msgstr ""
+
+msgid "Paste the authorization code here:"
+msgstr ""
+
+msgid "BellePoule needs your agreement to post announces on your behalf"
+msgstr ""
+
+msgid "New competition"
+msgstr ""
+
+msgid "Choose a creation method:"
+msgstr ""
+
+msgid "From a XML file"
+msgstr ""
+
+msgid "Empty competition"
+msgstr ""
+
+msgid "From a FFE zip file (extranet)"
+msgstr ""
+
+msgid "From AskFred (.frd)"
+msgstr ""
+
+msgid "Connection to <b>BellePoule2D</b>"
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule2D</b> is running."
+msgstr ""
 
 msgid "Recently opened"
 msgstr "Duela gutxi irekiak"
+
+msgid "Reload imports..."
+msgstr ""
 
 msgid "Backup"
 msgstr "Babes-kopia"
@@ -795,53 +1082,66 @@ msgstr "Gaitu"
 msgid "Deactivate"
 msgstr "Desgaitu"
 
-msgid "Referees"
-msgstr "Epaileak"
-
-msgid "Print meal tickets"
-msgstr "Inprimatu janari-tiketak"
-
-msgid "Print payment book"
-msgstr "Inprimatu ordainketa liburua"
-
-msgid "Ecosystem"
-msgstr "Ingurunea"
-
-msgid "WIFI"
-msgstr "WIFI"
-
-msgid "Score sheet scanner"
-msgstr "Emaitza-orri eskanerra"
-
 msgid "Publication"
 msgstr "Argitalpena"
 
-msgid "New version!"
-msgstr "Bertsio berria!"
+msgid "Setup"
+msgstr ""
+
+msgid "Access code"
+msgstr ""
 
 msgid "Open an example..."
 msgstr "Adibide bat ireki..."
 
-msgid "User manual"
-msgstr "Erabiltzaile-gida"
-
 msgid "Fencer file template (.csv)"
 msgstr "Esgrimalarien fitxategi txantiloia"
 
-msgid ""
-"Scan this code with <b>SmartPoule</b>\n"
-"to make your smarphone\n"
-"a score sheet scanner."
-msgstr ""
-"<b>SmartPoule</b>-n bidez kode hau eskaneatu\n"
-"zure smartphone-a\n"
-"emaitza-orri bilakatzeko."
+msgid "User"
+msgstr "Erabiltzailea"
 
-msgid "<b>Score sheet scanner</b>"
-msgstr "<b>Emaitza-orri eskanerra</b>"
+msgid "FTP server"
+msgstr "FTP zerbitzaria"
+
+msgid "<b>Web site</b>"
+msgstr "<b>Webgunea</b>"
+
+msgid "<b>Announce</b>"
+msgstr ""
+
+msgid "<b>Video server</b>"
+msgstr "<b>Bideo-zerbitzaria</b>"
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule</b>)."
+msgstr ""
+
+msgid "Reload the imported fencers?"
+msgstr ""
+
+msgid ""
+"Applicable only on <b>non-started</b> competitions created by importing "
+"fencers."
+msgstr ""
 
 msgid "Form"
 msgstr "Inprimakia"
+
+msgid "Job"
+msgstr ""
+
+msgid "Take off"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
+msgid "<b>Referee</b>"
+msgstr ""
+
+msgid "<b>Fencers</b>"
+msgstr ""
 
 msgid "Date of competition"
 msgstr "Txapelketaren data"
@@ -924,11 +1224,5 @@ msgstr "Txapelketaren uneko egoera gorde."
 msgid "To specify the features of the competition."
 msgstr "Txapelketaren ezarpenak zehazteko."
 
-msgid "Man"
-msgstr "Gizona"
-
-msgid "U16"
-msgstr "16a"
-
-msgid "Import referee file"
-msgstr "Epaile fitxategia inportatu"
+#~ msgid "ref"
+#~ msgstr "erref"

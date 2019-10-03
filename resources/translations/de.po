@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-23 17:21+0200\n"
-"PO-Revision-Date: 2017-02-14 17:08+0000\n"
-"Last-Translator: Ben Haeberli <bendicht.haeberli@bluewin.ch>\n"
+"POT-Creation-Date: 2019-10-03 09:47+0200\n"
+"PO-Revision-Date: 2019-02-07 00:36+0000\n"
+"Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-02-15 05:53+0000\n"
-"X-Generator: Launchpad (build 18326)\n"
-"Language: \n"
+"X-Launchpad-Export-Date: 2019-10-03 06:01+0000\n"
+"X-Generator: Launchpad (build 19066)\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -40,20 +40,11 @@ msgstr "Daten"
 msgid "Look"
 msgstr "Aussehen"
 
-msgid "Split"
-msgstr "Teilung"
-
-msgid "List of fencers to extract"
+msgid "Follow the instructions given by "
 msgstr ""
 
-msgid "Choose a rank file to apply..."
+msgid "Access denied!"
 msgstr ""
-
-msgid "Rank files: cotcot, xml, txt (France)"
-msgstr ""
-
-msgid "All files"
-msgstr "Alle Dateien"
 
 msgid "<b>Smartpoule</b> configuration code"
 msgstr ""
@@ -74,6 +65,12 @@ msgstr "Teilnehmerdateien"
 msgid "Referee files"
 msgstr "Kampfrichterdateien"
 
+msgid "All files"
+msgstr "Alle Dateien"
+
+msgid "The imported FFF file has encoding errors."
+msgstr ""
+
 msgid "List of registered"
 msgstr "Anmeldeliste"
 
@@ -86,111 +83,20 @@ msgstr "Abwesenheitsliste"
 msgid "Fencer list"
 msgstr "Teilnehmerliste"
 
-msgid "Barrage"
-msgstr ""
-
 msgid "Copy"
 msgstr "Kopieren"
 
 msgid "Paste"
 msgstr "Einsetzen"
 
+msgid "Paste (link)"
+msgstr ""
+
+msgid "Remove"
+msgstr "Entfernen"
+
 msgid "Page"
 msgstr "Seite"
-
-msgid "Check-in"
-msgstr "Aufruf"
-
-msgid "** Without team **"
-msgstr "** Ohne Mannschaft **"
-
-msgid "Expected fencers"
-msgstr "Erwartete Fechter"
-
-msgid "Expected teams"
-msgstr "Erwartete Mannschaften"
-
-msgid "Team size"
-msgstr ""
-
-#, c-format
-msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr ""
-
-msgid "Tick the present players of the team."
-msgstr ""
-
-msgid "Untick the absent players of the team."
-msgstr ""
-
-msgid "General classification"
-msgstr "Ergebnisliste"
-
-msgid "Choose a target file..."
-msgstr "Wählen Sie die Zieldatei..."
-
-msgid "All FFF files (.FFF)"
-msgstr "Alle FFF-Dateien (.FFF)"
-
-msgid "All PDF files (.PDF)"
-msgstr "Alle PDF Dateien (.pdf)"
-
-msgid "All HTML files (.HTML)"
-msgstr ""
-
-msgid "Classification"
-msgstr "Rangliste"
-
-msgid "Sabre"
-msgstr "Säbel"
-
-msgid "Epée"
-msgstr "Degen"
-
-msgid "Foil"
-msgstr "Florett"
-
-msgid "Educ"
-msgstr ""
-
-msgid "Male"
-msgstr "Herren"
-
-msgid "Female"
-msgstr "Damen"
-
-msgid "Mixed"
-msgstr "Gemischt"
-
-msgid "League"
-msgstr ""
-
-msgid "Regional"
-msgstr ""
-
-msgid "Open"
-msgstr ""
-
-msgid "World cup"
-msgstr ""
-
-msgid "National championships"
-msgstr ""
-
-msgid "World championships"
-msgstr ""
-
-msgid "Other"
-msgstr ""
-
-msgid "Choose a file..."
-msgstr "Datei auswählen …"
-
-msgid "BellePoule files (.cotcot)"
-msgstr "BellePoule-Dateien (.cotcot)"
-
-msgid "Close without saving"
-msgstr ""
 
 msgid "U5"
 msgstr ""
@@ -204,11 +110,14 @@ msgstr ""
 msgid "U11"
 msgstr ""
 
-msgid "U14"
+msgid "U13"
+msgstr ""
+
+msgid "U15"
 msgstr "B-Jugend"
 
 msgid "U17"
-msgstr ""
+msgstr "A-Jugend"
 
 msgid "U20"
 msgstr ""
@@ -234,56 +143,88 @@ msgstr ""
 msgid "Veteran 4"
 msgstr ""
 
+msgid "Veteran 5"
+msgstr ""
+
 msgid "Veteran 3+4"
 msgstr ""
 
-msgid "Meal"
+msgid "Veteran 4+5"
 msgstr ""
-
-msgid "Drink"
-msgstr ""
-
-msgid "Dessert"
-msgstr ""
-
-msgid "Coffee"
-msgstr ""
-
-msgid "Payment book"
-msgstr "Kassenbuch"
-
-msgid "Signature"
-msgstr "Unterschrift"
-
-msgid "Restart BellePoule for this change to take effect"
-msgstr "Starten Sie BellePoule neu, damit die Änderungen wirksam werden"
 
 msgid "Choose a competion file to open... "
 msgstr "Wählen Sie die zu öffnende Datei... "
 
-msgid "Competition files (.cotcot / .xml)"
-msgstr "Wettkampfdateien"
+msgid "Example files"
+msgstr ""
 
-msgid "Recently opened files"
-msgstr "Zuletzt geöffnete Dateien"
+msgid "Competition files"
+msgstr ""
 
 msgid "BellePoule files"
 msgstr "Bellepoule-Dateien"
 
-msgid "Meal tickets"
-msgstr "Essengutscheine"
+msgid "Recently opened files"
+msgstr "Zuletzt geöffnete Dateien"
 
 msgid "Choose a backup files location..."
 msgstr "Wählen Sie eine Backup-Datei"
 
-msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>Wollen Sie wirklich BellePoule schließen?</big></b>"
+msgid "Men"
+msgstr ""
 
-msgid "Quit BellePoule?"
-msgstr "BellePoule schließen?"
+msgid "Women"
+msgstr ""
 
-msgid "All the unsaved competions will be lost."
-msgstr "Alle nicht gespeicherten Änderungen werden verworfen."
+msgid "Mixed"
+msgstr "Gemischt"
+
+msgid "League"
+msgstr "Liga"
+
+msgid "Regional"
+msgstr "Regional"
+
+msgid "Open"
+msgstr "Öffnen"
+
+msgid "World cup"
+msgstr ""
+
+msgid "National championships"
+msgstr ""
+
+msgid "World championships"
+msgstr "Weltmeisterschaft"
+
+msgid "Other"
+msgstr "Andere"
+
+msgid "Choose a file..."
+msgstr "Datei auswählen …"
+
+msgid "GREG alert"
+msgstr ""
+
+msgid ""
+"It's recommended to give a label when publication on GREG (www.escrime-info."
+"com) is intended.\n"
+"\n"
+"Re-open the form to fill it in?"
+msgstr ""
+
+msgid "BellePoule files (.cotcot)"
+msgstr "BellePoule-Dateien (.cotcot)"
+
+msgid "Close without saving"
+msgstr "Schließen, ohne zu speichern"
+
+#, c-format
+msgid "Match %s"
+msgstr "Gefecht %s"
+
+msgid "No winner!"
+msgstr "Kein Sieger!"
 
 #, c-format
 msgid "Round #%d"
@@ -293,8 +234,7 @@ msgid "Formula"
 msgstr "Austragungsmodus"
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr ""
-"<b><big>Wollen Sie wirklich die laufende Phase annullieren?</big></b>"
+msgstr "<b><big>Wollen Sie wirklich die laufende Phase annullieren?</big></b>"
 
 msgid "Go back to the previous round?"
 msgstr "Zur vorrangegangener Runde zurückkehren?"
@@ -307,14 +247,87 @@ msgid ""
 "Do you wish to add a barrage round?</big></b>"
 msgstr ""
 
-msgid "ref"
-msgstr "Ref"
+msgid "Barrage"
+msgstr ""
+
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr "<b><big>Wollen Sie wirklich BellePoule schließen?</big></b>"
+
+msgid "Quit BellePoule?"
+msgstr "BellePoule schließen?"
+
+msgid "All the unsaved competions will be lost."
+msgstr "Alle nicht gespeicherten Änderungen werden verworfen."
+
+#, c-format
+msgid "Piste %d"
+msgstr ""
+
+msgid "No time!"
+msgstr ""
+
+msgid "No piste!"
+msgstr ""
+
+msgid "Display jobs"
+msgstr ""
+
+msgid "Not available"
+msgstr ""
+
+msgid "Available"
+msgstr ""
+
+msgid "Pool"
+msgstr ""
+
+msgid "Meal"
+msgstr ""
+
+msgid "Drink"
+msgstr "Getränk"
+
+msgid "Dessert"
+msgstr "Dessert"
+
+msgid "Coffee"
+msgstr "Kaffee"
+
+msgid "Payment book"
+msgstr "Kassenbuch"
+
+msgid "Signature"
+msgstr "Unterschrift"
+
+msgid "Meal tickets"
+msgstr "Essengutscheine"
+
+#, c-format
+msgid ""
+"<b>%s</b> is delayed.\n"
+"Do you want to postpone the next bouts?\n"
+msgstr ""
+
+msgid "Restart BellePoule for this change to take effect"
+msgstr "Starten Sie BellePoule neu, damit die Änderungen wirksam werden"
+
+msgid "Educ"
+msgstr ""
+
+msgid "Foil"
+msgstr "Florett"
+
+msgid "Epée"
+msgstr "Degen"
+
+msgid "Sabre"
+msgstr "Säbel"
 
 msgid "place"
 msgstr "Platz"
 
 msgid "team"
-msgstr ""
+msgstr "Team"
 
 msgid "last name"
 msgstr "Nachname"
@@ -328,8 +341,20 @@ msgstr "Geburtsdatum"
 msgid "gender"
 msgstr "Geschlecht"
 
+msgid "Male"
+msgstr "Herren"
+
+msgid "Female"
+msgstr "Damen"
+
+msgid "weapon"
+msgstr ""
+
 msgid "country"
 msgstr "Nation"
+
+msgid "region"
+msgstr ""
 
 msgid "league"
 msgstr "Landesverband"
@@ -340,9 +365,6 @@ msgstr "Verein"
 msgid "licence"
 msgstr "Lizenz"
 
-msgid "IP address"
-msgstr ""
-
 msgid "rate"
 msgstr "Rate"
 
@@ -352,11 +374,23 @@ msgstr "Level"
 msgid "ranking"
 msgstr "Platzierung"
 
+msgid "rating"
+msgstr ""
+
 msgid "presence"
 msgstr "Anwesenheit"
 
 msgid "exported"
 msgstr "exportiert"
+
+msgid "incident"
+msgstr ""
+
+msgid "Absent"
+msgstr "Abwesend"
+
+msgid "Latecomer"
+msgstr ""
 
 msgid "global status"
 msgstr "global Status"
@@ -379,6 +413,15 @@ msgstr "Aufgabe"
 msgid "status"
 msgstr "Status"
 
+msgid "cyphered password"
+msgstr ""
+
+msgid "IP address"
+msgstr "IP-Adresse"
+
+msgid "Password"
+msgstr "Passwort:"
+
 msgid "pool #"
 msgstr "Rundennr."
 
@@ -397,23 +440,17 @@ msgstr "Index"
 msgid "Hits scored"
 msgstr "geg. Treffer"
 
+msgid "strip"
+msgstr ""
+
+msgid "time"
+msgstr ""
+
 msgid "Round start rank"
 msgstr "Startplatz"
 
 msgid "promoted"
-msgstr ""
-
-msgid "availability"
-msgstr "Verfügbarkeit"
-
-msgid "Busy"
-msgstr "Beschäftigt"
-
-msgid "Absent"
-msgstr "Abwesend"
-
-msgid "Free"
-msgstr "Verfügbar"
+msgstr "gefördert"
 
 msgid "connection"
 msgstr ""
@@ -429,6 +466,61 @@ msgstr ""
 
 msgid "Manual"
 msgstr ""
+
+msgid "Classification"
+msgstr "Rangliste"
+
+msgid "Piste"
+msgstr "Bahn"
+
+msgid "Place #"
+msgstr "Platz #"
+
+msgid "Referee"
+msgstr "Kampfrichter"
+
+msgid "Table"
+msgstr "Direktausscheid"
+
+#, c-format
+msgid "%s: score sheets printing"
+msgstr "%s : Druck der Gefechte"
+
+msgid "Winner"
+msgstr "Sieger"
+
+msgid "Final"
+msgstr "Finale"
+
+msgid "Semi-final"
+msgstr "Halbfinale"
+
+#, c-format
+msgid "Table of %d"
+msgstr "Letzte %d"
+
+msgid "OVER"
+msgstr ""
+
+msgid ""
+"Referees allocation \n"
+" ongoing"
+msgstr ""
+
+msgid "Table classification"
+msgstr "Rangfolge nach der Direktausscheidung"
+
+msgid "All places fenced"
+msgstr ""
+
+msgid "Fence off for third place"
+msgstr ""
+
+msgid "No fence off for third place"
+msgstr ""
+
+msgid "Max score"
+msgstr "Max Punktestand"
 
 msgid "Pools arrangement"
 msgstr "Zusammensetzung der Runden"
@@ -451,18 +543,12 @@ msgstr "Ausgeglichen"
 msgid "Grouped by strength"
 msgstr "Nach Stärke gruppiert"
 
-msgid "Max score"
-msgstr "Max Punktestand"
+msgid "Impossible to apply with this configuration of pools"
+msgstr ""
 
 #, c-format
 msgid "Pool #%02d"
 msgstr "Rundennummer %02d"
-
-msgid "Referee"
-msgstr "Kampfrichter"
-
-msgid "Piste"
-msgstr "Bahn"
 
 msgid "Status"
 msgstr "Status"
@@ -488,53 +574,60 @@ msgstr "Runden"
 msgid "Bout without winner!"
 msgstr "Gefecht ohne Sieger!"
 
-msgid "Place #"
-msgstr "Platz #"
+msgid "General classification"
+msgstr "Ergebnisliste"
 
-msgid "cutting"
+msgid "All FFF files (.FFF)"
+msgstr "Alle FFF-Dateien (.FFF)"
+
+msgid "All PDF files (.PDF)"
+msgstr "Alle PDF Dateien (.pdf)"
+
+msgid "All HTML files (.HTML)"
+msgstr "Alle HTML Dateien (.HTML)"
+
+msgid "All AskFred files (.FRD)"
 msgstr ""
 
-msgid "Table"
-msgstr "Direktausscheid"
+msgid "Split"
+msgstr "Teilung"
+
+msgid "List of fencers to extract"
+msgstr ""
+
+msgid "Choose a rank file to apply..."
+msgstr ""
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr ""
+
+msgid "Check-in"
+msgstr "Aufruf"
+
+msgid "** Without team **"
+msgstr "** Ohne Mannschaft **"
+
+msgid "Present fencers"
+msgstr ""
+
+msgid "Expected fencers"
+msgstr "Erwartete Fechter"
+
+msgid "Expected teams"
+msgstr "Erwartete Mannschaften"
+
+msgid "Team size"
+msgstr "Teamgröße"
 
 #, c-format
-msgid "%s: score sheets printing"
-msgstr "%s : Druck der Gefechte"
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
+msgstr ""
 
-msgid "Winner"
-msgstr "Sieger"
+msgid "Tick the present players of the team."
+msgstr ""
 
-msgid "Final"
-msgstr "Finale"
-
-msgid "Semi-final"
-msgstr "Halbfinale"
-
-#, c-format
-msgid "Table of %d"
-msgstr "Letzte %d"
-
-#, c-format
-msgid "Match %s"
-msgstr "Gefecht %s"
-
-msgid "No winner!"
-msgstr "Kein Sieger!"
-
-msgid "Table classification"
-msgstr "Rangfolge nach der Direktausscheidung"
-
-msgid "Fenced places"
-msgstr "Gefochtene Plätze"
-
-msgid "All"
-msgstr "Alle"
-
-msgid "Third place"
-msgstr "Dritter Platz"
-
-msgid "None"
-msgstr "Kein(e)"
+msgid "Untick the absent players of the team."
+msgstr ""
 
 msgid "Fencer list printing"
 msgstr "Ausdruck der Teilnehmerliste"
@@ -575,8 +668,29 @@ msgstr ""
 msgid "Derived from fencer classification"
 msgstr ""
 
-msgid "when unknown"
+msgid "Extension"
 msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Assign"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Undo"
+msgstr ""
+
+msgid "Match"
+msgstr ""
+
+msgid "<b>Match</b>"
+msgstr "<b>Gefecht</b>"
+
+msgid "<b>Score</b>"
+msgstr "<b>Punktestand</b>"
 
 msgid "Table printing"
 msgstr "Druck der Tabelle"
@@ -584,21 +698,15 @@ msgstr "Druck der Tabelle"
 msgid "<b><big>How to print?</big></b>"
 msgstr ""
 
-msgid "The table"
-msgstr "Die Tabelle"
-
-msgid "Score sheets"
-msgstr "Gefechtstableau"
-
-msgid "Pending"
-msgstr "Offene"
+msgid "Bouts/sheet"
+msgstr ""
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
-"<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie "
-"drucken?</big></b>"
+"<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie drucken?</big></"
+"b>"
 
 msgid "All the score sheets"
 msgstr "Alle Gefechtstableaus"
@@ -606,23 +714,8 @@ msgstr "Alle Gefechtstableaus"
 msgid "The pending score sheets"
 msgstr "Offene Gefechtstableaus"
 
-msgid "<b>Match</b>"
-msgstr "<b>Gefecht</b>"
-
-msgid "A fencer"
-msgstr "Fechter A"
-
-msgid "B fencer"
-msgstr "Fechter B"
-
-msgid "<b>Score</b>"
-msgstr "<b>Punktestand</b>"
-
 msgid "Add"
 msgstr "Hinzufügen"
-
-msgid "Remove"
-msgstr "Entfernen"
 
 msgid "<b>Schedule</b>"
 msgstr "<b>Zeitplan</b>"
@@ -636,13 +729,25 @@ msgstr "Letzte Phase"
 msgid "Next round"
 msgstr "Nächste Phase"
 
+msgid "Choose a target file..."
+msgstr "Wählen Sie die Zieldatei..."
+
 msgid "Export to <b>HTML</b>"
-msgstr ""
+msgstr "Exprtierten als <b>HTML</b>"
 
 msgid "Export to <b>FFF</b>"
-msgstr ""
+msgstr "Exportieren als <b>FFF</b>"
 
 msgid "Export to <b>PDF</b>"
+msgstr "Exportieren als <b>PDF</b>"
+
+msgid "Export to <b>FRD</b>"
+msgstr ""
+
+msgid "Place shifting"
+msgstr ""
+
+msgid "Winner's place"
 msgstr ""
 
 msgid "Name"
@@ -687,6 +792,24 @@ msgstr "Platzierung insgesamt"
 msgid "Single classification"
 msgstr "Platzierung Runde"
 
+msgid "All"
+msgstr "Alle"
+
+msgid "Selected"
+msgstr ""
+
+msgid "Now"
+msgstr ""
+
+msgid "<b>From?</b>"
+msgstr ""
+
+msgid "label"
+msgstr ""
+
+msgid "Import referee file"
+msgstr "Imprtiere Kampfrichter-Datei"
+
 msgid "Content designed for the referees."
 msgstr "Rundenzettel für die Kampfrichter"
 
@@ -694,44 +817,46 @@ msgid "Promoted"
 msgstr ""
 
 msgid "Eliminated"
+msgstr "Ausgeschieden"
+
+msgid "BellePoule - Fencing tournament"
+msgstr "BellePoule - Fechtturnier"
+
+msgid "File"
+msgstr "Datei"
+
+msgid "Referees"
+msgstr "Kampfrichter"
+
+msgid "WIFI"
 msgstr ""
 
-msgid "Fill in a match"
-msgstr "Ein Gefecht auswählen"
-
-msgid ""
-"Fill in all the scores randomly.\n"
-"To activate/deactivate this button, go to the properties of the competition."
+msgid "Score sheet scanner"
 msgstr ""
-"Ausfüllen der Tabelle durch Zufallsergebnisse.\n"
-"Aktivieren/Deaktivieren der Funktion in den Turniereigenschaften."
 
-msgid "From"
-msgstr "Von"
+msgid "Print meal tickets"
+msgstr "Essensgutscheine drucken"
 
-msgid "To"
-msgstr "An"
+msgid "Print payment book"
+msgstr "Zahlungsliste drucken"
 
-msgid "For place"
-msgstr "Dritte Platz"
+msgid "New version!"
+msgstr "Neue Version!"
 
-msgid "Zoom"
-msgstr "Vergrößerung"
+msgid "Release notes"
+msgstr ""
 
-msgid "Mask or unmask some data type as well as define their display order."
-msgstr "Auswahl der angezeigten Personendaten."
+msgid "Acces code"
+msgstr ""
 
-msgid "Print"
-msgstr "Drucken"
+msgid "User manual"
+msgstr "Benutzerhandbuch"
 
-msgid "Number of pools"
-msgstr "Zahl der Runden"
+msgid "Return"
+msgstr ""
 
-msgid "Fencers / pools"
-msgstr "Fechter pro Runde"
-
-msgid "Swapping"
-msgstr "Verschiebung"
+msgid "Matches"
+msgstr ""
 
 msgid ""
 "Fencing tournament management software.\n"
@@ -741,9 +866,6 @@ msgstr ""
 "Fechtturnier Verwaltungs-Software.\n"
 "\n"
 "\n"
-
-msgid "WPA"
-msgstr ""
 
 msgid "Security"
 msgstr ""
@@ -757,29 +879,190 @@ msgid ""
 "the smarthphones running <b>SmartPoule</b>"
 msgstr ""
 
-msgid "User"
-msgstr "Benutzer"
-
-msgid "Password"
-msgstr "Passwort:"
-
-msgid "FTP server"
-msgstr "FTP-Server"
-
-msgid "<b>Web site</b>"
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
 msgstr ""
 
-msgid "<b>Video server</b>"
+msgid "<b>Score sheet scanner</b>"
 msgstr ""
 
-msgid "BellePoule - Fencing tournament"
-msgstr "BellePoule - Fechtturnier"
+msgid "Connection rejected"
+msgstr ""
 
-msgid "File"
-msgstr "Datei"
+msgid "BellePoule2D is already operating on the network."
+msgstr ""
+
+msgid "Connection to <b>BellePoule</b>"
+msgstr ""
+
+msgid "Plug an USB stick."
+msgstr ""
+
+msgid "Unplug it."
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule</b> is running."
+msgstr ""
+
+msgid "Scan this QRCode:"
+msgstr ""
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule2D</b>)."
+msgstr ""
+
+msgid "Fenced places"
+msgstr "Gefochtene Plätze"
+
+msgid "Fill in a match"
+msgstr "Ein Gefecht auswählen"
+
+msgid "Score sheets"
+msgstr "Gefechtstableau"
+
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+"Ausfüllen der Tabelle durch Zufallsergebnisse.\n"
+"Aktivieren/Deaktivieren der Funktion in den Turniereigenschaften."
+
+msgid "match"
+msgstr ""
+
+msgid "<b>Search</b>"
+msgstr ""
+
+msgid "Zoom"
+msgstr "Vergrößerung"
+
+msgid "From:"
+msgstr ""
+
+msgid "Only the selected"
+msgstr ""
+
+msgid "Pistes"
+msgstr ""
+
+msgid "None"
+msgstr "Kein(e)"
+
+msgid "<b>No referee available!</b>"
+msgstr ""
+
+msgid "Didn't you forget to check them in?"
+msgstr ""
+
+msgid "Overlap of time slots"
+msgstr ""
+
+msgid "Rotate"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Print"
+msgstr "Drucken"
+
+msgid "<span size=\"x-small\">club</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">league</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">country</span>"
+msgstr ""
+
+msgid "Warnings"
+msgstr ""
+
+msgid "Check the fencers you wish to include"
+msgstr ""
+
+msgid "New fencer..."
+msgstr ""
+
+msgid "Uncheck the fencers you wish to withdraw"
+msgstr ""
+
+msgid "Mask or unmask some data type as well as define their display order."
+msgstr "Auswahl der angezeigten Personendaten."
+
+msgid "Number of pools"
+msgstr "Zahl der Runden"
+
+msgid "Fencers / pools"
+msgstr "Fechter pro Runde"
+
+msgid "Swapping"
+msgstr "Verschiebung"
+
+msgid "Label "
+msgstr ""
+
+msgid ""
+"Used by GREG to distinguish\n"
+"the competions created from splitting."
+msgstr ""
+
+msgid ""
+"BellePoule needs your agreement\n"
+"to tweet on your behalf"
+msgstr ""
+
+msgid "Click on the link to open a web browser:"
+msgstr ""
+
+msgid "Obtain an authorization code"
+msgstr ""
+
+msgid "on this web site"
+msgstr ""
+
+msgid "Paste the authorization code here:"
+msgstr ""
+
+msgid "BellePoule needs your agreement to post announces on your behalf"
+msgstr ""
+
+msgid "New competition"
+msgstr ""
+
+msgid "Choose a creation method:"
+msgstr ""
+
+msgid "From a XML file"
+msgstr ""
+
+msgid "Empty competition"
+msgstr ""
+
+msgid "From a FFE zip file (extranet)"
+msgstr ""
+
+msgid "From AskFred (.frd)"
+msgstr ""
+
+msgid "Connection to <b>BellePoule2D</b>"
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule2D</b> is running."
+msgstr ""
 
 msgid "Recently opened"
 msgstr "Zuletzt verwendete"
+
+msgid "Reload imports..."
+msgstr ""
 
 msgid "Backup"
 msgstr "Sichern"
@@ -793,49 +1076,65 @@ msgstr "Aktivieren"
 msgid "Deactivate"
 msgstr "Deaktivieren"
 
-msgid "Referees"
-msgstr "Kampfrichter"
-
-msgid "Print meal tickets"
-msgstr "Essensgutscheine drucken"
-
-msgid "Print payment book"
-msgstr "Zahlungsliste drucken"
-
-msgid "Ecosystem"
-msgstr ""
-
-msgid "WIFI"
-msgstr ""
-
-msgid "Score sheet scanner"
-msgstr ""
-
 msgid "Publication"
 msgstr ""
 
-msgid "New version!"
-msgstr "Neue Version!"
+msgid "Setup"
+msgstr ""
+
+msgid "Access code"
+msgstr ""
 
 msgid "Open an example..."
 msgstr "Beispiel öffnen"
 
-msgid "User manual"
-msgstr "Benutzerhandbuch"
-
 msgid "Fencer file template (.csv)"
 msgstr "Vorlage Fechterdatei (.csv)"
 
-msgid ""
-"Scan this code with <b>SmartPoule</b>\n"
-"to make your smarphone\n"
-"a score sheet scanner."
+msgid "User"
+msgstr "Benutzer"
+
+msgid "FTP server"
+msgstr "FTP-Server"
+
+msgid "<b>Web site</b>"
 msgstr ""
 
-msgid "<b>Score sheet scanner</b>"
+msgid "<b>Announce</b>"
+msgstr ""
+
+msgid "<b>Video server</b>"
+msgstr ""
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule</b>)."
+msgstr ""
+
+msgid "Reload the imported fencers?"
+msgstr ""
+
+msgid ""
+"Applicable only on <b>non-started</b> competitions created by importing "
+"fencers."
 msgstr ""
 
 msgid "Form"
+msgstr ""
+
+msgid "Job"
+msgstr ""
+
+msgid "Take off"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
+msgid "<b>Referee</b>"
+msgstr ""
+
+msgid "<b>Fencers</b>"
 msgstr ""
 
 msgid "Date of competition"
@@ -860,7 +1159,7 @@ msgid "Individual"
 msgstr ""
 
 msgid "Team"
-msgstr ""
+msgstr "Team"
 
 msgid "<b>Type</b>"
 msgstr "<b>Typ</b>"
@@ -918,15 +1217,6 @@ msgstr "Speichert den aktuellen Stand des Wettkampfs."
 
 msgid "To specify the features of the competition."
 msgstr "Eigenschaften des Turniers festlegen."
-
-msgid "Man"
-msgstr "Herren"
-
-msgid "U16"
-msgstr "A-Jugend"
-
-msgid "Import referee file"
-msgstr "Imprtiere Kampfrichter-Datei"
 
 #~ msgid "<b><big>Quels tireurs voulez-vous imprimer ?</big></b>"
 #~ msgstr "<b><big>Welche Fechter wollen Sie drucken?</big></b>"
@@ -1114,7 +1404,9 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ msgid "Classement général"
 #~ msgstr "Ergebnisliste"
 
-#, c-format
+#~ msgid "ref"
+#~ msgstr "Ref"
+
 #~ msgid ""
 #~ "<b><big>Voulez-vous vraiment fermer\n"
 #~ "<big>%s</big> ?</big></b>"
@@ -1140,7 +1432,6 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ msgid "T. données"
 #~ msgstr "T. gegeben"
 
-#, c-format
 #~ msgid "Poule No %02d"
 #~ msgstr "Rundennummer %02d"
 
@@ -1175,7 +1466,6 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ msgid "Poules"
 #~ msgstr "Runden"
 
-#, c-format
 #~ msgid "Tableau de %d"
 #~ msgstr "letzte %d"
 
@@ -1189,15 +1479,15 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ msgstr "Tabelle"
 
 #~ msgid ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
+#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></"
+#~ "b>"
 #~ msgstr ""
-#~ "<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie "
-#~ "drucken?</big></b>"
+#~ "<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie drucken?</"
+#~ "big></b>"
 
 #~ msgid "Scission"
 #~ msgstr "Spaltung"
 
-#, c-format
 #~ msgid "%s : Impression des matchs"
 #~ msgstr "%s : Druck der Gefechte"
 
@@ -1344,19 +1634,21 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ msgstr "zu anschlagen"
 
 #~ msgid ""
-#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit les "
-#~ "listes de tireurs inscrits aux compétitions par l'intermédiaire de son site "
-#~ "internet. "
+#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit "
+#~ "les listes de tireurs inscrits aux compétitions par l'intermédiaire de "
+#~ "son site internet. "
 #~ msgstr ""
-#~ "FFF ist das Format, unter dem der französischer Fechterbund die Listen von "
-#~ "Fechtern liefert, die an das Turnier über ihr Netzstandort eingetragen sind. "
+#~ "FFF ist das Format, unter dem der französischer Fechterbund die Listen "
+#~ "von Fechtern liefert, die an das Turnier über ihr Netzstandort "
+#~ "eingetragen sind. "
 
 #~ msgid ""
 #~ "Les informations de date et heures sont exploitées pour avertir par une "
 #~ "alarme les organisateurs de l'éminence de de certains évènements."
 #~ msgstr ""
-#~ "Die Informationen von Datum und Stunden werden genutzt, um die Organisatoren "
-#~ "vor der Erhöhung bestimmter Ereignisse durch einen Alarm zu warnen."
+#~ "Die Informationen von Datum und Stunden werden genutzt, um die "
+#~ "Organisatoren vor der Erhöhung bestimmter Ereignisse durch einen Alarm zu "
+#~ "warnen."
 
 #~ msgid "ligue"
 #~ msgstr "LV"
@@ -1386,8 +1678,8 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "compétition."
 #~ msgstr ""
 #~ "Füllt alle Gefecht der Tabelle durch Zufallsstände.\n"
-#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
-#~ "Turniers."
+#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften "
+#~ "des Turniers."
 
 #~ msgid ""
 #~ "Remplis tous les matchs de toutes les poules par des scores aléatoires.\n"
@@ -1395,15 +1687,15 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "compétition."
 #~ msgstr ""
 #~ "Füllt alle Gefecht aller Runden durch Zufallsstände.\n"
-#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
-#~ "Turniers."
+#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften "
+#~ "des Turniers."
 
 #~ msgid "Remplissage auto"
 #~ msgstr "automatisches Füllen"
 
 #~ msgid ""
-#~ "Exporte le classement dans un fichier au format \".csv\" pour des tableurs "
-#~ "du type Excel ou OpenOffice"
+#~ "Exporte le classement dans un fichier au format \".csv\" pour des "
+#~ "tableurs du type Excel ou OpenOffice"
 #~ msgstr ""
 #~ "Exportiert die Rangfolge in eine \".csv\" Datei-Format für Excel oder "
 #~ "OpenOffice-Typ"
@@ -1424,12 +1716,13 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ msgstr "Unaktiviert des Knopf \"automatisches Füllen der Punktstände\"."
 
 #~ msgid ""
-#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
-#~ "des saisies longues et laborieuses lors des séances de prise en main de "
-#~ "BellePoule."
+#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut "
+#~ "éviter des saisies longues et laborieuses lors des séances de prise en "
+#~ "main de BellePoule."
 #~ msgstr ""
-#~ "Aktiviert den Knopf \"automatisches Füllen der Punktstände\". Es kann lange "
-#~ "und mühselige Erfassungen während den Testen von BellePoule vermeiden."
+#~ "Aktiviert den Knopf \"automatisches Füllen der Punktstände\". Es kann "
+#~ "lange und mühselige Erfassungen während den Testen von BellePoule "
+#~ "vermeiden."
 
 #~ msgid "Ouvrir un exemple ..."
 #~ msgstr "Ein Beispiel zu eröffnen"
@@ -1527,16 +1820,19 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "\n"
 #~ "  0. Definitions.\n"
 #~ "\n"
-#~ "  \"This License\" refers to version 3 of the GNU General Public License.\n"
+#~ "  \"This License\" refers to version 3 of the GNU General Public "
+#~ "License.\n"
 #~ "\n"
-#~ "  \"Copyright\" also means copyright-like laws that apply to other kinds of\n"
+#~ "  \"Copyright\" also means copyright-like laws that apply to other kinds "
+#~ "of\n"
 #~ "works, such as semiconductor masks.\n"
 #~ "\n"
 #~ "  \"The Program\" refers to any copyrightable work licensed under this\n"
 #~ "License.  Each licensee is addressed as \"you\".  \"Licensees\" and\n"
 #~ "\"recipients\" may be individuals or organizations.\n"
 #~ "\n"
-#~ "  To \"modify\" a work means to copy from or adapt all or part of the work\n"
+#~ "  To \"modify\" a work means to copy from or adapt all or part of the "
+#~ "work\n"
 #~ "in a fashion requiring copyright permission, other than the making of an\n"
 #~ "exact copy.  The resulting work is called a \"modified version\" of the\n"
 #~ "earlier work or a work \"based on\" the earlier work.\n"
@@ -1749,10 +2045,13 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "from the Corresponding Source as a System Library, need not be\n"
 #~ "included in conveying the object code work.\n"
 #~ "\n"
-#~ "  A \"User Product\" is either (1) a \"consumer product\", which means any\n"
+#~ "  A \"User Product\" is either (1) a \"consumer product\", which means "
+#~ "any\n"
 #~ "tangible personal property which is normally used for personal, family,\n"
-#~ "or household purposes, or (2) anything designed or sold for incorporation\n"
-#~ "into a dwelling.  In determining whether a product is a consumer product,\n"
+#~ "or household purposes, or (2) anything designed or sold for "
+#~ "incorporation\n"
+#~ "into a dwelling.  In determining whether a product is a consumer "
+#~ "product,\n"
 #~ "doubtful cases shall be resolved in favor of coverage.  For a particular\n"
 #~ "product received by a particular user, \"normally used\" refers to a\n"
 #~ "typical or common use of that class of product, regardless of the status\n"
@@ -1764,7 +2063,8 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "\n"
 #~ "  \"Installation Information\" for a User Product means any methods,\n"
 #~ "procedures, authorization keys, or other information required to install\n"
-#~ "and execute modified versions of a covered work in that User Product from\n"
+#~ "and execute modified versions of a covered work in that User Product "
+#~ "from\n"
 #~ "a modified version of its Corresponding Source.  The information must\n"
 #~ "suffice to ensure that the continued functioning of the modified object\n"
 #~ "code is in no case prevented or interfered with solely because\n"
@@ -1784,7 +2084,8 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "  The requirement to provide Installation Information does not include a\n"
 #~ "requirement to continue to provide support service, warranty, or updates\n"
 #~ "for a work that has been modified or installed by the recipient, or for\n"
-#~ "the User Product in which it has been modified or installed.  Access to a\n"
+#~ "the User Product in which it has been modified or installed.  Access to "
+#~ "a\n"
 #~ "network may be denied when the modification itself materially and\n"
 #~ "adversely affects the operation of the network or violates the rules and\n"
 #~ "protocols for communication across the network.\n"
@@ -1814,7 +2115,8 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "for which you have or can give appropriate copyright permission.\n"
 #~ "\n"
 #~ "  Notwithstanding any other provision of this License, for material you\n"
-#~ "add to a covered work, you may (if authorized by the copyright holders of\n"
+#~ "add to a covered work, you may (if authorized by the copyright holders "
+#~ "of\n"
 #~ "that material) supplement the terms of this License with terms:\n"
 #~ "\n"
 #~ "    a) Disclaiming warranty or limiting liability differently from the\n"
@@ -1998,8 +2300,10 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "otherwise) that contradict the conditions of this License, they do not\n"
 #~ "excuse you from the conditions of this License.  If you cannot convey a\n"
 #~ "covered work so as to satisfy simultaneously your obligations under this\n"
-#~ "License and any other pertinent obligations, then as a consequence you may\n"
-#~ "not convey it at all.  For example, if you agree to terms that obligate you\n"
+#~ "License and any other pertinent obligations, then as a consequence you "
+#~ "may\n"
+#~ "not convey it at all.  For example, if you agree to terms that obligate "
+#~ "you\n"
 #~ "to collect a royalty for further conveying from those to whom you convey\n"
 #~ "the Program, the only way you could satisfy both those terms and this\n"
 #~ "License would be to refrain entirely from conveying the Program.\n"
@@ -2017,8 +2321,10 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "\n"
 #~ "  14. Revised Versions of this License.\n"
 #~ "\n"
-#~ "  The Free Software Foundation may publish revised and/or new versions of\n"
-#~ "the GNU General Public License from time to time.  Such new versions will\n"
+#~ "  The Free Software Foundation may publish revised and/or new versions "
+#~ "of\n"
+#~ "the GNU General Public License from time to time.  Such new versions "
+#~ "will\n"
 #~ "be similar in spirit to the present version, but may differ in detail to\n"
 #~ "address new problems or concerns.\n"
 #~ "\n"
@@ -2045,23 +2351,30 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "\n"
 #~ "  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n"
 #~ "APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT\n"
-#~ "HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY\n"
+#~ "HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT "
+#~ "WARRANTY\n"
 #~ "OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,\n"
 #~ "THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n"
-#~ "PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM\n"
+#~ "PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE "
+#~ "PROGRAM\n"
 #~ "IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF\n"
 #~ "ALL NECESSARY SERVICING, REPAIR OR CORRECTION.\n"
 #~ "\n"
 #~ "  16. Limitation of Liability.\n"
 #~ "\n"
 #~ "  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING\n"
-#~ "WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS\n"
-#~ "THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY\n"
+#~ "WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR "
+#~ "CONVEYS\n"
+#~ "THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING "
+#~ "ANY\n"
 #~ "GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE\n"
-#~ "USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF\n"
-#~ "DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD\n"
+#~ "USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS "
+#~ "OF\n"
+#~ "DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR "
+#~ "THIRD\n"
 #~ "PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),\n"
-#~ "EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF\n"
+#~ "EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY "
+#~ "OF\n"
 #~ "SUCH DAMAGES.\n"
 #~ "\n"
 #~ "  17. Interpretation of Sections 15 and 16.\n"
@@ -2079,14 +2392,16 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "\n"
 #~ "  If you develop a new program, and you want it to be of the greatest\n"
 #~ "possible use to the public, the best way to achieve this is to make it\n"
-#~ "free software which everyone can redistribute and change under these terms.\n"
+#~ "free software which everyone can redistribute and change under these "
+#~ "terms.\n"
 #~ "\n"
 #~ "  To do so, attach the following notices to the program.  It is safest\n"
 #~ "to attach them to the start of each source file to most effectively\n"
 #~ "state the exclusion of warranty; and each file should have at least\n"
 #~ "the \"copyright\" line and a pointer to where the full notice is found.\n"
 #~ "\n"
-#~ "    <one line to give the program's name and a brief idea of what it does.>\n"
+#~ "    <one line to give the program's name and a brief idea of what it does."
+#~ ">\n"
 #~ "    Copyright (C) <year>  <name of author>\n"
 #~ "\n"
 #~ "    This program is free software: you can redistribute it and/or modify\n"
@@ -2100,7 +2415,8 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "    GNU General Public License for more details.\n"
 #~ "\n"
 #~ "    You should have received a copy of the GNU General Public License\n"
-#~ "    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
+#~ "    along with this program.  If not, see <http://www.gnu.org/licenses/"
+#~ ">.\n"
 #~ "\n"
 #~ "Also add information on how to contact you by electronic and paper mail.\n"
 #~ "\n"
@@ -2108,24 +2424,29 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "notice like this when it starts in an interactive mode:\n"
 #~ "\n"
 #~ "    <program>  Copyright (C) <year>  <name of author>\n"
-#~ "    This program comes with ABSOLUTELY NO WARRANTY; for details type `show "
-#~ "w'.\n"
+#~ "    This program comes with ABSOLUTELY NO WARRANTY; for details type "
+#~ "`show w'.\n"
 #~ "    This is free software, and you are welcome to redistribute it\n"
 #~ "    under certain conditions; type `show c' for details.\n"
 #~ "\n"
-#~ "The hypothetical commands `show w' and `show c' should show the appropriate\n"
+#~ "The hypothetical commands `show w' and `show c' should show the "
+#~ "appropriate\n"
 #~ "parts of the General Public License.  Of course, your program's commands\n"
 #~ "might be different; for a GUI interface, you would use an \"about box\".\n"
 #~ "\n"
 #~ "  You should also get your employer (if you work as a programmer) or "
 #~ "school,\n"
-#~ "if any, to sign a \"copyright disclaimer\" for the program, if necessary.\n"
-#~ "For more information on this, and how to apply and follow the GNU GPL, see\n"
+#~ "if any, to sign a \"copyright disclaimer\" for the program, if "
+#~ "necessary.\n"
+#~ "For more information on this, and how to apply and follow the GNU GPL, "
+#~ "see\n"
 #~ "<http://www.gnu.org/licenses/>.\n"
 #~ "\n"
-#~ "  The GNU General Public License does not permit incorporating your program\n"
+#~ "  The GNU General Public License does not permit incorporating your "
+#~ "program\n"
 #~ "into proprietary programs.  If your program is a subroutine library, you\n"
-#~ "may consider it more useful to permit linking proprietary applications with\n"
+#~ "may consider it more useful to permit linking proprietary applications "
+#~ "with\n"
 #~ "the library.  If this is what you want to do, use the GNU Lesser General\n"
 #~ "Public License instead of this License.  But first, please read\n"
 #~ "<http://www.gnu.org/philosophy/why-not-lgpl.html>. "
@@ -2204,16 +2525,19 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "\n"
 #~ "  0. Definitions.\n"
 #~ "\n"
-#~ "  \"This License\" refers to version 3 of the GNU General Public License.\n"
+#~ "  \"This License\" refers to version 3 of the GNU General Public "
+#~ "License.\n"
 #~ "\n"
-#~ "  \"Copyright\" also means copyright-like laws that apply to other kinds of\n"
+#~ "  \"Copyright\" also means copyright-like laws that apply to other kinds "
+#~ "of\n"
 #~ "works, such as semiconductor masks.\n"
 #~ "\n"
 #~ "  \"The Program\" refers to any copyrightable work licensed under this\n"
 #~ "License.  Each licensee is addressed as \"you\".  \"Licensees\" and\n"
 #~ "\"recipients\" may be individuals or organizations.\n"
 #~ "\n"
-#~ "  To \"modify\" a work means to copy from or adapt all or part of the work\n"
+#~ "  To \"modify\" a work means to copy from or adapt all or part of the "
+#~ "work\n"
 #~ "in a fashion requiring copyright permission, other than the making of an\n"
 #~ "exact copy.  The resulting work is called a \"modified version\" of the\n"
 #~ "earlier work or a work \"based on\" the earlier work.\n"
@@ -2426,10 +2750,13 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "from the Corresponding Source as a System Library, need not be\n"
 #~ "included in conveying the object code work.\n"
 #~ "\n"
-#~ "  A \"User Product\" is either (1) a \"consumer product\", which means any\n"
+#~ "  A \"User Product\" is either (1) a \"consumer product\", which means "
+#~ "any\n"
 #~ "tangible personal property which is normally used for personal, family,\n"
-#~ "or household purposes, or (2) anything designed or sold for incorporation\n"
-#~ "into a dwelling.  In determining whether a product is a consumer product,\n"
+#~ "or household purposes, or (2) anything designed or sold for "
+#~ "incorporation\n"
+#~ "into a dwelling.  In determining whether a product is a consumer "
+#~ "product,\n"
 #~ "doubtful cases shall be resolved in favor of coverage.  For a particular\n"
 #~ "product received by a particular user, \"normally used\" refers to a\n"
 #~ "typical or common use of that class of product, regardless of the status\n"
@@ -2441,7 +2768,8 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "\n"
 #~ "  \"Installation Information\" for a User Product means any methods,\n"
 #~ "procedures, authorization keys, or other information required to install\n"
-#~ "and execute modified versions of a covered work in that User Product from\n"
+#~ "and execute modified versions of a covered work in that User Product "
+#~ "from\n"
 #~ "a modified version of its Corresponding Source.  The information must\n"
 #~ "suffice to ensure that the continued functioning of the modified object\n"
 #~ "code is in no case prevented or interfered with solely because\n"
@@ -2461,7 +2789,8 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "  The requirement to provide Installation Information does not include a\n"
 #~ "requirement to continue to provide support service, warranty, or updates\n"
 #~ "for a work that has been modified or installed by the recipient, or for\n"
-#~ "the User Product in which it has been modified or installed.  Access to a\n"
+#~ "the User Product in which it has been modified or installed.  Access to "
+#~ "a\n"
 #~ "network may be denied when the modification itself materially and\n"
 #~ "adversely affects the operation of the network or violates the rules and\n"
 #~ "protocols for communication across the network.\n"
@@ -2491,7 +2820,8 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "for which you have or can give appropriate copyright permission.\n"
 #~ "\n"
 #~ "  Notwithstanding any other provision of this License, for material you\n"
-#~ "add to a covered work, you may (if authorized by the copyright holders of\n"
+#~ "add to a covered work, you may (if authorized by the copyright holders "
+#~ "of\n"
 #~ "that material) supplement the terms of this License with terms:\n"
 #~ "\n"
 #~ "    a) Disclaiming warranty or limiting liability differently from the\n"
@@ -2675,8 +3005,10 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "otherwise) that contradict the conditions of this License, they do not\n"
 #~ "excuse you from the conditions of this License.  If you cannot convey a\n"
 #~ "covered work so as to satisfy simultaneously your obligations under this\n"
-#~ "License and any other pertinent obligations, then as a consequence you may\n"
-#~ "not convey it at all.  For example, if you agree to terms that obligate you\n"
+#~ "License and any other pertinent obligations, then as a consequence you "
+#~ "may\n"
+#~ "not convey it at all.  For example, if you agree to terms that obligate "
+#~ "you\n"
 #~ "to collect a royalty for further conveying from those to whom you convey\n"
 #~ "the Program, the only way you could satisfy both those terms and this\n"
 #~ "License would be to refrain entirely from conveying the Program.\n"
@@ -2694,8 +3026,10 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "\n"
 #~ "  14. Revised Versions of this License.\n"
 #~ "\n"
-#~ "  The Free Software Foundation may publish revised and/or new versions of\n"
-#~ "the GNU General Public License from time to time.  Such new versions will\n"
+#~ "  The Free Software Foundation may publish revised and/or new versions "
+#~ "of\n"
+#~ "the GNU General Public License from time to time.  Such new versions "
+#~ "will\n"
 #~ "be similar in spirit to the present version, but may differ in detail to\n"
 #~ "address new problems or concerns.\n"
 #~ "\n"
@@ -2722,23 +3056,30 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "\n"
 #~ "  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n"
 #~ "APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT\n"
-#~ "HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY\n"
+#~ "HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT "
+#~ "WARRANTY\n"
 #~ "OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,\n"
 #~ "THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n"
-#~ "PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM\n"
+#~ "PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE "
+#~ "PROGRAM\n"
 #~ "IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF\n"
 #~ "ALL NECESSARY SERVICING, REPAIR OR CORRECTION.\n"
 #~ "\n"
 #~ "  16. Limitation of Liability.\n"
 #~ "\n"
 #~ "  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING\n"
-#~ "WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS\n"
-#~ "THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY\n"
+#~ "WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR "
+#~ "CONVEYS\n"
+#~ "THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING "
+#~ "ANY\n"
 #~ "GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE\n"
-#~ "USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF\n"
-#~ "DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD\n"
+#~ "USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS "
+#~ "OF\n"
+#~ "DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR "
+#~ "THIRD\n"
 #~ "PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),\n"
-#~ "EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF\n"
+#~ "EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY "
+#~ "OF\n"
 #~ "SUCH DAMAGES.\n"
 #~ "\n"
 #~ "  17. Interpretation of Sections 15 and 16.\n"
@@ -2756,14 +3097,16 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "\n"
 #~ "  If you develop a new program, and you want it to be of the greatest\n"
 #~ "possible use to the public, the best way to achieve this is to make it\n"
-#~ "free software which everyone can redistribute and change under these terms.\n"
+#~ "free software which everyone can redistribute and change under these "
+#~ "terms.\n"
 #~ "\n"
 #~ "  To do so, attach the following notices to the program.  It is safest\n"
 #~ "to attach them to the start of each source file to most effectively\n"
 #~ "state the exclusion of warranty; and each file should have at least\n"
 #~ "the \"copyright\" line and a pointer to where the full notice is found.\n"
 #~ "\n"
-#~ "    <one line to give the program's name and a brief idea of what it does.>\n"
+#~ "    <one line to give the program's name and a brief idea of what it does."
+#~ ">\n"
 #~ "    Copyright (C) <year>  <name of author>\n"
 #~ "\n"
 #~ "    This program is free software: you can redistribute it and/or modify\n"
@@ -2777,7 +3120,8 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "    GNU General Public License for more details.\n"
 #~ "\n"
 #~ "    You should have received a copy of the GNU General Public License\n"
-#~ "    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
+#~ "    along with this program.  If not, see <http://www.gnu.org/licenses/"
+#~ ">.\n"
 #~ "\n"
 #~ "Also add information on how to contact you by electronic and paper mail.\n"
 #~ "\n"
@@ -2785,24 +3129,29 @@ msgstr "Imprtiere Kampfrichter-Datei"
 #~ "notice like this when it starts in an interactive mode:\n"
 #~ "\n"
 #~ "    <program>  Copyright (C) <year>  <name of author>\n"
-#~ "    This program comes with ABSOLUTELY NO WARRANTY; for details type `show "
-#~ "w'.\n"
+#~ "    This program comes with ABSOLUTELY NO WARRANTY; for details type "
+#~ "`show w'.\n"
 #~ "    This is free software, and you are welcome to redistribute it\n"
 #~ "    under certain conditions; type `show c' for details.\n"
 #~ "\n"
-#~ "The hypothetical commands `show w' and `show c' should show the appropriate\n"
+#~ "The hypothetical commands `show w' and `show c' should show the "
+#~ "appropriate\n"
 #~ "parts of the General Public License.  Of course, your program's commands\n"
 #~ "might be different; for a GUI interface, you would use an \"about box\".\n"
 #~ "\n"
 #~ "  You should also get your employer (if you work as a programmer) or "
 #~ "school,\n"
-#~ "if any, to sign a \"copyright disclaimer\" for the program, if necessary.\n"
-#~ "For more information on this, and how to apply and follow the GNU GPL, see\n"
+#~ "if any, to sign a \"copyright disclaimer\" for the program, if "
+#~ "necessary.\n"
+#~ "For more information on this, and how to apply and follow the GNU GPL, "
+#~ "see\n"
 #~ "<http://www.gnu.org/licenses/>.\n"
 #~ "\n"
-#~ "  The GNU General Public License does not permit incorporating your program\n"
+#~ "  The GNU General Public License does not permit incorporating your "
+#~ "program\n"
 #~ "into proprietary programs.  If your program is a subroutine library, you\n"
-#~ "may consider it more useful to permit linking proprietary applications with\n"
+#~ "may consider it more useful to permit linking proprietary applications "
+#~ "with\n"
 #~ "the library.  If this is what you want to do, use the GNU Lesser General\n"
 #~ "Public License instead of this License.  But first, please read\n"
 #~ "<http://www.gnu.org/philosophy/why-not-lgpl.html>. "

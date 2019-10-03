@@ -1,8 +1,11 @@
 ar;العربية
 ca;Català
 de;Deutsch
+el;Ελληνικά
 en;English
 es;Español
+eu;Euskara
+fa;فارسی
 fr;Français
 it;Italiano
 hu;Magyar
@@ -13,4 +16,5 @@ pl;Polski
 pt;Português
 pt_BR;Português brasileiro
 ru;Русский
+sl;Slovenščina
 sv;Svenska

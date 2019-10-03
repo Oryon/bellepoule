@@ -6,54 +6,45 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-23 17:21+0200\n"
-"PO-Revision-Date: 2010-09-06 06:51+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"POT-Creation-Date: 2019-10-02 17:42+0200\n"
+"PO-Revision-Date: 2018-04-24 07:39+0000\n"
+"Last-Translator: Anthony Guechoum <a.guechoum@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-02-15 05:52+0000\n"
-"X-Generator: Launchpad (build 18326)\n"
+"X-Launchpad-Export-Date: 2019-10-03 06:01+0000\n"
+"X-Generator: Launchpad (build 19066)\n"
 
 msgid "Long text"
-msgstr ""
+msgstr "Testenn hir"
 
 msgid "Short text"
-msgstr ""
+msgstr "Testenn berr"
 
 msgid "Graphic"
-msgstr ""
+msgstr "Grafik"
 
 msgid "Data to display"
-msgstr ""
+msgstr "Roadennoù da ziskouez"
 
 msgid "Visibility"
 msgstr ""
 
 msgid "Data"
-msgstr ""
+msgstr "Roadennoù"
 
 msgid "Look"
 msgstr ""
 
-msgid "Split"
+msgid "Follow the instructions given by "
 msgstr ""
 
-msgid "List of fencers to extract"
-msgstr ""
-
-msgid "Choose a rank file to apply..."
-msgstr ""
-
-msgid "Rank files: cotcot, xml, txt (France)"
-msgstr ""
-
-msgid "All files"
+msgid "Access denied!"
 msgstr ""
 
 msgid "<b>Smartpoule</b> configuration code"
-msgstr ""
+msgstr "Kod kefluniañ <b>Smartpoule</b>"
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
@@ -64,9 +55,15 @@ msgid "Choose a fencer file to import..."
 msgstr ""
 
 msgid "Fencer files"
-msgstr ""
+msgstr "Restroù an iskirmer"
 
 msgid "Referee files"
+msgstr ""
+
+msgid "All files"
+msgstr "Ar restroù holl"
+
+msgid "The imported FFF file has encoding errors."
 msgstr ""
 
 msgid "List of registered"
@@ -79,113 +76,22 @@ msgid "List of absents"
 msgstr ""
 
 msgid "Fencer list"
-msgstr ""
-
-msgid "Barrage"
-msgstr ""
+msgstr "Roll an iskrimered"
 
 msgid "Copy"
-msgstr ""
+msgstr "Kopiañ"
 
 msgid "Paste"
+msgstr "Pegañ"
+
+msgid "Paste (link)"
+msgstr ""
+
+msgid "Remove"
 msgstr ""
 
 msgid "Page"
-msgstr ""
-
-msgid "Check-in"
-msgstr ""
-
-msgid "** Without team **"
-msgstr ""
-
-msgid "Expected fencers"
-msgstr ""
-
-msgid "Expected teams"
-msgstr ""
-
-msgid "Team size"
-msgstr ""
-
-#, c-format
-msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr ""
-
-msgid "Tick the present players of the team."
-msgstr ""
-
-msgid "Untick the absent players of the team."
-msgstr ""
-
-msgid "General classification"
-msgstr ""
-
-msgid "Choose a target file..."
-msgstr ""
-
-msgid "All FFF files (.FFF)"
-msgstr ""
-
-msgid "All PDF files (.PDF)"
-msgstr ""
-
-msgid "All HTML files (.HTML)"
-msgstr ""
-
-msgid "Classification"
-msgstr ""
-
-msgid "Sabre"
-msgstr ""
-
-msgid "Epée"
-msgstr ""
-
-msgid "Foil"
-msgstr ""
-
-msgid "Educ"
-msgstr ""
-
-msgid "Male"
-msgstr ""
-
-msgid "Female"
-msgstr ""
-
-msgid "Mixed"
-msgstr ""
-
-msgid "League"
-msgstr ""
-
-msgid "Regional"
-msgstr ""
-
-msgid "Open"
-msgstr ""
-
-msgid "World cup"
-msgstr ""
-
-msgid "National championships"
-msgstr ""
-
-msgid "World championships"
-msgstr ""
-
-msgid "Other"
-msgstr ""
-
-msgid "Choose a file..."
-msgstr ""
-
-msgid "BellePoule files (.cotcot)"
-msgstr ""
-
-msgid "Close without saving"
-msgstr ""
+msgstr "Pajenn"
 
 msgid "U5"
 msgstr ""
@@ -199,7 +105,10 @@ msgstr ""
 msgid "U11"
 msgstr ""
 
-msgid "U14"
+msgid "U13"
+msgstr ""
+
+msgid "U15"
 msgstr ""
 
 msgid "U17"
@@ -229,55 +138,87 @@ msgstr ""
 msgid "Veteran 4"
 msgstr ""
 
+msgid "Veteran 5"
+msgstr ""
+
 msgid "Veteran 3+4"
 msgstr ""
 
-msgid "Meal"
-msgstr ""
-
-msgid "Drink"
-msgstr ""
-
-msgid "Dessert"
-msgstr ""
-
-msgid "Coffee"
-msgstr ""
-
-msgid "Payment book"
-msgstr ""
-
-msgid "Signature"
-msgstr ""
-
-msgid "Restart BellePoule for this change to take effect"
+msgid "Veteran 4+5"
 msgstr ""
 
 msgid "Choose a competion file to open... "
 msgstr ""
 
-msgid "Competition files (.cotcot / .xml)"
+msgid "Example files"
 msgstr ""
 
-msgid "Recently opened files"
+msgid "Competition files"
 msgstr ""
 
 msgid "BellePoule files"
 msgstr ""
 
-msgid "Meal tickets"
+msgid "Recently opened files"
 msgstr ""
 
 msgid "Choose a backup files location..."
 msgstr ""
 
-msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgid "Men"
 msgstr ""
 
-msgid "Quit BellePoule?"
+msgid "Women"
 msgstr ""
 
-msgid "All the unsaved competions will be lost."
+msgid "Mixed"
+msgstr ""
+
+msgid "League"
+msgstr ""
+
+msgid "Regional"
+msgstr "Rannvroel"
+
+msgid "Open"
+msgstr "Digor"
+
+msgid "World cup"
+msgstr "Kib ar Bed"
+
+msgid "National championships"
+msgstr ""
+
+msgid "World championships"
+msgstr ""
+
+msgid "Other"
+msgstr "All"
+
+msgid "Choose a file..."
+msgstr "Dibabit ur restr..."
+
+msgid "GREG alert"
+msgstr ""
+
+msgid ""
+"It's recommended to give a label when publication on GREG (www.escrime-"
+"info.com) is intended.\n"
+"\n"
+"Re-open the form to fill it in?"
+msgstr ""
+
+msgid "BellePoule files (.cotcot)"
+msgstr "Restroù BellePoule (.cotcot)"
+
+msgid "Close without saving"
+msgstr ""
+
+#, c-format
+msgid "Match %s"
+msgstr ""
+
+msgid "No winner!"
 msgstr ""
 
 #, c-format
@@ -301,14 +242,87 @@ msgid ""
 "Do you wish to add a barrage round?</big></b>"
 msgstr ""
 
-msgid "ref"
+msgid "Barrage"
 msgstr ""
+
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr ""
+
+msgid "Quit BellePoule?"
+msgstr ""
+
+msgid "All the unsaved competions will be lost."
+msgstr ""
+
+#, c-format
+msgid "Piste %d"
+msgstr ""
+
+msgid "No time!"
+msgstr ""
+
+msgid "No piste!"
+msgstr ""
+
+msgid "Display jobs"
+msgstr ""
+
+msgid "Not available"
+msgstr ""
+
+msgid "Available"
+msgstr ""
+
+msgid "Pool"
+msgstr ""
+
+msgid "Meal"
+msgstr ""
+
+msgid "Drink"
+msgstr ""
+
+msgid "Dessert"
+msgstr ""
+
+msgid "Coffee"
+msgstr "Kafe"
+
+msgid "Payment book"
+msgstr ""
+
+msgid "Signature"
+msgstr ""
+
+msgid "Meal tickets"
+msgstr ""
+
+#, c-format
+msgid ""
+"<b>%s</b> is delayed.\n"
+"Do you want to postpone the next bouts?\n"
+msgstr ""
+
+msgid "Restart BellePoule for this change to take effect"
+msgstr ""
+
+msgid "Educ"
+msgstr ""
+
+msgid "Foil"
+msgstr ""
+
+msgid "Epée"
+msgstr "Kleze"
+
+msgid "Sabre"
+msgstr "Sabrenn"
 
 msgid "place"
 msgstr ""
 
 msgid "team"
-msgstr ""
+msgstr "skipailh"
 
 msgid "last name"
 msgstr ""
@@ -322,19 +336,28 @@ msgstr ""
 msgid "gender"
 msgstr ""
 
+msgid "Male"
+msgstr "Paotr"
+
+msgid "Female"
+msgstr "Plac'h"
+
+msgid "weapon"
+msgstr ""
+
 msgid "country"
+msgstr "bro"
+
+msgid "region"
 msgstr ""
 
 msgid "league"
-msgstr ""
+msgstr "kevre"
 
 msgid "club"
 msgstr ""
 
 msgid "licence"
-msgstr ""
-
-msgid "IP address"
 msgstr ""
 
 msgid "rate"
@@ -346,10 +369,22 @@ msgstr ""
 msgid "ranking"
 msgstr ""
 
+msgid "rating"
+msgstr ""
+
 msgid "presence"
 msgstr ""
 
 msgid "exported"
+msgstr ""
+
+msgid "incident"
+msgstr ""
+
+msgid "Absent"
+msgstr ""
+
+msgid "Latecomer"
 msgstr ""
 
 msgid "global status"
@@ -371,6 +406,15 @@ msgid "Forfeit"
 msgstr ""
 
 msgid "status"
+msgstr "stad"
+
+msgid "cyphered password"
+msgstr ""
+
+msgid "IP address"
+msgstr "Chomlec'h IP"
+
+msgid "Password"
 msgstr ""
 
 msgid "pool #"
@@ -391,22 +435,16 @@ msgstr ""
 msgid "Hits scored"
 msgstr ""
 
+msgid "strip"
+msgstr ""
+
+msgid "time"
+msgstr ""
+
 msgid "Round start rank"
 msgstr ""
 
 msgid "promoted"
-msgstr ""
-
-msgid "availability"
-msgstr ""
-
-msgid "Busy"
-msgstr ""
-
-msgid "Absent"
-msgstr ""
-
-msgid "Free"
 msgstr ""
 
 msgid "connection"
@@ -416,12 +454,67 @@ msgid "Broken"
 msgstr ""
 
 msgid "Waiting"
-msgstr ""
+msgstr "O c'hortoz"
 
 msgid "OK"
 msgstr ""
 
 msgid "Manual"
+msgstr ""
+
+msgid "Classification"
+msgstr ""
+
+msgid "Piste"
+msgstr ""
+
+msgid "Place #"
+msgstr ""
+
+msgid "Referee"
+msgstr ""
+
+msgid "Table"
+msgstr ""
+
+#, c-format
+msgid "%s: score sheets printing"
+msgstr ""
+
+msgid "Winner"
+msgstr ""
+
+msgid "Final"
+msgstr ""
+
+msgid "Semi-final"
+msgstr ""
+
+#, c-format
+msgid "Table of %d"
+msgstr ""
+
+msgid "OVER"
+msgstr ""
+
+msgid ""
+"Referees allocation \n"
+" ongoing"
+msgstr ""
+
+msgid "Table classification"
+msgstr ""
+
+msgid "All places fenced"
+msgstr ""
+
+msgid "Fence off for third place"
+msgstr ""
+
+msgid "No fence off for third place"
+msgstr ""
+
+msgid "Max score"
 msgstr ""
 
 msgid "Pools arrangement"
@@ -445,21 +538,15 @@ msgstr ""
 msgid "Grouped by strength"
 msgstr ""
 
-msgid "Max score"
+msgid "Impossible to apply with this configuration of pools"
 msgstr ""
 
 #, c-format
 msgid "Pool #%02d"
 msgstr ""
 
-msgid "Referee"
-msgstr ""
-
-msgid "Piste"
-msgstr ""
-
 msgid "Status"
-msgstr ""
+msgstr "Stad"
 
 msgid "Vict./Matchs"
 msgstr ""
@@ -482,52 +569,59 @@ msgstr ""
 msgid "Bout without winner!"
 msgstr ""
 
-msgid "Place #"
+msgid "General classification"
 msgstr ""
 
-msgid "cutting"
+msgid "All FFF files (.FFF)"
+msgstr "Restroù FFF holl (.FFF)"
+
+msgid "All PDF files (.PDF)"
+msgstr "Restroù PDF holl (.PDF)"
+
+msgid "All HTML files (.HTML)"
+msgstr "Restroù HTML holl (.HTML)"
+
+msgid "All AskFred files (.FRD)"
 msgstr ""
 
-msgid "Table"
+msgid "Split"
+msgstr ""
+
+msgid "List of fencers to extract"
+msgstr ""
+
+msgid "Choose a rank file to apply..."
+msgstr ""
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr ""
+
+msgid "Check-in"
+msgstr "Enrolladur"
+
+msgid "** Without team **"
+msgstr ""
+
+msgid "Present fencers"
+msgstr ""
+
+msgid "Expected fencers"
+msgstr ""
+
+msgid "Expected teams"
+msgstr ""
+
+msgid "Team size"
 msgstr ""
 
 #, c-format
-msgid "%s: score sheets printing"
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
 msgstr ""
 
-msgid "Winner"
+msgid "Tick the present players of the team."
 msgstr ""
 
-msgid "Final"
-msgstr ""
-
-msgid "Semi-final"
-msgstr ""
-
-#, c-format
-msgid "Table of %d"
-msgstr ""
-
-#, c-format
-msgid "Match %s"
-msgstr ""
-
-msgid "No winner!"
-msgstr ""
-
-msgid "Table classification"
-msgstr ""
-
-msgid "Fenced places"
-msgstr ""
-
-msgid "All"
-msgstr ""
-
-msgid "Third place"
-msgstr ""
-
-msgid "None"
+msgid "Untick the absent players of the team."
 msgstr ""
 
 msgid "Fencer list printing"
@@ -569,7 +663,28 @@ msgstr ""
 msgid "Derived from fencer classification"
 msgstr ""
 
-msgid "when unknown"
+msgid "Extension"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Assign"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Undo"
+msgstr ""
+
+msgid "Match"
+msgstr ""
+
+msgid "<b>Match</b>"
+msgstr ""
+
+msgid "<b>Score</b>"
 msgstr ""
 
 msgid "Table printing"
@@ -578,13 +693,7 @@ msgstr ""
 msgid "<b><big>How to print?</big></b>"
 msgstr ""
 
-msgid "The table"
-msgstr ""
-
-msgid "Score sheets"
-msgstr ""
-
-msgid "Pending"
+msgid "Bouts/sheet"
 msgstr ""
 
 msgid ""
@@ -598,22 +707,7 @@ msgstr ""
 msgid "The pending score sheets"
 msgstr ""
 
-msgid "<b>Match</b>"
-msgstr ""
-
-msgid "A fencer"
-msgstr ""
-
-msgid "B fencer"
-msgstr ""
-
-msgid "<b>Score</b>"
-msgstr ""
-
 msgid "Add"
-msgstr ""
-
-msgid "Remove"
 msgstr ""
 
 msgid "<b>Schedule</b>"
@@ -628,6 +722,9 @@ msgstr ""
 msgid "Next round"
 msgstr ""
 
+msgid "Choose a target file..."
+msgstr ""
+
 msgid "Export to <b>HTML</b>"
 msgstr ""
 
@@ -635,6 +732,15 @@ msgid "Export to <b>FFF</b>"
 msgstr ""
 
 msgid "Export to <b>PDF</b>"
+msgstr ""
+
+msgid "Export to <b>FRD</b>"
+msgstr ""
+
+msgid "Place shifting"
+msgstr ""
+
+msgid "Winner's place"
 msgstr ""
 
 msgid "Name"
@@ -679,6 +785,24 @@ msgstr ""
 msgid "Single classification"
 msgstr ""
 
+msgid "All"
+msgstr ""
+
+msgid "Selected"
+msgstr ""
+
+msgid "Now"
+msgstr ""
+
+msgid "<b>From?</b>"
+msgstr ""
+
+msgid "label"
+msgstr ""
+
+msgid "Import referee file"
+msgstr ""
+
 msgid "Content designed for the referees."
 msgstr ""
 
@@ -688,48 +812,49 @@ msgstr ""
 msgid "Eliminated"
 msgstr ""
 
-msgid "Fill in a match"
+msgid "BellePoule - Fencing tournament"
 msgstr ""
 
-msgid ""
-"Fill in all the scores randomly.\n"
-"To activate/deactivate this button, go to the properties of the competition."
+msgid "File"
 msgstr ""
 
-msgid "From"
+msgid "Referees"
 msgstr ""
 
-msgid "To"
+msgid "WIFI"
 msgstr ""
 
-msgid "For place"
+msgid "Score sheet scanner"
 msgstr ""
 
-msgid "Zoom"
+msgid "Print meal tickets"
 msgstr ""
 
-msgid "Mask or unmask some data type as well as define their display order."
+msgid "Print payment book"
 msgstr ""
 
-msgid "Print"
+msgid "New version!"
 msgstr ""
 
-msgid "Number of pools"
+msgid "Release notes"
 msgstr ""
 
-msgid "Fencers / pools"
+msgid "Acces code"
 msgstr ""
 
-msgid "Swapping"
+msgid "User manual"
+msgstr ""
+
+msgid "Return"
+msgstr ""
+
+msgid "Matches"
 msgstr ""
 
 msgid ""
 "Fencing tournament management software.\n"
 "\n"
 "\n"
-msgstr ""
-
-msgid "WPA"
 msgstr ""
 
 msgid "Security"
@@ -744,28 +869,187 @@ msgid ""
 "the smarthphones running <b>SmartPoule</b>"
 msgstr ""
 
-msgid "User"
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
 msgstr ""
 
-msgid "Password"
+msgid "<b>Score sheet scanner</b>"
 msgstr ""
 
-msgid "FTP server"
+msgid "Connection rejected"
 msgstr ""
 
-msgid "<b>Web site</b>"
+msgid "BellePoule2D is already operating on the network."
 msgstr ""
 
-msgid "<b>Video server</b>"
+msgid "Connection to <b>BellePoule</b>"
 msgstr ""
 
-msgid "BellePoule - Fencing tournament"
+msgid "Plug an USB stick."
 msgstr ""
 
-msgid "File"
+msgid "Unplug it."
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule</b> is running."
+msgstr ""
+
+msgid "Scan this QRCode:"
+msgstr ""
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule2D</b>)."
+msgstr ""
+
+msgid "Fenced places"
+msgstr ""
+
+msgid "Fill in a match"
+msgstr ""
+
+msgid "Score sheets"
+msgstr ""
+
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+
+msgid "match"
+msgstr ""
+
+msgid "<b>Search</b>"
+msgstr ""
+
+msgid "Zoom"
+msgstr ""
+
+msgid "From:"
+msgstr ""
+
+msgid "Only the selected"
+msgstr ""
+
+msgid "Pistes"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "<b>No referee available!</b>"
+msgstr ""
+
+msgid "Didn't you forget to check them in?"
+msgstr ""
+
+msgid "Overlap of time slots"
+msgstr ""
+
+msgid "Rotate"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Print"
+msgstr ""
+
+msgid "<span size=\"x-small\">club</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">league</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">country</span>"
+msgstr ""
+
+msgid "Warnings"
+msgstr ""
+
+msgid "Check the fencers you wish to include"
+msgstr ""
+
+msgid "New fencer..."
+msgstr ""
+
+msgid "Uncheck the fencers you wish to withdraw"
+msgstr ""
+
+msgid "Mask or unmask some data type as well as define their display order."
+msgstr ""
+
+msgid "Number of pools"
+msgstr ""
+
+msgid "Fencers / pools"
+msgstr ""
+
+msgid "Swapping"
+msgstr ""
+
+msgid "Label "
+msgstr ""
+
+msgid ""
+"Used by GREG to distinguish\n"
+"the competions created from splitting."
+msgstr ""
+
+msgid ""
+"BellePoule needs your agreement\n"
+"to tweet on your behalf"
+msgstr ""
+
+msgid "Click on the link to open a web browser:"
+msgstr ""
+
+msgid "Obtain an authorization code"
+msgstr ""
+
+msgid "on this web site"
+msgstr ""
+
+msgid "Paste the authorization code here:"
+msgstr ""
+
+msgid "BellePoule needs your agreement to post announces on your behalf"
+msgstr ""
+
+msgid "New competition"
+msgstr ""
+
+msgid "Choose a creation method:"
+msgstr ""
+
+msgid "From a XML file"
+msgstr ""
+
+msgid "Empty competition"
+msgstr ""
+
+msgid "From a FFE zip file (extranet)"
+msgstr ""
+
+msgid "From AskFred (.frd)"
+msgstr ""
+
+msgid "Connection to <b>BellePoule2D</b>"
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule2D</b> is running."
 msgstr ""
 
 msgid "Recently opened"
+msgstr ""
+
+msgid "Reload imports..."
 msgstr ""
 
 msgid "Backup"
@@ -780,49 +1064,65 @@ msgstr ""
 msgid "Deactivate"
 msgstr ""
 
-msgid "Referees"
-msgstr ""
-
-msgid "Print meal tickets"
-msgstr ""
-
-msgid "Print payment book"
-msgstr ""
-
-msgid "Ecosystem"
-msgstr ""
-
-msgid "WIFI"
-msgstr ""
-
-msgid "Score sheet scanner"
-msgstr ""
-
 msgid "Publication"
 msgstr ""
 
-msgid "New version!"
+msgid "Setup"
+msgstr ""
+
+msgid "Access code"
 msgstr ""
 
 msgid "Open an example..."
 msgstr ""
 
-msgid "User manual"
-msgstr ""
-
 msgid "Fencer file template (.csv)"
 msgstr ""
 
-msgid ""
-"Scan this code with <b>SmartPoule</b>\n"
-"to make your smarphone\n"
-"a score sheet scanner."
+msgid "User"
 msgstr ""
 
-msgid "<b>Score sheet scanner</b>"
+msgid "FTP server"
+msgstr ""
+
+msgid "<b>Web site</b>"
+msgstr ""
+
+msgid "<b>Announce</b>"
+msgstr ""
+
+msgid "<b>Video server</b>"
+msgstr ""
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule</b>)."
+msgstr ""
+
+msgid "Reload the imported fencers?"
+msgstr ""
+
+msgid ""
+"Applicable only on <b>non-started</b> competitions created by importing "
+"fencers."
 msgstr ""
 
 msgid "Form"
+msgstr ""
+
+msgid "Job"
+msgstr ""
+
+msgid "Take off"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
+msgid "<b>Referee</b>"
+msgstr ""
+
+msgid "<b>Fencers</b>"
 msgstr ""
 
 msgid "Date of competition"
@@ -901,13 +1201,4 @@ msgid "Save the current state of the competition."
 msgstr ""
 
 msgid "To specify the features of the competition."
-msgstr ""
-
-msgid "Man"
-msgstr ""
-
-msgid "U16"
-msgstr ""
-
-msgid "Import referee file"
 msgstr ""

@@ -20,7 +20,7 @@
             <property name="can_focus">False</property>
             <child>
               <object class="GtkRadioButton" id="batch_group">
-                <property name="label" translatable="yes">radiobutton</property>
+                <property name="label">radiobutton</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
                 <property name="active">True</property>
@@ -101,7 +101,7 @@
                       <object class="GtkLabel" id="competition_gender_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Man</property>
+                        <property name="label">Man</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -116,7 +116,7 @@
                       <object class="GtkLabel" id="competition_weapon_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Sabre</property>
+                        <property name="label">Sabre</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -131,7 +131,7 @@
                       <object class="GtkLabel" id="competition_category_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">U16</property>
+                        <property name="label">U16</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>

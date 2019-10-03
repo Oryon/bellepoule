@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-23 17:21+0200\n"
-"PO-Revision-Date: 2016-08-23 16:31+0000\n"
+"POT-Creation-Date: 2019-10-03 09:47+0200\n"
+"PO-Revision-Date: 2019-02-07 00:36+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Japanese <ja@li.org>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-02-15 05:53+0000\n"
-"X-Generator: Launchpad (build 18326)\n"
-"Language: ja\n"
+"X-Launchpad-Export-Date: 2019-10-03 06:01+0000\n"
+"X-Generator: Launchpad (build 19066)\n"
 
 msgid "Long text"
 msgstr "長いテキスト"
@@ -39,20 +39,11 @@ msgstr "データ"
 msgid "Look"
 msgstr "見える"
 
-msgid "Split"
-msgstr "分割"
-
-msgid "List of fencers to extract"
-msgstr "抽出するフェンシング選手のリスト"
-
-msgid "Choose a rank file to apply..."
+msgid "Follow the instructions given by "
 msgstr ""
 
-msgid "Rank files: cotcot, xml, txt (France)"
+msgid "Access denied!"
 msgstr ""
-
-msgid "All files"
-msgstr "すべてのファイル"
 
 msgid "<b>Smartpoule</b> configuration code"
 msgstr ""
@@ -60,7 +51,9 @@ msgstr ""
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
-msgstr "データ入力を早めるには、このボックスのチェックを外します。　対応するフィールドには、押されたTabキーでは無視されます。"
+msgstr ""
+"データ入力を早めるには、このボックスのチェックを外します。　対応するフィール"
+"ドには、押されたTabキーでは無視されます。"
 
 msgid "Choose a fencer file to import..."
 msgstr "インポートするフェンシング選手ファイルを選択してください..."
@@ -70,6 +63,12 @@ msgstr "フェンシング選手のファイル"
 
 msgid "Referee files"
 msgstr "レフェリーファイル"
+
+msgid "All files"
+msgstr "すべてのファイル"
+
+msgid "The imported FFF file has encoding errors."
+msgstr ""
 
 msgid "List of registered"
 msgstr "登録のリスト"
@@ -83,111 +82,20 @@ msgstr "休むのリスト"
 msgid "Fencer list"
 msgstr "フェンシング選手のリスト"
 
-msgid "Barrage"
-msgstr ""
-
 msgid "Copy"
 msgstr ""
 
 msgid "Paste"
 msgstr ""
 
+msgid "Paste (link)"
+msgstr ""
+
+msgid "Remove"
+msgstr "削除"
+
 msgid "Page"
 msgstr "ページ"
-
-msgid "Check-in"
-msgstr "チェックイン"
-
-msgid "** Without team **"
-msgstr ""
-
-msgid "Expected fencers"
-msgstr ""
-
-msgid "Expected teams"
-msgstr ""
-
-msgid "Team size"
-msgstr ""
-
-#, c-format
-msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr ""
-
-msgid "Tick the present players of the team."
-msgstr ""
-
-msgid "Untick the absent players of the team."
-msgstr ""
-
-msgid "General classification"
-msgstr "大別"
-
-msgid "Choose a target file..."
-msgstr "対象のファイルを選択してください..."
-
-msgid "All FFF files (.FFF)"
-msgstr "すべてFFFファイル（。FFF）"
-
-msgid "All PDF files (.PDF)"
-msgstr "すべてPDFファイル（。PDF）"
-
-msgid "All HTML files (.HTML)"
-msgstr ""
-
-msgid "Classification"
-msgstr "分類"
-
-msgid "Sabre"
-msgstr "サーブル"
-
-msgid "Epée"
-msgstr "エペ"
-
-msgid "Foil"
-msgstr "フルーレ"
-
-msgid "Educ"
-msgstr ""
-
-msgid "Male"
-msgstr "男性"
-
-msgid "Female"
-msgstr "女性"
-
-msgid "Mixed"
-msgstr "複合"
-
-msgid "League"
-msgstr ""
-
-msgid "Regional"
-msgstr ""
-
-msgid "Open"
-msgstr ""
-
-msgid "World cup"
-msgstr ""
-
-msgid "National championships"
-msgstr ""
-
-msgid "World championships"
-msgstr ""
-
-msgid "Other"
-msgstr ""
-
-msgid "Choose a file..."
-msgstr "ファイルの選択..."
-
-msgid "BellePoule files (.cotcot)"
-msgstr "ベルプルのファイル (.cotcot)"
-
-msgid "Close without saving"
-msgstr ""
 
 msgid "U5"
 msgstr ""
@@ -201,8 +109,11 @@ msgstr ""
 msgid "U11"
 msgstr ""
 
-msgid "U14"
-msgstr "U14"
+msgid "U13"
+msgstr "U13"
+
+msgid "U15"
+msgstr "U15"
 
 msgid "U17"
 msgstr ""
@@ -231,56 +142,88 @@ msgstr ""
 msgid "Veteran 4"
 msgstr ""
 
+msgid "Veteran 5"
+msgstr ""
+
 msgid "Veteran 3+4"
 msgstr ""
 
-msgid "Meal"
+msgid "Veteran 4+5"
 msgstr ""
-
-msgid "Drink"
-msgstr ""
-
-msgid "Dessert"
-msgstr ""
-
-msgid "Coffee"
-msgstr ""
-
-msgid "Payment book"
-msgstr "納付書"
-
-msgid "Signature"
-msgstr "署名"
-
-msgid "Restart BellePoule for this change to take effect"
-msgstr "この変更を有効にするにベルプルを再起動"
 
 msgid "Choose a competion file to open... "
 msgstr "開くために競争ファイルを選択してください... "
 
-msgid "Competition files (.cotcot / .xml)"
-msgstr "競争のファイル　(.cotcot / .xml)"
+msgid "Example files"
+msgstr ""
 
-msgid "Recently opened files"
-msgstr "最近開いたファイル"
+msgid "Competition files"
+msgstr ""
 
 msgid "BellePoule files"
 msgstr "ベルプルのファイル"
 
-msgid "Meal tickets"
-msgstr "食券"
+msgid "Recently opened files"
+msgstr "最近開いたファイル"
 
 msgid "Choose a backup files location..."
 msgstr "バックアップファイルの場所を選んでください"
 
-msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>本当にベルプルを終了しますか</big></b>"
+msgid "Men"
+msgstr ""
 
-msgid "Quit BellePoule?"
-msgstr "ベルプルを終了しますか？"
+msgid "Women"
+msgstr ""
 
-msgid "All the unsaved competions will be lost."
-msgstr "すべての保存されていない競技は失われます。"
+msgid "Mixed"
+msgstr "複合"
+
+msgid "League"
+msgstr ""
+
+msgid "Regional"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "World cup"
+msgstr ""
+
+msgid "National championships"
+msgstr ""
+
+msgid "World championships"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Choose a file..."
+msgstr "ファイルの選択..."
+
+msgid "GREG alert"
+msgstr ""
+
+msgid ""
+"It's recommended to give a label when publication on GREG (www.escrime-info."
+"com) is intended.\n"
+"\n"
+"Re-open the form to fill it in?"
+msgstr ""
+
+msgid "BellePoule files (.cotcot)"
+msgstr "ベルプルのファイル (.cotcot)"
+
+msgid "Close without saving"
+msgstr ""
+
+#, c-format
+msgid "Match %s"
+msgstr "試合 %s"
+
+msgid "No winner!"
+msgstr "勝者ない！"
 
 #, c-format
 msgid "Round #%d"
@@ -303,8 +246,81 @@ msgid ""
 "Do you wish to add a barrage round?</big></b>"
 msgstr ""
 
-msgid "ref"
-msgstr "参照"
+msgid "Barrage"
+msgstr ""
+
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr "<b><big>本当にベルプルを終了しますか</big></b>"
+
+msgid "Quit BellePoule?"
+msgstr "ベルプルを終了しますか？"
+
+msgid "All the unsaved competions will be lost."
+msgstr "すべての保存されていない競技は失われます。"
+
+#, c-format
+msgid "Piste %d"
+msgstr ""
+
+msgid "No time!"
+msgstr ""
+
+msgid "No piste!"
+msgstr ""
+
+msgid "Display jobs"
+msgstr ""
+
+msgid "Not available"
+msgstr ""
+
+msgid "Available"
+msgstr ""
+
+msgid "Pool"
+msgstr ""
+
+msgid "Meal"
+msgstr ""
+
+msgid "Drink"
+msgstr ""
+
+msgid "Dessert"
+msgstr ""
+
+msgid "Coffee"
+msgstr ""
+
+msgid "Payment book"
+msgstr "納付書"
+
+msgid "Signature"
+msgstr "署名"
+
+msgid "Meal tickets"
+msgstr "食券"
+
+#, c-format
+msgid ""
+"<b>%s</b> is delayed.\n"
+"Do you want to postpone the next bouts?\n"
+msgstr ""
+
+msgid "Restart BellePoule for this change to take effect"
+msgstr "この変更を有効にするにベルプルを再起動"
+
+msgid "Educ"
+msgstr ""
+
+msgid "Foil"
+msgstr "フルーレ"
+
+msgid "Epée"
+msgstr "エペ"
+
+msgid "Sabre"
+msgstr "サーブル"
 
 msgid "place"
 msgstr "場所"
@@ -324,8 +340,20 @@ msgstr "生年月日"
 msgid "gender"
 msgstr "性別"
 
+msgid "Male"
+msgstr "男性"
+
+msgid "Female"
+msgstr "女性"
+
+msgid "weapon"
+msgstr ""
+
 msgid "country"
 msgstr "国"
+
+msgid "region"
+msgstr ""
 
 msgid "league"
 msgstr "リーグ"
@@ -336,9 +364,6 @@ msgstr "クラブ"
 msgid "licence"
 msgstr "ライセンス"
 
-msgid "IP address"
-msgstr ""
-
 msgid "rate"
 msgstr "率"
 
@@ -348,11 +373,23 @@ msgstr "レベル"
 msgid "ranking"
 msgstr "ランキング"
 
+msgid "rating"
+msgstr ""
+
 msgid "presence"
 msgstr "出席"
 
 msgid "exported"
 msgstr "エクスポート"
+
+msgid "incident"
+msgstr ""
+
+msgid "Absent"
+msgstr "欠勤"
+
+msgid "Latecomer"
+msgstr ""
 
 msgid "global status"
 msgstr "グローバルステータス"
@@ -375,6 +412,15 @@ msgstr "負ける"
 msgid "status"
 msgstr "ステータス"
 
+msgid "cyphered password"
+msgstr ""
+
+msgid "IP address"
+msgstr ""
+
+msgid "Password"
+msgstr "パスワード"
+
 msgid "pool #"
 msgstr "グループリーグ #"
 
@@ -393,23 +439,17 @@ msgstr "インデックス"
 msgid "Hits scored"
 msgstr "打撃記録"
 
+msgid "strip"
+msgstr ""
+
+msgid "time"
+msgstr ""
+
 msgid "Round start rank"
 msgstr "初めラウンドランク"
 
 msgid "promoted"
 msgstr ""
-
-msgid "availability"
-msgstr "可用性"
-
-msgid "Busy"
-msgstr "忙しい"
-
-msgid "Absent"
-msgstr "欠勤"
-
-msgid "Free"
-msgstr "空き"
 
 msgid "connection"
 msgstr ""
@@ -425,6 +465,61 @@ msgstr ""
 
 msgid "Manual"
 msgstr ""
+
+msgid "Classification"
+msgstr "分類"
+
+msgid "Piste"
+msgstr "トラック"
+
+msgid "Place #"
+msgstr "＃ を配置"
+
+msgid "Referee"
+msgstr "レフェリー"
+
+msgid "Table"
+msgstr "表"
+
+#, c-format
+msgid "%s: score sheets printing"
+msgstr "%s: 勝点シートを印刷"
+
+msgid "Winner"
+msgstr "勝者"
+
+msgid "Final"
+msgstr "決勝"
+
+msgid "Semi-final"
+msgstr "準決勝"
+
+#, c-format
+msgid "Table of %d"
+msgstr "%d のテーブル"
+
+msgid "OVER"
+msgstr ""
+
+msgid ""
+"Referees allocation \n"
+" ongoing"
+msgstr ""
+
+msgid "Table classification"
+msgstr "表の分類"
+
+msgid "All places fenced"
+msgstr ""
+
+msgid "Fence off for third place"
+msgstr ""
+
+msgid "No fence off for third place"
+msgstr ""
+
+msgid "Max score"
+msgstr "最大得点"
 
 msgid "Pools arrangement"
 msgstr "グループリーグ配置"
@@ -447,18 +542,12 @@ msgstr "バランスのとれた"
 msgid "Grouped by strength"
 msgstr "強さによってグループ化された"
 
-msgid "Max score"
-msgstr "最大得点"
+msgid "Impossible to apply with this configuration of pools"
+msgstr ""
 
 #, c-format
 msgid "Pool #%02d"
 msgstr "グループリーグ　#%02d"
-
-msgid "Referee"
-msgstr "レフェリー"
-
-msgid "Piste"
-msgstr "トラック"
 
 msgid "Status"
 msgstr "ステータス"
@@ -484,53 +573,60 @@ msgstr "グループリーグ"
 msgid "Bout without winner!"
 msgstr "勝者のない試合"
 
-msgid "Place #"
-msgstr "＃ を配置"
+msgid "General classification"
+msgstr "大別"
 
-msgid "cutting"
-msgstr "切断"
+msgid "All FFF files (.FFF)"
+msgstr "すべてFFFファイル（。FFF）"
 
-msgid "Table"
-msgstr "表"
+msgid "All PDF files (.PDF)"
+msgstr "すべてPDFファイル（。PDF）"
+
+msgid "All HTML files (.HTML)"
+msgstr ""
+
+msgid "All AskFred files (.FRD)"
+msgstr ""
+
+msgid "Split"
+msgstr "分割"
+
+msgid "List of fencers to extract"
+msgstr "抽出するフェンシング選手のリスト"
+
+msgid "Choose a rank file to apply..."
+msgstr ""
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr ""
+
+msgid "Check-in"
+msgstr "チェックイン"
+
+msgid "** Without team **"
+msgstr ""
+
+msgid "Present fencers"
+msgstr ""
+
+msgid "Expected fencers"
+msgstr ""
+
+msgid "Expected teams"
+msgstr ""
+
+msgid "Team size"
+msgstr ""
 
 #, c-format
-msgid "%s: score sheets printing"
-msgstr "%s: 勝点シートを印刷"
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
+msgstr ""
 
-msgid "Winner"
-msgstr "勝者"
+msgid "Tick the present players of the team."
+msgstr ""
 
-msgid "Final"
-msgstr "決勝"
-
-msgid "Semi-final"
-msgstr "準決勝"
-
-#, c-format
-msgid "Table of %d"
-msgstr "%d のテーブル"
-
-#, c-format
-msgid "Match %s"
-msgstr "試合 %s"
-
-msgid "No winner!"
-msgstr "勝者ない！"
-
-msgid "Table classification"
-msgstr "表の分類"
-
-msgid "Fenced places"
-msgstr "フェンシングしたの場所"
-
-msgid "All"
-msgstr "すべて"
-
-msgid "Third place"
-msgstr "三位"
-
-msgid "None"
-msgstr "なし"
+msgid "Untick the absent players of the team."
+msgstr ""
 
 msgid "Fencer list printing"
 msgstr "フェンシング選手リスト印刷"
@@ -571,8 +667,29 @@ msgstr ""
 msgid "Derived from fencer classification"
 msgstr ""
 
-msgid "when unknown"
+msgid "Extension"
 msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Assign"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Undo"
+msgstr ""
+
+msgid "Match"
+msgstr ""
+
+msgid "<b>Match</b>"
+msgstr "<b>試合</b>"
+
+msgid "<b>Score</b>"
+msgstr "<b>スコア</b>"
 
 msgid "Table printing"
 msgstr "表印刷"
@@ -580,19 +697,14 @@ msgstr "表印刷"
 msgid "<b><big>How to print?</big></b>"
 msgstr ""
 
-msgid "The table"
-msgstr "テーブル"
-
-msgid "Score sheets"
-msgstr "スコアシート"
-
-msgid "Pending"
-msgstr "保留中"
+msgid "Bouts/sheet"
+msgstr ""
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-msgstr "<b><big>選択したテーブルで、なん勝点シートを印刷したいですか？</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
+msgstr ""
+"<b><big>選択したテーブルで、なん勝点シートを印刷したいですか？</big></b>"
 
 msgid "All the score sheets"
 msgstr "すべてのスコアシート"
@@ -600,23 +712,8 @@ msgstr "すべてのスコアシート"
 msgid "The pending score sheets"
 msgstr "保留中のスコアシート"
 
-msgid "<b>Match</b>"
-msgstr "<b>試合</b>"
-
-msgid "A fencer"
-msgstr "A フェンシング選手"
-
-msgid "B fencer"
-msgstr "B フェンシング選手"
-
-msgid "<b>Score</b>"
-msgstr "<b>スコア</b>"
-
 msgid "Add"
 msgstr "追加する"
-
-msgid "Remove"
-msgstr "削除"
 
 msgid "<b>Schedule</b>"
 msgstr "<b>スケジュール</b>"
@@ -630,6 +727,9 @@ msgstr "前ラウンド"
 msgid "Next round"
 msgstr "次のラウンド"
 
+msgid "Choose a target file..."
+msgstr "対象のファイルを選択してください..."
+
 msgid "Export to <b>HTML</b>"
 msgstr ""
 
@@ -637,6 +737,15 @@ msgid "Export to <b>FFF</b>"
 msgstr ""
 
 msgid "Export to <b>PDF</b>"
+msgstr ""
+
+msgid "Export to <b>FRD</b>"
+msgstr ""
+
+msgid "Place shifting"
+msgstr ""
+
+msgid "Winner's place"
 msgstr ""
 
 msgid "Name"
@@ -681,6 +790,24 @@ msgstr "組み合わせ分類"
 msgid "Single classification"
 msgstr "シングル分類"
 
+msgid "All"
+msgstr "すべて"
+
+msgid "Selected"
+msgstr ""
+
+msgid "Now"
+msgstr ""
+
+msgid "<b>From?</b>"
+msgstr ""
+
+msgid "label"
+msgstr ""
+
+msgid "Import referee file"
+msgstr "審判のファイルをインポートする"
+
 msgid "Content designed for the referees."
 msgstr "審判のために設計されたコンテンツ。"
 
@@ -690,42 +817,44 @@ msgstr ""
 msgid "Eliminated"
 msgstr ""
 
-msgid "Fill in a match"
-msgstr "試合に記入"
+msgid "BellePoule - Fencing tournament"
+msgstr "ベルプル-フェンシング大会"
 
-msgid ""
-"Fill in all the scores randomly.\n"
-"To activate/deactivate this button, go to the properties of the competition."
+msgid "File"
+msgstr "ファイル"
+
+msgid "Referees"
+msgstr "審判"
+
+msgid "WIFI"
 msgstr ""
-"ランダムにすべてのスコアを入力してください。\n"
-"このボタンを有効にする/無効化する、競争のプロパティにアクセスしてください。"
 
-msgid "From"
-msgstr "から"
+msgid "Score sheet scanner"
+msgstr ""
 
-msgid "To"
-msgstr "まで"
+msgid "Print meal tickets"
+msgstr "印刷チケットのお食事"
 
-msgid "For place"
-msgstr "場所のため"
+msgid "Print payment book"
+msgstr "印刷納付書"
 
-msgid "Zoom"
-msgstr "ズーム"
+msgid "New version!"
+msgstr "新バージョン！"
 
-msgid "Mask or unmask some data type as well as define their display order."
-msgstr "データ·タイプを表示または非表示。その表示順序を定義します。"
+msgid "Release notes"
+msgstr ""
 
-msgid "Print"
-msgstr "印刷"
+msgid "Acces code"
+msgstr ""
 
-msgid "Number of pools"
-msgstr "グループリーグの数"
+msgid "User manual"
+msgstr "ユーザーマニュアル"
 
-msgid "Fencers / pools"
-msgstr "フェンシング選手 / グループリーグ"
+msgid "Return"
+msgstr ""
 
-msgid "Swapping"
-msgstr "順列"
+msgid "Matches"
+msgstr ""
 
 msgid ""
 "Fencing tournament management software.\n"
@@ -735,9 +864,6 @@ msgstr ""
 "フェンシングのトーナメント管理ソフトウェア。\n"
 "\n"
 "\n"
-
-msgid "WPA"
-msgstr ""
 
 msgid "Security"
 msgstr ""
@@ -751,29 +877,190 @@ msgid ""
 "the smarthphones running <b>SmartPoule</b>"
 msgstr ""
 
-msgid "User"
-msgstr "ユーザー"
-
-msgid "Password"
-msgstr "パスワード"
-
-msgid "FTP server"
-msgstr "ftpサーバー"
-
-msgid "<b>Web site</b>"
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
 msgstr ""
 
-msgid "<b>Video server</b>"
+msgid "<b>Score sheet scanner</b>"
 msgstr ""
 
-msgid "BellePoule - Fencing tournament"
-msgstr "ベルプル-フェンシング大会"
+msgid "Connection rejected"
+msgstr ""
 
-msgid "File"
-msgstr "ファイル"
+msgid "BellePoule2D is already operating on the network."
+msgstr ""
+
+msgid "Connection to <b>BellePoule</b>"
+msgstr ""
+
+msgid "Plug an USB stick."
+msgstr ""
+
+msgid "Unplug it."
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule</b> is running."
+msgstr ""
+
+msgid "Scan this QRCode:"
+msgstr ""
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule2D</b>)."
+msgstr ""
+
+msgid "Fenced places"
+msgstr "フェンシングしたの場所"
+
+msgid "Fill in a match"
+msgstr "試合に記入"
+
+msgid "Score sheets"
+msgstr "スコアシート"
+
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+"ランダムにすべてのスコアを入力してください。\n"
+"このボタンを有効にする/無効化する、競争のプロパティにアクセスしてください。"
+
+msgid "match"
+msgstr ""
+
+msgid "<b>Search</b>"
+msgstr ""
+
+msgid "Zoom"
+msgstr "ズーム"
+
+msgid "From:"
+msgstr ""
+
+msgid "Only the selected"
+msgstr ""
+
+msgid "Pistes"
+msgstr ""
+
+msgid "None"
+msgstr "なし"
+
+msgid "<b>No referee available!</b>"
+msgstr ""
+
+msgid "Didn't you forget to check them in?"
+msgstr ""
+
+msgid "Overlap of time slots"
+msgstr ""
+
+msgid "Rotate"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Print"
+msgstr "印刷"
+
+msgid "<span size=\"x-small\">club</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">league</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">country</span>"
+msgstr ""
+
+msgid "Warnings"
+msgstr ""
+
+msgid "Check the fencers you wish to include"
+msgstr ""
+
+msgid "New fencer..."
+msgstr ""
+
+msgid "Uncheck the fencers you wish to withdraw"
+msgstr ""
+
+msgid "Mask or unmask some data type as well as define their display order."
+msgstr "データ·タイプを表示または非表示。その表示順序を定義します。"
+
+msgid "Number of pools"
+msgstr "グループリーグの数"
+
+msgid "Fencers / pools"
+msgstr "フェンシング選手 / グループリーグ"
+
+msgid "Swapping"
+msgstr "順列"
+
+msgid "Label "
+msgstr ""
+
+msgid ""
+"Used by GREG to distinguish\n"
+"the competions created from splitting."
+msgstr ""
+
+msgid ""
+"BellePoule needs your agreement\n"
+"to tweet on your behalf"
+msgstr ""
+
+msgid "Click on the link to open a web browser:"
+msgstr ""
+
+msgid "Obtain an authorization code"
+msgstr ""
+
+msgid "on this web site"
+msgstr ""
+
+msgid "Paste the authorization code here:"
+msgstr ""
+
+msgid "BellePoule needs your agreement to post announces on your behalf"
+msgstr ""
+
+msgid "New competition"
+msgstr ""
+
+msgid "Choose a creation method:"
+msgstr ""
+
+msgid "From a XML file"
+msgstr ""
+
+msgid "Empty competition"
+msgstr ""
+
+msgid "From a FFE zip file (extranet)"
+msgstr ""
+
+msgid "From AskFred (.frd)"
+msgstr ""
+
+msgid "Connection to <b>BellePoule2D</b>"
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule2D</b> is running."
+msgstr ""
 
 msgid "Recently opened"
 msgstr "最近オープンした"
+
+msgid "Reload imports..."
+msgstr ""
 
 msgid "Backup"
 msgstr "バックアップ"
@@ -787,49 +1074,65 @@ msgstr "有効にする"
 msgid "Deactivate"
 msgstr "非活性化する"
 
-msgid "Referees"
-msgstr "審判"
-
-msgid "Print meal tickets"
-msgstr "印刷チケットのお食事"
-
-msgid "Print payment book"
-msgstr "印刷納付書"
-
-msgid "Ecosystem"
-msgstr ""
-
-msgid "WIFI"
-msgstr ""
-
-msgid "Score sheet scanner"
-msgstr ""
-
 msgid "Publication"
 msgstr ""
 
-msgid "New version!"
-msgstr "新バージョン！"
+msgid "Setup"
+msgstr ""
+
+msgid "Access code"
+msgstr ""
 
 msgid "Open an example..."
 msgstr "例えばを開ける。。。"
 
-msgid "User manual"
-msgstr "ユーザーマニュアル"
-
 msgid "Fencer file template (.csv)"
 msgstr "フェンシング選手テンプレートファイル（。CSV）"
 
-msgid ""
-"Scan this code with <b>SmartPoule</b>\n"
-"to make your smarphone\n"
-"a score sheet scanner."
+msgid "User"
+msgstr "ユーザー"
+
+msgid "FTP server"
+msgstr "ftpサーバー"
+
+msgid "<b>Web site</b>"
 msgstr ""
 
-msgid "<b>Score sheet scanner</b>"
+msgid "<b>Announce</b>"
+msgstr ""
+
+msgid "<b>Video server</b>"
+msgstr ""
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule</b>)."
+msgstr ""
+
+msgid "Reload the imported fencers?"
+msgstr ""
+
+msgid ""
+"Applicable only on <b>non-started</b> competitions created by importing "
+"fencers."
 msgstr ""
 
 msgid "Form"
+msgstr ""
+
+msgid "Job"
+msgstr ""
+
+msgid "Take off"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
+msgid "<b>Referee</b>"
+msgstr ""
+
+msgid "<b>Fencers</b>"
 msgstr ""
 
 msgid "Date of competition"
@@ -913,11 +1216,5 @@ msgstr "競争の現在の状態を保存します。"
 msgid "To specify the features of the competition."
 msgstr "競争の特性を指定する"
 
-msgid "Man"
-msgstr "男性"
-
-msgid "U16"
-msgstr "U16"
-
-msgid "Import referee file"
-msgstr "審判のファイルをインポートする"
+#~ msgid "ref"
+#~ msgstr "参照"

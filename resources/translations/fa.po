@@ -1,0 +1,1228 @@
+# Persian translation for bellepoule
+# Copyright (c) 2017 Rosetta Contributors and Canonical Ltd 2017
+# This file is distributed under the same license as the bellepoule package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bellepoule\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-03 09:47+0200\n"
+"PO-Revision-Date: 2019-02-07 00:36+0000\n"
+"Last-Translator: betonniere <Unknown>\n"
+"Language-Team: Persian <fa@li.org>\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2019-10-03 06:01+0000\n"
+"X-Generator: Launchpad (build 19066)\n"
+
+msgid "Long text"
+msgstr "متن بلند"
+
+msgid "Short text"
+msgstr "متن کوتاه"
+
+msgid "Graphic"
+msgstr "گرافیک (نگاره)"
+
+msgid "Data to display"
+msgstr "داده ای برای نمایش"
+
+msgid "Visibility"
+msgstr "قابلیت نمایش"
+
+msgid "Data"
+msgstr "داده"
+
+msgid "Look"
+msgstr "نگاه کردن"
+
+msgid "Follow the instructions given by "
+msgstr ""
+
+msgid "Access denied!"
+msgstr ""
+
+msgid "<b>Smartpoule</b> configuration code"
+msgstr "<b>Smartpoule</b> کد پیکربندی"
+
+msgid ""
+"Uncheck this box to quicken the data input. The corresponding field will be "
+"ignored on TAB key pressed."
+msgstr ""
+"تیک جعبه را بردارید تا ورود اطلاعات سریعتر شود. با فشار دکمه TAB گزینه "
+"مربوطه نادید گرفته می شود"
+
+msgid "Choose a fencer file to import..."
+msgstr "پرونده یک شمشیرباز را برای وارد کردن انتخاب کنید"
+
+msgid "Fencer files"
+msgstr "پرونده های شمشیربازی"
+
+msgid "Referee files"
+msgstr "پرونده های داوری"
+
+msgid "All files"
+msgstr "تمام پرونده‌ها"
+
+msgid "The imported FFF file has encoding errors."
+msgstr ""
+
+msgid "List of registered"
+msgstr "فهرست ثبت شده"
+
+msgid "List of presents"
+msgstr "فهرست حاضران"
+
+msgid "List of absents"
+msgstr "فهرست غایبان"
+
+msgid "Fencer list"
+msgstr "لیست شمشیربازان"
+
+msgid "Copy"
+msgstr "رونوشت"
+
+msgid "Paste"
+msgstr "_جای‌گذاری"
+
+msgid "Paste (link)"
+msgstr ""
+
+msgid "Remove"
+msgstr "حذف"
+
+msgid "Page"
+msgstr "صفحه"
+
+msgid "U5"
+msgstr "زیر 5 سال"
+
+msgid "U7"
+msgstr "زیر 7 سال"
+
+msgid "U9"
+msgstr "زیر 9 سال"
+
+msgid "U11"
+msgstr "زیر 11 سال"
+
+msgid "U13"
+msgstr "زیر 13 سال"
+
+msgid "U15"
+msgstr "زیر 15 سال"
+
+msgid "U17"
+msgstr "زیر 17 سال"
+
+msgid "U20"
+msgstr "زیر 20 سال"
+
+msgid "U23"
+msgstr "زیر 23 سال"
+
+msgid "Senior"
+msgstr "بزرگسال"
+
+msgid "Veteran"
+msgstr "پیش کسوت"
+
+msgid "Veteran 1"
+msgstr "پیش کسوت 1"
+
+msgid "Veteran 2"
+msgstr "پیش کسوت 2"
+
+msgid "Veteran 3"
+msgstr "پیش کسوت 3"
+
+msgid "Veteran 4"
+msgstr "پیش کسوت 4"
+
+msgid "Veteran 5"
+msgstr ""
+
+msgid "Veteran 3+4"
+msgstr "پیش کسوت 3+4"
+
+msgid "Veteran 4+5"
+msgstr ""
+
+msgid "Choose a competion file to open... "
+msgstr "برای باز شدن یک مسابقه پرونده ای را انتخاب کنید... "
+
+msgid "Example files"
+msgstr ""
+
+msgid "Competition files"
+msgstr ""
+
+msgid "BellePoule files"
+msgstr "پرونده های BellePoule"
+
+msgid "Recently opened files"
+msgstr "آخرین پرونده های باز شده"
+
+msgid "Choose a backup files location..."
+msgstr "انتخاب محل پرونده های پشتیبان ..."
+
+msgid "Men"
+msgstr ""
+
+msgid "Women"
+msgstr ""
+
+msgid "Mixed"
+msgstr "ترکیبی"
+
+msgid "League"
+msgstr "لیگ"
+
+msgid "Regional"
+msgstr "منطقه ای"
+
+msgid "Open"
+msgstr "عمومی"
+
+msgid "World cup"
+msgstr "جام جهانی"
+
+msgid "National championships"
+msgstr "قهرمانی کشور"
+
+msgid "World championships"
+msgstr "قهرمانی جهان"
+
+msgid "Other"
+msgstr "سایر"
+
+msgid "Choose a file..."
+msgstr "یک پرونده انتخاب کنید..."
+
+msgid "GREG alert"
+msgstr ""
+
+msgid ""
+"It's recommended to give a label when publication on GREG (www.escrime-info."
+"com) is intended.\n"
+"\n"
+"Re-open the form to fill it in?"
+msgstr ""
+
+msgid "BellePoule files (.cotcot)"
+msgstr "(.cotcot) BellePoule پرونده های"
+
+msgid "Close without saving"
+msgstr "بستن بدون ذخیره کردن"
+
+#, c-format
+msgid "Match %s"
+msgstr "مسابقه %s"
+
+msgid "No winner!"
+msgstr "بدون برنده"
+
+#, c-format
+msgid "Round #%d"
+msgstr "#%d دور"
+
+msgid "Formula"
+msgstr "فرمول"
+
+msgid "<b><big>Do you really want to cancel the current round?</big></b>"
+msgstr "<b> <big> آیا واقعا می خواهید دور فعلی را لغو کنید؟ </big> </b>"
+
+msgid "Go back to the previous round?"
+msgstr "بازگشت به مرحله قبلی؟"
+
+msgid "All the inputs of this round will be cancelled."
+msgstr "تمام ورودی های این دور لغو خواهد شد."
+
+msgid ""
+"<b><big>Because of ties, the quota is exceeded.\n"
+"Do you wish to add a barrage round?</big></b>"
+msgstr ""
+"<b><big>بدلیل وجود مشکل، سهمیه بیش از حد مجاز است\n"
+"آیا میخواهید یک دور اضافی اضافه شود؟</big></b>"
+
+msgid "Barrage"
+msgstr "مداوم"
+
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr "<b> <big> آیا واقعا می خواهید از BellePoule خارج شوید. </big> </b>"
+
+msgid "Quit BellePoule?"
+msgstr "خروج از BellePoule"
+
+msgid "All the unsaved competions will be lost."
+msgstr "تمام مسابقات ذخیره نشده از دست خواهد رفت"
+
+#, c-format
+msgid "Piste %d"
+msgstr ""
+
+msgid "No time!"
+msgstr ""
+
+msgid "No piste!"
+msgstr ""
+
+msgid "Display jobs"
+msgstr ""
+
+msgid "Not available"
+msgstr ""
+
+msgid "Available"
+msgstr ""
+
+msgid "Pool"
+msgstr ""
+
+msgid "Meal"
+msgstr "غذا"
+
+msgid "Drink"
+msgstr "نوشیدنی"
+
+msgid "Dessert"
+msgstr "دسر"
+
+msgid "Coffee"
+msgstr "قهوه"
+
+msgid "Payment book"
+msgstr "کتابچه پرداخت"
+
+msgid "Signature"
+msgstr "امضاء"
+
+msgid "Meal tickets"
+msgstr "کوپن غذا"
+
+#, c-format
+msgid ""
+"<b>%s</b> is delayed.\n"
+"Do you want to postpone the next bouts?\n"
+msgstr ""
+
+msgid "Restart BellePoule for this change to take effect"
+msgstr "راه اندازی مجدد BellePoule برای بارگذاری این تغییر"
+
+msgid "Educ"
+msgstr "آموزشی"
+
+msgid "Foil"
+msgstr "فلوره"
+
+msgid "Epée"
+msgstr "اپه"
+
+msgid "Sabre"
+msgstr "سابر"
+
+msgid "place"
+msgstr "جایگاه"
+
+msgid "team"
+msgstr "تیم"
+
+msgid "last name"
+msgstr "نام خانوادگی"
+
+msgid "first name"
+msgstr "نام"
+
+msgid "date of birth"
+msgstr "تاریخ تولد"
+
+msgid "gender"
+msgstr "جنسیت"
+
+msgid "Male"
+msgstr "مذکر"
+
+msgid "Female"
+msgstr "مونث"
+
+msgid "weapon"
+msgstr ""
+
+msgid "country"
+msgstr "کشور"
+
+msgid "region"
+msgstr ""
+
+msgid "league"
+msgstr "لیگ"
+
+msgid "club"
+msgstr "باشگاه"
+
+msgid "licence"
+msgstr "مجوز"
+
+msgid "rate"
+msgstr "رتبه"
+
+msgid "level"
+msgstr "سطح"
+
+msgid "ranking"
+msgstr "رتبه بندی"
+
+msgid "rating"
+msgstr ""
+
+msgid "presence"
+msgstr "حضور"
+
+msgid "exported"
+msgstr "غیبت"
+
+msgid "incident"
+msgstr ""
+
+msgid "Absent"
+msgstr "غایب"
+
+msgid "Latecomer"
+msgstr ""
+
+msgid "global status"
+msgstr "وضعیت کلی"
+
+msgid "Qualified"
+msgstr "قبول شده"
+
+msgid "Not qualified"
+msgstr "رد شده"
+
+msgid "Withdrawal"
+msgstr "صرف نظر"
+
+msgid "Excluded"
+msgstr "محروم"
+
+msgid "Forfeit"
+msgstr "جریمه"
+
+msgid "status"
+msgstr "وضعیت"
+
+msgid "cyphered password"
+msgstr ""
+
+msgid "IP address"
+msgstr "نشانی IP"
+
+msgid "Password"
+msgstr "گذرواژه"
+
+msgid "pool #"
+msgstr "جدول"
+
+msgid "Victories"
+msgstr "برنده ها"
+
+msgid "Bouts"
+msgstr "دور"
+
+msgid "Vict./Bouts (‰)"
+msgstr "برنده/دور (‰)"
+
+msgid "index"
+msgstr "نمایه"
+
+msgid "Hits scored"
+msgstr "ضربه های موفق"
+
+msgid "strip"
+msgstr ""
+
+msgid "time"
+msgstr ""
+
+msgid "Round start rank"
+msgstr "دور رتبه شروع"
+
+msgid "promoted"
+msgstr "ترفیع"
+
+msgid "connection"
+msgstr "اتصال"
+
+msgid "Broken"
+msgstr "خراب"
+
+msgid "Waiting"
+msgstr "در حال انتظار"
+
+msgid "OK"
+msgstr "تایید"
+
+msgid "Manual"
+msgstr "دستی"
+
+msgid "Classification"
+msgstr "رده‌بندی"
+
+msgid "Piste"
+msgstr "پیست"
+
+msgid "Place #"
+msgstr "مکان #"
+
+msgid "Referee"
+msgstr "داور"
+
+msgid "Table"
+msgstr "جدول"
+
+#, c-format
+msgid "%s: score sheets printing"
+msgstr "%s: چاپ برگه امتیازات"
+
+msgid "Winner"
+msgstr "برنده"
+
+msgid "Final"
+msgstr "نهایی"
+
+msgid "Semi-final"
+msgstr "نیمه نهایی"
+
+#, c-format
+msgid "Table of %d"
+msgstr "جدول %d"
+
+msgid "OVER"
+msgstr ""
+
+msgid ""
+"Referees allocation \n"
+" ongoing"
+msgstr ""
+
+msgid "Table classification"
+msgstr "جدول رده بندی"
+
+msgid "All places fenced"
+msgstr ""
+
+msgid "Fence off for third place"
+msgstr ""
+
+msgid "No fence off for third place"
+msgstr ""
+
+msgid "Max score"
+msgstr "بالاترین امتیاز"
+
+msgid "Pools arrangement"
+msgstr "ترتیب جداول"
+
+msgid "or"
+msgstr "یا"
+
+msgid "Wrong fencers count!"
+msgstr "شمارش اشتباه شمشیربازان"
+
+msgid "Allocation"
+msgstr "تخصیص"
+
+msgid "Seeding"
+msgstr "سابقه سازی"
+
+msgid "Balanced"
+msgstr "تراز شده"
+
+msgid "Grouped by strength"
+msgstr "گروه بندی با قدرت"
+
+msgid "Impossible to apply with this configuration of pools"
+msgstr ""
+
+#, c-format
+msgid "Pool #%02d"
+msgstr "جدول #%02d"
+
+msgid "Status"
+msgstr "وضعیت"
+
+msgid "Vict./Matchs"
+msgstr "برنده/مسابقه ها"
+
+msgid "H. scored"
+msgstr "ضربات زده"
+
+msgid "H. received"
+msgstr "ضربات خورده"
+
+msgid "Index"
+msgstr "نمایه"
+
+msgid "Place"
+msgstr "مکان"
+
+msgid "Pools"
+msgstr "جداول"
+
+msgid "Bout without winner!"
+msgstr "مسابقه بدون برنده"
+
+msgid "General classification"
+msgstr "رده بندی کلی"
+
+msgid "All FFF files (.FFF)"
+msgstr "تمام پرونده های اف اف اف (.FFF)"
+
+msgid "All PDF files (.PDF)"
+msgstr "تمام پرونده های پی دی اف (.PDF)"
+
+msgid "All HTML files (.HTML)"
+msgstr "تمام پرونده های اچ تی ام ال (.HTML)"
+
+msgid "All AskFred files (.FRD)"
+msgstr ""
+
+msgid "Split"
+msgstr "تقسیم کردن"
+
+msgid "List of fencers to extract"
+msgstr "فهرست شمشیر بازان برای استخراج"
+
+msgid "Choose a rank file to apply..."
+msgstr "انتخاب پرونده رتبه برای اعمال"
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr "پرونده های رتبه: (فرانسوی)cotcot,xml,txt"
+
+msgid "Check-in"
+msgstr "بررسی"
+
+msgid "** Without team **"
+msgstr "بدون تیم"
+
+msgid "Present fencers"
+msgstr ""
+
+msgid "Expected fencers"
+msgstr "شمشیربازان منتظر"
+
+msgid "Expected teams"
+msgstr "تیم های منتظر"
+
+msgid "Team size"
+msgstr "اندازه تیم"
+
+#, c-format
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
+msgstr "شما کمترین اندازه تیم را به <b>%d</b> شمشیرباز تنظیم نموده اید."
+
+msgid "Tick the present players of the team."
+msgstr "بازیکنان حاضر در تیم را تیک بزنید."
+
+msgid "Untick the absent players of the team."
+msgstr "تیک بازیکنان غایب را تیم را بردارید."
+
+msgid "Fencer list printing"
+msgstr "چاپ لیست شمشیربازان"
+
+msgid "<b><big>What do you want to print?</big></b>"
+msgstr "<b><big>چه چیزی را می خواهید چاپ کنید؟</big></b>"
+
+msgid "All the presents"
+msgstr "تمامی حاضران"
+
+msgid "All the absents"
+msgstr "تمامی غایبین"
+
+msgid "Presents"
+msgstr "حاضران"
+
+msgid "Absents"
+msgstr "غایبین"
+
+msgid "all"
+msgstr "همه"
+
+msgid "Import fencers"
+msgstr "ورود شمشیربازان"
+
+msgid "Import ranking"
+msgstr "ورود رده بندی"
+
+msgid "Minimum team size"
+msgstr "کمترین اندازه تیم"
+
+msgid "Team classification"
+msgstr "رده بندی تیم"
+
+msgid "Manually assigned"
+msgstr "تعین بصورت دستی"
+
+msgid "Derived from fencer classification"
+msgstr "گرفته شده از رده بندی شمشیربازان"
+
+msgid "Extension"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Assign"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Undo"
+msgstr ""
+
+msgid "Match"
+msgstr ""
+
+msgid "<b>Match</b>"
+msgstr "<b>مسابقه</b>"
+
+msgid "<b>Score</b>"
+msgstr "<b>امتیاز</b>"
+
+msgid "Table printing"
+msgstr "چاپ جدول"
+
+msgid "<b><big>How to print?</big></b>"
+msgstr "<b><big>چگونه چاپ شود؟</big></b>"
+
+msgid "Bouts/sheet"
+msgstr ""
+
+msgid ""
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
+msgstr "<b><big>شما کدام جدول امتیازات را می خواهید چاپ شود؟</big></b>"
+
+msgid "All the score sheets"
+msgstr "تمام جداول امتیازات"
+
+msgid "The pending score sheets"
+msgstr "جداول امتیاز معلق"
+
+msgid "Add"
+msgstr "افزودن"
+
+msgid "<b>Schedule</b>"
+msgstr "<b>برنامه</b>"
+
+msgid "<b>Parameters</b>"
+msgstr "<b>پارامترها</b>"
+
+msgid "Previous round"
+msgstr "مرحله قبلی"
+
+msgid "Next round"
+msgstr "مرحله بعدی"
+
+msgid "Choose a target file..."
+msgstr "پرونده مورد نظر را انتخاب کنید..."
+
+msgid "Export to <b>HTML</b>"
+msgstr "خروجی بصورت <b>HTML</b>"
+
+msgid "Export to <b>FFF</b>"
+msgstr "خروجی بصورت <b>FFF</b>"
+
+msgid "Export to <b>PDF</b>"
+msgstr "خروجی بصورت <b>PDF</b>"
+
+msgid "Export to <b>FRD</b>"
+msgstr ""
+
+msgid "Place shifting"
+msgstr ""
+
+msgid "Winner's place"
+msgstr ""
+
+msgid "Name"
+msgstr "نام"
+
+msgid "Number"
+msgstr "شماره"
+
+msgid "Pool sheets printing"
+msgstr "چاپ جداول رده بندی"
+
+msgid "<b><big>Print...</big></b>"
+msgstr "<b><big>چاپ...</big></b>"
+
+msgid "All the pools"
+msgstr "تمام جداول رده بندی"
+
+msgid "Only the selected pool"
+msgstr "فقط جدول رده بندی انتخاب شده"
+
+msgid "<b>What?</b>"
+msgstr "<b>چه چیزی؟</b>"
+
+msgid "For arbitration"
+msgstr "برای حکمیت"
+
+msgid "Matches watermarked"
+msgstr "علامت گذاری مسابقه ها"
+
+msgid "For the bulletin board"
+msgstr "برای تابلو اعلانات"
+
+msgid "<b>For what?</b>"
+msgstr "<b>برای چه چیزی؟</b>"
+
+msgid "Automatic stuffing"
+msgstr "ابزار خودکار"
+
+msgid "Combined classification"
+msgstr "ترکیب رده بندی"
+
+msgid "Single classification"
+msgstr "رده بندی تنها"
+
+msgid "All"
+msgstr "همه"
+
+msgid "Selected"
+msgstr ""
+
+msgid "Now"
+msgstr ""
+
+msgid "<b>From?</b>"
+msgstr ""
+
+msgid "label"
+msgstr ""
+
+msgid "Import referee file"
+msgstr "ورود پرونده داور"
+
+msgid "Content designed for the referees."
+msgstr "محتوای طراحی شده برای داوران."
+
+msgid "Promoted"
+msgstr "ترویج شده"
+
+msgid "Eliminated"
+msgstr "حذف شده"
+
+msgid "BellePoule - Fencing tournament"
+msgstr "BellePoule - مسابقات شمشیربازی"
+
+msgid "File"
+msgstr "پرونده"
+
+msgid "Referees"
+msgstr "داوران"
+
+msgid "WIFI"
+msgstr "WIFI"
+
+msgid "Score sheet scanner"
+msgstr "اسکنر جدول امتیاز"
+
+msgid "Print meal tickets"
+msgstr "چاپ کوپن غذا"
+
+msgid "Print payment book"
+msgstr "چاپ کتابچه پرداخت"
+
+msgid "New version!"
+msgstr "نسخه جدید"
+
+msgid "Release notes"
+msgstr ""
+
+msgid "Acces code"
+msgstr ""
+
+msgid "User manual"
+msgstr "راهنمای کاربر"
+
+msgid "Return"
+msgstr ""
+
+msgid "Matches"
+msgstr ""
+
+msgid ""
+"Fencing tournament management software.\n"
+"\n"
+"\n"
+msgstr ""
+"نرم افزار مدیریت مسابقات شمشیربازی\n"
+"\n"
+"\n"
+
+msgid "Security"
+msgstr "امنیت"
+
+msgid "Passphrase"
+msgstr "عبارت‌ عبور"
+
+msgid ""
+"Enter your WIFI network settings here.\n"
+"They will be used to automatically configure\n"
+"the smarthphones running <b>SmartPoule</b>"
+msgstr ""
+"تنظیمات شبکه WIFI خود را اینجا وارد کنید\n"
+"آنها به طور خودکار برای پیکربندی استفاده می شوند\n"
+"گوشی های هوشمند دارای <b> SmartPoule </b> هستند"
+
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
+msgstr ""
+"این کد را با گوشی هوشمند خود اسکن کنید <b>SmartPoule</b>\n"
+"برای تبدیل گوشی هوشمندتان به\n"
+"یک اسکنر جدول امتیاز."
+
+msgid "<b>Score sheet scanner</b>"
+msgstr "<b>اسکنر جدول امتیاز</b>"
+
+msgid "Connection rejected"
+msgstr ""
+
+msgid "BellePoule2D is already operating on the network."
+msgstr ""
+
+msgid "Connection to <b>BellePoule</b>"
+msgstr ""
+
+msgid "Plug an USB stick."
+msgstr ""
+
+msgid "Unplug it."
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule</b> is running."
+msgstr ""
+
+msgid "Scan this QRCode:"
+msgstr ""
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule2D</b>)."
+msgstr ""
+
+msgid "Fenced places"
+msgstr "جایگاه ها"
+
+msgid "Fill in a match"
+msgstr "مسابقه ای را پر کنید"
+
+msgid "Score sheets"
+msgstr "جدول امتیازات"
+
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+"پر کردن تصادفی تمام امتیازات.\n"
+"برای فعال/غیرفعال کردن این دکمه، به ویژگی های مسابقه بروید."
+
+msgid "match"
+msgstr ""
+
+msgid "<b>Search</b>"
+msgstr ""
+
+msgid "Zoom"
+msgstr "بزرگنمایی"
+
+msgid "From:"
+msgstr ""
+
+msgid "Only the selected"
+msgstr ""
+
+msgid "Pistes"
+msgstr ""
+
+msgid "None"
+msgstr "هیچ‌کدام"
+
+msgid "<b>No referee available!</b>"
+msgstr ""
+
+msgid "Didn't you forget to check them in?"
+msgstr ""
+
+msgid "Overlap of time slots"
+msgstr ""
+
+msgid "Rotate"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Print"
+msgstr "چاپ"
+
+msgid "<span size=\"x-small\">club</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">league</span>"
+msgstr ""
+
+msgid "<span size=\"x-small\">country</span>"
+msgstr ""
+
+msgid "Warnings"
+msgstr ""
+
+msgid "Check the fencers you wish to include"
+msgstr ""
+
+msgid "New fencer..."
+msgstr ""
+
+msgid "Uncheck the fencers you wish to withdraw"
+msgstr ""
+
+msgid "Mask or unmask some data type as well as define their display order."
+msgstr ""
+"پنهان یا ظاهر کردن برخی از انواع داده ها و نیز تعیین نظم صفحه نمایش آنها."
+
+msgid "Number of pools"
+msgstr "شماره جدول"
+
+msgid "Fencers / pools"
+msgstr "شمشیربازان / جداول"
+
+msgid "Swapping"
+msgstr "تعویض"
+
+msgid "Label "
+msgstr ""
+
+msgid ""
+"Used by GREG to distinguish\n"
+"the competions created from splitting."
+msgstr ""
+
+msgid ""
+"BellePoule needs your agreement\n"
+"to tweet on your behalf"
+msgstr ""
+
+msgid "Click on the link to open a web browser:"
+msgstr ""
+
+msgid "Obtain an authorization code"
+msgstr ""
+
+msgid "on this web site"
+msgstr ""
+
+msgid "Paste the authorization code here:"
+msgstr ""
+
+msgid "BellePoule needs your agreement to post announces on your behalf"
+msgstr ""
+
+msgid "New competition"
+msgstr ""
+
+msgid "Choose a creation method:"
+msgstr ""
+
+msgid "From a XML file"
+msgstr ""
+
+msgid "Empty competition"
+msgstr ""
+
+msgid "From a FFE zip file (extranet)"
+msgstr ""
+
+msgid "From AskFred (.frd)"
+msgstr ""
+
+msgid "Connection to <b>BellePoule2D</b>"
+msgstr ""
+
+msgid ""
+"Plug it now in a computer where\n"
+"<b>BellePoule2D</b> is running."
+msgstr ""
+
+msgid "Recently opened"
+msgstr "آخرین باز شده"
+
+msgid "Reload imports..."
+msgstr ""
+
+msgid "Backup"
+msgstr "پشتیبان"
+
+msgid "Backup files location..."
+msgstr "محل پرونده های پشتیبان..."
+
+msgid "Activate"
+msgstr "فعالسازی"
+
+msgid "Deactivate"
+msgstr "غیرفعال‌سازی"
+
+msgid "Publication"
+msgstr "انتشار"
+
+msgid "Setup"
+msgstr ""
+
+msgid "Access code"
+msgstr ""
+
+msgid "Open an example..."
+msgstr "باز کردن یک نمونه..."
+
+msgid "Fencer file template (.csv)"
+msgstr "قالب پرونده شمشیرباز (.csv)"
+
+msgid "User"
+msgstr "کاربر"
+
+msgid "FTP server"
+msgstr "سرویس دهنده FTP"
+
+msgid "<b>Web site</b>"
+msgstr "<b>درگاه اینترنتی</b>"
+
+msgid "<b>Announce</b>"
+msgstr ""
+
+msgid "<b>Video server</b>"
+msgstr "<b>سرویس دهنده تصاویر</b>"
+
+msgid ""
+"Scan the other QRCode on the partner application\n"
+" (menu <b>BellePoule</b>)."
+msgstr ""
+
+msgid "Reload the imported fencers?"
+msgstr ""
+
+msgid ""
+"Applicable only on <b>non-started</b> competitions created by importing "
+"fencers."
+msgstr ""
+
+msgid "Form"
+msgstr "فرم"
+
+msgid "Job"
+msgstr ""
+
+msgid "Take off"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
+msgid "<b>Referee</b>"
+msgstr ""
+
+msgid "<b>Fencers</b>"
+msgstr ""
+
+msgid "Date of competition"
+msgstr "تاریخ مسابقه"
+
+msgid "Competition properties"
+msgstr "خصوصیات مسابقه"
+
+msgid "Weapon"
+msgstr "اسلحه"
+
+msgid "Gender"
+msgstr "جنسیت"
+
+msgid "Category"
+msgstr "دسته‌بندی"
+
+msgid "Level"
+msgstr "سطح"
+
+msgid "Individual"
+msgstr "انفرادی"
+
+msgid "Team"
+msgstr "تیم"
+
+msgid "<b>Type</b>"
+msgstr "<b>نوع</b>"
+
+msgid "Title"
+msgstr "عنوان"
+
+msgid "Organizer"
+msgstr "سازمان‌دهنده"
+
+msgid "Web site"
+msgstr "درگاه اینترنتی"
+
+msgid "Location"
+msgstr "مکان"
+
+msgid "<b>Overviews</b>"
+msgstr "<b>مرور اجمالی</b>"
+
+msgid "Date"
+msgstr "تاریخ"
+
+msgid "Scratch"
+msgstr "خط خوردگی"
+
+msgid "Start"
+msgstr "شروع"
+
+msgid "<b>Date / Time</b>"
+msgstr "<b>تاریخ/ ساعت</b>"
+
+msgid "Allow"
+msgstr "مجاز"
+
+msgid "Forbid"
+msgstr "ممنوع"
+
+msgid ""
+"Automatic\n"
+"score\n"
+"stuffing"
+msgstr ""
+"توقف\n"
+"امتیازدهی\n"
+"خودکار"
+
+msgid "<b>Scores</b>"
+msgstr "<b>امتیازات</b>"
+
+msgid "Event"
+msgstr "رویداد"
+
+msgid "Save the current state of the competition."
+msgstr "وضعیت کنونی رقابت را ذخیره کنید."
+
+msgid "To specify the features of the competition."
+msgstr "برای مشخص کردن ویژگی های رقابت."
+
+#~ msgid "ref"
+#~ msgstr "داور"
