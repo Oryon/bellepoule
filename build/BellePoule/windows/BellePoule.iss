@@ -108,23 +108,26 @@ Source: "..\..\..\resources\translations\user_manual.pdf"; DestDir: "{app}\share
 ;Traductions
 Source: "..\..\..\resources\translations\index.txt"; DestDir: "{app}\share\{#PRODUCT}\resources\translations"; Flags: ignoreversion
 
-Source: "..\..\..\resources\translations\fr\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\fr"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\de\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\de"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\nl\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\nl"; Flags: ignoreversion recursesubdirs
-;Source: "..\..\..\resources\translations\pl\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\pl"; Flags: ignoreversion recursesubdirs
-;Source: "..\..\..\resources\translations\ca\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ca"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\ru\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ru"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\ar\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ar"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\es\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\es"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\it\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\it"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\ko\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ko"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\pt\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\pt"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\pt_br\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\pt_br"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\sv\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\sv"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\resources\translations\ja\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\ja"; Flags: ignoreversion recursesubdirs
-;Source: "..\..\..\resources\translations\hu\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\hu"; Flags: ignoreversion recursesubdirs
-;Source: "..\..\..\resources\translations\sl\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\sl"; Flags: ignoreversion recursesubdirs
-;Source: "..\..\..\resources\translations\eu\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\eu"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\ar\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\ar";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\ca\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\ca";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\de\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\de";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\el\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\el";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\es\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\es";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\eu\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\eu";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\fa\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\fa";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\fr\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\fr";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\hu\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\hu";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\it\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\it";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\ja\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\ja";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\ko\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\ko";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\nl\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\nl";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\pl\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\pl";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\pt\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\pt";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\pt_BR\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\pt_BR"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\ru\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\ru";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\sl\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\sl";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\sv\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\sv";    Flags: ignoreversion recursesubdirs
+Source: "..\..\..\resources\translations\zh_CN\*"; DestDir: "{app}\share\{#PRODUCT}\resources\translations\zh_CN"; Flags: ignoreversion recursesubdirs
 
 #ifdef MINGW
 ;WebServer
@@ -139,73 +142,85 @@ Source: "..\..\..\sources\www\cognac\nbproject\*"; DestDir: "{app}\share\{#PRODU
 Source: "..\..\..\scripts\wwwstart.bat"; DestDir: "{app}\share\{#PRODUCT}\scripts"; Flags: ignoreversion
 Source: "..\..\..\scripts\wwwstop.bat"; DestDir: "{app}\share\{#PRODUCT}\scripts"; Flags: ignoreversion
 
-Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-
-Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
-
-Source: "{#MINGW}\share\locale\pl\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pl\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\pl\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pl\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\pl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pl\LC_MESSAGES"; Flags: ignoreversion
-
-Source: "{#MINGW}\share\locale\ca\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ca\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\ca\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ca\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\ca\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ca\LC_MESSAGES"; Flags: ignoreversion
-
-Source: "{#MINGW}\share\locale\de\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\de\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\de\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
-
-Source: "{#MINGW}\share\locale\ru\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\ru\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\ru\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
-
-Source: "{#MINGW}\share\locale\ar\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\ar\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ar\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ar\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\ar\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "{#MINGW}\share\locale\es\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\es\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ca\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\ca\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ca\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\ca\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ca\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ca\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\de\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\de\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\de\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\el\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\el\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\el\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\el\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\el\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\el\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\es\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\es\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\es\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "{#MINGW}\share\locale\it\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\it\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\it\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\eu\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\eu\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\eu\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\eu\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\eu\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\eu\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\fa\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\fa\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\fa\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\fa\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\fa\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\fa\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "{#MINGW}\share\locale\pt_BR\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pt_BR\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\pt_BR\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pt_BR\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\pt_BR\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt_BR\LC_MESSAGES"; Flags: ignoreversion
-
-Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
-
-Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
-
-Source: "{#MINGW}\share\locale\hu\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\hu\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\hu\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\hu\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\hu\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\hu\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\hu\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\hu\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\hu\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\hu\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "{#MINGW}\share\locale\sl\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\sl\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\sl\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\sl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\it\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\it\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\it\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\pl\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\pl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pl\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\pl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pl\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\pt_BR\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\pt_BR\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt_BR\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\pt_BR\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt_BR\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt_BR\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\ru\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ru\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ru\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\sl\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\sl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\sl\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\sl\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\sl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\sl\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "{#MINGW}\share\locale\eu\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\eu\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\eu\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\eu\LC_MESSAGES"; Flags: ignoreversion
-Source: "{#MINGW}\share\locale\eu\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\eu\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "{#MINGW}\share\locale\zh_CN\LC_MESSAGES\glib20.mo";           DestDir: "{app}\share\locale\zh_CN\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\zh_CN\LC_MESSAGES\gtk20.mo";            DestDir: "{app}\share\locale\zh_CN\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\zh_CN\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\zh_CN\LC_MESSAGES"; Flags: ignoreversion
 #endif
 
 ;Resources

@@ -1,209 +1,207 @@
-# Korean translation for bellepoule
-# Copyright (c) 2011 Rosetta Contributors and Canonical Ltd 2011
+# Chinese (Simplified) translation for bellepoule
+# Copyright (c) 2019 Rosetta Contributors and Canonical Ltd 2019
 # This file is distributed under the same license as the bellepoule package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-15 09:08+0200\n"
-"PO-Revision-Date: 2019-02-07 00:36+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
-"Language-Team: Korean <ko@li.org>\n"
-"Language: ko\n"
+"POT-Creation-Date: 2019-10-18 13:33+0200\n"
+"PO-Revision-Date: 2019-10-16 10:40+0000\n"
+"Last-Translator: hong <Unknown>\n"
+"Language-Team: Chinese (Simplified) <zh_CN@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2019-10-03 06:01+0000\n"
-"X-Generator: Launchpad (build 19066)\n"
+"X-Launchpad-Export-Date: 2019-10-17 05:53+0000\n"
+"X-Generator: Launchpad (build 186023fa645d8be19d403a76064f0643f510db2f)\n"
 
 msgid "Long text"
-msgstr ""
+msgstr "长文字"
 
 msgid "Short text"
-msgstr ""
+msgstr "短文字"
 
 msgid "Graphic"
-msgstr ""
+msgstr "图表"
 
 msgid "Data to display"
-msgstr "표시 데이터"
+msgstr "显示数据"
 
 msgid "Visibility"
-msgstr ""
+msgstr "显示"
 
 msgid "Data"
-msgstr "데이터"
+msgstr "数据(D)"
 
 msgid "Look"
-msgstr "보기"
+msgstr "查看"
 
 msgid "Follow the instructions given by "
-msgstr ""
+msgstr "按照这个指示去做 "
 
 msgid "Access denied!"
-msgstr ""
+msgstr "拒绝访问"
 
 msgid "<b>Smartpoule</b> configuration code"
-msgstr ""
+msgstr "配置代码"
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
-msgstr ""
-"데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르"
-"면 관련 필드가 무시됩니다."
+msgstr "取消此复选框以加快数据输入。按TAB键时，相应的字段将被忽略。"
 
 msgid "Choose a fencer file to import..."
-msgstr "가져올 선수 파일을 선택하세요."
+msgstr "选择一个击剑者文件导入"
 
 msgid "Fencer files"
-msgstr "선수 파일"
+msgstr "击剑选手文件"
 
 msgid "Referee files"
-msgstr "심판 파일"
+msgstr "裁判的文件"
 
 msgid "All files"
-msgstr "모든 파일들"
+msgstr "所有文件(*.*)"
 
 msgid "The imported FFF file has encoding errors."
-msgstr ""
+msgstr "导入的FFF文件有编码错误。"
 
 msgid "List of registered"
-msgstr "등록된 리스트"
+msgstr "注册列表"
 
 msgid "List of presents"
-msgstr "현재 리스트"
+msgstr "排名列表"
 
 msgid "List of absents"
-msgstr "불참 리스트"
+msgstr "在场的列表"
 
 msgid "Fencer list"
-msgstr "선수 리스트"
+msgstr "选手列表"
 
 msgid "Copy"
-msgstr ""
+msgstr "复制"
 
 msgid "Paste"
-msgstr ""
+msgstr "粘贴"
 
 msgid "Paste (link)"
-msgstr ""
+msgstr "粘贴（link）"
 
 msgid "Remove"
-msgstr "제거"
+msgstr "移除"
 
 msgid "Page"
-msgstr "페이지"
+msgstr "页"
 
 msgid "U5"
-msgstr "5세 이하"
+msgstr "U5"
 
 msgid "U7"
-msgstr "7세 이하"
+msgstr "U7"
 
 msgid "U9"
-msgstr "9세 이하"
+msgstr "U9"
 
 msgid "U11"
-msgstr "11세 이하"
+msgstr "U11"
 
 msgid "U13"
-msgstr "13세 이하"
+msgstr "U13"
 
 msgid "U15"
-msgstr "15세 이하"
+msgstr "U15"
 
 msgid "U17"
-msgstr "17세 이하"
+msgstr "U17"
 
 msgid "U20"
-msgstr "20세 이하"
+msgstr "U20"
 
 msgid "U23"
-msgstr "23세 이하"
+msgstr "U23"
 
 msgid "Senior"
-msgstr "일반부"
+msgstr "老年人"
 
 msgid "Veteran"
-msgstr "베테랑"
+msgstr "老鸟"
 
 msgid "Veteran 1"
-msgstr ""
+msgstr "老鸟1"
 
 msgid "Veteran 2"
-msgstr ""
+msgstr "老鸟2"
 
 msgid "Veteran 3"
-msgstr ""
+msgstr "老鸟3"
 
 msgid "Veteran 4"
-msgstr ""
+msgstr "老鸟4"
 
 msgid "Veteran 5"
-msgstr ""
+msgstr "Veteran 5"
 
 msgid "Veteran 3+4"
-msgstr ""
+msgstr "Veteran 3+4"
 
 msgid "Veteran 4+5"
-msgstr ""
+msgstr "Veteran 4+5"
 
 msgid "Choose a competion file to open... "
-msgstr "열어볼 대회 파일을 선택하세요. "
+msgstr "选择要打开的比赛文件 "
 
 msgid "Example files"
-msgstr ""
+msgstr "示例文件"
 
 msgid "Competition files"
-msgstr ""
+msgstr "比赛文件"
 
 msgid "BellePoule files"
-msgstr "BellePoule 파일들"
+msgstr "BellePoule 文件"
 
 msgid "Recently opened files"
-msgstr "최근에 열어본 파일"
+msgstr "最近打开的文件"
 
 msgid "Choose a backup files location..."
-msgstr "백업 파일 위치를 선택하세요."
+msgstr "选择备份文件位置"
 
 msgid "Men"
-msgstr ""
+msgstr "男性"
 
 msgid "Women"
-msgstr ""
+msgstr "女性"
 
 msgid "Mixed"
-msgstr "혼성"
+msgstr "混合的"
 
 msgid "League"
-msgstr ""
+msgstr "联盟"
 
 msgid "Regional"
-msgstr ""
+msgstr "区域"
 
 msgid "Open"
-msgstr ""
+msgstr "打开"
 
 msgid "World cup"
-msgstr ""
+msgstr "世界杯"
 
 msgid "National championships"
-msgstr ""
+msgstr "全国锦标赛"
 
 msgid "World championships"
-msgstr ""
+msgstr "世界锦标赛"
 
 msgid "Other"
-msgstr ""
+msgstr "其他"
 
 msgid "Choose a file..."
-msgstr "파일을 선택하세요..."
+msgstr "选择文件..."
 
 msgid "GREG alert"
-msgstr ""
+msgstr "GREG警告"
 
 msgid ""
 "It's recommended to give a label when publication on GREG (www.escrime-info."
@@ -211,1039 +209,1050 @@ msgid ""
 "\n"
 "Re-open the form to fill it in?"
 msgstr ""
+"建议在GREG (www.escri-info.com)上发表时，给出一个标签。重新打开表格填写?"
 
 msgid "BellePoule files (.cotcot)"
-msgstr "BellePoule 파일 (.cotcot)"
+msgstr "BellePoule files (.昵称)"
 
 msgid "Close without saving"
-msgstr ""
+msgstr "不保存关闭"
 
 #, c-format
 msgid "Match %s"
-msgstr "%s 강"
+msgstr "竞赛 %s"
 
 msgid "No winner!"
-msgstr ""
+msgstr "没有冠军"
 
 #, c-format
 msgid "Round #%d"
-msgstr ""
+msgstr "轮次 #%d"
 
 msgid "Formula"
-msgstr "방식"
+msgstr "规则"
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>정말로 진행 중인 경기를 취소할까요?</big></b>"
+msgstr "<b><big>你真的想取消这一轮吗?</big></b>"
 
 msgid "Go back to the previous round?"
-msgstr "이전 경기로 돌아갈까요?"
+msgstr "回到上一轮"
 
 msgid "All the inputs of this round will be cancelled."
-msgstr "이번 경기의 모든 입력이 취소됩니다."
+msgstr "这一轮的所有输入将被取消"
 
 msgid ""
 "<b><big>Because of ties, the quota is exceeded.\n"
 "Do you wish to add a barrage round?</big></b>"
-msgstr ""
+msgstr "<b><big>由于系领带，超出了限额。你想增加一个弹幕回合吗?</big></b>"
 
 msgid "Barrage"
-msgstr ""
+msgstr "拦截"
 
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>BellePoule을 종료할까요?</big></b>"
+msgstr "<b><big>你真的想退出 BellePoule吗</big></b>"
 
 msgid "Quit BellePoule?"
-msgstr "BellePoule을 종료할까요?"
+msgstr "退出BellePoule？"
 
 msgid "All the unsaved competions will be lost."
-msgstr "저장되지 않은 모든 경기가 사라집니다."
+msgstr "所有未保存的比赛都将丢失"
 
 #, c-format
 msgid "Piste %d"
-msgstr ""
+msgstr "剑道号 %d"
 
 msgid "No time!"
-msgstr ""
+msgstr "时间结束"
 
 msgid "No piste!"
-msgstr ""
+msgstr "没有剑道"
 
 msgid "Display jobs"
-msgstr ""
+msgstr "显示工作"
 
 msgid "Not available"
-msgstr ""
+msgstr "不可用"
 
 msgid "Available"
-msgstr ""
+msgstr "可用"
 
 msgid "Pool"
-msgstr ""
+msgstr "存储池"
 
 msgid "Meal"
-msgstr ""
+msgstr "用餐"
 
 msgid "Drink"
-msgstr ""
+msgstr "饮料"
 
 msgid "Dessert"
-msgstr ""
+msgstr "甜点心"
 
 msgid "Coffee"
-msgstr ""
+msgstr "咖啡"
 
 msgid "Payment book"
-msgstr "지불 장부"
+msgstr "付款登记簿"
 
 msgid "Signature"
-msgstr "서명"
+msgstr "个性签名"
 
 msgid "Meal tickets"
-msgstr "식권"
+msgstr "饭票"
 
 #, c-format
 msgid ""
 "<b>%s</b> is delayed.\n"
 "Do you want to postpone the next bouts?\n"
 msgstr ""
+"<b>%s</b>被延迟.\n"
+"你想推迟下一次比赛吗？\n"
 
 msgid "Restart BellePoule for this change to take effect"
-msgstr "변경 사항을 적용하기 위해 다시 시작"
+msgstr "重新启动BellePoule以使此更改生效"
 
 msgid "Educ"
-msgstr ""
+msgstr "受教育程度"
 
 msgid "Foil"
-msgstr "플러레"
+msgstr "花剑"
 
 msgid "Epée"
-msgstr "에뻬"
+msgstr "重剑"
 
 msgid "Sabre"
-msgstr "사브르"
+msgstr "佩剑"
 
 msgid "place"
-msgstr "순위"
+msgstr "place"
 
 msgid "team"
-msgstr ""
+msgstr "队伍"
 
 msgid "last name"
-msgstr "성"
+msgstr "姓"
 
 msgid "first name"
-msgstr "이름"
+msgstr "名"
 
 msgid "date of birth"
-msgstr "생일"
+msgstr "出生年月日"
 
 msgid "gender"
-msgstr "성별"
+msgstr "性别"
 
 msgid "Male"
-msgstr "남성"
+msgstr "男性"
 
 msgid "Female"
-msgstr "여성"
+msgstr "女性"
 
 msgid "weapon"
-msgstr ""
+msgstr "装备"
 
 msgid "country"
-msgstr "국가"
+msgstr "国家"
 
 msgid "region"
-msgstr ""
+msgstr "地区"
 
 msgid "league"
-msgstr "리그"
+msgstr "联盟"
 
 msgid "club"
-msgstr "클럽"
+msgstr "俱乐部"
 
 msgid "licence"
-msgstr "자격"
+msgstr "证件"
 
 msgid "rate"
-msgstr "비율"
+msgstr "比率"
 
 msgid "level"
-msgstr "레벨"
+msgstr "级别"
 
 msgid "ranking"
-msgstr "순위"
+msgstr "排名"
 
 msgid "rating"
-msgstr ""
+msgstr "评级"
 
 msgid "presence"
-msgstr "참석"
+msgstr "出场"
 
 msgid "exported"
-msgstr "내보내기 된"
+msgstr "已导出"
 
 msgid "incident"
-msgstr ""
+msgstr "事件"
 
 msgid "Absent"
-msgstr "결석"
+msgstr "缺席"
 
 msgid "Latecomer"
-msgstr ""
+msgstr "迟到者"
 
 msgid "global status"
-msgstr "전역 상태"
+msgstr "全球地位"
 
 msgid "Qualified"
-msgstr "자격이 있는"
+msgstr "有资格的"
 
 msgid "Not qualified"
-msgstr "자격이 없는"
+msgstr "没资格的"
 
 msgid "Withdrawal"
-msgstr "인출"
+msgstr "撤销"
 
 msgid "Excluded"
-msgstr "제외된"
+msgstr "排除的"
 
 msgid "Forfeit"
-msgstr "박탈된"
+msgstr "处罚"
 
 msgid "status"
-msgstr "상태"
+msgstr "状态"
 
 msgid "cyphered password"
-msgstr ""
+msgstr "数字密码"
 
 msgid "IP address"
-msgstr ""
+msgstr "IP 地址"
 
 msgid "Password"
-msgstr "패스워드"
+msgstr "密码"
 
 msgid "pool #"
-msgstr "풀#"
+msgstr "池 #"
 
 msgid "Victories"
-msgstr "승리"
+msgstr "胜利次数"
 
 msgid "Bouts"
-msgstr ""
+msgstr "回合"
 
 msgid "Vict./Bouts (‰)"
-msgstr "승리횟수/경기수 (‰)"
+msgstr "胜利次数./回合 (‰)"
 
 msgid "index"
-msgstr "득실차"
+msgstr "索引"
 
 msgid "Hits scored"
-msgstr "득점"
+msgstr "命中得分"
 
 msgid "strip"
-msgstr ""
+msgstr "除去"
 
 msgid "time"
-msgstr ""
+msgstr "时间"
 
 msgid "Round start rank"
-msgstr "경기 시작 랭킹"
+msgstr "开赛排轮次"
 
 msgid "promoted"
-msgstr ""
+msgstr "已推荐"
 
 msgid "connection"
-msgstr ""
+msgstr "连接"
 
 msgid "Broken"
-msgstr ""
+msgstr "已损坏"
 
 msgid "Waiting"
-msgstr ""
+msgstr "等待中"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "Manual"
-msgstr ""
+msgstr "手册"
 
 msgid "Classification"
-msgstr "순위"
+msgstr "分类"
 
 msgid "Piste"
-msgstr "피스트"
+msgstr "剑道"
 
 msgid "Place #"
-msgstr "등수 #"
+msgstr "空间 #"
 
 msgid "Referee"
-msgstr "심판"
+msgstr "裁判"
 
 msgid "Table"
-msgstr "대진표"
+msgstr "表"
 
 #, c-format
 msgid "%s: score sheets printing"
-msgstr "%s: 점수표 인쇄"
+msgstr "%s: 得分表打印"
 
 msgid "Winner"
-msgstr "승자"
+msgstr "胜利者"
 
 msgid "Final"
-msgstr "결승"
+msgstr "最终"
 
 msgid "Semi-final"
-msgstr "준결승"
+msgstr "半决赛"
 
 #, c-format
 msgid "Table of %d"
-msgstr "%d 강"
+msgstr "表 of %d"
 
 msgid "OVER"
-msgstr ""
+msgstr "结束"
 
 msgid ""
 "Referees allocation \n"
 " ongoing"
 msgstr ""
+"裁判分配\n"
+" 进行中的"
 
 msgid "Table classification"
-msgstr "토너먼트 순위"
+msgstr "表分类"
 
 msgid "All places fenced"
-msgstr ""
+msgstr "所有地方击剑"
 
 msgid "Fence off for third place"
-msgstr ""
+msgstr "争取第三名"
 
 msgid "No fence off for third place"
-msgstr ""
+msgstr "不必决出第三名"
 
 msgid "Max score"
-msgstr "최대 점수"
+msgstr "最高得分"
 
 msgid "Pools arrangement"
-msgstr "풀 배치"
+msgstr "池的安排"
 
 msgid "or"
-msgstr ""
+msgstr "要么"
 
 msgid "Wrong fencers count!"
-msgstr ""
+msgstr "击剑计数错误!"
 
 msgid "Allocation"
-msgstr "할당"
+msgstr "存储分配"
 
 msgid "Seeding"
-msgstr "대진표 작성 중"
+msgstr "做种"
 
 msgid "Balanced"
-msgstr "균형"
+msgstr "已平衡"
 
 msgid "Grouped by strength"
-msgstr "능력별로 그룹 생성"
+msgstr "按强度分组"
 
 msgid "Impossible to apply with this configuration of pools"
-msgstr ""
+msgstr "不可能应用这种池配置"
 
 #, c-format
 msgid "Pool #%02d"
-msgstr "풀 #%02d"
+msgstr "池 #%02d"
 
 msgid "Status"
-msgstr "상태"
+msgstr "状态"
 
 msgid "Vict./Matchs"
-msgstr "승리횟수/경기"
+msgstr "胜利./比赛"
 
 msgid "H. scored"
-msgstr "득점"
+msgstr "h .得分"
 
 msgid "H. received"
-msgstr "실점"
+msgstr "H. 收到"
 
 msgid "Index"
-msgstr "득실차"
+msgstr "目录"
 
 msgid "Place"
-msgstr "순위"
+msgstr "位置"
 
 msgid "Pools"
-msgstr "풀"
+msgstr "存储池（Pool）"
 
 msgid "Bout without winner!"
-msgstr ""
+msgstr "回合中赢家！"
 
 msgid "General classification"
-msgstr "전체 순위"
+msgstr "总成绩"
 
 msgid "All FFF files (.FFF)"
-msgstr "모든 FFF 파일(.FFF)"
+msgstr "All FFF files (.FFF)"
 
 msgid "All PDF files (.PDF)"
-msgstr "모든 PDF 파일(.PDF)"
+msgstr "All PDF files (.PDF)"
 
 msgid "All HTML files (.HTML)"
-msgstr ""
+msgstr "All HTML files (.HTML)"
 
 msgid "All AskFred files (.FRD)"
-msgstr ""
+msgstr "All AskFred files (.FRD)"
 
 msgid "Split"
-msgstr "분할"
+msgstr "拆分"
 
 msgid "List of fencers to extract"
-msgstr "제외할 선수 리스트"
+msgstr "要提取的击剑运动员列表"
 
 msgid "Choose a rank file to apply..."
-msgstr ""
+msgstr "选择一个成绩文件载入…"
 
 msgid "Rank files: cotcot, xml, txt (France)"
-msgstr ""
+msgstr "成绩文件: cotcot, xml, txt (France)"
 
 msgid "Check-in"
-msgstr "체크인"
+msgstr "登记"
 
 msgid "** Without team **"
-msgstr ""
+msgstr "** 没有团队 **"
 
 msgid "Present fencers"
-msgstr ""
+msgstr "现在的击剑运动员"
 
 msgid "Expected fencers"
-msgstr ""
+msgstr "预期的击剑运动员"
 
 msgid "Expected teams"
-msgstr ""
+msgstr "预期的团队"
 
 msgid "Team size"
-msgstr ""
+msgstr "团队规模"
 
 #, c-format
 msgid "You have configured the minimum team size to <b>%d</b> fencers."
-msgstr ""
+msgstr "您已经将最小团队规模配置为<b>%d</b>击剑运动员."
 
 msgid "Tick the present players of the team."
-msgstr ""
+msgstr "勾选该队现在的队员."
 
 msgid "Untick the absent players of the team."
-msgstr ""
+msgstr "勾选该队缺席的队员."
 
 msgid "Fencer list printing"
-msgstr "선수 리스트 인쇄"
+msgstr "击剑选手名单打印"
 
 msgid "<b><big>What do you want to print?</big></b>"
-msgstr "<b><big>무엇을 인쇄할까요?</big></b>"
+msgstr "<b><big>你想打印什么?</big></b>"
 
 msgid "All the presents"
-msgstr "참가자 전원"
+msgstr "所有的奖励"
 
 msgid "All the absents"
-msgstr "결석자 전원"
+msgstr "所有在场的"
 
 msgid "Presents"
-msgstr "참석"
+msgstr "奖品"
 
 msgid "Absents"
-msgstr "결석"
+msgstr "缺席的"
 
 msgid "all"
-msgstr "모든"
+msgstr "全部"
 
 msgid "Import fencers"
-msgstr ""
+msgstr "导入击剑运动员"
 
 msgid "Import ranking"
-msgstr ""
+msgstr "导入成绩"
 
 msgid "Minimum team size"
-msgstr ""
+msgstr "最低团队规模"
 
 msgid "Team classification"
-msgstr ""
+msgstr "团体名次"
 
 msgid "Manually assigned"
-msgstr ""
+msgstr "手动分配"
 
 msgid "Derived from fencer classification"
-msgstr ""
+msgstr "源自击剑运动员分类"
 
 msgid "Extension"
-msgstr ""
+msgstr "分机"
 
 msgid "No"
-msgstr ""
+msgstr "否"
 
 msgid "Assign"
-msgstr ""
+msgstr "指派"
 
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 msgid "Undo"
-msgstr ""
+msgstr "撤销"
 
 msgid "Match"
-msgstr ""
+msgstr "匹配"
 
 msgid "<b>Match</b>"
-msgstr "<b>경기</b>"
+msgstr "<b>匹配</b>"
 
 msgid "<b>Score</b>"
-msgstr "<b>점수</b>"
+msgstr "<b>比分</b>"
 
 msgid "Table printing"
-msgstr "대진표 인쇄"
+msgstr "页面打印"
 
 msgid "<b><big>How to print?</big></b>"
-msgstr ""
+msgstr "<b><big>如何打印?</big></b>"
 
 msgid "Bouts/sheet"
-msgstr ""
+msgstr "回合/覆盖"
 
 msgid ""
 "<b><big>Which score sheets of the selected table do you want to print?</"
 "big></b>"
-msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big></b>"
+msgstr "<b><big>您要打印所选表的哪些分数表?</big></b>"
 
 msgid "All the score sheets"
-msgstr "모든 점수 기록지"
+msgstr "所有的分数表"
 
 msgid "The pending score sheets"
-msgstr "지연 중인 점수 기록지"
+msgstr "悬而未决的分数表"
 
 msgid "Add"
-msgstr "추가"
+msgstr "添加"
 
 msgid "<b>Schedule</b>"
-msgstr "<b>스케츌</b>"
+msgstr "<b>时间表</b>"
 
 msgid "<b>Parameters</b>"
-msgstr "<b>변수</b>"
+msgstr "<b>参数</b>"
 
 msgid "Previous round"
-msgstr "이전 라운드"
+msgstr "上一轮"
 
 msgid "Next round"
-msgstr "다음 라운드"
+msgstr "下一回合"
 
 msgid "Choose a target file..."
-msgstr "원하는 파일을 선택하세요..."
+msgstr "选择一个目标文件…"
 
 msgid "Export to <b>HTML</b>"
-msgstr ""
+msgstr "导出到 <b>HTML</b>"
 
 msgid "Export to <b>FFF</b>"
-msgstr ""
+msgstr "导出到<b>FFF</b>"
 
 msgid "Export to <b>PDF</b>"
-msgstr ""
+msgstr "导出到 <b>PDF</b>"
 
 msgid "Export to <b>FRD</b>"
-msgstr ""
+msgstr "导出到 <b>FRD</b>"
 
 msgid "Place shifting"
-msgstr ""
+msgstr "空间转移"
 
 msgid "Winner's place"
-msgstr ""
+msgstr "冠军的位置"
 
 msgid "Name"
-msgstr "이름"
+msgstr "名字"
 
 msgid "Number"
-msgstr "숫자"
+msgstr "数字"
 
 msgid "Pool sheets printing"
-msgstr "풀 시트 인쇄"
+msgstr "池表打印"
 
 msgid "<b><big>Print...</big></b>"
-msgstr "<b><big>인쇄...</big></b>"
+msgstr "<b><big>Print...</big></b>"
 
 msgid "All the pools"
-msgstr "모든 풀"
+msgstr "所有的池"
 
 msgid "Only the selected pool"
-msgstr "선택한 풀"
+msgstr "仅选择池"
 
 msgid "<b>What?</b>"
-msgstr "<b>무엇?</b>"
+msgstr "<b>What?</b>"
 
 msgid "For arbitration"
-msgstr "중재용"
+msgstr "仲裁"
 
 msgid "Matches watermarked"
-msgstr ""
+msgstr "比赛有水印的"
 
 msgid "For the bulletin board"
-msgstr "게시판용"
+msgstr "在公告板上"
 
 msgid "<b>For what?</b>"
-msgstr "<b>무엇을 위해서?</b>"
+msgstr "<b>For what?</b>"
 
 msgid "Automatic stuffing"
-msgstr "자동 생성"
+msgstr "自动填充"
 
 msgid "Combined classification"
-msgstr "연동 순위"
+msgstr "组合分类"
 
 msgid "Single classification"
-msgstr "개별 순위"
+msgstr "单一分类"
 
 msgid "All"
-msgstr "전체"
+msgstr "全部"
 
 msgid "Selected"
-msgstr ""
+msgstr "选中"
 
 msgid "Now"
-msgstr ""
+msgstr "现在"
 
 msgid "<b>From?</b>"
-msgstr ""
+msgstr "<b>From?</b>"
 
 msgid "label"
-msgstr ""
+msgstr "标签"
 
 msgid "Import referee file"
-msgstr "중요 심판 파일"
+msgstr "导入裁判文件"
 
 msgid "Content designed for the referees."
-msgstr "심판을 위해 설계된 컨텐츠"
+msgstr "为裁判设计的内容。"
 
 msgid "Promoted"
-msgstr ""
+msgstr "升为"
 
 msgid "Eliminated"
-msgstr ""
+msgstr "被淘汰"
 
 msgid "BellePoule - Fencing tournament"
-msgstr "BellePoule - 펜싱 토너먼트"
+msgstr "BellePoule - 击剑比赛"
 
 msgid "File"
-msgstr "파일"
+msgstr "文件"
 
 msgid "Referees"
-msgstr "심판"
+msgstr "裁判"
 
 msgid "WIFI"
-msgstr ""
+msgstr "WIFI"
 
 msgid "Score sheet scanner"
-msgstr ""
+msgstr "记分表扫描仪"
 
 msgid "Print meal tickets"
-msgstr "식권 인쇄"
+msgstr "打印餐票"
 
 msgid "Print payment book"
-msgstr "지출 장부 인쇄"
+msgstr "打印付款单"
 
 msgid "New version!"
-msgstr "신규 버전!"
+msgstr "新版本!"
 
 msgid "Release notes"
-msgstr ""
+msgstr "发行说明"
 
 msgid "Acces code"
-msgstr ""
+msgstr "数据库代码"
 
 msgid "User manual"
-msgstr "사용자 메뉴얼"
+msgstr "用户手册"
 
 msgid "Return"
-msgstr ""
+msgstr "返回"
 
 msgid "Matches"
-msgstr ""
+msgstr "比赛"
 
 msgid ""
 "Fencing tournament management software.\n"
 "\n"
 "\n"
 msgstr ""
-"펜싱 토너먼트 관리 소프트웨어.\n"
+"击剑比赛管理软件\n"
 "\n"
 "\n"
 
 msgid "Security"
-msgstr ""
+msgstr "安全性"
 
 msgid "Passphrase"
-msgstr ""
+msgstr "密码"
 
 msgid ""
 "Enter your WIFI network settings here.\n"
 "They will be used to automatically configure\n"
 "the smarthphones running <b>SmartPoule</b>"
 msgstr ""
+"在这里输入您的WIFI网络设置\n"
+"它们将用于自动配置\n"
+"运行SmartPoule的智能手机"
 
 msgid ""
 "Scan this code with <b>SmartPoule</b>\n"
 "to make your smarphone\n"
 "a score sheet scanner."
 msgstr ""
+"使用 <b>SmartPoule</b>扫描此代码\n"
+"做你的智能手机\n"
+"一个分数表扫描仪"
 
 msgid "<b>Score sheet scanner</b>"
-msgstr ""
+msgstr "<b>记分表扫描仪</b>"
 
 msgid "Connection rejected"
-msgstr ""
+msgstr "连接被拒绝"
 
 msgid "BellePoule2D is already operating on the network."
-msgstr ""
+msgstr "BellePoule2D 已经在网络上运行了"
 
 msgid "Connection to <b>BellePoule</b>"
-msgstr ""
+msgstr "连接到<b>BellePoule</b>"
 
 msgid "Plug an USB stick."
-msgstr ""
+msgstr "插入usb设备"
 
 msgid "Unplug it."
-msgstr ""
+msgstr "拔出插头"
 
 msgid ""
 "Plug it now in a computer where\n"
 "<b>BellePoule</b> is running."
 msgstr ""
+"现在把它插到电脑上\n"
+"<b>BellePoule</b>正在运行"
 
 msgid "Scan this QRCode:"
-msgstr ""
+msgstr "扫描二维码"
 
 msgid ""
 "Scan the other QRCode on the partner application\n"
 " (menu <b>BellePoule2D</b>)."
 msgstr ""
+"扫描合作伙伴应用程序上的其他QRCode\n"
+" (菜单<b>BellePoule2D</b>)."
 
 msgid "Fenced places"
-msgstr "경기 순위"
+msgstr "击剑空间"
 
 msgid "Fill in a match"
-msgstr "경기에 입력"
+msgstr "填入一个比赛"
 
 msgid "Score sheets"
-msgstr "점수표"
+msgstr "记分表"
 
 msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
-"모든 점수를 무작위로 입력합니다.\n"
-"이 버튼을 활성 또는 비활성화하기 위해서는 경기 속성으로 갑니다."
+"随机填写所有分数\n"
+"要激活/停用此按钮，请进入比赛属性。"
 
 msgid "match"
-msgstr ""
+msgstr "比赛"
 
 msgid "<b>Search</b>"
-msgstr ""
+msgstr "<b>搜索</b>"
 
 msgid "Zoom"
-msgstr "확대"
+msgstr "Zoom"
 
 msgid "From:"
-msgstr ""
+msgstr "来源:"
 
 msgctxt "jobs"
 msgid "All"
-msgstr ""
+msgstr "所有"
 
 msgctxt "jobs"
 msgid "Only the selected"
-msgstr ""
+msgstr "只有选择的"
 
 msgid "Pistes"
-msgstr ""
+msgstr "剑道"
 
 msgctxt "pistes"
 msgid "All"
-msgstr ""
+msgstr "所有"
 
 msgctxt "pistes"
 msgid "Only the selected"
-msgstr ""
+msgstr "只有选择的"
 
 msgctxt "referees"
 msgid "All"
-msgstr ""
+msgstr "所有"
 
 msgctxt "referees"
 msgid "Only the selected"
-msgstr ""
+msgstr "只有选择的"
 
 msgid "None"
-msgstr "없음"
+msgstr "无"
 
 msgid "<b>No referee available!</b>"
-msgstr ""
+msgstr "<b>没有裁判!</b>"
 
 msgid "Didn't you forget to check them in?"
-msgstr ""
+msgstr "你没有忘记登记入住吗?"
 
 msgid "Overlap of time slots"
-msgstr ""
+msgstr "时段重叠"
 
 msgid "Rotate"
-msgstr ""
+msgstr "旋转"
 
 msgid "Block"
-msgstr ""
+msgstr "阻止"
 
 msgid "Print"
-msgstr "인쇄"
+msgstr "打印"
 
 msgid "<span size=\"x-small\">club</span>"
-msgstr ""
+msgstr "<span size=\"x-small\">俱乐部</span>"
 
 msgid "<span size=\"x-small\">league</span>"
-msgstr ""
+msgstr "<span size=\"x-small\">联盟</span>"
 
 msgid "<span size=\"x-small\">country</span>"
-msgstr ""
+msgstr "<span size=\"x-small\">国家</span>"
 
 msgid "Warnings"
-msgstr ""
+msgstr "警告"
 
 msgid "Check the fencers you wish to include"
-msgstr ""
+msgstr "检查你想包括的击剑运动员"
 
 msgid "New fencer..."
-msgstr ""
+msgstr "新击剑运动员..."
 
 msgid "Uncheck the fencers you wish to withdraw"
-msgstr ""
+msgstr "取消勾选你想退出的击剑运动员"
 
 msgid "Mask or unmask some data type as well as define their display order."
-msgstr "표시 순서를 정의할 뿐 아니라 데이터 타입을 지우거나 표시합니다."
+msgstr "屏蔽或反屏蔽某些数据类型，并定义它们的显示顺序。"
 
 msgid "Number of pools"
-msgstr "풀 갯수"
+msgstr "池号码"
 
 msgid "Fencers / pools"
-msgstr "선수 / 풀"
+msgstr "击剑运动员/池"
 
 msgid "Swapping"
-msgstr "교체"
+msgstr "交换"
 
 msgid "Label "
-msgstr ""
+msgstr "标签 "
 
 msgid ""
 "Used by GREG to distinguish\n"
 "the competions created from splitting."
 msgstr ""
+"用GREG来区分\n"
+"由分裂产生的竞争."
 
 msgid ""
 "BellePoule needs your agreement\n"
 "to tweet on your behalf"
 msgstr ""
+"BellePoule需要你的同意\n"
+"代表你发微博"
 
 msgid "Click on the link to open a web browser:"
-msgstr ""
+msgstr "点击链接打开网页浏览器:"
 
 msgid "Obtain an authorization code"
-msgstr ""
+msgstr "获取授权码"
 
 msgid "on this web site"
-msgstr ""
+msgstr "在本网站"
 
 msgid "Paste the authorization code here:"
-msgstr ""
+msgstr "粘贴授权代码到这里:"
 
 msgid "BellePoule needs your agreement to post announces on your behalf"
-msgstr ""
+msgstr "BellePoule 需要你的同意才能代表你发布公告"
 
 msgid "New competition"
-msgstr ""
+msgstr "新竞争"
 
 msgid "Choose a creation method:"
-msgstr ""
+msgstr "选择一个创建方法:"
 
 msgid "From a XML file"
-msgstr ""
+msgstr "From a XML file"
 
 msgid "Empty competition"
-msgstr ""
+msgstr "空的竞争"
 
 msgid "From a FFE zip file (extranet)"
-msgstr ""
+msgstr "来自FFE zip文件(外扩网)"
 
 msgid "From AskFred (.frd)"
-msgstr ""
+msgstr "From AskFred (.frd)"
 
 msgid "Connection to <b>BellePoule2D</b>"
-msgstr ""
+msgstr "连接到 <b>BellePoule2D</b>"
 
 msgid ""
 "Plug it now in a computer where\n"
 "<b>BellePoule2D</b> is running."
 msgstr ""
+"现在把它插到电脑上\n"
+"<b>BellePoule2D</b> 正在运行."
 
 msgid "Recently opened"
-msgstr "최근 파일"
+msgstr "最近打开的"
 
 msgid "Reload imports..."
-msgstr ""
+msgstr "重新载入入口..."
 
 msgid "Backup"
-msgstr "백업"
+msgstr "备份"
 
 msgid "Backup files location..."
-msgstr "백업 파일 위치"
+msgstr "备份文件的位置..."
 
 msgid "Activate"
-msgstr "활성화"
+msgstr "激活"
 
 msgid "Deactivate"
-msgstr "비활성화"
+msgstr "停用"
 
 msgid "Publication"
-msgstr ""
+msgstr "发布"
 
 msgid "Setup"
-msgstr ""
+msgstr "设置"
 
 msgid "Access code"
-msgstr ""
+msgstr "访问代码"
 
 msgid "Open an example..."
-msgstr "예제 열기..."
+msgstr "打开一个列子"
 
 msgid "Fencer file template (.csv)"
-msgstr "펜서 파일 템플릿 (.csv)"
+msgstr "击剑者文件模板(.csv)"
 
 msgid "User"
-msgstr "사용자"
+msgstr "用户"
 
 msgid "FTP server"
-msgstr "FTP 서버"
+msgstr "FTP server"
 
 msgid "<b>Web site</b>"
-msgstr ""
+msgstr "<b>网页</b>"
 
 msgid "<b>Announce</b>"
-msgstr ""
+msgstr "<b>通告</b>"
 
 msgid "<b>Video server</b>"
-msgstr ""
+msgstr "<b>视频服务</b>"
 
 msgid ""
 "Scan the other QRCode on the partner application\n"
 " (menu <b>BellePoule</b>)."
 msgstr ""
+"扫描合作伙伴应用程序上的其他QRCode\n"
+" (菜单<b>BellePoule</b>)."
 
 msgid "Reload the imported fencers?"
-msgstr ""
+msgstr "重新载入加入的击剑运动员"
 
 msgid ""
 "Applicable only on <b>non-started</b> competitions created by importing "
 "fencers."
-msgstr ""
+msgstr "只适用于非开始的比赛由进口击剑选手创建。"
 
 msgid "Form"
-msgstr ""
+msgstr "格式"
 
 msgid "Job"
-msgstr ""
+msgstr "工作"
 
 msgid "Take off"
-msgstr ""
+msgstr "拿走"
 
 msgid "Move"
-msgstr ""
+msgstr "走开"
 
 msgid "<b>Referee</b>"
-msgstr ""
+msgstr "<b>裁判</b>"
 
 msgid "<b>Fencers</b>"
-msgstr ""
+msgstr "<b>击剑运动员</b>"
 
 msgid "Date of competition"
-msgstr "경기 일자"
+msgstr "比赛日期"
 
 msgid "Competition properties"
-msgstr "경기 속성"
+msgstr "竞争的性质"
 
 msgid "Weapon"
-msgstr "종목"
+msgstr "装备"
 
 msgid "Gender"
-msgstr "성별"
+msgstr "性别"
 
 msgid "Category"
-msgstr "카테고리"
+msgstr "分类"
 
 msgid "Level"
-msgstr ""
+msgstr "级别"
 
 msgid "Individual"
-msgstr ""
+msgstr "个人"
 
 msgid "Team"
-msgstr ""
+msgstr "队伍"
 
 msgid "<b>Type</b>"
-msgstr "<b>타입</b>"
+msgstr "<b>类型</b>"
 
 msgid "Title"
-msgstr "타이틀"
+msgstr "标题"
 
 msgid "Organizer"
-msgstr "운영자"
+msgstr "组织"
 
 msgid "Web site"
-msgstr "웹사이트"
+msgstr "网站"
 
 msgid "Location"
-msgstr "위치"
+msgstr "地点"
 
 msgid "<b>Overviews</b>"
-msgstr "<b>개요</b>"
+msgstr "<b>概述</b>"
 
 msgid "Date"
-msgstr "일자"
+msgstr "日期"
 
 msgid "Scratch"
-msgstr "핸디캡 없음"
+msgstr "Scratch"
 
 msgid "Start"
-msgstr "시작"
+msgstr "开始"
 
 msgid "<b>Date / Time</b>"
-msgstr "<b>일자 / 시간</b>"
+msgstr "<b>日期 / 时间</b>"
 
 msgid "Allow"
-msgstr "허용"
+msgstr "允许"
 
 msgid "Forbid"
-msgstr "금지"
+msgstr "禁止"
 
 msgid ""
 "Automatic\n"
 "score\n"
 "stuffing"
 msgstr ""
-"자동\n"
-"점수\n"
-"생성"
+"自动的\n"
+"得分\n"
+"填充"
 
 msgid "<b>Scores</b>"
-msgstr "<b>점수</b>"
+msgstr "<b>得分</b>"
 
 msgid "Event"
-msgstr "대회"
+msgstr "活动"
 
 msgid "Save the current state of the competition."
-msgstr "경기를 현재 상태로 저장합니다."
+msgstr "保存当前的竞争状态。"
 
 msgid "To specify the features of the competition."
-msgstr "대회 특징을 명시합니다."
-
-#~ msgid "ref"
-#~ msgstr "심판"
-
-#~ msgid "9999"
-#~ msgstr "9999"
-
-#~ msgid "31/03/2009"
-#~ msgstr "31/03/2009"
-
-#~ msgid ":"
-#~ msgstr ":"
+msgstr "明确比赛的特点"

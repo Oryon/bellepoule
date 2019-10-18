@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:47+0200\n"
+"POT-Creation-Date: 2019-10-15 09:08+0200\n"
 "PO-Revision-Date: 2018-04-18 07:48+0000\n"
 "Last-Translator: Nikos Mitrokostas <Unknown>\n"
 "Language-Team: Greek <el@li.org>\n"
@@ -936,10 +936,31 @@ msgstr ""
 msgid "From:"
 msgstr ""
 
+msgctxt "jobs"
+msgid "All"
+msgstr ""
+
+msgctxt "jobs"
 msgid "Only the selected"
 msgstr ""
 
 msgid "Pistes"
+msgstr ""
+
+msgctxt "pistes"
+msgid "All"
+msgstr ""
+
+msgctxt "pistes"
+msgid "Only the selected"
+msgstr ""
+
+msgctxt "referees"
+msgid "All"
+msgstr ""
+
+msgctxt "referees"
+msgid "Only the selected"
 msgstr ""
 
 msgid "None"

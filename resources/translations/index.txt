@@ -7,8 +7,8 @@ es;Español
 eu;Euskara
 fa;فارسی
 fr;Français
-it;Italiano
 hu;Magyar
+it;Italiano
 ja;日本語
 ko;한국어
 nl;Nederlands
@@ -18,3 +18,4 @@ pt_BR;Português brasileiro
 ru;Русский
 sl;Slovenščina
 sv;Svenska
+zh_CN;中文

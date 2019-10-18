@@ -308,7 +308,6 @@ namespace Net
                         "navigation-policy-decision-requested",
                         G_CALLBACK (OnWebKitRedirect),
                         this);
-      printf ("this ==>> %x\n", this);
 
       webkit_web_view_load_uri (WEBKIT_WEB_VIEW (web_view),
                                 _session->GetAuthorizationPage ());
@@ -373,7 +372,6 @@ namespace Net
                                          WebKitWebPolicyDecision   *policy_decision,
                                          Advertiser                *a)
   {
-    printf ("a ==>> %x\n", a);
     return a->OnRedirect (request,
                           policy_decision);
   }

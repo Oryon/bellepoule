@@ -34,8 +34,9 @@ VERSION      = $(VERSION_MAJOR).$(VERSION_MINOR)
 RELEASE      = $(PRODUCT)_$(VERSION)
 LONG_VERSION = $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)
 DATE         = $(shell date -R)
-OSX_CROSS    = $(HOME)/Project/Cross/Osxcross/target/macports/pkgs/opt/local
-INSTALL_NAME_TOOL = $(HOME)/Project/Cross/Osxcross/build/cctools-895-ld64-274.2_8e9c3f2/cctools/misc/install_name_tool
+OSX_CROSS_ROOT    = $(HOME)/Project/Cross/Osxcross
+OSX_CROSS_LOCAL   = $(OSX_CROSS_ROOT)/target/macports/pkgs/opt/local
+INSTALL_NAME_TOOL = $(HOME)/Project/Cross/Osxcross/build/cctools-port/cctools/misc/install_name_tool
 
 GTK = gtk+-2.0
 GOO = goocanvas
@@ -107,7 +108,6 @@ CFLAGS += -Wswitch-default
 CFLAGS += -Wswitch-enum
 CFLAGS += -Wundef
 CFLAGS += -Wunreachable-code
-CFLAGS += -Wsuggest-override
 CFLAGS += -Wno-int-to-pointer-cast
 CFLAGS += -Wno-long-long
 CFLAGS += -Wno-unused-parameter
@@ -126,8 +126,10 @@ CFLAGS += -Wno-cast-align
 CFLAGS += -Wno-overloaded-virtual
 CFLAGS += -Wno-unused-private-field
 CFLAGS += -Wno-format-security
+CFLAGS += -Wno-unknown-pragmas
 else
 CFLAGS += -fPIC
+CFLAGS += -Wsuggest-override
 endif
 
 CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 libzip $(WEBKIT_LIB) libusb-1.0)
@@ -212,6 +214,8 @@ RPATH      =
 STATIC_LIB = $(OUTPUT)/lib$(PRODUCT).a
 
 else
+STATIC_LIB =
+
 ifeq ($(DISTRIB), fedora)
 LIB_FOLDER = $(shell rpm --eval '%{_libdir}')
 else
@@ -221,13 +225,12 @@ endif
 ifeq ($(DISTRIB), osx)
 SHARED_OPT = -dynamiclib
 SHARED_LIB = $(OUTPUT)/lib$(PRODUCT).dylib
+RPATH      =
 else
 SHARED_OPT = -shared
 SHARED_LIB = $(OUTPUT)/lib$(PRODUCT).so
-endif
-
-STATIC_LIB =
 RPATH      = '-Wl,-rpath=$$ORIGIN/../lib/$(PRODUCT)'
+endif
 endif
 
 #----------------------------------------------------
@@ -358,43 +361,51 @@ define prepare_osx_func
 	sed -i 's/__NAME__/$(subst $\",,$(2))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
 	sed -i 's/__IDENTIFIER__/$(subst $\",,$(1))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
 	sed -i 's/__ICNS__/$(subst $\",,$(1))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
-	cp $(OSX_CROSS)/../relocated/*.dylib $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Frameworks
-	cp $(OSX_CROSS)/../loaders/*.so $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/lib/gdk-pixbuf-2.0/2.10.0/loaders
-	cp $(OSX_CROSS)/../printbackends/*.so $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/lib/gtk-2.0/2.10.0/printbackends
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fr/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/fr/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fr/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/nl/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/nl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/nl/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pl/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/pl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pl/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ca/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/ca/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ca/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/de/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/de/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/de/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ru/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/ru/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ru/LC_MESSAGES/gtk20r.mo
+	cp $(OSX_CROSS_ROOT)/relocated/dylibs/*.dylib $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Frameworks
+	cp $(OSX_CROSS_ROOT)/relocated/loaders/*.so $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/lib/gdk-pixbuf-2.0/2.10.0/loaders
+	cp $(OSX_CROSS_ROOT)/relocated/printbackends/*.so $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/lib/gtk-2.0/2.10.0/printbackends
+
+
 	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ar/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/ar/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ar/LC_MESSAGES/gtk20r.mo
+	cp $(OSX_CROSS_LOCAL)/share/locale/ar/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ar/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ca/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/ca/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ca/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/de/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/de/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/de/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/el/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/el/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/el/LC_MESSAGES/gtk20r.mo
 	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/es/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/es/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/es/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/it/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/it/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/it/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ko/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/ko/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ko/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pt/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/pt/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pt/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sv/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/sv/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sv/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ja/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/ja/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ja/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/hu/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/hu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/hu/LC_MESSAGES/gtk20r.mo
-	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sl/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/sl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sl/LC_MESSAGES/gtk20r.mo
+	cp $(OSX_CROSS_LOCAL)/share/locale/es/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/es/LC_MESSAGES/gtk20r.mo
 	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/eu/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/eu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/eu/LC_MESSAGES/gtk20r.mo
+	cp $(OSX_CROSS_LOCAL)/share/locale/eu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/eu/LC_MESSAGES/gtk20r.mo
 	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fa/LC_MESSAGES
-	cp $(OSX_CROSS)/share/locale/fa/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fa/LC_MESSAGES/gtk20r.mo
+	cp $(OSX_CROSS_LOCAL)/share/locale/fa/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fa/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fr/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/fr/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/fr/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/hu/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/hu/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/hu/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/it/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/it/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/it/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ja/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/ja/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ja/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ko/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/ko/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ko/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/nl/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/nl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/nl/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pl/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/pl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pl/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pt/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/pt/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pt/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pt_BR/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/pt_BR/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/pt_BR/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ru/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/ru/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/ru/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sl/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/sl/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sl/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sv/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/sv/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/sv/LC_MESSAGES/gtk20r.mo
+	mkdir -p $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/zh_CN/LC_MESSAGES
+	cp $(OSX_CROSS_LOCAL)/share/locale/zh_CN/LC_MESSAGES/gtk20.mo            $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/share/locale/zh_CN/LC_MESSAGES/gtk20r.mo
 endef
 
 prepare_osx:
@@ -443,24 +454,26 @@ prepare_resources:
 	mkdir -p $(RESOURCES)/translations
 	cp -f ../../resources/translations/user_manual.pdf $(RESOURCES)/translations
 	cp -f ../../resources/translations/index.txt $(RESOURCES)/translations
-	cp -rf ../../resources/translations/fr    $(RESOURCES)/translations
-	cp -rf ../../resources/translations/de    $(RESOURCES)/translations
-	cp -rf ../../resources/translations/nl    $(RESOURCES)/translations
-#	cp -rf ../../resources/translations/pl    $(RESOURCES)/translations
-	cp -rf ../../resources/translations/ru    $(RESOURCES)/translations
 	cp -rf ../../resources/translations/ar    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/ca    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/de    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/el    $(RESOURCES)/translations
 	cp -rf ../../resources/translations/es    $(RESOURCES)/translations
-#	cp -rf ../../resources/translations/ca    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/eu    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/fa    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/fr    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/hu    $(RESOURCES)/translations
 	cp -rf ../../resources/translations/it    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/ja    $(RESOURCES)/translations
 	cp -rf ../../resources/translations/ko    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/nl    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/pl    $(RESOURCES)/translations
 	cp -rf ../../resources/translations/pt    $(RESOURCES)/translations
 	cp -rf ../../resources/translations/pt_BR $(RESOURCES)/translations
+	cp -rf ../../resources/translations/ru    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/sl    $(RESOURCES)/translations
 	cp -rf ../../resources/translations/sv    $(RESOURCES)/translations
-	cp -rf ../../resources/translations/ja    $(RESOURCES)/translations
-#	cp -rf ../../resources/translations/hu    $(RESOURCES)/translations
-#	cp -rf ../../resources/translations/sl    $(RESOURCES)/translations
-#	cp -rf ../../resources/translations/eu    $(RESOURCES)/translations
-#	cp -rf ../../resources/translations/fa    $(RESOURCES)/translations
+	cp -rf ../../resources/translations/zh_CN $(RESOURCES)/translations
 	mkdir -p $(RESOURCES)/glade/images
 	cp -f ../../resources/glade/images/*.png   $(RESOURCES)/glade/images
 	cp -f ../../resources/glade/images/*.gif   $(RESOURCES)/glade/images
