@@ -25,14 +25,14 @@ ifneq ($(DISTRIB), windows)
 	endif
 endif
 
-PRODUCT      = bellepoulebeta
-#PRODUCT      = bellepoule
+#PRODUCT      = bellepoulebeta
+PRODUCT      = bellepoule
 OUTPUT       = Release
 #OUTPUT       = Debug
 PACKAGE      = $(HOME)/Project/PPA/$(PRODUCT)
 VERSION      = $(VERSION_MAJOR).$(VERSION_MINOR)
 RELEASE      = $(PRODUCT)_$(VERSION)
-LONG_VERSION = $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)
+LONG_VERSION = $(VERSION_MAJOR).$(VERSION_MINOR).$(V)
 DATE         = $(shell date -R)
 OSX_CROSS_ROOT    = $(HOME)/Project/Cross/Osxcross
 OSX_CROSS_LOCAL   = $(OSX_CROSS_ROOT)/target/macports/pkgs/opt/local
@@ -357,12 +357,12 @@ package: prepare_staging $(prepare_linux) $(prepare_osx) prepare_sources $(prepa
 define prepare_osx_func
 	cp -rf osx/$(PRODUCT).app $(PACKAGE)/$(RELEASE)/$(1).app
 	sed -i 's/__VERSION__/$(subst $\",,$(LONG_VERSION))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
-	sed -i 's/__EXECUTABLE__/$(subst $\",,$(1))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
-	sed -i 's/__NAME__/$(subst $\",,$(2))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
-	sed -i 's/__IDENTIFIER__/$(subst $\",,$(1))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
-	sed -i 's/__ICNS__/$(subst $\",,$(1))/' $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
-	cp $(OSX_CROSS_ROOT)/relocated/dylibs/*.dylib $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Frameworks
-	cp $(OSX_CROSS_ROOT)/relocated/loaders/*.so $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/lib/gdk-pixbuf-2.0/2.10.0/loaders
+	sed -i 's/__EXECUTABLE__/$(subst $\",,$(1))/'         $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
+	sed -i 's/__NAME__/$(subst $\",,$(1))/'               $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
+	sed -i 's/__IDENTIFIER__/$(subst $\",,$(1))/'         $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
+	sed -i 's/__ICNS__/$(subst $\",,$(1))/'               $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Info.plist
+	cp $(OSX_CROSS_ROOT)/relocated/dylibs/*.dylib     $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Frameworks
+	cp $(OSX_CROSS_ROOT)/relocated/loaders/*.so       $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/lib/gdk-pixbuf-2.0/2.10.0/loaders
 	cp $(OSX_CROSS_ROOT)/relocated/printbackends/*.so $(PACKAGE)/$(RELEASE)/$(1).app/Contents/Resources/lib/gtk-2.0/2.10.0/printbackends
 
 
@@ -409,8 +409,8 @@ define prepare_osx_func
 endef
 
 prepare_osx:
-	$(call prepare_osx_func,$(PRODUCT)-supervisor,BellePoule)
-	$(call prepare_osx_func,$(PRODUCT)-marshaller,BellePoule2D)
+	$(call prepare_osx_func,$(PRODUCT))
+	$(call prepare_osx_func,$(PRODUCT)2D)
 
 prepare_arch:
 	git clone --quiet git+ssh://aur@aur.archlinux.org/$(PRODUCT).git $(PACKAGE)/$(RELEASE)/arch
@@ -442,13 +442,13 @@ prepare_windows_resources:
 
 prepare_osx_resources: prepare_resources
 	cp -f ../../resources/gtkrc.osx $(RESOURCES)/gtkrc
-	tar -C $(PACKAGE)/$(RELEASE)/$(PRODUCT).app            -cf $(PACKAGE)/$(RELEASE)/resources.tar .
-	tar -C $(PACKAGE)/$(RELEASE)/$(PRODUCT)-supervisor.app -xf $(PACKAGE)/$(RELEASE)/resources.tar
-	tar -C $(PACKAGE)/$(RELEASE)/$(PRODUCT)-marshaller.app -xf $(PACKAGE)/$(RELEASE)/resources.tar
-	rm -rf $(PACKAGE)/$(RELEASE)/$(PRODUCT).app
+	tar -C $(PACKAGE)/$(RELEASE)/$(PRODUCT).app --exclude=Info.plist   -cf $(PACKAGE)/$(RELEASE)/resources.tar .
+	tar -C $(PACKAGE)/$(RELEASE)/$(PRODUCT).app                        -xf $(PACKAGE)/$(RELEASE)/resources.tar
+	tar -C $(PACKAGE)/$(RELEASE)/$(PRODUCT)2D.app                      -xf $(PACKAGE)/$(RELEASE)/resources.tar
 	rm -rf $(PACKAGE)/$(RELEASE)/resources.tar
-	png2icns $(PACKAGE)/$(RELEASE)/$(PRODUCT)-supervisor.app/Contents/Resources/$(PRODUCT)-supervisor.icns ../../resources/glade/images/supervisor.png
-	png2icns $(PACKAGE)/$(RELEASE)/$(PRODUCT)-marshaller.app/Contents/Resources/$(PRODUCT)-marshaller.icns ../../resources/glade/images/marshaller.png
+	png2icns $(PACKAGE)/$(RELEASE)/$(PRODUCT).app/Contents/Resources/$(PRODUCT).icns ../../resources/glade/images/supervisor.png
+	png2icns $(PACKAGE)/$(RELEASE)/$(PRODUCT)2D.app/Contents/Resources/$(PRODUCT)2D.icns ../../resources/glade/images/marshaller.png
+	cp -f ../../resources/glade/images/BellePouleWarning.png $(RESOURCES)/glade/images/BellePoule.png
 
 prepare_resources:
 	mkdir -p $(RESOURCES)/translations
@@ -476,6 +476,7 @@ prepare_resources:
 	cp -rf ../../resources/translations/zh_CN $(RESOURCES)/translations
 	mkdir -p $(RESOURCES)/glade/images
 	cp -f ../../resources/glade/images/*.png   $(RESOURCES)/glade/images
+	rm $(RESOURCES)/glade/images/BellePouleWarning.png
 	cp -f ../../resources/glade/images/*.gif   $(RESOURCES)/glade/images
 	cp -f ../../resources/glade/images/*.jpg   $(RESOURCES)/glade/images
 	cp -f ../../resources/glade/*.glade $(RESOURCES)/glade
@@ -533,11 +534,11 @@ prepare_desktop:
 	cp -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
 	sed -i 's/__EXE__/marshaller/g'     $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
-	sed -i 's/__NAME__/bellepoule-2D (beta)/g'     $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
+	sed -i 's/__NAME__/bellepoule-2D/g'     $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
 	cp -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
 	sed -i 's/__EXE__/supervisor/g'     $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
-	sed -i 's/__NAME__/bellepoule (beta)/g'    $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
+	sed -i 's/__NAME__/bellepoule/g'    $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
 	rm -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template
 
 build:   $(build_staging)
@@ -550,30 +551,30 @@ build_windows: all
 	env WINEPREFIX="$(HOME)/.wine" wine C:\\windows\\command\\start.exe /Unix $(HOME)/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Inno\ Setup\ 5/Inno\ Setup\ Compiler.lnk
 
 publish_windows:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/Output/$(PRODUCT)-$(VERSION_MAJOR)-$(VERSION_MINOR)-$(VERSION_MATURITY)-win.exe; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/stable ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/Output/$(PRODUCT)-$(VERSION_MAJOR)-$(VERSION_MINOR)-win.exe; quit"
 
 define build_osx_func
-	cp $(OUTPUT)/$(1) $(1).app/Contents/MacOS/$(1)
-	mkdir $(1).app/Contents/Resources/lib/$(PRODUCT)
-	cp $(OUTPUT)/lib$(PRODUCT).dylib $(1).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
-	chmod a+x $(1).app/Contents/MacOS/$(PRODUCT)*
-	find $(1).app/Contents/Frameworks -type f -printf "%f\n" | while read lib;\
+	cp $(OUTPUT)/$(1) $(2).app/Contents/MacOS/$(2)
+	mkdir $(2).app/Contents/Resources/lib/$(PRODUCT)
+	cp $(OUTPUT)/lib$(PRODUCT).dylib $(2).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
+	chmod a+x $(2).app/Contents/MacOS/$(PRODUCT)*
+	find $(2).app/Contents/Frameworks -type f -printf "%f\n" | while read lib;\
 		do \
-		$(INSTALL_NAME_TOOL) -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(1).app/Contents/MacOS/$(1); \
-		$(INSTALL_NAME_TOOL) -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(1).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib; \
+		$(INSTALL_NAME_TOOL) -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(2).app/Contents/MacOS/$(2); \
+		$(INSTALL_NAME_TOOL) -change /opt/local/lib/$$lib @executable_path/../Frameworks/$$lib $(2).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib; \
 		done
-	$(INSTALL_NAME_TOOL) -id @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(1).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
-	$(INSTALL_NAME_TOOL) -change $(OUTPUT)/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(1).app/Contents/MacOS/$(1)
-	zip -qr $(1)-$(subst .,-,$(LONG_VERSION))-osx.zip $(1).app
+	$(INSTALL_NAME_TOOL) -id @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(2).app/Contents/Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib
+	$(INSTALL_NAME_TOOL) -change $(OUTPUT)/lib$(PRODUCT).dylib @executable_path/../Resources/lib/$(PRODUCT)/lib$(PRODUCT).dylib $(2).app/Contents/MacOS/$(2)
+	zip -qr $(2)-$(subst .,-,$(LONG_VERSION))-osx.zip $(2).app
 endef
 
 build_osx: all
-	$(call build_osx_func,$(PRODUCT)-supervisor)
-	$(call build_osx_func,$(PRODUCT)-marshaller)
+	$(call build_osx_func,$(PRODUCT)-supervisor,bellepoule)
+	$(call build_osx_func,$(PRODUCT)-marshaller,bellepoule2D)
 
 publish_osx:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable $(PRODUCT)-supervisor-$(subst .,-,$(LONG_VERSION))-osx.zip; quit"
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable $(PRODUCT)-marshaller-$(subst .,-,$(LONG_VERSION))-osx.zip; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/stable $(PRODUCT)-$(subst .,-,$(LONG_VERSION))-osx.zip; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/stable $(PRODUCT)2D-$(subst .,-,$(LONG_VERSION))-osx.zip; quit"
 
 build_ubuntu:
 	debuild -us -uc --lintian-opts --color always
@@ -583,7 +584,7 @@ publish_ubuntu:
 	dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes
 
 publish_debian:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable ../$(PRODUCT)_$(VERSION_MAJOR).$(VERSION_MINOR)ubuntu1~stretch1_amd64.deb; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/stable ../$(PRODUCT)_$(VERSION_MAJOR).$(VERSION_MINOR)ubuntu1~stretch1_amd64.deb; quit"
 
 build_fedora:
 	cd .. && tar cf $(PRODUCT)_$(VERSION).tar.gz --exclude="$(PRODUCT)_$(VERSION).tar.gz" .
@@ -593,7 +594,7 @@ build_fedora:
 	cp $(HOME)/rpmbuild/SRPMS/$(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc28.src.rpm .
 
 publish_fedora:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/unstable $(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc28.src.rpm; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/stable $(PRODUCT)-$(VERSION)-$(VERSION_MICRO).fc28.src.rpm; quit"
 
 build_arch:
 	python arch/make_archlinux.py $(VERSION_MAJOR) $(VERSION_MINOR) $(V) $(VERSION_MICRO)

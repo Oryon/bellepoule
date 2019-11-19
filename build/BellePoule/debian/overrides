@@ -1,4 +1,4 @@
 __PRODUCT__ binary: setuid-binary usr/bin/__PRODUCT__-backend 4755 root/root
 __PRODUCT__ binary: binary-without-manpage usr/bin/__PRODUCT__-backend
-__PRODUCT__ binary: binary-without-manpage usr/bin/bellepoulebeta-marshaller
-__PRODUCT__ binary: binary-without-manpage usr/bin/bellepoulebeta-supervisor
+__PRODUCT__ binary: binary-without-manpage usr/bin/__PRODUCT__-marshaller
+__PRODUCT__ binary: binary-without-manpage usr/bin/__PRODUCT__-supervisor

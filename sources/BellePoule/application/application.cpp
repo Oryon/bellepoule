@@ -591,6 +591,7 @@ void Application::OnDownloaderData (Net::Downloader  *downloader,
           {
             new_version_detected = TRUE;
           }
+          g_free (stable_version);
         }
       }
 
@@ -604,6 +605,10 @@ void Application::OnDownloaderData (Net::Downloader  *downloader,
         gtk_widget_show (GTK_WIDGET (main_module->GetGObject ("update_menuitem")));
         g_free (label);
       }
+
+      g_free (remote_version);
+      g_free (remote_revision);
+      g_free (remote_maturity);
     }
 
     g_key_file_free (version_file);
@@ -790,17 +795,7 @@ void Application::OnQuit (GtkWindow *window)
 // --------------------------------------------------------------------------------
 void Application::OnOpenWebSite (const gchar *page)
 {
-  const gchar *language = g_getenv ("LANGUAGE");
-  GString     *uri      = g_string_new ("http://betton.escrime.free.fr/fencing-tournament-software/");
-
-  if (g_strcmp0 (language, "fr") == 0)
-  {
-    g_string_append (uri, "fr/");
-  }
-  else
-  {
-    g_string_append (uri, "en/");
-  }
+  GString *uri = g_string_new ("http://betton.escrime.free.fr/fencing-tournament-software/");
 
   g_string_append (uri, page);
 
@@ -814,9 +809,17 @@ void Application::OnOpenWebSite (const gchar *page)
 extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *menuitem,
                                                                   Object      *owner)
 {
-  Application *a = dynamic_cast <Application *> (owner);
+  Application *a        = dynamic_cast <Application *> (owner);
+  const gchar *language = g_getenv ("LANGUAGE");
 
-  a->OnOpenWebSite ("v" VERSION "-beta");
+  if (g_strcmp0 (language, "fr") == 0)
+  {
+    a->OnOpenWebSite ("fr/telechargement-v" VERSION);
+  }
+  else
+  {
+    a->OnOpenWebSite ("en/download-v" VERSION);
+  }
 }
 
 // --------------------------------------------------------------------------------

@@ -1134,14 +1134,7 @@ namespace Marshaller
 
     _listener->OnExposeWeapon (competition->GetWeaponCode ());
 
-    if (_referee_pool->WeaponHasReferees (competition->GetWeaponCode ()) == FALSE)
-    {
-      GtkWidget *error_dialog = _glade->GetWidget ("referee_error_dialog");
-
-      RunDialog (GTK_DIALOG (error_dialog));
-      gtk_widget_hide (error_dialog);
-    }
-    else if (_piste_list)
+    if (_piste_list)
     {
       GtkWidget *dialog = _glade->GetWidget ("job_dialog");
 
@@ -1311,48 +1304,52 @@ namespace Marshaller
     {
       for (GList *a = jobs; a; a = g_list_next (a))
       {
-        Job   *job_a      = (Job *) a->data;
-        Slot  *slot_a     = job_a->GetSlot ();
-        GList *referees_a = slot_a->GetRefereeList ();
+        Job  *job_a  = (Job *) a->data;
+        Slot *slot_a = job_a->GetSlot ();
 
-        if (g_list_length (referees_a) == 1)
+        if (slot_a)
         {
-          EnlistedReferee *referee_a = (EnlistedReferee *) referees_a->data;
+          GList *referees_a = slot_a->GetRefereeList ();
 
-          for (GList *b = jobs; b; b = g_list_next (b))
+          if (g_list_length (referees_a) == 1)
           {
-            if (a != b)
+            EnlistedReferee *referee_a = (EnlistedReferee *) referees_a->data;
+
+            for (GList *b = jobs; b; b = g_list_next (b))
             {
-              Job  *job_b  = (Job *) b->data;
-              Slot *slot_b = job_b->GetSlot ();
-
-              if (slot_a->Equals (slot_b))
+              if (a != b)
               {
-                GList *referees_b = slot_b->GetRefereeList ();
+                Job  *job_b  = (Job *) b->data;
+                Slot *slot_b = job_b->GetSlot ();
 
-                if (g_list_length (referees_b) == 1)
+                if (slot_a->Equals (slot_b))
                 {
-                  EnlistedReferee *referee_b = (EnlistedReferee *) referees_b->data;
-                  gint             delta_a   = job_a->GetKinship (referee_b) - job_a->GetKinship ();
-                  gint             delta_b   = job_b->GetKinship (referee_a) - job_b->GetKinship ();
+                  GList *referees_b = slot_b->GetRefereeList ();
 
-                  if ((delta_a + delta_b) < 0)
+                  if (g_list_length (referees_b) == 1)
                   {
-                    slot_a->RemoveReferee ((EnlistedReferee *) referee_a);
-                    slot_b->RemoveReferee ((EnlistedReferee *) referee_b);
+                    EnlistedReferee *referee_b = (EnlistedReferee *) referees_b->data;
+                    gint             delta_a   = job_a->GetKinship (referee_b) - job_a->GetKinship ();
+                    gint             delta_b   = job_b->GetKinship (referee_a) - job_b->GetKinship ();
 
-                    if (   referee_a->IsAvailableFor (slot_b, slot_b->GetDuration ())
-                        && referee_b->IsAvailableFor (slot_a, slot_a->GetDuration ()))
+                    if ((delta_a + delta_b) < 0)
                     {
-                      slot_a->AddReferee (referee_b);
-                      slot_b->AddReferee (referee_a);
+                      slot_a->RemoveReferee ((EnlistedReferee *) referee_a);
+                      slot_b->RemoveReferee ((EnlistedReferee *) referee_b);
+
+                      if (   referee_a->IsAvailableFor (slot_b, slot_b->GetDuration ())
+                          && referee_b->IsAvailableFor (slot_a, slot_a->GetDuration ()))
+                      {
+                        slot_a->AddReferee (referee_b);
+                        slot_b->AddReferee (referee_a);
+                      }
+                      else
+                      {
+                        slot_a->AddReferee (referee_a);
+                        slot_b->AddReferee (referee_b);
+                      }
+                      break;
                     }
-                    else
-                    {
-                      slot_a->AddReferee (referee_a);
-                      slot_b->AddReferee (referee_b);
-                    }
-                    break;
                   }
                 }
               }
@@ -1383,7 +1380,7 @@ namespace Marshaller
           Job  *job      = (Job *) current->data;
           Slot *now_slot = job->GetSlot ();
 
-          if (now_slot->GetRefereeList ())
+          if (now_slot && now_slot->GetRefereeList ())
           {
             if (first_slot == nullptr)
             {

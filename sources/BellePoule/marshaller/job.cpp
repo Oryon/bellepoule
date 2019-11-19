@@ -292,8 +292,13 @@ namespace Marshaller
     Slot *slot_a = a->GetSlot ();
     Slot *slot_b = b->GetSlot ();
 
-    return g_date_time_compare (slot_a->GetStartTime (),
-                                slot_b->GetStartTime ());
+    if (slot_a && slot_b)
+    {
+      return g_date_time_compare (slot_a->GetStartTime (),
+                                  slot_b->GetStartTime ());
+    }
+
+    return 0;
   }
 
   // --------------------------------------------------------------------------------
