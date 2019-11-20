@@ -2,6 +2,7 @@
 <html>
   <title>SmartPoule</title>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
 
   <!--***********************************-->
   <head>
@@ -18,7 +19,6 @@
     <style>
       * {
         box-sizing: border-box;
-        touch-action: none;
       }
 
       .aspect-ratio {
@@ -113,25 +113,40 @@
         this.freezed   = false;
         this.countable = countable;
         this.step      = step;
+        this.hits      = 0;
 
         this.setTrigger (trigger);
       }
 
       setTrigger (trigger) {
-        var context  = this;
-
         this.trigger = trigger;
+        if (this.trigger != null) {
+          var context  = this;
 
-        this.trigger.onclick = function () {Counter.onClicked (context);};
-        this.trigger.addEventListener ('long-press', function (e) {Counter.onLongPress (context, e);});
+          this.trigger.onclick = function () {Counter.onClicked (context);};
+          this.trigger.addEventListener ('long-press', function (e) {Counter.onLongPress (context, e);});
+        }
+      }
+
+      reset () {
+        this.hits = 0;
+      }
+
+      reStart () {
+        this.hits = 0;
+        this.countable.reset ();
       }
 
       count () {
+        this.hits++;
         this.countable.increment (this.step);
       }
 
       cancel () {
-        this.countable.increment (-this.step);
+        if (this.hits > 0) {
+          this.hits--;
+          this.countable.increment (-this.step);
+        }
       }
 
       static onClicked (what) {
@@ -152,11 +167,57 @@
     // -- ResetCounter --------------------
     class ResetCounter extends Counter {
       constructor (trigger, countable, step) {
-        super (trigger, countable, step)
+        super (trigger, countable, step);
+
+        this.listeners = [];
       }
 
       cancel () {
         this.countable.reset ();
+
+        this.listeners.forEach (listener => listener.reset ());
+      }
+
+      addListener (counter) {
+        this.listeners.push (counter);
+      }
+    };
+
+
+    // -- FaultCounter --------------------
+    class FaultCounter extends Counter {
+      constructor (trigger, countable, penalties) {
+        super (trigger, new Score (trigger), 1)
+
+        this.counter1 = new Counter (null, countable, penalties[0]);
+        this.counter2 = new Counter (null, countable, penalties[1]);
+      }
+
+      reset () {
+        this.counter2.reset ();
+        this.counter1.reset ();
+
+        this.reStart ();
+      }
+
+      count () {
+        if (this.counter1.hits > 0) {
+         this.counter2.count ();
+        } else {
+         this.counter1.count ();
+        }
+
+        super.count ();
+      }
+
+      cancel () {
+        if (this.counter2.hits > 0) {
+         this.counter2.cancel ();
+        } else {
+         this.counter1.cancel ();
+        }
+
+        super.cancel ();
       }
     };
 
@@ -178,15 +239,15 @@
         var gender  = {'M':'Homme', 'F':'Dame', 'X':'Mixte'};
         var lastRow = document.getElementById ('competition.panel');
         var cell    = lastRow.insertCell (-1);
-        var html    = "";
+        var html    = '';
 
-        html += "<td>";
-        html += "  <div class='competition' Align='Center'>";
-        html +=     weapon[this.get ("Arme")] + " "
-        html +=     gender[this.get ("Sexe")] + " ";
-        html +=     this.get ("Categorie");
-        html += "  </div>";
-        html += "</td>";
+        html += '<td>';
+        html += '  <div class="competition" Align="Center">';
+        html +=     weapon[this.get ('Arme')] + ' '
+        html +=     gender[this.get ('Sexe')] + ' ';
+        html +=     this.get ('Categorie');
+        html += '  </div>';
+        html += '</td>';
         cell.innerHTML = html;
 
         cell.colSpan = 12;
@@ -225,9 +286,11 @@
         this.addCardsPanel    ();
 
         this.faultTriggers = []
-        for (let g = 1; g < 5; g++) {
-          this.addFaultsPanel (g);
-        }
+
+        var faults = [{'color':'white',  'penalties':[0, 3]},
+                      {'color':'orange', 'penalties':[3, 5]},
+                      {'color':'red',    'penalties':[5, -1]}];
+        faults.forEach (fault => this.addFaultsPanel (fault));
       }
 
       setCompetition (competition) {
@@ -237,13 +300,13 @@
       addIdentityPanel (what) {
         var lastRow = document.getElementById (what + 's.panel');
         var cell    = lastRow.insertCell (-1);
-        var html    = "";
+        var html    = '';
 
-        html += "<td>";
-        html += "  <div class='fencer-" + what + "'>";
+        html += '<td>';
+        html += '  <div class="fencer-' + what + '">';
         html +=     what;
-        html += "  </div>";
-        html += "</td>";
+        html += '  </div>';
+        html += '</td>';
         cell.innerHTML = html;
 
         cell.colSpan = 6;
@@ -254,11 +317,11 @@
       addLightPanel (color) {
         var lastRow = document.getElementById ('lights.panel');
         var cell    = lastRow.insertCell (-1);
-        var html    = "";
+        var html    = '';
 
-        html += "<td>";
-        html += "  <div class='score'>0</div>";
-        html += "</td>";
+        html += '<td>';
+        html += '  <div class="score">0</div>';
+        html += '</td>';
         cell.innerHTML = html;
 
         cell.colSpan = 6;
@@ -275,18 +338,19 @@
         this.pointTriggers = []
         for (let p = 1; p < 4; p++) {
           var cell = lastRow.insertCell (-1);
-          var html = "";
+          var html = '';
 
-          html += "<td>";
-          html += "  <div class='fencer-name'>";
+          html += '<td>';
+          html += '  <div class="fencer-name">';
           html +=     p;
-          html += "  </div>";
-          html += "</td>";
+          html += '  </div>';
+          html += '</td>';
           cell.innerHTML = html;
 
           cell.colSpan = 2;
 
           this.pointTriggers[p] = new Counter (cell, this.score, p);
+          this.trigger.addListener (this.pointTriggers[p]);
         }
       }
 
@@ -298,40 +362,42 @@
         var excluded   = lastRow.insertCell (-1);
         var size;
 
-        victory.innerHTML = "<td><div class='fencer-name'>V</div></td>";
+        victory.innerHTML = '<td><div class="fencer-name">V</div></td>';
         victory.colSpan = 2;
         size = victory.getBoundingClientRect().height;
 
-        withdrawal.innerHTML = "<td><img src='data:image/svg+xml;base64," + svg.dataset.url + "' width='" + size + "'/></td>";
+        withdrawal.innerHTML = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + size + '"/></td>';
         withdrawal.colSpan = 2;
 
         svg = document.getElementById ('blackcard.svg');
-        excluded.innerHTML = "<td><img src='data:image/svg+xml;base64," + svg.dataset.url + "' width='" + size + "'/></td>";
+        excluded.innerHTML = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + size + '"/></td>';
         excluded.colSpan = 2;
       }
 
-      addFaultsPanel (group) {
+      addFaultsPanel (fault) {
         var context = this;
-        var lastRow = document.getElementById ('faults' + group + '.panel');
-        var html    = "";
+        var lastRow = document.getElementById ('faults-' + fault.color + '.panel');
+        var html    = '';
         var cell;
 
         lastRow.insertCell (-1);
         lastRow.insertCell (-1);
         cell = lastRow.insertCell (-1);
 
-        html += "<td>";
-        html += "  <div class='fencer-name'>";
-        html +=      group;
-        html += "  </div>";
-        html += "</td>";
+        html += '<td>';
+        html += '  <div class="fencer-name">';
+        html +=      'g';
+        html += '  </div>';
+        html += '</td>';
         cell.innerHTML = html;
 
         lastRow.insertCell (-1);
         lastRow.insertCell (-1);
         lastRow.insertCell (-1);
 
-        this.faultTriggers[group] = new Counter (cell, this.score, group);
+        this.faultTriggers[fault.color] = new FaultCounter (cell,
+                                                            this.score, fault.penalties);
+        this.trigger.addListener (this.faultTriggers[fault.color]);
       }
     }
 
@@ -374,10 +440,9 @@
       <tr class='row' id='lights.panel'/>
       <tr class='row' id='points.panel'/>
       <tr class='row' id='cards.panel'/>
-      <tr class='row' id='faults1.panel'/>
-      <tr class='row' id='faults2.panel'/>
-      <tr class='row' id='faults3.panel'/>
-      <tr class='row' id='faults4.panel'/>
+      <tr class='row' id='faults-white.panel'/>
+      <tr class='row' id='faults-orange.panel'/>
+      <tr class='row' id='faults-red.panel'/>
 
       <tr>
         <td bgcolor='pink' Colspan='12'/>
