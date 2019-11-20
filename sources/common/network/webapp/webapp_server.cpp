@@ -174,7 +174,6 @@ namespace Net
           message->Set ("batch",       tokens[3]);
           message->Set ("bout",        tokens[4]);
 
-          message->Dump (TRUE);
           server->_listener->OnMessage (message);
         }
         g_strfreev (tokens);
@@ -299,7 +298,7 @@ namespace Net
 
             lws_write (wsi,
                        msg,
-                       strlen ((gchar *) msg) + 1,
+                       strlen ((gchar *) msg),
                        LWS_WRITE_TEXT);
           }
 

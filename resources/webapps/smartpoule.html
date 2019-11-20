@@ -10,16 +10,21 @@
         box-sizing: border-box;
       }
 
-      body {
-        font-family: Arial, Helvetica, sans-serif;
-        width: 98%;
-        height: 100%;
+      .aspect-ratio {
+        width: 100vw; 
+        height: 56.25vw; /* height:width ratio = 9/16 = .5625  */
+        background: pink;
+        max-height: 100vh;
+        max-width: 177.78vh; /* 16/9 = 1.778 */
+        margin: auto;
+        position: absolute;
+        top:0;bottom:0; /* vertical center */
+        left:0;right:0; /* horizontal center */
       }
 
-      .box {
-        float: left;
-        width: 50%;
-        padding: 30px;
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: grey;
       }
 
       .score {
@@ -38,6 +43,32 @@
     var green_score
 
 
+    // -- Competition --------------------
+    class Competition {
+      constructor (xml_doc) {
+        this.element = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+      }
+
+      get (attribute) {
+        return this.element.getAttribute (attribute);
+      }
+    }
+
+
+    // -- Match --------------------
+    class Match {
+      constructor (xml) {
+        var parser  = new DOMParser ();
+        var xml_doc = parser.parseFromString (xml, 'text/xml');
+
+        var competition = new Competition (xml_doc);
+        document.getElementById ('match').style.background = competition.get ('Couleur')
+
+        console.log (this)
+      }
+    }
+
+
     // -- Score --------------------
     class Score {
       constructor (color) {
@@ -48,10 +79,6 @@
         this.light.score   = this
 
         this.reset ()
-      }
-
-      dump () {
-        console.log ("==>> " + this.color);
       }
 
       reset () {
@@ -74,12 +101,10 @@
     };
 
 
-
     // -- Socket -------------------
     socket.onopen = function ()
     {
-      console.log ("socket open " + "ws://" + document.domain + ':' + location.port, "smartpoule");
-      document.getElementById ("path").innerHTML = path;
+      console.log ('socket open ' + 'ws://' + document.domain + ':' + location.port, 'smartpoule');
 
       red_score   = new Score ('red')
       green_score = new Score ('green')
@@ -89,31 +114,41 @@
 
     socket.onclose = function ()
     {
-      console.log ("socket close");
+      console.log ('socket close');
     }
 
     socket.onmessage = function (msg)
     {
-      document.getElementById ("num").innerHTML = msg.data;
+      if (msg.data.startsWith ('[Header]\nname=BellePoule::ScoreSheet'))
+      {
+        tag = 'xml='
+        offset = msg.data.indexOf (tag);
+        xml = msg.data.slice (offset + tag.length)
+        xml = xml.replace (/\\n/g, '')
+        match  = new Match (xml);
+      }
     }
   </script>
 
   <!--***********************************-->
   <body>
 
-    <p id="path"></p>
-    <p id="num"></p>
+    <table class='aspect-ratio' Border = '0' height='100%' Cellpadding = '5' Cellspacing = '5'>
+      <tr>
+        <td id='match' Colspan = '2' Align = 'Center'>
+          <div class='score'>5</div>
+        </td>
+      </tr>
 
-    <div>
-      <div class="box" id="red_light" style="background-color:#8F1818">
-        <div class="score">5</div>
-      </div>
-    </div>
-    <div>
-      <div class="box" id="green_light" style="background-color:#098709">
-        <div class="score">4</div>
-      </div>
-    </div>
+      <tr>
+        <td id='red_light' style='background-color:#8F1818'>
+          <div class='score'>5</div>
+        </td>
+        <td id='green_light' style='background-color:#098709'>
+          <div class='score'>4</div>
+        </td>
+      </tr>
+    </table>
 
   </body>
 </html>
