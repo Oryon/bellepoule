@@ -23,64 +23,11 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  HttpServer::RequestBody::RequestBody (HttpServer *server)
-  {
-    _server = server;
-    _data   = nullptr;
-    _length = 0;
-  }
-
-  // --------------------------------------------------------------------------------
-  HttpServer::RequestBody::~RequestBody ()
-  {
-    g_free (_data);
-  }
-
-  // --------------------------------------------------------------------------------
-  void HttpServer::RequestBody::ZeroTerminate ()
-  {
-    _data = (gchar *) g_realloc (_data,
-                                 _length + 1);
-    _data[_length] = '\0';
-  }
-
-  // --------------------------------------------------------------------------------
-  void HttpServer::RequestBody::Append (const char *buf,
-                                        size_t      len)
-  {
-    _data = (gchar *) g_realloc (_data,
-                                 _length + len);
-    strncpy (&_data[_length],
-             buf,
-             len);
-    _length += len;
-  }
-
-  // --------------------------------------------------------------------------------
-  void HttpServer::RequestBody::Replace (const char *buf)
-  {
-    g_free (_data);
-    _data   = nullptr;
-    _length = 0;
-
-    if (buf)
-    {
-      Append (buf,
-              strlen (buf) + 1);
-    }
-  }
-}
-
-namespace Net
-{
-  // --------------------------------------------------------------------------------
   HttpServer::HttpServer (Listener *listener,
                           guint     port)
-    : Object ("HttpServer")
+    : Server (listener, port)
   {
-    _port     = port;
-    _listener = listener;
-    _iv       = nullptr;
+    _iv = nullptr;
 
     _cryptor = new Cryptor ();
 
@@ -108,12 +55,6 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  guint HttpServer::GetPort ()
-  {
-    return _port;
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean HttpServer::DeferedPost (RequestBody *request_body)
   {
     Message *message;
@@ -133,7 +74,9 @@ namespace Net
     }
     else
     {
-      request_body->_server->_listener->OnMessage (message);
+      HttpServer *server = dynamic_cast<HttpServer *> (request_body->_server);
+
+      server->Deliver (message);
     }
 
     message->Release ();

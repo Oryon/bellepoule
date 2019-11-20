@@ -120,6 +120,7 @@ endif
 
 ifeq ($(DISTRIB), windows)
 CFLAGS += -I$(MINGW)/include
+CFLAGS += -fpermissive
 else ifeq ($(DISTRIB), osx)
 CFLAGS += -DOSX
 CFLAGS += -Wno-cast-align
@@ -150,6 +151,7 @@ ifeq ($(DISTRIB), windows)
 LDFLAGS += -lws2_32
 LDFLAGS += -liphlpapi
 LDFLAGS += -lpthread
+LDFLAGS += -lwebsockets
 ifeq ($(OUTPUT), Release)
 LDFLAGS += -mwindows
 endif

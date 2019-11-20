@@ -16,49 +16,24 @@
 
 #pragma once
 
-#include <glib.h>
 #include <microhttpd.h>
 
 #include "util/object.hpp"
+#include "server.hpp"
 
 namespace Net
 {
   class Cryptor;
+  class RequestBody;
 
-  class HttpServer : public Object
+  class HttpServer : public Server
   {
-    public:
-      struct Listener
-      {
-          virtual const gchar *GetSecretKey (const gchar *authentication_scheme) = 0;
-          virtual gboolean     OnMessage    (Message     *message)               = 0;
-      };
-
     public:
       HttpServer (Listener *listener,
                   guint     port);
 
-      guint GetPort ();
-
     private:
-      struct RequestBody
-      {
-        RequestBody (HttpServer *server);
-        ~RequestBody ();
-
-        void Append (const char *buf,
-                     size_t      len);
-        void Replace (const char *buf);
-        void ZeroTerminate ();
-
-        gchar      *_data;
-        guint       _length;
-        HttpServer *_server;
-      };
-
       struct MHD_Daemon *_daemon;
-      guint              _port;
-      Listener          *_listener;
       Cryptor           *_cryptor;
       gchar             *_iv;
 

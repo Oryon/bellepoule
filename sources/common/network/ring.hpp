@@ -20,6 +20,7 @@
 
 #include <util/object.hpp>
 #include <http_server.hpp>
+#include <server.hpp>
 #include <partner.hpp>
 #include <usb_broker.hpp>
 #include <usb_challenge.hpp>
@@ -30,10 +31,11 @@ namespace Net
   class Credentials;
   class ConsoleServer;
   class UsbDrive;
+  class WebAppServer;
 
   class Ring : public Object,
                public Object::Listener,
-               public HttpServer::Listener,
+               public Server::Listener,
                public Partner::Listener,
                public UsbBroker::Listener,
                public UsbChallenge::Listener
@@ -78,6 +80,9 @@ namespace Net
                         GtkWidget *partner_indicator);
 
       void Leave ();
+
+      void SendBackResponse (Message *question,
+                             Message *response);
 
       void InjectMessage (Message *message,
                           Message *after);
@@ -134,6 +139,7 @@ namespace Net
       GSocket         *_announce_socket;
       Credentials     *_credentials;
       HttpServer      *_http_server;
+      WebAppServer    *_web_app_server;
       gint             _quit_countdown;
       UsbBroker       *_usb_broker;
       HandshakeResult  _handshake_result;

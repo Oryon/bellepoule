@@ -314,6 +314,7 @@ Source: "{#MINGW}\bin\libp11-kit-0.dll"; DestDir: "{app}\bin"; Flags: ignorevers
 Source: "{#MINGW}\bin\libzip-4.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libwinpthread-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libusb-1.0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libwebsockets.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
 Source: "{#MINGW}\lib\gio\modules\libgiognutls.dll"; DestDir: "{app}\lib\gio\modules"; Flags: ignoreversion
 

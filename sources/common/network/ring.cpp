@@ -21,6 +21,7 @@
 #include "util/global.hpp"
 #include "util/user_config.hpp"
 #include "util/wifi_code.hpp"
+#include "webapp/webapp_server.hpp"
 #include "console/console_server.hpp"
 #include "credentials.hpp"
 #include "message.hpp"
@@ -93,9 +94,11 @@ namespace Net
 
     Net::ConsoleServer::ExposeVariable ("heartbeat", 1);
 
-    // Unicast listener
+    // Unicast listeners
     _http_server = new Net::HttpServer (this,
                                         _unicast_port);
+    _web_app_server = new Net::WebAppServer (this,
+                                             8000);
 
     // Announce listener
     {
@@ -153,6 +156,7 @@ namespace Net
     _usb_broker->Release ();
     _credentials->Release ();
     _http_server->Release ();
+    _web_app_server->Release ();
 
     TryToRelease (_console_server);
 
@@ -697,6 +701,14 @@ namespace Net
 
     _message_list = g_list_remove (_message_list,
                                    message);
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::SendBackResponse (Message *question,
+                               Message *response)
+  {
+    _web_app_server->SendBackResponse (question,
+                                       response);
   }
 
   // -------------------------------------------------------------------------------
