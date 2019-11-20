@@ -22,14 +22,14 @@
       }
 
       .aspect-ratio {
-        width: 100vw; 
-        max-width: 59.00vh; /* height:width ratio */
+        width:      100vw;
+        max-width:  59.00vh; /* height:width ratio */
         max-height: 100vh;
-        height: 168.00vw; /* height:width ratio */
-        margin: auto;
-        position: absolute;
-        top:0;bottom:0; /* vertical center */
-        left:0;right:0; /* horizontal center */
+        height:     168.00vw; /* height:width ratio */
+        margin:     auto;
+        position:   absolute;
+        top:0;  bottom:0; /* vertical center */
+        left:0; right:0; /* horizontal center */
       }
 
       body {
@@ -57,9 +57,13 @@
         text-align: center;
       }
 
-      .fencer-name {
+      .fencer-name, .fault {
         font-size: 5vh;
         text-align: center;
+      }
+
+      .fault {
+        margin: 1vh 0vh 2vh 0vh;
       }
 
       .fencer-firstname {
@@ -224,14 +228,25 @@
 
     // -- Competition --------------------
     class Competition {
-      constructor (xml_doc) {
-        this.element = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+      constructor (xml) {
+        this.xml     = xml;
+        this.fencers = this.xml.getElementsByTagName ('Tireurs')[0];
 
         this.addPanel ();
       }
 
       get (attribute) {
-        return this.element.getAttribute (attribute);
+        return this.xml.getAttribute (attribute);
+      }
+
+      getFencer (id) {
+        for (let f = 1; f < this.fencers.childElementCount; f++) {
+          var current = this.fencers.children[f];
+
+          if (current.getAttribute ('ID') == id) {
+            return current;
+          }
+        }
       }
 
       addPanel () {
@@ -259,15 +274,26 @@
     // -- Match --------------------
     class Match {
       constructor (xml, fencer_A, fencer_B) {
-        var parser  = new DOMParser ();
-        var xml_doc = parser.parseFromString (xml, 'text/xml');
+        var parser      = new DOMParser ();
+        var xml_doc     = parser.parseFromString (xml, 'text/xml');
+        var root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+        var competition = new Competition (root);
 
-        var competition = new Competition (xml_doc);
+        {
+          var path  = "/CompetitionIndividuelle/PhaseDeTableaux/SuiteDeTableaux/Tableau/Match";
+          var nodes = xml_doc.evaluate (path, root, null, XPathResult.ANY_TYPE, null);
+          var node  = nodes.iterateNext ();
 
-        fencer_A.setCompetition (competition)
-        fencer_B.setCompetition (competition)
+          if (node && node.childElementCount == 2) {
+            var fencer;
 
-        console.log (this)
+            fencer = node.childNodes[0];
+            fencer_A.feed (competition, fencer.getAttribute ('REF'));
+
+            fencer = node.childNodes[1];
+            fencer_B.feed (competition, fencer.getAttribute ('REF'));
+          }
+        }
       }
     }
 
@@ -276,6 +302,7 @@
     class Fencer {
       constructor (color) {
         this.rgb           = {'red':'#8F1818', 'green':'#098709'};
+        this.color         = color;
         this.freezed       = false;
         this.taintedPanels = [];
 
@@ -293,8 +320,14 @@
         faults.forEach (fault => this.addFaultsPanel (fault));
       }
 
-      setCompetition (competition) {
-        this.taintedPanels.forEach (element => element.style.background = competition.get ('Couleur'));
+      feed (competition, ref) {
+        var name      = document.getElementById (this.color + '-fencer-name');
+        var firstname = document.getElementById (this.color + '-fencer-firstname');
+
+        this.taintedPanels.forEach (panel => panel.style.background = competition.get ('Couleur'));
+
+        name.innerHTML      = competition.getFencer (ref).getAttribute('Nom');
+        firstname.innerHTML = competition.getFencer (ref).getAttribute('Prenom');
       }
 
       addIdentityPanel (what) {
@@ -303,7 +336,7 @@
         var html    = '';
 
         html += '<td>';
-        html += '  <div class="fencer-' + what + '">';
+        html += '  <div id="' + this.color + '-fencer-' + what + '" class="fencer-' + what + '">';
         html +=     what;
         html += '  </div>';
         html += '</td>';
@@ -366,11 +399,11 @@
         victory.colSpan = 2;
         size = victory.getBoundingClientRect().height;
 
-        withdrawal.innerHTML = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + size + '"/></td>';
+        withdrawal.innerHTML = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + size*.7 + '"/></td>';
         withdrawal.colSpan = 2;
 
         svg = document.getElementById ('blackcard.svg');
-        excluded.innerHTML = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + size + '"/></td>';
+        excluded.innerHTML = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + size*.7 + '"/></td>';
         excluded.colSpan = 2;
       }
 
@@ -385,11 +418,11 @@
         cell = lastRow.insertCell (-1);
 
         html += '<td>';
-        html += '  <div class="fencer-name">';
-        html +=      'g';
-        html += '  </div>';
+        html += '  <div class="fault" style="background:' + fault.color + ';"></div>';
         html += '</td>';
         cell.innerHTML = html;
+
+        cell.style.backgroundColor = 'grey';
 
         lastRow.insertCell (-1);
         lastRow.insertCell (-1);
@@ -445,7 +478,7 @@
       <tr class='row' id='faults-red.panel'/>
 
       <tr>
-        <td bgcolor='pink' Colspan='12'/>
+        <td Colspan='12'/>
       </tr>
     </table>
 
