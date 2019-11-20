@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <title>SmartPoule</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <meta charset="UTF-8">
 
   <!--***********************************-->
@@ -19,6 +18,7 @@
     <style>
       * {
         box-sizing: border-box;
+        touch-action: none;
       }
 
       .aspect-ratio {
@@ -77,6 +77,8 @@
 
   <!--***********************************-->
   <script>
+    var red_fencer;
+    var green_fencer;
     var path   = location.pathname;
     var socket = new WebSocket ("ws://" + document.domain + ':' + location.port, "smartpoule");
 
@@ -86,22 +88,46 @@
     class Competition {
       constructor (xml_doc) {
         this.element = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+
+        this.addPanel ();
       }
 
       get (attribute) {
         return this.element.getAttribute (attribute);
+      }
+
+      addPanel () {
+        var weapon  = {'S':'Sabre', 'E':'Epée', 'F':'Fleuret', 'X':'Educ'};
+        var gender  = {'M':'Homme', 'F':'Dame', 'X':'Mixte'};
+        var lastRow = document.getElementById ('competition.panel');
+        var cell    = lastRow.insertCell (-1);
+        var html    = "";
+
+        html += "<td>";
+        html += "  <div class='competition' Align='Center'>";
+        html +=     weapon[this.get ("Arme")] + " "
+        html +=     gender[this.get ("Sexe")] + " ";
+        html +=     this.get ("Categorie");
+        html += "  </div>";
+        html += "</td>";
+        cell.innerHTML = html;
+
+        cell.colSpan = 12;
+        cell.style.background = this.get ('Couleur');
       }
     }
 
 
     // -- Match --------------------
     class Match {
-      constructor (xml) {
+      constructor (xml, fencer_A, fencer_B) {
         var parser  = new DOMParser ();
         var xml_doc = parser.parseFromString (xml, 'text/xml');
 
         var competition = new Competition (xml_doc);
-        document.getElementById ('root').style.background = competition.get ('Couleur')
+
+        fencer_A.setCompetition (competition)
+        fencer_B.setCompetition (competition)
 
         console.log (this)
       }
@@ -111,17 +137,18 @@
     // -- Score --------------------
     class Score {
       constructor (color) {
-        this.color   = color;
         this.freezed = false;
+      }
+
+      setLight (light) {
         var context  = this;
 
-        this.light = document.getElementById (color + '_light');
-        this.light.score   = this;
+        this.light = light;
 
         this.light.onclick = function () {Score.onClicked (context);};
         this.light.addEventListener ('long-press', function (e) {Score.onLongPress (context, e);});
 
-        this.reset ()
+        this.reset ();
       }
 
       reset () {
@@ -146,6 +173,7 @@
       }
 
       static onLongPress (what, e) {
+        window.navigator.vibrate(200);
         e.preventDefault ();
         what.freezed = true;
         what.reset ();
@@ -153,18 +181,78 @@
     };
 
 
+    // -- Fault --------------------
+    class Fault {
+      constructor (group) {
+        this.freezed = false;
+        this.counts  = 0;
+      }
+
+      setButton (button) {
+        var context  = this;
+
+        this.button = button;
+
+        this.button.onclick = function () {Fault.onClicked (context);};
+        this.button.addEventListener ('long-press', function (e) {Fault.onLongPress (context, e);});
+
+        this.reset ();
+      }
+
+      reset () {
+        this.counts = 0;
+        this.refresh ();
+      }
+
+      increment () {
+        this.counts += 1;
+        this.refresh ();
+      }
+
+      refresh () {
+        this.button.children[0].innerHTML = this.counts
+      }
+
+      static onClicked (what) {
+        if (what.freezed == false) {
+          what.increment ();
+        }
+        what.freezed = false;
+      }
+
+      static onLongPress (what, e) {
+        window.navigator.vibrate(200);
+        e.preventDefault ();
+        what.freezed = true;
+        what.reset ();
+      }
+    }
+
+
     // -- Fencer --------------------
     class Fencer {
       constructor (color) {
-        this.color   = color;
-        this.freezed = false;
+        this.rgb           = { 'red' : '#8F1818', 'green' : '#098709'};
+        this.freezed       = false;
+        this.taintedPanels = [];
 
-        this.score = new Score (color);
+        this.score = new Score ();
 
-        this.addIdentityPanel ('name')
-        this.addIdentityPanel ('firstname')
-        this.addPointsPanel   ()
-        this.addCardsPanel    ()
+        this.addIdentityPanel ('name');
+        this.addIdentityPanel ('firstname');
+        this.addLightPanel    (color);
+        this.addPointsPanel   ();
+        this.addCardsPanel    ();
+
+        this.faults = []
+        for (let g = 1; g < 5; g++) {
+          this.faults[g] = new Fault (g);
+          this.addFaultsPanel (g);
+        }
+      }
+
+      setCompetition (competition) {
+        this.taintedPanels.forEach (element => element.style.background = competition.get ('Couleur'));
       }
 
       addIdentityPanel (what) {
@@ -179,7 +267,25 @@
         html += "</td>";
         cell.innerHTML = html;
 
-        cell.colSpan = 3;
+        cell.colSpan = 6;
+
+        this.taintedPanels.push (cell);
+      }
+
+      addLightPanel (color) {
+        var lastRow = document.getElementById ('lights.panel');
+        var cell    = lastRow.insertCell (-1);
+        var html    = "";
+
+        html += "<td>";
+        html += "  <div class='score'>0</div>";
+        html += "</td>";
+        cell.innerHTML = html;
+
+        cell.colSpan = 6;
+        cell.style.backgroundColor = this.rgb[color]
+
+        this.score.setLight (cell);
       }
 
       addPointsPanel () {
@@ -196,6 +302,8 @@
           html += "  </div>";
           html += "</td>";
           cell.innerHTML = html;
+
+          cell.colSpan = 2;
           cell.onclick = function () {Fencer.onPoints (context, p);};
           cell.addEventListener ('long-press', function (e) {Fencer.onLongPress (context, e, p);});
         }
@@ -210,12 +318,39 @@
         var size;
 
         victory.innerHTML = "<td><div class='fencer-name'>V</div></td>";
+        victory.colSpan = 2;
         size = victory.getBoundingClientRect().height;
 
         withdrawal.innerHTML = "<td><img src='data:image/svg+xml;base64," + svg.dataset.url + "' width='" + size + "'/></td>";
+        withdrawal.colSpan = 2;
 
         svg = document.getElementById ('blackcard.svg');
         excluded.innerHTML = "<td><img src='data:image/svg+xml;base64," + svg.dataset.url + "' width='" + size + "'/></td>";
+        excluded.colSpan = 2;
+      }
+
+      addFaultsPanel (group) {
+        var context = this;
+        var lastRow = document.getElementById ('faults' + group + '.panel');
+        var html    = "";
+        var cell;
+
+        lastRow.insertCell (-1);
+        lastRow.insertCell (-1);
+        cell = lastRow.insertCell (-1);
+
+        html += "<td>";
+        html += "  <div class='fencer-name'>";
+        html +=      group;
+        html += "  </div>";
+        html += "</td>";
+        cell.innerHTML = html;
+
+        lastRow.insertCell (-1);
+        lastRow.insertCell (-1);
+        lastRow.insertCell (-1);
+
+        this.faults[group].setButton (cell);
       }
 
       static onPoints (what, points) {
@@ -226,6 +361,7 @@
       }
 
       static onLongPress (what, e, points) {
+        window.navigator.vibrate(200);
         e.preventDefault ();
         what.freezed = true;
         what.score.increment (-points);
@@ -257,7 +393,7 @@
         offset = msg.data.indexOf (tag);
         xml = msg.data.slice (offset + tag.length)
         xml = xml.replace (/\\n/g, '')
-        match  = new Match (xml);
+        match  = new Match (xml, red_fencer, green_fencer);
       }
     }
   </script>
@@ -265,31 +401,19 @@
   <!--***********************************-->
   <body>
     <table id='root' class='aspect-ratio' Cellspacing='0'>
-      <tr class='row'>
-        <td colspan='6' Align='Center'>
-          <div class='competition'>Weapon Gender Category</div>
-        </td>
-      </tr>
-
-      <tr class='row' id='names.panel'></tr>
-
-      <tr class='row' id='firstnames.panel'></tr>
-
-      <tr class='row'>
-        <td id='red_light' colspan='3' style='background-color:#8F1818'>
-          <div class='score'>5</div>
-        </td>
-        <td id='green_light' colspan='3' style='background-color:#098709'>
-          <div class='score'>4</div>
-        </td>
-      </tr>
-
-      <tr class='row' id='points.panel'></tr>
-
-      <tr class='row' id='cards.panel'></tr>
+      <tr class='row' id='competition.panel'/>
+      <tr class='row' id='names.panel'/>
+      <tr class='row' id='firstnames.panel'/>
+      <tr class='row' id='lights.panel'/>
+      <tr class='row' id='points.panel'/>
+      <tr class='row' id='cards.panel'/>
+      <tr class='row' id='faults1.panel'/>
+      <tr class='row' id='faults2.panel'/>
+      <tr class='row' id='faults3.panel'/>
+      <tr class='row' id='faults4.panel'/>
 
       <tr>
-        <td bgcolor='pink' Colspan='6'/>
+        <td bgcolor='pink' Colspan='12'/>
       </tr>
     </table>
 
