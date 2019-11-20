@@ -84,6 +84,83 @@
 
     !function(e,t){"use strict";var n=null,a="ontouchstart"in e||navigator.MaxTouchPoints>0||navigator.msMaxTouchPoints>0,i=a?"touchstart":"mousedown",o=a?"touchend":"mouseup",m=a?"touchmove":"mousemove",u=0,r=0,s=10,c=10;function l(i){v(i);var m=i.target,u=parseInt(m.getAttribute("data-long-press-delay")||"1500",10);n=function(t,n){if(!(e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame&&e.mozCancelRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame))return e.setTimeout(t,n);var a=(new Date).getTime(),i={},o=function(){(new Date).getTime()-a>=n?t.call():i.value=requestAnimFrame(o)};return i.value=requestAnimFrame(o),i}(function(e){v();var n=a?e.touches[0].clientX:e.clientX,i=a?e.touches[0].clientY:e.clientY;this.dispatchEvent(new CustomEvent("long-press",{bubbles:!0,cancelable:!0,detail:{clientX:n,clientY:i}}))&&t.addEventListener(o,function e(n){t.removeEventListener(o,e,!0),function(e){e.stopImmediatePropagation(),e.preventDefault(),e.stopPropagation()}(n)},!0)}.bind(m,i),u)}function v(t){var a;(a=n)&&(e.cancelAnimationFrame?e.cancelAnimationFrame(a.value):e.webkitCancelAnimationFrame?e.webkitCancelAnimationFrame(a.value):e.webkitCancelRequestAnimationFrame?e.webkitCancelRequestAnimationFrame(a.value):e.mozCancelRequestAnimationFrame?e.mozCancelRequestAnimationFrame(a.value):e.oCancelRequestAnimationFrame?e.oCancelRequestAnimationFrame(a.value):e.msCancelRequestAnimationFrame?e.msCancelRequestAnimationFrame(a.value):clearTimeout(a)),n=null}"function"!=typeof e.CustomEvent&&(e.CustomEvent=function(e,n){n=n||{bubbles:!1,cancelable:!1,detail:void 0};var a=t.createEvent("CustomEvent");return a.initCustomEvent(e,n.bubbles,n.cancelable,n.detail),a},e.CustomEvent.prototype=e.Event.prototype),e.requestAnimFrame=e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame||function(t){e.setTimeout(t,1e3/60)},t.addEventListener(o,v,!0),t.addEventListener(m,function(e){var t=Math.abs(u-e.clientX),n=Math.abs(r-e.clientY);(t>=s||n>=c)&&v()},!0),t.addEventListener("wheel",v,!0),t.addEventListener("scroll",v,!0),t.addEventListener(i,function(e){u=e.clientX,r=e.clientY,l(e)},!0)}(window,document);
 
+    // -- Score --------------------
+    class Score {
+      constructor (display) {
+        this.display = display;
+        this.reset ();
+      }
+
+      increment (delta) {
+        this.points += delta;
+        this.refresh ();
+      }
+
+      reset () {
+        this.points = 0
+        this.refresh ();
+      }
+
+      refresh () {
+        this.display.children[0].innerHTML = this.points
+      }
+    }
+
+
+    // -- Counter --------------------
+    class Counter {
+      constructor (trigger, countable, step) {
+        this.freezed   = false;
+        this.countable = countable;
+        this.step      = step;
+
+        this.setTrigger (trigger);
+      }
+
+      setTrigger (trigger) {
+        var context  = this;
+
+        this.trigger = trigger;
+
+        this.trigger.onclick = function () {Counter.onClicked (context);};
+        this.trigger.addEventListener ('long-press', function (e) {Counter.onLongPress (context, e);});
+      }
+
+      count () {
+        this.countable.increment (this.step);
+      }
+
+      cancel () {
+        this.countable.increment (-this.step);
+      }
+
+      static onClicked (what) {
+        if (what.freezed == false) {
+          what.count ();
+        }
+        what.freezed = false;
+      }
+
+      static onLongPress (what, e) {
+        e.preventDefault ();
+        what.freezed = true;
+        what.cancel ();
+      }
+    };
+
+
+    // -- ResetCounter --------------------
+    class ResetCounter extends Counter {
+      constructor (trigger, countable, step) {
+        super (trigger, countable, step)
+      }
+
+      cancel () {
+        this.countable.reset ();
+      }
+    };
+
+
     // -- Competition --------------------
     class Competition {
       constructor (xml_doc) {
@@ -134,109 +211,12 @@
     }
 
 
-    // -- Score --------------------
-    class Score {
-      constructor (color) {
-        this.freezed = false;
-      }
-
-      setLight (light) {
-        var context  = this;
-
-        this.light = light;
-
-        this.light.onclick = function () {Score.onClicked (context);};
-        this.light.addEventListener ('long-press', function (e) {Score.onLongPress (context, e);});
-
-        this.reset ();
-      }
-
-      reset () {
-        this.points = 0;
-        this.refresh ();
-      }
-
-      increment (delta) {
-        this.points += delta;
-        this.refresh ();
-      }
-
-      refresh () {
-        this.light.children[0].innerHTML = this.points
-      }
-
-      static onClicked (what) {
-        if (what.freezed == false) {
-          what.increment (1);
-        }
-        what.freezed = false;
-      }
-
-      static onLongPress (what, e) {
-        window.navigator.vibrate(200);
-        e.preventDefault ();
-        what.freezed = true;
-        what.reset ();
-      }
-    };
-
-
-    // -- Fault --------------------
-    class Fault {
-      constructor (group) {
-        this.freezed = false;
-        this.counts  = 0;
-      }
-
-      setButton (button) {
-        var context  = this;
-
-        this.button = button;
-
-        this.button.onclick = function () {Fault.onClicked (context);};
-        this.button.addEventListener ('long-press', function (e) {Fault.onLongPress (context, e);});
-
-        this.reset ();
-      }
-
-      reset () {
-        this.counts = 0;
-        this.refresh ();
-      }
-
-      increment () {
-        this.counts += 1;
-        this.refresh ();
-      }
-
-      refresh () {
-        this.button.children[0].innerHTML = this.counts
-      }
-
-      static onClicked (what) {
-        if (what.freezed == false) {
-          what.increment ();
-        }
-        what.freezed = false;
-      }
-
-      static onLongPress (what, e) {
-        window.navigator.vibrate(200);
-        e.preventDefault ();
-        what.freezed = true;
-        what.reset ();
-      }
-    }
-
-
     // -- Fencer --------------------
     class Fencer {
       constructor (color) {
-        this.rgb           = { 'red' : '#8F1818', 'green' : '#098709'};
+        this.rgb           = {'red':'#8F1818', 'green':'#098709'};
         this.freezed       = false;
         this.taintedPanels = [];
-
-        this.score = new Score ();
 
         this.addIdentityPanel ('name');
         this.addIdentityPanel ('firstname');
@@ -244,9 +224,8 @@
         this.addPointsPanel   ();
         this.addCardsPanel    ();
 
-        this.faults = []
+        this.faultTriggers = []
         for (let g = 1; g < 5; g++) {
-          this.faults[g] = new Fault (g);
           this.addFaultsPanel (g);
         }
       }
@@ -285,13 +264,15 @@
         cell.colSpan = 6;
         cell.style.backgroundColor = this.rgb[color]
 
-        this.score.setLight (cell);
+        this.score   = new Score (cell);
+        this.trigger = new ResetCounter (cell, this.score, 1);
       }
 
       addPointsPanel () {
         var context = this;
         var lastRow = document.getElementById ('points.panel');
 
+        this.pointTriggers = []
         for (let p = 1; p < 4; p++) {
           var cell = lastRow.insertCell (-1);
           var html = "";
@@ -304,8 +285,8 @@
           cell.innerHTML = html;
 
           cell.colSpan = 2;
-          cell.onclick = function () {Fencer.onPoints (context, p);};
-          cell.addEventListener ('long-press', function (e) {Fencer.onLongPress (context, e, p);});
+
+          this.pointTriggers[p] = new Counter (cell, this.score, p);
         }
       }
 
@@ -350,21 +331,7 @@
         lastRow.insertCell (-1);
         lastRow.insertCell (-1);
 
-        this.faults[group].setButton (cell);
-      }
-
-      static onPoints (what, points) {
-        if (what.freezed == false) {
-          what.score.increment (points);
-        }
-        what.freezed = false;
-      }
-
-      static onLongPress (what, e, points) {
-        window.navigator.vibrate(200);
-        e.preventDefault ();
-        what.freezed = true;
-        what.score.increment (-points);
+        this.faultTriggers[group] = new Counter (cell, this.score, group);
       }
     }
 
