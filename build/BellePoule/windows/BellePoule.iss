@@ -6,14 +6,13 @@
 #define MINGW     ".\crossroad"
 #define WEBSERVER "..\..\..\..\webserver"
 #define ICONS     ".\icons"
-;#define PRODUCT   "bellepoulebeta"
-#define PRODUCT   "bellepoule"
-#define PUBLIC_VERSION
+#define PRODUCT   "bellepoulebeta"
+;#define PUBLIC_VERSION
 
 [Setup]
 AppName={#PRODUCT}
-AppVerName={#PRODUCT} version {#VERSION}.{#VERSION_REVISION}
-OutputBaseFilename={#PRODUCT}-{#VERSION}-{#VERSION_REVISION}-win
+AppVerName={#PRODUCT} version {#VERSION}.{#VERSION_REVISION}{#VERSION_MATURITY}
+OutputBaseFilename={#PRODUCT}-{#VERSION}-{#VERSION_REVISION}-{#VERSION_MATURITY}-win
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/
@@ -79,16 +78,16 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Icons]
-Name: "{userprograms}\{#PRODUCT}\bellepoule-2D"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
-Name: "{userprograms}\{#PRODUCT}\bellepoule"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
+Name: "{userprograms}\{#PRODUCT}\bellepoule-2D (beta)"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
+Name: "{userprograms}\{#PRODUCT}\bellepoule (beta)"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
 Name: "{userprograms}\{#PRODUCT}\Uninstall {#PRODUCT}"; Filename: "{uninstallexe}"
-Name: "{commonprograms}\{#PRODUCT}\bellepoule-2D"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
-Name: "{commonprograms}\{#PRODUCT}\bellepoule"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
+Name: "{commonprograms}\{#PRODUCT}\bellepoule-2D (beta)"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
+Name: "{commonprograms}\{#PRODUCT}\bellepoule (beta)"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
 Name: "{commonprograms}\{#PRODUCT}\Uninstall {#PRODUCT}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\bellepoule-2D"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: desktopicon; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
-Name: "{userdesktop}\bellepoule"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: desktopicon; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\bellepoule-2D"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\bellepoule"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
+Name: "{userdesktop}\bellepoule-2D (beta)"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: desktopicon; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
+Name: "{userdesktop}\bellepoule (beta)"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: desktopicon; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\bellepoule-2D (beta)"; Filename: "{app}\bin\{#PRODUCT}-marshaller.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\share\{#PRODUCT}\resources\marshaller.ico"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\bellepoule (beta)"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\share\{#PRODUCT}\resources\supervisor.ico"
 
 [Files]
 Source: "exe\{#PRODUCT}-marshaller.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
