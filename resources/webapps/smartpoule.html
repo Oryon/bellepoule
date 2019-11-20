@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html>
   <title>SmartPoule</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <meta charset="UTF-8">
 
   <!--***********************************-->
   <head>
+    <icon
+        id="blackcard.svg"
+        data-url="PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgoKPHN2ZwogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgIHhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiCiAgIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiCiAgIHhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIgogICB3aWR0aD0iOTEwbW0iCiAgIGhlaWdodD0iOTEwbW0iCiAgIHZpZXdCb3g9IjAgMCA5MTAgOTEwIgogICB2ZXJzaW9uPSIxLjEiCiAgIGlkPSJzdmc4MjQiCiAgIGlua3NjYXBlOnZlcnNpb249IjAuOTIuMiAoNWMzZTgwZCwgMjAxNy0wOC0wNikiCiAgIHNvZGlwb2RpOmRvY25hbWU9Ijc1Njc1Njc1Njc1Njcuc3ZnIj4KICA8ZGVmcwogICAgIGlkPSJkZWZzODE4IiAvPgogIDxzb2RpcG9kaTpuYW1lZHZpZXcKICAgICBpZD0iYmFzZSIKICAgICBwYWdlY29sb3I9IiNmZmZmZmYiCiAgICAgYm9yZGVyY29sb3I9IiM2NjY2NjYiCiAgICAgYm9yZGVyb3BhY2l0eT0iMS4wIgogICAgIGlua3NjYXBlOnBhZ2VvcGFjaXR5PSIwLjAiCiAgICAgaW5rc2NhcGU6cGFnZXNoYWRvdz0iMiIKICAgICBpbmtzY2FwZTp6b29tPSIwLjE3MzA3NjkzIgogICAgIGlua3NjYXBlOmN4PSIxMzgwLjUwOTQiCiAgICAgaW5rc2NhcGU6Y3k9IjE4MDguOTE2MiIKICAgICBpbmtzY2FwZTpkb2N1bWVudC11bml0cz0ibW0iCiAgICAgaW5rc2NhcGU6Y3VycmVudC1sYXllcj0idGV4dDkwMSIKICAgICBzaG93Z3JpZD0iZmFsc2UiCiAgICAgaW5rc2NhcGU6d2luZG93LXdpZHRoPSIxOTIwIgogICAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9IjEwNTciCiAgICAgaW5rc2NhcGU6d2luZG93LXg9Ii04IgogICAgIGlua3NjYXBlOndpbmRvdy15PSItOCIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIgogICAgIGlua3NjYXBlOnNuYXAtZ2xvYmFsPSJmYWxzZSIKICAgICBzaG93Ym9yZGVyPSJ0cnVlIgogICAgIGlua3NjYXBlOnBhZ2VjaGVja2VyYm9hcmQ9ImZhbHNlIgogICAgIGlua3NjYXBlOnNob3dwYWdlc2hhZG93PSJ0cnVlIgogICAgIGJvcmRlcmxheWVyPSJmYWxzZSIgLz4KICA8bWV0YWRhdGEKICAgICBpZD0ibWV0YWRhdGE4MjEiPgogICAgPHJkZjpSREY+CiAgICAgIDxjYzpXb3JrCiAgICAgICAgIHJkZjphYm91dD0iIj4KICAgICAgICA8ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4KICAgICAgICA8ZGM6dHlwZQogICAgICAgICAgIHJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2UiIC8+CiAgICAgICAgPGRjOnRpdGxlPjwvZGM6dGl0bGU+CiAgICAgIDwvY2M6V29yaz4KICAgIDwvcmRmOlJERj4KICA8L21ldGFkYXRhPgogIDxnCiAgICAgaW5rc2NhcGU6bGFiZWw9IkxheWVyIDEiCiAgICAgaW5rc2NhcGU6Z3JvdXBtb2RlPSJsYXllciIKICAgICBpZD0ibGF5ZXIxIgogICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAsNjEzKSI+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MC45MDc5OTk3NSIKICAgICAgIGQ9Ik0gMjY2Ljk0NzQsMjk1Ljk5OTg1IDEsMzAuMDUyNjQzIDEuMDAwNSwtMzQ2LjA1Mjc5IDI2Ni45NDcyLC02MTIgNjQzLjA1MzEsLTYxMS45OTk2MSA5MDksLTM0Ni4wNTI3NiA5MDkuMDAwMiwzMC4wNTI5MjUgNjQzLjA1MzIsMjk2IFoiCiAgICAgICBpZD0icGF0aDM4MzEiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIgogICAgICAgc29kaXBvZGk6bm9kZXR5cGVzPSJjY2NjY2NjY2MiIC8+CiAgICA8cGF0aAogICAgICAgc29kaXBvZGk6bm9kZXR5cGVzPSJjY2NjY2NjY2MiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIgogICAgICAgaWQ9InBhdGgyMTExIgogICAgICAgZD0ibSAyNjguNjAzOSwtNjA3Ljk5OTQ2IDM3Mi43OTI2LC0xLjVlLTQgMjYzLjYwMzIsMjYzLjYwMzkyIEwgOTA1LDI4LjM5NjM3IDY0MS4zOTU5LDI5MiAyNjguNjAzOSwyOTEuOTk5OTkgNSwyOC4zOTY0NCBWIC0zNDQuMzk1OCBaIgogICAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MC44OTk5OTk3NCIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDojZGMwYTE0O2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDowLjc5MDAwMDE0IgogICAgICAgZD0iTSAyOTEuMzg1NywyMzYuOTk5OTUgNjAuMDAwMyw1LjYxNDYzNCBsIC0yZS00LC0zMjcuMjI5MDI0IDIzMS4zODU0LC0yMzEuMzg1OSAzMjcuMjI4OSwzLjRlLTQgMjMxLjM4NTIsMjMxLjM4NTIyIDZlLTQsMzI3LjIyOTAzMyAtMjMxLjM4NTgsMjMxLjM4NTcyNyB6IgogICAgICAgaWQ9InBhdGgyMTEzIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKICAgICAgIHNvZGlwb2RpOm5vZGV0eXBlcz0iY2NjY2NjY2NjIiAvPgogICAgPGcKICAgICAgIGFyaWEtbGFiZWw9IlNUT1AiCiAgICAgICBzdHlsZT0iZm9udC1zdHlsZTpub3JtYWw7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zdHJldGNoOm5vcm1hbDtmb250LXNpemU6NDQxLjgyNjIwMjM5cHg7bGluZS1oZWlnaHQ6MS4yNTtmb250LWZhbWlseTonRElOIDE0NTEgRW5nc2NocmlmdCc7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjonRElOIDE0NTEgRW5nc2NocmlmdCc7bGV0dGVyLXNwYWNpbmc6MHB4O3dvcmQtc3BhY2luZzowcHg7ZmlsbDojMDBmZmZmO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDoxMS4wNDU2NTUyNSIKICAgICAgIGlkPSJ0ZXh0MjE0NiIKICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMC42OTA3ODQsNDc0LjY3MDY4KSIgLz4KICAgIDx0ZXh0CiAgICAgICB4bWw6c3BhY2U9InByZXNlcnZlIgogICAgICAgc3R5bGU9ImZvbnQtc3R5bGU6bm9ybWFsO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc3RyZXRjaDpub3JtYWw7Zm9udC1zaXplOjQxNC41NzQ4OTAxNHB4O2xpbmUtaGVpZ2h0OjEuMjU7Zm9udC1mYW1pbHk6J09sZCBSb2FkIFNpZ25zIEZvbnQnOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246J09sZCBSb2FkIFNpZ25zIEZvbnQnO2xldHRlci1zcGFjaW5nOjBweDt3b3JkLXNwYWNpbmc6MHB4O2ZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MTAuMzY0MzcyMjUiCiAgICAgICB4PSIxMjAuNjI3OSIKICAgICAgIHk9IjQ3NC4wNDA3MSIKICAgICAgIGlkPSJ0ZXh0ODM0Ij48dHNwYW4KICAgICAgICAgc29kaXBvZGk6cm9sZT0ibGluZSIKICAgICAgICAgaWQ9InRzcGFuODMyIgogICAgICAgICB4PSIxMjAuNjI3OSIKICAgICAgICAgeT0iODQ3LjQ3MDg5IgogICAgICAgICBzdHlsZT0iZm9udC1zdHlsZTpub3JtYWw7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zdHJldGNoOm5vcm1hbDtmb250LWZhbWlseTonT2xkIFJvYWQgU2lnbnMgRm9udCc7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjonT2xkIFJvYWQgU2lnbnMgRm9udCc7c3Ryb2tlLXdpZHRoOjEwLjM2NDM3MjI1IiAvPjwvdGV4dD4KICAgIDxnCiAgICAgICBhcmlhLWxhYmVsPSJTVE9QIgogICAgICAgc3R5bGU9ImZvbnQtc3R5bGU6bm9ybWFsO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc3RyZXRjaDpub3JtYWw7Zm9udC1zaXplOjQ0MS44MjYyMDIzOXB4O2xpbmUtaGVpZ2h0OjA7Zm9udC1mYW1pbHk6J0RJTiAxNDUxIEVuZ3NjaHJpZnQnOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246J0RJTiAxNDUxIEVuZ3NjaHJpZnQnO2xldHRlci1zcGFjaW5nOi0wLjAwNzkzNzVweDt3b3JkLXNwYWNpbmc6MHB4O2ZpbGw6I2ZmY2MwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MTEuMDQ1NjU1MjUiCiAgICAgICBpZD0idGV4dDkwMSIKICAgICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwLjgzOTA0LDg2OC44MjY0MykiPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDgyOSIKICAgICAgICAgc3R5bGU9ImZvbnQtc3R5bGU6bm9ybWFsO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc3RyZXRjaDpub3JtYWw7Zm9udC1zaXplOjQ0MS44MjYyMDIzOXB4O2xpbmUtaGVpZ2h0OjA7Zm9udC1mYW1pbHk6J0RJTiAxNDUxIEVuZ3NjaHJpZnQnOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246J0RJTiAxNDUxIEVuZ3NjaHJpZnQnO2xldHRlci1zcGFjaW5nOi0wLjAwNzkzNzVweDt3b3JkLXNwYWNpbmc6MHB4O2ZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MS4yMzU4MzkzNyIKICAgICAgICAgZD0ibSA5NS4xNjA5NiwtOTYzLjYzNDMzIGggNDIuMDQ3IHYgMTUuNzc2OCBjIDAsMTUuOTg3OCAxMi45NTc4LDI4Ljk1NDIgMjguODk3OCwyOC45NTQyIGggMi42MzU5IGMgMTUuOTY5NiwwIDI4LjkwMjcsLTEyLjk2NjQgMjguOTAyNywtMjguOTU0MiB2IC0zMS41NzcxIGMgMCwtMTEuNzk4MyAtNy4xMzYsLTIyLjQwNDU3IC0xOC4wNTA5LC0yNi44MzEwNyBsIC0zNy40ODAzLC0xNS4yMDIxIGMgLTI2Ljc5NjgsLTEwLjg4NTQgLTQ0LjMxNiwtMzYuOTMwNiAtNDQuMzE2LC02NS44NjY2IHYgLTE4LjQzNjIgYyAwLC0zOS4yMjMxIDMxLjc2OTYsLTcxLjA1NTkgNzAuOTQ0NSwtNzEuMDU1OSAzOS4yMDQ1LDAgNzAuOTY5NSwzMS44MzI4IDcwLjk2OTUsNzEuMDU1OSB2IDE1Ljc5OTkgaCAtNDIuMDY2OCB2IC0xNS43OTk5IGMgMCwtMTUuOTgzIC0xMi45MzMxLC0yOC45MzYgLTI4LjkwMjcsLTI4LjkzNiAtMTUuOTY5NiwwIC0yOC44OTc1LDEyLjk1MyAtMjguODk3NSwyOC45MzYgdiAxOC40MzYyIGMgMCwxMS43OCA3LjEzMDgsMjIuMzg1OSAxOC4wNDU3LDI2LjgwNzkgbCAzNy41MDM5LDE1LjIyNTYgYyAyNi43OTgyLDEwLjg2NjcgNDQuMzE3NCwzNi45MTA1IDQ0LjMxNzQsNjUuODY2MjcgdiAzMS41NzcxIGMgMCwzOS4yMjc5IC0zMS43NjUsNzEuMDMxMSAtNzAuOTY5NSw3MS4wMzExIGggLTIuNjM1OSBjIC0zOS4xNzQ5LDAgLTcwLjk0NDgsLTMxLjgwMzIgLTcwLjk0NDgsLTcxLjAzMTEiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCiAgICAgICAgIHNvZGlwb2RpOm5vZGV0eXBlcz0iY2Nzc3Nzc2Njc3Nzc2Njc3Nzc2Njc3Nzc2MiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlkPSJwYXRoODMxIgogICAgICAgICBzdHlsZT0iZm9udC1zdHlsZTpub3JtYWw7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zdHJldGNoOm5vcm1hbDtmb250LXNpemU6NDQxLjgyNjIwMjM5cHg7bGluZS1oZWlnaHQ6MDtmb250LWZhbWlseTonRElOIDE0NTEgRW5nc2NocmlmdCc7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjonRElOIDE0NTEgRW5nc2NocmlmdCc7bGV0dGVyLXNwYWNpbmc6LTAuMDA3OTM3NXB4O3dvcmQtc3BhY2luZzowcHg7ZmlsbDojZmZmZmZmO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDoxLjIzNTI0ODY4IgogICAgICAgICBkPSJtIDM2OC4zNjA5NiwtODc5LjQ3NjQzIHYgLTI1Mi43MDAwNyBoIDQ5LjkgdiAtNDIgaCAtMTQxLjggdiA0MiBoIDQ5LjkgdiAyNTIuNzAwMDcgeiIKICAgICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKICAgICAgICAgc29kaXBvZGk6bm9kZXR5cGVzPSJjY2NjY2NjY2MiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCiAgICAgICAgIGlkPSJwYXRoODQxIgogICAgICAgICBkPSJtIDUzMC4zNjA4NiwtMTE3Ni44MjY3IGMgLTM5LjI3ODUsMCAtNzAuOSwzMS42MjE1IC03MC45LDcwLjkwMDEgdiAxNTguMjAwMDcgYyAwLDM5LjI3ODYgMzEuNjIxNSw3MC45MDAxIDcwLjksNzAuOTAwMSAzOS4yNzg2LDAgNzAuOTAwMSwtMzEuNjIxNSA3MC45MDAxLC03MC45MDAxIHYgLTE1OC4yMDAwNyBjIDAsLTM5LjI3ODYgLTMxLjYyMTUsLTcwLjkwMDEgLTcwLjkwMDEsLTcwLjkwMDEgeiBtIDAsNDIgYyAxNi4wMTA2LDAgMjguOTAwMSwxMi44ODk1IDI4LjkwMDEsMjguOTAwMSB2IDE1OC4yMDAwNyBjIDAsMTYuMDEwNiAtMTIuODg5NSwyOC45MDAxIC0yOC45MDAxLDI4LjkwMDEgLTE2LjAxMDUsMCAtMjguOSwtMTIuODg5NSAtMjguOSwtMjguOTAwMSB2IC0xNTguMjAwMDcgYyAwLC0xNi4wMTA2IDEyLjg4OTUsLTI4LjkwMDEgMjguOSwtMjguOTAwMSB6IgogICAgICAgICBzdHlsZT0iZm9udC1zdHlsZTpub3JtYWw7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zdHJldGNoOm5vcm1hbDtmb250LXNpemU6NDQxLjgyNjIwMjM5cHg7bGluZS1oZWlnaHQ6MDtmb250LWZhbWlseTonRElOIDE0NTEgRW5nc2NocmlmdCc7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjonRElOIDE0NTEgRW5nc2NocmlmdCc7bGV0dGVyLXNwYWNpbmc6LTAuMDA3OTM3NXB4O3dvcmQtc3BhY2luZzowcHg7b3BhY2l0eToxO2ZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MC4wNTc5ODQ5OTtzdHJva2UtbGluZWNhcDpzcXVhcmU7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxO3BhaW50LW9yZGVyOnN0cm9rZSBmaWxsIG1hcmtlcnMiIC8+CiAgICAgIDxwYXRoCiAgICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZTo0NDEuODI2MjAyMzlweDtsaW5lLWhlaWdodDowO2ZvbnQtZmFtaWx5OidESU4gMTQ1MSBFbmdzY2hyaWZ0JzstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOidESU4gMTQ1MSBFbmdzY2hyaWZ0JztsZXR0ZXItc3BhY2luZzotMC4wMDc5Mzc1cHg7d29yZC1zcGFjaW5nOjBweDtmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjEuMjM1NjU5NDgiCiAgICAgICAgIGQ9Im0gNzI2LjgzNzU1LC05OTUuMjQ2NjMgYyA2OC42ODUyNSwwIDY4LjMyMzQ2LC02OC40MDUwNyA2OC4zMjM0NiwtNjguNDA1MDcgdiAtNDIuMTE5NCBjIDAsMCAwLjM2MTc5LC02OC40MDUxIC02OC4zMjM0NiwtNjguNDA1MSBoIC02OC4zMjY1OSB2IDI5NC42OTk3NyBoIDQyLjA2IHYgLTExNS43NzAyIHogbSAwLC00Mi4xNjE2NyBoIC0yNi4yNjY1OSB2IC05NC42MDYxIGggMjYuMjY2NTkgYyAyNi4zOTYyNiwwIDI2LjUyMzQ3LDI2LjI0MzMgMjYuNTIzNDcsMjYuMjQzMyB2IDQyLjExOTQgYyAwLDAgLTAuMTI3MjEsMjYuMjQzNCAtMjYuNTIzNDcsMjYuMjQzNCB6IgogICAgICAgICBpZD0icGF0aDg1MiIKICAgICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKICAgICAgICAgc29kaXBvZGk6bm9kZXR5cGVzPSJzY2NzY2NjY3NzY2NzY2NzIiAvPgogICAgPC9nPgogIDwvZz4KPC9zdmc+Cg==">
+    </icon>
+
+    <icon
+        id="withdrawal.svg"
+        data-url="PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgoKPHN2ZwogICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHZlcnNpb249IjEuMCIKICAgd2lkdGg9IjE5MiIKICAgaGVpZ2h0PSIxOTIiCiAgIGlkPSJTdGFyIG9mIGxpZmUiPgogIDxkZWZzCiAgICAgaWQ9ImRlZnMyODg2IiAvPgogIDxnCiAgICAgaWQ9ImNyb3NzIj4KICAgIDxwYXRoCiAgICAgICBkPSJtIDc0LDEzMyAwLDUyIDQ0LDAgMCwtNTIgNDQsMjYgMjIsLTM4IEwgMTQwLDk2IDE4NCw3MCAxNjIsMzIgMTE3LDU4IDExNyw3IDc0LDcgNzQsNTggMzAsMzIgOCw3MCA1Miw5NiA4LDEyMSAzMCwxNTkgeiIKICAgICAgIGlkPSJvdXRsaW5lIgogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzMzMzNiYjtzdHJva2Utd2lkdGg6NiIgLz4KICAgIDxwYXRoCiAgICAgICBkPSJtIDc0LDEzMyAwLDUyIDQ0LDAgMCwtNTIgNDQsMjYgMjIsLTM4IEwgMTQwLDk2IDE4NCw3MCAxNjIsMzIgMTE3LDU4IDExNyw3IDc0LDcgNzQsNTggMzAsMzIgOCw3MCA1Miw5NiA4LDEyMSAzMCwxNTkgeiIKICAgICAgIGlkPSJpbm5lciIKICAgICAgIHN0eWxlPSJmaWxsOiMwMDAwYmI7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOiNmZmZmZmY7c3Ryb2tlLXdpZHRoOjIiIC8+CiAgPC9nPgogIDxnCiAgICAgaWQ9InN5bWJvbHMiCiAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6IzMzMzNiYjtzdHJva2Utd2lkdGg6MiI+CiAgICA8cGF0aAogICAgICAgZD0ibSA5MywxNjYgYyAwLDcgNiw3IDYsMCBsIDMsLTEzOCBjIDAsLTggLTEyLC04IC0xMiwwIGwgMywxMzUgMCwzIHoiCiAgICAgICBpZD0icm9kIiAvPgogICAgPGcKICAgICAgIGlkPSJzbmFrZSI+CiAgICAgIDxwYXRoCiAgICAgICAgIGQ9Im0gMTAwLDE1MyBjIDcsNCAzLDE1IC0zLDE1IDIsLTUgMywtOSAzLC0xNSB6IG0gMSwtNDAgYyAxMCw5IDQsMjIgLTMsMjYgLTYsMyAtNiw3IC02LDE1IC05LC0xMCAtNCwtMTkgNCwtMjQgNSwtNCA1LC0xMCA1LC0xNyB6IG0gMSwtMzAgYyAwLDExIC0xNywxNCAtMTcsMjIgMCwzIDEsOSA2LDEyIDAsLTExIDksLTEyIDE1LC0xOCA3LC03IDcsLTE5IC00LC0yOCAwLDQgMCw4IDAsMTIgeiBNIDkwLDc3IEMgODAsNjkgNzYsNTUgODAsNDYgYyAzLC0xMCAyMCwtMTEgMjAsLTMgMCw4IC0yMCwzIC0xMywxNiBsIDMsNSAwLDEzIHoiCiAgICAgICAgIGlkPSJib2R5IiAvPgogICAgICA8cGF0aAogICAgICAgICBkPSJtIDk1LDQzIGMgNywtMyAtNywtMyAwLDAgeiIKICAgICAgICAgaWQ9ImV5ZSIKICAgICAgICAgc3R5bGU9ImZpbGw6IzMzMzNiYjtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6bm9uZSIgLz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPgo=">
+    </icon>
+
     <style>
       * {
         box-sizing: border-box;
@@ -12,10 +23,9 @@
 
       .aspect-ratio {
         width: 100vw; 
-        height: 56.25vw; /* height:width ratio = 9/16 = .5625  */
-        background: pink;
+        max-width: 59.00vh; /* height:width ratio */
         max-height: 100vh;
-        max-width: 177.78vh; /* 16/9 = 1.778 */
+        height: 168.00vw; /* height:width ratio */
         margin: auto;
         position: absolute;
         top:0;bottom:0; /* vertical center */
@@ -25,6 +35,16 @@
       body {
         font-family: Arial, Helvetica, sans-serif;
         background-color: grey;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none;   /* Chrome 6.0+, Safari 3.1+, Edge & Opera 15+ */
+        -moz-user-select: none;      /* Firefox */
+        -ms-user-select: none;       /* IE 10+ and Edge */
+        user-select: none;           /* Non-prefixed version, 
+                                        currently supported by Chrome and Opera */
+      }
+
+      .row {
+        height:1%;
       }
 
       .score {
@@ -32,6 +52,26 @@
         text-align: center;
       }
 
+      .competition {
+        font-size: 3vh;
+        text-align: center;
+      }
+
+      .fencer-name {
+        font-size: 5vh;
+        text-align: center;
+      }
+
+      .fencer-firstname {
+        font-size: 2vh;
+        text-align: center;
+      }
+
+      td img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
     </style>
   </head>
 
@@ -39,9 +79,8 @@
   <script>
     var path   = location.pathname;
     var socket = new WebSocket ("ws://" + document.domain + ':' + location.port, "smartpoule");
-    var red_score
-    var green_score
 
+    !function(e,t){"use strict";var n=null,a="ontouchstart"in e||navigator.MaxTouchPoints>0||navigator.msMaxTouchPoints>0,i=a?"touchstart":"mousedown",o=a?"touchend":"mouseup",m=a?"touchmove":"mousemove",u=0,r=0,s=10,c=10;function l(i){v(i);var m=i.target,u=parseInt(m.getAttribute("data-long-press-delay")||"1500",10);n=function(t,n){if(!(e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame&&e.mozCancelRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame))return e.setTimeout(t,n);var a=(new Date).getTime(),i={},o=function(){(new Date).getTime()-a>=n?t.call():i.value=requestAnimFrame(o)};return i.value=requestAnimFrame(o),i}(function(e){v();var n=a?e.touches[0].clientX:e.clientX,i=a?e.touches[0].clientY:e.clientY;this.dispatchEvent(new CustomEvent("long-press",{bubbles:!0,cancelable:!0,detail:{clientX:n,clientY:i}}))&&t.addEventListener(o,function e(n){t.removeEventListener(o,e,!0),function(e){e.stopImmediatePropagation(),e.preventDefault(),e.stopPropagation()}(n)},!0)}.bind(m,i),u)}function v(t){var a;(a=n)&&(e.cancelAnimationFrame?e.cancelAnimationFrame(a.value):e.webkitCancelAnimationFrame?e.webkitCancelAnimationFrame(a.value):e.webkitCancelRequestAnimationFrame?e.webkitCancelRequestAnimationFrame(a.value):e.mozCancelRequestAnimationFrame?e.mozCancelRequestAnimationFrame(a.value):e.oCancelRequestAnimationFrame?e.oCancelRequestAnimationFrame(a.value):e.msCancelRequestAnimationFrame?e.msCancelRequestAnimationFrame(a.value):clearTimeout(a)),n=null}"function"!=typeof e.CustomEvent&&(e.CustomEvent=function(e,n){n=n||{bubbles:!1,cancelable:!1,detail:void 0};var a=t.createEvent("CustomEvent");return a.initCustomEvent(e,n.bubbles,n.cancelable,n.detail),a},e.CustomEvent.prototype=e.Event.prototype),e.requestAnimFrame=e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame||function(t){e.setTimeout(t,1e3/60)},t.addEventListener(o,v,!0),t.addEventListener(m,function(e){var t=Math.abs(u-e.clientX),n=Math.abs(r-e.clientY);(t>=s||n>=c)&&v()},!0),t.addEventListener("wheel",v,!0),t.addEventListener("scroll",v,!0),t.addEventListener(i,function(e){u=e.clientX,r=e.clientY,l(e)},!0)}(window,document);
 
     // -- Competition --------------------
     class Competition {
@@ -62,7 +101,7 @@
         var xml_doc = parser.parseFromString (xml, 'text/xml');
 
         var competition = new Competition (xml_doc);
-        document.getElementById ('match').style.background = competition.get ('Couleur')
+        document.getElementById ('root').style.background = competition.get ('Couleur')
 
         console.log (this)
       }
@@ -72,11 +111,15 @@
     // -- Score --------------------
     class Score {
       constructor (color) {
-        this.color = color;
+        this.color   = color;
+        this.freezed = false;
+        var context  = this;
 
         this.light = document.getElementById (color + '_light');
-        this.light.onclick = Score.onClicked;
-        this.light.score   = this
+        this.light.score   = this;
+
+        this.light.onclick = function () {Score.onClicked (context);};
+        this.light.addEventListener ('long-press', function (e) {Score.onLongPress (context, e);});
 
         this.reset ()
       }
@@ -86,8 +129,8 @@
         this.refresh ();
       }
 
-      increment () {
-        this.points += 1;
+      increment (delta) {
+        this.points += delta;
         this.refresh ();
       }
 
@@ -95,10 +138,99 @@
         this.light.children[0].innerHTML = this.points
       }
 
-      static onClicked () {
-        this.score.increment ();
+      static onClicked (what) {
+        if (what.freezed == false) {
+          what.increment (1);
+        }
+        what.freezed = false;
+      }
+
+      static onLongPress (what, e) {
+        e.preventDefault ();
+        what.freezed = true;
+        what.reset ();
       }
     };
+
+
+    // -- Fencer --------------------
+    class Fencer {
+      constructor (color) {
+        this.color   = color;
+        this.freezed = false;
+
+        this.score = new Score (color);
+
+        this.addIdentityPanel ('name')
+        this.addIdentityPanel ('firstname')
+        this.addPointsPanel   ()
+        this.addCardsPanel    ()
+      }
+
+      addIdentityPanel (what) {
+        var lastRow = document.getElementById (what + 's.panel');
+        var cell    = lastRow.insertCell (-1);
+        var html    = "";
+
+        html += "<td>";
+        html += "  <div class='fencer-" + what + "'>";
+        html +=     what;
+        html += "  </div>";
+        html += "</td>";
+        cell.innerHTML = html;
+
+        cell.colSpan = 3;
+      }
+
+      addPointsPanel () {
+        var context = this;
+        var lastRow = document.getElementById ('points.panel');
+
+        for (let p = 1; p < 4; p++) {
+          var cell = lastRow.insertCell (-1);
+          var html = "";
+
+          html += "<td>";
+          html += "  <div class='fencer-name'>";
+          html +=     p;
+          html += "  </div>";
+          html += "</td>";
+          cell.innerHTML = html;
+          cell.onclick = function () {Fencer.onPoints (context, p);};
+          cell.addEventListener ('long-press', function (e) {Fencer.onLongPress (context, e, p);});
+        }
+      }
+
+      addCardsPanel () {
+        var svg        = document.getElementById ('withdrawal.svg');
+        var lastRow    = document.getElementById ('cards.panel');
+        var withdrawal = lastRow.insertCell (-1);
+        var victory    = lastRow.insertCell (-1);
+        var excluded   = lastRow.insertCell (-1);
+        var size;
+
+        victory.innerHTML = "<td><div class='fencer-name'>V</div></td>";
+        size = victory.getBoundingClientRect().height;
+
+        withdrawal.innerHTML = "<td><img src='data:image/svg+xml;base64," + svg.dataset.url + "' width='" + size + "'/></td>";
+
+        svg = document.getElementById ('blackcard.svg');
+        excluded.innerHTML = "<td><img src='data:image/svg+xml;base64," + svg.dataset.url + "' width='" + size + "'/></td>";
+      }
+
+      static onPoints (what, points) {
+        if (what.freezed == false) {
+          what.score.increment (points);
+        }
+        what.freezed = false;
+      }
+
+      static onLongPress (what, e, points) {
+        e.preventDefault ();
+        what.freezed = true;
+        what.score.increment (-points);
+      }
+    }
 
 
     // -- Socket -------------------
@@ -106,8 +238,8 @@
     {
       console.log ('socket open ' + 'ws://' + document.domain + ':' + location.port, 'smartpoule');
 
-      red_score   = new Score ('red')
-      green_score = new Score ('green')
+      red_fencer   = new Fencer ('red');
+      green_fencer = new Fencer ('green');
 
       socket.send (path);
     }
@@ -132,21 +264,32 @@
 
   <!--***********************************-->
   <body>
-
-    <table class='aspect-ratio' Border = '0' height='100%' Cellpadding = '5' Cellspacing = '5'>
-      <tr>
-        <td id='match' Colspan = '2' Align = 'Center'>
-          <div class='score'>5</div>
+    <table id='root' class='aspect-ratio' Cellspacing='0'>
+      <tr class='row'>
+        <td colspan='6' Align='Center'>
+          <div class='competition'>Weapon Gender Category</div>
         </td>
       </tr>
 
-      <tr>
-        <td id='red_light' style='background-color:#8F1818'>
+      <tr class='row' id='names.panel'></tr>
+
+      <tr class='row' id='firstnames.panel'></tr>
+
+      <tr class='row'>
+        <td id='red_light' colspan='3' style='background-color:#8F1818'>
           <div class='score'>5</div>
         </td>
-        <td id='green_light' style='background-color:#098709'>
+        <td id='green_light' colspan='3' style='background-color:#098709'>
           <div class='score'>4</div>
         </td>
+      </tr>
+
+      <tr class='row' id='points.panel'></tr>
+
+      <tr class='row' id='cards.panel'></tr>
+
+      <tr>
+        <td bgcolor='pink' Colspan='6'/>
       </tr>
     </table>
 
