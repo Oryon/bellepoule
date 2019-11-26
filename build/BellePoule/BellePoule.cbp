@@ -534,6 +534,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/splitting/splitting.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/round.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/round.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/html_table.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
@@ -834,10 +840,10 @@
 		<Unit filename="../../sources/common/network/web_server.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-    <Unit filename="../../sources/common/network/webapp/webapp_server.cpp">
+		<Unit filename="../../sources/common/network/webapp/webapp_server.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-    <Unit filename="../../sources/common/network/webapp/webapp_server.hpp">
+		<Unit filename="../../sources/common/network/webapp/webapp_server.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/wifi_network.cpp">

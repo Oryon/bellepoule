@@ -323,6 +323,10 @@ Contest::Contest (GList    *advertisers,
                                       weapon->GetImage ());
       current = g_list_next (current);
     }
+
+    g_signal_connect (G_OBJECT (_weapon_combo), "changed",
+                      G_CALLBACK (OnWeaponChanged),
+                      this);
   }
 
   {
@@ -2253,6 +2257,24 @@ void Contest::TweetFeeder (Net::Advertiser::Feeder *feeder)
     g_list_foreach (_advertisers,
                     (GFunc) Net::Advertiser::TweetFeeder,
                     feeder);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::OnWeaponChanged (GtkComboBox *combobox,
+                               Contest      *contest)
+{
+  Weapon *weapon = Weapon::GetFromIndex (gtk_combo_box_get_active (combobox));
+
+  if (weapon->GetXmlImage ()[0] == 'L')
+  {
+    contest->_schedule->Mutate ("TourDePoules",
+                                "RondeSuisse");
+  }
+  else
+  {
+    contest->_schedule->Mutate ("RondeSuisse",
+                                "TourDePoules");
   }
 }
 

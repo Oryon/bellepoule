@@ -238,6 +238,9 @@ class Contest : public Module
 
     void SetFilename (gchar *filename);
 
+    static void OnWeaponChanged (GtkComboBox *combobox,
+                                 Contest     *contest);
+
   private:
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context) override;

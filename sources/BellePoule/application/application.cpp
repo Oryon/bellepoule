@@ -250,6 +250,7 @@ void Application::Prepare ()
 {
   // Weapon
   {
+    new Weapon (gettext ("Laser"), "L", "L", 30);
     new Weapon (gettext ("Educ"),  "X", "S", 30);
     new Weapon (gettext ("Foil"),  "F", "F", 30);
     new Weapon (gettext ("Epée"),  "E", "E", 30);

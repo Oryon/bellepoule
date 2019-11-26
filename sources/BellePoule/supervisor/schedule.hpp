@@ -70,6 +70,9 @@ class Schedule : public Module,
 
     void ApplyNewConfig ();
 
+    void Mutate (const gchar *from,
+                 const gchar *to);
+
     void SetScoreStuffingPolicy (gboolean allowed);
     gboolean ScoreStuffingIsAllowed ();
 
