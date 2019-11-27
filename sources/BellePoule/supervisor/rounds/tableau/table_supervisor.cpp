@@ -632,11 +632,14 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Supervisor::LoadConfiguration (xmlNode *xml_node)
   {
-    Stage::LoadConfiguration (xml_node);
-
-    if (_fenced_places)
+    if (xml_node)
     {
-      _fenced_places->Load (xml_node);
+      Stage::LoadConfiguration (xml_node);
+
+      if (_fenced_places)
+      {
+        _fenced_places->Load (xml_node);
+      }
     }
   }
 

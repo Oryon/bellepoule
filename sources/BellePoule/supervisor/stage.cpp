@@ -360,6 +360,8 @@ void Stage::FillInConfig ()
 
   if (module)
   {
+    InitQualifiedForm ();
+
     {
       GtkEntry *w = GTK_ENTRY (module->GetGObject ("name_entry"));
 
@@ -1318,8 +1320,6 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
                     "Classement");
     }
   }
-
-  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------

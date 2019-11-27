@@ -20,6 +20,8 @@
 
 #include "../../stage.hpp"
 
+class Data;
+
 namespace Swiss
 {
   class Round : public Stage,
@@ -35,7 +37,19 @@ namespace Swiss
       static const gchar *_xml_class_name;
 
     private:
+      Data *_matches_per_fencer;
+
       ~Round () override;
+
+      void Load (xmlNode *xml_node) override;
+
+      void SaveConfiguration (XmlScheme *xml_scheme) override;
+
+      void LoadConfiguration (xmlNode *xml_node) override;
+
+      void FillInConfig () override;
+
+      void ApplyConfig () override;
 
       static Stage *CreateInstance (StageClass *stage_class);
   };

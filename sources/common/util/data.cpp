@@ -88,6 +88,7 @@ gboolean Data::Load (xmlNode *xml_node)
 
   SetString (prop);
 
+  _valid = FALSE;
   if (_string)
   {
     _value = (guint) atoi (_string);
