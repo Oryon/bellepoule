@@ -297,7 +297,7 @@ namespace Pool
   {
     Net::Ring::_broker->UnregisterPartnerListener (this);
 
-    DeletePools ();
+    Reset ();
 
     _max_score->Release        ();
     _swapping->Release         ();

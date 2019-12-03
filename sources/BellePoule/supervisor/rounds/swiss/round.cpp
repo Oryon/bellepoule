@@ -18,6 +18,7 @@
 #include "util/glade.hpp"
 #include "util/attribute_desc.hpp"
 #include "util/filter.hpp"
+#include "../../match.hpp"
 
 #include "round.hpp"
 
@@ -30,8 +31,10 @@ namespace Swiss
   Round::Round (StageClass *stage_class)
     : Object ("Swiss::Round"),
       Stage (stage_class),
-      Module ("swiss_supervisor.glade")
+      People::PlayersList ("swiss_supervisor.glade", NO_RIGHT)
   {
+    _matches = nullptr;
+
     _max_score = new Data ("ScoreMax",
                            15);
 
@@ -95,6 +98,8 @@ namespace Swiss
   {
     _max_score->Release ();
     _matches_per_fencer->Release ();
+
+    Reset ();
   }
 
   // --------------------------------------------------------------------------------
@@ -104,6 +109,29 @@ namespace Swiss
                         _xml_class_name,
                         CreateInstance,
                         EDITABLE|REMOVABLE);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::Reset ()
+  {
+    for (GList *m = _matches; m; m = g_list_next (m))
+    {
+      Match *match = (Match *) m->data;
+
+      for (guint i = 0; i < 2; i++)
+      {
+        Player *fencer  = match->GetOpponent (i);
+        GList  *matches = (GList *) fencer->GetPtrData (this, "Matches");
+
+        FreeFullGList (Match,
+                       matches);
+
+        fencer->RemoveData (this, "Matches");
+      }
+    }
+
+    g_list_free (_matches);
+    _matches = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -177,5 +205,104 @@ namespace Swiss
         }
       }
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::Garnish ()
+  {
+    GSList *fencers            = GetShortList ();
+    guint   fencer_count       = g_slist_length (fencers);
+    guint   matches_per_fencer = MIN (_matches_per_fencer->_value, fencer_count-1);
+
+    for (GSList *f = fencers; f; f = g_slist_next (f))
+    {
+      Player *fencer  = (Player *) f->data;
+      GList  *matches = (GList *) fencer->GetPtrData (this, "Matches");
+
+      for (guint match_count = g_list_length (matches);
+                 match_count < matches_per_fencer;
+                 match_count++)
+      {
+        guint32 toss = g_random_int_range (0, fencer_count-1);
+
+        for (GSList *o = g_slist_nth (fencers, toss);
+             o != nullptr;
+             o = GetNext (fencers, o))
+        {
+          Player *opponent = (Player *) o->data;
+
+          if ((opponent != fencer) && FencerHasMatch (opponent,
+                                                      matches) == FALSE)
+          {
+            Match *match = new Match (fencer,
+                                      opponent,
+                                      _max_score);
+
+            matches = g_list_prepend (matches,
+                                      match);
+
+            {
+              GList *opponent_matches = (GList *) opponent->GetPtrData (this, "Matches");
+
+              opponent_matches = g_list_prepend (opponent_matches,
+                                                 match);
+              match->Retain ();
+              opponent->SetData (this, "Matches",
+                                 opponent_matches);
+            }
+
+            _matches = g_list_prepend (_matches,
+                                       match);
+            break;
+          }
+        }
+      }
+      fencer->SetData (this, "Matches",
+                       matches);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::Display ()
+  {
+    for (GSList *current = GetShortList (); current; current = g_slist_next (current))
+    {
+      Add ((Player *) current->data);
+    }
+
+    OnAttrListUpdated ();
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Round::FencerHasMatch (Player *fencer,
+                                  GList  *matches)
+  {
+    for (GList *m = matches; m; m = g_list_next (m))
+    {
+      Match *match = (Match *) m->data;
+
+      for (guint i = 0; i < 2; i++)
+      {
+        if (match->GetOpponent (i) == fencer)
+        {
+          return TRUE;
+        }
+      }
+    }
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  GSList *Round::GetNext (GSList *in,
+                          GSList *from)
+  {
+    GSList *next = g_slist_next (from);
+
+    if (next == nullptr)
+    {
+      next = in;
+    }
+
+    return next;
   }
 }

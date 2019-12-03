@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 
+#include "actors/players_list.hpp"
 #include "../../stage.hpp"
 
 class Data;
@@ -25,7 +26,7 @@ class Data;
 namespace Swiss
 {
   class Round : public Stage,
-                public Module
+                public People::PlayersList
   {
     public:
       static void Declare ();
@@ -37,7 +38,8 @@ namespace Swiss
       static const gchar *_xml_class_name;
 
     private:
-      Data *_matches_per_fencer;
+      Data  *_matches_per_fencer;
+      GList *_matches;
 
       ~Round () override;
 
@@ -50,6 +52,18 @@ namespace Swiss
       void FillInConfig () override;
 
       void ApplyConfig () override;
+
+      void Garnish () override;
+
+      void Reset () override;
+
+      void Display () override;
+
+      GSList *GetNext (GSList *in,
+                       GSList *from);
+
+      gboolean FencerHasMatch (Player *fencer,
+                               GList  *matches);
 
       static Stage *CreateInstance (StageClass *stage_class);
   };
