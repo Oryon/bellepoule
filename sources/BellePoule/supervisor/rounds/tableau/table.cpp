@@ -29,11 +29,10 @@
 namespace Table
 {
   // --------------------------------------------------------------------------------
-  Table::Table (TableSet    *table_set,
-                const gchar *xml_player_tag,
-                guint        first_place,
-                guint        size,
-                guint        number,
+  Table::Table (TableSet *table_set,
+                guint     first_place,
+                guint     size,
+                guint     number,
                 ...)
     : Object ("Table")
   {
@@ -53,7 +52,6 @@ namespace Table
     _loaded             = FALSE;
     _node_table         = g_new (GNode *, _size);
     _free_node_index    = 0;
-    _xml_player_tag     = xml_player_tag;
     _mini_name          = g_strdup_printf ("T%d", _size);
 
     _match_list = nullptr;
@@ -464,11 +462,20 @@ namespace Table
                 id++;
                 if (g_strcmp0 (id, number) == 0)
                 {
+                  Stage *stage = _table_set->GetStage ();
+
                   match->ChangeIdChain (_parcel->GetNetID (),
                                         netid);
 
-                  LoadMatch (n,
-                             match);
+                  stage->LoadMatch (n,
+                                    match);
+
+                  for (guint i = 0; i < 2; i++)
+                  {
+                    _table_set->SetPlayerToMatch (match,
+                                                  match->GetOpponent (i),
+                                                  i);
+                  }
                   break;
                 }
               }
@@ -484,131 +491,6 @@ namespace Table
         }
       }
       Load (n->children);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Table::LoadMatch (xmlNode *xml_node,
-                         Match   *match)
-  {
-    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
-    {
-      if (n->type == XML_ELEMENT_NODE)
-      {
-        static xmlNode *A = nullptr;
-        static xmlNode *B = nullptr;
-
-        if (g_strcmp0 ((char *) n->name, "Match") == 0)
-        {
-          gchar *attr;
-
-          A = nullptr;
-          B = nullptr;
-
-          attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
-          if ((attr == nullptr) || (atoi (attr) != match->GetNumber ()))
-          {
-            xmlFree (attr);
-            return;
-          }
-          xmlFree (attr);
-
-          attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Piste");
-          if (attr)
-          {
-            match->SetPiste (atoi (attr));
-            xmlFree (attr);
-          }
-
-          {
-            gchar *date = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
-            gchar *time = (gchar *) xmlGetProp (xml_node, BAD_CAST "Heure");
-
-            if (date && time)
-            {
-              match->SetStartTime (new FieTime (date, time));
-            }
-
-            xmlFree (date);
-            xmlFree (time);
-          }
-
-          attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Duree");
-          if (attr)
-          {
-            match->SetDuration (atoi (attr));
-            xmlFree (attr);
-          }
-
-          attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Portee");
-          if (attr)
-          {
-            match->SetDurationSpan (atoi (attr));
-            xmlFree (attr);
-          }
-        }
-        else if (g_strcmp0 ((char *) n->name, "Arbitre") == 0)
-        {
-          gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
-
-          if (attr)
-          {
-            _table_set->AddReferee (match,
-                                    atoi (attr));
-            xmlFree (attr);
-          }
-        }
-        else if (g_strcmp0 ((char *) n->name, _xml_player_tag) == 0)
-        {
-          if (A == nullptr)
-          {
-            A = n;
-          }
-          else
-          {
-            B = n;
-
-            {
-              Player *fencer_a = nullptr;
-              Player *fencer_b = nullptr;
-              gchar  *attr;
-
-              attr = (gchar *) xmlGetProp (A, BAD_CAST "REF");
-              if (attr)
-              {
-                fencer_a = _table_set->GetFencerFromRef (atoi (attr));
-                xmlFree (attr);
-              }
-
-              attr = (gchar *) xmlGetProp (B, BAD_CAST "REF");
-              if (attr)
-              {
-                fencer_b = _table_set->GetFencerFromRef (atoi (attr));
-                xmlFree (attr);
-              }
-
-              if (fencer_a && fencer_b)
-              {
-                match->Load (A, fencer_a,
-                             B, fencer_b);
-
-                _table_set->SetPlayerToMatch (match,
-                                              fencer_a,
-                                              0);
-                _table_set->SetPlayerToMatch (match,
-                                              fencer_b,
-                                              1);
-              }
-            }
-
-            A = nullptr;
-            B = nullptr;
-            return;
-          }
-        }
-        LoadMatch (n->children,
-                   match);
-      }
     }
   }
 

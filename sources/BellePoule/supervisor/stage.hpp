@@ -26,6 +26,7 @@
 #include "error.hpp"
 
 class Player;
+class Match;
 class Classification;
 class Filter;
 class Contest;
@@ -187,6 +188,9 @@ class Stage : public virtual Object,
     static StageClass *GetClass (guint index);
 
     static Stage *CreateInstance (const gchar *name);
+
+    void LoadMatch (xmlNode *xml_node,
+                    Match   *match);
 
   protected:
     Attendees *_attendees;

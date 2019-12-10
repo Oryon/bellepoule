@@ -24,12 +24,14 @@
 #include "util/filter.hpp"
 #include "util/data.hpp"
 #include "util/xml_scheme.hpp"
+#include "util/fie_time.hpp"
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
 #include "attendees.hpp"
 #include "classification.hpp"
 #include "contest.hpp"
 #include "book/section.hpp"
+#include "match.hpp"
 
 #include "stage.hpp"
 
@@ -1318,6 +1320,125 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
 
       filter->Load (xml_node,
                     "Classement");
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage::LoadMatch (xmlNode *xml_node,
+                       Match   *match)
+{
+  for (xmlNode *n = xml_node; n != nullptr; n = n->next)
+  {
+    if (n->type == XML_ELEMENT_NODE)
+    {
+      static xmlNode *A = nullptr;
+      static xmlNode *B = nullptr;
+
+      if (g_strcmp0 ((char *) n->name, "Match") == 0)
+      {
+        gchar *attr;
+
+        A = nullptr;
+        B = nullptr;
+
+        attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+        if ((attr == nullptr) || (atoi (attr) != match->GetNumber ()))
+        {
+          xmlFree (attr);
+          return;
+        }
+        xmlFree (attr);
+
+        attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Piste");
+        if (attr)
+        {
+          match->SetPiste (atoi (attr));
+          xmlFree (attr);
+        }
+
+        {
+          gchar *date = (gchar *) xmlGetProp (xml_node, BAD_CAST "Date");
+          gchar *time = (gchar *) xmlGetProp (xml_node, BAD_CAST "Heure");
+
+          if (date && time)
+          {
+            match->SetStartTime (new FieTime (date, time));
+          }
+
+          xmlFree (date);
+          xmlFree (time);
+        }
+
+        attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Duree");
+        if (attr)
+        {
+          match->SetDuration (atoi (attr));
+          xmlFree (attr);
+        }
+
+        attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Portee");
+        if (attr)
+        {
+          match->SetDurationSpan (atoi (attr));
+          xmlFree (attr);
+        }
+      }
+      else if (g_strcmp0 ((char *) n->name, "Arbitre") == 0)
+      {
+        gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+
+        if (attr)
+        {
+          Player *referee = _contest->GetRefereeFromRef (atoi (attr));
+
+          match->AddReferee (referee);
+          xmlFree (attr);
+        }
+      }
+      else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
+      {
+        if (A == nullptr)
+        {
+          A = n;
+        }
+        else
+        {
+          B = n;
+
+          {
+            Player *fencer_a = nullptr;
+            Player *fencer_b = nullptr;
+            gchar  *attr;
+
+            attr = (gchar *) xmlGetProp (A, BAD_CAST "REF");
+            if (attr)
+            {
+              fencer_a = GetFencerFromRef (atoi (attr));
+              xmlFree (attr);
+            }
+
+            attr = (gchar *) xmlGetProp (B, BAD_CAST "REF");
+            if (attr)
+            {
+              fencer_b = GetFencerFromRef (atoi (attr));
+              xmlFree (attr);
+            }
+
+            if (fencer_a && fencer_b)
+            {
+              match->Load (A, fencer_a,
+                           B, fencer_b);
+            }
+          }
+
+          A = nullptr;
+          B = nullptr;
+          return;
+        }
+      }
+      LoadMatch (n->children,
+                 match);
     }
   }
 }

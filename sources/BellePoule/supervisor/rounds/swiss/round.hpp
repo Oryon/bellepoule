@@ -18,7 +18,7 @@
 
 #include <gtk/gtk.h>
 
-#include "actors/players_list.hpp"
+#include "util/canvas_module.hpp"
 #include "../../stage.hpp"
 
 class Data;
@@ -26,7 +26,7 @@ class Data;
 namespace Swiss
 {
   class Round : public Stage,
-                public People::PlayersList
+                public CanvasModule
   {
     public:
       static void Declare ();
@@ -43,11 +43,17 @@ namespace Swiss
 
       ~Round () override;
 
-      void Load (xmlNode *xml_node) override;
-
       void SaveConfiguration (XmlScheme *xml_scheme) override;
 
+      void Load (xmlNode *xml_node) override;
+
       void LoadConfiguration (xmlNode *xml_node) override;
+
+      void LoadMatches (xmlNode *xml_node);
+
+      void Save (XmlScheme *xml_scheme) override;
+
+      void SaveHeader (XmlScheme *xml_scheme);
 
       void FillInConfig () override;
 

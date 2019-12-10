@@ -36,11 +36,10 @@ namespace Table
                 public Error::Provider
   {
     public:
-      Table (TableSet    *table_set,
-             const gchar *xml_player_tag,
-             guint        first_place,
-             guint        size,
-             guint        number,
+      Table (TableSet *table_set,
+             guint     first_place,
+             guint     size,
+             guint     number,
              ...);
 
       gchar *GetImage ();
@@ -124,15 +123,11 @@ namespace Table
       TableSet     *_table_set;
       GNode       **_node_table;
       guint         _free_node_index;
-      const gchar  *_xml_player_tag;
 
       ~Table () override;
 
       static gint CompareMatchNumber (Match *a,
                                       Match *b);
-
-      void LoadMatch (xmlNode *xml_node,
-                      Match   *match);
 
       void SimplifyLooserTree (GSList **list);
 

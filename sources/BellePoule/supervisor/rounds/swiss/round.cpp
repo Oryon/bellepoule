@@ -18,6 +18,8 @@
 #include "util/glade.hpp"
 #include "util/attribute_desc.hpp"
 #include "util/filter.hpp"
+#include "util/player.hpp"
+#include "util/xml_scheme.hpp"
 #include "../../match.hpp"
 
 #include "round.hpp"
@@ -31,7 +33,7 @@ namespace Swiss
   Round::Round (StageClass *stage_class)
     : Object ("Swiss::Round"),
       Stage (stage_class),
-      People::PlayersList ("swiss_supervisor.glade", NO_RIGHT)
+      CanvasModule ("swiss_supervisor.glade")
   {
     _matches = nullptr;
 
@@ -83,7 +85,6 @@ namespace Swiss
       filter = new Filter (GetKlassName (),
                            attr_list);
 
-      filter->ShowAttribute ("stage_start_rank");
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
       filter->ShowAttribute ("club");
@@ -144,6 +145,70 @@ namespace Swiss
   void Round::Load (xmlNode *xml_node)
   {
     LoadConfiguration (xml_node);
+    Garnish ();
+    LoadMatches (xml_node);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::LoadMatches (xmlNode *xml_node)
+  {
+    for (xmlNode *n = xml_node; n != nullptr; n = n->next)
+    {
+      if (n->type == XML_ELEMENT_NODE)
+      {
+        if (g_strcmp0 ((char *) n->name, _xml_class_name) == 0)
+        {
+        }
+        else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
+        {
+          LoadAttendees (n);
+        }
+        else if (g_strcmp0 ((char *) n->name, "Match") == 0)
+        {
+          gchar *number = nullptr;
+
+          {
+            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+
+            if (attr)
+            {
+              number = g_strdup (attr);
+
+              xmlFree (attr);
+            }
+          }
+
+          if (number)
+          {
+            for (GList *m = _matches; m; m = g_list_next (m))
+            {
+              Match       *match = (Match *) m->data;
+              const gchar *id    = match->GetName ();
+
+              if (id)
+              {
+                if (g_strcmp0 (id, number) == 0)
+                {
+                  for (guint i = 0; i < 2; i++)
+                  {
+                    LoadMatch (n,
+                               match);
+                  }
+                  break;
+                }
+              }
+            }
+
+            g_free (number);
+          }
+        }
+        else
+        {
+          return;
+        }
+      }
+      LoadMatches (n->children);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -166,6 +231,39 @@ namespace Swiss
     {
       _matches_per_fencer->Load (xml_node);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::SaveHeader (XmlScheme *xml_scheme)
+  {
+    xml_scheme->StartElement (_xml_class_name);
+
+    SaveConfiguration (xml_scheme);
+
+    if (_drop_zones)
+    {
+      xml_scheme->WriteFormatAttribute ("NbDePoules",
+                                        "%d", g_slist_length (_drop_zones));
+    }
+    xml_scheme->WriteFormatAttribute ("PhaseSuivanteDesQualifies",
+                                      "%d", GetId ()+2);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::Save (XmlScheme *xml_scheme)
+  {
+    SaveHeader (xml_scheme);
+
+    Stage::SaveAttendees (xml_scheme);
+
+    for (GList *m = _matches; m; m = g_list_next (m))
+    {
+      Match *match = (Match *) m->data;
+
+      match->Save (xml_scheme);
+    }
+
+    xml_scheme->EndElement ();
   }
 
   // --------------------------------------------------------------------------------
@@ -251,8 +349,9 @@ namespace Swiss
                                  opponent_matches);
             }
 
-            _matches = g_list_prepend (_matches,
-                                       match);
+            _matches = g_list_append (_matches,
+                                      match);
+            match->SetNumber (g_list_length (_matches));
             break;
           }
         }
@@ -265,12 +364,42 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Round::Display ()
   {
-    for (GSList *current = GetShortList (); current; current = g_slist_next (current))
-    {
-      Add ((Player *) current->data);
-    }
+    GooCanvasItem *root = GetRootItem ();
 
-    OnAttrListUpdated ();
+    if (root)
+    {
+      guint          row   = 0;
+      GooCanvasItem *table = goo_canvas_table_new (root,
+                                                   NULL);
+
+      for (GList *m = _matches; m; m = g_list_next (m))
+      {
+        Match *match = (Match *) m->data;
+
+        for (guint i = 0; i < 2; i++)
+        {
+          Player        *fencer = match->GetOpponent (i);
+          GooCanvasItem *image;
+
+          image = GetPlayerImage (table,
+                                  "font_desc=\"" BP_FONT "14.0px\"",
+                                  fencer,
+                                  nullptr,
+                                  "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
+                                  "first_name", "foreground=\"darkblue\"",
+                                  "club",       "style=\"italic\" foreground=\"dimgrey\"",
+                                  "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                                  "region",     "style=\"italic\" foreground=\"dimgrey\"",
+                                  "country",    "style=\"italic\" foreground=\"dimgrey\"",
+                                  NULL);
+
+          Canvas::PutInTable (table,
+                              image,
+                              row, i);
+        }
+        row++;
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

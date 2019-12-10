@@ -774,7 +774,6 @@ namespace Table
         guint size = 1 << t;
 
         _tables[t] = new Table (this,
-                                _supervisor->GetXmlPlayerTag (),
                                 _first_place,
                                 size,
                                 _nb_tables - t-1,
@@ -2294,19 +2293,9 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  Player *TableSet::GetFencerFromRef (guint ref)
+  Stage *TableSet::GetStage ()
   {
-    return _supervisor->GetFencerFromRef (ref);
-  }
-
-  // --------------------------------------------------------------------------------
-  void TableSet::AddReferee (Match *match,
-                             guint  referee_ref)
-  {
-    Contest *contest = _supervisor->GetContest ();
-    Player  *referee = contest->GetRefereeFromRef (referee_ref);
-
-    match->AddReferee (referee);
+    return _supervisor;
   }
 
   // --------------------------------------------------------------------------------

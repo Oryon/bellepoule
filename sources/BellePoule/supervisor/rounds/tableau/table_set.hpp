@@ -126,10 +126,7 @@ namespace Table
       void RemovePlayerFromMatch (Match *to_match,
                                   guint  position);
 
-      Player *GetFencerFromRef (guint ref);
-
-      void AddReferee (Match *match,
-                       guint  referee_ref);
+      Stage *GetStage ();
 
       guint GetNbTables ();
 
