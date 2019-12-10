@@ -20,13 +20,15 @@
 
 #include "util/canvas_module.hpp"
 #include "../../stage.hpp"
+#include "../../score_collector.hpp"
 
 class Data;
 
 namespace Swiss
 {
   class Round : public Stage,
-                public CanvasModule
+                public CanvasModule,
+                public ScoreCollector::Listener
   {
     public:
       static void Declare ();
@@ -38,8 +40,13 @@ namespace Swiss
       static const gchar *_xml_class_name;
 
     private:
-      Data  *_matches_per_fencer;
-      GList *_matches;
+      static GdkPixbuf     *_moved_pixbuf;
+      static const gdouble  _score_rect_w;
+      static const gdouble  _score_rect_h;
+
+      Data           *_matches_per_fencer;
+      GList          *_matches;
+      ScoreCollector *_score_collector;
 
       ~Round () override;
 
@@ -65,8 +72,34 @@ namespace Swiss
 
       void Display () override;
 
-      GSList *GetNext (GSList *in,
-                       GSList *from);
+      void Dump () override;
+
+      void TossMatches (GSList *fencers,
+                        guint   matches_per_fencer);
+
+      void DisplayScore (GooCanvasItem *table,
+                         guint          row,
+                         guint          column,
+                         Match         *match,
+                         Player        *fencer);
+
+      void OnAttrListUpdated () override;
+
+      void OnNewScore (ScoreCollector *score_collector,
+                       Match          *match,
+                       Player         *player) override;
+
+      static void OnStatusChanged (GtkComboBox *combo_box,
+                                   Round       *round);
+
+      static gboolean OnStatusKeyPressEvent (GtkWidget   *widget,
+                                             GdkEventKey *event,
+                                             Round       *round);
+
+      static gboolean OnStatusArrowPress (GooCanvasItem  *item,
+                                          GooCanvasItem  *target,
+                                          GdkEventButton *event,
+                                          Round          *round);
 
       gboolean FencerHasMatch (Player *fencer,
                                GList  *matches);

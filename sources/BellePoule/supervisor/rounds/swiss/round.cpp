@@ -14,20 +14,28 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <gdk/gdkkeysyms.h>
 #include "util/data.hpp"
 #include "util/glade.hpp"
 #include "util/attribute_desc.hpp"
 #include "util/filter.hpp"
 #include "util/player.hpp"
 #include "util/xml_scheme.hpp"
+#include "util/global.hpp"
 #include "../../match.hpp"
+#include "../../score.hpp"
 
 #include "round.hpp"
+#include "wheel_of_fortune.hpp"
 
 namespace Swiss
 {
   const gchar *Round::_class_name     = N_ ("Pool");
   const gchar *Round::_xml_class_name = "RondeSuisse";
+
+  GdkPixbuf     *Round  ::_moved_pixbuf = nullptr;
+  const gdouble  Round  ::_score_rect_w = 45.0;
+  const gdouble  Round  ::_score_rect_h = 30.0;
 
   // --------------------------------------------------------------------------------
   Round::Round (StageClass *stage_class)
@@ -35,7 +43,8 @@ namespace Swiss
       Stage (stage_class),
       CanvasModule ("swiss_supervisor.glade")
   {
-    _matches = nullptr;
+    _matches         = nullptr;
+    _score_collector = nullptr;
 
     _max_score = new Data ("ScoreMax",
                            15);
@@ -100,6 +109,8 @@ namespace Swiss
     _max_score->Release ();
     _matches_per_fencer->Release ();
 
+    Object::TryToRelease (_score_collector);
+
     Reset ();
   }
 
@@ -110,6 +121,18 @@ namespace Swiss
                         _xml_class_name,
                         CreateInstance,
                         EDITABLE|REMOVABLE);
+
+    {
+      GtkWidget *image;
+
+      image = gtk_image_new ();
+      g_object_ref_sink (image);
+      _moved_pixbuf = gtk_widget_render_icon (image,
+                                              GTK_STOCK_REFRESH,
+                                              GTK_ICON_SIZE_BUTTON,
+                                              nullptr);
+      g_object_unref (image);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -122,16 +145,15 @@ namespace Swiss
       for (guint i = 0; i < 2; i++)
       {
         Player *fencer  = match->GetOpponent (i);
-        GList  *matches = (GList *) fencer->GetPtrData (this, "Matches");
+        GList  *matches = (GList *) fencer->GetPtrData (this, "Round::matches");
 
-        FreeFullGList (Match,
-                       matches);
-
-        fencer->RemoveData (this, "Matches");
+        g_list_free (matches);
+        fencer->RemoveData (this, "Round::matches");
       }
     }
 
-    g_list_free (_matches);
+    FreeFullGList (Match,
+                   _matches);
     _matches = nullptr;
   }
 
@@ -308,29 +330,44 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Round::Garnish ()
   {
-    GSList *fencers            = GetShortList ();
+    GSList *fencers            = g_slist_copy (GetShortList ());
     guint   fencer_count       = g_slist_length (fencers);
     guint   matches_per_fencer = MIN (_matches_per_fencer->_value, fencer_count-1);
+
+    for (guint i = 0; i < matches_per_fencer; i++)
+    {
+      TossMatches (fencers,
+                   i+1);
+      fencers = g_slist_reverse (fencers);
+    }
+
+    g_slist_free (fencers);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::TossMatches (GSList *fencers,
+                           guint   matches_per_fencer)
+  {
+    WheelOfFortune *wheel = new WheelOfFortune (fencers);
 
     for (GSList *f = fencers; f; f = g_slist_next (f))
     {
       Player *fencer  = (Player *) f->data;
-      GList  *matches = (GList *) fencer->GetPtrData (this, "Matches");
+      GList  *matches = (GList *) fencer->GetPtrData (this, "Round::matches");
 
       for (guint match_count = g_list_length (matches);
                  match_count < matches_per_fencer;
                  match_count++)
       {
-        guint32 toss = g_random_int_range (0, fencer_count-1);
 
-        for (GSList *o = g_slist_nth (fencers, toss);
-             o != nullptr;
-             o = GetNext (fencers, o))
+        for (void *o = wheel->Turn (); o; o = wheel->TryAgain ())
         {
-          Player *opponent = (Player *) o->data;
+          Player *opponent         = (Player *) o;
+          GList  *opponent_matches = (GList *) opponent->GetPtrData (this, "Round::matches");
 
-          if ((opponent != fencer) && FencerHasMatch (opponent,
-                                                      matches) == FALSE)
+          if (   (opponent != fencer)
+              && (FencerHasMatch (opponent, matches) == FALSE)
+              && (g_list_length (opponent_matches) < matches_per_fencer))
           {
             Match *match = new Match (fencer,
                                       opponent,
@@ -339,26 +376,54 @@ namespace Swiss
             matches = g_list_prepend (matches,
                                       match);
 
-            {
-              GList *opponent_matches = (GList *) opponent->GetPtrData (this, "Matches");
-
-              opponent_matches = g_list_prepend (opponent_matches,
-                                                 match);
-              match->Retain ();
-              opponent->SetData (this, "Matches",
-                                 opponent_matches);
-            }
+            opponent_matches = g_list_prepend (opponent_matches,
+                                               match);
+            opponent->SetData (this, "Round::matches",
+                               opponent_matches);
 
             _matches = g_list_append (_matches,
                                       match);
             match->SetNumber (g_list_length (_matches));
+
             break;
           }
         }
       }
-      fencer->SetData (this, "Matches",
+      fencer->SetData (this, "Round::matches",
                        matches);
     }
+
+    wheel->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::Dump ()
+  {
+    GSList *fencers = GetShortList ();
+
+    for (GSList *f = fencers; f; f = g_slist_next (f))
+    {
+      Player *fencer  = (Player *) f->data;
+      GList  *matches = (GList *) fencer->GetPtrData (this, "Round::matches");
+
+      printf ("%s (%d) ==>> ", fencer->GetName (), g_list_length (matches));
+
+      for (GList *m = matches; m; m = g_list_next (m))
+      {
+        Match *match = (Match *) m->data;
+
+        if (match->GetOpponent (0) != fencer)
+        {
+          printf ("%s, ", match->GetOpponent (0)->GetName ());
+        }
+        else
+        {
+          printf ("%s, ", match->GetOpponent (1)->GetName ());
+        }
+      }
+      printf ("\n");
+    }
+    printf ("\n");
   }
 
   // --------------------------------------------------------------------------------
@@ -370,18 +435,45 @@ namespace Swiss
     {
       guint          row   = 0;
       GooCanvasItem *table = goo_canvas_table_new (root,
+                                                   "column-spacing", 10.0,
+                                                   "row-spacing",    10.0,
                                                    NULL);
+
+      {
+        Object::TryToRelease (_score_collector);
+
+        _score_collector = new ScoreCollector (this,
+                                               FALSE);
+
+        _score_collector->SetConsistentColors ("LightGrey",
+                                               "SkyBlue");
+      }
 
       for (GList *m = _matches; m; m = g_list_next (m))
       {
-        Match *match = (Match *) m->data;
+        GooCanvasItem *item;
+        guint          column = 0;
+        Match         *match  = (Match *) m->data;
+
+        item = Canvas::PutPixbufInTable (table,
+                                         _moved_pixbuf,
+                                         row, column++);
+        Canvas::SetTableItemAttribute (item, "y-align", 0.5);
 
         for (guint i = 0; i < 2; i++)
         {
-          Player        *fencer = match->GetOpponent (i);
-          GooCanvasItem *image;
+          Player *fencer = match->GetOpponent (i);
 
-          image = GetPlayerImage (table,
+          if (i%2 != 0)
+          {
+            DisplayScore (table,
+                          row,
+                          column++,
+                          match,
+                          fencer);
+          }
+
+          item = GetPlayerImage (table,
                                   "font_desc=\"" BP_FONT "14.0px\"",
                                   fencer,
                                   nullptr,
@@ -394,12 +486,255 @@ namespace Swiss
                                   NULL);
 
           Canvas::PutInTable (table,
-                              image,
-                              row, i);
+                              item,
+                              row, column++);
+          Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+
+          if (i%2 == 0)
+          {
+            DisplayScore (table,
+                          row,
+                          column++,
+                          match,
+                          fencer);
+          }
         }
         row++;
       }
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::DisplayScore (GooCanvasItem *table,
+                            guint          row,
+                            guint          column,
+                            Match         *match,
+                            Player        *fencer)
+  {
+    GooCanvasItem *score_table = goo_canvas_table_new (table, NULL);
+    GooCanvasItem *score_rect;
+
+    Canvas::PutInTable (table,
+                        score_table,
+                        row,
+                        column);
+    Canvas::SetTableItemAttribute (score_table, "x-align", 1.0);
+    Canvas::SetTableItemAttribute (score_table, "x-expand", 1u);
+    Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
+
+    // score_rect
+    {
+      score_rect = goo_canvas_rect_new (score_table,
+                                        0, 0,
+                                        _score_rect_w, _score_rect_h,
+                                        "stroke-pattern", NULL,
+                                        "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
+                                        NULL);
+
+      Canvas::PutInTable (score_table,
+                          score_rect,
+                          0,
+                          0);
+    }
+
+    // arrow_icon
+    {
+      GooCanvasItem *item;
+      static gchar  *arrow_icon = nullptr;
+
+      if (arrow_icon == nullptr)
+      {
+        arrow_icon = g_build_filename (Global::_share_dir, "resources/glade/images/arrow.png", NULL);
+      }
+      item = Canvas::PutIconInTable (score_table,
+                                         arrow_icon,
+                                         0,
+                                         0);
+      Canvas::SetTableItemAttribute (item, "x-align", 1.0);
+      Canvas::SetTableItemAttribute (item, "y-align", 0.0);
+
+      g_object_set_data (G_OBJECT (item), "Arrow::match", match);
+      g_object_set_data (G_OBJECT (item), "Arrow::fencer", fencer);
+      g_signal_connect (item, "button_press_event",
+                        G_CALLBACK (OnStatusArrowPress), this);
+    }
+
+    // score_text
+    {
+      GooCanvasItem *item = goo_canvas_text_new (score_table,
+                                                 "",
+                                                 0, 0,
+                                                 -1,
+                                                 GTK_ANCHOR_CENTER,
+                                                 "font", BP_FONT "bold 20px",
+                                                 NULL);
+
+      Canvas::PutInTable (score_table,
+                          item,
+                          0,
+                          0);
+      Canvas::SetTableItemAttribute (item, "x-align", 0.5);
+      Canvas::SetTableItemAttribute (item, "y-align", 1.0);
+
+      _score_collector->AddCollectingPoint (score_rect,
+                                            item,
+                                            match,
+                                            fencer);
+    }
+
+    // score_image (status icon)
+    {
+      GooCanvasItem *item = Canvas::PutPixbufInTable (score_table,
+                                                      nullptr,
+                                                      0,
+                                                      0);
+
+      Canvas::SetTableItemAttribute (item, "x-align", 0.5);
+      Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Round::OnStatusArrowPress (GooCanvasItem  *item,
+                                      GooCanvasItem  *target,
+                                      GdkEventButton *event,
+                                      Round          *round)
+  {
+    if (   (event->button == 1)
+        && (event->type   == GDK_BUTTON_PRESS))
+    {
+      GtkWidget *combo;
+      Match     *match  = (Match *)  g_object_get_data (G_OBJECT (item), "Arrow::match");
+      Player    *fencer = (Player *) g_object_get_data (G_OBJECT (item), "Arrow::fencer");
+
+      {
+        GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
+
+        combo = gtk_combo_box_new_with_model (round->GetStatusModel ());
+
+        gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, FALSE);
+        gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo),
+                                        cell, "pixbuf", AttributeDesc::DiscreteColumnId::ICON_pix,
+                                        NULL);
+
+        goo_canvas_widget_new (round->GetRootItem (),
+                               combo,
+                               event->x_root,
+                               event->y_root,
+                               -1,
+                               -1,
+                               NULL);
+        gtk_widget_grab_focus (combo);
+      }
+
+      {
+        GtkTreeIter  iter;
+        gboolean     iter_is_valid;
+        gchar       *code;
+        gchar        current_status = 'Q';
+
+        if (match->IsDropped ())
+        {
+          Score *score = match->GetScore (fencer);
+
+          if (score && score->IsOut ())
+          {
+            current_status = score->GetDropReason ();
+          }
+        }
+
+        iter_is_valid = gtk_tree_model_get_iter_first (round->GetStatusModel (),
+                                                       &iter);
+        while (iter_is_valid)
+        {
+          gtk_tree_model_get (round->GetStatusModel (),
+                              &iter,
+                              AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &code,
+                              -1);
+          if (current_status == code[0])
+          {
+            gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo),
+                                           &iter);
+
+            g_free (code);
+            break;
+          }
+
+          g_free (code);
+          iter_is_valid = gtk_tree_model_iter_next (round->GetStatusModel (),
+                                                    &iter);
+        }
+      }
+
+      {
+        g_object_set_data (G_OBJECT (combo), "player_for_status", (void *) fencer);
+        g_object_set_data (G_OBJECT (combo), "match_for_status",  (void *) match);
+        g_signal_connect (combo, "changed",
+                          G_CALLBACK (OnStatusChanged), round);
+        g_signal_connect (combo, "key-press-event",
+                          G_CALLBACK (OnStatusKeyPressEvent), round);
+      }
+    }
+
+    return FALSE;
+  }
+
+
+  // --------------------------------------------------------------------------------
+  void Round::OnStatusChanged (GtkComboBox *combo_box,
+                               Round       *round)
+  {
+    {
+      GtkTreeIter  iter;
+      gchar       *code;
+      Match       *match  = (Match *) g_object_get_data (G_OBJECT (combo_box), "match_for_status");
+      Player      *player = (Player *) g_object_get_data (G_OBJECT (combo_box), "player_for_status");
+
+      gtk_combo_box_get_active_iter (combo_box,
+                                     &iter);
+      gtk_tree_model_get (round->GetStatusModel (),
+                          &iter,
+                          AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &code,
+                          -1);
+
+      if (code && *code !='Q')
+      {
+        match->DropFencer (player,
+                           code);
+      }
+      else
+      {
+        match->RestoreFencer (player);
+      }
+
+      {
+        Player::AttributeId status_attr_id ("status", round->GetDataOwner ());
+
+        player->SetAttributeValue (&status_attr_id,
+                                   code);
+      }
+
+      g_free (code);
+
+      round->OnNewScore (nullptr,
+                         match,
+                         player);
+    }
+
+    gtk_widget_destroy (GTK_WIDGET (combo_box));
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Round::OnStatusKeyPressEvent (GtkWidget   *widget,
+                                         GdkEventKey *event,
+                                         Round       *round)
+  {
+    if (event->keyval == GDK_KEY_Escape)
+    {
+      gtk_widget_destroy (GTK_WIDGET (widget));
+      return TRUE;
+    }
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -422,16 +757,40 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  GSList *Round::GetNext (GSList *in,
-                          GSList *from)
+  void Round::OnAttrListUpdated ()
   {
-    GSList *next = g_slist_next (from);
+    Wipe ();
+    Display ();
+  }
 
-    if (next == nullptr)
-    {
-      next = in;
-    }
+  // --------------------------------------------------------------------------------
+  void Round::OnNewScore (ScoreCollector *score_collector,
+                          Match          *match,
+                          Player         *player)
+  {
+    match->Timestamp ();
 
-    return next;
+    _score_collector->Refresh (match);
+
+    //ScheduleNewMatch
+    //OnRoundOver
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_swiss_filter_toolbutton_clicked (GtkWidget *widget,
+                                                                      Object    *owner)
+  {
+    Round *r = dynamic_cast <Round *> (owner);
+
+    r->SelectAttributes ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_print_swiss_toolbutton_clicked (GtkWidget *widget,
+                                                                     Object    *owner)
+  {
+    Round *r = dynamic_cast <Round *> (owner);
+
+    r->Print (gettext (Round::_class_name));
   }
 }

@@ -540,6 +540,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/round.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/wheel_of_fortune.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/wheel_of_fortune.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/html_table.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

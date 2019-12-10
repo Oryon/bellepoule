@@ -238,11 +238,12 @@
             <property name="can_focus">False</property>
             <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkToolButton" id="pool_filter_toolbutton">
+              <object class="GtkToolButton" id="swiss_filter_toolbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Data</property>
                 <property name="stock_id">gtk-index</property>
+                <signal name="clicked" handler="on_swiss_filter_toolbutton_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -250,10 +251,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="print_pool_toolbutton">
+              <object class="GtkToolButton" id="print_swiss_toolbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="stock_id">gtk-print</property>
+                <signal name="clicked" handler="on_print_swiss_toolbutton_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

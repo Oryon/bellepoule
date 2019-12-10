@@ -107,7 +107,14 @@ Schedule::Schedule (Contest *contest,
 Schedule::~Schedule ()
 {
   gtk_list_store_clear (_list_store);
-  FreeFullGList (Stage, _stage_list);
+
+  for (GList *s = g_list_last (_stage_list); s; s = g_list_previous (s))
+  {
+    Stage *stage = (Stage *) s->data;
+
+    stage->Release ();
+  }
+  g_list_free (_stage_list);
 }
 
 // --------------------------------------------------------------------------------

@@ -1012,7 +1012,7 @@ rendering:
   extern "C" G_MODULE_EXPORT void on_pool_filter_toolbutton_clicked (GtkWidget *widget,
                                                                      Object    *owner)
   {
-    Supervisor          *p = dynamic_cast <Supervisor *> (owner);
+    Supervisor *p = dynamic_cast <Supervisor *> (owner);
 
     p->OnFilterClicked ("pool_classification_toggletoolbutton");
   }

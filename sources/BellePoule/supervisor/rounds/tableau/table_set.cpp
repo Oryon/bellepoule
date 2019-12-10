@@ -3788,10 +3788,10 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::OnStatusChanged (GtkComboBox *combo_box)
   {
-    GtkTreeIter          iter;
-    gchar               *code;
-    Match               *match  = (Match *)  g_object_get_data (G_OBJECT (combo_box), "match_for_status");
-    Player              *player = (Player *) g_object_get_data (G_OBJECT (combo_box), "player_for_status");
+    GtkTreeIter  iter;
+    gchar       *code;
+    Match       *match  = (Match *) g_object_get_data (G_OBJECT (combo_box), "match_for_status");
+    Player      *player = (Player *) g_object_get_data (G_OBJECT (combo_box), "player_for_status");
 
     gtk_combo_box_get_active_iter (combo_box,
                                    &iter);
