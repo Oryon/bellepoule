@@ -455,10 +455,14 @@ namespace Swiss
         guint          column = 0;
         Match         *match  = (Match *) m->data;
 
-        item = Canvas::PutPixbufInTable (table,
-                                         _moved_pixbuf,
-                                         row, column++);
-        Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+        if (match->IsFalsified ())
+        {
+          item = Canvas::PutPixbufInTable (table,
+                                           _moved_pixbuf,
+                                           row, column);
+          Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+        }
+        column++;
 
         for (guint i = 0; i < 2; i++)
         {

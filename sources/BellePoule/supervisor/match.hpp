@@ -136,6 +136,8 @@ class Match : public Object,
 
     gboolean IsDirty ();
 
+    gboolean IsFalsified ();
+
     static gint Compare (Match *A,
                          Match *B);
 
@@ -162,6 +164,7 @@ class Match : public Object,
     guint     _duration_sec;
     guint     _duration_span;
     gboolean  _dirty;
+    gboolean  _falsified;
 
     static GTimeSpan _clock_offset;
 
@@ -172,9 +175,10 @@ class Match : public Object,
 
     void FeedParcel (Net::Message *parcel) override;
 
-    void Init (Data *max_score);
-
     ~Match () override;
 
     Error *SpawnError () override;
+
+    void CheckFalsification (xmlNode  *node,
+                             Opponent *opponent);
 };

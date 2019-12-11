@@ -34,17 +34,35 @@ GTimeSpan Match::_clock_offset = 0;
 Match::Match (Data *max_score)
   : Object ("Match")
 {
-  Init (max_score);
+  _referee_list  = nullptr;
+  _start_time    = nullptr;
+  _duration_sec  = 0;
+  _duration_span = 1;
+  _piste         = 0;
+  _dirty         = TRUE;
+  _falsified     = FALSE;
+
+  _max_score = max_score;
+
+  for (guint i = 0; i < 2; i++)
+  {
+    _opponents[i]._fencer   = nullptr;
+    _opponents[i]._is_known = FALSE;
+    _opponents[i]._score    = new Score (max_score);
+  }
+
+  _name       = g_strdup ("");
+  _name_space = g_strdup ("");
+
+  _number = 0;
 }
 
 // --------------------------------------------------------------------------------
 Match::Match  (Player *A,
                Player *B,
                Data   *max_score)
-  : Object ("Match")
+  : Match (max_score)
 {
-  Init (max_score);
-
   _opponents[0]._fencer   = A;
   _opponents[0]._is_known = TRUE;
 
@@ -62,31 +80,6 @@ Match::~Match ()
 
   g_free (_name);
   g_free (_name_space);
-}
-
-// --------------------------------------------------------------------------------
-void Match::Init (Data *max_score)
-{
-  _referee_list  = nullptr;
-  _start_time    = nullptr;
-  _duration_sec  = 0;
-  _duration_span = 1;
-  _piste         = 0;
-  _dirty         = TRUE;
-
-  _max_score = max_score;
-
-  for (guint i = 0; i < 2; i++)
-  {
-    _opponents[i]._fencer   = nullptr;
-    _opponents[i]._is_known = FALSE;
-    _opponents[i]._score    = new Score (max_score);
-  }
-
-  _name       = g_strdup ("");
-  _name_space = g_strdup ("");
-
-  _number = 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -511,18 +504,49 @@ void Match::Save (XmlScheme *xml_scheme,
 }
 
 // --------------------------------------------------------------------------------
+void Match::CheckFalsification (xmlNode  *node,
+                                Opponent *opponent)
+{
+  if (opponent && opponent->_is_known)
+  {
+    gchar *attr;
+
+    attr = (gchar *) xmlGetProp (node, BAD_CAST "REF");
+    if (attr)
+    {
+      if (opponent->_fencer->GetRef () != strtol (attr, nullptr, 10))
+      {
+        _falsified = TRUE;
+      }
+
+      xmlFree (attr);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Match::Load (xmlNode *node_a,
                   Player  *fencer_a,
                   xmlNode *node_b,
                   Player  *fencer_b)
 {
-  _opponents[0]._fencer = fencer_a;
-  Load (node_a,
-        fencer_a);
+  {
+    CheckFalsification (node_a,
+                        &_opponents[0]);
 
-  _opponents[1]._fencer = fencer_b;
-  Load (node_b,
-        fencer_b);
+    _opponents[0]._fencer = fencer_a;
+    Load (node_a,
+          fencer_a);
+  }
+
+  {
+    CheckFalsification (node_b,
+                        &_opponents[1]);
+
+    _opponents[1]._fencer = fencer_b;
+    Load (node_b,
+          fencer_b);
+  }
 
   for (guint i = 0; i < 2; i++)
   {
@@ -878,6 +902,12 @@ Error *Match::SpawnError ()
 gboolean Match::IsDirty ()
 {
   return _dirty;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Match::IsFalsified ()
+{
+  return _falsified;
 }
 
 // --------------------------------------------------------------------------------
