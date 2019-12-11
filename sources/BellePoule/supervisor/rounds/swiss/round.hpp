@@ -77,11 +77,11 @@ namespace Swiss
       void TossMatches (GSList *fencers,
                         guint   matches_per_fencer);
 
-      void DisplayScore (GooCanvasItem *table,
-                         guint          row,
-                         guint          column,
-                         Match         *match,
-                         Player        *fencer);
+      GooCanvasItem *DisplayScore (GooCanvasItem *table,
+                                   guint          row,
+                                   guint          column,
+                                   Match         *match,
+                                   Player        *fencer);
 
       void OnAttrListUpdated () override;
 

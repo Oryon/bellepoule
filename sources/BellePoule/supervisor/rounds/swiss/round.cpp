@@ -106,12 +106,12 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   Round::~Round ()
   {
+    Reset ();
+
     _max_score->Release ();
     _matches_per_fencer->Release ();
 
     Object::TryToRelease (_score_collector);
-
-    Reset ();
   }
 
   // --------------------------------------------------------------------------------
@@ -452,29 +452,46 @@ namespace Swiss
       for (GList *m = _matches; m; m = g_list_next (m))
       {
         GooCanvasItem *item;
-        guint          column = 0;
-        Match         *match  = (Match *) m->data;
+        GooCanvasItem *collecting_point_A;
+        GooCanvasItem *collecting_point_B;
+        guint          column             = 0;
+        Match         *match              = (Match *) m->data;
 
-        if (match->IsFalsified ())
+        // Falsification
         {
-          item = Canvas::PutPixbufInTable (table,
-                                           _moved_pixbuf,
-                                           row, column);
+          if (match->IsFalsified ())
+          {
+            item = Canvas::PutPixbufInTable (table,
+                                             _moved_pixbuf,
+                                             row, column);
+            Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+          }
+          column++;
+        }
+
+        // Number
+        {
+          item = Canvas::PutTextInTable (table,
+                                         match->GetName (),
+                                         row, column++);
+          g_object_set (G_OBJECT (item),
+                        "font", BP_FONT "18px",
+                        NULL);
           Canvas::SetTableItemAttribute (item, "y-align", 0.5);
         }
-        column++;
 
+        // Fencers
         for (guint i = 0; i < 2; i++)
         {
           Player *fencer = match->GetOpponent (i);
 
           if (i%2 != 0)
           {
-            DisplayScore (table,
-                          row,
-                          column++,
-                          match,
-                          fencer);
+            collecting_point_A = DisplayScore (table,
+                                               row,
+                                               column++,
+                                               match,
+                                               fencer);
           }
 
           item = GetPlayerImage (table,
@@ -496,24 +513,41 @@ namespace Swiss
 
           if (i%2 == 0)
           {
-            DisplayScore (table,
-                          row,
-                          column++,
-                          match,
-                          fencer);
+            collecting_point_B = DisplayScore (table,
+                                               row,
+                                               column++,
+                                               match,
+                                               fencer);
           }
         }
+
+        _score_collector->SetNextCollectingPoint (collecting_point_A,
+                                                  collecting_point_B);
+        _score_collector->SetNextCollectingPoint (collecting_point_B,
+                                                  collecting_point_A);
+
+        // Piste
+        {
+          item = Canvas::PutTextInTable (table,
+                                         "Piste 3",
+                                         row, column++);
+          g_object_set (G_OBJECT (item),
+                        "font", BP_FONT "bold 18px",
+                        NULL);
+          Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+        }
+
         row++;
       }
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Round::DisplayScore (GooCanvasItem *table,
-                            guint          row,
-                            guint          column,
-                            Match         *match,
-                            Player        *fencer)
+  GooCanvasItem * Round::DisplayScore (GooCanvasItem *table,
+                                       guint          row,
+                                       guint          column,
+                                       Match         *match,
+                                       Player        *fencer)
   {
     GooCanvasItem *score_table = goo_canvas_table_new (table, NULL);
     GooCanvasItem *score_rect;
@@ -596,6 +630,8 @@ namespace Swiss
       Canvas::SetTableItemAttribute (item, "x-align", 0.5);
       Canvas::SetTableItemAttribute (item, "y-align", 0.5);
     }
+
+    return score_rect;
   }
 
   // --------------------------------------------------------------------------------
@@ -764,6 +800,14 @@ namespace Swiss
   void Round::OnAttrListUpdated ()
   {
     Wipe ();
+
+    for (GList *m = _matches; m; m = g_list_next (m))
+    {
+      Match *match = (Match *) m->data;
+
+      _score_collector->RemoveCollectingPoints (match);
+    }
+
     Display ();
   }
 
