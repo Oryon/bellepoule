@@ -22,7 +22,10 @@
 #include "util/player.hpp"
 #include "util/xml_scheme.hpp"
 #include "util/global.hpp"
+#include "network/message.hpp"
+#include "network/ring.hpp"
 #include "../../match.hpp"
+#include "../../contest.hpp"
 #include "../../score.hpp"
 
 #include "hall.hpp"
@@ -915,6 +918,59 @@ namespace Swiss
       _piste_count->_value = atoi (str);
       _hall->SetPisteCount (_piste_count->_value);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Round::OnMessage (Net::Message *message)
+  {
+    if (message->Is ("SmartPoule::JobListCall"))
+    {
+      {
+        Net::Message *response = new Net::Message ("BellePoule::JobList");
+
+        {
+          xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+          {
+            XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
+
+            _contest->SaveHeader (xml_scheme);
+            SaveHeader (xml_scheme);
+
+            for (GList *m = _matches; m; m = g_list_next (m))
+            {
+              Match *match = (Match *) m->data;
+
+              if (match->GetPtrData (this, "Round::displayed"))
+              {
+                match->Save (xml_scheme);
+              }
+            }
+
+            xml_scheme->EndElement ();
+            xml_scheme->EndElement ();
+
+            xml_scheme->Release ();
+          }
+
+          response->Set ("competition", _contest->GetNetID ());
+          response->Set ("stage",       GetNetID ());
+          response->Set ("batch",       1);
+          response->Set ("xml",         (const gchar *) xml_buffer->content);
+
+          xmlBufferFree (xml_buffer);
+        }
+
+        Net::Ring::_broker->SendBackResponse (message,
+                                              response);
+
+        response->Release ();
+
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

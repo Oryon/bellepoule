@@ -39,10 +39,11 @@
         -webkit-user-select: none;   /* Chrome 6.0+, Safari 3.1+, Edge & Opera 15+ */
         -moz-user-select: none;      /* Firefox */
         -ms-user-select: none;       /* IE 10+ and Edge */
-        user-select: none;           /* Non-prefixed version, 
+        user-select: none;           /* Non-prefixed version,
                                         currently supported by Chrome and Opera */
       }
 
+      /* Scorekeeper */
       .row {
         height:1%;
       }
@@ -57,9 +58,15 @@
         text-align: center;
       }
 
-      .fencer-name, .fault {
+      .fencer-name, .fault, .point {
         font-size: 4vh;
         text-align: center;
+      }
+
+      .fencer-name {
+        width: 29vw;
+        overflow: hidden;
+        text-overflow: "…";
       }
 
       .fencer-firstname {
@@ -76,6 +83,34 @@
         margin-left: auto;
         margin-right: auto;
       }
+
+      /* Match list */
+      td.td_matchlist {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      table.table_matchlist {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th.th_matchlist, td.td_matchlist {
+        text-align: left;
+      }
+
+      td.td_piste {
+        text-align: right;
+      }
+
+      tr.tr_matchlist {
+        font-size: 5vw;
+      }
+
+      tr.tr_matchlist:nth-child(even) {
+        background-color: Lightgreen;
+      }
     </style>
   </head>
 
@@ -83,8 +118,10 @@
   <script>
     var red_fencer;
     var green_fencer;
-    var path   = location.pathname;
-    var socket = new WebSocket ("ws://" + document.domain + ':' + location.port, "smartpoule");
+    var scorekeeper;
+    var matchlist;
+    var path        = location.pathname;
+    var socket      = new WebSocket ("ws://" + document.domain + ':' + location.port, "smartpoule");
 
     !function(e,t){"use strict";var n=null,a="ontouchstart"in e||navigator.MaxTouchPoints>0||navigator.msMaxTouchPoints>0,i=a?"touchstart":"mousedown",o=a?"touchend":"mouseup",m=a?"touchmove":"mousemove",u=0,r=0,s=10,c=10;function l(i){v(i);var m=i.target,u=parseInt(m.getAttribute("data-long-press-delay")||"1500",10);n=function(t,n){if(!(e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame&&e.mozCancelRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame))return e.setTimeout(t,n);var a=(new Date).getTime(),i={},o=function(){(new Date).getTime()-a>=n?t.call():i.value=requestAnimFrame(o)};return i.value=requestAnimFrame(o),i}(function(e){v();var n=a?e.touches[0].clientX:e.clientX,i=a?e.touches[0].clientY:e.clientY;this.dispatchEvent(new CustomEvent("long-press",{bubbles:!0,cancelable:!0,detail:{clientX:n,clientY:i}}))&&t.addEventListener(o,function e(n){t.removeEventListener(o,e,!0),function(e){e.stopImmediatePropagation(),e.preventDefault(),e.stopPropagation()}(n)},!0)}.bind(m,i),u)}function v(t){var a;(a=n)&&(e.cancelAnimationFrame?e.cancelAnimationFrame(a.value):e.webkitCancelAnimationFrame?e.webkitCancelAnimationFrame(a.value):e.webkitCancelRequestAnimationFrame?e.webkitCancelRequestAnimationFrame(a.value):e.mozCancelRequestAnimationFrame?e.mozCancelRequestAnimationFrame(a.value):e.oCancelRequestAnimationFrame?e.oCancelRequestAnimationFrame(a.value):e.msCancelRequestAnimationFrame?e.msCancelRequestAnimationFrame(a.value):clearTimeout(a)),n=null}"function"!=typeof e.CustomEvent&&(e.CustomEvent=function(e,n){n=n||{bubbles:!1,cancelable:!1,detail:void 0};var a=t.createEvent("CustomEvent");return a.initCustomEvent(e,n.bubbles,n.cancelable,n.detail),a},e.CustomEvent.prototype=e.Event.prototype),e.requestAnimFrame=e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame||function(t){e.setTimeout(t,1e3/60)},t.addEventListener(o,v,!0),t.addEventListener(m,function(e){var t=Math.abs(u-e.clientX),n=Math.abs(r-e.clientY);(t>=s||n>=c)&&v()},!0),t.addEventListener("wheel",v,!0),t.addEventListener("scroll",v,!0),t.addEventListener(i,function(e){u=e.clientX,r=e.clientY,l(e)},!0)}(window,document);
 
@@ -125,7 +162,7 @@
       setTrigger (trigger) {
         this.trigger = trigger;
         if (this.trigger != null) {
-          var context  = this;
+          var context = this;
 
           this.trigger.onclick = function () {Counter.onClicked (context);};
           this.trigger.addEventListener ('long-press', function (e) {Counter.onLongPress (context, e);});
@@ -240,7 +277,7 @@
       }
 
       getFencer (id) {
-        for (let f = 1; f < this.fencers.childElementCount; f++) {
+        for (let f = 0; f < this.fencers.childElementCount; f++) {
           var current = this.fencers.children[f];
 
           if (current.getAttribute ('ID') == id) {
@@ -271,16 +308,73 @@
     }
 
 
-    // -- Match --------------------
-    class Match {
+    // -- Batch --------------------
+    class Batch {
+      constructor (xml) {
+        var context     = this;
+        var parser      = new DOMParser ();
+        var xml_doc     = parser.parseFromString (xml, 'text/xml');
+        var root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+        var competition = new Competition (root);
+        var scheme      = '/CompetitionIndividuelle/RondeSuisse';
+
+        {
+          var nodes = xml_doc.evaluate (scheme, root, null, XPathResult.ANY_TYPE, null);
+          var node  = nodes.iterateNext ();
+
+          if (node) {
+            var table = document.getElementById ('matchlist');
+
+            for (let i = 0; i < node.childElementCount; i++) {
+              var match    = node.childNodes[i];
+              let match_id = match.getAttribute ('ID');
+              var row      = table.insertRow (-1);
+
+              row.setAttribute ('class', 'tr_matchlist');
+              row.addEventListener ('click', function () {Batch.onClicked (context, match_id);});
+
+              for (let f = 0; f < node.childNodes[i].childElementCount; f++) {
+                var fencer_node = node.childNodes[i].childNodes[f];
+                var fencer_id   = fencer_node.getAttribute ('REF');
+                var fencer      = competition.getFencer (fencer_id);
+                var cell        = row.insertCell (-1);
+                var html        = '<td">' + fencer.getAttribute ('Nom') + '</td>';
+
+                cell.setAttribute ('class', 'td_matchlist');
+                cell.innerHTML = html;
+              }
+
+              {
+                var cell = row.insertCell (-1);
+                var html = '<td><b>Piste ' + match.getAttribute ('Piste') + '</b></td>';
+
+                cell.setAttribute ('class', 'td_piste');
+                cell.innerHTML = html;
+              }
+            }
+          }
+        }
+      }
+
+      static onClicked (batch, match) {
+        console.log (batch, match);
+        matchlist.style.display   = 'none';
+        scorekeeper.style.display = 'table';
+      }
+    }
+
+    // -- ScoreSheet --------------------
+    class ScoreSheet {
       constructor (xml, fencer_A, fencer_B) {
         var parser      = new DOMParser ();
         var xml_doc     = parser.parseFromString (xml, 'text/xml');
         var root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
         var competition = new Competition (root);
+        var schemes     = ['PhaseDeTableaux/SuiteDeTableaux/Tableau/Match', 'RondeSuisse/Match'];
 
+        for (var scheme of schemes)
         {
-          var path  = "/CompetitionIndividuelle/PhaseDeTableaux/SuiteDeTableaux/Tableau/Match";
+          var path  = '/CompetitionIndividuelle/' + scheme;
           var nodes = xml_doc.evaluate (path, root, null, XPathResult.ANY_TYPE, null);
           var node  = nodes.iterateNext ();
 
@@ -365,7 +459,6 @@
       }
 
       addPointsPanel () {
-        var context = this;
         var lastRow = document.getElementById ('points.panel');
 
         this.pointTriggers = []
@@ -374,7 +467,7 @@
           var html = '';
 
           html += '<td>';
-          html += '  <div class="fencer-name">';
+          html += '  <div class="point">';
           html +=     p;
           html += '  </div>';
           html += '</td>';
@@ -395,7 +488,7 @@
         var excluded   = lastRow.insertCell (-1);
         var size;
 
-        victory.innerHTML = '<td><div class="fencer-name">V</div></td>';
+        victory.innerHTML = '<td><div class="point">V</div></td>';
         victory.colSpan = 2;
         size = victory.getBoundingClientRect().height;
 
@@ -408,7 +501,6 @@
       }
 
       addFaultsPanel (fault) {
-        var context = this;
         var lastRow = document.getElementById ('faults-' + fault.color + '.panel');
         var html    = '';
         var cell;
@@ -443,6 +535,9 @@
       red_fencer   = new Fencer ('red');
       green_fencer = new Fencer ('green');
 
+      scorekeeper = document.getElementById ('scorekeeper');
+      matchlist   = document.getElementById ('matchlist');
+
       socket.send (path);
     }
 
@@ -455,32 +550,49 @@
     {
       if (msg.data.startsWith ('[Header]\nname=BellePoule::ScoreSheet'))
       {
-        tag = 'xml='
-        offset = msg.data.indexOf (tag);
-        xml = msg.data.slice (offset + tag.length)
-        xml = xml.replace (/\\n/g, '')
-        match  = new Match (xml, red_fencer, green_fencer);
+        tag    = 'xml=';
+        offset = msg.data.indexOf (tag);;
+        xml    = msg.data.slice (offset + tag.length);
+        xml    = xml.replace (/\\n/g, '');
+        score_sheet = new ScoreSheet (xml, red_fencer, green_fencer);
+
+        matchlist.style.display   = 'none';
+        scorekeeper.style.display = 'table';
+      }
+      else if (msg.data.startsWith ('[Header]\nname=BellePoule::JobList'))
+      {
+        tag    = 'xml=';
+        offset = msg.data.indexOf (tag);;
+        xml    = msg.data.slice (offset + tag.length);
+        xml    = xml.replace (/\\n/g, '');
+        batch  = new Batch (xml);
+
+        matchlist.style.display   = 'none';
+        scorekeeper.style.display = 'table';
+        //scorekeeper.style.display = 'none';
+        //matchlist.style.display   = 'table';
       }
     }
   </script>
 
   <!--***********************************-->
   <body>
-    <table id='root' class='aspect-ratio' Cellspacing='0'>
-      <tr class='row' id='competition.panel'/>
-      <tr class='row' id='names.panel'/>
-      <tr class='row' id='firstnames.panel'/>
-      <tr class='row' id='lights.panel'/>
-      <tr class='row' id='points.panel'/>
-      <tr class='row' id='cards.panel'/>
-      <tr class='row' id='faults-white.panel'/>
-      <tr class='row' id='faults-orange.panel'/>
-      <tr class='row' id='faults-red.panel'/>
+      <table id='matchlist' class='table_matchlist'>
 
-      <tr>
-        <td Colspan='12'/>
-      </tr>
+      <table id='scorekeeper' class='aspect-ratio' style='display:none' Cellspacing='0'>
+        <tr class='row' id='competition.panel'/>
+        <tr class='row' id='names.panel'/>
+        <tr class='row' id='firstnames.panel'/>
+        <tr class='row' id='lights.panel'/>
+        <tr class='row' id='points.panel'/>
+        <tr class='row' id='cards.panel'/>
+        <tr class='row' id='faults-white.panel'/>
+        <tr class='row' id='faults-orange.panel'/>
+        <tr class='row' id='faults-red.panel'/>
+        <tr>
+          <td Colspan='12'/>
+        </tr>
+      </table>
     </table>
-
   </body>
 </html>

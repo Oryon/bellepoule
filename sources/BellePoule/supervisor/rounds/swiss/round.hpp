@@ -99,6 +99,8 @@ namespace Swiss
                        Match          *match,
                        Player         *player) override;
 
+      gboolean OnMessage (Net::Message *message) override;
+
       static void OnStatusChanged (GtkComboBox *combo_box,
                                    Round       *round);
 

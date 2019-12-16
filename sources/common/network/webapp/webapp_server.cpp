@@ -152,13 +152,21 @@ namespace Net
   // --------------------------------------------------------------------------------
   gboolean WebAppServer::OnScoreSheetCall (IncomingRequest *request)
   {
-    WebAppServer *server  = dynamic_cast<WebAppServer *> (request->_server);
-    Message      *message = new Message ("SmartPoule::ScoreSheetCall");
+    WebAppServer *server = dynamic_cast<WebAppServer *> (request->_server);
 
     {
-      gsize   size;
-      guchar *data = g_base64_decode (&request->_data[1],
-                                      &size);
+      Message *message = new Message ("SmartPoule::JobListCall");
+
+      message->Set ("client", request->_id);
+      server->_listener->OnMessage (message);
+    }
+
+    /*
+    {
+      Message *message = new Message ("SmartPoule::ScoreSheetCall");
+      gsize    size;
+      guchar  *data  = g_base64_decode (&request->_data[1],
+                                        &size);
 
       if (data)
       {
@@ -180,6 +188,7 @@ namespace Net
         g_free (data);
       }
     }
+    */
 
     delete (request);
     return G_SOURCE_REMOVE;

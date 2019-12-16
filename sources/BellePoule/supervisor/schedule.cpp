@@ -724,22 +724,32 @@ gboolean Schedule::OnMessage (Net::Message *message)
       break;
     }
 
-    if (stage->GetNetID () == message->GetInteger ("stage"))
+    if (message->HasField ("stage"))
     {
-      if (message->Is ("SmartPoule::Score"))
+      if (stage->GetNetID () == message->GetInteger ("stage"))
       {
-        if (stage->GetInputProviderClient ())
+        if (message->Is ("SmartPoule::Score"))
         {
-          stage = stage->GetNextStage ();
+          if (stage->GetInputProviderClient ())
+          {
+            stage = stage->GetNextStage ();
+          }
+
+          if (stage->Locked ())
+          {
+            return FALSE;
+          }
         }
 
-        if (stage->Locked ())
-        {
-          return FALSE;
-        }
+        return stage->OnMessage (message);
       }
-
-      return stage->OnMessage (message);
+    }
+    else
+    {
+      if (stage->OnMessage (message))
+      {
+        return TRUE;
+      }
     }
 
     current = g_list_next (current);
