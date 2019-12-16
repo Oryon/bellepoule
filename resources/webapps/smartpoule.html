@@ -162,7 +162,7 @@
       setTrigger (trigger) {
         this.trigger = trigger;
         if (this.trigger != null) {
-          var context = this;
+          let context = this;
 
           this.trigger.onclick = function () {Counter.onClicked (context);};
           this.trigger.addEventListener ('long-press', function (e) {Counter.onLongPress (context, e);});
@@ -278,7 +278,7 @@
 
       getFencer (id) {
         for (let f = 0; f < this.fencers.childElementCount; f++) {
-          var current = this.fencers.children[f];
+          let current = this.fencers.children[f];
 
           if (current.getAttribute ('ID') == id) {
             return current;
@@ -287,11 +287,11 @@
       }
 
       addPanel () {
-        var weapon  = {'S':'Sabre', 'E':'Epée', 'F':'Fleuret', 'X':'Educ'};
-        var gender  = {'M':'Homme', 'F':'Dame', 'X':'Mixte'};
-        var lastRow = document.getElementById ('competition.panel');
-        var cell    = lastRow.insertCell (-1);
-        var html    = '';
+        let weapon  = {'S':'Sabre', 'E':'Epée', 'F':'Fleuret', 'X':'Educ'};
+        let gender  = {'M':'Homme', 'F':'Dame', 'X':'Mixte'};
+        let lastRow = document.getElementById ('competition.panel');
+        let cell    = lastRow.insertCell (-1);
+        let html    = '';
 
         html += '<td>';
         html += '  <div class="competition" Align="Center">';
@@ -311,42 +311,42 @@
     // -- Batch --------------------
     class Batch {
       constructor (xml) {
-        var context     = this;
-        var parser      = new DOMParser ();
-        var xml_doc     = parser.parseFromString (xml, 'text/xml');
-        var root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
-        var competition = new Competition (root);
-        var scheme      = '/CompetitionIndividuelle/RondeSuisse';
+        let context     = this;
+        let parser      = new DOMParser ();
+        let xml_doc     = parser.parseFromString (xml, 'text/xml');
+        let root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+        let competition = new Competition (root);
+        let scheme      = '/CompetitionIndividuelle/RondeSuisse';
 
         {
-          var nodes = xml_doc.evaluate (scheme, root, null, XPathResult.ANY_TYPE, null);
-          var node  = nodes.iterateNext ();
+          let nodes = xml_doc.evaluate (scheme, root, null, XPathResult.ANY_TYPE, null);
+          let node  = nodes.iterateNext ();
 
           if (node) {
-            var table = document.getElementById ('matchlist');
+            let table = document.getElementById ('matchlist');
 
             for (let i = 0; i < node.childElementCount; i++) {
-              var match    = node.childNodes[i];
+              let match    = node.childNodes[i];
               let match_id = match.getAttribute ('ID');
-              var row      = table.insertRow (-1);
+              let row      = table.insertRow (-1);
 
               row.setAttribute ('class', 'tr_matchlist');
               row.addEventListener ('click', function () {Batch.onClicked (context, match_id);});
 
               for (let f = 0; f < node.childNodes[i].childElementCount; f++) {
-                var fencer_node = node.childNodes[i].childNodes[f];
-                var fencer_id   = fencer_node.getAttribute ('REF');
-                var fencer      = competition.getFencer (fencer_id);
-                var cell        = row.insertCell (-1);
-                var html        = '<td">' + fencer.getAttribute ('Nom') + '</td>';
+                let fencer_node = node.childNodes[i].childNodes[f];
+                let fencer_id   = fencer_node.getAttribute ('REF');
+                let fencer      = competition.getFencer (fencer_id);
+                let cell        = row.insertCell (-1);
+                let html        = '<td">' + fencer.getAttribute ('Nom') + '</td>';
 
                 cell.setAttribute ('class', 'td_matchlist');
                 cell.innerHTML = html;
               }
 
               {
-                var cell = row.insertCell (-1);
-                var html = '<td><b>Piste ' + match.getAttribute ('Piste') + '</b></td>';
+                let cell = row.insertCell (-1);
+                let html = '<td><b>Piste ' + match.getAttribute ('Piste') + '</b></td>';
 
                 cell.setAttribute ('class', 'td_piste');
                 cell.innerHTML = html;
@@ -366,20 +366,20 @@
     // -- ScoreSheet --------------------
     class ScoreSheet {
       constructor (xml, fencer_A, fencer_B) {
-        var parser      = new DOMParser ();
-        var xml_doc     = parser.parseFromString (xml, 'text/xml');
-        var root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
-        var competition = new Competition (root);
-        var schemes     = ['PhaseDeTableaux/SuiteDeTableaux/Tableau/Match', 'RondeSuisse/Match'];
+        let parser      = new DOMParser ();
+        let xml_doc     = parser.parseFromString (xml, 'text/xml');
+        let root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+        let competition = new Competition (root);
+        let schemes     = ['PhaseDeTableaux/SuiteDeTableaux/Tableau/Match', 'RondeSuisse/Match'];
 
-        for (var scheme of schemes)
+        for (let scheme of schemes)
         {
-          var path  = '/CompetitionIndividuelle/' + scheme;
-          var nodes = xml_doc.evaluate (path, root, null, XPathResult.ANY_TYPE, null);
-          var node  = nodes.iterateNext ();
+          let path  = '/CompetitionIndividuelle/' + scheme;
+          let nodes = xml_doc.evaluate (path, root, null, XPathResult.ANY_TYPE, null);
+          let node  = nodes.iterateNext ();
 
           if (node && node.childElementCount == 2) {
-            var fencer;
+            let fencer;
 
             fencer = node.childNodes[0];
             fencer_A.feed (competition, fencer.getAttribute ('REF'));
@@ -408,15 +408,15 @@
 
         this.faultTriggers = []
 
-        var faults = [{'color':'white',  'penalties':[0, 3]},
+        let faults = [{'color':'white',  'penalties':[0, 3]},
                       {'color':'orange', 'penalties':[3, 5]},
                       {'color':'red',    'penalties':[5, -1]}];
         faults.forEach (fault => this.addFaultsPanel (fault));
       }
 
       feed (competition, ref) {
-        var name      = document.getElementById (this.color + '-fencer-name');
-        var firstname = document.getElementById (this.color + '-fencer-firstname');
+        let name      = document.getElementById (this.color + '-fencer-name');
+        let firstname = document.getElementById (this.color + '-fencer-firstname');
 
         this.taintedPanels.forEach (panel => panel.style.background = competition.get ('Couleur'));
 
@@ -425,9 +425,9 @@
       }
 
       addIdentityPanel (what) {
-        var lastRow = document.getElementById (what + 's.panel');
-        var cell    = lastRow.insertCell (-1);
-        var html    = '';
+        let lastRow = document.getElementById (what + 's.panel');
+        let cell    = lastRow.insertCell (-1);
+        let html    = '';
 
         html += '<td>';
         html += '  <div id="' + this.color + '-fencer-' + what + '" class="fencer-' + what + '">';
@@ -442,9 +442,9 @@
       }
 
       addLightPanel (color) {
-        var lastRow = document.getElementById ('lights.panel');
-        var cell    = lastRow.insertCell (-1);
-        var html    = '';
+        let lastRow = document.getElementById ('lights.panel');
+        let cell    = lastRow.insertCell (-1);
+        let html    = '';
 
         html += '<td>';
         html += '  <div class="score">0</div>';
@@ -459,12 +459,12 @@
       }
 
       addPointsPanel () {
-        var lastRow = document.getElementById ('points.panel');
+        let lastRow = document.getElementById ('points.panel');
 
         this.pointTriggers = []
         for (let p = 1; p < 4; p++) {
-          var cell = lastRow.insertCell (-1);
-          var html = '';
+          let cell = lastRow.insertCell (-1);
+          let html = '';
 
           html += '<td>';
           html += '  <div class="point">';
@@ -481,12 +481,12 @@
       }
 
       addCardsPanel () {
-        var svg        = document.getElementById ('withdrawal.svg');
-        var lastRow    = document.getElementById ('cards.panel');
-        var withdrawal = lastRow.insertCell (-1);
-        var victory    = lastRow.insertCell (-1);
-        var excluded   = lastRow.insertCell (-1);
-        var size;
+        let svg        = document.getElementById ('withdrawal.svg');
+        let lastRow    = document.getElementById ('cards.panel');
+        let withdrawal = lastRow.insertCell (-1);
+        let victory    = lastRow.insertCell (-1);
+        let excluded   = lastRow.insertCell (-1);
+        let size;
 
         victory.innerHTML = '<td><div class="point">V</div></td>';
         victory.colSpan = 2;
@@ -501,9 +501,9 @@
       }
 
       addFaultsPanel (fault) {
-        var lastRow = document.getElementById ('faults-' + fault.color + '.panel');
-        var html    = '';
-        var cell;
+        let lastRow = document.getElementById ('faults-' + fault.color + '.panel');
+        let html    = '';
+        let cell;
 
         lastRow.insertCell (-1);
         lastRow.insertCell (-1);
@@ -567,10 +567,8 @@
         xml    = xml.replace (/\\n/g, '');
         batch  = new Batch (xml);
 
-        matchlist.style.display   = 'none';
-        scorekeeper.style.display = 'table';
-        //scorekeeper.style.display = 'none';
-        //matchlist.style.display   = 'table';
+        scorekeeper.style.display = 'none';
+        matchlist.style.display   = 'table';
       }
     }
   </script>
