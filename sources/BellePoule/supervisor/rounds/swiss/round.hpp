@@ -26,6 +26,8 @@ class Data;
 
 namespace Swiss
 {
+  class Hall;
+
   class Round : public Stage,
                 public CanvasModule,
                 public ScoreCollector::Listener
@@ -34,6 +36,8 @@ namespace Swiss
       static void Declare ();
 
       Round (StageClass *stage_class);
+
+      void OnPisteCountChanged (GtkEditable *editable);
 
     public:
       static const gchar *_class_name;
@@ -44,9 +48,13 @@ namespace Swiss
       static const gdouble  _score_rect_w;
       static const gdouble  _score_rect_h;
 
+      Hall           *_hall;
       Data           *_matches_per_fencer;
+      Data           *_piste_count;
       GList          *_matches;
       ScoreCollector *_score_collector;
+      GooCanvasItem  *_table;
+      guint           _rows;
 
       ~Round () override;
 
@@ -76,6 +84,8 @@ namespace Swiss
 
       void TossMatches (GSList *fencers,
                         guint   matches_per_fencer);
+
+      void DisplayMatch (Match *match);
 
       GooCanvasItem *DisplayScore (GooCanvasItem *table,
                                    guint          row,

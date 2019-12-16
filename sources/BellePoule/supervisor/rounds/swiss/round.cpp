@@ -25,8 +25,9 @@
 #include "../../match.hpp"
 #include "../../score.hpp"
 
-#include "round.hpp"
+#include "hall.hpp"
 #include "wheel_of_fortune.hpp"
+#include "round.hpp"
 
 namespace Swiss
 {
@@ -58,6 +59,12 @@ namespace Swiss
 
     _matches_per_fencer = new Data ("MatchsParTireur",
                                     7);
+
+    _hall = new Hall ();
+
+    _piste_count = new Data ("NbPistes",
+                             4);
+    _hall->SetPisteCount (_piste_count->_value);
 
     {
       GSList *attr_list;
@@ -108,8 +115,9 @@ namespace Swiss
   {
     Reset ();
 
-    _max_score->Release ();
+    _max_score->Release          ();
     _matches_per_fencer->Release ();
+    _piste_count->Release        ();
 
     Object::TryToRelease (_score_collector);
   }
@@ -138,6 +146,8 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Round::Reset ()
   {
+    _hall->Clear ();
+
     for (GList *m = _matches; m; m = g_list_next (m))
     {
       Match *match = (Match *) m->data;
@@ -150,6 +160,8 @@ namespace Swiss
         g_list_free (matches);
         fencer->RemoveData (this, "Round::matches");
       }
+
+      match->RemoveData (this, "Round::displayed");
     }
 
     FreeFullGList (Match,
@@ -174,6 +186,8 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Round::LoadMatches (xmlNode *xml_node)
   {
+    _hall->Clear ();
+
     for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
@@ -215,6 +229,11 @@ namespace Swiss
                   {
                     LoadMatch (n,
                                match);
+
+                    if (match->IsOver () == FALSE)
+                    {
+                      _hall->BookPiste (match->GetPiste ());
+                    }
                   }
                   break;
                 }
@@ -238,10 +257,8 @@ namespace Swiss
   {
     Stage::SaveConfiguration (xml_scheme);
 
-    if (_matches_per_fencer)
-    {
-      _matches_per_fencer->Save (xml_scheme);
-    }
+    _matches_per_fencer->Save (xml_scheme);
+    _piste_count->Save        (xml_scheme);
   }
 
   // --------------------------------------------------------------------------------
@@ -249,10 +266,10 @@ namespace Swiss
   {
     Stage::LoadConfiguration (xml_node);
 
-    if (_matches_per_fencer)
-    {
-      _matches_per_fencer->Load (xml_node);
-    }
+    _matches_per_fencer->Load (xml_node);
+
+    _piste_count->Load (xml_node);
+    _hall->SetPisteCount (_piste_count->_value);
   }
 
   // --------------------------------------------------------------------------------
@@ -299,6 +316,19 @@ namespace Swiss
       if (w)
       {
         gchar *text = g_strdup_printf ("%d", _matches_per_fencer->_value);
+
+        gtk_entry_set_text (w,
+                            text);
+        g_free (text);
+      }
+    }
+
+    {
+      GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("piste_entry"));
+
+      if (w)
+      {
+        gchar *text = g_strdup_printf ("%d", _piste_count->_value);
 
         gtk_entry_set_text (w,
                             text);
@@ -433,11 +463,12 @@ namespace Swiss
 
     if (root)
     {
-      guint          row   = 0;
-      GooCanvasItem *table = goo_canvas_table_new (root,
-                                                   "column-spacing", 10.0,
-                                                   "row-spacing",    10.0,
-                                                   NULL);
+      guint ongoings = 0;
+
+      _table = goo_canvas_table_new (root,
+                                     "column-spacing", 10.0,
+                                     "row-spacing",    10.0,
+                                     NULL);
 
       {
         Object::TryToRelease (_score_collector);
@@ -449,97 +480,122 @@ namespace Swiss
                                                "SkyBlue");
       }
 
+      _rows = 0;
       for (GList *m = _matches; m; m = g_list_next (m))
       {
-        GooCanvasItem *item;
-        GooCanvasItem *collecting_point_A;
-        GooCanvasItem *collecting_point_B;
-        guint          column             = 0;
-        Match         *match              = (Match *) m->data;
+        Match *match = (Match *) m->data;
 
-        // Falsification
+        if (match->IsOver () == FALSE)
         {
-          if (match->IsFalsified ())
+          ongoings++;
+
+          if (ongoings > _piste_count->_value)
           {
-            item = Canvas::PutPixbufInTable (table,
-                                             _moved_pixbuf,
-                                             row, column);
-            Canvas::SetTableItemAttribute (item, "y-align", 0.5);
-          }
-          column++;
-        }
-
-        // Number
-        {
-          item = Canvas::PutTextInTable (table,
-                                         match->GetName (),
-                                         row, column++);
-          g_object_set (G_OBJECT (item),
-                        "font", BP_FONT "18px",
-                        NULL);
-          Canvas::SetTableItemAttribute (item, "y-align", 0.5);
-        }
-
-        // Fencers
-        for (guint i = 0; i < 2; i++)
-        {
-          Player *fencer = match->GetOpponent (i);
-
-          if (i%2 != 0)
-          {
-            collecting_point_A = DisplayScore (table,
-                                               row,
-                                               column++,
-                                               match,
-                                               fencer);
-          }
-
-          item = GetPlayerImage (table,
-                                  "font_desc=\"" BP_FONT "14.0px\"",
-                                  fencer,
-                                  nullptr,
-                                  "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
-                                  "first_name", "foreground=\"darkblue\"",
-                                  "club",       "style=\"italic\" foreground=\"dimgrey\"",
-                                  "league",     "style=\"italic\" foreground=\"dimgrey\"",
-                                  "region",     "style=\"italic\" foreground=\"dimgrey\"",
-                                  "country",    "style=\"italic\" foreground=\"dimgrey\"",
-                                  NULL);
-
-          Canvas::PutInTable (table,
-                              item,
-                              row, column++);
-          Canvas::SetTableItemAttribute (item, "y-align", 0.5);
-
-          if (i%2 == 0)
-          {
-            collecting_point_B = DisplayScore (table,
-                                               row,
-                                               column++,
-                                               match,
-                                               fencer);
+            break;
           }
         }
 
-        _score_collector->SetNextCollectingPoint (collecting_point_A,
-                                                  collecting_point_B);
-        _score_collector->SetNextCollectingPoint (collecting_point_B,
-                                                  collecting_point_A);
-
-        // Piste
-        {
-          item = Canvas::PutTextInTable (table,
-                                         "Piste 3",
-                                         row, column++);
-          g_object_set (G_OBJECT (item),
-                        "font", BP_FONT "bold 18px",
-                        NULL);
-          Canvas::SetTableItemAttribute (item, "y-align", 0.5);
-        }
-
-        row++;
+        match->SetPiste (_hall->BookPiste ());
+        DisplayMatch (match);
       }
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::DisplayMatch (Match *match)
+  {
+    GooCanvasItem *item;
+    GooCanvasItem *collecting_point_A;
+    GooCanvasItem *collecting_point_B;
+    guint          column             = 0;
+
+    // Falsification
+    {
+      if (match->IsFalsified ())
+      {
+        item = Canvas::PutPixbufInTable (_table,
+                                         _moved_pixbuf,
+                                         _rows, column);
+        Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+      }
+      column++;
+    }
+
+    // Number
+    {
+      item = Canvas::PutTextInTable (_table,
+                                     match->GetName (),
+                                     _rows, column++);
+      g_object_set (G_OBJECT (item),
+                    "font", BP_FONT "18px",
+                    NULL);
+      Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+    }
+
+    // Fencers
+    for (guint i = 0; i < 2; i++)
+    {
+      Player *fencer = match->GetOpponent (i);
+
+      if (i%2 != 0)
+      {
+        collecting_point_A = DisplayScore (_table,
+                                           _rows,
+                                           column++,
+                                           match,
+                                           fencer);
+      }
+
+      item = GetPlayerImage (_table,
+                             "font_desc=\"" BP_FONT "14.0px\"",
+                             fencer,
+                             nullptr,
+                             "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
+                             "first_name", "foreground=\"darkblue\"",
+                             "club",       "style=\"italic\" foreground=\"dimgrey\"",
+                             "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                             "region",     "style=\"italic\" foreground=\"dimgrey\"",
+                             "country",    "style=\"italic\" foreground=\"dimgrey\"",
+                             NULL);
+
+      Canvas::PutInTable (_table,
+                          item,
+                          _rows, column++);
+      Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+
+      if (i%2 == 0)
+      {
+        collecting_point_B = DisplayScore (_table,
+                                           _rows,
+                                           column++,
+                                           match,
+                                           fencer);
+      }
+    }
+
+    _score_collector->SetNextCollectingPoint (collecting_point_A,
+                                              collecting_point_B);
+    _score_collector->SetNextCollectingPoint (collecting_point_B,
+                                              collecting_point_A);
+
+    // Piste
+    {
+      gchar *piste = g_strdup_printf ("%s %d", gettext ("Piste"), match->GetPiste ());
+
+      item = Canvas::PutTextInTable (_table,
+                                     piste,
+                                     _rows, column++);
+      g_object_set (G_OBJECT (item),
+                    "font", BP_FONT "bold 18px",
+                    NULL);
+      Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+
+      g_free (piste);
+    }
+
+    _rows++;
+    match->SetData (this, "Round::displayed",
+                    (void *) TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -820,8 +876,45 @@ namespace Swiss
 
     _score_collector->Refresh (match);
 
-    //ScheduleNewMatch
+    if (match->IsOver ())
+    {
+      _hall->Free (match->GetPiste ());
+
+      for (GList *m = _matches; m; m = g_list_next (m))
+      {
+        Match *current_match = (Match *) m->data;
+
+        if (current_match->IsOver () == FALSE)
+        {
+          if (current_match->GetPtrData (this, "Round::displayed") == FALSE)
+          {
+            guint piste = _hall->BookPiste ();
+
+            if (piste)
+            {
+              current_match->SetPiste (piste);
+              DisplayMatch (current_match);
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    MakeDirty ();
     //OnRoundOver
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::OnPisteCountChanged (GtkEditable *editable)
+  {
+    gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (editable));
+
+    if (str)
+    {
+      _piste_count->_value = atoi (str);
+      _hall->SetPisteCount (_piste_count->_value);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -840,5 +933,14 @@ namespace Swiss
     Round *r = dynamic_cast <Round *> (owner);
 
     r->Print (gettext (Round::_class_name));
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_piste_entry_changed (GtkEditable *editable,
+                                                          Object      *owner)
+  {
+    Round *r = dynamic_cast <Round *> (owner);
+
+    r->OnPisteCountChanged (editable);
   }
 }
