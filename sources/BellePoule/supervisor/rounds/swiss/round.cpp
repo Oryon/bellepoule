@@ -47,6 +47,8 @@ namespace Swiss
       Stage (stage_class),
       CanvasModule ("swiss_supervisor.glade")
   {
+    Disclose ("BellePoule::Batch");
+
     _matches         = nullptr;
     _score_collector = nullptr;
 
@@ -942,6 +944,53 @@ namespace Swiss
               Match *match = (Match *) m->data;
 
               if (match->GetPtrData (this, "Round::displayed"))
+              {
+                match->Save (xml_scheme);
+              }
+            }
+
+            xml_scheme->EndElement ();
+            xml_scheme->EndElement ();
+
+            xml_scheme->Release ();
+          }
+
+          response->Set ("competition", _contest->GetNetID ());
+          response->Set ("stage",       GetNetID ());
+          response->Set ("batch",       1);
+          response->Set ("xml",         (const gchar *) xml_buffer->content);
+
+          xmlBufferFree (xml_buffer);
+        }
+
+        Net::Ring::_broker->SendBackResponse (message,
+                                              response);
+
+        response->Release ();
+
+        return TRUE;
+      }
+    }
+    else if (message->Is ("SmartPoule::ScoreSheetCall"))
+    {
+      {
+        Net::Message *response = new Net::Message ("BellePoule::ScoreSheet");
+
+        {
+          xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+          {
+            XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
+
+            _contest->SaveHeader (xml_scheme);
+            SaveHeader (xml_scheme);
+
+            {
+              message->Dump (TRUE);
+              Match *match = (Match *) g_list_nth_data (_matches,
+                                                        message->GetInteger ("bout")-1);
+
+              if (match)
               {
                 match->Save (xml_scheme);
               }

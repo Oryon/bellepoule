@@ -78,7 +78,7 @@ namespace Net
 
       ~WebAppServer () override;
 
-      static gboolean OnScoreSheetCall (IncomingRequest *request);
+      static gboolean OnRequest (IncomingRequest *request);
 
       static gpointer ThreadFunction (WebAppServer *server);
 

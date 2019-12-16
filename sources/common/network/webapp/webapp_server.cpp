@@ -150,46 +150,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean WebAppServer::OnScoreSheetCall (IncomingRequest *request)
+  gboolean WebAppServer::OnRequest (IncomingRequest *request)
   {
-    WebAppServer *server = dynamic_cast<WebAppServer *> (request->_server);
+    WebAppServer *server  = dynamic_cast<WebAppServer *> (request->_server);
+    Message      *message = new Message ((const guint8 *) request->_data);
 
-    {
-      Message *message = new Message ("SmartPoule::JobListCall");
+    message->Set ("client", request->_id);
+    server->_listener->OnMessage (message);
 
-      message->Set ("client", request->_id);
-      server->_listener->OnMessage (message);
-    }
-
-    /*
-    {
-      Message *message = new Message ("SmartPoule::ScoreSheetCall");
-      gsize    size;
-      guchar  *data  = g_base64_decode (&request->_data[1],
-                                        &size);
-
-      if (data)
-      {
-        gchar **tokens = g_strsplit_set ((gchar *) data,
-                                         "#/.",
-                                         0);
-
-        if (tokens && tokens[0] && tokens[1] && tokens[2] && tokens[3] && tokens[4])
-        {
-          message->Set ("client",      request->_id);
-          message->Set ("competition", (guint) g_ascii_strtoll (tokens[1], nullptr, 16));
-          message->Set ("stage",       (guint) g_ascii_strtoll (tokens[2], nullptr, 16));
-          message->Set ("batch",       tokens[3]);
-          message->Set ("bout",        tokens[4]);
-
-          server->_listener->OnMessage (message);
-        }
-        g_strfreev (tokens);
-        g_free (data);
-      }
-    }
-    */
-
+    message->Release ();
     delete (request);
     return G_SOURCE_REMOVE;
   }
@@ -282,7 +251,7 @@ namespace Net
         if (lws_is_final_fragment (wsi))
         {
           web_app->_input_buffer->ZeroTerminate ();
-          g_idle_add ((GSourceFunc) OnScoreSheetCall,
+          g_idle_add ((GSourceFunc) OnRequest,
                       web_app->_input_buffer);
           web_app->_input_buffer = nullptr;
         }
