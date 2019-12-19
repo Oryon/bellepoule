@@ -124,32 +124,59 @@
 
     !function(e,t){"use strict";var n=null,a="ontouchstart"in e||navigator.MaxTouchPoints>0||navigator.msMaxTouchPoints>0,i=a?"touchstart":"mousedown",o=a?"touchend":"mouseup",m=a?"touchmove":"mousemove",u=0,r=0,s=10,c=10;function l(i){v(i);var m=i.target,u=parseInt(m.getAttribute("data-long-press-delay")||"1500",10);n=function(t,n){if(!(e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame&&e.mozCancelRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame))return e.setTimeout(t,n);var a=(new Date).getTime(),i={},o=function(){(new Date).getTime()-a>=n?t.call():i.value=requestAnimFrame(o)};return i.value=requestAnimFrame(o),i}(function(e){v();var n=a?e.touches[0].clientX:e.clientX,i=a?e.touches[0].clientY:e.clientY;this.dispatchEvent(new CustomEvent("long-press",{bubbles:!0,cancelable:!0,detail:{clientX:n,clientY:i}}))&&t.addEventListener(o,function e(n){t.removeEventListener(o,e,!0),function(e){e.stopImmediatePropagation(),e.preventDefault(),e.stopPropagation()}(n)},!0)}.bind(m,i),u)}function v(t){var a;(a=n)&&(e.cancelAnimationFrame?e.cancelAnimationFrame(a.value):e.webkitCancelAnimationFrame?e.webkitCancelAnimationFrame(a.value):e.webkitCancelRequestAnimationFrame?e.webkitCancelRequestAnimationFrame(a.value):e.mozCancelRequestAnimationFrame?e.mozCancelRequestAnimationFrame(a.value):e.oCancelRequestAnimationFrame?e.oCancelRequestAnimationFrame(a.value):e.msCancelRequestAnimationFrame?e.msCancelRequestAnimationFrame(a.value):clearTimeout(a)),n=null}"function"!=typeof e.CustomEvent&&(e.CustomEvent=function(e,n){n=n||{bubbles:!1,cancelable:!1,detail:void 0};var a=t.createEvent("CustomEvent");return a.initCustomEvent(e,n.bubbles,n.cancelable,n.detail),a},e.CustomEvent.prototype=e.Event.prototype),e.requestAnimFrame=e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame||function(t){e.setTimeout(t,1e3/60)},t.addEventListener(o,v,!0),t.addEventListener(m,function(e){var t=Math.abs(u-e.clientX),n=Math.abs(r-e.clientY);(t>=s||n>=c)&&v()},!0),t.addEventListener("wheel",v,!0),t.addEventListener("scroll",v,!0),t.addEventListener(i,function(e){u=e.clientX,r=e.clientY,l(e)},!0)}(window,document);
 
+    function getMessageField (message,
+                              field)
+    {
+      let pattern = new RegExp (field + '=.*\\n');
+
+      if (pattern.test (message))
+      {
+        return message.match (pattern)[0];
+      }
+      return '';
+    }
+
     // -- Score --------------------
     class Score {
-      constructor (display) {
+      constructor (display)
+      {
         this.display = display;
         this.reset ();
       }
 
-      increment (delta) {
+      setListener (listener)
+      {
+        this.listener = listener;
+      }
+
+      increment (delta)
+      {
         this.points += delta;
         this.refresh ();
       }
 
-      reset () {
+      reset ()
+      {
         this.points = 0
         this.refresh ();
       }
 
-      refresh () {
+      refresh ()
+      {
         this.display.children[0].innerHTML = this.points
+
+        if (this.listener)
+        {
+          this.listener.onNewScore ();
+        }
       }
     }
 
 
     // -- Counter --------------------
     class Counter {
-      constructor (trigger, countable, step) {
+      constructor (trigger, countable, step)
+      {
         this.freezed   = false;
         this.countable = countable;
         this.step      = step;
@@ -158,9 +185,11 @@
         this.setTrigger (trigger);
       }
 
-      setTrigger (trigger) {
+      setTrigger (trigger)
+      {
         this.trigger = trigger;
-        if (this.trigger != null) {
+        if (this.trigger != null)
+        {
           let context = this;
 
           this.trigger.onclick = function () {Counter.onClicked (context);};
@@ -168,35 +197,43 @@
         }
       }
 
-      reset () {
+      reset ()
+      {
         this.hits = 0;
       }
 
-      reStart () {
+      reStart ()
+      {
         this.hits = 0;
         this.countable.reset ();
       }
 
-      count () {
+      count ()
+      {
         this.hits++;
         this.countable.increment (this.step);
       }
 
-      cancel () {
-        if (this.hits > 0) {
+      cancel ()
+      {
+        if (this.hits > 0)
+        {
           this.hits--;
           this.countable.increment (-this.step);
         }
       }
 
-      static onClicked (what) {
-        if (what.freezed == false) {
+      static onClicked (what)
+      {
+        if (what.freezed == false)
+        {
           what.count ();
         }
         what.freezed = false;
       }
 
-      static onLongPress (what, e) {
+      static onLongPress (what, e)
+      {
         e.preventDefault ();
         what.freezed = true;
         what.cancel ();
@@ -206,19 +243,22 @@
 
     // -- ResetCounter --------------------
     class ResetCounter extends Counter {
-      constructor (trigger, countable, step) {
+      constructor (trigger, countable, step)
+      {
         super (trigger, countable, step);
 
         this.listeners = [];
       }
 
-      cancel () {
+      cancel ()
+      {
         this.countable.reset ();
 
         this.listeners.forEach (listener => listener.reset ());
       }
 
-      addListener (counter) {
+      addListener (counter)
+      {
         this.listeners.push (counter);
       }
     };
@@ -226,34 +266,44 @@
 
     // -- FaultCounter --------------------
     class FaultCounter extends Counter {
-      constructor (trigger, countable, penalties) {
+      constructor (trigger, countable, penalties)
+      {
         super (trigger, new Score (trigger), 1)
 
         this.counter1 = new Counter (null, countable, penalties[0]);
         this.counter2 = new Counter (null, countable, penalties[1]);
       }
 
-      reset () {
+      reset ()
+      {
         this.counter2.reset ();
         this.counter1.reset ();
 
         this.reStart ();
       }
 
-      count () {
-        if (this.counter1.hits > 0) {
+      count ()
+      {
+        if (this.counter1.hits > 0)
+        {
          this.counter2.count ();
-        } else {
+        }
+        else
+        {
          this.counter1.count ();
         }
 
         super.count ();
       }
 
-      cancel () {
-        if (this.counter2.hits > 0) {
+      cancel ()
+      {
+        if (this.counter2.hits > 0)
+        {
          this.counter2.cancel ();
-        } else {
+        }
+        else
+        {
          this.counter1.cancel ();
         }
 
@@ -264,26 +314,32 @@
 
     // -- Competition --------------------
     class Competition {
-      constructor (xml) {
+      constructor (xml)
+      {
         this.xml     = xml;
         this.fencers = this.xml.getElementsByTagName ('Tireurs')[0];
       }
 
-      get (attribute) {
+      get (attribute)
+      {
         return this.xml.getAttribute (attribute);
       }
 
-      getFencer (id) {
-        for (let f = 0; f < this.fencers.childElementCount; f++) {
+      getFencer (id)
+      {
+        for (let f = 0; f < this.fencers.childElementCount; f++)
+        {
           let current = this.fencers.children[f];
 
-          if (current.getAttribute ('ID') == id) {
+          if (current.getAttribute ('ID') == id)
+          {
             return current;
           }
         }
       }
 
-      addPanel () {
+      addPanel ()
+      {
         let weapon  = {'S':'Sabre', 'E':'Epée', 'F':'Fleuret', 'X':'Educ', 'L':'Laser'};
         let gender  = {'M':'Homme', 'F':'Dame', 'X':'Mixte'};
         let lastRow = document.getElementById ('competition.panel');
@@ -307,12 +363,13 @@
 
     // -- Batch --------------------
     class Batch {
-      constructor (xml) {
-        let context     = this;
-        let parser      = new DOMParser ();
-        let xml_doc     = parser.parseFromString (xml, 'text/xml');
-        let root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
-        let scheme      = '/CompetitionIndividuelle/RondeSuisse';
+      constructor (xml)
+      {
+        let context = this;
+        let parser  = new DOMParser ();
+        let xml_doc = parser.parseFromString (xml, 'text/xml');
+        let root    = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+        let scheme  = '/CompetitionIndividuelle/RondeSuisse';
 
         this.competition = new Competition (root);
 
@@ -320,11 +377,14 @@
           let nodes = xml_doc.evaluate (scheme, root, null, XPathResult.ANY_TYPE, null);
           let node  = nodes.iterateNext ();
 
-          if (node) {
+          if (node)
+          {
             let table = document.getElementById ('matchlist');
+
             this.stage = parseInt (node.getAttribute ('NetID'), 16);
 
-            for (let i = 0; i < node.childElementCount; i++) {
+            for (let i = 0; i < node.childElementCount; i++)
+            {
               let match    = node.childNodes[i];
               let match_id = match.getAttribute ('ID');
               let row      = table.insertRow (-1);
@@ -332,7 +392,8 @@
               row.setAttribute ('class', 'tr_matchlist');
               row.addEventListener ('click', function () {Batch.onClicked (context, match_id);});
 
-              for (let f = 0; f < node.childNodes[i].childElementCount; f++) {
+              for (let f = 0; f < node.childNodes[i].childElementCount; f++)
+              {
                 let fencer_node = node.childNodes[i].childNodes[f];
                 let fencer_id   = fencer_node.getAttribute ('REF');
                 let fencer      = this.competition.getFencer (fencer_id);
@@ -368,45 +429,92 @@
         msg += 'batch=1\n';
         msg += 'bout=' + match + '\n';
 
-        console.log (msg);
         socket.send (msg);
       }
     }
 
     // -- ScoreSheet --------------------
     class ScoreSheet {
-      constructor (xml, fencer_A, fencer_B) {
-        let parser      = new DOMParser ();
-        let xml_doc     = parser.parseFromString (xml, 'text/xml');
-        let root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
-        let competition = new Competition (root);
-        let schemes     = ['PhaseDeTableaux/SuiteDeTableaux/Tableau/Match', 'RondeSuisse/Match'];
+      constructor (msg,
+                   red_fencer,
+                   green_fencer)
+      {
+        let xml;
 
-        competition.addPanel ();
-
-        for (let scheme of schemes)
         {
-          let path  = '/CompetitionIndividuelle/' + scheme;
-          let nodes = xml_doc.evaluate (path, root, null, XPathResult.ANY_TYPE, null);
-          let node  = nodes.iterateNext ();
+          let tag    = 'xml=';
+          let offset = msg.data.indexOf (tag);
 
-          if (node && node.childElementCount == 2) {
-            let fencer;
+          xml = msg.data.slice (offset + tag.length);
+          xml = xml.replace (/\\n/g, '');
+        }
 
-            fencer = node.childNodes[0];
-            fencer_A.feed (competition, fencer.getAttribute ('REF'));
+        this.competition = getMessageField (msg.data, 'competition');
+        this.stage       = getMessageField (msg.data, 'stage');
+        this.batch       = getMessageField (msg.data, 'batch');
 
-            fencer = node.childNodes[1];
-            fencer_B.feed (competition, fencer.getAttribute ('REF'));
+        {
+          let parser      = new DOMParser ();
+          let xml_doc     = parser.parseFromString (xml, 'text/xml');
+          let root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+          let competition = new Competition (root);
+          let schemes     = ['PhaseDeTableaux/SuiteDeTableaux/Tableau/Match', 'RondeSuisse/Match'];
+
+          competition.addPanel ();
+
+          for (let scheme of schemes)
+          {
+            let path  = '/CompetitionIndividuelle/' + scheme;
+            let nodes = xml_doc.evaluate (path, root, null, XPathResult.ANY_TYPE, null);
+            let node  = nodes.iterateNext ();
+
+            if (node && node.childElementCount == 2)
+            {
+              this.bout    = 'bout=' + node.getAttribute ('ID') + '\n';
+              this.fencers = [red_fencer, green_fencer];
+
+              for (let f = 0; f < 2; f++)
+              {
+                this.fencers[f].feed (competition, node.childNodes[f].getAttribute ('REF'));
+                this.fencers[f].score.setListener (this);
+              }
+            }
           }
         }
+
+        this.onNewScore ();
+      }
+
+      onNewScore ()
+      {
+        let msg = '';
+
+        msg += '[Header]\n';
+        msg += 'name=SmartPoule::Score\n';
+        msg += 'netid=0\n';
+        msg += 'fitness=1\n';
+        msg += '[Body]\n'
+        msg += this.competition;
+        msg += this.stage;
+        msg += this.batch;
+        msg += this.bout;
+        msg += 'xml=<?xml version="1.0" encoding="UTF-8"?>'
+        msg += '<Match>'
+        for (let f = 0; f < 2; f++)
+        {
+          msg += '<Tireur REF="' + this.fencers[f].ref + '" Score="' + this.fencers[f].score.points + '" Statut="D"/>'
+        }
+        msg += '</Match>'
+
+        socket.send (msg);
       }
     }
 
 
     // -- Fencer --------------------
     class Fencer {
-      constructor (color) {
+      constructor (color)
+      {
         this.rgb           = {'red':'#8F1818', 'green':'#098709'};
         this.color         = color;
         this.freezed       = false;
@@ -426,17 +534,20 @@
         faults.forEach (fault => this.addFaultsPanel (fault));
       }
 
-      feed (competition, ref) {
+      feed (competition, ref)
+      {
         let name      = document.getElementById (this.color + '-fencer-name');
         let firstname = document.getElementById (this.color + '-fencer-firstname');
 
         this.taintedPanels.forEach (panel => panel.style.background = competition.get ('Couleur'));
 
+        this.ref = ref;
         name.innerHTML      = competition.getFencer (ref).getAttribute('Nom');
         firstname.innerHTML = competition.getFencer (ref).getAttribute('Prenom');
       }
 
-      addIdentityPanel (what) {
+      addIdentityPanel (what)
+      {
         let lastRow = document.getElementById (what + 's.panel');
         let cell    = lastRow.insertCell (-1);
         let html    = '';
@@ -453,7 +564,8 @@
         this.taintedPanels.push (cell);
       }
 
-      addLightPanel (color) {
+      addLightPanel (color)
+      {
         let lastRow = document.getElementById ('lights.panel');
         let cell    = lastRow.insertCell (-1);
         let html    = '';
@@ -470,11 +582,13 @@
         this.trigger = new ResetCounter (cell, this.score, 1);
       }
 
-      addPointsPanel () {
+      addPointsPanel ()
+      {
         let lastRow = document.getElementById ('points.panel');
 
         this.pointTriggers = []
-        for (let p = 1; p < 4; p++) {
+        for (let p = 1; p < 4; p++)
+        {
           let cell = lastRow.insertCell (-1);
           let html = '';
 
@@ -492,7 +606,8 @@
         }
       }
 
-      addCardsPanel () {
+      addCardsPanel ()
+      {
         let svg        = document.getElementById ('withdrawal.svg');
         let lastRow    = document.getElementById ('cards.panel');
         let withdrawal = lastRow.insertCell (-1);
@@ -512,7 +627,8 @@
         excluded.colSpan = 2;
       }
 
-      addFaultsPanel (fault) {
+      addFaultsPanel (fault)
+      {
         let lastRow = document.getElementById ('faults-' + fault.color + '.panel');
         let html    = '';
         let cell;
@@ -542,8 +658,6 @@
     // -- Socket -------------------
     socket.onopen = function ()
     {
-      console.log ('socket open ' + 'ws://' + document.domain + ':' + location.port, 'smartpoule');
-
       red_fencer   = new Fencer ('red');
       green_fencer = new Fencer ('green');
 
@@ -564,18 +678,15 @@
 
     socket.onclose = function ()
     {
-      console.log ('socket close');
     }
 
     socket.onmessage = function (msg)
     {
       if (msg.data.startsWith ('[Header]\nname=BellePoule::ScoreSheet'))
       {
-        tag    = 'xml=';
-        offset = msg.data.indexOf (tag);;
-        xml    = msg.data.slice (offset + tag.length);
-        xml    = xml.replace (/\\n/g, '');
-        score_sheet = new ScoreSheet (xml, red_fencer, green_fencer);
+        score_sheet = new ScoreSheet (msg,
+                                      red_fencer,
+                                      green_fencer);
 
         matchlist.style.display   = 'none';
         scorekeeper.style.display = 'table';

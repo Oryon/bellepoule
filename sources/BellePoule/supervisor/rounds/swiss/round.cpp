@@ -1017,6 +1017,60 @@ namespace Swiss
         return TRUE;
       }
     }
+    else if (message->Is ("SmartPoule::Score"))
+    {
+      guint match_number = message->GetInteger ("bout");
+
+      if (match_number > 0)
+      {
+        Match *match = (Match *) g_list_nth_data (_matches,
+                                                  match_number-1);
+
+        if (match)
+        {
+          gchar *xml_data = message->GetString ("xml");
+
+          xmlDoc *doc = xmlReadMemory (xml_data,
+                                       strlen (xml_data),
+                                       "noname.xml",
+                                       nullptr,
+                                       0);
+
+          if (doc)
+          {
+            xmlXPathInit ();
+
+            {
+              xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+              xmlXPathObject  *xml_object;
+              xmlNodeSet      *xml_nodeset;
+
+              xml_object = xmlXPathEval (BAD_CAST "/Match/*", xml_context);
+              xml_nodeset = xml_object->nodesetval;
+
+              if (xml_nodeset->nodeNr == 2)
+              {
+                for (guint i = 0; i < 2; i++)
+                {
+                  match->Load (xml_nodeset->nodeTab[i],
+                               match->GetOpponent (i));
+                }
+                _score_collector->Refresh (match);
+                //RefreshScoreData ();
+                //RefreshDashBoard ();
+              }
+
+              xmlXPathFreeObject  (xml_object);
+              xmlXPathFreeContext (xml_context);
+            }
+            xmlFreeDoc (doc);
+          }
+          g_free (xml_data);
+
+          return TRUE;
+        }
+      }
+    }
 
     return FALSE;
   }
