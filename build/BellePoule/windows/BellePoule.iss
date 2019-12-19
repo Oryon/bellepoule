@@ -108,6 +108,9 @@ Source: "..\..\..\resources\translations\user_manual.pdf"; DestDir: "{app}\share
 ;Traductions
 Source: "..\..\..\resources\translations\index.txt"; DestDir: "{app}\share\{#PRODUCT}\resources\translations"; Flags: ignoreversion
 
+;Webapp
+Source: "..\..\..\resources\webapps\smartpoule.html"; DestDir: "{app}\share\{#PRODUCT}\resources\webapps"; Flags: ignoreversion
+
 Source: "..\..\..\resources\translations\ar\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\ar";    Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\ca\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\ca";    Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\de\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\de";    Flags: ignoreversion recursesubdirs

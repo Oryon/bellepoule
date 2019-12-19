@@ -986,7 +986,6 @@ namespace Swiss
             SaveHeader (xml_scheme);
 
             {
-              message->Dump (TRUE);
               Match *match = (Match *) g_list_nth_data (_matches,
                                                         message->GetInteger ("bout")-1);
 

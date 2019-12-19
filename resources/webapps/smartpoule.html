@@ -64,9 +64,9 @@
       }
 
       .fencer-name {
-        width: 29vw;
+        width: 50vw;
         overflow: hidden;
-        text-overflow: "…";
+        text-overflow: ".";
       }
 
       .fencer-firstname {
@@ -284,7 +284,7 @@
       }
 
       addPanel () {
-        let weapon  = {'S':'Sabre', 'E':'Epée', 'F':'Fleuret', 'X':'Educ'};
+        let weapon  = {'S':'Sabre', 'E':'Epée', 'F':'Fleuret', 'X':'Educ', 'L':'Laser'};
         let gender  = {'M':'Homme', 'F':'Dame', 'X':'Mixte'};
         let lastRow = document.getElementById ('competition.panel');
         let cell    = lastRow.insertCell (-1);

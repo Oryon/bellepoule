@@ -303,7 +303,7 @@ namespace Net
   {
     while (server->_running)
     {
-      lws_service (server->_context, -1);
+      lws_service (server->_context, G_MAXINT);
 
       {
         OutgoingMessage *outgoing_message = (OutgoingMessage *) g_async_queue_timeout_pop (server->_queue,
