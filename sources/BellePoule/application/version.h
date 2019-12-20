@@ -3,7 +3,7 @@
 
 #define VERSION_BRANCH    "STABLE"
 #define VERSION           "5"
-#define VERSION_REVISION  "0"
+#define VERSION_REVISION  "1"
 #define VERSION_MATURITY  ""
 
 #endif

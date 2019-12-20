@@ -481,6 +481,7 @@ void Application::Start (int                   argc,
                                               "Franz Lewin Wagner    (German)\n"
                                               "Dom Walden            (English\n"
                                               "Aureliano Martini     (Italian)\n"
+                                              "Francesco Nazzani     (Italian)\n"
                                               "Jihwan Cho            (Korean)\n"
                                               "Marijn Somers         (Dutch)\n"
                                               "Werner Huysmans       (Dutch)\n"

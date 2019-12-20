@@ -1,41 +1,42 @@
-# Breton translation for bellepoule
-# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
-# This file is distributed under the same license as the BellePoule package.
+# Kurdish translation for bellepoule
+# Copyright (c) 2019 Rosetta Contributors and Canonical Ltd 2019
+# This file is distributed under the same license as the bellepoule package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2019-10-13 18:29+0200\n"
-"PO-Revision-Date: 2018-04-24 07:39+0000\n"
-"Last-Translator: Anthony Guechoum <a.guechoum@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2019-12-04 11:13+0000\n"
+"Last-Translator: Rokar ✌ <Unknown>\n"
+"Language-Team: Kurdish <ku@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2019-10-14 05:59+0000\n"
-"X-Generator: Launchpad (build af2eefe214bd95389a09b7c956720881bab16807)\n"
+"X-Launchpad-Export-Date: 2019-12-05 05:51+0000\n"
+"X-Generator: Launchpad (build c597c3229eb023b1e626162d5947141bf7befb13)\n"
 
 msgid "Long text"
-msgstr "Testenn hir"
+msgstr ""
 
 msgid "Short text"
-msgstr "Testenn berr"
+msgstr ""
 
 msgid "Graphic"
-msgstr "Grafik"
+msgstr "Grafîk"
 
 msgid "Data to display"
-msgstr "Roadennoù da ziskouez"
+msgstr ""
 
 msgid "Visibility"
-msgstr ""
+msgstr "Xuyabûn"
 
 msgid "Data"
-msgstr "Roadennoù"
+msgstr "Dane"
 
 msgid "Look"
-msgstr ""
+msgstr "Xuyanî"
 
 msgid "Follow the instructions given by "
 msgstr ""
@@ -44,7 +45,7 @@ msgid "Access denied!"
 msgstr ""
 
 msgid "<b>Smartpoule</b> configuration code"
-msgstr "Kod kefluniañ <b>Smartpoule</b>"
+msgstr ""
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
@@ -55,13 +56,13 @@ msgid "Choose a fencer file to import..."
 msgstr ""
 
 msgid "Fencer files"
-msgstr "Restroù an iskirmer"
+msgstr ""
 
 msgid "Referee files"
 msgstr ""
 
 msgid "All files"
-msgstr "Ar restroù holl"
+msgstr "Hemû pelan"
 
 msgid "The imported FFF file has encoding errors."
 msgstr ""
@@ -76,13 +77,13 @@ msgid "List of absents"
 msgstr ""
 
 msgid "Fencer list"
-msgstr "Roll an iskrimered"
+msgstr ""
 
 msgid "Copy"
-msgstr "Kopiañ"
+msgstr ""
 
 msgid "Paste"
-msgstr "Pegañ"
+msgstr ""
 
 msgid "Paste (link)"
 msgstr ""
@@ -91,7 +92,7 @@ msgid "Remove"
 msgstr ""
 
 msgid "Page"
-msgstr "Pajenn"
+msgstr ""
 
 msgid "U5"
 msgstr ""
@@ -178,13 +179,13 @@ msgid "League"
 msgstr ""
 
 msgid "Regional"
-msgstr "Rannvroel"
+msgstr ""
 
 msgid "Open"
-msgstr "Digor"
+msgstr ""
 
 msgid "World cup"
-msgstr "Kib ar Bed"
+msgstr ""
 
 msgid "National championships"
 msgstr ""
@@ -193,10 +194,10 @@ msgid "World championships"
 msgstr ""
 
 msgid "Other"
-msgstr "All"
+msgstr ""
 
 msgid "Choose a file..."
-msgstr "Dibabit ur restr..."
+msgstr ""
 
 msgid "GREG alert"
 msgstr ""
@@ -209,7 +210,7 @@ msgid ""
 msgstr ""
 
 msgid "BellePoule files (.cotcot)"
-msgstr "Restroù BellePoule (.cotcot)"
+msgstr ""
 
 msgid "Close without saving"
 msgstr ""
@@ -286,7 +287,7 @@ msgid "Dessert"
 msgstr ""
 
 msgid "Coffee"
-msgstr "Kafe"
+msgstr ""
 
 msgid "Payment book"
 msgstr ""
@@ -313,16 +314,16 @@ msgid "Foil"
 msgstr ""
 
 msgid "Epée"
-msgstr "Kleze"
+msgstr ""
 
 msgid "Sabre"
-msgstr "Sabrenn"
+msgstr ""
 
 msgid "place"
 msgstr ""
 
 msgid "team"
-msgstr "skipailh"
+msgstr ""
 
 msgid "last name"
 msgstr ""
@@ -337,22 +338,22 @@ msgid "gender"
 msgstr ""
 
 msgid "Male"
-msgstr "Paotr"
+msgstr ""
 
 msgid "Female"
-msgstr "Plac'h"
+msgstr ""
 
 msgid "weapon"
 msgstr ""
 
 msgid "country"
-msgstr "bro"
+msgstr ""
 
 msgid "region"
 msgstr ""
 
 msgid "league"
-msgstr "kevre"
+msgstr ""
 
 msgid "club"
 msgstr ""
@@ -406,13 +407,13 @@ msgid "Forfeit"
 msgstr ""
 
 msgid "status"
-msgstr "stad"
+msgstr ""
 
 msgid "cyphered password"
 msgstr ""
 
 msgid "IP address"
-msgstr "Chomlec'h IP"
+msgstr ""
 
 msgid "Password"
 msgstr ""
@@ -454,7 +455,7 @@ msgid "Broken"
 msgstr ""
 
 msgid "Waiting"
-msgstr "O c'hortoz"
+msgstr ""
 
 msgid "OK"
 msgstr ""
@@ -546,7 +547,7 @@ msgid "Pool #%02d"
 msgstr ""
 
 msgid "Status"
-msgstr "Stad"
+msgstr ""
 
 msgid "Vict./Matchs"
 msgstr ""
@@ -573,13 +574,13 @@ msgid "General classification"
 msgstr ""
 
 msgid "All FFF files (.FFF)"
-msgstr "Restroù FFF holl (.FFF)"
+msgstr ""
 
 msgid "All PDF files (.PDF)"
-msgstr "Restroù PDF holl (.PDF)"
+msgstr ""
 
 msgid "All HTML files (.HTML)"
-msgstr "Restroù HTML holl (.HTML)"
+msgstr ""
 
 msgid "All AskFred files (.FRD)"
 msgstr ""
@@ -597,7 +598,7 @@ msgid "Rank files: cotcot, xml, txt (France)"
 msgstr ""
 
 msgid "Check-in"
-msgstr "Enrolladur"
+msgstr ""
 
 msgid "** Without team **"
 msgstr ""
