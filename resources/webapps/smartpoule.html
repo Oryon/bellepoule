@@ -53,6 +53,11 @@
         text-align: center;
       }
 
+      .spacer {
+        font-size: 1vh;
+        text-align: center;
+      }
+
       .competition {
         font-size: 3vh;
         text-align: center;
@@ -175,7 +180,9 @@
 
     // -- Counter --------------------
     class Counter {
-      constructor (trigger, countable, step)
+      constructor (trigger,
+                   countable,
+                   step)
       {
         this.freezed   = false;
         this.countable = countable;
@@ -210,8 +217,13 @@
 
       count ()
       {
-        this.hits++;
-        this.countable.increment (this.step);
+        if (this.step >= 0)
+        {
+          this.hits++;
+          this.countable.increment (this.step);
+          return true;
+        }
+        return false;
       }
 
       cancel ()
@@ -266,12 +278,18 @@
 
     // -- FaultCounter --------------------
     class FaultCounter extends Counter {
-      constructor (trigger, countable, penalties)
+      constructor (trigger,
+                   penalties)
       {
-        super (trigger, new Score (trigger), 1)
+        super (trigger, new Score (trigger), 1);
 
-        this.counter1 = new Counter (null, countable, penalties[0]);
-        this.counter2 = new Counter (null, countable, penalties[1]);
+        this.penalties = penalties;
+      }
+
+      setCountable (countable)
+      {
+        this.counter1 = new Counter (null, countable, this.penalties[0]);
+        this.counter2 = new Counter (null, countable, this.penalties[1]);
       }
 
       reset ()
@@ -284,16 +302,21 @@
 
       count ()
       {
+        let counter;
+
         if (this.counter1.hits > 0)
         {
-         this.counter2.count ();
+          counter = this.counter2;
         }
         else
         {
-         this.counter1.count ();
+          counter = this.counter1;
         }
 
-        super.count ();
+        if (counter.count ())
+        {
+          super.count ();
+        }
       }
 
       cancel ()
@@ -346,8 +369,12 @@
         let cell    = lastRow.insertCell (-1);
         let html    = '';
 
+        html += '</td>';
         html += '<td>';
-        html += '  <div class="competition" Align="Center">';
+        html += '  <div class="spacer">';
+        html += '&nbsp';
+        html += '  </div>';
+        html += '  <div class="competition">';
         html +=     weapon[this.get ('Arme')] + ' '
         html +=     gender[this.get ('Sexe')] + ' ';
         html +=     this.get ('Categorie');
@@ -475,12 +502,17 @@
 
               for (let f = 0; f < 2; f++)
               {
+                this.fencers[f].display ();
+
                 this.fencers[f].feed (competition, node.childNodes[f].getAttribute ('REF'));
                 this.fencers[f].score.setListener (this);
               }
             }
           }
         }
+
+        red_fencer.setOpponent   (green_fencer);
+        green_fencer.setOpponent (red_fencer);
 
         this.onNewScore ();
       }
@@ -519,19 +551,28 @@
         this.color         = color;
         this.freezed       = false;
         this.taintedPanels = [];
+        this.faults        = [{'color':'white',  'penalties':[0, 3]},
+                              {'color':'orange', 'penalties':[3, 5]},
+                              {'color':'red',    'penalties':[5, -1]}];
+      }
 
+      setOpponent (opponent)
+      {
+        for (let i = 0; i < this.faults.length; i++)
+        {
+          this.faults[i].counter.setCountable (opponent.score);
+          this.trigger.addListener (opponent.faults[i].counter);
+        }
+      }
+
+      display ()
+      {
         this.addIdentityPanel ('name');
         this.addIdentityPanel ('firstname');
-        this.addLightPanel    (color);
+        this.addLightPanel    (this.color);
         this.addPointsPanel   ();
         this.addCardsPanel    ();
-
-        this.faultTriggers = []
-
-        let faults = [{'color':'white',  'penalties':[0, 3]},
-                      {'color':'orange', 'penalties':[3, 5]},
-                      {'color':'red',    'penalties':[5, -1]}];
-        faults.forEach (fault => this.addFaultsPanel (fault));
+        this.addFaultsPanel   ();
       }
 
       feed (competition, ref)
@@ -627,30 +668,32 @@
         excluded.colSpan = 2;
       }
 
-      addFaultsPanel (fault)
+      addFaultsPanel ()
       {
-        let lastRow = document.getElementById ('faults-' + fault.color + '.panel');
-        let html    = '';
-        let cell;
+        for (let fault of this.faults)
+        {
+          let lastRow = document.getElementById ('faults-' + fault.color + '.panel');
+          let html    = '';
+          let cell;
 
-        lastRow.insertCell (-1);
-        lastRow.insertCell (-1);
-        cell = lastRow.insertCell (-1);
+          lastRow.insertCell (-1);
+          lastRow.insertCell (-1);
+          cell = lastRow.insertCell (-1);
 
-        html += '<td>';
-        html += '  <div class="fault" style="background:' + fault.color + ';"></div>';
-        html += '</td>';
-        cell.innerHTML = html;
+          html += '<td>';
+          html += '  <div class="fault" style="background:' + fault.color + ';"></div>';
+          html += '</td>';
+          cell.innerHTML = html;
 
-        cell.style.backgroundColor = 'grey';
+          cell.style.backgroundColor = 'grey';
 
-        lastRow.insertCell (-1);
-        lastRow.insertCell (-1);
-        lastRow.insertCell (-1);
+          lastRow.insertCell (-1);
+          lastRow.insertCell (-1);
+          lastRow.insertCell (-1);
 
-        this.faultTriggers[fault.color] = new FaultCounter (cell,
-                                                            this.score, fault.penalties);
-        this.trigger.addListener (this.faultTriggers[fault.color]);
+          fault.counter = new FaultCounter (cell,
+                                            fault.penalties);
+        }
       }
     }
 
@@ -684,12 +727,12 @@
     {
       if (msg.data.startsWith ('[Header]\nname=BellePoule::ScoreSheet'))
       {
+        matchlist.style.display   = 'none';
+        scorekeeper.style.display = 'table';
+
         score_sheet = new ScoreSheet (msg,
                                       red_fencer,
                                       green_fencer);
-
-        matchlist.style.display   = 'none';
-        scorekeeper.style.display = 'table';
       }
       else if (msg.data.startsWith ('[Header]\nname=BellePoule::JobList'))
       {
