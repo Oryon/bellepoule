@@ -145,7 +145,7 @@
     class Score {
       constructor (display)
       {
-        this.victory_mark = '';
+        this.status = '';
 
         this.display = display;
         this.reset ();
@@ -162,9 +162,9 @@
         this.refresh ();
       }
 
-      setVictoryMark (mark)
+      setStatus (status)
       {
-        this.victory_mark = mark;
+        this.status = status;
         this.refresh ();
       }
 
@@ -176,9 +176,9 @@
 
       refresh ()
       {
-        if (this.victory_mark == 'V')
+        if (this.status == 'V')
         {
-          this.display.children[0].innerHTML = this.victory_mark + this.points
+          this.display.children[0].innerHTML = this.status + this.points
         }
         else
         {
@@ -214,7 +214,6 @@
 
       freeze ()
       {
-        console.log (typeof window.orientation);
         if (typeof window.orientation == 'undefined')
         {
           this.freezed = true;
@@ -230,7 +229,7 @@
       {
         if (what.freezed == false)
         {
-          what.onSensorClicked ();
+          what.onSensorClicked (what);
         }
         what.unFreeze ();
       }
@@ -239,7 +238,7 @@
       {
         e.preventDefault ();
         what.freeze ();
-        what.onSensorLongPress ();
+        what.onSensorLongPress (what);
       }
     }
 
@@ -281,12 +280,12 @@
         return false;
       }
 
-      onSensorClicked ()
+      onSensorClicked (sensor)
       {
         this.count ();
       }
 
-      onSensorLongPress ()
+      onSensorLongPress (sensor)
       {
         this.cancel ();
       }
@@ -322,6 +321,36 @@
       {
         this.listeners.push (counter);
       }
+    };
+
+
+    // -- Card --------------------
+    class Card extends Sensor {
+      constructor (listener,
+                   cell,
+                   html,
+                   code)
+      {
+        super ();
+
+        this.code     = code;
+        this.listener = listener;
+
+        cell.innerHTML = html
+        cell.colSpan   = 2;
+        this.setTrigger (cell);
+      }
+
+      onSensorClicked (sensor)
+      {
+        this.listener.onCardClicked (this.code);
+      }
+
+      onSensorLongPress (sensor)
+      {
+        this.listener.onCardCancelled (this.code);
+      }
+
     };
 
 
@@ -568,6 +597,7 @@
 
       onNewScore ()
       {
+        let dropped_match = false;
         let msg = '';
 
         msg += '[Header]\n';
@@ -581,28 +611,42 @@
         msg += this.bout;
         msg += 'xml=<?xml version="1.0" encoding="UTF-8"?>'
         msg += '<Match>'
+
         for (let f = 0; f < 2; f++)
         {
-          msg += '<Tireur REF="' + this.fencers[f].ref + '" Score="' + this.fencers[f].score.points + '"';
-          if (this.fencers[f].score.victory_mark != null)
+          if (   (this.fencers[f].score.status == 'A')
+              || (this.fencers[f].score.status == 'E'))
           {
-            msg += ' Statut="' + this.fencers[f].score.victory_mark + '"';
+            dropped_match = true;
+            break;
+          }
+        }
+
+        for (let f = 0; f < 2; f++)
+        {
+          msg += '<Tireur REF="' + this.fencers[f].ref + '"';
+          if (dropped_match == false)
+          {
+            msg += ' Score="' + this.fencers[f].score.points + '"';
+          }
+          if (this.fencers[f].score.status != '')
+          {
+            msg += ' Statut="' + this.fencers[f].score.status + '"';
           }
           msg += '/>';
         }
-        msg += '</Match>'
+        msg += '</Match>';
 
+        console.log (msg);
         socket.send (msg);
       }
     }
 
 
     // -- Fencer --------------------
-    class Fencer extends Sensor {
+    class Fencer {
       constructor (color)
       {
-        super ();
-
         this.rgb           = {'red':'#8F1818', 'green':'#098709'};
         this.color         = color;
         this.freezed       = false;
@@ -623,19 +667,25 @@
         }
       }
 
-      onSensorClicked ()
+      onCardClicked (code)
       {
-        if (this.score.points >= this.opponent.score.points)
+        if (code == 'V')
         {
-          this.score.setVictoryMark          ('V');
-          this.opponent.score.setVictoryMark ('D');
+          if (this.score.points >= this.opponent.score.points)
+          {
+            this.score.setStatus          ('V');
+            this.opponent.score.setStatus ('D');
+          }
+        }
+        else
+        {
+          this.score.setStatus (code);
         }
       }
 
-      onSensorLongPress ()
+      onCardCancelled (code)
       {
-        this.score.setVictoryMark          ('');
-        this.opponent.score.setVictoryMark ('');
+        this.score.setStatus ('');
       }
 
       display ()
@@ -722,27 +772,30 @@
 
       addCardsPanel ()
       {
-        let svg        = document.getElementById ('withdrawal.svg');
-        let lastRow    = document.getElementById ('cards.panel');
-        let withdrawal = lastRow.insertCell (-1);
-        let victory    = lastRow.insertCell (-1);
-        let excluded   = lastRow.insertCell (-1);
-        let context    = this;
-        let size;
+        let svg             = document.getElementById ('withdrawal.svg');
+        let lastRow         = document.getElementById ('cards.panel');
+        let withdrawal_cell = lastRow.insertCell (-1);
+        let victory_cell    = lastRow.insertCell (-1);
+        let excluded_cell   = lastRow.insertCell (-1);
+        let context         = this;
+        let row_size;
 
-        victory.innerHTML = '<td><div class="point">V</div></td>';
-        victory.colSpan = 2;
+        this.victory_card = new Card (this,
+                                      victory_cell,
+                                      '<td><div class="point">V</div></td>',
+                                      'V');
+        row_size = victory_cell.getBoundingClientRect().height;
 
-        this.setTrigger (victory);
-
-        size = victory.getBoundingClientRect().height;
-
-        withdrawal.innerHTML = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + size*.7 + '"/></td>';
-        withdrawal.colSpan = 2;
+        this.withdrawal_card = new Card (this,
+                                         withdrawal_cell,
+                                         '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + row_size*.7 + '"/></td>',
+                                         'A');
 
         svg = document.getElementById ('blackcard.svg');
-        excluded.innerHTML = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + size*.7 + '"/></td>';
-        excluded.colSpan = 2;
+        this.excluded_card = new Card (this,
+                                       excluded_cell,
+                                       '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + row_size*.7 + '"/></td>',
+                                       'E');
       }
 
       addFaultsPanel ()

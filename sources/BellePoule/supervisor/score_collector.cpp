@@ -119,62 +119,65 @@ void ScoreCollector::SetMatch (GooCanvasItem *to_point,
 // --------------------------------------------------------------------------------
 void ScoreCollector::Refresh (Match *match)
 {
-  if (match->IsDropped () == FALSE)
+  GooCanvasItem *goo_rect = (GooCanvasItem *) match->GetPtrData (this, "goo_rect_A");
+
+  if (goo_rect)
   {
-    GooCanvasItem *goo_rect = (GooCanvasItem *) match->GetPtrData (this, "goo_rect_A");
-
-    if (goo_rect)
+    if (match == (Match *) g_object_get_data (G_OBJECT (goo_rect), "match"))
     {
-      if (match == (Match *) g_object_get_data (G_OBJECT (goo_rect), "match"))
+      if (match->IsDropped () && _display_match_name)
       {
-        // A
-        {
-          Score         *score       = match->GetScore (match->GetOpponent (0));
-          GooCanvasItem *score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
-          gchar         *score_image = score->GetImage ();
-
-          g_object_set (score_text,
-                        "text", score_image,
-                        "fill-color", "black",
-                        NULL);
-          if (   (score_image[0] == 0)
-              && (_display_match_name))
-          {
-            g_object_set (score_text,
-                          "text", match->GetName (),
-                          "fill-color", "GainsBoro",
-                          NULL);
-          }
-          g_free (score_image);
-        }
-
-        // B
-        goo_rect = (GooCanvasItem *) match->GetPtrData (this, "goo_rect_B");
-        if (goo_rect)
-        {
-          Score         *score       = match->GetScore (match->GetOpponent (1));
-          GooCanvasItem *score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
-          gchar         *score_image = score->GetImage ();
-
-          g_object_set (score_text,
-                        "text", score_image,
-                        "fill-color", "black",
-                        NULL);
-          if (   (score_image[0] == 0)
-              && (_display_match_name))
-          {
-            g_object_set (score_text,
-                          "text", match->GetName (),
-                          "fill-color", "GainsBoro",
-                          NULL);
-          }
-          g_free (score_image);
-        }
-
-        SetMatchColor (match,
-                       _consistent_normal_color,
-                       _unconsistent_normal_color);
+        // Pool case. Managed from the pool directly.
+        return;
       }
+
+      // A
+      {
+        Score         *score       = match->GetScore (match->GetOpponent (0));
+        GooCanvasItem *score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
+        gchar         *score_image = score->GetImage ();
+
+        g_object_set (score_text,
+                      "text", score_image,
+                      "fill-color", "black",
+                      NULL);
+        if (   (score_image[0] == 0)
+            && (_display_match_name))
+        {
+          g_object_set (score_text,
+                        "text", match->GetName (),
+                        "fill-color", "GainsBoro",
+                        NULL);
+        }
+        g_free (score_image);
+      }
+
+      // B
+      goo_rect = (GooCanvasItem *) match->GetPtrData (this, "goo_rect_B");
+      if (goo_rect)
+      {
+        Score         *score       = match->GetScore (match->GetOpponent (1));
+        GooCanvasItem *score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
+        gchar         *score_image = score->GetImage ();
+
+        g_object_set (score_text,
+                      "text", score_image,
+                      "fill-color", "black",
+                      NULL);
+        if (   (score_image[0] == 0)
+            && (_display_match_name))
+        {
+          g_object_set (score_text,
+                        "text", match->GetName (),
+                        "fill-color", "GainsBoro",
+                        NULL);
+        }
+        g_free (score_image);
+      }
+
+      SetMatchColor (match,
+                     _consistent_normal_color,
+                     _unconsistent_normal_color);
     }
   }
 }

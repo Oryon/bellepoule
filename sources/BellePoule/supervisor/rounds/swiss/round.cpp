@@ -646,9 +646,9 @@ namespace Swiss
         arrow_icon = g_build_filename (Global::_share_dir, "resources/glade/images/arrow.png", NULL);
       }
       item = Canvas::PutIconInTable (score_table,
-                                         arrow_icon,
-                                         0,
-                                         0);
+                                           arrow_icon,
+                                           0,
+                                           0);
       Canvas::SetTableItemAttribute (item, "x-align", 1.0);
       Canvas::SetTableItemAttribute (item, "y-align", 0.0);
 
@@ -683,13 +683,18 @@ namespace Swiss
 
     // score_image (status icon)
     {
-      GooCanvasItem *item = Canvas::PutPixbufInTable (score_table,
-                                                      nullptr,
-                                                      0,
-                                                      0);
+      Score         *score = match->GetScore (fencer);
+      GooCanvasItem *item  = Canvas::PutPixbufInTable (score_table,
+                                                       nullptr,
+                                                       0,
+                                                       0);
 
       Canvas::SetTableItemAttribute (item, "x-align", 0.5);
       Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+
+      score->SetData (this,
+                      "Round::status_item",
+                      item);
     }
 
     return score_rect;
@@ -881,6 +886,30 @@ namespace Swiss
 
     _score_collector->Refresh (match);
 
+    {
+      Score *score = match->GetScore (player);
+
+      if (score)
+      {
+        Player::AttributeId  attr_id ("status", GetDataOwner ());
+        AttributeDesc       *attr_desc = AttributeDesc::GetDescFromCodeName ("status");
+        GdkPixbuf           *pixbuf    = attr_desc->GetDiscretePixbuf (score->GetDropReason ());
+
+        g_object_set (score->GetPtrData (this, "Round::status_item"),
+                      "visibility", GOO_CANVAS_ITEM_HIDDEN,
+                      NULL);
+        if (pixbuf)
+        {
+          g_object_set (score->GetPtrData (this, "Round::status_item"),
+                        "pixbuf",     pixbuf,
+                        "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                        NULL);
+
+          g_object_unref (pixbuf);
+        }
+      }
+    }
+
     if (match->IsOver ())
     {
       _hall->Free (match->GetPiste ());
@@ -1054,8 +1083,11 @@ namespace Swiss
                 {
                   match->Load (xml_nodeset->nodeTab[i],
                                match->GetOpponent (i));
+
+                  OnNewScore (_score_collector,
+                              match,
+                              match->GetOpponent (i));
                 }
-                _score_collector->Refresh (match);
                 //RefreshScoreData ();
                 //RefreshDashBoard ();
               }
