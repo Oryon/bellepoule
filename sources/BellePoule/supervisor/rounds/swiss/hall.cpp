@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "../../match.hpp"
 #include "hall.hpp"
 
 namespace Swiss
@@ -22,15 +23,15 @@ namespace Swiss
   Hall::Hall ()
     : Object ("Swiss::Hall")
   {
-    _piste_count    = 0;
-    _table_size     = 0;
-    _piste_register = nullptr;
+    _piste_count = 0;
+    _table_size  = 0;
+    _owners      = nullptr;
   }
 
   // --------------------------------------------------------------------------------
   Hall::~Hall ()
   {
-    g_free (_piste_register);
+    g_free (_owners);
   }
 
   // --------------------------------------------------------------------------------
@@ -38,7 +39,14 @@ namespace Swiss
   {
     for (guint i = 0; i < _piste_count; i++)
     {
-      printf ("%d ==> %d\n", i+1, _piste_register[i]);
+      if (_owners[i])
+      {
+        printf ("%d ==> %s\n", i+1, _owners[i]->GetName ());
+      }
+      else
+      {
+        printf ("%d ==> nullptr\n", i+1);
+      }
     }
     printf ("\n");
   }
@@ -48,7 +56,7 @@ namespace Swiss
   {
     for (guint i = 0; i < _table_size; i++)
     {
-      _piste_register[i] = FALSE;
+      _owners[i] = nullptr;
     }
   }
 
@@ -58,12 +66,12 @@ namespace Swiss
     if (count > _table_size)
     {
       _table_size = count;
-      _piste_register = (gboolean *) g_realloc (_piste_register,
-                                                _table_size);
+      _owners = (Match **) g_realloc (_owners,
+                                      _table_size * sizeof (Match *));
 
       for (guint i = _piste_count; i < _table_size; i++)
       {
-        _piste_register[i] = FALSE;
+        _owners[i] = nullptr;
       }
     }
 
@@ -71,34 +79,42 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::BookPiste (guint piste)
+  guint Hall::BookPiste (Match *owner)
   {
-    if ((0 < piste) && (piste <= _piste_count))
-    {
-      _piste_register[piste-1] = TRUE;
-    }
-  }
+    guint piste = owner->GetPiste ();
 
-  // --------------------------------------------------------------------------------
-  guint Hall::BookPiste ()
-  {
-    for (guint i = 0; i < _piste_count; i++)
+    if (piste == 0)
     {
-      if (_piste_register[i] == FALSE)
+      for (guint i = 0; i < _piste_count; i++)
       {
-        _piste_register[i] = TRUE;
-        return i+1;
+        if (_owners[i] == nullptr)
+        {
+          _owners[i] = owner;
+          owner->SetPiste (i+1);
+          break;
+        }
       }
     }
-    return 0;
+    else if (piste <= _piste_count)
+    {
+      _owners[piste-1] = owner;
+      owner->SetPiste (piste);
+    }
+
+    return owner->GetPiste ();
   }
 
   // --------------------------------------------------------------------------------
-  void Hall::Free (guint piste)
+  void Hall::FreePiste (Match *owner)
   {
+    guint piste = owner->GetPiste ();
+
     if ((0 < piste) && (piste <= _table_size))
     {
-      _piste_register[piste-1] = FALSE;
+      if (_owners[piste-1] == owner)
+      {
+        _owners[piste-1] = nullptr;
+      }
     }
   }
 }

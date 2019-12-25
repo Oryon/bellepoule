@@ -19,6 +19,8 @@
 #include <gtk/gtk.h>
 #include <util/object.hpp>
 
+class Match;
+
 namespace Swiss
 {
   class Hall : public Object
@@ -30,18 +32,16 @@ namespace Swiss
 
       void SetPisteCount (guint count);
 
-      void BookPiste (guint piste);
+      guint BookPiste (Match *owner);
 
-      guint BookPiste ();
-
-      void Free (guint piste);
+      void FreePiste (Match *owner);
 
       void Dump () override;
 
     private:
-      guint     _table_size;
-      guint     _piste_count;
-      gboolean *_piste_register;
+      guint   _table_size;
+      guint   _piste_count;
+      Match **_owners;
 
       ~Hall ();
   };

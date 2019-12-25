@@ -183,6 +183,7 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Round::Load (xmlNode *xml_node)
   {
+    _hall->Clear ();
     LoadConfiguration (xml_node);
     Garnish ();
     LoadMatches (xml_node);
@@ -191,8 +192,6 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Round::LoadMatches (xmlNode *xml_node)
   {
-    _hall->Clear ();
-
     for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
@@ -237,7 +236,7 @@ namespace Swiss
 
                     if (match->IsOver () == FALSE)
                     {
-                      _hall->BookPiste (match->GetPiste ());
+                      _hall->BookPiste (match);
                     }
                   }
                   break;
@@ -500,7 +499,7 @@ namespace Swiss
           }
         }
 
-        match->SetPiste (_hall->BookPiste ());
+        _hall->BookPiste (match);
         DisplayMatch (match);
       }
     }
@@ -912,25 +911,19 @@ namespace Swiss
 
     if (match->IsOver ())
     {
-      _hall->Free (match->GetPiste ());
+      _hall->FreePiste (match);
 
       for (GList *m = _matches; m; m = g_list_next (m))
       {
         Match *current_match = (Match *) m->data;
 
-        if (current_match->IsOver () == FALSE)
+        if (current_match->GetPtrData (this, "Round::displayed") == FALSE)
         {
-          if (current_match->GetPtrData (this, "Round::displayed") == FALSE)
+          if (_hall->BookPiste (current_match))
           {
-            guint piste = _hall->BookPiste ();
-
-            if (piste)
-            {
-              current_match->SetPiste (piste);
-              DisplayMatch (current_match);
-            }
-            break;
+            DisplayMatch (current_match);
           }
+          break;
         }
       }
     }
