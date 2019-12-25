@@ -145,6 +145,8 @@
     class Score {
       constructor (display)
       {
+        this.victory_mark = '';
+
         this.display = display;
         this.reset ();
       }
@@ -160,6 +162,12 @@
         this.refresh ();
       }
 
+      setVictoryMark (mark)
+      {
+        this.victory_mark = mark;
+        this.refresh ();
+      }
+
       reset ()
       {
         this.points = 0
@@ -168,7 +176,14 @@
 
       refresh ()
       {
-        this.display.children[0].innerHTML = this.points
+        if (this.victory_mark == 'V')
+        {
+          this.display.children[0].innerHTML = this.victory_mark + this.points
+        }
+        else
+        {
+          this.display.children[0].innerHTML = this.points
+        }
 
         if (this.listener)
         {
@@ -178,18 +193,11 @@
     }
 
 
-    // -- Counter --------------------
-    class Counter {
-      constructor (trigger,
-                   countable,
-                   step)
+    // -- Sensor --------------------
+    class Sensor {
+      constructor ()
       {
-        this.freezed   = false;
-        this.countable = countable;
-        this.step      = step;
-        this.hits      = 0;
-
-        this.setTrigger (trigger);
+        this.freezed = false;
       }
 
       setTrigger (trigger)
@@ -199,9 +207,56 @@
         {
           let context = this;
 
-          this.trigger.onclick = function () {Counter.onClicked (context);};
-          this.trigger.addEventListener ('long-press', function (e) {Counter.onLongPress (context, e);});
+          this.trigger.onclick = function () {Sensor.onClicked (context);};
+          this.trigger.addEventListener ('long-press', function (e) {Sensor.onLongPress (context, e);});
         }
+      }
+
+      freeze ()
+      {
+        console.log (typeof window.orientation);
+        if (typeof window.orientation == 'undefined')
+        {
+          this.freezed = true;
+        }
+      }
+
+      unFreeze ()
+      {
+        this.freezed = false;
+      }
+
+      static onClicked (what)
+      {
+        if (what.freezed == false)
+        {
+          what.onSensorClicked ();
+        }
+        what.unFreeze ();
+      }
+
+      static onLongPress (what, e)
+      {
+        e.preventDefault ();
+        what.freeze ();
+        what.onSensorLongPress ();
+      }
+    }
+
+
+    // -- Counter --------------------
+    class Counter extends Sensor {
+      constructor (trigger,
+                   countable,
+                   step)
+      {
+        super ();
+
+        this.countable = countable;
+        this.step      = step;
+        this.hits      = 0;
+
+        this.setTrigger (trigger);
       }
 
       reset ()
@@ -226,6 +281,16 @@
         return false;
       }
 
+      onSensorClicked ()
+      {
+        this.count ();
+      }
+
+      onSensorLongPress ()
+      {
+        this.cancel ();
+      }
+
       cancel ()
       {
         if (this.hits > 0)
@@ -234,27 +299,11 @@
           this.countable.increment (-this.step);
         }
       }
-
-      static onClicked (what)
-      {
-        if (what.freezed == false)
-        {
-          what.count ();
-        }
-        what.freezed = false;
-      }
-
-      static onLongPress (what, e)
-      {
-        e.preventDefault ();
-        what.freezed = true;
-        what.cancel ();
-      }
     };
 
 
-    // -- ResetCounter --------------------
-    class ResetCounter extends Counter {
+    // -- Light --------------------
+    class Light extends Counter {
       constructor (trigger, countable, step)
       {
         super (trigger, countable, step);
@@ -534,7 +583,12 @@
         msg += '<Match>'
         for (let f = 0; f < 2; f++)
         {
-          msg += '<Tireur REF="' + this.fencers[f].ref + '" Score="' + this.fencers[f].score.points + '" Statut="D"/>'
+          msg += '<Tireur REF="' + this.fencers[f].ref + '" Score="' + this.fencers[f].score.points + '"';
+          if (this.fencers[f].score.victory_mark != null)
+          {
+            msg += ' Statut="' + this.fencers[f].score.victory_mark + '"';
+          }
+          msg += '/>';
         }
         msg += '</Match>'
 
@@ -544,9 +598,11 @@
 
 
     // -- Fencer --------------------
-    class Fencer {
+    class Fencer extends Sensor {
       constructor (color)
       {
+        super ();
+
         this.rgb           = {'red':'#8F1818', 'green':'#098709'};
         this.color         = color;
         this.freezed       = false;
@@ -558,11 +614,28 @@
 
       setOpponent (opponent)
       {
+        this.opponent = opponent;
+
         for (let i = 0; i < this.faults.length; i++)
         {
           this.faults[i].counter.setCountable (opponent.score);
-          this.trigger.addListener (opponent.faults[i].counter);
+          this.light.addListener (opponent.faults[i].counter);
         }
+      }
+
+      onSensorClicked ()
+      {
+        if (this.score.points >= this.opponent.score.points)
+        {
+          this.score.setVictoryMark          ('V');
+          this.opponent.score.setVictoryMark ('D');
+        }
+      }
+
+      onSensorLongPress ()
+      {
+        this.score.setVictoryMark          ('');
+        this.opponent.score.setVictoryMark ('');
       }
 
       display ()
@@ -619,8 +692,8 @@
         cell.colSpan = 6;
         cell.style.backgroundColor = this.rgb[color]
 
-        this.score   = new Score (cell);
-        this.trigger = new ResetCounter (cell, this.score, 1);
+        this.score = new Score (cell);
+        this.light = new Light (cell, this.score, 1);
       }
 
       addPointsPanel ()
@@ -643,7 +716,7 @@
           cell.colSpan = 2;
 
           this.pointTriggers[p] = new Counter (cell, this.score, p);
-          this.trigger.addListener (this.pointTriggers[p]);
+          this.light.addListener (this.pointTriggers[p]);
         }
       }
 
@@ -654,10 +727,14 @@
         let withdrawal = lastRow.insertCell (-1);
         let victory    = lastRow.insertCell (-1);
         let excluded   = lastRow.insertCell (-1);
+        let context    = this;
         let size;
 
         victory.innerHTML = '<td><div class="point">V</div></td>';
         victory.colSpan = 2;
+
+        this.setTrigger (victory);
+
         size = victory.getBoundingClientRect().height;
 
         withdrawal.innerHTML = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + size*.7 + '"/></td>';
