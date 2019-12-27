@@ -1072,6 +1072,8 @@ namespace Swiss
 
               if (xml_nodeset->nodeNr == 2)
               {
+                match->CleanScore ();
+
                 for (guint i = 0; i < 2; i++)
                 {
                   match->Load (xml_nodeset->nodeTab[i],
