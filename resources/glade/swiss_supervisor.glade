@@ -273,12 +273,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToggleToolButton" id="pool_classification_toggletoolbutton">
+              <object class="GtkToggleToolButton" id="swiss_classification_toggletoolbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Classification</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">score_image4</property>
+                <signal name="toggled" handler="on_swiss_classification_toggletoolbutton_toggled" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -471,19 +472,46 @@
           </packing>
         </child>
         <child>
-          <object class="GtkViewport" id="main_hook">
+          <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkScrolledWindow" id="canvas_scrolled_window">
+              <object class="GtkViewport" id="main_hook">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="hscrollbar_policy">automatic</property>
-                <property name="vscrollbar_policy">automatic</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkScrolledWindow" id="canvas_scrolled_window">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">automatic</property>
+                    <property name="vscrollbar_policy">automatic</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkViewport" id="classification_hook">
+                <property name="can_focus">False</property>
+                <property name="no_show_all">True</property>
+                <property name="resize_mode">queue</property>
+                <property name="shadow_type">none</property>
                 <child>
                   <placeholder/>
                 </child>
               </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>

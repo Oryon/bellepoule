@@ -207,6 +207,8 @@ class Stage : public virtual Object,
 
     GSList *GetShortList ();
 
+    void RefreshClassification ();
+
     Classification *GetClassification ();
 
     void LockOnClassification (GtkWidget *w);

@@ -22,6 +22,7 @@
 #include "util/player.hpp"
 #include "util/xml_scheme.hpp"
 #include "util/global.hpp"
+#include "util/attribute.hpp"
 #include "network/message.hpp"
 #include "network/ring.hpp"
 #include "../../match.hpp"
@@ -71,6 +72,7 @@ namespace Swiss
                              4);
     _hall->SetPisteCount (_piste_count->_value);
 
+    // Filter
     {
       GSList *attr_list;
       Filter *filter;
@@ -112,6 +114,54 @@ namespace Swiss
 
       SetFilter (filter);
       filter->Release ();
+    }
+
+    // Classifications
+    {
+      Filter *filter;
+
+      {
+        GSList *attr_list;
+
+        AttributeDesc::CreateExcludingList (&attr_list,
+#ifndef DEBUG
+                                            "ref",
+                                            "plugin_ID",
+#endif
+                                            "incident",
+                                            "IP",
+                                            "password",
+                                            "cyphered_password",
+                                            "HS",
+                                            "attending",
+                                            "exported",
+                                            "final_rank",
+                                            "global_status",
+                                            "indice",
+                                            "level",
+                                            "workload_rate",
+                                            "pool_nr",
+                                            "promoted",
+                                            "status",
+                                            "team",
+                                            "victories_count",
+                                            "bouts_count",
+                                            "victories_ratio",
+                                            "strip",
+                                            "time",
+                                            NULL);
+        filter = new Filter (GetKlassName (),
+                             attr_list);
+
+        filter->ShowAttribute ("rank");
+        filter->ShowAttribute ("name");
+        filter->ShowAttribute ("first_name");
+        filter->ShowAttribute ("club");
+        filter->ShowAttribute ("score_quest");
+
+        SetClassificationFilter (filter);
+        filter->Release ();
+      }
     }
   }
 
@@ -156,6 +206,8 @@ namespace Swiss
     for (GList *m = _matches; m; m = g_list_next (m))
     {
       Match *match = (Match *) m->data;
+
+      ResetQuest (match);
 
       for (guint i = 0; i < 2; i++)
       {
@@ -862,6 +914,14 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
+  void Round::OnPlugged ()
+  {
+    CanvasModule::OnPlugged ();
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("swiss_classification_toggletoolbutton")),
+                                       FALSE);
+  }
+
+  // --------------------------------------------------------------------------------
   void Round::OnAttrListUpdated ()
   {
     Wipe ();
@@ -874,6 +934,35 @@ namespace Swiss
     }
 
     Display ();
+  }
+
+  // --------------------------------------------------------------------------------
+  GSList *Round::GetCurrentClassification ()
+  {
+    GSList *result = g_slist_copy (GetShortList ());
+
+    {
+      Player::AttributeId quest_attr_id ("score_quest");
+
+      result = g_slist_sort_with_data (result,
+                                       (GCompareDataFunc) Player::CompareInverted,
+                                       &quest_attr_id);
+    }
+
+    {
+      Player::AttributeId  rank_attr_id  ("rank", this);
+      guint                rank = 1;
+
+      for (GSList *f = result; f; f = g_slist_next (f))
+      {
+        Player *fencer = (Player *) f->data;
+
+        fencer->SetAttributeValue (&rank_attr_id,
+                                   rank++);
+      }
+    }
+
+    return result;
   }
 
   // --------------------------------------------------------------------------------
@@ -909,7 +998,10 @@ namespace Swiss
       }
     }
 
-    if (match->IsOver ())
+    EvaluateQuest (match);
+    RefreshClassification ();
+
+    if (match->IsOver () || match->IsDropped ())
     {
       _hall->FreePiste (match);
 
@@ -930,6 +1022,85 @@ namespace Swiss
 
     MakeDirty ();
     //OnRoundOver
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::ResetQuest (Match *match)
+  {
+    Player::AttributeId quest_attr_id ("score_quest");
+
+    for (guint i = 0; i < 2; i++)
+    {
+      Player    *fencer         = match->GetOpponent (i);
+      guint      previous_quest = fencer->GetUIntData (match, "Round::quest");
+      Attribute *quest_attr     = fencer->GetAttribute (&quest_attr_id);
+
+      if (quest_attr)
+      {
+        fencer->SetAttributeValue (&quest_attr_id,
+                                   quest_attr->GetUIntValue () - previous_quest);
+        fencer->RemoveData (match, "Round::quest");
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::EvaluateQuest (Match *match)
+  {
+    Player::AttributeId quest_attr_id ("score_quest");
+
+    ResetQuest (match);
+
+    if (match->IsDropped ())
+    {
+      for (guint i = 0; i < 2; i++)
+      {
+        Player *fencer = match->GetOpponent (i);
+
+        if (match->GetScore (fencer)->IsOut () == FALSE)
+        {
+          fencer->SetData (match,
+                           "Round::quest",
+                           (void *) 2);
+          fencer->SetAttributeValue (&quest_attr_id,
+                                     2);
+        }
+      }
+    }
+    else if (match->IsOver ())
+    {
+      Player *winner       = match->GetWinner ();
+      Player *looser       = match->GetLooser ();
+      guint   winner_score = match->GetScore (winner)->Get ();
+      guint   looser_score = match->GetScore (looser)->Get ();
+      guint   delta        = winner_score - looser_score;
+      guint   quest;
+
+      if (delta < 4)
+      {
+        quest = 1;
+      }
+      else if (4 <= delta && delta <= 7)
+      {
+        quest = 2;
+      }
+      else if (8 <= delta && delta <= 11)
+      {
+        quest = 3;
+      }
+      else
+      {
+        quest = 4;
+      }
+
+      winner->SetData (match,
+                       "Round::quest",
+                       (void *) quest);
+      winner->SetAttributeValue (&quest_attr_id,
+                                 quest);
+      looser->SetAttributeValue (&quest_attr_id,
+                                 (guint) 0);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1108,7 +1279,7 @@ namespace Swiss
   {
     Round *r = dynamic_cast <Round *> (owner);
 
-    r->SelectAttributes ();
+    r->OnFilterClicked ("swiss_classification_toggletoolbutton");
   }
 
   // --------------------------------------------------------------------------------
@@ -1127,5 +1298,14 @@ namespace Swiss
     Round *r = dynamic_cast <Round *> (owner);
 
     r->OnPisteCountChanged (editable);
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_swiss_classification_toggletoolbutton_toggled (GtkToggleToolButton *widget,
+                                                                                    Object              *owner)
+  {
+    Round *r = dynamic_cast <Round *> (owner);
+
+    r->ToggleClassification (gtk_toggle_tool_button_get_active (widget));
   }
 }

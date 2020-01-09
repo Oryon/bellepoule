@@ -340,7 +340,12 @@ void Filter::Load (xmlNode     *xml_node,
         AttributeDesc *desc = AttributeDesc::GetDescFromXmlName (selections[i]);
 
         g_free (selections[i]);
-        selections[i] = g_strdup (desc->_code_name);
+        selections[i] = nullptr;
+
+        if (desc)
+        {
+          selections[i] = g_strdup (desc->_code_name);
+        }
       }
 
       ApplyList (selections);

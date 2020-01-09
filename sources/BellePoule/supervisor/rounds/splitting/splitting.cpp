@@ -272,8 +272,8 @@ namespace People
 
       attr_id.MakeRandomReady (_rand_seed);
       remaining = g_slist_sort_with_data (remaining,
-                                                   (GCompareDataFunc) Player::Compare,
-                                                   &attr_id);
+                                          (GCompareDataFunc) Player::Compare,
+                                          &attr_id);
     }
 
     return remaining;

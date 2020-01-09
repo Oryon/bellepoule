@@ -337,6 +337,8 @@ void Application::Prepare ()
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "rating", "Rating", gettext ("rating"));
 
+    desc = AttributeDesc::Declare (G_TYPE_UINT, "score_quest", "ScoreQuest", gettext ("Quest"));
+
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
     desc->_uniqueness    = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;

@@ -100,6 +100,7 @@ namespace People
                                           "victories_count",
                                           "bouts_count",
                                           "victories_ratio",
+                                          "score_quest",
                                           "strip",
                                           "time",
                                           NULL);

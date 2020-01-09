@@ -961,13 +961,22 @@ void Stage::OnFilterClicked (const gchar *classification_toggle_button)
 }
 
 // --------------------------------------------------------------------------------
+void Stage::RefreshClassification ()
+{
+  if (Locked () == FALSE)
+  {
+    SetResult ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Stage::ToggleClassification (gboolean classification_on)
 {
   Module *module = dynamic_cast <Module *> (this);
 
-  if (classification_on && (Locked () == FALSE))
+  if (classification_on)
   {
-    SetResult ();
+    RefreshClassification ();
   }
 
   if (module)

@@ -87,13 +87,21 @@ namespace Swiss
 
       void DisplayMatch (Match *match);
 
+      void EvaluateQuest (Match *match);
+
+      void ResetQuest (Match *match);
+
       GooCanvasItem *DisplayScore (GooCanvasItem *table,
                                    guint          row,
                                    guint          column,
                                    Match         *match,
                                    Player        *fencer);
 
+      void OnPlugged () override;
+
       void OnAttrListUpdated () override;
+
+      GSList *GetCurrentClassification () override;
 
       void OnNewScore (ScoreCollector *score_collector,
                        Match          *match,
