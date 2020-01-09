@@ -1027,8 +1027,6 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Supervisor::OnLocked ()
   {
-    DisableSensitiveWidgets ();
-
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
                                        FALSE);
 
@@ -1040,8 +1038,6 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Supervisor::OnUnLocked ()
   {
-    EnableSensitiveWidgets ();
-
     gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
                             (GtkTreeModelForeachFunc) ToggleTableSetLock,
                             nullptr);

@@ -72,6 +72,17 @@ namespace Swiss
                              4);
     _hall->SetPisteCount (_piste_count->_value);
 
+    {
+      AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
+      AddSensitiveWidget (_glade->GetWidget ("matches_per_fencer_entry"));
+      AddSensitiveWidget (_glade->GetWidget ("qualified_table"));
+      AddSensitiveWidget (_glade->GetWidget ("piste_entry"));
+      AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
+
+      LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
+      LockOnClassification (_glade->GetWidget ("piste_entry"));
+    }
+
     // Filter
     {
       GSList *attr_list;

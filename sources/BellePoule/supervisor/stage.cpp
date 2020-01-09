@@ -252,7 +252,10 @@ void Stage::Display ()
 // --------------------------------------------------------------------------------
 void Stage::Lock ()
 {
+  Module *module = dynamic_cast <Module *> (this);
+
   _locked = TRUE;
+  module->DisableSensitiveWidgets ();
   OnLocked ();
   SetResult ();
 
@@ -265,9 +268,12 @@ void Stage::Lock ()
 // --------------------------------------------------------------------------------
 void Stage::UnLock ()
 {
+  Module *module = dynamic_cast <Module *> (this);
+
   FreeResult ();
 
   _locked = FALSE;
+  module->EnableSensitiveWidgets ();
   OnUnLocked ();
 
   if (GetInputProvider ())

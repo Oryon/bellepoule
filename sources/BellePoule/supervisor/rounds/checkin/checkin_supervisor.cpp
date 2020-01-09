@@ -807,7 +807,6 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnLocked ()
   {
-    DisableSensitiveWidgets ();
     SetSensitiveState (FALSE);
     SetPopupVisibility ("PlayersList::PasteCloneAction", FALSE);
 
@@ -930,7 +929,6 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnUnLocked ()
   {
-    EnableSensitiveWidgets ();
     SetSensitiveState (TRUE);
     SetPopupVisibility ("PlayersList::PasteCloneAction", TRUE);
     _form->UnLock ();

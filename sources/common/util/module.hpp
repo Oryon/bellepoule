@@ -75,6 +75,10 @@ class Module : public virtual Object
 
     Filter *GetFilter ();
 
+    void EnableSensitiveWidgets ();
+
+    void DisableSensitiveWidgets ();
+
     virtual void MakeDirty ();
 
     virtual void DrawContainerPage (GtkPrintOperation *operation,
@@ -131,9 +135,6 @@ class Module : public virtual Object
     GtkToolbar *GetToolbar ();
 
     GtkContainer *GetConfigContainer ();
-
-    void EnableSensitiveWidgets ();
-    void DisableSensitiveWidgets ();
 
     void SetCursor (GdkCursorType cursor_type);
 

@@ -2428,8 +2428,6 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::OnLocked ()
   {
-    DisableSensitiveWidgets ();
-
     for (GSList *current = _drop_zones; current; current = g_slist_next (current))
     {
       Pool *pool = GetPoolOf (current);
@@ -2447,7 +2445,6 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::OnUnLocked ()
   {
-    EnableSensitiveWidgets ();
     SpreadJobs ();
   }
 

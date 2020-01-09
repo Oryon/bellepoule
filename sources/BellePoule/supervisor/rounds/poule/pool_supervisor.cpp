@@ -337,8 +337,6 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Supervisor::OnLocked ()
   {
-    DisableSensitiveWidgets ();
-
     for (guint p = 0; p < _allocator->GetNbPools (); p++)
     {
       Pool *pool = _allocator->GetPool (p);
@@ -350,8 +348,6 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Supervisor::OnUnLocked ()
   {
-    EnableSensitiveWidgets ();
-
     for (guint p = 0; p < _allocator->GetNbPools (); p++)
     {
       Pool *pool = _allocator->GetPool (p);

@@ -188,7 +188,6 @@ namespace People
   // --------------------------------------------------------------------------------
   void Splitting::OnLocked ()
   {
-    DisableSensitiveWidgets ();
     SetSensitiveState (FALSE);
 
     if (GetState () == State::OPERATIONAL)
@@ -292,7 +291,6 @@ namespace People
   // --------------------------------------------------------------------------------
   void Splitting::OnUnLocked ()
   {
-    EnableSensitiveWidgets ();
     SetSensitiveState (TRUE);
 
     Reset ();
