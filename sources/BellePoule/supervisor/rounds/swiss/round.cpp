@@ -41,9 +41,9 @@ namespace Swiss
   const gchar *Round::_class_name     = N_ ("Pool");
   const gchar *Round::_xml_class_name = "RondeSuisse";
 
-  GdkPixbuf     *Round  ::_moved_pixbuf = nullptr;
-  const gdouble  Round  ::_score_rect_w = 45.0;
-  const gdouble  Round  ::_score_rect_h = 30.0;
+  GdkPixbuf     *Round::_moved_pixbuf = nullptr;
+  const gdouble  Round::_score_rect_w = 45.0;
+  const gdouble  Round::_score_rect_h = 30.0;
 
   // --------------------------------------------------------------------------------
   Round::Round (StageClass *stage_class)
@@ -633,7 +633,7 @@ namespace Swiss
 
         _hall->BookPiste (match);
         DisplayMatch (match);
-        RefreshStatus (match);
+        RefreshMatch (match);
       }
     }
   }
@@ -779,6 +779,10 @@ namespace Swiss
       Canvas::SetTableItemAttribute (item, "y-align", 0.5);
 
       g_free (piste);
+
+      match->SetData (this,
+                      "Round::piste",
+                      item);
     }
 
     _rows++;
@@ -876,7 +880,7 @@ namespace Swiss
       Canvas::SetTableItemAttribute (item, "y-align", 0.5);
 
       score->SetData (this,
-                      "Round::status_item",
+                      "Round::score_status",
                       item);
     }
 
@@ -1063,8 +1067,7 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Round::OnAttrListUpdated ()
   {
-    Wipe ();
-
+    Wipe    ();
     Display ();
   }
 
@@ -1105,7 +1108,7 @@ namespace Swiss
     match->Timestamp ();
 
     _score_collector->Refresh (match);
-    RefreshStatus (match);
+    RefreshMatch (match);
 
     _quest->EvaluateMatch (match);
 
@@ -1140,7 +1143,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::RefreshStatus (Match *match)
+  void Round::RefreshMatch (Match *match)
   {
     for (guint i = 0; i < 2; i++)
     {
@@ -1149,7 +1152,7 @@ namespace Swiss
 
       if (score)
       {
-        GooCanvasItem *status_item = (GooCanvasItem *) score->GetPtrData (this, "Round::status_item");
+        GooCanvasItem *status_item = (GooCanvasItem *) score->GetPtrData (this, "Round::score_status");
 
         if (status_item)
         {
@@ -1161,7 +1164,7 @@ namespace Swiss
                         NULL);
           if (pixbuf)
           {
-            g_object_set (score->GetPtrData (this, "Round::status_item"),
+            g_object_set (score->GetPtrData (this, "Round::score_status"),
                           "pixbuf",     pixbuf,
                           "visibility", GOO_CANVAS_ITEM_VISIBLE,
                           NULL);
@@ -1170,6 +1173,21 @@ namespace Swiss
           }
         }
       }
+    }
+
+    if (match->IsOver ())
+    {
+      g_object_set (G_OBJECT (match->GetPtrData (this, "Round::piste")),
+                    "font",       BP_FONT "18px",
+                    "fill-color", "grey",
+                    nullptr);
+    }
+    else
+    {
+      g_object_set (G_OBJECT (match->GetPtrData (this, "Round::piste")),
+                    "font",       BP_FONT "bold 18px",
+                    "fill-color", "dark",
+                    nullptr);
     }
   }
 

@@ -110,7 +110,7 @@ namespace Swiss
 
       gboolean MatchIsCancelled (Match *match);
 
-      void RefreshStatus (Match *match);
+      void RefreshMatch (Match *match);
 
       void SynchronizeConfiguration (GtkEditable *editable);
 
