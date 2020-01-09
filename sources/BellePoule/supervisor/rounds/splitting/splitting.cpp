@@ -64,6 +64,8 @@ namespace People
                                           "IP",
                                           "password",
                                           "cyphered_password",
+                                          "score_quest",
+                                          "elo",
                                           "HS",
                                           "attending",
                                           "final_rank",

@@ -80,6 +80,8 @@ namespace Pool
                                           "IP",
                                           "password",
                                           "cyphered_password",
+                                          "score_quest",
+                                          "elo",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -96,7 +98,6 @@ namespace Pool
                                           "victories_count",
                                           "bouts_count",
                                           "victories_ratio",
-                                          "score_quest",
                                           "strip",
                                           "time",
                                           NULL);
@@ -125,6 +126,8 @@ namespace Pool
                                             "IP",
                                             "password",
                                             "cyphered_password",
+                                            "score_quest",
+                                            "elo",
                                             "attending",
                                             "exported",
                                             "final_rank",
@@ -135,7 +138,6 @@ namespace Pool
                                             "team",
                                             "strip",
                                             "time",
-                                            "score_quest",
                                             NULL);
         filter = new Filter (GetKlassName (),
                              attr_list);

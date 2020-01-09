@@ -88,6 +88,8 @@ namespace Table
                                           "IP",
                                           "password",
                                           "cyphered_password",
+                                          "score_quest",
+                                          "elo",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -104,7 +106,6 @@ namespace Table
                                           "victories_count",
                                           "bouts_count",
                                           "victories_ratio",
-                                          "score_quest",
                                           "strip",
                                           "time",
                                           NULL);
@@ -133,6 +134,8 @@ namespace Table
                                           "IP",
                                           "password",
                                           "cyphered_password",
+                                          "score_quest",
+                                          "elo",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -147,7 +150,6 @@ namespace Table
                                           "victories_count",
                                           "bouts_count",
                                           "victories_ratio",
-                                          "score_quest",
                                           "strip",
                                           "time",
                                           NULL);

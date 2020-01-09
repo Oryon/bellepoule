@@ -116,6 +116,8 @@ namespace Swiss
                                           "IP",
                                           "password",
                                           "cyphered_password",
+                                          "score_quest",
+                                          "elo",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -594,6 +596,8 @@ namespace Swiss
   {
     GooCanvasItem *root = GetRootItem ();
 
+    Wipe ();
+
     if (root)
     {
       guint ongoings = 0;
@@ -1055,6 +1059,51 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
+  gint Round::ComparePlayer (Player *A,
+                             Player *B,
+                             Round  *round)
+  {
+    Player::AttributeId attr_id ("");
+    gint                result;
+
+    {
+      guint quest_A;
+      guint quest_B;
+
+      attr_id._name = (gchar *) "score_quest";
+      quest_A = A->GetAttribute (&attr_id)->GetUIntValue ();
+      quest_B = B->GetAttribute (&attr_id)->GetUIntValue ();
+
+      result = quest_B - quest_A;
+
+      if (result)
+      {
+        return result;
+      }
+    }
+
+    {
+      guint elo_A;
+      guint elo_B;
+
+      attr_id._name = (gchar *) "elo";
+      elo_A = A->GetAttribute (&attr_id)->GetUIntValue ();
+      elo_B = B->GetAttribute (&attr_id)->GetUIntValue ();
+
+      result = elo_B - elo_A;
+
+      if (result)
+      {
+        return result;
+      }
+    }
+
+    return Player::RandomCompare (A,
+                                  B,
+                                  round->GetRandSeed ());
+  }
+
+  // --------------------------------------------------------------------------------
   void Round::OnPlugged ()
   {
     CanvasModule::OnPlugged ();
@@ -1067,7 +1116,6 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Round::OnAttrListUpdated ()
   {
-    Wipe    ();
     Display ();
   }
 
@@ -1076,13 +1124,9 @@ namespace Swiss
   {
     GSList *result = g_slist_copy (GetShortList ());
 
-    {
-      Player::AttributeId quest_attr_id ("score_quest");
-
-      result = g_slist_sort_with_data (result,
-                                       (GCompareDataFunc) Player::CompareInverted,
-                                       &quest_attr_id);
-    }
+    result = g_slist_sort_with_data (result,
+                                     (GCompareDataFunc) ComparePlayer,
+                                     this);
 
     {
       Player::AttributeId  rank_attr_id  ("rank", this);
@@ -1138,6 +1182,12 @@ namespace Swiss
       }
     }
 
+    if (score_collector)
+    {
+      _elo->ProcessBatch (_matches);
+      RefreshClassification ();
+    }
+
     MakeDirty ();
     //OnRoundOver
   }
@@ -1159,12 +1209,12 @@ namespace Swiss
           AttributeDesc *attr_desc = AttributeDesc::GetDescFromCodeName ("status");
           GdkPixbuf     *pixbuf    = attr_desc->GetDiscretePixbuf (score->GetDropReason ());
 
-          g_object_set (status_item,
+          g_object_set (G_OBJECT (status_item),
                         "visibility", GOO_CANVAS_ITEM_HIDDEN,
                         NULL);
           if (pixbuf)
           {
-            g_object_set (score->GetPtrData (this, "Round::score_status"),
+            g_object_set (G_OBJECT (score->GetPtrData (this, "Round::score_status")),
                           "pixbuf",     pixbuf,
                           "visibility", GOO_CANVAS_ITEM_VISIBLE,
                           NULL);

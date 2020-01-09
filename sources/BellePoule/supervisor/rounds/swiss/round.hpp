@@ -147,6 +147,10 @@ namespace Swiss
       gboolean FencerHasMatch (Player *fencer,
                                GList  *matches);
 
+      static gint ComparePlayer (Player *A,
+                                 Player *B,
+                                 Round  *round);
+
       static Stage *CreateInstance (StageClass *stage_class);
 
       static void on_per_fencer_entry_changed (GtkEditable *editable,
