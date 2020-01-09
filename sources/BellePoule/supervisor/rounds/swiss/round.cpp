@@ -268,16 +268,19 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Round::LoadMatches (xmlNode *xml_node)
   {
+    static gboolean attendees_loaded = FALSE;
+
     for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
         if (g_strcmp0 ((char *) n->name, _xml_class_name) == 0)
         {
+          attendees_loaded = FALSE;
         }
         else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
-          if (_rows == 0)
+          if (attendees_loaded == FALSE)
           {
             LoadAttendees (n);
           }
@@ -285,6 +288,8 @@ namespace Swiss
         else if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
           gchar *number = nullptr;
+
+          attendees_loaded = TRUE;
 
           {
             gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
@@ -583,7 +588,10 @@ namespace Swiss
 
         if (match->IsOver () == FALSE)
         {
-          ongoings++;
+          if (MatchIsCancelled (match) == FALSE)
+          {
+            ongoings++;
+          }
 
           if (ongoings > _piste_count->_value)
           {
@@ -599,11 +607,35 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Round::MatchIsCancelled (Match *match)
+  {
+    if (match->IsOver () == FALSE)
+    {
+      Player::AttributeId status_attr_id ("status", GetDataOwner ());
+
+      for (guint i = 0; i < 2; i++)
+      {
+        Player    *fencer      = match->GetOpponent (i);
+        Attribute *status_attr = fencer->GetAttribute (&status_attr_id);
+        gchar     *status      = status_attr->GetStrValue ();
+
+        if (   (status && status[0] == 'A')
+            || (status && status[0] == 'E'))
+        {
+          return TRUE;
+        }
+      }
+    }
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   void Round::DisplayMatch (Match *match)
   {
     GooCanvasItem *item;
     GooCanvasItem *collecting_point_A;
     GooCanvasItem *collecting_point_B;
+    gboolean       cancelled          = MatchIsCancelled (match);
     guint          column             = 0;
 
     // Falsification
@@ -630,52 +662,76 @@ namespace Swiss
     }
 
     // Fencers
-    for (guint i = 0; i < 2; i++)
     {
-      Player *fencer = match->GetOpponent (i);
+      GString *common_markup = g_string_new ("font_desc=\"" BP_FONT "14.0px\"");
 
-      if (i%2 != 0)
+      if (cancelled)
       {
-        collecting_point_A = DisplayScore (_table,
-                                           _rows,
-                                           column++,
-                                           match,
-                                           fencer);
+        common_markup = g_string_append (common_markup,
+                                         " strikethrough=\"yes\"");
       }
 
-      item = GetPlayerImage (_table,
-                             "font_desc=\"" BP_FONT "14.0px\"",
-                             fencer,
-                             nullptr,
-                             "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
-                             "first_name", "foreground=\"darkblue\"",
-                             "club",       "style=\"italic\" foreground=\"dimgrey\"",
-                             "league",     "style=\"italic\" foreground=\"dimgrey\"",
-                             "region",     "style=\"italic\" foreground=\"dimgrey\"",
-                             "country",    "style=\"italic\" foreground=\"dimgrey\"",
-                             NULL);
-
-      Canvas::PutInTable (_table,
-                          item,
-                          _rows, column++);
-      Canvas::SetTableItemAttribute (item, "y-align", 0.5);
-
-      if (i%2 == 0)
+      for (guint i = 0; i < 2; i++)
       {
-        collecting_point_B = DisplayScore (_table,
-                                           _rows,
-                                           column++,
-                                           match,
-                                           fencer);
+        Player *fencer = match->GetOpponent (i);
+
+        if (i%2 != 0)
+        {
+          if (cancelled == FALSE)
+          {
+            collecting_point_A = DisplayScore (_table,
+                                               _rows,
+                                               column,
+                                               match,
+                                               fencer);
+          }
+          column++;
+        }
+
+        item = GetPlayerImage (_table,
+                               common_markup->str,
+                               fencer,
+                               nullptr,
+                               "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
+                               "first_name", "foreground=\"darkblue\"",
+                               "club",       "style=\"italic\" foreground=\"dimgrey\"",
+                               "league",     "style=\"italic\" foreground=\"dimgrey\"",
+                               "region",     "style=\"italic\" foreground=\"dimgrey\"",
+                               "country",    "style=\"italic\" foreground=\"dimgrey\"",
+                               NULL);
+
+        Canvas::PutInTable (_table,
+                            item,
+                            _rows, column++);
+        Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+
+        if (i%2 == 0)
+        {
+          if (cancelled == FALSE)
+          {
+            collecting_point_B = DisplayScore (_table,
+                                               _rows,
+                                               column,
+                                               match,
+                                               fencer);
+          }
+          column++;
+        }
       }
+      g_string_free (common_markup,
+                     TRUE);
     }
 
-    _score_collector->SetNextCollectingPoint (collecting_point_A,
-                                              collecting_point_B);
-    _score_collector->SetNextCollectingPoint (collecting_point_B,
-                                              collecting_point_A);
+    if (cancelled == FALSE)
+    {
+      _score_collector->SetNextCollectingPoint (collecting_point_A,
+                                                collecting_point_B);
+      _score_collector->SetNextCollectingPoint (collecting_point_B,
+                                                collecting_point_A);
+    }
 
     // Piste
+    if (cancelled == FALSE)
     {
       gchar *piste = g_strdup_printf ("%s %d", gettext ("Piste"), match->GetPiste ());
 
@@ -1020,7 +1076,7 @@ namespace Swiss
 
     _quest->EvaluateMatch (match);
 
-    if (match->IsOver () || match->IsDropped ())
+    if (match->IsOver ())
     {
       _hall->FreePiste (match);
 
@@ -1034,7 +1090,14 @@ namespace Swiss
           {
             DisplayMatch (current_match);
           }
-          break;
+          if (MatchIsCancelled (current_match))
+          {
+            _hall->FreePiste (current_match);
+          }
+          else
+          {
+            break;
+          }
         }
       }
     }
@@ -1053,20 +1116,25 @@ namespace Swiss
 
       if (score)
       {
-        AttributeDesc *attr_desc = AttributeDesc::GetDescFromCodeName ("status");
-        GdkPixbuf     *pixbuf    = attr_desc->GetDiscretePixbuf (score->GetDropReason ());
+        GooCanvasItem *status_item = (GooCanvasItem *) score->GetPtrData (this, "Round::status_item");
 
-        g_object_set (score->GetPtrData (this, "Round::status_item"),
-                      "visibility", GOO_CANVAS_ITEM_HIDDEN,
-                      NULL);
-        if (pixbuf)
+        if (status_item)
         {
-          g_object_set (score->GetPtrData (this, "Round::status_item"),
-                        "pixbuf",     pixbuf,
-                        "visibility", GOO_CANVAS_ITEM_VISIBLE,
-                        NULL);
+          AttributeDesc *attr_desc = AttributeDesc::GetDescFromCodeName ("status");
+          GdkPixbuf     *pixbuf    = attr_desc->GetDiscretePixbuf (score->GetDropReason ());
 
-          g_object_unref (pixbuf);
+          g_object_set (status_item,
+                        "visibility", GOO_CANVAS_ITEM_HIDDEN,
+                        NULL);
+          if (pixbuf)
+          {
+            g_object_set (score->GetPtrData (this, "Round::status_item"),
+                          "pixbuf",     pixbuf,
+                          "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                          NULL);
+
+            g_object_unref (pixbuf);
+          }
         }
       }
     }

@@ -95,6 +95,8 @@ namespace Swiss
 
       void DisplayMatch (Match *match);
 
+      gboolean MatchIsCancelled (Match *match);
+
       void RefreshStatus (Match *match);
 
       GooCanvasItem *DisplayScore (GooCanvasItem *table,
