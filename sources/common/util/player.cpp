@@ -60,6 +60,12 @@ Player::Player (const gchar *player_class)
 
     attr_id._name = (gchar *) "ranking";
     SetAttributeValue (&attr_id, (guint) 0);
+
+    attr_id._name = (gchar *) "score_quest";
+    SetAttributeValue (&attr_id, (guint) 0);
+
+    attr_id._name = (gchar *) "elo";
+    SetAttributeValue (&attr_id, (guint) 1000);
   }
 }
 

@@ -31,6 +31,7 @@
 
 #include "hall.hpp"
 #include "elo.hpp"
+#include "quest.hpp"
 #include "wheel_of_fortune.hpp"
 #include "round.hpp"
 
@@ -51,7 +52,8 @@ namespace Swiss
   {
     Disclose ("BellePoule::Batch");
 
-    _elo = new Elo ();
+    _elo   = new Elo ();
+    _quest = new Quest ();
 
     _matches         = nullptr;
     _score_collector = nullptr;
@@ -188,8 +190,9 @@ namespace Swiss
     _matches_per_fencer->Release ();
     _piste_count->Release        ();
 
-    _hall->Release ();
-    _elo->Release ();
+    _hall->Release  ();
+    _elo->Release   ();
+    _quest->Release ();
 
     Object::TryToRelease (_score_collector);
   }
@@ -220,11 +223,13 @@ namespace Swiss
   {
     _hall->Clear ();
 
+    _elo->CancelBatch ();
+
     for (GList *m = _matches; m; m = g_list_next (m))
     {
       Match *match = (Match *) m->data;
 
-      ResetQuest (match);
+      _quest->CancelMatch (match);
 
       for (guint i = 0; i < 2; i++)
       {
@@ -256,6 +261,8 @@ namespace Swiss
     LoadConfiguration (xml_node);
     Garnish ();
     LoadMatches (xml_node);
+    _elo->ProcessBatch (_matches);
+    RefreshClassification ();
   }
 
   // --------------------------------------------------------------------------------
@@ -312,12 +319,7 @@ namespace Swiss
                     _hall->BookPiste (match);
                   }
 
-                  for (guint i = 0; i < 2; i++)
-                  {
-                    OnNewScore (nullptr,
-                                match,
-                                match->GetOpponent (i));
-                  }
+                  _quest->EvaluateMatch (match);
 
                   break;
                 }
@@ -591,6 +593,7 @@ namespace Swiss
 
         _hall->BookPiste (match);
         DisplayMatch (match);
+        RefreshStatus (match);
       }
     }
   }
@@ -914,6 +917,8 @@ namespace Swiss
       round->OnNewScore (nullptr,
                          match,
                          player);
+      round->_elo->ProcessBatch (round->_matches);
+      round->RefreshClassification ();
     }
 
     gtk_widget_destroy (GTK_WIDGET (combo_box));
@@ -957,18 +962,6 @@ namespace Swiss
     CanvasModule::OnPlugged ();
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("swiss_classification_toggletoolbutton")),
                                        FALSE);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Round::OnLocked ()
-  {
-    _elo->ProcessBatch (_matches);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Round::OnUnLocked ()
-  {
-    _elo->CancelBatch ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1023,9 +1016,9 @@ namespace Swiss
     match->Timestamp ();
 
     _score_collector->Refresh (match);
+    RefreshStatus (match);
 
-    EvaluateQuest (match);
-    RefreshClassification ();
+    _quest->EvaluateMatch (match);
 
     if (match->IsOver () || match->IsDropped ())
     {
@@ -1046,8 +1039,17 @@ namespace Swiss
       }
     }
 
+    MakeDirty ();
+    //OnRoundOver
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::RefreshStatus (Match *match)
+  {
+    for (guint i = 0; i < 2; i++)
     {
-      Score *score = match->GetScore (player);
+      Player *fencer = match->GetOpponent (i);
+      Score  *score  = match->GetScore (fencer);
 
       if (score)
       {
@@ -1067,100 +1069,6 @@ namespace Swiss
           g_object_unref (pixbuf);
         }
       }
-    }
-
-    MakeDirty ();
-    //OnRoundOver
-  }
-
-  // --------------------------------------------------------------------------------
-  void Round::ResetQuest (Match *match)
-  {
-    Player::AttributeId quest_attr_id ("score_quest");
-
-    for (guint i = 0; i < 2; i++)
-    {
-      Player    *fencer         = match->GetOpponent (i);
-      guint      previous_quest = fencer->GetUIntData (match, "Round::quest");
-      Attribute *quest_attr     = fencer->GetAttribute (&quest_attr_id);
-
-      if (quest_attr)
-      {
-        fencer->SetAttributeValue (&quest_attr_id,
-                                   quest_attr->GetUIntValue () - previous_quest);
-        fencer->RemoveData (match, "Round::quest");
-      }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Round::EvaluateQuest (Match *match)
-  {
-    Player::AttributeId quest_attr_id ("score_quest");
-
-    ResetQuest (match);
-
-    if (match->IsDropped ())
-    {
-      for (guint i = 0; i < 2; i++)
-      {
-        Player    *fencer     = match->GetOpponent (i);
-        Attribute *quest_attr = fencer->GetAttribute (&quest_attr_id);
-
-        if (match->GetScore (fencer)->IsOut () == FALSE)
-        {
-          guint new_quest = 2;
-
-          fencer->SetData (match,
-                           "Round::quest",
-                           GUINT_TO_POINTER (2));
-
-          if (quest_attr)
-          {
-            new_quest += quest_attr->GetUIntValue ();
-          }
-          fencer->SetAttributeValue (&quest_attr_id,
-                                     new_quest);
-        }
-      }
-    }
-    else if (match->IsOver ())
-    {
-      Player    *winner       = match->GetWinner ();
-      Player    *looser       = match->GetLooser ();
-      guint      winner_score = match->GetScore (winner)->Get ();
-      guint      looser_score = match->GetScore (looser)->Get ();
-      guint      delta        = winner_score - looser_score;
-      Attribute *quest_attr   = winner->GetAttribute (&quest_attr_id);
-      guint      new_quest;
-
-      if (delta < 4)
-      {
-        new_quest = 1;
-      }
-      else if (4 <= delta && delta <= 7)
-      {
-        new_quest = 2;
-      }
-      else if (8 <= delta && delta <= 11)
-      {
-        new_quest = 3;
-      }
-      else
-      {
-        new_quest = 4;
-      }
-
-      winner->SetData (match,
-                       "Round::quest",
-                       GUINT_TO_POINTER (new_quest));
-
-      if (quest_attr)
-      {
-        new_quest += quest_attr->GetUIntValue ();
-      }
-      winner->SetAttributeValue (&quest_attr_id,
-                                 new_quest);
     }
   }
 
@@ -1217,7 +1125,8 @@ namespace Swiss
                   B);
     }
 
-    MakeDirty ();
+    _elo->ProcessBatch (_matches);
+    RefreshClassification ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1359,6 +1268,8 @@ namespace Swiss
                               match,
                               match->GetOpponent (i));
                 }
+                _elo->ProcessBatch (_matches);
+                RefreshClassification ();
                 //RefreshScoreData ();
                 //RefreshDashBoard ();
               }

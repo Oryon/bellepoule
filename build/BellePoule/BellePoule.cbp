@@ -546,6 +546,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/hall.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/quest.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/quest.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/round.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

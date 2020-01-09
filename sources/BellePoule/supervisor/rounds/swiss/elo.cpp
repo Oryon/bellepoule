@@ -40,6 +40,8 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Elo::ProcessBatch (GList *matches)
   {
+    CancelBatch ();
+
     for (GList *m = matches; m; m = g_list_next (m))
     {
       Match *match = (Match *) m->data;
@@ -63,13 +65,6 @@ namespace Swiss
       {
         Attribute *elo_attr = fencer->GetAttribute (&elo_attr_id);
 
-        if (elo_attr == nullptr)
-        {
-          fencer->SetAttributeValue (&elo_attr_id,
-                                     1000);
-          elo_attr = fencer->GetAttribute (&elo_attr_id);
-        }
-
         fencer->SetData (this,
                          "Elo::recovery",
                          GUINT_TO_POINTER (elo_attr->GetUIntValue ()));
@@ -84,39 +79,42 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Elo::Evaluate (Match *match)
   {
-    Player::AttributeId elo_attr_id ("elo");
-    gdouble             elo[2];
-    gdouble             probability[2];
-
-    // elo
-    for (guint f = 0; f < 2; f++)
+    if (match->IsOver () || match->IsDropped ())
     {
-      Player    *fencer   = (Player *) match->GetOpponent (f);
-      Attribute *elo_attr = fencer->GetAttribute (&elo_attr_id);
+      Player::AttributeId elo_attr_id ("elo");
+      gdouble             elo[2];
+      gdouble             probability[2];
 
-      elo[f] = elo_attr->GetUIntValue ();
-    }
-
-    // probability
-    probability[0] = 1 / (1 + pow (10, (elo[1] - elo[0]) / 400));
-    probability[1] = 1 - probability[0];
-
-    for (guint f = 0; f < 2; f++)
-    {
-      Player  *fencer = (Player *) match->GetOpponent (f);
-      gdouble  new_elo;
-
-      if (fencer == match->GetWinner ())
+      // elo
+      for (guint f = 0; f < 2; f++)
       {
-        new_elo = round (elo[f] + K*(1-probability[f]));
-      }
-      else
-      {
-        new_elo = round (elo[f] + K*(-probability[f]));
+        Player    *fencer   = (Player *) match->GetOpponent (f);
+        Attribute *elo_attr = fencer->GetAttribute (&elo_attr_id);
+
+        elo[f] = elo_attr->GetUIntValue ();
       }
 
-      fencer->SetAttributeValue (&elo_attr_id,
-                                 (guint) new_elo);
+      // probability
+      probability[0] = 1 / (1 + pow (10, (elo[1] - elo[0]) / 400));
+      probability[1] = 1 - probability[0];
+
+      for (guint f = 0; f < 2; f++)
+      {
+        Player  *fencer = (Player *) match->GetOpponent (f);
+        gdouble  new_elo;
+
+        if (fencer == match->GetWinner ())
+        {
+          new_elo = round (elo[f] + K*(1-probability[f]));
+        }
+        else
+        {
+          new_elo = round (elo[f] + K*(-probability[f]));
+        }
+
+        fencer->SetAttributeValue (&elo_attr_id,
+                                   (guint) new_elo);
+      }
     }
   }
 

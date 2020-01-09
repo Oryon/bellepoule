@@ -28,6 +28,7 @@ namespace Swiss
 {
   class Hall;
   class Elo;
+  class Quest;
 
   class Round : public Stage,
                 public CanvasModule,
@@ -52,6 +53,7 @@ namespace Swiss
       static const gdouble  _score_rect_h;
 
       Elo            *_elo;
+      Quest          *_quest;
       Hall           *_hall;
       Data           *_matches_per_fencer;
       Data           *_piste_count;
@@ -93,9 +95,7 @@ namespace Swiss
 
       void DisplayMatch (Match *match);
 
-      void EvaluateQuest (Match *match);
-
-      void ResetQuest (Match *match);
+      void RefreshStatus (Match *match);
 
       GooCanvasItem *DisplayScore (GooCanvasItem *table,
                                    guint          row,
@@ -104,10 +104,6 @@ namespace Swiss
                                    Player        *fencer);
 
       void OnPlugged () override;
-
-      void OnLocked () override;
-
-      void OnUnLocked () override;
 
       void OnAttrListUpdated () override;
 
