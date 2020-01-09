@@ -198,6 +198,7 @@ class Stage : public virtual Object,
     Contest   *_contest;
     Data      *_max_score;
     Data      *_nb_qualified;
+    GSList    *_output_short_list;
 
     Stage (StageClass *stage_class);
 
@@ -206,6 +207,8 @@ class Stage : public virtual Object,
     void SignalStatusUpdate ();
 
     GSList *GetShortList ();
+
+    virtual void SetOutputShortlist ();
 
     void RefreshClassification ();
 
@@ -241,7 +244,6 @@ class Stage : public virtual Object,
     gboolean            _locked;
     StageClass         *_stage_class;
     GSList             *_result;
-    GSList             *_output_short_list;
     guint               _quota_exceedance;
     Classification     *_classification;
     GSList             *_locked_on_classification;
@@ -258,8 +260,6 @@ class Stage : public virtual Object,
     static StageClass *GetClass (const gchar *name);
 
     virtual GSList *GetCurrentClassification () {return nullptr;};
-
-    virtual void SetOutputShortlist ();
 
     virtual gboolean HasItsOwnRanking ();
 

@@ -535,6 +535,16 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
+  void Round::SetOutputShortlist ()
+  {
+    Stage::SetOutputShortlist ();
+
+    _output_short_list = g_slist_sort_with_data (_output_short_list,
+                                                (GCompareDataFunc) Player::RandomCompare,
+                                                 GINT_TO_POINTER (GetRandSeed ()));
+  }
+
+  // --------------------------------------------------------------------------------
   void Round::Display ()
   {
     GooCanvasItem *root = GetRootItem ();

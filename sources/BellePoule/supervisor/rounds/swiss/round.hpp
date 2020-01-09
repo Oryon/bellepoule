@@ -84,6 +84,8 @@ namespace Swiss
 
       void Dump () override;
 
+      void SetOutputShortlist () override;
+
       void TossMatches (GSList *fencers,
                         guint   matches_per_fencer);
 
