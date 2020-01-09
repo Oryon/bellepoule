@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <math.h>
 #include <gdk/gdkkeysyms.h>
 #include "util/data.hpp"
 #include "util/glade.hpp"
@@ -47,10 +48,23 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   Round::Round (StageClass *stage_class)
     : Object ("Swiss::Round"),
-      Stage (stage_class),
-      CanvasModule ("swiss_supervisor.glade")
+    Stage (stage_class),
+    CanvasModule ("swiss_supervisor.glade")
   {
     Disclose ("BellePoule::Batch");
+
+    {
+      _piste_entry      = GTK_WIDGET (_glade->GetWidget ("piste_entry"));
+      _per_fencer_entry = GTK_WIDGET (_glade->GetWidget ("per_fencer_entry"));
+      _duration_entry   = GTK_WIDGET (_glade->GetWidget ("duration_entry"));
+
+      _per_fencer_entry_handler = g_signal_connect (G_OBJECT (_per_fencer_entry), "changed",
+                                                    G_CALLBACK (on_per_fencer_entry_changed),
+                                                    (Object *) this);
+      _duration_entry_handler = g_signal_connect (G_OBJECT (_duration_entry), "changed",
+                                                  G_CALLBACK (on_duration_entry_changed),
+                                                  (Object *) this);
+    }
 
     _elo   = new Elo ();
     _quest = new Quest ();
@@ -70,6 +84,8 @@ namespace Swiss
 
     _matches_per_fencer = new Data ("MatchsParTireur",
                                     7);
+    _available_time = new Data ("TempsDisponible",
+                                4);
 
     _hall = new Hall ();
 
@@ -79,9 +95,7 @@ namespace Swiss
 
     {
       AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
-      AddSensitiveWidget (_glade->GetWidget ("matches_per_fencer_entry"));
-      AddSensitiveWidget (_glade->GetWidget ("qualified_table"));
-      AddSensitiveWidget (_glade->GetWidget ("piste_entry"));
+      AddSensitiveWidget (_glade->GetWidget ("qualified_viewport"));
       AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
 
       LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
@@ -188,6 +202,7 @@ namespace Swiss
 
     _max_score->Release          ();
     _matches_per_fencer->Release ();
+    _available_time->Release     ();
     _piste_count->Release        ();
 
     _hall->Release  ();
@@ -349,6 +364,7 @@ namespace Swiss
     Stage::SaveConfiguration (xml_scheme);
 
     _matches_per_fencer->Save (xml_scheme);
+    _available_time->Save     (xml_scheme);
     _piste_count->Save        (xml_scheme);
   }
 
@@ -358,6 +374,7 @@ namespace Swiss
     Stage::LoadConfiguration (xml_node);
 
     _matches_per_fencer->Load (xml_node);
+    _available_time->Load     (xml_node);
 
     _piste_count->Load (xml_node);
     _hall->SetPisteCount (_piste_count->_value);
@@ -401,12 +418,27 @@ namespace Swiss
   {
     Stage::FillInConfig ();
 
+    if (_matches_per_fencer->IsValid ())
     {
-      GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("matches_per_fencer_entry"));
+      GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("per_fencer_entry"));
 
       if (w)
       {
         gchar *text = g_strdup_printf ("%d", _matches_per_fencer->_value);
+
+        gtk_entry_set_text (w,
+                            text);
+        g_free (text);
+      }
+    }
+
+    if (_available_time->IsValid ())
+    {
+      GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("duration_entry"));
+
+      if (w)
+      {
+        gchar *text = g_strdup_printf ("%d", _available_time->_value);
 
         gtk_entry_set_text (w,
                             text);
@@ -424,26 +456,6 @@ namespace Swiss
         gtk_entry_set_text (w,
                             text);
         g_free (text);
-      }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Round::ApplyConfig ()
-  {
-    Stage::ApplyConfig ();
-
-    {
-      GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("matches_per_fencer_entry"));
-
-      if (w)
-      {
-        gchar *str = (gchar *) gtk_entry_get_text (w);
-
-        if (str)
-        {
-          _matches_per_fencer->_value = atoi (str);
-        }
       }
     }
   }
@@ -477,8 +489,8 @@ namespace Swiss
       GList  *matches = (GList *) fencer->GetPtrData (this, "Round::matches");
 
       for (guint match_count = g_list_length (matches);
-                 match_count < matches_per_fencer;
-                 match_count++)
+           match_count < matches_per_fencer;
+           match_count++)
       {
 
         for (void *o = wheel->Turn (); o; o = wheel->TryAgain ())
@@ -553,7 +565,7 @@ namespace Swiss
     Stage::SetOutputShortlist ();
 
     _output_short_list = g_slist_sort_with_data (_output_short_list,
-                                                (GCompareDataFunc) Player::RandomCompare,
+                                                 (GCompareDataFunc) Player::RandomCompare,
                                                  GINT_TO_POINTER (GetRandSeed ()));
   }
 
@@ -570,6 +582,8 @@ namespace Swiss
 
         fencer->RemoveData (match, "Round::highlight");
       }
+
+      _score_collector->RemoveCollectingPoints (match);
     }
 
     CanvasModule::Wipe ();
@@ -815,9 +829,9 @@ namespace Swiss
         arrow_icon = g_build_filename (Global::_share_dir, "resources/glade/images/arrow.png", NULL);
       }
       item = Canvas::PutIconInTable (score_table,
-                                           arrow_icon,
-                                           0,
-                                           0);
+                                     arrow_icon,
+                                     0,
+                                     0);
       Canvas::SetTableItemAttribute (item, "x-align", 1.0);
       Canvas::SetTableItemAttribute (item, "y-align", 0.0);
 
@@ -1042,19 +1056,14 @@ namespace Swiss
     CanvasModule::OnPlugged ();
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("swiss_classification_toggletoolbutton")),
                                        FALSE);
+
+    SynchronizeConfiguration (GTK_EDITABLE (_piste_entry));
   }
 
   // --------------------------------------------------------------------------------
   void Round::OnAttrListUpdated ()
   {
     Wipe ();
-
-    for (GList *m = _matches; m; m = g_list_next (m))
-    {
-      Match *match = (Match *) m->data;
-
-      _score_collector->RemoveCollectingPoints (match);
-    }
 
     Display ();
   }
@@ -1173,7 +1182,116 @@ namespace Swiss
     {
       _piste_count->_value = atoi (str);
       _hall->SetPisteCount (_piste_count->_value);
+
+      SynchronizeConfiguration (editable);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::OnMatchesPerFencerChanged (GtkEditable *editable)
+  {
+    gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (editable));
+
+    if (str)
+    {
+      _matches_per_fencer->_value = atoi (str);
+      _matches_per_fencer->Activate ();
+      _available_time->Deactivate   ();
+
+      SynchronizeConfiguration (editable);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::OnDurationChanged (GtkEditable *editable)
+  {
+    gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (editable));
+
+    if (str)
+    {
+      _available_time->_value = atoi (str);
+      _matches_per_fencer->Deactivate ();
+      _available_time->Activate       ();
+
+      SynchronizeConfiguration (editable);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::SynchronizeConfiguration (GtkEditable *editable)
+  {
+    GtkWidget *entry_to_block   = _duration_entry;
+    gulong     handler_to_block = _duration_entry_handler;
+
+    if (GTK_WIDGET (editable) == _piste_entry)
+    {
+      if (_available_time->IsValid ())
+      {
+        entry_to_block   = _per_fencer_entry;
+        handler_to_block = _per_fencer_entry_handler;
+      }
+    }
+    else if (GTK_WIDGET (editable) == _duration_entry)
+    {
+      entry_to_block   = _per_fencer_entry;
+      handler_to_block = _per_fencer_entry_handler;
+    }
+
+    if (_piste_count->_value)
+    {
+      guint fencers = g_slist_length (GetShortList ());
+
+      g_signal_handler_block (entry_to_block,
+                              handler_to_block);
+
+      if (entry_to_block == _duration_entry)
+      {
+        gchar *text;
+
+        if (_matches_per_fencer->_value > fencers-1)
+        {
+          text = g_strdup_printf ("%d", fencers-1);
+
+          gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("per_fencer_entry")),
+                              text);
+        }
+        else
+        {
+          guint  matches    = (fencers *_matches_per_fencer->_value) / 2;
+          guint  time_slots = matches / _piste_count->_value;
+          guint  duration   = (time_slots *15) / 60;
+
+          if (duration == 0)
+          {
+            text = g_strdup ("<1");
+          }
+          else
+          {
+            text = g_strdup_printf ("%d", duration);
+          }
+          gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("duration_entry")),
+                              text);
+        }
+        g_free (text);
+      }
+      else
+      {
+        guint  matches     = _available_time->_value*4 * _piste_count->_value;
+        guint  grid_size   = (1 + sqrt (1+8*matches)) / 2;
+        guint  per_fencer  = MIN (fencers-1, grid_size-1);
+        gchar *text        = g_strdup_printf ("%d", per_fencer);
+
+        gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("per_fencer_entry")),
+                            text);
+        g_free (text);
+      }
+
+      g_signal_handler_unblock (entry_to_block,
+                                handler_to_block);
+      OnAttrListUpdated ();
+    }
+
+    MakeDirty ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1426,6 +1544,24 @@ namespace Swiss
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::on_per_fencer_entry_changed (GtkEditable *editable,
+                                           Object      *owner)
+  {
+    Round *r = dynamic_cast <Round *> (owner);
+
+    r->OnMatchesPerFencerChanged (editable);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::on_duration_entry_changed (GtkEditable *editable,
+                                         Object      *owner)
+  {
+    Round *r = dynamic_cast <Round *> (owner);
+
+    r->OnDurationChanged (editable);
   }
 
   // --------------------------------------------------------------------------------

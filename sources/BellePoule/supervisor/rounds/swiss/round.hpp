@@ -58,11 +58,17 @@ namespace Swiss
       Quest          *_quest;
       Hall           *_hall;
       Data           *_matches_per_fencer;
+      Data           *_available_time;
       Data           *_piste_count;
       GList          *_matches;
       ScoreCollector *_score_collector;
       GooCanvasItem  *_table;
       guint           _rows;
+      GtkWidget      *_piste_entry;
+      GtkWidget      *_per_fencer_entry;
+      GtkWidget      *_duration_entry;
+      gulong          _per_fencer_entry_handler;
+      gulong          _duration_entry_handler;
 
       ~Round () override;
 
@@ -80,8 +86,6 @@ namespace Swiss
 
       void FillInConfig () override;
 
-      void ApplyConfig () override;
-
       void Garnish () override;
 
       void Reset () override;
@@ -91,6 +95,11 @@ namespace Swiss
       void Wipe () override;
 
       void Dump () override;
+
+      void OnMatchesPerFencerChanged (GtkEditable *editable);
+
+      void OnDurationChanged (GtkEditable *editable);
+
 
       void SetOutputShortlist () override;
 
@@ -102,6 +111,8 @@ namespace Swiss
       gboolean MatchIsCancelled (Match *match);
 
       void RefreshStatus (Match *match);
+
+      void SynchronizeConfiguration (GtkEditable *editable);
 
       GooCanvasItem *DisplayScore (GooCanvasItem *table,
                                    guint          row,
@@ -137,5 +148,11 @@ namespace Swiss
                                GList  *matches);
 
       static Stage *CreateInstance (StageClass *stage_class);
+
+      static void on_per_fencer_entry_changed (GtkEditable *editable,
+                                               Object      *owner);
+
+      static void on_duration_entry_changed (GtkEditable *editable,
+                                             Object      *owner);
   };
 }
