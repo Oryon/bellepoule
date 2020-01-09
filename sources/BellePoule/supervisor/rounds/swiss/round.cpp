@@ -1127,6 +1127,50 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
+  void Round::OnStuffClicked ()
+  {
+    Wipe ();
+
+    Reset ();
+    Garnish ();
+    Display ();
+
+    for (GList *m = _matches; m; m = g_list_next (m))
+    {
+      Match  *match;
+      Player *A;
+      Player *B;
+      gint    score;
+
+      match = (Match *) m->data;
+      A     = match->GetOpponent (0);
+      B     = match->GetOpponent (1);
+      score = g_random_int_range (0,
+                                  _max_score->_value);
+
+      if (g_random_boolean ())
+      {
+        match->SetScore (A, _max_score->_value, TRUE);
+        match->SetScore (B, score, FALSE);
+      }
+      else
+      {
+        match->SetScore (A, score, FALSE);
+        match->SetScore (B, _max_score->_value, TRUE);
+      }
+
+      OnNewScore (nullptr,
+                  match,
+                  A);
+      OnNewScore (nullptr,
+                  match,
+                  B);
+    }
+
+    MakeDirty ();
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Round::OnMessage (Net::Message *message)
   {
     if (message->Is ("SmartPoule::JobListCall"))
@@ -1318,5 +1362,14 @@ namespace Swiss
     Round *r = dynamic_cast <Round *> (owner);
 
     r->ToggleClassification (gtk_toggle_tool_button_get_active (widget));
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_swiss_stuff_toolbutton_clicked (GtkWidget *widget,
+                                                                     Object    *owner)
+  {
+    Round *r = dynamic_cast <Round *> (owner);
+
+    r->OnStuffClicked ();
   }
 }

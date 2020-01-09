@@ -39,6 +39,8 @@ namespace Swiss
 
       void OnPisteCountChanged (GtkEditable *editable);
 
+      void OnStuffClicked ();
+
     public:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
