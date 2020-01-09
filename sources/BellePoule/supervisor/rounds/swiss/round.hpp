@@ -27,6 +27,7 @@ class Data;
 namespace Swiss
 {
   class Hall;
+  class Elo;
 
   class Round : public Stage,
                 public CanvasModule,
@@ -50,6 +51,7 @@ namespace Swiss
       static const gdouble  _score_rect_w;
       static const gdouble  _score_rect_h;
 
+      Elo            *_elo;
       Hall           *_hall;
       Data           *_matches_per_fencer;
       Data           *_piste_count;
@@ -102,6 +104,10 @@ namespace Swiss
                                    Player        *fencer);
 
       void OnPlugged () override;
+
+      void OnLocked () override;
+
+      void OnUnLocked () override;
 
       void OnAttrListUpdated () override;
 

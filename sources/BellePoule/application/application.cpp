@@ -340,6 +340,9 @@ void Application::Prepare ()
     desc = AttributeDesc::Declare (G_TYPE_UINT, "score_quest", "ScoreQuest", gettext ("Quest"));
     desc->_computability = AttributeDesc::Computability::COMPUTABLE;
 
+    desc = AttributeDesc::Declare (G_TYPE_UINT, "elo", "Elo", gettext ("Elo"));
+    desc->_computability = AttributeDesc::Computability::COMPUTABLE;
+
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
     desc->_uniqueness    = AttributeDesc::Uniqueness::NOT_SINGULAR;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;

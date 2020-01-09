@@ -30,6 +30,7 @@
 #include "../../score.hpp"
 
 #include "hall.hpp"
+#include "elo.hpp"
 #include "wheel_of_fortune.hpp"
 #include "round.hpp"
 
@@ -49,6 +50,8 @@ namespace Swiss
       CanvasModule ("swiss_supervisor.glade")
   {
     Disclose ("BellePoule::Batch");
+
+    _elo = new Elo ();
 
     _matches         = nullptr;
     _score_collector = nullptr;
@@ -184,6 +187,9 @@ namespace Swiss
     _max_score->Release          ();
     _matches_per_fencer->Release ();
     _piste_count->Release        ();
+
+    _hall->Release ();
+    _elo->Release ();
 
     Object::TryToRelease (_score_collector);
   }
@@ -856,8 +862,8 @@ namespace Swiss
       }
 
       {
-        g_object_set_data (G_OBJECT (combo), "player_for_status", (void *) fencer);
-        g_object_set_data (G_OBJECT (combo), "match_for_status",  (void *) match);
+        g_object_set_data (G_OBJECT (combo), "player_for_status", fencer);
+        g_object_set_data (G_OBJECT (combo), "match_for_status",  match);
         g_signal_connect (combo, "changed",
                           G_CALLBACK (OnStatusChanged), round);
         g_signal_connect (combo, "key-press-event",
@@ -951,6 +957,18 @@ namespace Swiss
     CanvasModule::OnPlugged ();
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("swiss_classification_toggletoolbutton")),
                                        FALSE);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::OnLocked ()
+  {
+    _elo->ProcessBatch (_matches);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::OnUnLocked ()
+  {
+    _elo->CancelBatch ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1095,7 +1113,7 @@ namespace Swiss
 
           fencer->SetData (match,
                            "Round::quest",
-                           (void *) 2);
+                           GUINT_TO_POINTER (2));
 
           if (quest_attr)
           {
@@ -1135,7 +1153,7 @@ namespace Swiss
 
       winner->SetData (match,
                        "Round::quest",
-                       (void *) new_quest);
+                       GUINT_TO_POINTER (new_quest));
 
       if (quest_attr)
       {
