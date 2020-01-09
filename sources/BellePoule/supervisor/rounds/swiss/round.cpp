@@ -558,6 +558,24 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
+  void Round::Wipe ()
+  {
+    for (GList *m = _matches; m; m = g_list_next (m))
+    {
+      Match *match = (Match *) m->data;
+
+      for (guint i = 0; i < 2; i++)
+      {
+        Player *fencer = match->GetOpponent (i);
+
+        fencer->RemoveData (match, "Round::highlight");
+      }
+    }
+
+    CanvasModule::Wipe ();
+  }
+
+  // --------------------------------------------------------------------------------
   void Round::Display ()
   {
     GooCanvasItem *root = GetRootItem ();
@@ -699,6 +717,9 @@ namespace Swiss
                                "region",     "style=\"italic\" foreground=\"dimgrey\"",
                                "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                NULL);
+
+        fencer->SetData (match, "Round::highlight",
+                         item);
 
         Canvas::PutInTable (_table,
                             item,
@@ -939,40 +960,43 @@ namespace Swiss
                                Round       *round)
   {
     {
-      GtkTreeIter          iter;
-      gchar               *code;
-      Match               *match  = (Match *) g_object_get_data (G_OBJECT (combo_box), "match_for_status");
-      Player              *player = (Player *) g_object_get_data (G_OBJECT (combo_box), "player_for_status");
-
-      gtk_combo_box_get_active_iter (combo_box,
-                                     &iter);
-      gtk_tree_model_get (round->GetStatusModel (),
-                          &iter,
-                          AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &code,
-                          -1);
-
-      if (code && *code !='Q')
-      {
-        match->DropFencer (player,
-                           code);
-      }
-      else
-      {
-        match->RestoreFencer (player);
-      }
+      Match  *match  = (Match *) g_object_get_data (G_OBJECT (combo_box), "match_for_status");
+      Player *fencer = (Player *) g_object_get_data (G_OBJECT (combo_box), "player_for_status");
 
       {
-        Player::AttributeId status_attr_id ("status", round->GetDataOwner ());
+        GtkTreeIter  iter;
+        gchar       *code;
 
-        player->SetAttributeValue (&status_attr_id,
-                                   code);
+        gtk_combo_box_get_active_iter (combo_box,
+                                       &iter);
+        gtk_tree_model_get (round->GetStatusModel (),
+                            &iter,
+                            AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &code,
+                            -1);
+
+        if (code && *code !='Q')
+        {
+          match->DropFencer (fencer,
+                             code);
+        }
+        else
+        {
+          match->RestoreFencer (fencer);
+        }
+
+        {
+          Player::AttributeId status_attr_id ("status", round->GetDataOwner ());
+
+          fencer->SetAttributeValue (&status_attr_id,
+                                     code);
+        }
+
+        g_free (code);
       }
-
-      g_free (code);
 
       round->OnNewScore (nullptr,
                          match,
-                         player);
+                         fencer);
       round->_elo->ProcessBatch (round->_matches);
       round->RefreshClassification ();
     }
@@ -1150,6 +1174,52 @@ namespace Swiss
       _piste_count->_value = atoi (str);
       _hall->SetPisteCount (_piste_count->_value);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Round::OnHighlightChanged (GtkEditable *editable)
+  {
+    gchar *str      = g_strdup (gtk_entry_get_text (GTK_ENTRY (editable)));
+    gchar *stripped = g_strstrip (str);
+    gchar *color    = (gchar *) "yellow";
+
+    if ((str == nullptr) || (str[0] == '\0'))
+    {
+      color = (gchar *) "white";
+    }
+
+    for (GList *m = _matches; m; m = g_list_next (m))
+    {
+      Match *match = (Match *) m->data;
+
+      if (match->GetPtrData (this, "Round::displayed"))
+      {
+        for (guint i = 0; i < 2; i++)
+        {
+          Player        *fencer = match->GetOpponent (i);
+          gchar         *name   = fencer->GetName ();
+          GooCanvasItem *item   = (GooCanvasItem *) fencer->GetPtrData (match, "Round::highlight");
+
+          if (g_str_match_string (str,
+                                  name,
+                                  TRUE))
+          {
+            g_object_set (G_OBJECT (item),
+                          "fill-color", color,
+                          nullptr);
+          }
+          else
+          {
+            g_object_set (G_OBJECT (item),
+                          "fill-color", "white",
+                          nullptr);
+          }
+
+          g_free (name);
+        }
+      }
+    }
+    g_free (stripped);
   }
 
   // --------------------------------------------------------------------------------
@@ -1336,6 +1406,7 @@ namespace Swiss
                               match,
                               match->GetOpponent (i));
                 }
+
                 _elo->ProcessBatch (_matches);
                 RefreshClassification ();
                 //RefreshScoreData ();
@@ -1400,5 +1471,14 @@ namespace Swiss
     Round *r = dynamic_cast <Round *> (owner);
 
     r->OnStuffClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_highlight_entry_changed (GtkEditable *editable,
+                                                              Object      *owner)
+  {
+    Round *r = dynamic_cast <Round *> (owner);
+
+    r->OnHighlightChanged (editable);
   }
 }

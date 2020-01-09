@@ -43,6 +43,8 @@ namespace Swiss
 
       void OnStuffClicked ();
 
+      void OnHighlightChanged (GtkEditable *editable);
+
     public:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
@@ -85,6 +87,8 @@ namespace Swiss
       void Reset () override;
 
       void Display () override;
+
+      void Wipe () override;
 
       void Dump () override;
 

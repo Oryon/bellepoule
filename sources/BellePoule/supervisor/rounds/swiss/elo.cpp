@@ -79,7 +79,7 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Elo::Evaluate (Match *match)
   {
-    if (match->IsOver () || match->IsDropped ())
+    if (match->IsOver ())
     {
       Player::AttributeId elo_attr_id ("elo");
       gdouble             elo[2];

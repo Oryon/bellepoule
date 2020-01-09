@@ -592,6 +592,14 @@ void Match::Load (xmlNode *node,
 
     xmlFree (attr);
   }
+
+  for (guint i = 0; i < 2; i++)
+  {
+    if (_opponents[i]._score->IsOut ())
+    {
+      _opponents[!i]._score->SynchronizeWith (_opponents[i]._score);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
