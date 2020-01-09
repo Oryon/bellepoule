@@ -44,6 +44,12 @@ class AttributeDesc : public Object
       NOT_PERSISTENT
     };
 
+    enum class Computability
+    {
+      COMPUTABLE,
+      NOT_COMPUTABLE
+    };
+
     enum class Scope
     {
       GLOBAL,
@@ -78,6 +84,7 @@ class AttributeDesc : public Object
     gchar        *_code_name;
     gchar        *_user_name;
     Persistency   _persistency;
+    Computability _computability;
     Scope         _scope;
     Uniqueness    _uniqueness;
     Look          _favorite_look;

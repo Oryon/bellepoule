@@ -601,9 +601,9 @@ void Contest::LoadXmlFile (const gchar *filename)
     GetSaveFileName (chooser,
                      "default_dir_name");
     gtk_widget_destroy (chooser);
-  }
 
-  Save ();
+    Save ();
+  }
 }
 
 // --------------------------------------------------------------------------------

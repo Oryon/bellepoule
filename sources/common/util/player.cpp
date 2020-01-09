@@ -595,98 +595,99 @@ void Player::Save (XmlScheme *xml_scheme,
 void Player::Load (xmlNode *xml_node)
 {
   GSList      *attr_list;
-  GSList      *current;
   AttributeId attending_attr_id ("attending");
 
   AttributeDesc::CreateExcludingList (&attr_list,
                                       NULL);
 
-  current = attr_list;
-  while (current)
+  for (GSList *current = attr_list; current; current = g_slist_next (current))
   {
-    AttributeDesc *desc  = (AttributeDesc *) current->data;
-    gchar         *value = (gchar *) xmlGetProp (xml_node, BAD_CAST desc->_xml_name);
+    AttributeDesc *desc = (AttributeDesc *) current->data;
 
-    if (value)
+    if (desc->_computability == AttributeDesc::Computability::NOT_COMPUTABLE)
     {
-      AttributeId attr_id (desc->_code_name);
+      gchar *value = (gchar *) xmlGetProp (xml_node, BAD_CAST desc->_xml_name);
 
-      SetAttributeValue (&attr_id,
-                         value);
-
-      if (g_strcmp0 (desc->_code_name, "ref") == 0)
+      if (value)
       {
-        Attribute *attr = GetAttribute (&attr_id);
+        AttributeId attr_id (desc->_code_name);
 
-        if (attr)
+        SetAttributeValue (&attr_id,
+                           value);
+
+        if (g_strcmp0 (desc->_code_name, "ref") == 0)
         {
-          _ref = attr->GetUIntValue ();
-        }
-      }
+          Attribute *attr = GetAttribute (&attr_id);
 
-      if (g_strcmp0 (desc->_code_name, "birth_date") == 0)
-      {
-        Attribute *attr = GetAttribute (&attr_id);
-
-        if (attr)
-        {
-          gchar *french_date = attr->GetStrValue ();
-          gchar **splitted_date;
-
-          splitted_date = g_strsplit_set (french_date,
-                                          ".",
-                                          0);
-          if (   splitted_date
-              && splitted_date[0]
-              && splitted_date[1]
-              && splitted_date[2])
+          if (attr)
           {
-            gchar buffer[50];
-
-            if (   (g_ascii_strcasecmp (splitted_date[0], "00") == 0)
-                || (g_ascii_strcasecmp (splitted_date[1], "00") == 0))
-            {
-              // AskFred
-              g_strlcpy (buffer,
-                         splitted_date[2],
-                         sizeof (buffer));
-            }
-            else
-            {
-              GDate *date = g_date_new ();
-
-              g_date_set_day   (date, (GDateDay)   atoi (splitted_date[0]));
-              g_date_set_month (date, (GDateMonth) atoi (splitted_date[1]));
-              g_date_set_year  (date, (GDateYear)  atoi (splitted_date[2]));
-
-              g_date_strftime (buffer,
-                               sizeof (buffer),
-                               "%x",
-                               date);
-              g_date_free (date);
-            }
-            attr->SetValue (buffer);
+            _ref = attr->GetUIntValue ();
           }
-          g_strfreev (splitted_date);
         }
-      }
 
-      if (g_strcmp0 (desc->_code_name, "global_status") == 0)
-      {
-        if (value[0] == 'F')
+        if (g_strcmp0 (desc->_code_name, "birth_date") == 0)
         {
-          SetAttributeValue (&attending_attr_id,
-                             (guint) FALSE);
+          Attribute *attr = GetAttribute (&attr_id);
+
+          if (attr)
+          {
+            gchar *french_date = attr->GetStrValue ();
+            gchar **splitted_date;
+
+            splitted_date = g_strsplit_set (french_date,
+                                            ".",
+                                            0);
+            if (   splitted_date
+                && splitted_date[0]
+                && splitted_date[1]
+                && splitted_date[2])
+            {
+              gchar buffer[50];
+
+              if (   (g_ascii_strcasecmp (splitted_date[0], "00") == 0)
+                  || (g_ascii_strcasecmp (splitted_date[1], "00") == 0))
+              {
+                // AskFred
+                g_strlcpy (buffer,
+                           splitted_date[2],
+                           sizeof (buffer));
+              }
+              else
+              {
+                GDate *date = g_date_new ();
+
+                g_date_set_day   (date, (GDateDay)   atoi (splitted_date[0]));
+                g_date_set_month (date, (GDateMonth) atoi (splitted_date[1]));
+                g_date_set_year  (date, (GDateYear)  atoi (splitted_date[2]));
+
+                g_date_strftime (buffer,
+                                 sizeof (buffer),
+                                 "%x",
+                                 date);
+                g_date_free (date);
+              }
+              attr->SetValue (buffer);
+            }
+            g_strfreev (splitted_date);
+          }
         }
-        else
+
+        if (g_strcmp0 (desc->_code_name, "global_status") == 0)
         {
-          SetAttributeValue (&attending_attr_id,
-                             TRUE);
+          if (value[0] == 'F')
+          {
+            SetAttributeValue (&attending_attr_id,
+                               (guint) FALSE);
+          }
+          else
+          {
+            SetAttributeValue (&attending_attr_id,
+                               TRUE);
+          }
         }
+        xmlFree (value);
       }
-      xmlFree (value);
     }
-    current = g_slist_next (current);
   }
 
   if (GetAttribute (&attending_attr_id) == nullptr)

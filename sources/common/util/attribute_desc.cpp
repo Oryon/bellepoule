@@ -40,6 +40,7 @@ AttributeDesc::AttributeDesc (GType        type,
   _favorite_look      = LONG_TEXT;
   _short_length       = 3;
   _persistency        = Persistency::PERSISTENT;
+  _computability      = Computability::NOT_COMPUTABLE;
   _scope              = Scope::GLOBAL;
   _free_value_allowed = TRUE;
   _rights             = Rights::PUBLIC;

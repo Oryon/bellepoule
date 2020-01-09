@@ -264,7 +264,10 @@ namespace Swiss
         }
         else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
-          LoadAttendees (n);
+          if (_rows == 0)
+          {
+            LoadAttendees (n);
+          }
         }
         else if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
@@ -296,12 +299,20 @@ namespace Swiss
                   {
                     LoadMatch (n,
                                match);
-
-                    if (match->IsOver () == FALSE)
-                    {
-                      _hall->BookPiste (match);
-                    }
                   }
+
+                  if (match->IsOver () == FALSE)
+                  {
+                    _hall->BookPiste (match);
+                  }
+
+                  for (guint i = 0; i < 2; i++)
+                  {
+                    OnNewScore (nullptr,
+                                match,
+                                match->GetOpponent (i));
+                  }
+
                   break;
                 }
               }
@@ -666,11 +677,11 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  GooCanvasItem * Round::DisplayScore (GooCanvasItem *table,
-                                       guint          row,
-                                       guint          column,
-                                       Match         *match,
-                                       Player        *fencer)
+  GooCanvasItem *Round::DisplayScore (GooCanvasItem *table,
+                                      guint          row,
+                                      guint          column,
+                                      Match         *match,
+                                      Player        *fencer)
   {
     GooCanvasItem *score_table = goo_canvas_table_new (table, NULL);
     GooCanvasItem *score_rect;
@@ -853,10 +864,10 @@ namespace Swiss
                                Round       *round)
   {
     {
-      GtkTreeIter  iter;
-      gchar       *code;
-      Match       *match  = (Match *) g_object_get_data (G_OBJECT (combo_box), "match_for_status");
-      Player      *player = (Player *) g_object_get_data (G_OBJECT (combo_box), "player_for_status");
+      GtkTreeIter          iter;
+      gchar               *code;
+      Match               *match  = (Match *) g_object_get_data (G_OBJECT (combo_box), "match_for_status");
+      Player              *player = (Player *) g_object_get_data (G_OBJECT (combo_box), "player_for_status");
 
       gtk_combo_box_get_active_iter (combo_box,
                                      &iter);
@@ -985,30 +996,6 @@ namespace Swiss
 
     _score_collector->Refresh (match);
 
-    {
-      Score *score = match->GetScore (player);
-
-      if (score)
-      {
-        Player::AttributeId  attr_id ("status", GetDataOwner ());
-        AttributeDesc       *attr_desc = AttributeDesc::GetDescFromCodeName ("status");
-        GdkPixbuf           *pixbuf    = attr_desc->GetDiscretePixbuf (score->GetDropReason ());
-
-        g_object_set (score->GetPtrData (this, "Round::status_item"),
-                      "visibility", GOO_CANVAS_ITEM_HIDDEN,
-                      NULL);
-        if (pixbuf)
-        {
-          g_object_set (score->GetPtrData (this, "Round::status_item"),
-                        "pixbuf",     pixbuf,
-                        "visibility", GOO_CANVAS_ITEM_VISIBLE,
-                        NULL);
-
-          g_object_unref (pixbuf);
-        }
-      }
-    }
-
     EvaluateQuest (match);
     RefreshClassification ();
 
@@ -1027,6 +1014,29 @@ namespace Swiss
             DisplayMatch (current_match);
           }
           break;
+        }
+      }
+    }
+
+    {
+      Score *score = match->GetScore (player);
+
+      if (score)
+      {
+        AttributeDesc *attr_desc = AttributeDesc::GetDescFromCodeName ("status");
+        GdkPixbuf     *pixbuf    = attr_desc->GetDiscretePixbuf (score->GetDropReason ());
+
+        g_object_set (score->GetPtrData (this, "Round::status_item"),
+                      "visibility", GOO_CANVAS_ITEM_HIDDEN,
+                      NULL);
+        if (pixbuf)
+        {
+          g_object_set (score->GetPtrData (this, "Round::status_item"),
+                        "pixbuf",     pixbuf,
+                        "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                        NULL);
+
+          g_object_unref (pixbuf);
         }
       }
     }
@@ -1066,51 +1076,63 @@ namespace Swiss
     {
       for (guint i = 0; i < 2; i++)
       {
-        Player *fencer = match->GetOpponent (i);
+        Player    *fencer     = match->GetOpponent (i);
+        Attribute *quest_attr = fencer->GetAttribute (&quest_attr_id);
 
         if (match->GetScore (fencer)->IsOut () == FALSE)
         {
+          guint new_quest = 2;
+
           fencer->SetData (match,
                            "Round::quest",
                            (void *) 2);
+
+          if (quest_attr)
+          {
+            new_quest += quest_attr->GetUIntValue ();
+          }
           fencer->SetAttributeValue (&quest_attr_id,
-                                     2);
+                                     new_quest);
         }
       }
     }
     else if (match->IsOver ())
     {
-      Player *winner       = match->GetWinner ();
-      Player *looser       = match->GetLooser ();
-      guint   winner_score = match->GetScore (winner)->Get ();
-      guint   looser_score = match->GetScore (looser)->Get ();
-      guint   delta        = winner_score - looser_score;
-      guint   quest;
+      Player    *winner       = match->GetWinner ();
+      Player    *looser       = match->GetLooser ();
+      guint      winner_score = match->GetScore (winner)->Get ();
+      guint      looser_score = match->GetScore (looser)->Get ();
+      guint      delta        = winner_score - looser_score;
+      Attribute *quest_attr   = winner->GetAttribute (&quest_attr_id);
+      guint      new_quest;
 
       if (delta < 4)
       {
-        quest = 1;
+        new_quest = 1;
       }
       else if (4 <= delta && delta <= 7)
       {
-        quest = 2;
+        new_quest = 2;
       }
       else if (8 <= delta && delta <= 11)
       {
-        quest = 3;
+        new_quest = 3;
       }
       else
       {
-        quest = 4;
+        new_quest = 4;
       }
 
       winner->SetData (match,
                        "Round::quest",
-                       (void *) quest);
+                       (void *) new_quest);
+
+      if (quest_attr)
+      {
+        new_quest += quest_attr->GetUIntValue ();
+      }
       winner->SetAttributeValue (&quest_attr_id,
-                                 quest);
-      looser->SetAttributeValue (&quest_attr_id,
-                                 (guint) 0);
+                                 new_quest);
     }
   }
 
@@ -1305,7 +1327,7 @@ namespace Swiss
                   match->Load (xml_nodeset->nodeTab[i],
                                match->GetOpponent (i));
 
-                  OnNewScore (_score_collector,
+                  OnNewScore (nullptr,
                               match,
                               match->GetOpponent (i));
                 }
