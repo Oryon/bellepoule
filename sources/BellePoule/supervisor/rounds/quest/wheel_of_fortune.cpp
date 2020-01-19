@@ -14,64 +14,55 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "util/player.hpp"
-#include "util/attribute.hpp"
-#include "../../match.hpp"
+#include "wheel_of_fortune.hpp"
 
-#include "quest.hpp"
-#include "elo.hpp"
-#include "bonus.hpp"
-
-namespace Swiss
+namespace Quest
 {
   // --------------------------------------------------------------------------------
-  Bonus::Bonus (Object *owner)
-    : Object ("Bonus")
+  WheelOfFortune::WheelOfFortune (GSList *list,
+                                  guint   rank_seed)
+    : Object ("Quest::WheelOfFortune")
   {
-    _matches = nullptr;
-
-    _quest = new Quest (owner);
-    _elo   = new Elo ();
+     _list       = list;
+     _origin     = list;
+     _size       = g_slist_length (list);
+     _randomizer = g_rand_new_with_seed (rank_seed);
   }
 
   // --------------------------------------------------------------------------------
-  Bonus::~Bonus ()
+  WheelOfFortune::~WheelOfFortune ()
   {
-    g_list_free (_matches);
-
-    _quest->Release ();
-    _elo->Release   ();
+    g_rand_free (_randomizer);
   }
 
   // --------------------------------------------------------------------------------
-  void Bonus::AuditMatch (Match *match)
+  void *WheelOfFortune::Turn ()
   {
-    if (match->IsOver ())
+    guint32 toss = g_rand_int_range (_randomizer,
+                                     0, _size-1);
+
+    _origin = g_slist_nth (_list,
+                           toss);
+    _position = _origin;
+
+    return _position->data;
+  }
+
+  // --------------------------------------------------------------------------------
+  void *WheelOfFortune::TryAgain ()
+  {
+    _position = g_slist_next (_position);
+
+    if (_position == nullptr)
     {
-      Player *winner = match->GetWinner ();
-      Player *looser = match->GetLooser ();
-
-      if (winner && looser)
-      {
-        _matches = g_list_prepend (_matches,
-                                   match);
-      }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Bonus::SumUp ()
-  {
-    for (GList *m = _matches; m; m = g_list_next (m))
-    {
-      Match *match = (Match *) m->data;
-
-      _quest->EvaluateMatch (match);
+      _position = _list;
     }
 
-    _elo->ProcessBatch (_matches);
+    if (_position == _origin)
+    {
+      return nullptr;
+    }
 
-    g_list_free (_matches);
-    _matches = nullptr;
+    return _position->data;
   }
 }

@@ -14,55 +14,51 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "wheel_of_fortune.hpp"
+#include "duel_score.hpp"
+#include "table.hpp"
+#include "point_system.hpp"
 
-namespace Swiss
+namespace Quest
 {
+  const gchar *BonusTable::_class_name     = N_ ("Table");
+  const gchar *BonusTable::_xml_class_name = "TableauSuisse";
+
   // --------------------------------------------------------------------------------
-  WheelOfFortune::WheelOfFortune (GSList *list,
-                                  guint   rank_seed)
-    : Object ("Swiss::WheelOfFortune")
+  BonusTable::BonusTable (StageClass *stage_class)
+    : Object ("Quest::BonusTable"),
+    Table::Supervisor (stage_class)
   {
-     _list       = list;
-     _origin     = list;
-     _size       = g_slist_length (list);
-     _randomizer = g_rand_new_with_seed (rank_seed);
   }
 
   // --------------------------------------------------------------------------------
-  WheelOfFortune::~WheelOfFortune ()
+  BonusTable::~BonusTable ()
   {
-    g_rand_free (_randomizer);
   }
 
   // --------------------------------------------------------------------------------
-  void *WheelOfFortune::Turn ()
+  Generic::PointSystem *BonusTable::GetBonus ()
   {
-    guint32 toss = g_rand_int_range (_randomizer,
-                                     0, _size-1);
-
-    _origin = g_slist_nth (_list,
-                           toss);
-    _position = _origin;
-
-    return _position->data;
+    return new PointSystem (GetDataOwner ());
   }
 
   // --------------------------------------------------------------------------------
-  void *WheelOfFortune::TryAgain ()
+  const gchar *BonusTable::GetXmlClassName ()
   {
-    _position = g_slist_next (_position);
+    return _xml_class_name;
+  }
 
-    if (_position == nullptr)
-    {
-      _position = _list;
-    }
+  // --------------------------------------------------------------------------------
+  void BonusTable::Declare ()
+  {
+    RegisterStageClass (gettext (_class_name),
+                        _xml_class_name,
+                        CreateInstance,
+                        EDITABLE|REMOVABLE);
+  }
 
-    if (_position == _origin)
-    {
-      return nullptr;
-    }
-
-    return _position->data;
+  // --------------------------------------------------------------------------------
+  Stage *BonusTable::CreateInstance (StageClass *stage_class)
+  {
+    return new BonusTable (stage_class);
   }
 }

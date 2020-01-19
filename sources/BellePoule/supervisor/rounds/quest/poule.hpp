@@ -24,20 +24,20 @@
 
 class Data;
 
-namespace Swiss
+namespace Quest
 {
   class Hall;
   class Elo;
-  class Quest;
+  class DuelScore;
 
-  class Round : public Stage,
+  class Poule : public Stage,
                 public CanvasModule,
                 public ScoreCollector::Listener
   {
     public:
       static void Declare ();
 
-      Round (StageClass *stage_class);
+      Poule (StageClass *stage_class);
 
       void OnPisteCountChanged (GtkEditable *editable);
 
@@ -55,7 +55,7 @@ namespace Swiss
       static const gdouble  _score_rect_h;
 
       Elo            *_elo;
-      Quest          *_quest;
+      DuelScore      *_duel_score;
       Hall           *_hall;
       Data           *_matches_per_fencer;
       Data           *_available_time;
@@ -70,7 +70,7 @@ namespace Swiss
       gulong          _per_fencer_entry_handler;
       gulong          _duration_entry_handler;
 
-      ~Round () override;
+      ~Poule () override;
 
       void SaveConfiguration (XmlScheme *xml_scheme) override;
 
@@ -133,23 +133,23 @@ namespace Swiss
       gboolean OnMessage (Net::Message *message) override;
 
       static void OnStatusChanged (GtkComboBox *combo_box,
-                                   Round       *round);
+                                   Poule       *poule);
 
       static gboolean OnStatusKeyPressEvent (GtkWidget   *widget,
                                              GdkEventKey *event,
-                                             Round       *round);
+                                             Poule       *poule);
 
       static gboolean OnStatusArrowPress (GooCanvasItem  *item,
                                           GooCanvasItem  *target,
                                           GdkEventButton *event,
-                                          Round          *round);
+                                          Poule          *poule);
 
       gboolean FencerHasMatch (Player *fencer,
                                GList  *matches);
 
       static gint ComparePlayer (Player *A,
                                  Player *B,
-                                 Round  *round);
+                                 Poule  *poule);
 
       static Stage *CreateInstance (StageClass *stage_class);
 

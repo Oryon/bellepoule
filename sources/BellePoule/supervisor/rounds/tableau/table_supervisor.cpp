@@ -32,7 +32,7 @@
 #include "../../classification.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
-#include "../../bonus.hpp"
+#include "../../point_system.hpp"
 #include "table.hpp"
 
 #include "table_supervisor.hpp"
@@ -567,9 +567,9 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  Generic::Bonus *Supervisor::GetBonus ()
+  Generic::PointSystem *Supervisor::GetBonus ()
   {
-    return new Generic::Bonus ();
+    return new Generic::PointSystem ();
   }
 
   // --------------------------------------------------------------------------------

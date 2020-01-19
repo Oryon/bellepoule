@@ -20,26 +20,18 @@
 
 class Match;
 
-namespace Swiss
+namespace Generic
 {
-  class Elo : public Object
+  class PointSystem : public virtual Object
   {
     public:
-      Elo ();
+      PointSystem ();
 
-      void ProcessBatch (GList *matches);
+      virtual void AuditMatch (Match *match);
 
-      void CancelBatch ();
+      virtual void SumUp ();
 
-    private:
-      static const guint K = 32;
-
-      GList *_fencers;
-
-      ~Elo ();
-
-      void PreserveInitialValue (Match *match);
-
-      void Evaluate (Match *match);
+    protected:
+      virtual ~PointSystem ();
   };
 }

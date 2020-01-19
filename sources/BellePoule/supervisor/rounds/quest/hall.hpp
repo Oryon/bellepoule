@@ -16,22 +16,33 @@
 
 #pragma once
 
+#include <gtk/gtk.h>
 #include <util/object.hpp>
 
 class Match;
 
-namespace Generic
+namespace Quest
 {
-  class Bonus : public virtual Object
+  class Hall : public Object
   {
     public:
-      Bonus ();
+      Hall ();
 
-      virtual void AuditMatch (Match *match);
+      void Clear ();
 
-      virtual void SumUp ();
+      void SetPisteCount (guint count);
 
-    protected:
-      virtual ~Bonus ();
+      guint BookPiste (Match *owner);
+
+      void FreePiste (Match *owner);
+
+      void Dump () override;
+
+    private:
+      guint   _table_size;
+      guint   _piste_count;
+      Match **_owners;
+
+      ~Hall ();
   };
 }

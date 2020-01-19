@@ -35,7 +35,7 @@
 #include "../../classification.hpp"
 #include "../../score.hpp"
 #include "../../match.hpp"
-#include "../../bonus.hpp"
+#include "../../point_system.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
 #include "../../book/section.hpp"
@@ -64,11 +64,11 @@ namespace Table
   };
 
   // --------------------------------------------------------------------------------
-  TableSet::TableSet (Supervisor     *supervisor,
-                      gchar          *id,
-                      guint           first_place,
-                      Generic::Bonus *bonus,
-                      GtkRange       *zoomer)
+  TableSet::TableSet (Supervisor           *supervisor,
+                      gchar                *id,
+                      guint                 first_place,
+                      Generic::PointSystem *point_system,
+                      GtkRange             *zoomer)
     : Object ("TableSet"),
     CanvasModule ("table.glade")
   {
@@ -94,7 +94,7 @@ namespace Table
     _from_table       = nullptr;
     _to_table         = nullptr;
     _last_search      = nullptr;
-    _bonus            = bonus;
+    _point_system     = point_system;
 
     _listener         = nullptr;
 
@@ -1899,7 +1899,7 @@ namespace Table
                          (void *) data->_table);
       }
 
-      table_set->_bonus->AuditMatch (data->_match);
+      table_set->_point_system->AuditMatch (data->_match);
     }
 
     return FALSE;
@@ -2488,7 +2488,7 @@ namespace Table
                        -1,
                        (GNodeTraverseFunc) StartClassification,
                        this);
-      _bonus->SumUp ();
+      _point_system->SumUp ();
 
       // Sort the list and complete it with the withdrawals
       {
@@ -2616,6 +2616,14 @@ namespace Table
           return table_B->GetNumber () - table_A->GetNumber ();
         }
       }
+    }
+
+    {
+      //bonus = table_set->_bonus->Compare ();
+
+      //if (table_set->_bonus->Compare ())
+      //{
+      //}
     }
 
     return table_set->ComparePreviousRankPlayer (A,

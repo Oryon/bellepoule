@@ -19,26 +19,26 @@
 #include "../../match.hpp"
 #include "../../score.hpp"
 
-#include "quest.hpp"
+#include "duel_score.hpp"
 
-namespace Swiss
+namespace Quest
 {
   // --------------------------------------------------------------------------------
-  Quest::Quest (Object *owner)
-    : Object ("Swiss::Quest")
+  DuelScore::DuelScore (Object *owner)
+    : Object ("Quest::DuelScore")
   {
     _owner = owner;
   }
 
   // --------------------------------------------------------------------------------
-  Quest::~Quest ()
+  DuelScore::~DuelScore ()
   {
   }
 
   // --------------------------------------------------------------------------------
-  void Quest::EvaluateMatch (Match *match)
+  void DuelScore::EvaluateMatch (Match *match)
   {
-    Player::AttributeId quest_attr_id ("score_quest", _owner);
+    Player::AttributeId duel_score_attr_id ("score_quest", _owner);
 
     CancelMatch (match);
 
@@ -46,23 +46,23 @@ namespace Swiss
     {
       for (guint i = 0; i < 2; i++)
       {
-        Player    *fencer     = match->GetOpponent (i);
-        Attribute *quest_attr = fencer->GetAttribute (&quest_attr_id);
+        Player    *fencer          = match->GetOpponent (i);
+        Attribute *duel_score_attr = fencer->GetAttribute (&duel_score_attr_id);
 
         if (match->GetScore (fencer)->IsOut () == FALSE)
         {
-          guint new_quest = 2;
+          guint new_duel_score = 2;
 
           fencer->SetData (match,
-                           "Round::quest",
+                           "Quest::DuelScore",
                            GUINT_TO_POINTER (2));
 
-          if (quest_attr)
+          if (duel_score_attr)
           {
-            new_quest += quest_attr->GetUIntValue ();
+            new_duel_score += duel_score_attr->GetUIntValue ();
           }
-          fencer->SetAttributeValue (&quest_attr_id,
-                                     new_quest);
+          fencer->SetAttributeValue (&duel_score_attr_id,
+                                     new_duel_score);
         }
       }
     }
@@ -73,47 +73,47 @@ namespace Swiss
 
       if (winner && looser)
       {
-        guint      winner_score = match->GetScore (winner)->Get ();
-        guint      looser_score = match->GetScore (looser)->Get ();
-        guint      delta        = winner_score - looser_score;
-        Attribute *quest_attr   = winner->GetAttribute (&quest_attr_id);
-        guint      new_quest;
+        guint      winner_score    = match->GetScore (winner)->Get ();
+        guint      looser_score    = match->GetScore (looser)->Get ();
+        guint      delta           = winner_score - looser_score;
+        Attribute *duel_score_attr = winner->GetAttribute (&duel_score_attr_id);
+        guint      new_duel_score;
 
         if (delta < 4)
         {
-          new_quest = 1;
+          new_duel_score = 1;
         }
         else if (4 <= delta && delta <= 7)
         {
-          new_quest = 2;
+          new_duel_score = 2;
         }
         else if (8 <= delta && delta <= 11)
         {
-          new_quest = 3;
+          new_duel_score = 3;
         }
         else
         {
-          new_quest = 4;
+          new_duel_score = 4;
         }
 
         winner->SetData (match,
-                         "Round::quest",
-                         GUINT_TO_POINTER (new_quest));
+                         "Quest::DuelScore",
+                         GUINT_TO_POINTER (new_duel_score));
 
-        if (quest_attr)
+        if (duel_score_attr)
         {
-          new_quest += quest_attr->GetUIntValue ();
+          new_duel_score += duel_score_attr->GetUIntValue ();
         }
-        winner->SetAttributeValue (&quest_attr_id,
-                                   new_quest);
+        winner->SetAttributeValue (&duel_score_attr_id,
+                                   new_duel_score);
       }
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Quest::CancelMatch (Match *match)
+  void DuelScore::CancelMatch (Match *match)
   {
-    Player::AttributeId quest_attr_id ("score_quest", _owner);
+    Player::AttributeId duel_score_attr_id ("score_quest", _owner);
 
     for (guint i = 0; i < 2; i++)
     {
@@ -121,14 +121,14 @@ namespace Swiss
 
       if (fencer)
       {
-        guint      previous_quest = fencer->GetUIntData (match, "Round::quest");
-        Attribute *quest_attr     = fencer->GetAttribute (&quest_attr_id);
+        guint      previous_duel_score = fencer->GetUIntData (match, "Quest::DuelScore");
+        Attribute *duel_score_attr     = fencer->GetAttribute (&duel_score_attr_id);
 
-        if (quest_attr)
+        if (duel_score_attr)
         {
-          fencer->SetAttributeValue (&quest_attr_id,
-                                     quest_attr->GetUIntValue () - previous_quest);
-          fencer->RemoveData (match, "Round::quest");
+          fencer->SetAttributeValue (&duel_score_attr_id,
+                                     duel_score_attr->GetUIntValue () - previous_duel_score);
+          fencer->RemoveData (match, "Quest::DuelScore");
         }
       }
     }

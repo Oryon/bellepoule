@@ -16,33 +16,25 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
 #include <util/object.hpp>
+#include "../../point_system.hpp"
 
 class Match;
 
-namespace Swiss
+namespace Quest
 {
-  class Hall : public Object
+  class DuelScore : public Object
   {
     public:
-      Hall ();
+      DuelScore (Object *owner);
 
-      void Clear ();
+      void EvaluateMatch (Match *match);
 
-      void SetPisteCount (guint count);
-
-      guint BookPiste (Match *owner);
-
-      void FreePiste (Match *owner);
-
-      void Dump () override;
+      void CancelMatch (Match *match);
 
     private:
-      guint   _table_size;
-      guint   _piste_count;
-      Match **_owners;
+      Object *_owner;
 
-      ~Hall ();
+      ~DuelScore () override;
   };
 }

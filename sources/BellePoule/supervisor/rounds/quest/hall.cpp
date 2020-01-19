@@ -17,11 +17,11 @@
 #include "../../match.hpp"
 #include "hall.hpp"
 
-namespace Swiss
+namespace Quest
 {
   // --------------------------------------------------------------------------------
   Hall::Hall ()
-    : Object ("Swiss::Hall")
+    : Object ("Quest::Hall")
   {
     _piste_count = 0;
     _table_size  = 0;

@@ -164,12 +164,12 @@
             <property name="can_focus">False</property>
             <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkToolButton" id="swiss_filter_toolbutton">
+              <object class="GtkToolButton" id="quest_filter_toolbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Data</property>
                 <property name="stock_id">gtk-index</property>
-                <signal name="clicked" handler="on_swiss_filter_toolbutton_clicked" swapped="no"/>
+                <signal name="clicked" handler="on_quest_filter_toolbutton_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -177,11 +177,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="print_swiss_toolbutton">
+              <object class="GtkToolButton" id="print_quest_toolbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="stock_id">gtk-print</property>
-                <signal name="clicked" handler="on_print_swiss_toolbutton_clicked" swapped="no"/>
+                <signal name="clicked" handler="on_print_quest_toolbutton_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -199,13 +199,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToggleToolButton" id="swiss_classification_toggletoolbutton">
+              <object class="GtkToggleToolButton" id="quest_classification_toggletoolbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Classification</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">score_image4</property>
-                <signal name="toggled" handler="on_swiss_classification_toggletoolbutton_toggled" swapped="no"/>
+                <signal name="toggled" handler="on_quest_classification_toggletoolbutton_toggled" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -229,7 +229,7 @@
                 <property name="label" translatable="yes">Automatic stuffing</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">gnome-devel</property>
-                <signal name="clicked" handler="on_swiss_stuff_toolbutton_clicked" swapped="no"/>
+                <signal name="clicked" handler="on_quest_stuff_toolbutton_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

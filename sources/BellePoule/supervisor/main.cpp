@@ -24,8 +24,8 @@
 #include "rounds/checkin/checkin_supervisor.hpp"
 #include "rounds/classification/general_classification.hpp"
 #include "rounds/splitting/splitting.hpp"
-#include "rounds/swiss/round.hpp"
-#include "rounds/swiss/table.hpp"
+#include "rounds/quest/poule.hpp"
+#include "rounds/quest/table.hpp"
 #include "rounds/poule/pool_allocator.hpp"
 #include "rounds/poule/pool_supervisor.hpp"
 #include "rounds/tableau/table_supervisor.hpp"
@@ -182,8 +182,8 @@ void BellPouleApp::Prepare ()
     People::CheckinSupervisor::Declare     ();
     Pool::Allocator::Declare               ();
     Pool::Supervisor::Declare              ();
-    Swiss::Round::Declare                  ();
-    Swiss::Toto::Declare                   ();
+    Quest::Poule::Declare                  ();
+    Quest::BonusTable::Declare             ();
     Table::Supervisor::Declare             ();
     People::Barrage::Declare               ();
     People::GeneralClassification::Declare ();

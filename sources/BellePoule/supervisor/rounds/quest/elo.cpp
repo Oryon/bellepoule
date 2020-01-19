@@ -22,11 +22,11 @@
 
 #include "elo.hpp"
 
-namespace Swiss
+namespace Quest
 {
   // --------------------------------------------------------------------------------
   Elo::Elo ()
-    : Object ("Swiss::Elo")
+    : Object ("Quest::Elo")
   {
     _fencers = nullptr;
   }

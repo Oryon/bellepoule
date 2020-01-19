@@ -16,28 +16,30 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
 #include <util/object.hpp>
+#include "../../point_system.hpp"
 
-namespace Swiss
+class Match;
+
+namespace Quest
 {
-  class WheelOfFortune : public Object
+  class DuelScore;
+  class Elo;
+
+  class PointSystem : public Generic::PointSystem
   {
     public:
-      WheelOfFortune (GSList *list,
-                      guint   rank_seed);
+      PointSystem (Object *owner);
 
-      void *Turn ();
+      virtual void AuditMatch (Match *match) override;
 
-      void *TryAgain ();
+      virtual void SumUp () override;
 
-    private:
-      GSList *_list;
-      GSList *_origin;
-      GSList *_position;
-      guint   _size;
-      GRand  *_randomizer;
+    protected:
+      GList     *_matches;
+      DuelScore *_duel_score;
+      Elo       *_elo;
 
-      ~WheelOfFortune ();
+      virtual ~PointSystem ();
   };
 }

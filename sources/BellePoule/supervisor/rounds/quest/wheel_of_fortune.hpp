@@ -16,25 +16,28 @@
 
 #pragma once
 
+#include <gtk/gtk.h>
 #include <util/object.hpp>
-#include "../../bonus.hpp"
 
-class Match;
-
-namespace Swiss
+namespace Quest
 {
-  class Quest : public Object
+  class WheelOfFortune : public Object
   {
     public:
-      Quest (Object *owner);
+      WheelOfFortune (GSList *list,
+                      guint   rank_seed);
 
-      void EvaluateMatch (Match *match);
+      void *Turn ();
 
-      void CancelMatch (Match *match);
+      void *TryAgain ();
 
     private:
-      Object *_owner;
+      GSList *_list;
+      GSList *_origin;
+      GSList *_position;
+      guint   _size;
+      GRand  *_randomizer;
 
-      ~Quest () override;
+      ~WheelOfFortune ();
   };
 }

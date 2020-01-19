@@ -32,24 +32,24 @@
 
 #include "hall.hpp"
 #include "elo.hpp"
-#include "quest.hpp"
+#include "duel_score.hpp"
 #include "wheel_of_fortune.hpp"
-#include "round.hpp"
+#include "poule.hpp"
 
-namespace Swiss
+namespace Quest
 {
-  const gchar *Round::_class_name     = N_ ("Pool");
-  const gchar *Round::_xml_class_name = "RondeSuisse";
+  const gchar *Poule::_class_name     = N_ ("Pool");
+  const gchar *Poule::_xml_class_name = "RondeSuisse";
 
-  GdkPixbuf     *Round::_moved_pixbuf = nullptr;
-  const gdouble  Round::_score_rect_w = 45.0;
-  const gdouble  Round::_score_rect_h = 30.0;
+  GdkPixbuf     *Poule::_moved_pixbuf = nullptr;
+  const gdouble  Poule::_score_rect_w = 45.0;
+  const gdouble  Poule::_score_rect_h = 30.0;
 
   // --------------------------------------------------------------------------------
-  Round::Round (StageClass *stage_class)
-    : Object ("Swiss::Round"),
+  Poule::Poule (StageClass *stage_class)
+    : Object ("Quest::Poule"),
     Stage (stage_class),
-    CanvasModule ("swiss_supervisor.glade")
+    CanvasModule ("quest_supervisor.glade")
   {
     Disclose ("BellePoule::Batch");
 
@@ -66,8 +66,8 @@ namespace Swiss
                                                   (Object *) this);
     }
 
-    _elo   = new Elo ();
-    _quest = new Quest (GetDataOwner ());
+    _elo        = new Elo ();
+    _duel_score = new DuelScore (GetDataOwner ());
 
     _matches         = nullptr;
     _score_collector = nullptr;
@@ -198,7 +198,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  Round::~Round ()
+  Poule::~Poule ()
   {
     Reset ();
 
@@ -207,15 +207,15 @@ namespace Swiss
     _available_time->Release     ();
     _piste_count->Release        ();
 
-    _hall->Release  ();
-    _elo->Release   ();
-    _quest->Release ();
+    _hall->Release       ();
+    _elo->Release        ();
+    _duel_score->Release ();
 
     Object::TryToRelease (_score_collector);
   }
 
   // --------------------------------------------------------------------------------
-  void Round::Declare ()
+  void Poule::Declare ()
   {
     RegisterStageClass (gettext (_class_name),
                         _xml_class_name,
@@ -236,7 +236,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::Reset ()
+  void Poule::Reset ()
   {
     _hall->Clear ();
 
@@ -246,18 +246,18 @@ namespace Swiss
     {
       Match *match = (Match *) m->data;
 
-      _quest->CancelMatch (match);
+      _duel_score->CancelMatch (match);
 
       for (guint i = 0; i < 2; i++)
       {
         Player *fencer  = match->GetOpponent (i);
-        GList  *matches = (GList *) fencer->GetPtrData (this, "Round::matches");
+        GList  *matches = (GList *) fencer->GetPtrData (this, "Poule::matches");
 
         g_list_free (matches);
-        fencer->RemoveData (this, "Round::matches");
+        fencer->RemoveData (this, "Poule::matches");
       }
 
-      match->RemoveData (this, "Round::displayed");
+      match->RemoveData (this, "Poule::displayed");
     }
 
     FreeFullGList (Match,
@@ -266,13 +266,13 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  Stage *Round::CreateInstance (StageClass *stage_class)
+  Stage *Poule::CreateInstance (StageClass *stage_class)
   {
-    return new Round (stage_class);
+    return new Poule (stage_class);
   }
 
   // --------------------------------------------------------------------------------
-  void Round::Load (xmlNode *xml_node)
+  void Poule::Load (xmlNode *xml_node)
   {
     _hall->Clear ();
     LoadConfiguration (xml_node);
@@ -283,7 +283,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::LoadMatches (xmlNode *xml_node)
+  void Poule::LoadMatches (xmlNode *xml_node)
   {
     static xmlNode  *match_node = nullptr;
     static xmlNode  *stop_node  = nullptr;
@@ -348,7 +348,7 @@ namespace Swiss
                     _hall->BookPiste (match);
                   }
 
-                  _quest->EvaluateMatch (match);
+                  _duel_score->EvaluateMatch (match);
 
                   break;
                 }
@@ -368,7 +368,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::SaveConfiguration (XmlScheme *xml_scheme)
+  void Poule::SaveConfiguration (XmlScheme *xml_scheme)
   {
     Stage::SaveConfiguration (xml_scheme);
 
@@ -378,7 +378,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::LoadConfiguration (xmlNode *xml_node)
+  void Poule::LoadConfiguration (xmlNode *xml_node)
   {
     Stage::LoadConfiguration (xml_node);
 
@@ -390,7 +390,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::SaveHeader (XmlScheme *xml_scheme)
+  void Poule::SaveHeader (XmlScheme *xml_scheme)
   {
     xml_scheme->StartElement (_xml_class_name);
 
@@ -406,7 +406,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::Save (XmlScheme *xml_scheme)
+  void Poule::Save (XmlScheme *xml_scheme)
   {
     SaveHeader (xml_scheme);
 
@@ -423,7 +423,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::FillInConfig ()
+  void Poule::FillInConfig ()
   {
     Stage::FillInConfig ();
 
@@ -470,7 +470,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::Garnish ()
+  void Poule::Garnish ()
   {
     GSList *fencers            = g_slist_copy (GetShortList ());
     guint   fencer_count       = g_slist_length (fencers);
@@ -487,7 +487,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::TossMatches (GSList *fencers,
+  void Poule::TossMatches (GSList *fencers,
                            guint   matches_per_fencer)
   {
     WheelOfFortune *wheel = new WheelOfFortune (fencers,
@@ -496,7 +496,7 @@ namespace Swiss
     for (GSList *f = fencers; f; f = g_slist_next (f))
     {
       Player *fencer  = (Player *) f->data;
-      GList  *matches = (GList *) fencer->GetPtrData (this, "Round::matches");
+      GList  *matches = (GList *) fencer->GetPtrData (this, "Poule::matches");
 
       for (guint match_count = g_list_length (matches);
            match_count < matches_per_fencer;
@@ -506,7 +506,7 @@ namespace Swiss
         for (void *o = wheel->Turn (); o; o = wheel->TryAgain ())
         {
           Player *opponent         = (Player *) o;
-          GList  *opponent_matches = (GList *) opponent->GetPtrData (this, "Round::matches");
+          GList  *opponent_matches = (GList *) opponent->GetPtrData (this, "Poule::matches");
 
           if (   (opponent != fencer)
               && (FencerHasMatch (opponent, matches) == FALSE)
@@ -521,7 +521,7 @@ namespace Swiss
 
             opponent_matches = g_list_prepend (opponent_matches,
                                                match);
-            opponent->SetData (this, "Round::matches",
+            opponent->SetData (this, "Poule::matches",
                                opponent_matches);
 
             _matches = g_list_append (_matches,
@@ -532,7 +532,7 @@ namespace Swiss
           }
         }
       }
-      fencer->SetData (this, "Round::matches",
+      fencer->SetData (this, "Poule::matches",
                        matches);
     }
 
@@ -540,14 +540,14 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::Dump ()
+  void Poule::Dump ()
   {
     GSList *fencers = GetShortList ();
 
     for (GSList *f = fencers; f; f = g_slist_next (f))
     {
       Player *fencer  = (Player *) f->data;
-      GList  *matches = (GList *) fencer->GetPtrData (this, "Round::matches");
+      GList  *matches = (GList *) fencer->GetPtrData (this, "Poule::matches");
 
       printf ("%s (%d) ==>> ", fencer->GetName (), g_list_length (matches));
 
@@ -570,7 +570,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::SetOutputShortlist ()
+  void Poule::SetOutputShortlist ()
   {
     Stage::SetOutputShortlist ();
 
@@ -580,7 +580,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::Wipe ()
+  void Poule::Wipe ()
   {
     for (GList *m = _matches; m; m = g_list_next (m))
     {
@@ -590,7 +590,7 @@ namespace Swiss
       {
         Player *fencer = match->GetOpponent (i);
 
-        fencer->RemoveData (match, "Round::highlight");
+        fencer->RemoveData (match, "Poule::highlight");
       }
 
       _score_collector->RemoveCollectingPoints (match);
@@ -600,7 +600,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::Display ()
+  void Poule::Display ()
   {
     GooCanvasItem *root = GetRootItem ();
 
@@ -651,7 +651,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Round::MatchIsCancelled (Match *match)
+  gboolean Poule::MatchIsCancelled (Match *match)
   {
     if (match->IsOver () == FALSE)
     {
@@ -674,7 +674,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::DisplayMatch (Match *match)
+  void Poule::DisplayMatch (Match *match)
   {
     GooCanvasItem *item;
     GooCanvasItem *collecting_point_A;
@@ -744,7 +744,7 @@ namespace Swiss
                                "country",    "style=\"italic\" foreground=\"dimgrey\"",
                                NULL);
 
-        fencer->SetData (match, "Round::highlight",
+        fencer->SetData (match, "Poule::highlight",
                          item);
 
         Canvas::PutInTable (_table,
@@ -793,17 +793,17 @@ namespace Swiss
       g_free (piste);
 
       match->SetData (this,
-                      "Round::piste",
+                      "Poule::piste",
                       item);
     }
 
     _rows++;
-    match->SetData (this, "Round::displayed",
+    match->SetData (this, "Poule::displayed",
                     (void *) TRUE);
   }
 
   // --------------------------------------------------------------------------------
-  GooCanvasItem *Round::DisplayScore (GooCanvasItem *table,
+  GooCanvasItem *Poule::DisplayScore (GooCanvasItem *table,
                                       guint          row,
                                       guint          column,
                                       Match         *match,
@@ -892,7 +892,7 @@ namespace Swiss
       Canvas::SetTableItemAttribute (item, "y-align", 0.5);
 
       score->SetData (this,
-                      "Round::score_status",
+                      "Poule::score_status",
                       item);
     }
 
@@ -900,10 +900,10 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Round::OnStatusArrowPress (GooCanvasItem  *item,
+  gboolean Poule::OnStatusArrowPress (GooCanvasItem  *item,
                                       GooCanvasItem  *target,
                                       GdkEventButton *event,
-                                      Round          *round)
+                                      Poule          *poule)
   {
     if (   (event->button == 1)
         && (event->type   == GDK_BUTTON_PRESS))
@@ -915,14 +915,14 @@ namespace Swiss
       {
         GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
 
-        combo = gtk_combo_box_new_with_model (round->GetStatusModel ());
+        combo = gtk_combo_box_new_with_model (poule->GetStatusModel ());
 
         gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, FALSE);
         gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo),
                                         cell, "pixbuf", AttributeDesc::DiscreteColumnId::ICON_pix,
                                         NULL);
 
-        goo_canvas_widget_new (round->GetRootItem (),
+        goo_canvas_widget_new (poule->GetRootItem (),
                                combo,
                                event->x_root,
                                event->y_root,
@@ -948,11 +948,11 @@ namespace Swiss
           }
         }
 
-        iter_is_valid = gtk_tree_model_get_iter_first (round->GetStatusModel (),
+        iter_is_valid = gtk_tree_model_get_iter_first (poule->GetStatusModel (),
                                                        &iter);
         while (iter_is_valid)
         {
-          gtk_tree_model_get (round->GetStatusModel (),
+          gtk_tree_model_get (poule->GetStatusModel (),
                               &iter,
                               AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &code,
                               -1);
@@ -966,7 +966,7 @@ namespace Swiss
           }
 
           g_free (code);
-          iter_is_valid = gtk_tree_model_iter_next (round->GetStatusModel (),
+          iter_is_valid = gtk_tree_model_iter_next (poule->GetStatusModel (),
                                                     &iter);
         }
       }
@@ -975,9 +975,9 @@ namespace Swiss
         g_object_set_data (G_OBJECT (combo), "player_for_status", fencer);
         g_object_set_data (G_OBJECT (combo), "match_for_status",  match);
         g_signal_connect (combo, "changed",
-                          G_CALLBACK (OnStatusChanged), round);
+                          G_CALLBACK (OnStatusChanged), poule);
         g_signal_connect (combo, "key-press-event",
-                          G_CALLBACK (OnStatusKeyPressEvent), round);
+                          G_CALLBACK (OnStatusKeyPressEvent), poule);
       }
     }
 
@@ -986,8 +986,8 @@ namespace Swiss
 
 
   // --------------------------------------------------------------------------------
-  void Round::OnStatusChanged (GtkComboBox *combo_box,
-                               Round       *round)
+  void Poule::OnStatusChanged (GtkComboBox *combo_box,
+                               Poule       *poule)
   {
     {
       Match  *match  = (Match *) g_object_get_data (G_OBJECT (combo_box), "match_for_status");
@@ -999,7 +999,7 @@ namespace Swiss
 
         gtk_combo_box_get_active_iter (combo_box,
                                        &iter);
-        gtk_tree_model_get (round->GetStatusModel (),
+        gtk_tree_model_get (poule->GetStatusModel (),
                             &iter,
                             AttributeDesc::DiscreteColumnId::XML_IMAGE_str, &code,
                             -1);
@@ -1015,7 +1015,7 @@ namespace Swiss
         }
 
         {
-          Player::AttributeId status_attr_id ("status", round->GetDataOwner ());
+          Player::AttributeId status_attr_id ("status", poule->GetDataOwner ());
 
           fencer->SetAttributeValue (&status_attr_id,
                                      code);
@@ -1024,20 +1024,20 @@ namespace Swiss
         g_free (code);
       }
 
-      round->OnNewScore (nullptr,
+      poule->OnNewScore (nullptr,
                          match,
                          fencer);
-      round->_elo->ProcessBatch (round->_matches);
-      round->RefreshClassification ();
+      poule->_elo->ProcessBatch (poule->_matches);
+      poule->RefreshClassification ();
     }
 
     gtk_widget_destroy (GTK_WIDGET (combo_box));
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Round::OnStatusKeyPressEvent (GtkWidget   *widget,
+  gboolean Poule::OnStatusKeyPressEvent (GtkWidget   *widget,
                                          GdkEventKey *event,
-                                         Round       *round)
+                                         Poule       *poule)
   {
     if (event->keyval == GDK_KEY_Escape)
     {
@@ -1048,7 +1048,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Round::FencerHasMatch (Player *fencer,
+  gboolean Poule::FencerHasMatch (Player *fencer,
                                   GList  *matches)
   {
     for (GList *m = matches; m; m = g_list_next (m))
@@ -1067,34 +1067,34 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  gint Round::ComparePlayer (Player *A,
+  gint Poule::ComparePlayer (Player *A,
                              Player *B,
-                             Round  *round)
+                             Poule  *poule)
   {
     Player::AttributeId attr_id ("");
     gint                result;
 
     {
-      guint      questA      = 0;
-      guint      questB      = 0;
-      Attribute *questA_attr;
-      Attribute *questB_attr;
+      guint      duel_scoreA      = 0;
+      guint      duel_scoreB      = 0;
+      Attribute *duel_scoreA_attr;
+      Attribute *duel_scoreB_attr;
 
 
       attr_id._name = (gchar *) "score_quest";
-      questA_attr = A->GetAttribute (&attr_id);
-      questB_attr = B->GetAttribute (&attr_id);
+      duel_scoreA_attr = A->GetAttribute (&attr_id);
+      duel_scoreB_attr = B->GetAttribute (&attr_id);
 
-      if (questA_attr)
+      if (duel_scoreA_attr)
       {
-        questA = questA_attr->GetUIntValue ();
+        duel_scoreA = duel_scoreA_attr->GetUIntValue ();
       }
-      if (questB_attr)
+      if (duel_scoreB_attr)
       {
-        questB = questB_attr->GetUIntValue ();
+        duel_scoreB = duel_scoreB_attr->GetUIntValue ();
       }
 
-      result = questB - questA;
+      result = duel_scoreB - duel_scoreA;
       if (result)
       {
         return result;
@@ -1118,27 +1118,27 @@ namespace Swiss
 
     return Player::RandomCompare (A,
                                   B,
-                                  round->GetRandSeed ());
+                                  poule->GetRandSeed ());
   }
 
   // --------------------------------------------------------------------------------
-  void Round::OnPlugged ()
+  void Poule::OnPlugged ()
   {
     CanvasModule::OnPlugged ();
-    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("swiss_classification_toggletoolbutton")),
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("quest_classification_toggletoolbutton")),
                                        FALSE);
 
     SynchronizeConfiguration (GTK_EDITABLE (_piste_entry));
   }
 
   // --------------------------------------------------------------------------------
-  void Round::OnAttrListUpdated ()
+  void Poule::OnAttrListUpdated ()
   {
     Display ();
   }
 
   // --------------------------------------------------------------------------------
-  GSList *Round::GetCurrentClassification ()
+  GSList *Poule::GetCurrentClassification ()
   {
     GSList *result = g_slist_copy (GetShortList ());
 
@@ -1163,7 +1163,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::OnNewScore (ScoreCollector *score_collector,
+  void Poule::OnNewScore (ScoreCollector *score_collector,
                           Match          *match,
                           Player         *player)
   {
@@ -1172,7 +1172,7 @@ namespace Swiss
     _score_collector->Refresh (match);
     RefreshMatch (match);
 
-    _quest->EvaluateMatch (match);
+    _duel_score->EvaluateMatch (match);
 
     if (match->IsOver ())
     {
@@ -1182,7 +1182,7 @@ namespace Swiss
       {
         Match *current_match = (Match *) m->data;
 
-        if (current_match->GetPtrData (this, "Round::displayed") == FALSE)
+        if (current_match->GetPtrData (this, "Poule::displayed") == FALSE)
         {
           if (_hall->BookPiste (current_match))
           {
@@ -1211,7 +1211,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::RefreshMatch (Match *match)
+  void Poule::RefreshMatch (Match *match)
   {
     for (guint i = 0; i < 2; i++)
     {
@@ -1220,7 +1220,7 @@ namespace Swiss
 
       if (score)
       {
-        GooCanvasItem *status_item = (GooCanvasItem *) score->GetPtrData (this, "Round::score_status");
+        GooCanvasItem *status_item = (GooCanvasItem *) score->GetPtrData (this, "Poule::score_status");
 
         if (status_item)
         {
@@ -1232,7 +1232,7 @@ namespace Swiss
                         NULL);
           if (pixbuf)
           {
-            g_object_set (G_OBJECT (score->GetPtrData (this, "Round::score_status")),
+            g_object_set (G_OBJECT (score->GetPtrData (this, "Poule::score_status")),
                           "pixbuf",     pixbuf,
                           "visibility", GOO_CANVAS_ITEM_VISIBLE,
                           NULL);
@@ -1245,14 +1245,14 @@ namespace Swiss
 
     if (match->IsOver ())
     {
-      g_object_set (G_OBJECT (match->GetPtrData (this, "Round::piste")),
+      g_object_set (G_OBJECT (match->GetPtrData (this, "Poule::piste")),
                     "font",       BP_FONT "18px",
                     "fill-color", "grey",
                     nullptr);
     }
     else
     {
-      g_object_set (G_OBJECT (match->GetPtrData (this, "Round::piste")),
+      g_object_set (G_OBJECT (match->GetPtrData (this, "Poule::piste")),
                     "font",       BP_FONT "bold 18px",
                     "fill-color", "dark",
                     nullptr);
@@ -1260,7 +1260,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::OnPisteCountChanged (GtkEditable *editable)
+  void Poule::OnPisteCountChanged (GtkEditable *editable)
   {
     gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (editable));
 
@@ -1274,7 +1274,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::OnMatchesPerFencerChanged (GtkEditable *editable)
+  void Poule::OnMatchesPerFencerChanged (GtkEditable *editable)
   {
     gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (editable));
 
@@ -1289,7 +1289,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::OnDurationChanged (GtkEditable *editable)
+  void Poule::OnDurationChanged (GtkEditable *editable)
   {
     gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (editable));
 
@@ -1304,7 +1304,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::SynchronizeConfiguration (GtkEditable *editable)
+  void Poule::SynchronizeConfiguration (GtkEditable *editable)
   {
     GtkWidget *entry_to_block   = _duration_entry;
     gulong     handler_to_block = _duration_entry_handler;
@@ -1381,7 +1381,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::OnHighlightChanged (GtkEditable *editable)
+  void Poule::OnHighlightChanged (GtkEditable *editable)
   {
     gchar *str      = g_strdup (gtk_entry_get_text (GTK_ENTRY (editable)));
     gchar *stripped = g_strstrip (str);
@@ -1396,13 +1396,13 @@ namespace Swiss
     {
       Match *match = (Match *) m->data;
 
-      if (match->GetPtrData (this, "Round::displayed"))
+      if (match->GetPtrData (this, "Poule::displayed"))
       {
         for (guint i = 0; i < 2; i++)
         {
           Player        *fencer = match->GetOpponent (i);
           gchar         *name   = fencer->GetName ();
-          GooCanvasItem *item   = (GooCanvasItem *) fencer->GetPtrData (match, "Round::highlight");
+          GooCanvasItem *item   = (GooCanvasItem *) fencer->GetPtrData (match, "Poule::highlight");
 
           if (g_str_match_string (str,
                                   name,
@@ -1427,7 +1427,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::OnStuffClicked ()
+  void Poule::OnStuffClicked ()
   {
     Wipe ();
 
@@ -1472,7 +1472,7 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Round::OnMessage (Net::Message *message)
+  gboolean Poule::OnMessage (Net::Message *message)
   {
     if (message->Is ("SmartPoule::JobListCall"))
     {
@@ -1492,7 +1492,7 @@ namespace Swiss
             {
               Match *match = (Match *) m->data;
 
-              if (match->GetPtrData (this, "Round::displayed"))
+              if (match->GetPtrData (this, "Poule::displayed"))
               {
                 match->Save (xml_scheme);
               }
@@ -1633,74 +1633,74 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  void Round::on_per_fencer_entry_changed (GtkEditable *editable,
+  void Poule::on_per_fencer_entry_changed (GtkEditable *editable,
                                            Object      *owner)
   {
-    Round *r = dynamic_cast <Round *> (owner);
+    Poule *p = dynamic_cast <Poule *> (owner);
 
-    r->OnMatchesPerFencerChanged (editable);
+    p->OnMatchesPerFencerChanged (editable);
   }
 
   // --------------------------------------------------------------------------------
-  void Round::on_duration_entry_changed (GtkEditable *editable,
+  void Poule::on_duration_entry_changed (GtkEditable *editable,
                                          Object      *owner)
   {
-    Round *r = dynamic_cast <Round *> (owner);
+    Poule *p = dynamic_cast <Poule *> (owner);
 
-    r->OnDurationChanged (editable);
+    p->OnDurationChanged (editable);
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_swiss_filter_toolbutton_clicked (GtkWidget *widget,
+  extern "C" G_MODULE_EXPORT void on_quest_filter_toolbutton_clicked (GtkWidget *widget,
                                                                       Object    *owner)
   {
-    Round *r = dynamic_cast <Round *> (owner);
+    Poule *p = dynamic_cast <Poule *> (owner);
 
-    r->OnFilterClicked ("swiss_classification_toggletoolbutton");
+    p->OnFilterClicked ("quest_classification_toggletoolbutton");
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_print_swiss_toolbutton_clicked (GtkWidget *widget,
+  extern "C" G_MODULE_EXPORT void on_print_quest_toolbutton_clicked (GtkWidget *widget,
                                                                      Object    *owner)
   {
-    Round *r = dynamic_cast <Round *> (owner);
+    Poule *p = dynamic_cast <Poule *> (owner);
 
-    r->Print (gettext (Round::_class_name));
+    p->Print (gettext (Poule::_class_name));
   }
 
   // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_piste_entry_changed (GtkEditable *editable,
                                                           Object      *owner)
   {
-    Round *r = dynamic_cast <Round *> (owner);
+    Poule *p = dynamic_cast <Poule *> (owner);
 
-    r->OnPisteCountChanged (editable);
+    p->OnPisteCountChanged (editable);
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_swiss_classification_toggletoolbutton_toggled (GtkToggleToolButton *widget,
+  extern "C" G_MODULE_EXPORT void on_quest_classification_toggletoolbutton_toggled (GtkToggleToolButton *widget,
                                                                                     Object              *owner)
   {
-    Round *r = dynamic_cast <Round *> (owner);
+    Poule *p = dynamic_cast <Poule *> (owner);
 
-    r->ToggleClassification (gtk_toggle_tool_button_get_active (widget));
+    p->ToggleClassification (gtk_toggle_tool_button_get_active (widget));
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_swiss_stuff_toolbutton_clicked (GtkWidget *widget,
+  extern "C" G_MODULE_EXPORT void on_quest_stuff_toolbutton_clicked (GtkWidget *widget,
                                                                      Object    *owner)
   {
-    Round *r = dynamic_cast <Round *> (owner);
+    Poule *p = dynamic_cast <Poule *> (owner);
 
-    r->OnStuffClicked ();
+    p->OnStuffClicked ();
   }
 
   // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_highlight_entry_changed (GtkEditable *editable,
                                                               Object      *owner)
   {
-    Round *r = dynamic_cast <Round *> (owner);
+    Poule *p = dynamic_cast <Poule *> (owner);
 
-    r->OnHighlightChanged (editable);
+    p->OnHighlightChanged (editable);
   }
 }

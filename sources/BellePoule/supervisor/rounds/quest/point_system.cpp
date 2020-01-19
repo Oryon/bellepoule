@@ -14,51 +14,64 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "quest.hpp"
-#include "table.hpp"
-#include "bonus.hpp"
+#include "util/player.hpp"
+#include "util/attribute.hpp"
+#include "../../match.hpp"
 
-namespace Swiss
+#include "duel_score.hpp"
+#include "elo.hpp"
+#include "point_system.hpp"
+
+namespace Quest
 {
-  const gchar *Toto::_class_name     = N_ ("Table");
-  const gchar *Toto::_xml_class_name = "TableauSuisse";
-
   // --------------------------------------------------------------------------------
-  Toto::Toto (StageClass *stage_class)
-    : Object ("Swiss::Table"),
-    Table::Supervisor (stage_class)
+  PointSystem::PointSystem (Object *owner)
+    : Object ("PointSystem")
   {
+    _matches = nullptr;
+
+    _duel_score = new DuelScore (owner);
+    _elo   = new Elo ();
   }
 
   // --------------------------------------------------------------------------------
-  Toto::~Toto ()
+  PointSystem::~PointSystem ()
   {
+    g_list_free (_matches);
+
+    _duel_score->Release ();
+    _elo->Release        ();
   }
 
   // --------------------------------------------------------------------------------
-  Generic::Bonus *Toto::GetBonus ()
+  void PointSystem::AuditMatch (Match *match)
   {
-    return new Bonus (GetDataOwner ());
+    if (match->IsOver ())
+    {
+      Player *winner = match->GetWinner ();
+      Player *looser = match->GetLooser ();
+
+      if (winner && looser)
+      {
+        _matches = g_list_prepend (_matches,
+                                   match);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------
-  const gchar *Toto::GetXmlClassName ()
+  void PointSystem::SumUp ()
   {
-    return _xml_class_name;
-  }
+    for (GList *m = _matches; m; m = g_list_next (m))
+    {
+      Match *match = (Match *) m->data;
 
-  // --------------------------------------------------------------------------------
-  void Toto::Declare ()
-  {
-    RegisterStageClass (gettext (_class_name),
-                        _xml_class_name,
-                        CreateInstance,
-                        EDITABLE|REMOVABLE);
-  }
+      _duel_score->EvaluateMatch (match);
+    }
 
-  // --------------------------------------------------------------------------------
-  Stage *Toto::CreateInstance (StageClass *stage_class)
-  {
-    return new Toto (stage_class);
+    _elo->ProcessBatch (_matches);
+
+    g_list_free (_matches);
+    _matches = nullptr;
   }
 }

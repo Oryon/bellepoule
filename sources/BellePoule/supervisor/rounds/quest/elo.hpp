@@ -16,37 +16,30 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <util/object.hpp>
 
-#include "../tableau/table_supervisor.hpp"
+class Match;
 
-namespace Generic
+namespace Quest
 {
-  class Bonus;
-}
-
-class StageClass;
-
-namespace Swiss
-{
-  class Toto : public Table::Supervisor
+  class Elo : public Object
   {
     public:
-      static void Declare ();
+      Elo ();
 
-      Toto (StageClass *stage_class);
+      void ProcessBatch (GList *matches);
 
-    public:
-      static const gchar *_class_name;
-      static const gchar *_xml_class_name;
+      void CancelBatch ();
 
     private:
-      ~Toto () override;
+      static const guint K = 32;
 
-      Generic::Bonus *GetBonus () override;
+      GList *_fencers;
 
-      const gchar *GetXmlClassName () override;
+      ~Elo ();
 
-      static Stage *CreateInstance (StageClass *stage_class);
+      void PreserveInitialValue (Match *match);
+
+      void Evaluate (Match *match);
   };
 }

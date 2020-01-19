@@ -14,31 +14,39 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "util/player.hpp"
-#include "util/attribute.hpp"
+#pragma once
 
-#include "bonus.hpp"
+#include <gtk/gtk.h>
+
+#include "../tableau/table_supervisor.hpp"
 
 namespace Generic
 {
-  // --------------------------------------------------------------------------------
-  Bonus::Bonus ()
-    : Object ("Bonus")
-  {
-  }
+  class PointSystem;
+}
 
-  // --------------------------------------------------------------------------------
-  Bonus::~Bonus ()
-  {
-  }
+class StageClass;
 
-  // --------------------------------------------------------------------------------
-  void Bonus::AuditMatch (Match *match)
+namespace Quest
+{
+  class BonusTable : public Table::Supervisor
   {
-  }
+    public:
+      static void Declare ();
 
-  // --------------------------------------------------------------------------------
-  void Bonus::SumUp ()
-  {
-  }
+      BonusTable (StageClass *stage_class);
+
+    public:
+      static const gchar *_class_name;
+      static const gchar *_xml_class_name;
+
+    private:
+      ~BonusTable () override;
+
+      Generic::PointSystem *GetBonus () override;
+
+      const gchar *GetXmlClassName () override;
+
+      static Stage *CreateInstance (StageClass *stage_class);
+  };
 }

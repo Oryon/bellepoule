@@ -24,7 +24,7 @@
 
 namespace Generic
 {
-  class Bonus;
+  class PointSystem;
 }
 
 class Error;
@@ -77,22 +77,22 @@ namespace Table
       static const guint THIRD_PLACES = 3;
       static const guint ALL_PLACES   = 99;
 
-      GtkTreeStore       *_table_set_treestore;
-      GtkTreeModelFilter *_table_set_filter;
-      xmlNode            *_xml_node;
-      TableSet           *_displayed_table_set;
-      gboolean            _is_over;
-      Error::Provider    *_first_error;
-      GSList             *_result;
-      GSList             *_blackcardeds;
-      Data               *_fenced_places;
-      Generic::Bonus      *_bonus;
+      GtkTreeStore         *_table_set_treestore;
+      GtkTreeModelFilter   *_table_set_filter;
+      xmlNode              *_xml_node;
+      TableSet             *_displayed_table_set;
+      gboolean              _is_over;
+      Error::Provider      *_first_error;
+      GSList               *_result;
+      GSList               *_blackcardeds;
+      Data                 *_fenced_places;
+      Generic::PointSystem *_point_system;
 
       void Display () override;
 
       void Garnish () override;
 
-      virtual Generic::Bonus *GetBonus ();
+      virtual Generic::PointSystem *GetBonus ();
 
       void CreateTableSets ();
 
