@@ -16,6 +16,7 @@
 
 #include "quest.hpp"
 #include "table.hpp"
+#include "bonus.hpp"
 
 namespace Swiss
 {
@@ -35,9 +36,9 @@ namespace Swiss
   }
 
   // --------------------------------------------------------------------------------
-  Bonus *Toto::GetBonus ()
+  Generic::Bonus *Toto::GetBonus ()
   {
-    return new Quest (GetDataOwner ());
+    return new Bonus (GetDataOwner ());
   }
 
   // --------------------------------------------------------------------------------

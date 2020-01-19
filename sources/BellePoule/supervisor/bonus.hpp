@@ -20,18 +20,18 @@
 
 class Match;
 
-class Bonus : public virtual Object
+namespace Generic
 {
-  public:
-    Bonus ();
+  class Bonus : public virtual Object
+  {
+    public:
+      Bonus ();
 
-    virtual void EvaluateMatch (Match *match);
+      virtual void AuditMatch (Match *match);
 
-    virtual void CancelMatch (Match *match);
+      virtual void SumUp ();
 
-  protected:
-    virtual ~Bonus ();
-
-  private:
-    Object *_owner;
-};
+    protected:
+      virtual ~Bonus ();
+  };
+}

@@ -540,6 +540,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/splitting/splitting.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/bonus.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/bonus.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/swiss/elo.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

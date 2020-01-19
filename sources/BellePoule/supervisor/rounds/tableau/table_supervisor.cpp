@@ -567,9 +567,9 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  Bonus *Supervisor::GetBonus ()
+  Generic::Bonus *Supervisor::GetBonus ()
   {
-    return new Bonus ();
+    return new Generic::Bonus ();
   }
 
   // --------------------------------------------------------------------------------

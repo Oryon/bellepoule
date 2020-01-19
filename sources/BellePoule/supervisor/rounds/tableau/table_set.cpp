@@ -64,11 +64,11 @@ namespace Table
   };
 
   // --------------------------------------------------------------------------------
-  TableSet::TableSet (Supervisor *supervisor,
-                      gchar      *id,
-                      guint       first_place,
-                      Bonus      *bonus,
-                      GtkRange   *zoomer)
+  TableSet::TableSet (Supervisor     *supervisor,
+                      gchar          *id,
+                      guint           first_place,
+                      Generic::Bonus *bonus,
+                      GtkRange       *zoomer)
     : Object ("TableSet"),
     CanvasModule ("table.glade")
   {
@@ -1899,7 +1899,7 @@ namespace Table
                          (void *) data->_table);
       }
 
-      table_set->_bonus->EvaluateMatch (data->_match);
+      table_set->_bonus->AuditMatch (data->_match);
     }
 
     return FALSE;
@@ -2488,6 +2488,7 @@ namespace Table
                        -1,
                        (GNodeTraverseFunc) StartClassification,
                        this);
+      _bonus->SumUp ();
 
       // Sort the list and complete it with the withdrawals
       {

@@ -20,6 +20,11 @@
 
 #include "../tableau/table_supervisor.hpp"
 
+namespace Generic
+{
+  class Bonus;
+}
+
 class StageClass;
 
 namespace Swiss
@@ -38,7 +43,7 @@ namespace Swiss
     private:
       ~Toto () override;
 
-      Bonus *GetBonus () override;
+      Generic::Bonus *GetBonus () override;
 
       const gchar *GetXmlClassName () override;
 

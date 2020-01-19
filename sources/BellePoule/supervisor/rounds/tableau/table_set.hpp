@@ -25,11 +25,15 @@
 
 #include "html_table.hpp"
 
+namespace Generic
+{
+  class Bonus;
+}
+
 class Error;
 class Data;
 class Match;
 class ScoreCollector;
-class Bonus;
 
 namespace Table
 {
@@ -53,11 +57,11 @@ namespace Table
       };
 
     public:
-      TableSet (Supervisor *supervisor,
-                gchar      *id,
-                guint       first_place,
-                Bonus      *bonus,
-                GtkRange   *zoomer);
+      TableSet (Supervisor     *supervisor,
+                gchar          *id,
+                guint           first_place,
+                Generic::Bonus *bonus,
+                GtkRange       *zoomer);
 
       void SetListener (Listener *listener);
 
@@ -193,7 +197,7 @@ namespace Table
       GdkPixbuf           *_printer_pixbuf;
       Filter              *_right_filter;
       GooCanvasItem       *_last_search;
-      Bonus               *_bonus;
+      Generic::Bonus      *_bonus;
 
       Listener *_listener;
 

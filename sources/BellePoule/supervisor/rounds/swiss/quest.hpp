@@ -23,14 +23,14 @@ class Match;
 
 namespace Swiss
 {
-  class Quest : public Bonus
+  class Quest : public Object
   {
     public:
       Quest (Object *owner);
 
-      void EvaluateMatch (Match *match) override;
+      void EvaluateMatch (Match *match);
 
-      void CancelMatch (Match *match) override;
+      void CancelMatch (Match *match);
 
     private:
       Object *_owner;

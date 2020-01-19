@@ -22,7 +22,11 @@
 #include "../../stage.hpp"
 #include "table_set.hpp"
 
-class Bonus;
+namespace Generic
+{
+  class Bonus;
+}
+
 class Error;
 class Data;
 class Match;
@@ -82,13 +86,13 @@ namespace Table
       GSList             *_result;
       GSList             *_blackcardeds;
       Data               *_fenced_places;
-      Bonus              *_bonus;
+      Generic::Bonus      *_bonus;
 
       void Display () override;
 
       void Garnish () override;
 
-      virtual Bonus *GetBonus ();
+      virtual Generic::Bonus *GetBonus ();
 
       void CreateTableSets ();
 

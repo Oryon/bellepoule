@@ -16,29 +16,62 @@
 
 #include "util/player.hpp"
 #include "util/attribute.hpp"
+#include "../../match.hpp"
 
+#include "quest.hpp"
+#include "elo.hpp"
 #include "bonus.hpp"
 
-namespace Generic
+namespace Swiss
 {
   // --------------------------------------------------------------------------------
-  Bonus::Bonus ()
+  Bonus::Bonus (Object *owner)
     : Object ("Bonus")
   {
+    _matches = nullptr;
+
+    _quest = new Quest (owner);
+    _elo   = new Elo ();
   }
 
   // --------------------------------------------------------------------------------
   Bonus::~Bonus ()
   {
+    g_list_free (_matches);
+
+    _quest->Release ();
+    _elo->Release   ();
   }
 
   // --------------------------------------------------------------------------------
   void Bonus::AuditMatch (Match *match)
   {
+    if (match->IsOver ())
+    {
+      Player *winner = match->GetWinner ();
+      Player *looser = match->GetLooser ();
+
+      if (winner && looser)
+      {
+        _matches = g_list_prepend (_matches,
+                                   match);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------
   void Bonus::SumUp ()
   {
+    for (GList *m = _matches; m; m = g_list_next (m))
+    {
+      Match *match = (Match *) m->data;
+
+      _quest->EvaluateMatch (match);
+    }
+
+    _elo->ProcessBatch (_matches);
+
+    g_list_free (_matches);
+    _matches = nullptr;
   }
 }

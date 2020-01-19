@@ -25,8 +25,7 @@ namespace Swiss
 {
   // --------------------------------------------------------------------------------
   Quest::Quest (Object *owner)
-    : Object ("Swiss::Round"),
-      Bonus ()
+    : Object ("Swiss::Quest")
   {
     _owner = owner;
   }
