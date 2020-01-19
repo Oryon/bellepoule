@@ -24,6 +24,11 @@
 
 class Data;
 
+namespace Generic
+{
+  class PointSystem;
+}
+
 namespace Quest
 {
   class Hall;
@@ -54,21 +59,22 @@ namespace Quest
       static const gdouble  _score_rect_w;
       static const gdouble  _score_rect_h;
 
-      Elo            *_elo;
-      DuelScore      *_duel_score;
-      Hall           *_hall;
-      Data           *_matches_per_fencer;
-      Data           *_available_time;
-      Data           *_piste_count;
-      GList          *_matches;
-      ScoreCollector *_score_collector;
-      GooCanvasItem  *_table;
-      guint           _rows;
-      GtkWidget      *_piste_entry;
-      GtkWidget      *_per_fencer_entry;
-      GtkWidget      *_duration_entry;
-      gulong          _per_fencer_entry_handler;
-      gulong          _duration_entry_handler;
+      Elo                  *_elo;
+      DuelScore            *_duel_score;
+      Hall                 *_hall;
+      Data                 *_matches_per_fencer;
+      Data                 *_available_time;
+      Data                 *_piste_count;
+      GList                *_matches;
+      ScoreCollector       *_score_collector;
+      GooCanvasItem        *_table;
+      guint                 _rows;
+      GtkWidget            *_piste_entry;
+      GtkWidget            *_per_fencer_entry;
+      GtkWidget            *_duration_entry;
+      gulong                _per_fencer_entry_handler;
+      gulong                _duration_entry_handler;
+      Generic::PointSystem *_point_system;
 
       ~Poule () override;
 

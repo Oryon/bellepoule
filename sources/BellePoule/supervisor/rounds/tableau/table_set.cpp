@@ -2619,11 +2619,13 @@ namespace Table
     }
 
     {
-      //bonus = table_set->_bonus->Compare ();
+      gint result = table_set->_point_system->Compare (A,
+                                                       B);
 
-      //if (table_set->_bonus->Compare ())
-      //{
-      //}
+      if (result != 0)
+      {
+        return result;
+      }
     }
 
     return table_set->ComparePreviousRankPlayer (A,

@@ -63,6 +63,13 @@ namespace Table
       static const gchar *_xml_class_name;
 
     protected:
+      static const guint NONE         = 0;
+      static const guint QUOTA        = 1;
+      static const guint THIRD_PLACES = 3;
+      static const guint ALL_PLACES   = 99;
+
+      Data *_fenced_places;
+
       ~Supervisor () override;
 
     private:
@@ -72,11 +79,6 @@ namespace Table
       void OnUnPlugged () override;
 
     private:
-      static const guint NONE         = 0;
-      static const guint QUOTA        = 1;
-      static const guint THIRD_PLACES = 3;
-      static const guint ALL_PLACES   = 99;
-
       GtkTreeStore         *_table_set_treestore;
       GtkTreeModelFilter   *_table_set_filter;
       xmlNode              *_xml_node;
@@ -85,14 +87,13 @@ namespace Table
       Error::Provider      *_first_error;
       GSList               *_result;
       GSList               *_blackcardeds;
-      Data                 *_fenced_places;
       Generic::PointSystem *_point_system;
 
       void Display () override;
 
       void Garnish () override;
 
-      virtual Generic::PointSystem *GetBonus ();
+      virtual Generic::PointSystem *GetPointSystem ();
 
       void CreateTableSets ();
 

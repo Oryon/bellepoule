@@ -43,7 +43,7 @@ namespace Quest
     private:
       ~BonusTable () override;
 
-      Generic::PointSystem *GetBonus () override;
+      Generic::PointSystem *GetPointSystem () override;
 
       const gchar *GetXmlClassName () override;
 

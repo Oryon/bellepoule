@@ -17,6 +17,7 @@
 #include "util/player.hpp"
 #include "util/attribute.hpp"
 #include "../../match.hpp"
+#include "../../stage.hpp"
 
 #include "duel_score.hpp"
 #include "elo.hpp"
@@ -25,9 +26,10 @@
 namespace Quest
 {
   // --------------------------------------------------------------------------------
-  PointSystem::PointSystem (Object *owner)
+  PointSystem::PointSystem (Stage *owner)
     : Object ("PointSystem")
   {
+    _owner   = owner;
     _matches = nullptr;
 
     _duel_score = new DuelScore (owner);
@@ -74,4 +76,59 @@ namespace Quest
     g_list_free (_matches);
     _matches = nullptr;
   }
+
+  // --------------------------------------------------------------------------------
+  gint PointSystem::Compare (Player *A,
+                             Player *B)
+  {
+    Player::AttributeId attr_id ("");
+    gint                result;
+
+    {
+      guint      duel_scoreA      = 0;
+      guint      duel_scoreB      = 0;
+      Attribute *duel_scoreA_attr;
+      Attribute *duel_scoreB_attr;
+
+
+      attr_id._name = (gchar *) "score_quest";
+      duel_scoreA_attr = A->GetAttribute (&attr_id);
+      duel_scoreB_attr = B->GetAttribute (&attr_id);
+
+      if (duel_scoreA_attr)
+      {
+        duel_scoreA = duel_scoreA_attr->GetUIntValue ();
+      }
+      if (duel_scoreB_attr)
+      {
+        duel_scoreB = duel_scoreB_attr->GetUIntValue ();
+      }
+
+      result = duel_scoreB - duel_scoreA;
+      if (result)
+      {
+        return result;
+      }
+    }
+
+    {
+      guint eloA;
+      guint eloB;
+
+      attr_id._name = (gchar *) "elo";
+      eloA = A->GetAttribute (&attr_id)->GetUIntValue ();
+      eloB = B->GetAttribute (&attr_id)->GetUIntValue ();
+
+      result = eloB - eloA;
+      if (result)
+      {
+        return result;
+      }
+    }
+
+    return Player::RandomCompare (A,
+                                  B,
+                                  _owner->GetRandSeed ());
+  }
+
 }

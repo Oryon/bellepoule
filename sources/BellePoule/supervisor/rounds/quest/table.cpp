@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/data.hpp"
 #include "duel_score.hpp"
 #include "table.hpp"
 #include "point_system.hpp"
@@ -28,6 +29,14 @@ namespace Quest
     : Object ("Quest::BonusTable"),
     Table::Supervisor (stage_class)
   {
+    _max_score->Release ();
+    _max_score = new Data ("ScoreMax",
+                           15);
+
+    _fenced_places->Release ();
+    _fenced_places = new Data ("PlacesTirees",
+                               Table::Supervisor::THIRD_PLACES);
+
   }
 
   // --------------------------------------------------------------------------------
@@ -36,9 +45,9 @@ namespace Quest
   }
 
   // --------------------------------------------------------------------------------
-  Generic::PointSystem *BonusTable::GetBonus ()
+  Generic::PointSystem *BonusTable::GetPointSystem ()
   {
-    return new PointSystem (GetDataOwner ());
+    return new PointSystem (this);
   }
 
   // --------------------------------------------------------------------------------

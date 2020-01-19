@@ -34,6 +34,7 @@
 #include "elo.hpp"
 #include "duel_score.hpp"
 #include "wheel_of_fortune.hpp"
+#include "point_system.hpp"
 #include "poule.hpp"
 
 namespace Quest
@@ -66,8 +67,9 @@ namespace Quest
                                                   (Object *) this);
     }
 
-    _elo        = new Elo ();
-    _duel_score = new DuelScore (GetDataOwner ());
+    _point_system = new PointSystem (this);
+    _elo          = new Elo ();
+    _duel_score   = new DuelScore (GetDataOwner ());
 
     _matches         = nullptr;
     _score_collector = nullptr;
@@ -1071,54 +1073,8 @@ namespace Quest
                              Player *B,
                              Poule  *poule)
   {
-    Player::AttributeId attr_id ("");
-    gint                result;
-
-    {
-      guint      duel_scoreA      = 0;
-      guint      duel_scoreB      = 0;
-      Attribute *duel_scoreA_attr;
-      Attribute *duel_scoreB_attr;
-
-
-      attr_id._name = (gchar *) "score_quest";
-      duel_scoreA_attr = A->GetAttribute (&attr_id);
-      duel_scoreB_attr = B->GetAttribute (&attr_id);
-
-      if (duel_scoreA_attr)
-      {
-        duel_scoreA = duel_scoreA_attr->GetUIntValue ();
-      }
-      if (duel_scoreB_attr)
-      {
-        duel_scoreB = duel_scoreB_attr->GetUIntValue ();
-      }
-
-      result = duel_scoreB - duel_scoreA;
-      if (result)
-      {
-        return result;
-      }
-    }
-
-    {
-      guint eloA;
-      guint eloB;
-
-      attr_id._name = (gchar *) "elo";
-      eloA = A->GetAttribute (&attr_id)->GetUIntValue ();
-      eloB = B->GetAttribute (&attr_id)->GetUIntValue ();
-
-      result = eloB - eloA;
-      if (result)
-      {
-        return result;
-      }
-    }
-
-    return Player::RandomCompare (A,
-                                  B,
-                                  poule->GetRandSeed ());
+    return poule->_point_system->Compare (A,
+                                          B);
   }
 
   // --------------------------------------------------------------------------------

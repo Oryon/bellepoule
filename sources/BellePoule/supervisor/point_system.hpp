@@ -19,6 +19,7 @@
 #include <util/object.hpp>
 
 class Match;
+class Player;
 
 namespace Generic
 {
@@ -30,6 +31,9 @@ namespace Generic
       virtual void AuditMatch (Match *match);
 
       virtual void SumUp ();
+
+      virtual gint Compare (Player *A,
+                            Player *B);
 
     protected:
       virtual ~PointSystem ();

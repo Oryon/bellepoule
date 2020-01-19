@@ -567,7 +567,7 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  Generic::PointSystem *Supervisor::GetBonus ()
+  Generic::PointSystem *Supervisor::GetPointSystem ()
   {
     return new Generic::PointSystem ();
   }
@@ -772,7 +772,7 @@ namespace Table
       table_set = new TableSet (this,
                                 gtk_tree_path_to_string (path),
                                 from_place,
-                                GetBonus (),
+                                GetPointSystem (),
                                 GTK_RANGE (_glade->GetWidget ("zoom_scale")));
 
       {

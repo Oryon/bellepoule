@@ -41,4 +41,11 @@ namespace Generic
   void PointSystem::SumUp ()
   {
   }
+
+  // --------------------------------------------------------------------------------
+  gint PointSystem::Compare (Player *A,
+                             Player *B)
+  {
+    return 0;
+  }
 }

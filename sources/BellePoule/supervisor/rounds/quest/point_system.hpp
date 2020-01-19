@@ -20,6 +20,7 @@
 #include "../../point_system.hpp"
 
 class Match;
+class Stage;
 
 namespace Quest
 {
@@ -29,17 +30,21 @@ namespace Quest
   class PointSystem : public Generic::PointSystem
   {
     public:
-      PointSystem (Object *owner);
+      PointSystem (Stage *owner);
 
-      virtual void AuditMatch (Match *match) override;
+      void AuditMatch (Match *match) override;
 
-      virtual void SumUp () override;
+      void SumUp () override;
 
     protected:
       GList     *_matches;
+      Stage     *_owner;
       DuelScore *_duel_score;
       Elo       *_elo;
 
       virtual ~PointSystem ();
+
+      gint Compare (Player *A,
+                    Player *B) override;
   };
 }
