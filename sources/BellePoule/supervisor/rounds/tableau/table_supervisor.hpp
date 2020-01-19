@@ -22,6 +22,7 @@
 #include "../../stage.hpp"
 #include "table_set.hpp"
 
+class Bonus;
 class Error;
 class Data;
 class Match;
@@ -57,6 +58,9 @@ namespace Table
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
 
+    protected:
+      ~Supervisor () override;
+
     private:
       void OnLocked () override;
       void OnUnLocked () override;
@@ -78,10 +82,13 @@ namespace Table
       GSList             *_result;
       GSList             *_blackcardeds;
       Data               *_fenced_places;
+      Bonus              *_bonus;
 
       void Display () override;
 
       void Garnish () override;
+
+      virtual Bonus *GetBonus ();
 
       void CreateTableSets ();
 
@@ -202,6 +209,6 @@ namespace Table
       void OnTableSetDisplayed (TableSet *table_set,
                                 Table    *from) override;
 
-      ~Supervisor () override;
+      virtual const gchar *GetXmlClassName ();
   };
 }

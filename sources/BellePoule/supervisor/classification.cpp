@@ -20,8 +20,6 @@
 
 #include "util/attribute.hpp"
 #include "util/player.hpp"
-#include "util/filter.hpp"
-#include "network/advertiser.hpp"
 
 #include "contest.hpp"
 #include "application/weapon.hpp"

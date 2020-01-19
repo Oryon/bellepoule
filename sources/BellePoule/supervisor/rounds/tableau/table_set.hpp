@@ -29,6 +29,7 @@ class Error;
 class Data;
 class Match;
 class ScoreCollector;
+class Bonus;
 
 namespace Table
 {
@@ -55,6 +56,7 @@ namespace Table
       TableSet (Supervisor *supervisor,
                 gchar      *id,
                 guint       first_place,
+                Bonus      *bonus,
                 GtkRange   *zoomer);
 
       void SetListener (Listener *listener);
@@ -191,6 +193,7 @@ namespace Table
       GdkPixbuf           *_printer_pixbuf;
       Filter              *_right_filter;
       GooCanvasItem       *_last_search;
+      Bonus               *_bonus;
 
       Listener *_listener;
 

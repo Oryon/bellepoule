@@ -2270,11 +2270,15 @@ void Contest::OnWeaponChanged (GtkComboBox *combobox,
   {
     contest->_schedule->Mutate ("TourDePoules",
                                 "RondeSuisse");
+    contest->_schedule->Mutate ("PhaseDeTableaux",
+                                "TableauSuisse");
   }
   else
   {
     contest->_schedule->Mutate ("RondeSuisse",
                                 "TourDePoules");
+    contest->_schedule->Mutate ("TableauSuisse",
+                                "PhaseDeTableaux");
   }
 }
 

@@ -16,25 +16,32 @@
 
 #pragma once
 
-#include <util/object.hpp>
-#include "../../bonus.hpp"
+#include <gtk/gtk.h>
 
-class Match;
+#include "../tableau/table_supervisor.hpp"
+
+class StageClass;
 
 namespace Swiss
 {
-  class Quest : public Bonus
+  class Toto : public Table::Supervisor
   {
     public:
-      Quest (Object *owner);
+      static void Declare ();
 
-      void EvaluateMatch (Match *match) override;
+      Toto (StageClass *stage_class);
 
-      void CancelMatch (Match *match) override;
+    public:
+      static const gchar *_class_name;
+      static const gchar *_xml_class_name;
 
     private:
-      Object *_owner;
+      ~Toto () override;
 
-      ~Quest () override;
+      Bonus *GetBonus () override;
+
+      const gchar *GetXmlClassName () override;
+
+      static Stage *CreateInstance (StageClass *stage_class);
   };
 }

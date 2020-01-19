@@ -17,24 +17,21 @@
 #pragma once
 
 #include <util/object.hpp>
-#include "../../bonus.hpp"
 
 class Match;
 
-namespace Swiss
+class Bonus : public virtual Object
 {
-  class Quest : public Bonus
-  {
-    public:
-      Quest (Object *owner);
+  public:
+    Bonus ();
 
-      void EvaluateMatch (Match *match) override;
+    virtual void EvaluateMatch (Match *match);
 
-      void CancelMatch (Match *match) override;
+    virtual void CancelMatch (Match *match);
 
-    private:
-      Object *_owner;
+  protected:
+    virtual ~Bonus ();
 
-      ~Quest () override;
-  };
-}
+  private:
+    Object *_owner;
+};

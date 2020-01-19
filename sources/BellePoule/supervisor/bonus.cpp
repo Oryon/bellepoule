@@ -14,27 +14,28 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "util/player.hpp"
+#include "util/attribute.hpp"
 
-#include <util/object.hpp>
-#include "../../bonus.hpp"
+#include "bonus.hpp"
 
-class Match;
-
-namespace Swiss
+// --------------------------------------------------------------------------------
+Bonus::Bonus ()
+  : Object ("Bonus")
 {
-  class Quest : public Bonus
-  {
-    public:
-      Quest (Object *owner);
+}
 
-      void EvaluateMatch (Match *match) override;
+// --------------------------------------------------------------------------------
+Bonus::~Bonus ()
+{
+}
 
-      void CancelMatch (Match *match) override;
+// --------------------------------------------------------------------------------
+void Bonus::EvaluateMatch (Match *match)
+{
+}
 
-    private:
-      Object *_owner;
-
-      ~Quest () override;
-  };
+// --------------------------------------------------------------------------------
+void Bonus::CancelMatch (Match *match)
+{
 }

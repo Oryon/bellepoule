@@ -32,6 +32,7 @@
 #include "../../classification.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
+#include "../../bonus.hpp"
 #include "table.hpp"
 
 #include "table_supervisor.hpp"
@@ -134,8 +135,6 @@ namespace Table
                                           "IP",
                                           "password",
                                           "cyphered_password",
-                                          "score_quest",
-                                          "elo",
                                           "HS",
                                           "attending",
                                           "exported",
@@ -192,6 +191,12 @@ namespace Table
                         _xml_class_name,
                         CreateInstance,
                         EDITABLE|REMOVABLE);
+  }
+
+  // --------------------------------------------------------------------------------
+  const gchar *Supervisor::GetXmlClassName ()
+  {
+    return _xml_class_name;
   }
 
   // --------------------------------------------------------------------------------
@@ -562,6 +567,12 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  Bonus *Supervisor::GetBonus ()
+  {
+    return new Bonus ();
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Supervisor::OnMessage (Net::Message *message)
   {
     if (message->Is ("BellePoule2D::Roadmap"))
@@ -656,7 +667,7 @@ namespace Table
     {
       if (n->type == XML_ELEMENT_NODE)
       {
-        if (g_strcmp0 ((char *) n->name, _xml_class_name) == 0)
+        if (g_strcmp0 ((char *) n->name, GetXmlClassName ()) == 0)
         {
         }
         else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
@@ -708,7 +719,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Supervisor::SaveHeader (XmlScheme *xml_scheme)
   {
-    xml_scheme->StartElement (_xml_class_name);
+    xml_scheme->StartElement (GetXmlClassName ());
 
     SaveConfiguration (xml_scheme);
   }
@@ -761,6 +772,7 @@ namespace Table
       table_set = new TableSet (this,
                                 gtk_tree_path_to_string (path),
                                 from_place,
+                                GetBonus (),
                                 GTK_RANGE (_glade->GetWidget ("zoom_scale")));
 
       {
@@ -1158,23 +1170,19 @@ namespace Table
                                                   Supervisor   *ts)
   {
     TableSet *table_set;
-    GSList   *current_result;
 
     gtk_tree_model_get (model, iter,
                         DisplayColumnId::TABLE_SET_TABLE_ptr, &table_set,
                         -1);
-    current_result = table_set->GetCurrentClassification ();
 
-    while (current_result)
+    for (GSList *p = table_set->GetCurrentClassification (); p; p = g_slist_next (p))
     {
-      Player *player = (Player *) current_result->data;
+      Player *player = (Player *) p->data;
 
       ts->_result = g_slist_remove (ts->_result,
                                     player);
       ts->_result = g_slist_append (ts->_result,
                                     player);
-
-      current_result = g_slist_next (current_result);
     }
 
     {

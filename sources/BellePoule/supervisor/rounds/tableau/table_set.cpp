@@ -35,6 +35,7 @@
 #include "../../classification.hpp"
 #include "../../score.hpp"
 #include "../../match.hpp"
+#include "../../bonus.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
 #include "../../book/section.hpp"
@@ -66,6 +67,7 @@ namespace Table
   TableSet::TableSet (Supervisor *supervisor,
                       gchar      *id,
                       guint       first_place,
+                      Bonus      *bonus,
                       GtkRange   *zoomer)
     : Object ("TableSet"),
     CanvasModule ("table.glade")
@@ -92,6 +94,7 @@ namespace Table
     _from_table       = nullptr;
     _to_table         = nullptr;
     _last_search      = nullptr;
+    _bonus            = bonus;
 
     _listener         = nullptr;
 
@@ -1895,6 +1898,8 @@ namespace Table
                          "best_table",
                          (void *) data->_table);
       }
+
+      table_set->_bonus->EvaluateMatch (data->_match);
     }
 
     return FALSE;
