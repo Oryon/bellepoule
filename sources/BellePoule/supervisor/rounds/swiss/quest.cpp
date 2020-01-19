@@ -24,9 +24,10 @@
 namespace Swiss
 {
   // --------------------------------------------------------------------------------
-  Quest::Quest ()
+  Quest::Quest (Object *owner)
     : Object ("Swiss::Quest")
   {
+    _owner = owner;
   }
 
   // --------------------------------------------------------------------------------
@@ -37,7 +38,7 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Quest::EvaluateMatch (Match *match)
   {
-    Player::AttributeId quest_attr_id ("score_quest");
+    Player::AttributeId quest_attr_id ("score_quest", _owner);
 
     CancelMatch (match);
 
@@ -108,7 +109,7 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Quest::CancelMatch (Match *match)
   {
-    Player::AttributeId quest_attr_id ("score_quest");
+    Player::AttributeId quest_attr_id ("score_quest", _owner);
 
     for (guint i = 0; i < 2; i++)
     {

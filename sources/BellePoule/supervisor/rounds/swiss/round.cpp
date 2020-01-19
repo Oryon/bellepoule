@@ -67,7 +67,7 @@ namespace Swiss
     }
 
     _elo   = new Elo ();
-    _quest = new Quest ();
+    _quest = new Quest (GetDataOwner ());
 
     _matches         = nullptr;
     _score_collector = nullptr;
@@ -1075,15 +1075,26 @@ namespace Swiss
     gint                result;
 
     {
-      guint quest_A;
-      guint quest_B;
+      guint      questA      = 0;
+      guint      questB      = 0;
+      Attribute *questA_attr;
+      Attribute *questB_attr;
+
 
       attr_id._name = (gchar *) "score_quest";
-      quest_A = A->GetAttribute (&attr_id)->GetUIntValue ();
-      quest_B = B->GetAttribute (&attr_id)->GetUIntValue ();
+      questA_attr = A->GetAttribute (&attr_id);
+      questB_attr = B->GetAttribute (&attr_id);
 
-      result = quest_B - quest_A;
+      if (questA_attr)
+      {
+        questA = questA_attr->GetUIntValue ();
+      }
+      if (questB_attr)
+      {
+        questB = questB_attr->GetUIntValue ();
+      }
 
+      result = questB - questA;
       if (result)
       {
         return result;
@@ -1091,15 +1102,14 @@ namespace Swiss
     }
 
     {
-      guint elo_A;
-      guint elo_B;
+      guint eloA;
+      guint eloB;
 
       attr_id._name = (gchar *) "elo";
-      elo_A = A->GetAttribute (&attr_id)->GetUIntValue ();
-      elo_B = B->GetAttribute (&attr_id)->GetUIntValue ();
+      eloA = A->GetAttribute (&attr_id)->GetUIntValue ();
+      eloB = B->GetAttribute (&attr_id)->GetUIntValue ();
 
-      result = elo_B - elo_A;
-
+      result = eloB - eloA;
       if (result)
       {
         return result;
@@ -1333,9 +1343,9 @@ namespace Swiss
         }
         else
         {
-          guint  matches    = (fencers *_matches_per_fencer->_value) / 2;
-          guint  time_slots = matches / _piste_count->_value;
-          guint  duration   = (time_slots *15) / 60;
+          guint matches    = (fencers * _matches_per_fencer->_value) / 2;
+          guint time_slots = matches / _piste_count->_value;
+          guint duration   = (time_slots*15) / 60;
 
           if (duration == 0)
           {
@@ -1352,10 +1362,10 @@ namespace Swiss
       }
       else
       {
-        guint  matches     = _available_time->_value*4 * _piste_count->_value;
-        guint  grid_size   = (1 + sqrt (1+8*matches)) / 2;
-        guint  per_fencer  = MIN (fencers-1, grid_size-1);
-        gchar *text        = g_strdup_printf ("%d", per_fencer);
+        guint  matches    = _available_time->_value * 4 * _piste_count->_value;
+        guint  grid_size  = (1 + sqrt (1 + 8*matches)) / 2;
+        guint  per_fencer = MIN (fencers-1, grid_size-1);
+        gchar *text       = g_strdup_printf ("%d", per_fencer);
 
         gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("per_fencer_entry")),
                             text);

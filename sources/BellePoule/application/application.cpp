@@ -337,10 +337,8 @@ void Application::Prepare ()
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "rating", "Rating", gettext ("rating"));
 
-    desc = AttributeDesc::Declare (G_TYPE_UINT, "score_quest", "ScoreQuest", gettext ("Quest"));
-    desc->_computability = AttributeDesc::Computability::COMPUTABLE;
-
     desc = AttributeDesc::Declare (G_TYPE_UINT, "elo", "Elo", gettext ("Elo"));
+    desc->_scope         = AttributeDesc::Scope::GLOBAL;
     desc->_computability = AttributeDesc::Computability::COMPUTABLE;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
@@ -398,6 +396,10 @@ void Application::Prepare ()
       desc = AttributeDesc::Declare (G_TYPE_STRING, "password", "MotDePasse", gettext ("Password"));
       desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;
       desc->_rights      = AttributeDesc::Rights::PRIVATE;
+
+      desc = AttributeDesc::Declare (G_TYPE_UINT, "score_quest", "ScoreQuest", gettext ("Quest"));
+      desc->_scope         = AttributeDesc::Scope::LOCAL;
+      desc->_computability = AttributeDesc::Computability::COMPUTABLE;
 
       desc = AttributeDesc::Declare (G_TYPE_UINT, "pool_nr", "PoolID", gettext ("pool #"));
       desc->_persistency = AttributeDesc::Persistency::NOT_PERSISTENT;

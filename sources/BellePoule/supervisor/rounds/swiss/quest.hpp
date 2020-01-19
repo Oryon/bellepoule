@@ -25,13 +25,15 @@ namespace Swiss
   class Quest : public Object
   {
     public:
-      Quest ();
+      Quest (Object *owner);
 
       void EvaluateMatch (Match *match);
 
       void CancelMatch (Match *match);
 
     private:
+      Object *_owner;
+
       ~Quest ();
   };
 }
