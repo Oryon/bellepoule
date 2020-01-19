@@ -19,13 +19,14 @@
 namespace Swiss
 {
   // --------------------------------------------------------------------------------
-  WheelOfFortune::WheelOfFortune (GSList *list)
+  WheelOfFortune::WheelOfFortune (GSList *list,
+                                  guint   rank_seed)
     : Object ("Swiss::WheelOfFortune")
   {
      _list       = list;
      _origin     = list;
      _size       = g_slist_length (list);
-     _randomizer = g_rand_new_with_seed (33);
+     _randomizer = g_rand_new_with_seed (rank_seed);
   }
 
   // --------------------------------------------------------------------------------

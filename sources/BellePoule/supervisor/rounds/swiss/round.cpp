@@ -285,19 +285,26 @@ namespace Swiss
   // --------------------------------------------------------------------------------
   void Round::LoadMatches (xmlNode *xml_node)
   {
-    static gboolean attendees_loaded = FALSE;
+    static xmlNode  *match_node = nullptr;
+    static xmlNode  *stop_node  = nullptr;
 
     for (xmlNode *n = xml_node; n != nullptr; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
-        if (g_strcmp0 ((char *) n->name, _xml_class_name) == 0)
+        if (n->parent == stop_node)
         {
-          attendees_loaded = FALSE;
+          match_node = nullptr;
+          stop_node  = nullptr;
+          return;
+        }
+        else if (g_strcmp0 ((char *) n->name, _xml_class_name) == 0)
+        {
+          stop_node = n->parent;
         }
         else if (g_strcmp0 ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
-          if (attendees_loaded == FALSE)
+          if (match_node == nullptr)
           {
             LoadAttendees (n);
           }
@@ -306,7 +313,7 @@ namespace Swiss
         {
           gchar *number = nullptr;
 
-          attendees_loaded = TRUE;
+          match_node = n;
 
           {
             gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
@@ -483,7 +490,8 @@ namespace Swiss
   void Round::TossMatches (GSList *fencers,
                            guint   matches_per_fencer)
   {
-    WheelOfFortune *wheel = new WheelOfFortune (fencers);
+    WheelOfFortune *wheel = new WheelOfFortune (fencers,
+                                                GetRandSeed ());
 
     for (GSList *f = fencers; f; f = g_slist_next (f))
     {

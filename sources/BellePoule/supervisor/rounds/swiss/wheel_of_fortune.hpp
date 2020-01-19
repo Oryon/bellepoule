@@ -24,7 +24,8 @@ namespace Swiss
   class WheelOfFortune : public Object
   {
     public:
-      WheelOfFortune (GSList *list);
+      WheelOfFortune (GSList *list,
+                      guint   rank_seed);
 
       void *Turn ();
 
