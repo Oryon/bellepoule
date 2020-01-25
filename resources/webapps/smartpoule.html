@@ -571,15 +571,13 @@
 
           if (node)
           {
-            let table = document.getElementById ('matchlist');
-
             this.stage = parseInt (node.getAttribute ('NetID'), 16);
 
             for (let i = 0; i < node.childElementCount; i++)
             {
               let match      = node.childNodes[i];
               let match_id   = match.getAttribute ('ID');
-              let row        = table.insertRow (-1);
+              let row        = matchlist.insertRow (-1);
               let match_over = false;
 
               row.setAttribute ('class', 'tr_matchlist');
@@ -626,9 +624,10 @@
                 let svg;
                 let html;
 
-                if (match_over)
-                {
+              if (match_over)
+              {
                   svg = document.getElementById ('ok.svg');
+                  row.style.display = 'none';
                 }
                 else
                 {
@@ -673,6 +672,7 @@
           let offset = msg.data.indexOf (tag);
 
           xml = msg.data.slice (offset + tag.length);
+          xml = xml.split ('\n', 1)[0];
           xml = xml.replace (/\\n/g, '');
         }
 
@@ -847,7 +847,7 @@
           let row_size = name.getBoundingClientRect().height;
           let html     = '';
 
-          html += '<img onclick="document.location.reload(true)" src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + row_size*1.0 + '"/>';
+          html += '<img onclick="CloseScorekeeper ();" src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + row_size*1.0 + '"/>';
           div.innerHTML = html;
         }
       }
@@ -1001,9 +1001,18 @@
     {
       if (msg.data.startsWith ('[Header]\nname=BellePoule::ScoreSheet'))
       {
+        let table = scorekeeper.firstElementChild;
+        for (let panel of table.rows)
+        {
+          while (panel.hasChildNodes ())
+          {
+            panel.removeChild (panel.firstChild);
+          }
+        }
+
         matchlist.style.display   = 'none';
-        scorekeeper.style.display = 'table';
-        overlay.style.display     = 'table';
+        scorekeeper.style.display = 'block';
+        overlay.style.display     = 'block';
 
         score_sheet = new ScoreSheet (msg,
                                       red_fencer,
@@ -1011,42 +1020,50 @@
       }
       else if (msg.data.startsWith ('[Header]\nname=BellePoule::JobList'))
       {
+        while (matchlist.hasChildNodes ())
+        {
+          matchlist.removeChild (matchlist.firstChild);
+        }
+
         tag    = 'xml=';
-        offset = msg.data.indexOf (tag);;
+        offset = msg.data.indexOf (tag);
         xml    = msg.data.slice (offset + tag.length);
+        xml    = xml.split ('\n', 1)[0];
         xml    = xml.replace (/\\n/g, '');
         batch  = new Batch (xml);
-
-        scorekeeper.style.display = 'none';
-        overlay.style.display     = 'none';
-        matchlist.style.display   = 'table';
       }
+    }
+
+    function CloseScorekeeper ()
+    {
+      matchlist.style.display   = 'table';
+      scorekeeper.style.display = 'none';
+      overlay.style.display     = 'none';
     }
   </script>
 
   <!--***********************************-->
   <body>
       <div class='frame'>
-        <table id='matchlist' class='table_matchlist'/>
+        <table id='matchlist' class='table_matchlist'></table>
 
         <div id='scorekeeper' class='table_scorekeeper' style='display:none'>
           <table Cellspacing='0'>
-            <tr class='row' id='competition.panel'/>
-            <tr class='row' id='names.panel'/>
-            <tr class='row' id='firstnames.panel'/>
-            <tr class='row' id='lights.panel'/>
-            <tr class='row' id='points.panel'/>
-            <tr class='row' id='cards.panel'/>
-            <tr class='row' id='faults-white.panel'/>
-            <tr class='row' id='faults-orange.panel'/>
-            <tr class='row' id='faults-red.panel'/>
+            <tr class='row' id='competition.panel'></tr>
+            <tr class='row' id='names.panel'></tr>
+            <tr class='row' id='firstnames.panel'></tr>
+            <tr class='row' id='lights.panel'></tr>
+            <tr class='row' id='points.panel'></tr>
+            <tr class='row' id='cards.panel'></tr>
+            <tr class='row' id='faults-white.panel'></tr>
+            <tr class='row' id='faults-orange.panel'></tr>
+            <tr class='row' id='faults-red.panel'></tr>
             <tr>
               <td Colspan='12'/>
             </tr>
           </table>
 
-          <div id="overlay" style='display:none'>
-          </div>
+          <div id="overlay" style='display:none'></div>
         </div>
       </div>
   </body>

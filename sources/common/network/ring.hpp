@@ -81,9 +81,6 @@ namespace Net
 
       void Leave ();
 
-      void SendBackResponse (Message *question,
-                             Message *response);
-
       void InjectMessage (Message *message,
                           Message *after);
 

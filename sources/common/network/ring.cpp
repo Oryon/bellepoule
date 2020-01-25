@@ -704,14 +704,6 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  void Ring::SendBackResponse (Message *question,
-                               Message *response)
-  {
-    _web_app_server->SendBackResponse (question,
-                                       response);
-  }
-
-  // -------------------------------------------------------------------------------
   void Ring::InjectMessage (Message *message,
                             Message *after)
   {
@@ -735,16 +727,26 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::SpreadMessage (Message *message)
   {
-    if (g_list_find (_message_list,
-                     message) == nullptr)
-    {
-      message->AddObjectListener (this);
-      _message_list = g_list_prepend (_message_list,
-                                      message);
-    }
+    gchar *channel = message->GetString ("channel");
 
     message->SetFitness (1);
-    Send (message);
+
+    if (g_strcmp0 (channel, "WebAppServer") == 0)
+    {
+      _web_app_server->SendMessageTo (message->GetInteger ("client"),
+                                      message);
+    }
+    else
+    {
+      if (g_list_find (_message_list,
+                       message) == nullptr)
+      {
+        message->AddObjectListener (this);
+        _message_list = g_list_prepend (_message_list,
+                                        message);
+      }
+      Send (message);
+    }
   }
 
   // -------------------------------------------------------------------------------

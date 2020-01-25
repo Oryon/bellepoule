@@ -30,8 +30,8 @@ namespace Net
       WebAppServer (Listener *listener,
                     guint     port);
 
-      void SendBackResponse (Message *question,
-                             Message *response);
+      void SendMessageTo (guint    to,
+                          Message *response);
 
     private:
       static const guint BUFFER_SIZE       = 1024;
@@ -59,6 +59,11 @@ namespace Net
       {
         OutgoingMessage (guint    client,
                          Message *message);
+
+        OutgoingMessage (guint        client,
+                         const gchar *message);
+
+        OutgoingMessage *Duplicate ();
 
         ~OutgoingMessage ();
 

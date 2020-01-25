@@ -46,9 +46,24 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  WebAppServer::OutgoingMessage::OutgoingMessage (guint        client,
+                                                  const gchar *message)
+  {
+    _client_id = client;
+    _message   = g_strdup (message);
+  }
+
+  // --------------------------------------------------------------------------------
   WebAppServer::OutgoingMessage::~OutgoingMessage ()
   {
     g_free (_message);
+  }
+
+  // --------------------------------------------------------------------------------
+  WebAppServer::OutgoingMessage *WebAppServer::OutgoingMessage::Duplicate ()
+  {
+    return new OutgoingMessage (_client_id,
+                                _message);
   }
 
   // --------------------------------------------------------------------------------
@@ -137,10 +152,10 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void WebAppServer::SendBackResponse (Message *question,
-                                       Message *response)
+  void WebAppServer::SendMessageTo (guint    to,
+                                    Message *response)
   {
-    OutgoingMessage *outgoing_message = new OutgoingMessage (question->GetInteger ("client"),
+    OutgoingMessage *outgoing_message = new OutgoingMessage (to,
                                                              response);
 
     g_async_queue_push (_queue,
@@ -155,7 +170,8 @@ namespace Net
     WebAppServer *server  = dynamic_cast<WebAppServer *> (request->_server);
     Message      *message = new Message ((const guint8 *) request->_data);
 
-    message->Set ("client", request->_id);
+    message->Set ("client",  request->_id);
+    message->Set ("channel", "WebAppServer");
     server->_listener->OnMessage (message);
 
     message->Release ();
@@ -310,26 +326,26 @@ namespace Net
                                                                                            1000);
         if (outgoing_message)
         {
-          gboolean retained = FALSE;
-
           for (GList *current = server->_clients; current != nullptr; current = g_list_next (current))
           {
-            WebApp *web_app = (WebApp *) current->data;
+            WebApp          *web_app     = (WebApp *) current->data;
+            OutgoingMessage *app_message = outgoing_message->Duplicate ();
 
-            if (web_app->_id == outgoing_message->_client_id)
+            if (   (app_message->_client_id == 0)
+                || (web_app->_id == app_message->_client_id))
             {
               web_app->_pending_messages = g_list_append (web_app->_pending_messages,
-                                                          outgoing_message);
+                                                          app_message);
               lws_callback_on_writable (web_app->_wsi);
-              retained = TRUE;
-              break;
+
+              if (app_message->_client_id != 0)
+              {
+                break;
+              }
             }
           }
 
-          if (retained == FALSE)
-          {
-            delete outgoing_message;
-          }
+          delete outgoing_message;
         }
       }
     }

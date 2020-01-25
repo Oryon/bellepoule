@@ -2111,12 +2111,15 @@ namespace Table
             {
               Net::Message *response = new Net::Message ("BellePoule::ScoreSheet");
               gchar        *batch    = message->GetString ("batch");
+              gchar        *channel  = message->GetString ("channel");
 
               response->Set ("competition", contest->GetNetID ());
               response->Set ("stage",       _supervisor->GetNetID ());
               response->Set ("batch",       batch);
               response->Set ("bout",        bout);
               response->Set ("xml",         (const gchar *) xml_buffer->content);
+
+              response->Set ("channel", channel);
 
               if (message->HasField ("referee_id"))
               {
@@ -2129,12 +2132,14 @@ namespace Table
               }
               else
               {
-                Net::Ring::_broker->SendBackResponse (message,
-                                                      response);
+                response->Set ("client", message->GetInteger ("client"));
+
+                Net::Ring::_broker->SpreadMessage (response);
               }
 
               response->Release ();
 
+              g_free (channel);
               g_free (batch);
             }
 

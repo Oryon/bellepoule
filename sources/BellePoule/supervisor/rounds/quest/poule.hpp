@@ -75,6 +75,7 @@ namespace Quest
       gulong                _per_fencer_entry_handler;
       gulong                _duration_entry_handler;
       Generic::PointSystem *_point_system;
+      gboolean              _loading;
 
       ~Poule () override;
 
@@ -123,6 +124,9 @@ namespace Quest
                                    Match         *match,
                                    Player        *fencer);
 
+      void SpreadJobList (guint  client,
+                          gchar *channel);
+
       void OnPlugged () override;
 
       void OnAttrListUpdated () override;
@@ -134,6 +138,8 @@ namespace Quest
                        Player         *player) override;
 
       gboolean OnMessage (Net::Message *message) override;
+
+      void OnLoadingCompleted () override;
 
       static void OnStatusChanged (GtkComboBox *combo_box,
                                    Poule       *poule);

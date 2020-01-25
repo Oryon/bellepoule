@@ -67,6 +67,8 @@ namespace Quest
                                                   (Object *) this);
     }
 
+    _loading = FALSE;
+
     _point_system = new PointSystem (this);
     _elo          = new Elo ();
     _duel_score   = new DuelScore (GetDataOwner ());
@@ -276,6 +278,8 @@ namespace Quest
   // --------------------------------------------------------------------------------
   void Poule::Load (xmlNode *xml_node)
   {
+    _loading = TRUE;
+
     _hall->Clear ();
     LoadConfiguration (xml_node);
     Garnish ();
@@ -504,7 +508,6 @@ namespace Quest
            match_count < matches_per_fencer;
            match_count++)
       {
-
         for (void *o = wheel->Turn (); o; o = wheel->TryAgain ())
         {
           Player *opponent         = (Player *) o;
@@ -639,6 +642,12 @@ namespace Quest
         DisplayMatch (match);
         RefreshMatch (match);
       }
+    }
+
+    if (_loading == FALSE)
+    {
+      SpreadJobList (0,
+                     nullptr);
     }
   }
 
@@ -1144,6 +1153,8 @@ namespace Quest
           }
         }
       }
+      SpreadJobList (0,
+                     nullptr);
     }
 
     if (score_collector)
@@ -1418,53 +1429,82 @@ namespace Quest
   }
 
   // --------------------------------------------------------------------------------
+  void Poule::OnLoadingCompleted ()
+  {
+    _loading = FALSE;
+
+    if (Locked () == FALSE)
+    {
+      SpreadJobList (0,
+                     nullptr);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Poule::SpreadJobList (guint  client,
+                             gchar *channel)
+  {
+    Net::Message *response = new Net::Message ("BellePoule::JobList");
+
+    {
+      xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+      {
+        XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
+
+        _contest->SaveHeader (xml_scheme);
+        SaveHeader (xml_scheme);
+
+        for (GList *m = _matches; m; m = g_list_next (m))
+        {
+          Match *match = (Match *) m->data;
+
+          if (match->GetPtrData (this, "Poule::displayed"))
+          {
+            match->Save (xml_scheme);
+          }
+        }
+
+        xml_scheme->EndElement ();
+        xml_scheme->EndElement ();
+
+        xml_scheme->Release ();
+      }
+
+      response->Set ("competition", _contest->GetNetID ());
+      response->Set ("stage",       GetNetID ());
+      response->Set ("batch",       1);
+      response->Set ("xml",         (const gchar *) xml_buffer->content);
+
+      response->Set ("client",  client);
+      if (channel == nullptr)
+      {
+        response->Set ("channel", "WebAppServer");
+      }
+      else
+      {
+        response->Set ("channel", channel);
+      }
+
+      xmlBufferFree (xml_buffer);
+    }
+
+    Net::Ring::_broker->SpreadMessage (response);
+
+    response->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Poule::OnMessage (Net::Message *message)
   {
     if (message->Is ("SmartPoule::JobListCall"))
     {
-      {
-        Net::Message *response = new Net::Message ("BellePoule::JobList");
+      gchar *channel = message->GetString ("channel");
 
-        {
-          xmlBuffer *xml_buffer = xmlBufferCreate ();
-
-          {
-            XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
-
-            _contest->SaveHeader (xml_scheme);
-            SaveHeader (xml_scheme);
-
-            for (GList *m = _matches; m; m = g_list_next (m))
-            {
-              Match *match = (Match *) m->data;
-
-              if (match->GetPtrData (this, "Poule::displayed"))
-              {
-                match->Save (xml_scheme);
-              }
-            }
-
-            xml_scheme->EndElement ();
-            xml_scheme->EndElement ();
-
-            xml_scheme->Release ();
-          }
-
-          response->Set ("competition", _contest->GetNetID ());
-          response->Set ("stage",       GetNetID ());
-          response->Set ("batch",       1);
-          response->Set ("xml",         (const gchar *) xml_buffer->content);
-
-          xmlBufferFree (xml_buffer);
-        }
-
-        Net::Ring::_broker->SendBackResponse (message,
-                                              response);
-
-        response->Release ();
-
-        return TRUE;
-      }
+      SpreadJobList (message->GetInteger ("client"),
+                     channel);
+      g_free (channel);
+      return TRUE;
     }
     else if (message->Is ("SmartPoule::ScoreSheetCall"))
     {
@@ -1473,6 +1513,7 @@ namespace Quest
 
         {
           xmlBuffer *xml_buffer = xmlBufferCreate ();
+          gchar     *channel    = message->GetString ("channel");
 
           {
             XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
@@ -1501,11 +1542,14 @@ namespace Quest
           response->Set ("batch",       1);
           response->Set ("xml",         (const gchar *) xml_buffer->content);
 
+          response->Set ("client",  message->GetInteger ("client"));
+          response->Set ("channel", channel);
+
+          g_free (channel);
           xmlBufferFree (xml_buffer);
         }
 
-        Net::Ring::_broker->SendBackResponse (message,
-                                              response);
+        Net::Ring::_broker->SpreadMessage (response);
 
         response->Release ();
 
