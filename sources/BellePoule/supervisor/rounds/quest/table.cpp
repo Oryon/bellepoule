@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/data.hpp"
+#include "util/player.hpp"
 #include "duel_score.hpp"
 #include "table.hpp"
 #include "point_system.hpp"
@@ -55,6 +56,14 @@ namespace Quest
   void BonusTable::Reset ()
   {
     _point_system->Clear ();
+  }
+
+  // --------------------------------------------------------------------------------
+  GSList *BonusTable::SpreadAttendees (GSList *attendees)
+  {
+    return g_slist_sort_with_data (attendees,
+                                   (GCompareDataFunc) Player::RandomCompare,
+                                   GINT_TO_POINTER (GetRandSeed ()));
   }
 
   // --------------------------------------------------------------------------------

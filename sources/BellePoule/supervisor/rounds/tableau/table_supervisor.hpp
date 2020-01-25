@@ -95,6 +95,8 @@ namespace Table
 
       virtual Generic::PointSystem *GetPointSystem ();
 
+      virtual GSList *SpreadAttendees (GSList *attendees);
+
       void CreateTableSets ();
 
       void DeleteTableSets ();

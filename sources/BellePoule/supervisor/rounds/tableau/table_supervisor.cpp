@@ -359,9 +359,7 @@ namespace Table
             Player::AttributeId  attr_id   = Player::AttributeId ("stage_start_rank", this);
             GSList              *attendees = g_slist_copy (short_list);
 
-            attendees = g_slist_sort_with_data (attendees,
-                                                (GCompareDataFunc) Player::Compare,
-                                                &attr_id);
+            attendees = SpreadAttendees (attendees);
 
             first_table_set->SetAttendees (attendees);
             _displayed_table_set = first_table_set;
@@ -371,6 +369,16 @@ namespace Table
     }
 
     SetTableSetsState ();
+  }
+
+  // --------------------------------------------------------------------------------
+  GSList *Supervisor::SpreadAttendees (GSList *attendees)
+  {
+    Player::AttributeId attr_id = Player::AttributeId ("stage_start_rank", this);
+
+    return g_slist_sort_with_data (attendees,
+                                   (GCompareDataFunc) Player::Compare,
+                                   &attr_id);
   }
 
   // --------------------------------------------------------------------------------

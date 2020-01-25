@@ -572,16 +572,6 @@ namespace Quest
   }
 
   // --------------------------------------------------------------------------------
-  void Poule::SetOutputShortlist ()
-  {
-    Stage::SetOutputShortlist ();
-
-    _output_short_list = g_slist_sort_with_data (_output_short_list,
-                                                 (GCompareDataFunc) Player::RandomCompare,
-                                                 GINT_TO_POINTER (GetRandSeed ()));
-  }
-
-  // --------------------------------------------------------------------------------
   void Poule::Wipe ()
   {
     for (GList *m = _matches; m; m = g_list_next (m))

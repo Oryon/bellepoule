@@ -106,9 +106,6 @@ namespace Quest
 
       void OnDurationChanged (GtkEditable *editable);
 
-
-      void SetOutputShortlist () override;
-
       void TossMatches (GSList *fencers,
                         guint   matches_per_fencer);
 
