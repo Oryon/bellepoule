@@ -45,6 +45,8 @@ namespace Quest
 
       Generic::PointSystem *GetPointSystem () override;
 
+      void Reset () override;
+
       const gchar *GetXmlClassName () override;
 
       static Stage *CreateInstance (StageClass *stage_class);

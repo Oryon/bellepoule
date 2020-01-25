@@ -68,7 +68,8 @@ namespace Table
       static const guint THIRD_PLACES = 3;
       static const guint ALL_PLACES   = 99;
 
-      Data *_fenced_places;
+      Data                 *_fenced_places;
+      Generic::PointSystem *_point_system;
 
       ~Supervisor () override;
 
@@ -79,15 +80,14 @@ namespace Table
       void OnUnPlugged () override;
 
     private:
-      GtkTreeStore         *_table_set_treestore;
-      GtkTreeModelFilter   *_table_set_filter;
-      xmlNode              *_xml_node;
-      TableSet             *_displayed_table_set;
-      gboolean              _is_over;
-      Error::Provider      *_first_error;
-      GSList               *_result;
-      GSList               *_blackcardeds;
-      Generic::PointSystem *_point_system;
+      GtkTreeStore       *_table_set_treestore;
+      GtkTreeModelFilter *_table_set_filter;
+      xmlNode            *_xml_node;
+      TableSet           *_displayed_table_set;
+      gboolean            _is_over;
+      Error::Provider    *_first_error;
+      GSList             *_result;
+      GSList             *_blackcardeds;
 
       void Display () override;
 

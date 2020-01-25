@@ -35,6 +35,8 @@ namespace Generic
       virtual gint Compare (Player *A,
                             Player *B);
 
+      virtual void Clear ();
+
     protected:
       virtual ~PointSystem ();
   };

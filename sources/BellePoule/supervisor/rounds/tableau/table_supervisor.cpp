@@ -58,6 +58,8 @@ namespace Table
   {
     Disclose ("Stage");
 
+    _point_system = GetPointSystem ();
+
     _max_score = new Data ("ScoreMax",
                            10);
 

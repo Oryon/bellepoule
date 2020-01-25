@@ -32,10 +32,6 @@ namespace Quest
     public:
       PointSystem (Stage *owner);
 
-      void AuditMatch (Match *match) override;
-
-      void SumUp () override;
-
     protected:
       GList     *_matches;
       Stage     *_owner;
@@ -43,6 +39,12 @@ namespace Quest
       Elo       *_elo;
 
       virtual ~PointSystem ();
+
+      void AuditMatch (Match *match) override;
+
+      void SumUp () override;
+
+      void Clear () override;
 
       gint Compare (Player *A,
                     Player *B) override;

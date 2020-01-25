@@ -78,13 +78,29 @@ namespace Quest
   }
 
   // --------------------------------------------------------------------------------
+  void PointSystem::Clear ()
+  {
+    _elo->CancelBatch ();
+
+    for (GList *m = _matches; m; m = g_list_next (m))
+    {
+      Match *match = (Match *) m->data;
+
+      _duel_score->CancelMatch (match);
+    }
+
+    g_list_free (_matches);
+    _matches = nullptr;
+  }
+
+  // --------------------------------------------------------------------------------
   gint PointSystem::Compare (Player *A,
                              Player *B)
   {
-    Player::AttributeId attr_id ("");
-    gint                result;
+    gint result;
 
     {
+      Player::AttributeId attr_id ("", _owner);
       guint      duel_scoreA      = 0;
       guint      duel_scoreB      = 0;
       Attribute *duel_scoreA_attr;
@@ -112,6 +128,7 @@ namespace Quest
     }
 
     {
+      Player::AttributeId attr_id ("");
       guint eloA;
       guint eloB;
 
