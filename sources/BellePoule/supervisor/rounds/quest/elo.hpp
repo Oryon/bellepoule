@@ -34,7 +34,8 @@ namespace Quest
     private:
       static const guint K = 32;
 
-      GList *_fencers;
+      GList  *_fencers;
+      GRegex *_table_pattern;
 
       ~Elo ();
 
