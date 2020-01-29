@@ -67,7 +67,7 @@ namespace Quest
                                                   (Object *) this);
     }
 
-    _loading = FALSE;
+    _muted = FALSE;
 
     _point_system = new PointSystem (this);
     _elo          = new Elo ();
@@ -278,7 +278,7 @@ namespace Quest
   // --------------------------------------------------------------------------------
   void Poule::Load (xmlNode *xml_node)
   {
-    _loading = TRUE;
+    _muted = TRUE;
 
     _hall->Clear ();
     LoadConfiguration (xml_node);
@@ -644,7 +644,7 @@ namespace Quest
       }
     }
 
-    if (_loading == FALSE)
+    if (_muted == FALSE)
     {
       SpreadJobList (0,
                      nullptr);
@@ -1089,7 +1089,9 @@ namespace Quest
   // --------------------------------------------------------------------------------
   void Poule::OnAttrListUpdated ()
   {
+    _muted = TRUE;
     Display ();
+    _muted = FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -1331,7 +1333,7 @@ namespace Quest
 
       g_signal_handler_unblock (entry_to_block,
                                 handler_to_block);
-      OnAttrListUpdated ();
+      Display ();
     }
 
     MakeDirty ();
@@ -1386,52 +1388,59 @@ namespace Quest
   // --------------------------------------------------------------------------------
   void Poule::OnStuffClicked ()
   {
-    Wipe ();
-
-    Reset ();
-    Garnish ();
-    Display ();
-
-    for (GList *m = _matches; m; m = g_list_next (m))
+    _muted = TRUE;
     {
-      Match  *match;
-      Player *A;
-      Player *B;
-      gint    score;
+      Wipe ();
 
-      match = (Match *) m->data;
-      A     = match->GetOpponent (0);
-      B     = match->GetOpponent (1);
-      score = g_random_int_range (0,
-                                  _max_score->_value);
+      Reset ();
+      Garnish ();
+      Display ();
 
-      if (g_random_boolean ())
+      for (GList *m = _matches; m; m = g_list_next (m))
       {
-        match->SetScore (A, _max_score->_value, TRUE);
-        match->SetScore (B, score, FALSE);
-      }
-      else
-      {
-        match->SetScore (A, score, FALSE);
-        match->SetScore (B, _max_score->_value, TRUE);
+        Match  *match;
+        Player *A;
+        Player *B;
+        gint    score;
+
+        match = (Match *) m->data;
+        A     = match->GetOpponent (0);
+        B     = match->GetOpponent (1);
+        score = g_random_int_range (0,
+                                    _max_score->_value);
+
+        if (g_random_boolean ())
+        {
+          match->SetScore (A, _max_score->_value, TRUE);
+          match->SetScore (B, score, FALSE);
+        }
+        else
+        {
+          match->SetScore (A, score, FALSE);
+          match->SetScore (B, _max_score->_value, TRUE);
+        }
+
+        OnNewScore (nullptr,
+                    match,
+                    A);
+        OnNewScore (nullptr,
+                    match,
+                    B);
       }
 
-      OnNewScore (nullptr,
-                  match,
-                  A);
-      OnNewScore (nullptr,
-                  match,
-                  B);
+      _elo->ProcessBatch (_matches);
+      RefreshClassification ();
     }
+    _muted = FALSE;
 
-    _elo->ProcessBatch (_matches);
-    RefreshClassification ();
+    SpreadJobList (0,
+                   nullptr);
   }
 
   // --------------------------------------------------------------------------------
   void Poule::OnLoadingCompleted ()
   {
-    _loading = FALSE;
+    _muted = FALSE;
 
     if (Locked () == FALSE)
     {
@@ -1444,54 +1453,57 @@ namespace Quest
   void Poule::SpreadJobList (guint  client,
                              gchar *channel)
   {
-    Net::Message *response = new Net::Message ("BellePoule::JobList");
-
+    if (_muted == FALSE)
     {
-      xmlBuffer *xml_buffer = xmlBufferCreate ();
+      Net::Message *response = new Net::Message ("BellePoule::JobList");
 
       {
-        XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
+        xmlBuffer *xml_buffer = xmlBufferCreate ();
 
-        _contest->SaveHeader (xml_scheme);
-        SaveHeader (xml_scheme);
-
-        for (GList *m = _matches; m; m = g_list_next (m))
         {
-          Match *match = (Match *) m->data;
+          XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
 
-          if (match->GetPtrData (this, "Poule::displayed"))
+          _contest->SaveHeader (xml_scheme);
+          SaveHeader (xml_scheme);
+
+          for (GList *m = _matches; m; m = g_list_next (m))
           {
-            match->Save (xml_scheme);
+            Match *match = (Match *) m->data;
+
+            if (match->GetPtrData (this, "Poule::displayed"))
+            {
+              match->Save (xml_scheme);
+            }
           }
+
+          xml_scheme->EndElement ();
+          xml_scheme->EndElement ();
+
+          xml_scheme->Release ();
         }
 
-        xml_scheme->EndElement ();
-        xml_scheme->EndElement ();
+        response->Set ("competition", _contest->GetNetID ());
+        response->Set ("stage",       GetNetID ());
+        response->Set ("batch",       1);
+        response->Set ("xml",         (const gchar *) xml_buffer->content);
 
-        xml_scheme->Release ();
+        response->Set ("client",  client);
+        if (channel == nullptr)
+        {
+          response->Set ("channel", "WebAppServer");
+        }
+        else
+        {
+          response->Set ("channel", channel);
+        }
+
+        xmlBufferFree (xml_buffer);
       }
 
-      response->Set ("competition", _contest->GetNetID ());
-      response->Set ("stage",       GetNetID ());
-      response->Set ("batch",       1);
-      response->Set ("xml",         (const gchar *) xml_buffer->content);
+      Net::Ring::_broker->SpreadMessage (response);
 
-      response->Set ("client",  client);
-      if (channel == nullptr)
-      {
-        response->Set ("channel", "WebAppServer");
-      }
-      else
-      {
-        response->Set ("channel", channel);
-      }
-
-      xmlBufferFree (xml_buffer);
+      response->Release ();
     }
-
-    Net::Ring::_broker->SpreadMessage (response);
-
-    response->Release ();
   }
 
   // --------------------------------------------------------------------------------

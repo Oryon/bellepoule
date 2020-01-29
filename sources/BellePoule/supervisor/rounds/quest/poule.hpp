@@ -75,7 +75,7 @@ namespace Quest
       gulong                _per_fencer_entry_handler;
       gulong                _duration_entry_handler;
       Generic::PointSystem *_point_system;
-      gboolean              _loading;
+      gboolean              _muted;
 
       ~Poule () override;
 
