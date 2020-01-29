@@ -23,6 +23,7 @@
 #include "util/player.hpp"
 #include "util/xml_scheme.hpp"
 #include "util/global.hpp"
+#include "network/message.hpp"
 #include "util/attribute.hpp"
 #include "network/message.hpp"
 #include "network/ring.hpp"
@@ -52,7 +53,11 @@ namespace Quest
     Stage (stage_class),
     CanvasModule ("quest_supervisor.glade")
   {
-    Disclose ("BellePoule::Batch");
+    {
+      Net::Message *parcel = Disclose ("BellePoule::Batch");
+
+      parcel->Set ("channel", "WebAppServer");
+    }
 
     {
       _piste_entry      = GTK_WIDGET (_glade->GetWidget ("piste_entry"));
@@ -268,8 +273,7 @@ namespace Quest
                    _matches);
     _matches = nullptr;
 
-    SpreadJobList (0,
-                   nullptr);
+    Recall ();
   }
 
   // --------------------------------------------------------------------------------
@@ -649,8 +653,7 @@ namespace Quest
 
     if (_muted == FALSE)
     {
-      SpreadJobList (0,
-                     nullptr);
+      Spread ();
     }
   }
 
@@ -1158,8 +1161,10 @@ namespace Quest
           }
         }
       }
-      SpreadJobList (0,
-                     nullptr);
+      if (_muted == FALSE)
+      {
+        Spread ();
+      }
     }
 
     if (score_collector)
@@ -1436,8 +1441,7 @@ namespace Quest
     }
     _muted = FALSE;
 
-    SpreadJobList (0,
-                   nullptr);
+    Spread ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1447,65 +1451,48 @@ namespace Quest
 
     if (Locked () == FALSE)
     {
-      SpreadJobList (0,
-                     nullptr);
+      Spread ();
     }
   }
 
   // --------------------------------------------------------------------------------
-  void Poule::SpreadJobList (guint  client,
-                             gchar *channel)
+  void Poule::FeedParcel (Net::Message *parcel)
   {
-    if (_muted == FALSE)
+    parcel->Set ("competition", _contest->GetNetID ());
+    parcel->Set ("stage",       GetNetID ());
+    parcel->Set ("name",        GetName ());
+    parcel->Set ("done",        Locked ());
+
+    parcel->Set ("client",  0);
+
     {
-      Net::Message *response = new Net::Message ("BellePoule::JobList");
+      xmlBuffer *xml_buffer = xmlBufferCreate ();
 
       {
-        xmlBuffer *xml_buffer = xmlBufferCreate ();
+        XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
 
+        _contest->SaveHeader (xml_scheme);
+        SaveHeader (xml_scheme);
+
+        for (GList *m = _matches; m; m = g_list_next (m))
         {
-          XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
+          Match *match = (Match *) m->data;
 
-          _contest->SaveHeader (xml_scheme);
-          SaveHeader (xml_scheme);
-
-          for (GList *m = _matches; m; m = g_list_next (m))
+          if (match->GetPtrData (this, "Poule::displayed"))
           {
-            Match *match = (Match *) m->data;
-
-            if (match->GetPtrData (this, "Poule::displayed"))
-            {
-              match->Save (xml_scheme);
-            }
+            match->Save (xml_scheme);
           }
-
-          xml_scheme->EndElement ();
-          xml_scheme->EndElement ();
-
-          xml_scheme->Release ();
         }
 
-        response->Set ("competition", _contest->GetNetID ());
-        response->Set ("stage",       GetNetID ());
-        response->Set ("batch",       1);
-        response->Set ("xml",         (const gchar *) xml_buffer->content);
+        xml_scheme->EndElement ();
+        xml_scheme->EndElement ();
 
-        response->Set ("client",  client);
-        if (channel == nullptr)
-        {
-          response->Set ("channel", "WebAppServer");
-        }
-        else
-        {
-          response->Set ("channel", channel);
-        }
-
-        xmlBufferFree (xml_buffer);
+        xml_scheme->Release ();
       }
 
-      Net::Ring::_broker->SpreadMessage (response);
+      parcel->Set ("xml", (const gchar *) xml_buffer->content);
 
-      response->Release ();
+      xmlBufferFree (xml_buffer);
     }
   }
 
@@ -1516,8 +1503,7 @@ namespace Quest
     {
       gchar *channel = message->GetString ("channel");
 
-      SpreadJobList (message->GetInteger ("client"),
-                     channel);
+      Spread ();
       g_free (channel);
       return TRUE;
     }
@@ -1554,7 +1540,6 @@ namespace Quest
 
           response->Set ("competition", _contest->GetNetID ());
           response->Set ("stage",       GetNetID ());
-          response->Set ("batch",       1);
           response->Set ("xml",         (const gchar *) xml_buffer->content);
 
           response->Set ("client",  message->GetInteger ("client"));

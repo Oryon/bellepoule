@@ -747,19 +747,35 @@ namespace Net
       }
       Send (message);
     }
+    g_free (channel);
   }
 
   // -------------------------------------------------------------------------------
   void Ring::RecallMessage (Message *message)
   {
-    _message_list = g_list_remove (_message_list,
-                                   message);
+    gchar *channel = message->GetString ("channel");
 
-    if (message->GetFitness ())
+    if (g_strcmp0 (channel, "WebAppServer") == 0)
     {
-      message->SetFitness (0);
-      Send (message);
+      if (message->GetFitness ())
+      {
+        message->SetFitness (0);
+        _web_app_server->SendMessageTo (message->GetInteger ("client"),
+                                        message);
+      }
     }
+    else
+    {
+      _message_list = g_list_remove (_message_list,
+                                     message);
+
+      if (message->GetFitness ())
+      {
+        message->SetFitness (0);
+        Send (message);
+      }
+    }
+    g_free (channel);
   }
 
   // -------------------------------------------------------------------------------

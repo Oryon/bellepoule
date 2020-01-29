@@ -652,7 +652,6 @@
         msg += '[Body]\n'
         msg += 'competition=' + batch.competition.get ('ID') + '\n';
         msg += 'stage=' + batch.stage + '\n';
-        msg += 'batch=1\n';
         msg += 'bout=' + match + '\n';
 
         socket.send (msg);
@@ -678,7 +677,6 @@
 
         this.competition = getMessageField (msg.data, 'competition');
         this.stage       = getMessageField (msg.data, 'stage');
-        this.batch       = getMessageField (msg.data, 'batch');
 
         {
           let parser      = new DOMParser ();
@@ -727,7 +725,6 @@
         msg += '[Body]\n'
         msg += this.competition;
         msg += this.stage;
-        msg += this.batch;
         msg += this.bout;
         msg += 'xml=<?xml version="1.0" encoding="UTF-8"?>'
         msg += '<Match>'
@@ -1018,19 +1015,28 @@
                                       red_fencer,
                                       green_fencer);
       }
-      else if (msg.data.startsWith ('[Header]\nname=BellePoule::JobList'))
+      else if (msg.data.startsWith ('[Header]\nname=BellePoule::Batch'))
       {
         while (matchlist.hasChildNodes ())
         {
           matchlist.removeChild (matchlist.firstChild);
         }
 
-        tag    = 'xml=';
-        offset = msg.data.indexOf (tag);
-        xml    = msg.data.slice (offset + tag.length);
-        xml    = xml.split ('\n', 1)[0];
-        xml    = xml.replace (/\\n/g, '');
-        batch  = new Batch (xml);
+        tag     = 'fitness=';
+        offset  = msg.data.indexOf (tag);
+        fitness = msg.data.slice (offset + tag.length);
+        fitness = fitness.split ('\n', 1)[0];
+        fitness = fitness.replace (/\\n/g, '');
+
+        if (fitness == '1')
+        {
+          tag    = 'xml=';
+          offset = msg.data.indexOf (tag);
+          xml    = msg.data.slice (offset + tag.length);
+          xml    = xml.split ('\n', 1)[0];
+          xml    = xml.replace (/\\n/g, '');
+          batch  = new Batch (xml);
+        }
       }
     }
 

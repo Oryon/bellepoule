@@ -977,8 +977,6 @@ Contest::~Contest ()
 
   _state = State::LEAVING;
 
-  Object::TryToRelease (_schedule);
-
   // www
   if (_filename && Global::_www)
   {
@@ -1011,6 +1009,7 @@ Contest::~Contest ()
 
   gdk_color_free (_gdk_color);
 
+  Object::TryToRelease (_schedule);
   Object::TryToRelease (_referees_list);
   Object::TryToRelease (_category);
 

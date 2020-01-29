@@ -124,9 +124,6 @@ namespace Quest
                                    Match         *match,
                                    Player        *fencer);
 
-      void SpreadJobList (guint  client,
-                          gchar *channel);
-
       void OnPlugged () override;
 
       void OnAttrListUpdated () override;
@@ -138,6 +135,8 @@ namespace Quest
                        Player         *player) override;
 
       gboolean OnMessage (Net::Message *message) override;
+
+      void FeedParcel (Net::Message *parcel) override;
 
       void OnLoadingCompleted () override;
 
