@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/global.hpp"
+#include "ring.hpp"
 #include "message.hpp"
 #include "webapp_server.hpp"
 
@@ -171,7 +172,7 @@ namespace Net
     Message      *message = new Message ((const guint8 *) request->_data);
 
     message->Set ("client",  request->_id);
-    message->Set ("channel", "WebAppServer");
+    message->Set ("channel", (guint) Ring::Channel::WEB_SOCKET);
     server->_listener->OnMessage (message);
 
     message->Release ();

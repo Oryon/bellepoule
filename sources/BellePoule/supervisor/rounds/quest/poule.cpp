@@ -54,9 +54,9 @@ namespace Quest
     CanvasModule ("quest_supervisor.glade")
   {
     {
-      Net::Message *parcel = Disclose ("BellePoule::Batch");
+      Net::Message *parcel = Disclose ("BellePoule::JobList");
 
-      parcel->Set ("channel", "WebAppServer");
+      parcel->Set ("channel", (guint) Net::Ring::Channel::WEB_SOCKET);
     }
 
     {
@@ -1499,62 +1499,50 @@ namespace Quest
   // --------------------------------------------------------------------------------
   gboolean Poule::OnMessage (Net::Message *message)
   {
-    if (message->Is ("SmartPoule::JobListCall"))
+    if (message->Is ("SmartPoule::ScoreSheetCall"))
     {
-      gchar *channel = message->GetString ("channel");
+      Net::Message *response = new Net::Message ("BellePoule::ScoreSheet");
 
-      Spread ();
-      g_free (channel);
-      return TRUE;
-    }
-    else if (message->Is ("SmartPoule::ScoreSheetCall"))
-    {
       {
-        Net::Message *response = new Net::Message ("BellePoule::ScoreSheet");
+        xmlBuffer *xml_buffer = xmlBufferCreate ();
+        guint      channel    = message->GetInteger ("channel");
 
         {
-          xmlBuffer *xml_buffer = xmlBufferCreate ();
-          gchar     *channel    = message->GetString ("channel");
+          XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
+
+          _contest->SaveHeader (xml_scheme);
+          SaveHeader (xml_scheme);
 
           {
-            XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
+            Match *match = (Match *) g_list_nth_data (_matches,
+                                                      message->GetInteger ("bout")-1);
 
-            _contest->SaveHeader (xml_scheme);
-            SaveHeader (xml_scheme);
-
+            if (match)
             {
-              Match *match = (Match *) g_list_nth_data (_matches,
-                                                        message->GetInteger ("bout")-1);
-
-              if (match)
-              {
-                match->Save (xml_scheme);
-              }
+              match->Save (xml_scheme);
             }
-
-            xml_scheme->EndElement ();
-            xml_scheme->EndElement ();
-
-            xml_scheme->Release ();
           }
 
-          response->Set ("competition", _contest->GetNetID ());
-          response->Set ("stage",       GetNetID ());
-          response->Set ("xml",         (const gchar *) xml_buffer->content);
+          xml_scheme->EndElement ();
+          xml_scheme->EndElement ();
 
-          response->Set ("client",  message->GetInteger ("client"));
-          response->Set ("channel", channel);
-
-          g_free (channel);
-          xmlBufferFree (xml_buffer);
+          xml_scheme->Release ();
         }
 
-        Net::Ring::_broker->SpreadMessage (response);
+        response->Set ("competition", _contest->GetNetID ());
+        response->Set ("stage",       GetNetID ());
+        response->Set ("xml",         (const gchar *) xml_buffer->content);
 
-        response->Release ();
+        response->Set ("client",  message->GetInteger ("client"));
+        response->Set ("channel", channel);
 
-        return TRUE;
+        xmlBufferFree (xml_buffer);
       }
+
+      response->Spread ();
+      response->Release ();
+
+      return TRUE;
     }
     else if (message->Is ("SmartPoule::Score"))
     {

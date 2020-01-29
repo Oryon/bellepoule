@@ -713,11 +713,9 @@ void Schedule::RemoveFromNotebook (Stage *stage)
 // --------------------------------------------------------------------------------
 gboolean Schedule::OnMessage (Net::Message *message)
 {
-  GList *current  = _stage_list;
-
-  while (current)
+  for (GList *s = _stage_list; s; s = g_list_next (s))
   {
-    Stage *stage = (Stage *) current->data;
+    Stage *stage = (Stage *) s->data;
 
     if (stage->GetId () > _current_stage)
     {
@@ -744,6 +742,13 @@ gboolean Schedule::OnMessage (Net::Message *message)
         return stage->OnMessage (message);
       }
     }
+    else if (message->Is ("SmartPoule::JobListCall"))
+    {
+      Stage *current_stage = GetStage (_current_stage);
+
+      current_stage->Spread ();
+      return TRUE;
+    }
     else
     {
       if (stage->OnMessage (message))
@@ -751,8 +756,6 @@ gboolean Schedule::OnMessage (Net::Message *message)
         return TRUE;
       }
     }
-
-    current = g_list_next (current);
   }
 
   return FALSE;

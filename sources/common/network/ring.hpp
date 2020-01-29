@@ -57,6 +57,12 @@ namespace Net
         RESOURCE_USER
       };
 
+      enum class Channel
+      {
+        WEB_SOCKET,
+        HTTP
+      };
+
       struct PartnerListener
       {
         virtual void OnPartnerJoined (Partner  *partner,

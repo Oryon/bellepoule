@@ -653,6 +653,16 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  void TableSet::SaveHeaders (XmlScheme *xml_scheme)
+  {
+    Contest *contest = _supervisor->GetContest ();
+
+    contest->SaveHeader     (xml_scheme);
+    _supervisor->SaveHeader (xml_scheme);
+    SaveHeader              (xml_scheme);
+  }
+
+  // --------------------------------------------------------------------------------
   void TableSet::SaveHeader (XmlScheme *xml_scheme)
   {
     xml_scheme->StartElement ("SuiteDeTableaux");
@@ -2094,9 +2104,7 @@ namespace Table
               XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
               Table     *table      = (Table *) match->GetPtrData (this, "table");
 
-              contest->SaveHeader     (xml_scheme);
-              _supervisor->SaveHeader (xml_scheme);
-              SaveHeader              (xml_scheme);
+              SaveHeaders (xml_scheme);
 
               table->SaveHeader (xml_scheme);
               match->Save (xml_scheme);
@@ -2111,7 +2119,7 @@ namespace Table
             {
               Net::Message *response = new Net::Message ("BellePoule::ScoreSheet");
               gchar        *batch    = message->GetString ("batch");
-              gchar        *channel  = message->GetString ("channel");
+              guint         channel  = message->GetInteger ("channel");
 
               response->Set ("competition", contest->GetNetID ());
               response->Set ("stage",       _supervisor->GetNetID ());
@@ -2133,13 +2141,11 @@ namespace Table
               else
               {
                 response->Set ("client", message->GetInteger ("client"));
-
-                Net::Ring::_broker->SpreadMessage (response);
+                response->Spread ();
               }
 
               response->Release ();
 
-              g_free (channel);
               g_free (batch);
             }
 

@@ -111,18 +111,19 @@ namespace Table
 
     private:
       gchar         *_mini_name;
-      guint         _size;
-      guint         _number;
-      guint         _column;
-      gboolean      _is_displayed;
-      gboolean      _is_header_displayed;
-      gboolean      _loaded;
-      Table        *_left_table;
-      Table        *_right_table;
-      GSList       *_match_list;
-      TableSet     *_table_set;
-      GNode       **_node_table;
-      guint         _free_node_index;
+      guint          _size;
+      guint          _number;
+      guint          _column;
+      gboolean       _is_displayed;
+      gboolean       _is_header_displayed;
+      gboolean       _loaded;
+      Table         *_left_table;
+      Table         *_right_table;
+      GSList        *_match_list;
+      TableSet      *_table_set;
+      GNode        **_node_table;
+      guint          _free_node_index;
+      Net::Message  *_job_list;
 
       ~Table () override;
 

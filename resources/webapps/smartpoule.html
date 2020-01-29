@@ -555,13 +555,13 @@
 
     // -- Batch --------------------
     class Batch {
-      constructor (xml)
+      constructor (xml,
+                   scheme)
       {
         let context = this;
         let parser  = new DOMParser ();
         let xml_doc = parser.parseFromString (xml, 'text/xml');
         let root    = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
-        let scheme  = '/CompetitionIndividuelle/RondeSuisse';
 
         this.competition = new Competition (root);
 
@@ -1015,7 +1015,7 @@
                                       red_fencer,
                                       green_fencer);
       }
-      else if (msg.data.startsWith ('[Header]\nname=BellePoule::Batch'))
+      else if (msg.data.startsWith ('[Header]\nname=BellePoule::JobList'))
       {
         while (matchlist.hasChildNodes ())
         {
@@ -1030,12 +1030,34 @@
 
         if (fitness == '1')
         {
+          let scheme;
+
+          offset = msg.data.indexOf ('[Body]');
+          body   = msg.data.slice (offset);
+
+          tag    = 'name=';
+          offset = body.indexOf (tag);
+          name = body.slice (offset + tag.length);
+          name = name.split ('\n', 1)[0];
+          name = name.replace (/\\n/g, '');
+
+          if (name.includes (':T'))
+          {
+            scheme = '/CompetitionIndividuelle/TableauSuisse/SuiteDeTableaux/Tableau';
+          }
+          else
+          {
+            scheme = '/CompetitionIndividuelle/RondeSuisse';
+          }
+
           tag    = 'xml=';
-          offset = msg.data.indexOf (tag);
-          xml    = msg.data.slice (offset + tag.length);
+          offset = body.indexOf (tag);
+          xml    = body.slice (offset + tag.length);
           xml    = xml.split ('\n', 1)[0];
           xml    = xml.replace (/\\n/g, '');
-          batch  = new Batch (xml);
+          console.log (body);
+          batch  = new Batch (xml,
+                              scheme);
         }
       }
     }

@@ -119,6 +119,8 @@ namespace Table
 
       void Load (xmlNode *xml_node);
 
+      void SaveHeaders (XmlScheme *xml_scheme);
+
       void SaveHeader (XmlScheme *xml_scheme);
 
       void Save (XmlScheme *xml_scheme);

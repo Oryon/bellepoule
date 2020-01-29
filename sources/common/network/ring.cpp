@@ -727,11 +727,16 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::SpreadMessage (Message *message)
   {
-    gchar *channel = message->GetString ("channel");
+    Channel channel = Channel::HTTP;
+
+    if (message->HasField ("channel"))
+    {
+      channel = (Channel) message->GetInteger ("channel");
+    }
 
     message->SetFitness (1);
 
-    if (g_strcmp0 (channel, "WebAppServer") == 0)
+    if (channel == Channel::WEB_SOCKET)
     {
       _web_app_server->SendMessageTo (message->GetInteger ("client"),
                                       message);
@@ -747,15 +752,19 @@ namespace Net
       }
       Send (message);
     }
-    g_free (channel);
   }
 
   // -------------------------------------------------------------------------------
   void Ring::RecallMessage (Message *message)
   {
-    gchar *channel = message->GetString ("channel");
+    Channel channel = Channel::HTTP;
 
-    if (g_strcmp0 (channel, "WebAppServer") == 0)
+    if (message->HasField ("channel"))
+    {
+      channel = (Channel) message->GetInteger ("channel");
+    }
+
+    if (channel == Channel::WEB_SOCKET)
     {
       if (message->GetFitness ())
       {
@@ -775,7 +784,6 @@ namespace Net
         Send (message);
       }
     }
-    g_free (channel);
   }
 
   // -------------------------------------------------------------------------------

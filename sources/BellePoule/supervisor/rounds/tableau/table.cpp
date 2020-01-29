@@ -58,6 +58,10 @@ namespace Table
 
     Disclose ("BellePoule::Batch");
 
+    _job_list = new Net::Message ("BellePoule::JobList");
+    _job_list->Set ("channel", (guint) Net::Ring::Channel::WEB_SOCKET);
+    _job_list->Set ("client",  0);
+
     {
       va_list ap;
 
@@ -70,15 +74,15 @@ namespace Table
         {
           guint value = va_arg (ap, guint);
 
-          _parcel->Set (key,
-                        value);
+          _parcel->Set   (key, value);
+          _job_list->Set (key, value);
         }
         else if (type[0] == 'S')
         {
           gchar *value = va_arg (ap, gchar *);
 
-          _parcel->Set (key,
-                        value);
+          _parcel->Set   (key, value);
+          _job_list->Set (key, value);
         }
       }
       va_end (ap);
@@ -88,7 +92,8 @@ namespace Table
                                         first_place,
                                         _mini_name);
 
-        _parcel->Set ("name", name);
+        _parcel->Set   ("name", name);
+        _job_list->Set ("name", name);
 
         g_free (name);
       }
@@ -415,6 +420,9 @@ namespace Table
               _parcel->SetNetID (g_ascii_strtoull (attr,
                                                    nullptr,
                                                    16));
+              _job_list->SetNetID (g_ascii_strtoull (attr,
+                                                     nullptr,
+                                                     16));
               xmlFree (attr);
             }
           }
@@ -636,15 +644,52 @@ namespace Table
 
     if (dirty)
     {
-      Object::Spread ();
-
-      for (GSList *current = _match_list; current; current = g_slist_next (current))
+      // BellePoule::JobList
+      if (_ready_to_fence)
       {
-        Match *match = (Match *) current->data;
+        xmlBuffer *xml_buffer = xmlBufferCreate ();
 
-        if (match->GetOpponent (0) && match->GetOpponent (1) && match->IsDirty ())
         {
-          match->Spread ();
+          XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
+
+          _table_set->SaveHeaders (xml_scheme);
+          SaveHeader (xml_scheme);
+
+          for (GSList *m = _match_list; m; m = g_slist_next (m))
+          {
+            Match *match = (Match *) m->data;
+
+            if (match->GetOpponent (0) && match->GetOpponent (1) && match->IsDirty ())
+            {
+              match->Save (xml_scheme);
+            }
+          }
+
+          xml_scheme->EndElement ();
+          xml_scheme->EndElement ();
+
+          xml_scheme->Release ();
+        }
+
+        _job_list->Set ("xml", (const gchar *) xml_buffer->content);
+
+        xmlBufferFree (xml_buffer);
+
+        _job_list->Spread ();
+      }
+
+      // BellePoule::Batch
+      {
+        Object::Spread ();
+
+        for (GSList *current = _match_list; current; current = g_slist_next (current))
+        {
+          Match *match = (Match *) current->data;
+
+          if (match->GetOpponent (0) && match->GetOpponent (1) && match->IsDirty ())
+          {
+            match->Spread ();
+          }
         }
       }
     }
@@ -653,6 +698,8 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Table::Recall ()
   {
+    _job_list->Recall ();
+
     {
       GSList *current = _match_list;
 
