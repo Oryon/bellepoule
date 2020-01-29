@@ -267,6 +267,9 @@ namespace Quest
     FreeFullGList (Match,
                    _matches);
     _matches = nullptr;
+
+    SpreadJobList (0,
+                   nullptr);
   }
 
   // --------------------------------------------------------------------------------
