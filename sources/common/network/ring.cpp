@@ -51,8 +51,9 @@ namespace Net
   {
     _unicast_address   = nullptr;
     _partner_list      = nullptr;
-    _message_list      = nullptr;
+    _partner_messages  = nullptr;
     _partner_listeners = nullptr;
+    _web_app_messages  = nullptr;
     _listener          = listener;
     _announce_address  = nullptr;
     _role              = role;
@@ -672,7 +673,7 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::Synchronize (Partner *partner)
   {
-    GList *current = g_list_last (_message_list);
+    GList *current = g_list_last (_partner_messages);
 
     while (current)
     {
@@ -697,17 +698,19 @@ namespace Net
   // -------------------------------------------------------------------------------
   void Ring::OnObjectDeleted (Object *object)
   {
-    Message *message = (Message *)object;
+    Message *message = (Message *) object;
 
-    _message_list = g_list_remove (_message_list,
-                                   message);
+    _partner_messages = g_list_remove (_partner_messages,
+                                       message);
+    _web_app_messages = g_list_remove (_web_app_messages,
+                                       message);
   }
 
   // -------------------------------------------------------------------------------
   void Ring::InjectMessage (Message *message,
                             Message *after)
   {
-    GList *node = g_list_find (_message_list,
+    GList *node = g_list_find (_partner_messages,
                                after);
 
     if (node)
@@ -717,9 +720,9 @@ namespace Net
 
       if (node)
       {
-        _message_list = g_list_insert_before (_message_list,
-                                              node,
-                                              message);
+        _partner_messages = g_list_insert_before (_partner_messages,
+                                                  node,
+                                                  message);
       }
     }
   }
@@ -738,17 +741,27 @@ namespace Net
 
     if (channel == Channel::WEB_SOCKET)
     {
+      if (message->GetInteger ("client") == 0)
+      {
+        if (g_list_find (_web_app_messages,
+                         message) == nullptr)
+        {
+          message->AddObjectListener (this);
+          _web_app_messages = g_list_append (_web_app_messages,
+                                             message);
+        }
+      }
       _web_app_server->SendMessageTo (message->GetInteger ("client"),
                                       message);
     }
     else
     {
-      if (g_list_find (_message_list,
+      if (g_list_find (_partner_messages,
                        message) == nullptr)
       {
         message->AddObjectListener (this);
-        _message_list = g_list_prepend (_message_list,
-                                        message);
+        _partner_messages = g_list_prepend (_partner_messages,
+                                            message);
       }
       Send (message);
     }
@@ -766,6 +779,9 @@ namespace Net
 
     if (channel == Channel::WEB_SOCKET)
     {
+      _web_app_messages = g_list_remove (_web_app_messages,
+                                         message);
+
       if (message->GetFitness ())
       {
         message->SetFitness (0);
@@ -775,8 +791,8 @@ namespace Net
     }
     else
     {
-      _message_list = g_list_remove (_message_list,
-                                     message);
+      _partner_messages = g_list_remove (_partner_messages,
+                                         message);
 
       if (message->GetFitness ())
       {
@@ -1093,6 +1109,19 @@ namespace Net
             break;
           }
         }
+      }
+      return TRUE;
+    }
+    else if (message->Is ("SmartPoule::JobListCall"))
+    {
+      guint client = message->GetInteger ("client");
+
+      for (GList *m = _web_app_messages; m; m = g_list_next (m))
+      {
+        Message *webapp_message = (Message *) m->data;
+
+        _web_app_server->SendMessageTo (client,
+                                        webapp_message);
       }
       return TRUE;
     }

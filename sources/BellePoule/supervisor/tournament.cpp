@@ -388,20 +388,6 @@ gboolean Tournament::OnMessage (Net::Message *message)
       result = contest->OnMessage (message);
     }
   }
-  else if (message->Is ("SmartPoule::JobListCall"))
-  {
-    Contest *contest = GetContest (message->GetInteger ("competition"));
-
-    if ((contest == nullptr) && _contest_list)
-    {
-      contest = (Contest *) _contest_list->data;
-    }
-
-    if (contest)
-    {
-      result = contest->OnMessage (message);
-    }
-  }
   else if (message->Is ("SmartPoule::Score"))
   {
     Contest *contest = GetContest (message->GetInteger ("competition"));

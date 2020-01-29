@@ -134,9 +134,10 @@ namespace Net
       gchar           *_unicast_address;
       guint            _unicast_port;
       GList           *_partner_list;
-      GList           *_message_list;
+      GList           *_partner_messages;
       GtkWidget       *_partner_indicator;
       GList           *_partner_listeners;
+      GList           *_web_app_messages;
       Listener        *_listener;
       GSocketAddress  *_announce_address;
       GSocket         *_announce_socket;

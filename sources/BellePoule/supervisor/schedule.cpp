@@ -742,13 +742,6 @@ gboolean Schedule::OnMessage (Net::Message *message)
         return stage->OnMessage (message);
       }
     }
-    else if (message->Is ("SmartPoule::JobListCall"))
-    {
-      Stage *current_stage = GetStage (_current_stage);
-
-      current_stage->Spread ();
-      return TRUE;
-    }
     else
     {
       if (stage->OnMessage (message))
