@@ -649,11 +649,11 @@ namespace Quest
         DisplayMatch (match);
         RefreshMatch (match);
       }
-    }
 
-    if (_muted == FALSE)
-    {
-      Spread ();
+      if (_muted == FALSE)
+      {
+        Spread ();
+      }
     }
   }
 
@@ -1460,10 +1460,10 @@ namespace Quest
   {
     parcel->Set ("competition", _contest->GetNetID ());
     parcel->Set ("stage",       GetNetID ());
-    parcel->Set ("name",        GetName ());
+    parcel->Set ("name",        GetId ());
     parcel->Set ("done",        Locked ());
 
-    parcel->Set ("client",  0);
+    parcel->Set ("client", 0);
 
     {
       xmlBuffer *xml_buffer = xmlBufferCreate ();

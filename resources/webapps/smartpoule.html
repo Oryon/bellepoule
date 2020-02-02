@@ -139,15 +139,12 @@
       tr.tr_matchlist {
         font-size: 5vw;
       }
-
-      tr.tr_matchlist:nth-child(even) {
-        background-color: Lightgreen;
-      }
     </style>
   </head>
 
   <!--***********************************-->
   <script>
+    var batches = new Map ();
     var red_fencer;
     var green_fencer;
     var scorekeeper;
@@ -557,49 +554,35 @@
     class Batch {
       constructor (stage,
                    id,
+                   step,
                    xml,
                    scheme)
       {
-        let context = this;
-        let parser  = new DOMParser ();
-        let xml_doc = parser.parseFromString (xml, 'text/xml');
-        let root    = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+        let parser = new DOMParser ();
 
-        this.competition = new Competition (root);
+        this.xml_doc = parser.parseFromString (xml, 'text/xml');
+        this.root    = this.xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
+        this.scheme  = scheme;
+
+        this.competition = new Competition (this.root);
         this.stage       = stage;
         this.id          = id;
+        this.step        = step;
+        this.over        = true;
 
         {
-          let nodes = xml_doc.evaluate (scheme, root, null, XPathResult.ANY_TYPE, null);
+          let nodes = this.getMessageNodes ();
           let node  = nodes.iterateNext ();
 
           if (node)
           {
             for (let i = 0; i < node.childElementCount; i++)
             {
-              let match      = node.childNodes[i];
-              let match_id   = match.getAttribute ('ID');
-              let row        = matchlist.insertRow (-1);
               let match_over = false;
-
-              row.setAttribute ('class', 'tr_matchlist');
-              row.addEventListener ('click', function () {Batch.onClicked (context, match_id);});
-
-              {
-                let cell = row.insertCell (-1);
-                let html = '<td><b>' + match.getAttribute ('ID') + '</b></td>';
-
-                cell.setAttribute ('class', 'td_match_id');
-                cell.innerHTML = html;
-              }
 
               for (let f = 0; f < node.childNodes[i].childElementCount; f++)
               {
                 let fencer_node = node.childNodes[i].childNodes[f];
-                let fencer_id   = fencer_node.getAttribute ('REF');
-                let fencer      = this.competition.getFencer (fencer_id);
-                let cell        = row.insertCell (-1);
-                let html        = '<td">' + fencer.getAttribute ('Nom') + '</td>';
 
                 if (   (fencer_node.getAttribute ('Statut') == 'V')
                     || (fencer_node.getAttribute ('Statut') == 'A')
@@ -607,38 +590,113 @@
                 {
                   match_over = true;
                 }
-
-                cell.setAttribute ('class', 'td_matchlist');
-                cell.innerHTML = html;
               }
 
+              if (match_over == false)
               {
-                let cell = row.insertCell (-1);
-                let html = '<td><b>Piste ' + match.getAttribute ('Piste') + '</b></td>';
+                this.over = false;
+                return;
+              }
+            }
+          }
+        }
+      }
 
-                cell.setAttribute ('class', 'td_piste');
-                cell.innerHTML = html;
+      getMessageNodes ()
+      {
+        return this.xml_doc.evaluate (this.scheme,
+                                      this.root,
+                                      null,
+                                      XPathResult.ANY_TYPE,
+                                      null);
+      }
+
+      display (what)
+      {
+        let nodes = this.getMessageNodes ();
+        let node  = nodes.iterateNext ();
+
+        if (node)
+        {
+          let context = this;
+
+          {
+            let header = matchlist.insertRow (-1);
+            let cell   = header.insertCell (-1);
+            let html   = '<td><b>' + what + '</b></td>';
+
+            header.style.backgroundColor = 'lightblue';
+            cell.innerHTML = html;
+          }
+
+          for (let i = 0; i < node.childElementCount; i++)
+          {
+            let match      = node.childNodes[i];
+            let match_id   = match.getAttribute ('ID');
+            let row        = matchlist.insertRow (-1);
+            let match_over = false;
+
+            row.setAttribute ('class', 'tr_matchlist');
+            if (i%2 == 0)
+            {
+              row.style.backgroundColor = 'lightgreen';
+            }
+
+            row.addEventListener ('click', function () {Batch.onClicked (context, match_id);});
+
+            {
+              let cell = row.insertCell (-1);
+              let html = '<td><b>' + match.getAttribute ('ID') + '</b></td>';
+
+              cell.setAttribute ('class', 'td_match_id');
+              cell.innerHTML = html;
+            }
+
+            for (let f = 0; f < node.childNodes[i].childElementCount; f++)
+            {
+              let fencer_node = node.childNodes[i].childNodes[f];
+              let fencer_id   = fencer_node.getAttribute ('REF');
+              let fencer      = this.competition.getFencer (fencer_id);
+              let cell        = row.insertCell (-1);
+              let html        = '<td">' + fencer.getAttribute ('Nom') + '</td>';
+
+              if (   (fencer_node.getAttribute ('Statut') == 'V')
+                  || (fencer_node.getAttribute ('Statut') == 'A')
+                  || (fencer_node.getAttribute ('Statut') == 'E'))
+              {
+                match_over = true;
               }
 
-              {
-                let cell     = row.insertCell (-1);
-                let row_size = cell.getBoundingClientRect().height;
-                let svg;
-                let html;
+              cell.setAttribute ('class', 'td_matchlist');
+              cell.innerHTML = html;
+            }
+
+            {
+              let cell = row.insertCell (-1);
+              let html = '<td><b>Piste ' + match.getAttribute ('Piste') + '</b></td>';
+
+              cell.setAttribute ('class', 'td_piste');
+              cell.innerHTML = html;
+            }
+
+            {
+              let cell     = row.insertCell (-1);
+              let row_size = cell.getBoundingClientRect().height;
+              let svg;
+              let html;
 
               if (match_over)
               {
-                  svg = document.getElementById ('ok.svg');
-                  row.style.display = 'none';
-                }
-                else
-                {
-                  svg = document.getElementById ('ko.svg');
-                }
-
-                html = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + row_size*.5 + '"/></td>';
-                cell.innerHTML = html;
+                svg = document.getElementById ('ok.svg')  ;
+                row.style.display = 'none';
               }
+              else
+              {
+                svg = document.getElementById ('ko.svg');
+              }
+
+              html = '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + row_size*.5 + '"/></td>';
+              cell.innerHTML = html;
             }
           }
         }
@@ -659,7 +717,7 @@
           let match_index = parseInt (match_id) - 1;
 
           msg += 'batch=' + batch.id + '\n';
-          msg += 'bout=' + '0' + ':' + match_index + '\n';
+          msg += 'bout=' + batch.step + ':' + match_index + '\n';
         }
         else
         {
@@ -784,11 +842,22 @@
         this.faults        = [{'color':'white',  'penalties':[0, 3]},
                               {'color':'orange', 'penalties':[3, 5]},
                               {'color':'red',    'penalties':[5, -1]}];
+
+        this.opponent = null;
       }
 
       setOpponent (opponent)
       {
         this.opponent = opponent;
+
+        if (opponent != null)
+        {
+          if ((this.score.status == 'D') && (opponent.score.status == 'D'))
+          {
+            this.score.status     = null;
+            opponent.score.status = null;
+          }
+        }
 
         for (let i = 0; i < this.faults.length; i++)
         {
@@ -1031,6 +1100,8 @@
       }
       else if (msg.data.startsWith ('[Header]\nname=BellePoule::JobList'))
       {
+        let batch;
+
         while (matchlist.hasChildNodes ())
         {
           matchlist.removeChild (matchlist.firstChild);
@@ -1042,24 +1113,28 @@
         fitness = fitness.split ('\n', 1)[0];
         fitness = fitness.replace (/\\n/g, '');
 
-        if (fitness == '1')
+        offset = msg.data.indexOf ('[Body]');
+        body   = msg.data.slice (offset);
+
+        tag    = 'name=';
+        offset = body.indexOf (tag);
+        name = body.slice (offset + tag.length);
+        name = name.split ('\n', 1)[0];
+        name = name.replace (/\\n/g, '');
+
+        if (fitness == '0')
+        {
+          batches.delete (name);
+        }
+        else
         {
           let scheme;
-
-          offset = msg.data.indexOf ('[Body]');
-          body   = msg.data.slice (offset);
 
           tag    = 'stage=';
           offset = body.indexOf (tag);
           stage = body.slice (offset + tag.length);
           stage = stage.split ('\n', 1)[0];
           stage = stage.replace (/\\n/g, '');
-
-          tag    = 'name=';
-          offset = body.indexOf (tag);
-          name = body.slice (offset + tag.length);
-          name = name.split ('\n', 1)[0];
-          name = name.replace (/\\n/g, '');
 
           if (name.includes (':T'))
           {
@@ -1070,11 +1145,18 @@
             batch_id = body.slice (offset + tag.length);
             batch_id = batch_id.split ('\n', 1)[0];
             batch_id = batch_id.replace (/\\n/g, '');
+
+            tag    = 'step=';
+            offset = body.indexOf (tag);
+            step = body.slice (offset + tag.length);
+            step = step.split ('\n', 1)[0];
+            step = step.replace (/\\n/g, '');
           }
           else
           {
             scheme = '/CompetitionIndividuelle/RondeSuisse';
             batch_id = null;
+            step     = null;
           }
 
           tag    = 'xml=';
@@ -1084,8 +1166,19 @@
           xml    = xml.replace (/\\n/g, '');
           batch  = new Batch (stage,
                               batch_id,
+                              step,
                               xml,
                               scheme);
+
+          batches.set (name, batch);
+        }
+
+        for (const [name, batch] of batches.entries ())
+        {
+          if (batch.over == false)
+          {
+            batch.display (name);
+          }
         }
       }
     }
