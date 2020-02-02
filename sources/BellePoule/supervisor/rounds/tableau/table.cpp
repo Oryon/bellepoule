@@ -76,6 +76,11 @@ namespace Table
 
           _parcel->Set   (key, value);
           _job_list->Set (key, value);
+
+          if (g_strcmp0 (key, "stage") == 0)
+          {
+            _job_list->SetNetID (value);
+          }
         }
         else if (type[0] == 'S')
         {
@@ -420,9 +425,6 @@ namespace Table
               _parcel->SetNetID (g_ascii_strtoull (attr,
                                                    nullptr,
                                                    16));
-              _job_list->SetNetID (g_ascii_strtoull (attr,
-                                                     nullptr,
-                                                     16));
               xmlFree (attr);
             }
           }

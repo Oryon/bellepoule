@@ -555,7 +555,9 @@
 
     // -- Batch --------------------
     class Batch {
-      constructor (xml,
+      constructor (stage,
+                   id,
+                   xml,
                    scheme)
       {
         let context = this;
@@ -564,6 +566,8 @@
         let root    = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
 
         this.competition = new Competition (root);
+        this.stage       = stage;
+        this.id          = id;
 
         {
           let nodes = xml_doc.evaluate (scheme, root, null, XPathResult.ANY_TYPE, null);
@@ -571,8 +575,6 @@
 
           if (node)
           {
-            this.stage = parseInt (node.getAttribute ('NetID'), 16);
-
             for (let i = 0; i < node.childElementCount; i++)
             {
               let match      = node.childNodes[i];
@@ -642,7 +644,7 @@
         }
       }
 
-      static onClicked (batch, match) {
+      static onClicked (batch, match_id) {
         let msg = '';
 
         msg += '[Header]\n';
@@ -652,7 +654,17 @@
         msg += '[Body]\n'
         msg += 'competition=' + batch.competition.get ('ID') + '\n';
         msg += 'stage=' + batch.stage + '\n';
-        msg += 'bout=' + match + '\n';
+        if (batch.id)
+        {
+          let match_index = parseInt (match_id) - 1;
+
+          msg += 'batch=' + batch.id + '\n';
+          msg += 'bout=' + '0' + ':' + match_index + '\n';
+        }
+        else
+        {
+          msg += 'bout=' + match_id + '\n';
+        }
 
         socket.send (msg);
       }
@@ -677,13 +689,15 @@
 
         this.competition = getMessageField (msg.data, 'competition');
         this.stage       = getMessageField (msg.data, 'stage');
+        this.batch       = getMessageField (msg.data, 'batch');
+        this.bout        = getMessageField (msg.data, 'bout');
 
         {
           let parser      = new DOMParser ();
           let xml_doc     = parser.parseFromString (xml, 'text/xml');
           let root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
           let competition = new Competition (root);
-          let schemes     = ['PhaseDeTableaux/SuiteDeTableaux/Tableau/Match', 'RondeSuisse/Match'];
+          let schemes     = ['TableauSuisse/SuiteDeTableaux/Tableau/Match', 'RondeSuisse/Match'];
 
           competition.addPanel ();
 
@@ -695,7 +709,6 @@
 
             if (node && node.childElementCount == 2)
             {
-              this.bout    = 'bout=' + node.getAttribute ('ID') + '\n';
               this.fencers = [red_fencer, green_fencer];
 
               for (let f = 0; f < 2; f++)
@@ -725,6 +738,7 @@
         msg += '[Body]\n'
         msg += this.competition;
         msg += this.stage;
+        msg += this.batch;
         msg += this.bout;
         msg += 'xml=<?xml version="1.0" encoding="UTF-8"?>'
         msg += '<Match>'
@@ -1035,6 +1049,12 @@
           offset = msg.data.indexOf ('[Body]');
           body   = msg.data.slice (offset);
 
+          tag    = 'stage=';
+          offset = body.indexOf (tag);
+          stage = body.slice (offset + tag.length);
+          stage = stage.split ('\n', 1)[0];
+          stage = stage.replace (/\\n/g, '');
+
           tag    = 'name=';
           offset = body.indexOf (tag);
           name = body.slice (offset + tag.length);
@@ -1044,10 +1064,17 @@
           if (name.includes (':T'))
           {
             scheme = '/CompetitionIndividuelle/TableauSuisse/SuiteDeTableaux/Tableau';
+
+            tag    = 'batch=';
+            offset = body.indexOf (tag);
+            batch_id = body.slice (offset + tag.length);
+            batch_id = batch_id.split ('\n', 1)[0];
+            batch_id = batch_id.replace (/\\n/g, '');
           }
           else
           {
             scheme = '/CompetitionIndividuelle/RondeSuisse';
+            batch_id = null;
           }
 
           tag    = 'xml=';
@@ -1055,8 +1082,9 @@
           xml    = body.slice (offset + tag.length);
           xml    = xml.split ('\n', 1)[0];
           xml    = xml.replace (/\\n/g, '');
-          console.log (body);
-          batch  = new Batch (xml,
+          batch  = new Batch (stage,
+                              batch_id,
+                              xml,
                               scheme);
         }
       }

@@ -1506,6 +1506,7 @@ namespace Quest
       {
         xmlBuffer *xml_buffer = xmlBufferCreate ();
         guint      channel    = message->GetInteger ("channel");
+        guint      bout       = message->GetInteger ("bout")-1;
 
         {
           XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
@@ -1515,7 +1516,7 @@ namespace Quest
 
           {
             Match *match = (Match *) g_list_nth_data (_matches,
-                                                      message->GetInteger ("bout")-1);
+                                                      bout);
 
             if (match)
             {
@@ -1531,6 +1532,7 @@ namespace Quest
 
         response->Set ("competition", _contest->GetNetID ());
         response->Set ("stage",       GetNetID ());
+        response->Set ("bout",        bout);
         response->Set ("xml",         (const gchar *) xml_buffer->content);
 
         response->Set ("client",  message->GetInteger ("client"));
@@ -1546,64 +1548,60 @@ namespace Quest
     }
     else if (message->Is ("SmartPoule::Score"))
     {
-      guint match_number = message->GetInteger ("bout");
+      guint  bout  = message->GetInteger ("bout");
+      Match *match = (Match *) g_list_nth_data (_matches,
+                                                bout);
 
-      if (match_number > 0)
+      if (match)
       {
-        Match *match = (Match *) g_list_nth_data (_matches,
-                                                  match_number-1);
+        gchar *xml_data = message->GetString ("xml");
 
-        if (match)
+        xmlDoc *doc = xmlReadMemory (xml_data,
+                                     strlen (xml_data),
+                                     "noname.xml",
+                                     nullptr,
+                                     0);
+
+        if (doc)
         {
-          gchar *xml_data = message->GetString ("xml");
+          xmlXPathInit ();
 
-          xmlDoc *doc = xmlReadMemory (xml_data,
-                                       strlen (xml_data),
-                                       "noname.xml",
-                                       nullptr,
-                                       0);
-
-          if (doc)
           {
-            xmlXPathInit ();
+            xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+            xmlXPathObject  *xml_object;
+            xmlNodeSet      *xml_nodeset;
 
+            xml_object = xmlXPathEval (BAD_CAST "/Match/*", xml_context);
+            xml_nodeset = xml_object->nodesetval;
+
+            if (xml_nodeset->nodeNr == 2)
             {
-              xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-              xmlXPathObject  *xml_object;
-              xmlNodeSet      *xml_nodeset;
+              match->CleanScore ();
 
-              xml_object = xmlXPathEval (BAD_CAST "/Match/*", xml_context);
-              xml_nodeset = xml_object->nodesetval;
-
-              if (xml_nodeset->nodeNr == 2)
+              for (guint i = 0; i < 2; i++)
               {
-                match->CleanScore ();
+                match->Load (xml_nodeset->nodeTab[i],
+                             match->GetOpponent (i));
 
-                for (guint i = 0; i < 2; i++)
-                {
-                  match->Load (xml_nodeset->nodeTab[i],
-                               match->GetOpponent (i));
-
-                  OnNewScore (nullptr,
-                              match,
-                              match->GetOpponent (i));
-                }
-
-                _elo->ProcessBatch (_matches);
-                RefreshClassification ();
-                //RefreshScoreData ();
-                //RefreshDashBoard ();
+                OnNewScore (nullptr,
+                            match,
+                            match->GetOpponent (i));
               }
 
-              xmlXPathFreeObject  (xml_object);
-              xmlXPathFreeContext (xml_context);
+              _elo->ProcessBatch (_matches);
+              RefreshClassification ();
+              //RefreshScoreData ();
+              //RefreshDashBoard ();
             }
-            xmlFreeDoc (doc);
-          }
-          g_free (xml_data);
 
-          return TRUE;
+            xmlXPathFreeObject  (xml_object);
+            xmlXPathFreeContext (xml_context);
+          }
+          xmlFreeDoc (doc);
         }
+        g_free (xml_data);
+
+        return TRUE;
       }
     }
 

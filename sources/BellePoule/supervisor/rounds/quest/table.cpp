@@ -37,7 +37,6 @@ namespace Quest
     _fenced_places->Release ();
     _fenced_places = new Data ("PlacesTirees",
                                Table::Supervisor::THIRD_PLACES);
-
   }
 
   // --------------------------------------------------------------------------------
