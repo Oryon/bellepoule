@@ -68,12 +68,6 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void WebAppServer::OutgoingMessage::Free (OutgoingMessage *message)
-  {
-    delete (message);
-  }
-
-  // --------------------------------------------------------------------------------
   // --------------------------------------------------------------------------------
   WebAppServer::WebAppServer (Listener *listener,
                               guint     port)
@@ -92,7 +86,7 @@ namespace Net
         protocols = g_new0 (struct lws_protocols, 3);
 
         protocols[0].name                  = "http-only";
-        protocols[0].callback              = WebAppServer::OnHttp;
+        protocols[0].callback              = (lws_callback_function *) WebAppServer::OnHttp;
         protocols[0].per_session_data_size = 0;
         protocols[0].rx_buffer_size        = 0;
         protocols[0].id                    = 0;
@@ -101,7 +95,7 @@ namespace Net
         protocols[1].name                  = "smartpoule";
         protocols[1].callback              = (lws_callback_function *) OnSmartPouleData;
         protocols[1].per_session_data_size = sizeof (WebApp);
-        protocols[1].rx_buffer_size        = BUFFER_SIZE;
+        protocols[1].rx_buffer_size        = 0;
         protocols[1].id                    = 0;
         protocols[1].user                  = this;
       }
@@ -111,8 +105,6 @@ namespace Net
       _info->protocols = protocols;
       _info->gid       = -1;
       _info->uid       = -1;
-
-      _context = lws_create_context (_info);
     }
 
     {
@@ -135,8 +127,6 @@ namespace Net
   // --------------------------------------------------------------------------------
   WebAppServer::~WebAppServer ()
   {
-    printf (MAGENTA "*** WebAppServer ***\n" ESC);
-
     _running = FALSE;
 
     if (_thread)
@@ -145,7 +135,8 @@ namespace Net
       g_thread_join (_thread);
     }
 
-    lws_context_destroy (_context);
+    printf (MAGENTA "*** WebAppServer ***\n" ESC);
+
     g_free ((void *) _info->protocols);
     g_free (_info);
 
@@ -184,7 +175,7 @@ namespace Net
   int WebAppServer::OnHttp (struct lws                *wsi,
                             enum lws_callback_reasons  reason,
                             void                      *user,
-                            void                      *in,
+                            gchar                     *in,
                             size_t                     len)
   {
 #pragma GCC diagnostic ignored "-Wswitch-enum"
@@ -231,10 +222,10 @@ namespace Net
       {
         printf (GREEN "LWS_CALLBACK_ESTABLISHED %p/%p\n" ESC, (void *) web_app, (void *) wsi);
 
-        web_app->_wsi              = wsi;
-        web_app->_id               = ++_connection_count;
-        web_app->_input_buffer     = nullptr;
-        web_app->_pending_messages = nullptr;
+        web_app->_wsi             = wsi;
+        web_app->_id              = ++_connection_count;
+        web_app->_input_buffer    = nullptr;
+        web_app->_pending_message = nullptr;
 
         server->_clients = g_list_prepend (server->_clients,
                                            web_app);
@@ -246,8 +237,7 @@ namespace Net
         printf (RED "LWS_CALLBACK_CLOSED      %p/%p\n" ESC, (void *) web_app, (void *) wsi);
 
         delete (web_app->_input_buffer);
-        g_list_free_full (web_app->_pending_messages,
-                          (GDestroyNotify) OutgoingMessage::Free);
+        delete (web_app->_pending_message);
 
         server->_clients = g_list_remove (server->_clients,
                                           web_app);
@@ -277,16 +267,15 @@ namespace Net
 
       case LWS_CALLBACK_SERVER_WRITEABLE:
       {
-        while (web_app->_pending_messages)
+        if (web_app->_pending_message)
         {
-          OutgoingMessage *message = (OutgoingMessage *) web_app->_pending_messages->data;
-          GString         *buffer  = g_string_new (nullptr);
+          GString *buffer = g_string_new (nullptr);
 
           g_string_append_len (buffer,
                                "", LWS_PRE);
 
           g_string_append_printf (buffer,
-                                  "%s", message->_message);
+                                  "%s", web_app->_pending_message->_message);
 
           {
             guchar *msg = (guchar *) &buffer->str[LWS_PRE];
@@ -300,9 +289,8 @@ namespace Net
           g_string_free (buffer,
                          TRUE);
 
-          delete (message);
-          web_app->_pending_messages = g_list_remove_link (web_app->_pending_messages,
-                                                           web_app->_pending_messages);
+          delete (web_app->_pending_message);
+          web_app->_pending_message = nullptr;
         }
       }
       break;
@@ -318,10 +306,26 @@ namespace Net
   // --------------------------------------------------------------------------------
   gpointer WebAppServer::ThreadFunction (WebAppServer *server)
   {
+    server->_context = lws_create_context (server->_info);
+
     while (server->_running)
     {
+      gboolean ready = TRUE;
+
       lws_service (server->_context, G_MAXINT);
 
+      for (GList *current = server->_clients; current != nullptr; current = g_list_next (current))
+      {
+        WebApp *web_app = (WebApp *) current->data;
+
+        if (web_app->_pending_message != nullptr)
+        {
+          ready = FALSE;
+          break;
+        }
+      }
+
+      if (ready)
       {
         OutgoingMessage *outgoing_message = (OutgoingMessage *) g_async_queue_timeout_pop (server->_queue,
                                                                                            1000);
@@ -329,17 +333,16 @@ namespace Net
         {
           for (GList *current = server->_clients; current != nullptr; current = g_list_next (current))
           {
-            WebApp          *web_app     = (WebApp *) current->data;
-            OutgoingMessage *app_message = outgoing_message->Duplicate ();
+            WebApp *web_app = (WebApp *) current->data;
 
-            if (   (app_message->_client_id == 0)
-                || (web_app->_id == app_message->_client_id))
+            if (   (outgoing_message->_client_id == 0)
+                || (web_app->_id == outgoing_message->_client_id))
             {
-              web_app->_pending_messages = g_list_append (web_app->_pending_messages,
-                                                          app_message);
+              web_app->_pending_message = outgoing_message->Duplicate ();
+
               lws_callback_on_writable (web_app->_wsi);
 
-              if (app_message->_client_id != 0)
+              if (outgoing_message->_client_id != 0)
               {
                 break;
               }
@@ -350,6 +353,8 @@ namespace Net
         }
       }
     }
+
+    lws_context_destroy (server->_context);
 
     return nullptr;
   }

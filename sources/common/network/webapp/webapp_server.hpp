@@ -34,26 +34,7 @@ namespace Net
                           Message *response);
 
     private:
-      static const guint BUFFER_SIZE       = 1024;
-      static guint       _connection_count;
-
-      struct WebApp
-      {
-        struct lws  *_wsi;
-        guint        _id;
-        RequestBody *_input_buffer;
-        GList       *_pending_messages;
-      };
-
-      struct IncomingRequest : public RequestBody
-      {
-        IncomingRequest (Server *server,
-                         guint   id);
-
-        ~IncomingRequest () override;
-
-        guint _id;
-      };
+      static guint _connection_count;
 
       struct OutgoingMessage
       {
@@ -67,10 +48,26 @@ namespace Net
 
         ~OutgoingMessage ();
 
-        static void Free (OutgoingMessage *message);
-
         guint  _client_id;
         gchar *_message;
+      };
+
+      struct WebApp
+      {
+        struct lws      *_wsi;
+        guint            _id;
+        RequestBody     *_input_buffer;
+        OutgoingMessage *_pending_message;
+      };
+
+      struct IncomingRequest : public RequestBody
+      {
+        IncomingRequest (Server *server,
+                         guint   id);
+
+        ~IncomingRequest () override;
+
+        guint _id;
       };
 
     private:
@@ -90,7 +87,7 @@ namespace Net
       static int OnHttp (struct lws                *wsi,
                          enum lws_callback_reasons  reason,
                          void                      *user,
-                         void                      *in,
+                         gchar                     *in,
                          size_t                     len);
 
       static int OnSmartPouleData (struct lws                *wsi,
