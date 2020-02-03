@@ -136,6 +136,12 @@
         text-align: right;
       }
 
+      td.td_step {
+        text-align: center;
+        font-size: 5vw;
+        color: White;
+      }
+
       tr.tr_matchlist {
         font-size: 5vw;
       }
@@ -623,9 +629,36 @@
           {
             let header = matchlist.insertRow (-1);
             let cell   = header.insertCell (-1);
-            let html   = '<td><b>' + what + '</b></td>';
+            let html   = '</p>';
+            let title;
 
-            header.style.backgroundColor = 'lightblue';
+            if (isNaN (what) == false)
+            {
+              html += '<td><b>' + 'Tour N° ' + what + '</b></td>';
+            }
+            else if (what == '1:T2')
+            {
+              html += '<td><b>' + 'Finale' + '</b></td>';
+            }
+            else if (what == '3:T2')
+            {
+              html += '<td><b>' + '3ième place' + '</b></td>';
+            }
+            else if (what == '1:T4')
+            {
+              html += '<td><b>' + 'Demi-finale' + '</b></td>';
+            }
+            else if (what == '1:T8')
+            {
+              html += '<td><b>' + 'Tableau de 8' + '</b></td>';
+            }
+            else
+            {
+              html += '<td><b>' + what + '</b></td>';
+            }
+
+            cell.colSpan = 4;
+            cell.setAttribute ('class', 'td_step');
             cell.innerHTML = html;
           }
 

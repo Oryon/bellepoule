@@ -2185,9 +2185,9 @@ namespace Table
 
                   if (match->IsOver ())
                   {
-                    SpreadWinners ();
-                    RefreshNodes ();
-                    RefilterQuickSearch ();
+                    OnNewScore (nullptr,
+                                match,
+                                nullptr);
                   }
                   else
                   {
