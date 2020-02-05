@@ -131,7 +131,10 @@ namespace Net
 
     if (_thread)
     {
-      lws_cancel_service (_context);
+      if (_context)
+      {
+        lws_cancel_service (_context);
+      }
       g_thread_join (_thread);
     }
 
@@ -308,53 +311,63 @@ namespace Net
   {
     server->_context = lws_create_context (server->_info);
 
-    while (server->_running)
+    if (server->_context)
     {
-      gboolean ready = TRUE;
-
-      lws_service (server->_context, G_MAXINT);
-
-      for (GList *current = server->_clients; current != nullptr; current = g_list_next (current))
+      while (server->_running)
       {
-        WebApp *web_app = (WebApp *) current->data;
+        gboolean ready = TRUE;
 
-        if (web_app->_pending_message != nullptr)
+        if (g_async_queue_length (server->_queue))
         {
-          ready = FALSE;
-          break;
+          lws_service (server->_context, 100);
         }
-      }
-
-      if (ready)
-      {
-        OutgoingMessage *outgoing_message = (OutgoingMessage *) g_async_queue_timeout_pop (server->_queue,
-                                                                                           1000);
-        if (outgoing_message)
+        else
         {
-          for (GList *current = server->_clients; current != nullptr; current = g_list_next (current))
+          lws_service (server->_context, G_MAXINT);
+        }
+
+        for (GList *current = server->_clients; current != nullptr; current = g_list_next (current))
+        {
+          WebApp *web_app = (WebApp *) current->data;
+
+          if (web_app->_pending_message != nullptr)
           {
-            WebApp *web_app = (WebApp *) current->data;
+            ready = FALSE;
+            break;
+          }
+        }
 
-            if (   (outgoing_message->_client_id == 0)
-                || (web_app->_id == outgoing_message->_client_id))
+        if (ready)
+        {
+          OutgoingMessage *outgoing_message = (OutgoingMessage *) g_async_queue_timeout_pop (server->_queue,
+                                                                                             1000);
+          if (outgoing_message)
+          {
+            for (GList *current = server->_clients; current != nullptr; current = g_list_next (current))
             {
-              web_app->_pending_message = outgoing_message->Duplicate ();
+              WebApp *web_app = (WebApp *) current->data;
 
-              lws_callback_on_writable (web_app->_wsi);
-
-              if (outgoing_message->_client_id != 0)
+              if (   (outgoing_message->_client_id == 0)
+                  || (web_app->_id == outgoing_message->_client_id))
               {
-                break;
+                web_app->_pending_message = outgoing_message->Duplicate ();
+
+                lws_callback_on_writable (web_app->_wsi);
+
+                if (outgoing_message->_client_id != 0)
+                {
+                  break;
+                }
               }
             }
-          }
 
-          delete outgoing_message;
+            delete outgoing_message;
+          }
         }
       }
-    }
 
-    lws_context_destroy (server->_context);
+      lws_context_destroy (server->_context);
+    }
 
     return nullptr;
   }
