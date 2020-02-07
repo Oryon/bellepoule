@@ -28,7 +28,10 @@ namespace Net
   {
     public:
       WebAppServer (Listener *listener,
+                    guint     channel,
                     guint     port);
+
+      void SetIpV4Address (const gchar *ip_address);
 
       void SendMessageTo (guint    to,
                           Message *response);
@@ -56,8 +59,16 @@ namespace Net
       {
         struct lws      *_wsi;
         guint            _id;
+        guint            _screen_id;
         RequestBody     *_input_buffer;
         OutgoingMessage *_pending_message;
+      };
+
+      struct Client
+      {
+        WebAppServer *_server;
+        guint         _client_id;
+        guint         _screen_id;
       };
 
       struct IncomingRequest : public RequestBody
@@ -71,6 +82,8 @@ namespace Net
       };
 
     private:
+      const gchar                      *_ip_address;
+      guint                             _channel;
       gboolean                          _running;
       GThread                          *_thread;
       GAsyncQueue                      *_queue;
@@ -81,6 +94,8 @@ namespace Net
       ~WebAppServer () override;
 
       static gboolean OnRequest (IncomingRequest *request);
+
+      static gboolean OnNewClient (Client *client);
 
       static gpointer ThreadFunction (WebAppServer *server);
 

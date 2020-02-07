@@ -23,6 +23,9 @@ class FlashCode : public Object
   public:
     FlashCode (const gchar *text);
 
+    static GdkPixbuf *GetPixbuf (const gchar *text,
+                                 guint        pixel_size = 3);
+
     GdkPixbuf *GetPixbuf (guint pixel_size = 3);
 
     virtual gchar *GetText ();

@@ -99,6 +99,7 @@ namespace Net
     _http_server = new Net::HttpServer (this,
                                         _unicast_port);
     _web_app_server = new Net::WebAppServer (this,
+                                             (guint) Channel::WEB_SOCKET,
                                              8000);
 
     // Announce listener
@@ -1258,6 +1259,8 @@ namespace Net
                                                      ANNOUNCE_PORT);
       g_object_unref (inet_address);
     }
+
+    _web_app_server->SetIpV4Address (_unicast_address);
   }
 
   // --------------------------------------------------------------------------------

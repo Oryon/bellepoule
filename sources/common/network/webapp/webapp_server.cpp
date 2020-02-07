@@ -15,7 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/global.hpp"
-#include "ring.hpp"
+#include "util/flash_code.hpp"
 #include "message.hpp"
 #include "webapp_server.hpp"
 
@@ -70,12 +70,15 @@ namespace Net
   // --------------------------------------------------------------------------------
   // --------------------------------------------------------------------------------
   WebAppServer::WebAppServer (Listener *listener,
+                              guint     channel,
                               guint     port)
     : Server (listener,
               port)
   {
-    _running = TRUE;
-    _clients = nullptr;
+    _running    = TRUE;
+    _clients    = nullptr;
+    _channel    = channel;
+    _ip_address = nullptr;
 
     _queue = g_async_queue_new_full ((GDestroyNotify) Object::TryToRelease);
 
@@ -147,6 +150,12 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void WebAppServer::SetIpV4Address (const gchar *ip_address)
+  {
+    _ip_address = ip_address;
+  }
+
+  // --------------------------------------------------------------------------------
   void WebAppServer::SendMessageTo (guint    to,
                                     Message *response)
   {
@@ -166,11 +175,67 @@ namespace Net
     Message      *message = new Message ((const guint8 *) request->_data);
 
     message->Set ("client",  request->_id);
-    message->Set ("channel", (guint) Ring::Channel::WEB_SOCKET);
+    message->Set ("channel", server->_channel);
     server->_listener->OnMessage (message);
 
     message->Release ();
     delete (request);
+    return G_SOURCE_REMOVE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean WebAppServer::OnNewClient (Client *client)
+  {
+    WebAppServer *server = dynamic_cast<WebAppServer *> (client->_server);
+    gchar        *png64;
+
+    {
+      GdkPixbuf *pixbuf;
+      gchar     *png;
+      gsize      png_size;
+      GError    *error    = nullptr;
+
+      {
+        gchar *code = g_strdup_printf ("%s:%d/arbitre/arene/%d",
+                                       server->_ip_address,
+                                       server->GetPort (),
+                                       client->_screen_id);
+
+        pixbuf = FlashCode::GetPixbuf (code);
+
+        g_free (code);
+      }
+
+      if (gdk_pixbuf_save_to_buffer (pixbuf,
+                                     &png,
+                                     &png_size,
+                                     "png",
+                                     &error,
+                                     nullptr) == FALSE)
+      {
+        g_printerr ("Failed to create Uploader thread: %s\n", error->message);
+        g_error_free (error);
+      }
+
+      png64 = g_base64_encode ((guchar *) png,
+                               png_size);
+
+      g_free (png);
+      g_object_unref (pixbuf);
+    }
+
+    {
+      Message *message = new Message ("BellePoule::QrCode");
+
+      message->Set ("qrcode.png", png64);
+
+      server->SendMessageTo (client->_client_id,
+                             message);
+    }
+
+    g_free (png64);
+
+    delete (client);
     return G_SOURCE_REMOVE;
   }
 
@@ -186,13 +251,28 @@ namespace Net
     {
       case LWS_CALLBACK_HTTP:
       {
-        gchar *app_path = g_build_filename (Global::_share_dir, "resources", "webapps", "smartpoule.html", nullptr);
+        if (g_str_has_suffix (in, ".png"))
+        {
+          gchar *base_name = g_path_get_basename (in);
+          gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", base_name, nullptr);
 
-        lws_serve_http_file (wsi,
-                             app_path,
-                             "text/html",
-                             nullptr, 0);
-        g_free (app_path);
+          lws_serve_http_file (wsi,
+                               app_path,
+                               "image/svg",
+                               nullptr, 0);
+          g_free (app_path);
+          g_free (base_name);
+        }
+        else
+        {
+          gchar *app_path = g_build_filename (Global::_share_dir, "resources", "webapps", "smartpoule.html", nullptr);
+
+          lws_serve_http_file (wsi,
+                               app_path,
+                               "text/html",
+                               nullptr, 0);
+          g_free (app_path);
+        }
       }
       break;
 
@@ -229,6 +309,40 @@ namespace Net
         web_app->_id              = ++_connection_count;
         web_app->_input_buffer    = nullptr;
         web_app->_pending_message = nullptr;
+
+        {
+          char peer_name[128];
+          char ip[30];
+
+          lws_get_peer_addresses (wsi,
+                                  lws_get_socket_fd (wsi),
+                                  peer_name, sizeof peer_name,
+                                  ip, sizeof ip);
+
+          {
+            gchar **splitted_ip = g_strsplit_set (ip,
+                                                  ".",
+                                                  0);
+
+            if (splitted_ip && splitted_ip[0] && splitted_ip[1] && splitted_ip[2] && splitted_ip[3])
+            {
+              Client *client;
+
+              web_app->_screen_id = g_ascii_strtoull (splitted_ip[3],
+                                                      nullptr,
+                                                      10);
+              client = new Client ();
+              client->_server    = server;
+              client->_client_id = web_app->_id;
+              client->_screen_id = web_app->_screen_id;
+
+              g_strfreev (splitted_ip);
+
+              g_idle_add ((GSourceFunc) OnNewClient,
+                          client);
+            }
+          }
+        }
 
         server->_clients = g_list_prepend (server->_clients,
                                            web_app);

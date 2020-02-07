@@ -47,21 +47,29 @@ gchar *FlashCode::GetText ()
 // --------------------------------------------------------------------------------
 GdkPixbuf *FlashCode::GetPixbuf (guint pixel_size)
 {
+  gchar     *text   = GetText ();
+  GdkPixbuf *pixbuf = GetPixbuf (text,
+                                 pixel_size);
+
+  g_free (text);
+
+  return pixbuf;
+}
+
+// --------------------------------------------------------------------------------
+GdkPixbuf *FlashCode::GetPixbuf (const gchar *text,
+                                 guint        pixel_size)
+{
   GdkPixbuf *pixbuf = nullptr;
 
   {
     QRcode *qr_code;
 
-    {
-      gchar *text = GetText ();
-
-      qr_code = QRcode_encodeString (text,
-                                     0,
-                                     QR_ECLEVEL_L,
-                                     QR_MODE_8,
-                                     1);
-      g_free (text);
-    }
+    qr_code = QRcode_encodeString (text,
+                                   0,
+                                   QR_ECLEVEL_L,
+                                   QR_MODE_8,
+                                   1);
 
     {
       GdkPixbuf   *small_pixbuf;
