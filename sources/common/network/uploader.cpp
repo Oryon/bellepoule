@@ -18,6 +18,8 @@
 
 #include "uploader.hpp"
 
+//#define UPLOADER_DEBUG
+
 namespace Net
 {
   // --------------------------------------------------------------------------------

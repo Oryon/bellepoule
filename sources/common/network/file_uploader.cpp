@@ -51,8 +51,12 @@ namespace Net
     if (_file_path)
     {
       gchar *base_name = g_path_get_basename (file_path);
+      gchar *escaped   = g_uri_escape_string (base_name,
+                                              nullptr,
+                                              FALSE);
 
-      _full_url = g_strdup_printf ("%s/%s", _url, base_name);
+      _full_url = g_strdup_printf ("%s/%s", _url, escaped);
+      g_free (escaped);
       g_free (base_name);
     }
 
