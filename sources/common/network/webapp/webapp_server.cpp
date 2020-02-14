@@ -192,13 +192,14 @@ namespace Net
   // --------------------------------------------------------------------------------
   gboolean WebAppServer::OnNewClient (Client *client)
   {
-    WebAppServer *server = dynamic_cast<WebAppServer *> (client->_server);
-    gchar        *png64;
+    WebAppServer *server  = dynamic_cast<WebAppServer *> (client->_server);
+    Message      *message = new Message ("BellePoule::QrCode");
 
     {
       GdkPixbuf *pixbuf;
       gchar     *png;
       gsize      png_size;
+      gchar     *png64;
       GError    *error    = nullptr;
 
       {
@@ -208,6 +209,7 @@ namespace Net
                                        client->_client_id);
 
         pixbuf = FlashCode::GetPixbuf (code);
+        message->Set ("qrcode.txt", code);
 
         g_free (code);
       }
@@ -225,21 +227,15 @@ namespace Net
 
       png64 = g_base64_encode ((guchar *) png,
                                png_size);
+      message->Set ("qrcode.png", png64);
 
       g_free (png);
       g_object_unref (pixbuf);
+      g_free (png64);
     }
 
-    {
-      Message *message = new Message ("BellePoule::QrCode");
-
-      message->Set ("qrcode.png", png64);
-
-      server->SendMessageTo (client->_client_id,
-                             message);
-    }
-
-    g_free (png64);
+    server->SendMessageTo (client->_client_id,
+                           message);
 
     delete (client);
     return G_SOURCE_REMOVE;

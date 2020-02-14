@@ -115,7 +115,7 @@ class Fencer
 
     {
       let svg      = document.getElementById ('close.svg');
-      let div      = document.getElementById ('overlay');
+      let div      = document.getElementById ('cross');
       let row_size = name.getBoundingClientRect().height;
       let html     = '';
 

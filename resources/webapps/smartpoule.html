@@ -49,9 +49,10 @@
     let green_fencer;
     let scorekeeper;
     let score_sheet;
-    let overlay;
+    let cross;
     let matchlist;
     let qrcode;
+    let http;
     let socket      = new WebSocket ("ws://" + document.domain + ':' + location.port, "smartpoule");
 
     !function(e,t){"use strict";var n=null,a="ontouchstart"in e||navigator.MaxTouchPoints>0||navigator.msMaxTouchPoints>0,i=a?"touchstart":"mousedown",o=a?"touchend":"mouseup",m=a?"touchmove":"mousemove",u=0,r=0,s=10,c=10;function l(i){v(i);var m=i.target,u=parseInt(m.getAttribute("data-long-press-delay")||"1500",10);n=function(t,n){if(!(e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame&&e.mozCancelRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame))return e.setTimeout(t,n);var a=(new Date).getTime(),i={},o=function(){(new Date).getTime()-a>=n?t.call():i.value=requestAnimFrame(o)};return i.value=requestAnimFrame(o),i}(function(e){v();var n=a?e.touches[0].clientX:e.clientX,i=a?e.touches[0].clientY:e.clientY;this.dispatchEvent(new CustomEvent("long-press",{bubbles:!0,cancelable:!0,detail:{clientX:n,clientY:i}}))&&t.addEventListener(o,function e(n){t.removeEventListener(o,e,!0),function(e){e.stopImmediatePropagation(),e.preventDefault(),e.stopPropagation()}(n)},!0)}.bind(m,i),u)}function v(t){var a;(a=n)&&(e.cancelAnimationFrame?e.cancelAnimationFrame(a.value):e.webkitCancelAnimationFrame?e.webkitCancelAnimationFrame(a.value):e.webkitCancelRequestAnimationFrame?e.webkitCancelRequestAnimationFrame(a.value):e.mozCancelRequestAnimationFrame?e.mozCancelRequestAnimationFrame(a.value):e.oCancelRequestAnimationFrame?e.oCancelRequestAnimationFrame(a.value):e.msCancelRequestAnimationFrame?e.msCancelRequestAnimationFrame(a.value):clearTimeout(a)),n=null}"function"!=typeof e.CustomEvent&&(e.CustomEvent=function(e,n){n=n||{bubbles:!1,cancelable:!1,detail:void 0};var a=t.createEvent("CustomEvent");return a.initCustomEvent(e,n.bubbles,n.cancelable,n.detail),a},e.CustomEvent.prototype=e.Event.prototype),e.requestAnimFrame=e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame||function(t){e.setTimeout(t,1e3/60)},t.addEventListener(o,v,!0),t.addEventListener(m,function(e){var t=Math.abs(u-e.clientX),n=Math.abs(r-e.clientY);(t>=s||n>=c)&&v()},!0),t.addEventListener("wheel",v,!0),t.addEventListener("scroll",v,!0),t.addEventListener(i,function(e){u=e.clientX,r=e.clientY,l(e)},!0)}(window,document);
@@ -65,9 +66,10 @@
       green_fencer = new Fencer ('green');
 
       scorekeeper = document.getElementById ('scorekeeper');
-      overlay     = document.getElementById ('overlay');
+      cross       = document.getElementById ('cross');
       matchlist   = document.getElementById ('matchlist');
       qrcode      = document.getElementById ('qrcode');
+      http        = document.getElementById ('http');
       brand       = document.getElementById ('brand');
 
       if (pathname == '/arene')
@@ -77,7 +79,7 @@
 
         matchlist.style.display   = 'none';
         scorekeeper.style.display = 'block';
-        overlay.style.display     = 'none';
+        cross.style.display       = 'none';
       }
       else
       {
@@ -91,6 +93,7 @@
         }
 
         qrcode.style.display = 'none';
+        http.style.display   = 'none';
 
         {
           let msg = new Message ('SmartPoule::JobListCall');
@@ -115,6 +118,7 @@
       else if (msg.data.startsWith ('[Header]\nname=BellePoule::ScoreSheet\n'))
       {
         let table = scorekeeper.firstElementChild;
+
         for (let panel of table.rows)
         {
           while (panel.hasChildNodes ())
@@ -128,7 +132,7 @@
 
         if (mode != 'mirror')
         {
-          overlay.style.display = 'block';
+          cross.style.display = 'block';
         }
 
         score_sheet = new ScoreSheet (msg,
@@ -193,7 +197,11 @@
             batches.set (name, batch);
           }
 
-          brand.style.display = 'block';
+          if (cross.style.display == 'none')
+          {
+            brand.style.display = 'block';
+          }
+
           for (const [name, batch] of batches.entries ())
           {
             if (batch.over == false)
@@ -206,9 +214,10 @@
       }
       else if (msg.data.startsWith ('[Header]\nname=BellePoule::QrCode\n'))
       {
-        let qrcode = document.getElementById ('qrcode');
+        let base64 = Message.getField (msg.data, 'Body', 'qrcode.png');
+        let text   = Message.getField (msg.data, 'Body', 'qrcode.txt');
 
-        base64 = Message.getField (msg.data, 'Body', 'qrcode.png');
+        http.innerHTML = text;
 
         qrcode.src = 'data:image/png;base64,'
         qrcode.src += base64;
@@ -220,7 +229,7 @@
     {
       matchlist.style.display   = 'table';
       scorekeeper.style.display = 'none';
-      overlay.style.display     = 'none';
+      cross.style.display       = 'none';
     }
   </script>
 
@@ -229,6 +238,7 @@
       <div class='frame'>
         <img id='brand' src='BellePoule.png'></img>
         <img id='qrcode'></img>
+        <div id='http'></div>
 
         <table id='matchlist' class='table_matchlist'></table>
 
@@ -248,7 +258,7 @@
             </tr>
           </table>
 
-          <div id="overlay" style='display:none'></div>
+          <div id="cross" style='display:none'></div>
         </div>
       </div>
   </body>

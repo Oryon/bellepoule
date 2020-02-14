@@ -22,7 +22,7 @@ body {
   currently supported by Chrome and Opera */
 }
 
-#overlay {
+#cross {
   position: fixed;
   z-index: 1;
   top: 1vh;
@@ -44,6 +44,13 @@ body {
   position: fixed;
   bottom: 2vw;
   right: 2vw;
+}
+
+#http {
+  position: fixed;
+  bottom: 2vw;
+  left: 2vw;
+  font-size: 2vh;
 }
 
 /* Scorekeeper */
