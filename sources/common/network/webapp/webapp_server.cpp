@@ -257,7 +257,31 @@ namespace Net
     {
       case LWS_CALLBACK_HTTP:
       {
-        if (g_str_has_suffix (in, ".png"))
+        if (g_str_has_suffix (in, ".js"))
+        {
+          gchar *base_name = g_path_get_basename (in);
+          gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", "js", base_name, nullptr);
+
+          lws_serve_http_file (wsi,
+                               app_path,
+                               "application/javascript",
+                               nullptr, 0);
+          g_free (app_path);
+          g_free (base_name);
+        }
+        else if (g_str_has_suffix (in, ".css"))
+        {
+          gchar *base_name = g_path_get_basename (in);
+          gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", "css", base_name, nullptr);
+
+          lws_serve_http_file (wsi,
+                               app_path,
+                               "text/css",
+                               nullptr, 0);
+          g_free (app_path);
+          g_free (base_name);
+        }
+        else if (g_str_has_suffix (in, ".png"))
         {
           gchar *base_name = g_path_get_basename (in);
           gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", base_name, nullptr);

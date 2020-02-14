@@ -1,0 +1,118 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame {
+  width:      100vw;
+  max-height: 100vh;
+  margin:     auto;
+  position:   absolute;
+  top:0;  bottom:0;     /* vertical center */
+  left:0; right:0;      /* horizontal center */
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: grey;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome 6.0+, Safari 3.1+, Edge & Opera 15+ */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* IE 10+ and Edge */
+  user-select: none;           /* Non-prefixed version,
+  currently supported by Chrome and Opera */
+}
+
+#overlay {
+  position: fixed;
+  z-index: 1;
+  top: 1vh;
+  right: 2vw;
+  width: 10vw;
+}
+
+#qrcode {
+  position: fixed;
+  bottom: 5vw;
+  right: 5vw;
+}
+
+/* Scorekeeper */
+.row {
+  height:1vh;
+}
+
+.score {
+  font-size: 10vh;
+  text-align: center;
+}
+
+.spacer {
+  font-size: 1vh;
+  text-align: center;
+}
+
+.competition {
+  font-size: 3vh;
+  text-align: center;
+}
+
+.fencer-name, .fault, .point {
+  font-size: 4vh;
+  text-align: center;
+}
+
+.fencer-name {
+  width: 50vw;
+  overflow: hidden;
+  text-overflow: ".";
+}
+
+.fencer-firstname {
+  font-size: 2vh;
+  text-align: center;
+}
+
+.fault {
+  margin: 1vh 0vh 2vh 0vh;
+}
+
+td img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Match list */
+td.td_matchlist {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.table_matchlist, table_matchlist.table_scorekeeper {
+  border-collapse: collapse;
+  width: 100vw;
+}
+
+th.th_matchlist, td.td_matchlist {
+  text-align: left;
+}
+
+td.td_match_id {
+  text-align: left;
+  font-size: 10vw;
+}
+
+td.td_piste {
+  text-align: right;
+}
+
+td.td_step {
+  text-align: center;
+  font-size: 5vw;
+  color: White;
+}
+
+tr.tr_matchlist {
+  font-size: 5vw;
+}
