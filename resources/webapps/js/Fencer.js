@@ -13,6 +13,18 @@ class Fencer
     this.opponent = null;
   }
 
+  getDisplaySize ()
+  {
+    if (mode == 'mirror')
+    {
+      return 'big';
+    }
+    else
+    {
+      return 'small';
+    }
+  }
+
   setOpponent (opponent)
   {
     this.opponent = opponent;
@@ -119,7 +131,7 @@ class Fencer
     let html    = '';
 
     html += '<td>';
-    html += '  <div id="' + this.color + '-fencer-' + what + '" class="fencer-' + what + '">';
+    html += '  <div id="' + this.color + '-fencer-' + what + '" class="' + this.getDisplaySize () + '-fencer-' + what + '">';
     html +=     what;
     html += '  </div>';
     html += '</td>';
@@ -137,7 +149,7 @@ class Fencer
     let html    = '';
 
     html += '<td>';
-    html += '  <div class="score">0</div>';
+    html += '  <div class="' + this.getDisplaySize () + '-score">0</div>';
     html += '</td>';
     cell.innerHTML = html;
 

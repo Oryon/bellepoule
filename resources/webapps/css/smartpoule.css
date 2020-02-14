@@ -32,8 +32,8 @@ body {
 
 #qrcode {
   position: fixed;
-  bottom: 5vw;
-  right: 5vw;
+  bottom: 2vw;
+  right: 2vw;
 }
 
 /* Scorekeeper */
@@ -41,8 +41,15 @@ body {
   height:1vh;
 }
 
-.score {
+.small-score {
   font-size: 10vh;
+}
+
+.big-score {
+  font-size: 50vh;
+}
+
+.big-score, .small-score {
   text-align: center;
 }
 
@@ -56,19 +63,29 @@ body {
   text-align: center;
 }
 
-.fencer-name, .fault, .point {
+.small-fencer-name, .fault, .point {
   font-size: 4vh;
   text-align: center;
 }
 
-.fencer-name {
+.big-fencer-name {
+  font-size: 8vh;
+  text-align: center;
+}
+
+.small-fencer-name, .big-fencer-name {
   width: 50vw;
   overflow: hidden;
   text-overflow: ".";
 }
 
-.fencer-firstname {
+.small-fencer-firstname {
   font-size: 2vh;
+  text-align: center;
+}
+
+.big-fencer-firstname {
+  font-size: 4vh;
   text-align: center;
 }
 
