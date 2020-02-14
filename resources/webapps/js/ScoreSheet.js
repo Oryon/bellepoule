@@ -50,19 +50,6 @@ class ScoreSheet extends Module
     green_fencer.setOpponent (red_fencer);
   }
 
-  clear ()
-  {
-    let table = this.container.firstElementChild;
-
-    for (let panel of table.rows)
-    {
-      while (panel.hasChildNodes ())
-      {
-        panel.removeChild (panel.firstChild);
-      }
-    }
-  }
-
   update (xml)
   {
     let parser  = new DOMParser ();

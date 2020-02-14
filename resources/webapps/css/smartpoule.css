@@ -40,17 +40,10 @@ body {
   transform: translateY(-50%);
 }
 
-#qrcode {
+#QrCode {
   position: fixed;
   bottom: 2vw;
   right: 2vw;
-}
-
-#http {
-  position: fixed;
-  bottom: 2vw;
-  left: 2vw;
-  font-size: 2vh;
 }
 
 /* Scorekeeper */

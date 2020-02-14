@@ -6,7 +6,7 @@ class ModuleStack
 
     if (mode != 'mirror')
     {
-      this.cross = document.getElementById ('cross');
+      this.cross  = document.getElementById ('cross');
       let svg     = document.getElementById ('close.svg');
       let context = this;
       let html    = '';
