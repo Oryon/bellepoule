@@ -1,4 +1,5 @@
-class Card extends Sensor {
+class Card extends Sensor
+{
   constructor (listener,
                cell,
                html,
@@ -9,8 +10,8 @@ class Card extends Sensor {
     this.code     = code;
     this.listener = listener;
 
-    cell.innerHTML = html
-      cell.colSpan   = 2;
+    cell.innerHTML = html;
+    cell.colSpan   = 2;
     this.setTrigger (cell);
   }
 
@@ -28,4 +29,4 @@ class Card extends Sensor {
   {
     this.reset ();
   }
-};
+}

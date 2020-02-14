@@ -27,7 +27,7 @@ body {
   z-index: 1;
   top: 1vh;
   right: 2vw;
-  width: 10vw;
+  width: 5vh;
 }
 
 #brand {
@@ -78,6 +78,10 @@ body {
 .competition {
   font-size: 3vh;
   text-align: center;
+}
+
+.card {
+  width: 4vh;
 }
 
 .small-fencer-name, .fault, .point {

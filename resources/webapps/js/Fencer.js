@@ -112,16 +112,6 @@ class Fencer
 
     this.score.setPoints (node.getAttribute ('Score'));
     this.score.setStatus (node.getAttribute ('Statut'));
-
-    {
-      let svg      = document.getElementById ('close.svg');
-      let div      = document.getElementById ('cross');
-      let row_size = name.getBoundingClientRect().height;
-      let html     = '';
-
-      html += '<img onclick="CloseScorekeeper ();" src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + row_size*1.0 + '"/>';
-      div.innerHTML = html;
-    }
   }
 
   addIdentityPanel (what)
@@ -193,23 +183,21 @@ class Fencer
     let victory_cell    = lastRow.insertCell (-1);
     let excluded_cell   = lastRow.insertCell (-1);
     let context         = this;
-    let row_size;
 
     this.victory_card = new Card (this,
                                   victory_cell,
                                   '<td><div class="point">V</div></td>',
                                   'V');
-    row_size = victory_cell.getBoundingClientRect().height;
 
     this.withdrawal_card = new Card (this,
                                      withdrawal_cell,
-                                     '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + row_size*1.0 + '"/></td>',
+                                     '<td><img class="card" src="data:image/svg+xml;base64,' + svg.dataset.url + '"/></td>',
                                      'A');
 
     svg = document.getElementById ('blackcard.svg');
     this.excluded_card = new Card (this,
                                    excluded_cell,
-                                   '<td><img src="data:image/svg+xml;base64,' + svg.dataset.url + '" width="' + row_size*.7 + '"/></td>',
+                                   '<td><img class="card" src="data:image/svg+xml;base64,' + svg.dataset.url + '"/></td>',
                                    'E');
   }
 

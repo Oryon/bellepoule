@@ -7,11 +7,13 @@
 
   <!--***********************************-->
   <head>
-    <link rel="icon" type="image/png" href="favicon.png"></link>
+    <link rel="icon" type="image/png" href="favicon.png">
 
-    <link rel="stylesheet" type="text/css" href="smartpoule.css"></link>
+    <link rel="stylesheet" type="text/css" href="smartpoule.css">
 
     <script type="application/javascript" src="Message.js"></script>
+    <script type="application/javascript" src="Module.js"></script>
+    <script type="application/javascript" src="ModuleStack.js"></script>
     <script type="application/javascript" src="Sensor.js"></script>
     <script type="application/javascript" src="Card.js"></script>
     <script type="application/javascript" src="Counter.js"></script>
@@ -42,6 +44,7 @@
   <!--***********************************-->
   <script>
     let batches = new Map ();
+    let stack;
     let brand;
     let mode;
     let mirror;
@@ -49,7 +52,6 @@
     let green_fencer;
     let scorekeeper;
     let score_sheet;
-    let cross;
     let matchlist;
     let qrcode;
     let http;
@@ -66,7 +68,6 @@
       green_fencer = new Fencer ('green');
 
       scorekeeper = document.getElementById ('scorekeeper');
-      cross       = document.getElementById ('cross');
       matchlist   = document.getElementById ('matchlist');
       qrcode      = document.getElementById ('qrcode');
       http        = document.getElementById ('http');
@@ -77,9 +78,7 @@
         mode   = 'mirror';
         mirror = '';
 
-        matchlist.style.display   = 'none';
-        scorekeeper.style.display = 'block';
-        cross.style.display       = 'none';
+        matchlist.style.display = 'none';
       }
       else
       {
@@ -101,6 +100,8 @@
           socket.send (msg.data);
         }
       }
+
+      stack = new ModuleStack (mode);
     }
 
     socket.onclose = function ()
@@ -127,17 +128,13 @@
           }
         }
 
-        matchlist.style.display   = 'none';
-        scorekeeper.style.display = 'block';
-
-        if (mode != 'mirror')
-        {
-          cross.style.display = 'block';
-        }
-
+        stack.pull (score_sheet);
         score_sheet = new ScoreSheet (msg,
                                       red_fencer,
                                       green_fencer);
+
+        matchlist.style.display = 'none';
+        stack.push (score_sheet);
 
         if (mirror != '')
         {
@@ -197,11 +194,7 @@
             batches.set (name, batch);
           }
 
-          if (cross.style.display == 'none')
-          {
-            brand.style.display = 'block';
-          }
-
+          brand.style.display = 'block';
           for (const [name, batch] of batches.entries ())
           {
             if (batch.over == false)
@@ -224,20 +217,13 @@
         brand.style.display = 'block';
       }
     }
-
-    function CloseScorekeeper ()
-    {
-      matchlist.style.display   = 'table';
-      scorekeeper.style.display = 'none';
-      cross.style.display       = 'none';
-    }
   </script>
 
   <!--***********************************-->
   <body>
       <div class='frame'>
-        <img id='brand' src='BellePoule.png'></img>
-        <img id='qrcode'></img>
+        <img id='brand' src='BellePoule.png'>
+        <img id='qrcode'>
         <div id='http'></div>
 
         <table id='matchlist' class='table_matchlist'></table>

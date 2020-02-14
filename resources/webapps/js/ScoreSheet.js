@@ -1,10 +1,14 @@
-class ScoreSheet
+class ScoreSheet extends Module
 {
   constructor (msg,
                red_fencer,
                green_fencer)
   {
-    let xml = Message.getField (msg.data, 'Body', 'xml');
+    {
+      let names_panel = document.getElementById ('names.panel');
+
+      super (names_panel.parentNode.parentNode.parentNode);
+    }
 
     this.competition = Message.getField (msg.data, 'Body', 'competition');
     this.stage       = Message.getField (msg.data, 'Body', 'stage');
@@ -12,6 +16,7 @@ class ScoreSheet
     this.bout        = Message.getField (msg.data, 'Body', 'bout');
 
     {
+      let xml         = Message.getField (msg.data, 'Body', 'xml');
       let parser      = new DOMParser ();
       let xml_doc     = parser.parseFromString (xml, 'text/xml');
       let root        = xml_doc.getElementsByTagName ('CompetitionIndividuelle')[0];
