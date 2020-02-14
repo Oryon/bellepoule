@@ -74,10 +74,10 @@ Schedule::Schedule (Contest *contest,
 
   // Formula dialog
   {
-    GtkWidget *menu_pool = gtk_menu_new ();
+    _menu_shell = GTK_MENU_SHELL (gtk_menu_new ());
 
     gtk_menu_tool_button_set_menu (GTK_MENU_TOOL_BUTTON (_glade->GetWidget ("add_stage_toolbutton")),
-                                   menu_pool);
+                                   GTK_WIDGET (_menu_shell));
 
     for (guint i = 0; i < Stage::GetNbStageClass (); i++)
     {
@@ -95,7 +95,7 @@ Schedule::Schedule (Contest *contest,
         g_object_set_data (G_OBJECT (menu_item),
                            "Schedule::class_name",
                            (void *) stage_class->_xml_name);
-        gtk_menu_shell_append (GTK_MENU_SHELL (menu_pool),
+        gtk_menu_shell_append (_menu_shell,
                                menu_item);
         gtk_widget_show (menu_item);
       }
@@ -675,21 +675,52 @@ void Schedule::Mutate (const gchar *from,
 {
   if (_current_stage == 0)
   {
-    for (GList *current = _stage_list; current != nullptr; current = g_list_next (current))
+    gboolean remaining = (_stage_list != nullptr);
+
+    while (remaining)
     {
-      Stage             *from_stage  = (Stage *) current->data;
-      Stage::StageClass *stage_class = from_stage->GetClass ();
-
-      if (g_strcmp0 (stage_class->_xml_name,
-                     from) == 0)
+      for (GList *current = _stage_list; current != nullptr; current = g_list_next (current))
       {
-        Stage *to_stage = CreateStage (to);
+        Stage             *from_stage  = (Stage *) current->data;
+        Stage::StageClass *stage_class = from_stage->GetClass ();
 
-        if (to_stage)
+        if (g_list_next (current) == nullptr)
         {
-          AddStage (to_stage,
-                    from_stage);
-          RemoveStage (from_stage);
+          remaining = FALSE;
+        }
+
+        if (g_strcmp0 (stage_class->_xml_name,
+                       from) == 0)
+        {
+          Stage *to_stage = CreateStage (to);
+
+          if (to_stage)
+          {
+            AddStage (to_stage,
+                      from_stage);
+            RemoveStage (from_stage);
+            break;
+          }
+        }
+      }
+    }
+
+    {
+      GList *children = gtk_container_get_children (GTK_CONTAINER (_menu_shell));
+
+      for (GList *c = children; c; c = g_list_next (c))
+      {
+        GtkWidget *child      = (GtkWidget *) c->data;
+        gchar     *class_name = (gchar *) g_object_get_data (G_OBJECT (child),
+                                                             "Schedule::class_name");
+
+        if (g_strcmp0 (class_name, from) == 0)
+        {
+          gtk_widget_hide (child);
+        }
+        else if (g_strcmp0 (class_name, to) == 0)
+        {
+          gtk_widget_show (child);
         }
       }
     }

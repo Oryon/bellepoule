@@ -99,6 +99,7 @@ class Schedule : public Module,
     void RefreshSensitivity ();
 
   private:
+    GtkMenuShell       *_menu_shell;
     GtkListStore       *_list_store;
     GtkTreeModelFilter *_list_store_filter;
     GList              *_stage_list;

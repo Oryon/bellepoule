@@ -202,7 +202,7 @@ namespace Net
       GError    *error    = nullptr;
 
       {
-        gchar *code = g_strdup_printf ("%s:%d/arbitre/arene/%d",
+        gchar *code = g_strdup_printf ("http://%s:%d/arbitre/arene/%d",
                                        server->_ip_address,
                                        server->GetPort (),
                                        client->_client_id);

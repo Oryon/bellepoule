@@ -146,54 +146,54 @@
       }
       else if (msg.data.startsWith ('[Header]\nname=BellePoule::JobList\n'))
       {
-        let batch;
-
-        while (matchlist.hasChildNodes ())
+        if (mode != 'mirror')
         {
-          matchlist.removeChild (matchlist.firstChild);
-        }
+          let batch;
 
-        fitness = Message.getField (msg.data, 'Header', 'fitness');
-        name    = Message.getField (msg.data, 'Body',   'name');
-
-        if (fitness == '0')
-        {
-          batches.delete (name);
-        }
-        else
-        {
-          let scheme;
-
-          stage = Message.getField (msg.data, 'Body', 'stage');
-
-          if (name.includes (':T'))
+          while (matchlist.hasChildNodes ())
           {
-            scheme = '/CompetitionIndividuelle/TableauSuisse/SuiteDeTableaux/Tableau';
+            matchlist.removeChild (matchlist.firstChild);
+          }
 
-            batch_id = Message.getField (msg.data, 'Body', 'batch');
-            step     = Message.getField (msg.data, 'Body', 'step');
+          fitness = Message.getField (msg.data, 'Header', 'fitness');
+          name    = Message.getField (msg.data, 'Body',   'name');
+
+          if (fitness == '0')
+          {
+            batches.delete (name);
           }
           else
           {
-            scheme = '/CompetitionIndividuelle/RondeSuisse';
-            batch_id = null;
-            step     = null;
+            let scheme;
+
+            stage = Message.getField (msg.data, 'Body', 'stage');
+
+            if (name.includes (':T'))
+            {
+              scheme = '/CompetitionIndividuelle/TableauSuisse/SuiteDeTableaux/Tableau';
+
+              batch_id = Message.getField (msg.data, 'Body', 'batch');
+              step     = Message.getField (msg.data, 'Body', 'step');
+            }
+            else
+            {
+              scheme = '/CompetitionIndividuelle/RondeSuisse';
+              batch_id = null;
+              step     = null;
+            }
+
+            xml = Message.getField (msg.data, 'Body', 'xml');
+
+            batch = new Batch (stage,
+                               batch_id,
+                               step,
+                               xml,
+                               scheme);
+
+            batches.set (name, batch);
           }
 
-          xml = Message.getField (msg.data, 'Body', 'xml');
-
-          batch = new Batch (stage,
-                             batch_id,
-                             step,
-                             xml,
-                             scheme);
-
-          batches.set (name, batch);
-        }
-
-        brand.style.display = 'block';
-        if (mode != 'mirror')
-        {
+          brand.style.display = 'block';
           for (const [name, batch] of batches.entries ())
           {
             if (batch.over == false)
