@@ -30,6 +30,16 @@ body {
   width: 10vw;
 }
 
+#brand {
+  max-width: 100%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+
+  margin-top: 50vh;
+  transform: translateY(-50%);
+}
+
 #qrcode {
   position: fixed;
   bottom: 2vw;
@@ -91,6 +101,7 @@ body {
 
 .fault {
   margin: 1vh 0vh 2vh 0vh;
+  background-color: grey;
 }
 
 td img {

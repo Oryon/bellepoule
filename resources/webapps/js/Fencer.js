@@ -230,8 +230,6 @@ class Fencer
       html += '</td>';
       cell.innerHTML = html;
 
-      cell.style.backgroundColor = 'grey';
-
       lastRow.insertCell (-1);
       lastRow.insertCell (-1);
       lastRow.insertCell (-1);

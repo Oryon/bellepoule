@@ -42,6 +42,7 @@
   <!--***********************************-->
   <script>
     let batches = new Map ();
+    let brand;
     let mode;
     let mirror;
     let red_fencer;
@@ -67,6 +68,7 @@
       overlay     = document.getElementById ('overlay');
       matchlist   = document.getElementById ('matchlist');
       qrcode      = document.getElementById ('qrcode');
+      brand       = document.getElementById ('brand');
 
       if (pathname == '/arene')
       {
@@ -104,6 +106,8 @@
 
     socket.onmessage = function (msg)
     {
+      brand.style.display = 'none';
+
       if (msg.data.startsWith ('[Header]\nname=SmartPoule::Score\n'))
       {
         score_sheet.update (Message.getField (msg.data, 'Header', 'xml'));
@@ -187,11 +191,16 @@
           batches.set (name, batch);
         }
 
-        for (const [name, batch] of batches.entries ())
+        brand.style.display = 'block';
+        if (mode != 'mirror')
         {
-          if (batch.over == false)
+          for (const [name, batch] of batches.entries ())
           {
-            batch.display (name);
+            if (batch.over == false)
+            {
+              batch.display (name);
+              brand.style.display = 'none';
+            }
           }
         }
       }
@@ -203,6 +212,7 @@
 
         qrcode.src = 'data:image/png;base64,'
         qrcode.src += base64;
+        brand.style.display = 'block';
       }
     }
 
@@ -217,6 +227,7 @@
   <!--***********************************-->
   <body>
       <div class='frame'>
+        <img id='brand' src='BellePoule.png'></img>
         <img id='qrcode'></img>
 
         <table id='matchlist' class='table_matchlist'></table>
