@@ -26,6 +26,7 @@
     <script type="application/javascript" src="Competition.js"></script>
     <script type="application/javascript" src="ScoreSheet.js"></script>
     <script type="application/javascript" src="QrCode.js"></script>
+    <script type="application/javascript" src="WelcomeScreen.js"></script>
 
     <icon
         id="close.svg"
@@ -47,7 +48,6 @@
   <script>
     let batches = new Map ();
     let stack;
-    let brand;
     let mode;
     let mirror;
     let red_fencer;
@@ -66,8 +66,6 @@
 
       red_fencer   = new Fencer ('red');
       green_fencer = new Fencer ('green');
-
-      brand = document.getElementById ('brand');
 
       if (pathname == '/arene')
       {
@@ -92,12 +90,13 @@
         }
       }
 
-      stack  = new ModuleStack (mode);
-      qrcode = new QrCode (document.getElementById ('main_frame'),
+      stack = new ModuleStack (mode,
+                               new WelcomeScreen (document.getElementById ('welcome.hook')));
+
+      qrcode = new QrCode (document.getElementById ('qrcode.hook'),
                            mode);
 
-      matchlist = new MatchList (document.getElementById ('matchlist'));
-      stack.push (matchlist);
+      matchlist = new MatchList (document.getElementById ('matchlist.hook'));
     }
 
     socket.onclose = function ()
@@ -106,8 +105,6 @@
 
     socket.onmessage = function (msg)
     {
-      brand.style.display = 'none';
-
       if (msg.data.startsWith ('[Header]\nname=SmartPoule::Score\n'))
       {
         score_sheet.update (Message.getField (msg.data, 'Header', 'xml'));
@@ -115,7 +112,7 @@
       else if (msg.data.startsWith ('[Header]\nname=BellePoule::ScoreSheet\n'))
       {
         stack.pull (score_sheet);
-        score_sheet = new ScoreSheet (document.getElementById ('scorekeeper'),
+        score_sheet = new ScoreSheet (document.getElementById ('ScoreSheet'),
                                       msg,
                                       red_fencer,
                                       green_fencer);
@@ -136,6 +133,7 @@
         {
           let batch;
 
+          stack.pull (matchlist);
           matchlist.clear ();
 
           fitness = Message.getField (msg.data, 'Header', 'fitness');
@@ -176,13 +174,12 @@
             batches.set (name, batch);
           }
 
-          brand.style.display = 'block';
           for (const [name, batch] of batches.entries ())
           {
             if (batch.over == false)
             {
               matchlist.displayBatch (batch, name);
-              brand.style.display = 'none';
+              stack.push (matchlist);
             }
           }
         }
@@ -191,22 +188,18 @@
       {
         qrcode.setUrl (msg.data);
         qrcode.show   ();
-
-        brand.style.display = 'block';
       }
     }
   </script>
 
   <!--***********************************-->
   <body>
-      <div id='main_frame' class='frame'>
-        <img id='brand' src='BellePoule.png'>
+      <div class='frame'>
+        <div id="welcome.hook"></div>
 
-        <div id='matchlist' style='display:none'>
-          <table class='table_matchlist'></table>
-        </div>
+        <div id="matchlist.hook"></div>
 
-        <div id='scorekeeper' class='table_scorekeeper' style='display:none'>
+        <div id='ScoreSheet' class='table_scorekeeper' style='display:none'>
           <table Cellspacing='0'>
             <tr class='row' id='competition.panel'></tr>
             <tr class='row' id='names.panel'></tr>
@@ -221,9 +214,11 @@
               <td Colspan='12'/>
             </tr>
           </table>
-          <div id="cross" style='display:none'></div>
         </div>
 
+        <div id="cross" style='display:none'></div>
+
+        <div id="qrcode.hook"></div>
       </div>
   </body>
 </html>

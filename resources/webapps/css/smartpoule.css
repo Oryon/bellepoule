@@ -30,7 +30,7 @@ body {
   width: 5vh;
 }
 
-#brand {
+#WelcomeScreen {
   max-width: 100%;
   height: auto;
   margin-left: auto;
@@ -121,7 +121,7 @@ td.td_matchlist {
   margin-right: auto;
 }
 
-table.table_matchlist, table_matchlist.table_scorekeeper {
+table.table_matchlist, table.table_scorekeeper {
   border-collapse: collapse;
   width: 100vw;
 }

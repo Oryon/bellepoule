@@ -1,8 +1,10 @@
 class ModuleStack
 {
-  constructor (mode)
+  constructor (mode,
+               default_module)
   {
-    this.stack = new Array ();
+    this.stack          = new Array ();
+    this.default_module = default_module;
 
     if (mode != 'mirror')
     {
@@ -15,6 +17,8 @@ class ModuleStack
       this.cross.innerHTML = html;
       this.cross.onclick = function () {ModuleStack.onCrossClicked (context);};
     }
+
+    this.default_module.show ();
   }
 
   push (module)
@@ -24,6 +28,7 @@ class ModuleStack
       this.stack[this.stack.length-1].hide ();
     }
 
+    this.default_module.hide ();
     this.stack.push (module);
     module.show ();
 
@@ -44,6 +49,10 @@ class ModuleStack
         if ((index > 0) && (index == this.stack.length-1))
         {
           this.stack[index-1].show ();
+        }
+        else
+        {
+          this.default_module.show ();
         }
 
         this.stack.splice (index, 1);
