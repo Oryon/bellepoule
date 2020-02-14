@@ -59,8 +59,9 @@ class Batch
                                   null);
   }
 
-  display (what)
+  display (what, where)
   {
+    let table = where.firstElementChild;
     let nodes = this.getMessageNodes ();
     let node  = nodes.iterateNext ();
 
@@ -69,7 +70,7 @@ class Batch
       let context = this;
 
       {
-        let header = matchlist.insertRow (-1);
+        let header = table.insertRow (-1);
         let cell   = header.insertCell (-1);
         let html   = '</p>';
         let title;
@@ -108,7 +109,7 @@ class Batch
       {
         let match      = node.childNodes[i];
         let match_id   = match.getAttribute ('ID');
-        let row        = matchlist.insertRow (-1);
+        let row        = table.insertRow (-1);
         let match_over = false;
 
         row.setAttribute ('class', 'tr_matchlist');

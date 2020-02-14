@@ -19,10 +19,15 @@ class ModuleStack
 
   push (module)
   {
+    if (this.stack.length > 0)
+    {
+      this.stack[this.stack.length-1].hide ();
+    }
+
     this.stack.push (module);
     module.show ();
 
-    if (this.cross && (this.stack.length > 0))
+    if (this.cross && (this.stack.length > 1))
     {
       this.cross.style.display = 'block';
     }
@@ -36,9 +41,14 @@ class ModuleStack
 
       if (index != -1)
       {
+        if ((index > 0) && (index == this.stack.length-1))
+        {
+          this.stack[index-1].show ();
+        }
+
         this.stack.splice (index, 1);
 
-        if (this.cross && (this.stack.length == 0))
+        if (this.cross && (this.stack.length == 1))
         {
           this.cross.style.display = 'none';
         }

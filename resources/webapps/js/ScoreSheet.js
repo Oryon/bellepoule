@@ -1,14 +1,14 @@
 class ScoreSheet extends Module
 {
-  constructor (msg,
+  constructor (container,
+               msg,
                red_fencer,
                green_fencer)
   {
-    {
-      let names_panel = document.getElementById ('names.panel');
+    super ('ScoreSheet',
+           container);
 
-      super (names_panel.parentNode.parentNode.parentNode);
-    }
+    this.clear ();
 
     this.competition = Message.getField (msg.data, 'Body', 'competition');
     this.stage       = Message.getField (msg.data, 'Body', 'stage');
@@ -48,6 +48,19 @@ class ScoreSheet extends Module
 
     red_fencer.setOpponent   (green_fencer);
     green_fencer.setOpponent (red_fencer);
+  }
+
+  clear ()
+  {
+    let table = this.container.firstElementChild;
+
+    for (let panel of table.rows)
+    {
+      while (panel.hasChildNodes ())
+      {
+        panel.removeChild (panel.firstChild);
+      }
+    }
   }
 
   update (xml)
