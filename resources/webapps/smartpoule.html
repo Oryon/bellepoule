@@ -154,6 +154,7 @@
     let red_fencer;
     let green_fencer;
     let scorekeeper;
+    let score_sheet;
     let overlay;
     let matchlist;
     let qrcode;
@@ -161,16 +162,60 @@
 
     !function(e,t){"use strict";var n=null,a="ontouchstart"in e||navigator.MaxTouchPoints>0||navigator.msMaxTouchPoints>0,i=a?"touchstart":"mousedown",o=a?"touchend":"mouseup",m=a?"touchmove":"mousemove",u=0,r=0,s=10,c=10;function l(i){v(i);var m=i.target,u=parseInt(m.getAttribute("data-long-press-delay")||"1500",10);n=function(t,n){if(!(e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame&&e.mozCancelRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame))return e.setTimeout(t,n);var a=(new Date).getTime(),i={},o=function(){(new Date).getTime()-a>=n?t.call():i.value=requestAnimFrame(o)};return i.value=requestAnimFrame(o),i}(function(e){v();var n=a?e.touches[0].clientX:e.clientX,i=a?e.touches[0].clientY:e.clientY;this.dispatchEvent(new CustomEvent("long-press",{bubbles:!0,cancelable:!0,detail:{clientX:n,clientY:i}}))&&t.addEventListener(o,function e(n){t.removeEventListener(o,e,!0),function(e){e.stopImmediatePropagation(),e.preventDefault(),e.stopPropagation()}(n)},!0)}.bind(m,i),u)}function v(t){var a;(a=n)&&(e.cancelAnimationFrame?e.cancelAnimationFrame(a.value):e.webkitCancelAnimationFrame?e.webkitCancelAnimationFrame(a.value):e.webkitCancelRequestAnimationFrame?e.webkitCancelRequestAnimationFrame(a.value):e.mozCancelRequestAnimationFrame?e.mozCancelRequestAnimationFrame(a.value):e.oCancelRequestAnimationFrame?e.oCancelRequestAnimationFrame(a.value):e.msCancelRequestAnimationFrame?e.msCancelRequestAnimationFrame(a.value):clearTimeout(a)),n=null}"function"!=typeof e.CustomEvent&&(e.CustomEvent=function(e,n){n=n||{bubbles:!1,cancelable:!1,detail:void 0};var a=t.createEvent("CustomEvent");return a.initCustomEvent(e,n.bubbles,n.cancelable,n.detail),a},e.CustomEvent.prototype=e.Event.prototype),e.requestAnimFrame=e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame||function(t){e.setTimeout(t,1e3/60)},t.addEventListener(o,v,!0),t.addEventListener(m,function(e){var t=Math.abs(u-e.clientX),n=Math.abs(r-e.clientY);(t>=s||n>=c)&&v()},!0),t.addEventListener("wheel",v,!0),t.addEventListener("scroll",v,!0),t.addEventListener(i,function(e){u=e.clientX,r=e.clientY,l(e)},!0)}(window,document);
 
-    function getMessageField (message,
-                              field)
-    {
-      let pattern = new RegExp (field + '=.*\\n');
-
-      if (pattern.test (message))
+    // -- Message ------------------
+    class Message {
+      constructor (name,
+                   content = null)
       {
-        return message.match (pattern)[0];
+        if (name != null)
+        {
+          this.data = '';
+
+          this.data += '[Header]\n';
+          this.data += 'name=' + name + '\n';
+          this.data += 'netid=0\n';
+          this.data += 'fitness=1\n';
+          this.data += '[Body]\n';
+        }
+        else
+        {
+          this.data = content;
+        }
       }
-      return '';
+
+      addField (name,
+                value)
+      {
+        this.data += name + '=' + value + '\n';
+      }
+
+      static getField (message,
+                       section_name,
+                       field)
+      {
+        let section;
+        let value = '';
+
+        {
+          let offset = message.indexOf ('[' + section_name + ']');
+
+          section = message.slice (offset);
+        }
+
+        {
+          let tag    = field + '=';
+          let offset = section.indexOf (tag);
+
+          if (offset != -1)
+          {
+            value = section.slice (offset + tag.length);
+            value = value.split ('\n', 1)[0];
+            value = value.replace (/\\n/g, '');
+          }
+        }
+
+        return value;
+      }
     }
 
     // -- Score --------------------
@@ -721,34 +766,26 @@
         }
       }
 
-      static onClicked (batch, match_id) {
-        let msg = '';
+      static onClicked (batch, match_id)
+      {
+        let msg = new Message ('SmartPoule::ScoreSheetCall');
 
-        msg += '[Header]\n';
-        msg += 'name=SmartPoule::ScoreSheetCall\n';
-        msg += 'netid=0\n';
-        msg += 'fitness=1\n';
-        msg += '[Body]\n';
-        msg += 'competition=' + batch.competition.get ('ID') + '\n';
-        msg += 'stage=' + batch.stage + '\n';
-        if (mirror != '')
-        {
-          msg += 'mirror=' + mirror + '\n';
-        }
+        msg.addField ('competition', batch.competition.get ('ID'));
+        msg.addField ('stage',       batch.stage);
 
         if (batch.id)
         {
           let match_index = parseInt (match_id) - 1;
 
-          msg += 'batch=' + batch.id + '\n';
-          msg += 'bout=' + batch.step + ':' + match_index + '\n';
+          msg.addField ('batch', batch.id);
+          msg.addField ('bout',  batch.step + ':' + match_index);
         }
         else
         {
-          msg += 'bout=' + match_id + '\n';
+          msg.addField ('bout', match_id);
         }
 
-        socket.send (msg);
+        socket.send (msg.data);
       }
     }
 
@@ -758,21 +795,12 @@
                    red_fencer,
                    green_fencer)
       {
-        let xml;
+        let xml = Message.getField (msg.data, 'Body', 'xml');
 
-        {
-          let tag    = 'xml=';
-          let offset = msg.data.indexOf (tag);
-
-          xml = msg.data.slice (offset + tag.length);
-          xml = xml.split ('\n', 1)[0];
-          xml = xml.replace (/\\n/g, '');
-        }
-
-        this.competition = getMessageField (msg.data, 'competition');
-        this.stage       = getMessageField (msg.data, 'stage');
-        this.batch       = getMessageField (msg.data, 'batch');
-        this.bout        = getMessageField (msg.data, 'bout');
+        this.competition = Message.getField (msg.data, 'Body', 'competition');
+        this.stage       = Message.getField (msg.data, 'Body', 'stage');
+        this.batch       = Message.getField (msg.data, 'Body', 'batch');
+        this.bout        = Message.getField (msg.data, 'Body', 'bout');
 
         {
           let parser      = new DOMParser ();
@@ -808,49 +836,70 @@
         green_fencer.setOpponent (red_fencer);
       }
 
+      update (xml)
+      {
+        let parser  = new DOMParser ();
+        let xml_doc = parser.parseFromString (xml, 'text/xml');
+        let root    = xml_doc.getElementsByTagName ('Match')[0];
+
+        if (root.childNodes.length == 2)
+        {
+          for (let f = 0; f < 2; f++)
+          {
+            this.fencers[f].update (root.childNodes[f]);
+          }
+        }
+      }
+
       onNewScore ()
       {
         let dropped_match = false;
-        let msg = '';
+        let xml = '<?xml version="1.0" encoding="UTF-8"?>';
+        let msg = new Message ('SmartPoule::Score');
 
-        msg += '[Header]\n';
-        msg += 'name=SmartPoule::Score\n';
-        msg += 'netid=0\n';
-        msg += 'fitness=1\n';
-        msg += '[Body]\n';
-        msg += this.competition;
-        msg += this.stage;
-        msg += this.batch;
-        msg += this.bout;
-        msg += 'xml=<?xml version="1.0" encoding="UTF-8"?>';
-        msg += '<Match>';
-
-        for (let f = 0; f < 2; f++)
         {
-          if (   (this.fencers[f].score.status == 'A')
-              || (this.fencers[f].score.status == 'E'))
+          xml += '<Match>';
+
+          for (let f = 0; f < 2; f++)
           {
-            dropped_match = true;
-            break;
+            if (   (this.fencers[f].score.status == 'A')
+                || (this.fencers[f].score.status == 'E'))
+            {
+              dropped_match = true;
+              break;
+            }
           }
+
+          for (let f = 0; f < 2; f++)
+          {
+            xml += '<Tireur REF="' + this.fencers[f].ref + '"';
+            if (dropped_match == false)
+            {
+              xml += ' Score="' + this.fencers[f].score.points + '"';
+            }
+            if (this.fencers[f].score.status != null)
+            {
+              xml += ' Statut="' + this.fencers[f].score.status + '"';
+            }
+            xml += '/>';
+          }
+          xml += '</Match>';
         }
 
-        for (let f = 0; f < 2; f++)
-        {
-          msg += '<Tireur REF="' + this.fencers[f].ref + '"';
-          if (dropped_match == false)
-          {
-            msg += ' Score="' + this.fencers[f].score.points + '"';
-          }
-          if (this.fencers[f].score.status != null)
-          {
-            msg += ' Statut="' + this.fencers[f].score.status + '"';
-          }
-          msg += '/>';
-        }
-        msg += '</Match>';
+        msg.addField ('competition', this.competition);
+        msg.addField ('stage',       this.stage);
+        msg.addField ('batch',       this.batch);
+        msg.addField ('bout',        this.bout);
+        msg.addField ('xml',         xml);
 
-        socket.send (msg);
+        socket.send (msg.data);
+
+        if (mirror != '')
+        {
+          msg.addField ('mirror', mirror);
+
+          socket.send (msg.data);
+        }
       }
     }
 
@@ -885,8 +934,11 @@
 
         for (let i = 0; i < this.faults.length; i++)
         {
-          this.faults[i].counter.setCountable (opponent.score);
-          this.light.addListener (opponent.faults[i].counter);
+          if (this.faults[i].counter != null)
+          {
+            this.faults[i].counter.setCountable (opponent.score);
+            this.light.addListener (opponent.faults[i].counter);
+          }
         }
 
         this.light.addListener (this.withdrawal_card);
@@ -926,13 +978,19 @@
         this.addIdentityPanel ('name');
         this.addIdentityPanel ('firstname');
         this.addLightPanel    (this.color);
-        this.addPointsPanel   ();
 
         if (mode != 'mirror')
         {
+          this.addPointsPanel ();
           this.addCardsPanel  ();
           this.addFaultsPanel ();
         }
+      }
+
+      update (node)
+      {
+        this.score.setPoints (node.getAttribute ('Score'));
+        this.score.setStatus (node.getAttribute ('Statut'));
       }
 
       feed (competition, node)
@@ -1101,25 +1159,24 @@
         scorekeeper.style.display = 'block';
         overlay.style.display     = 'none';
       }
-      else if (pathname.startsWith ('/arbitre/arene/'))
+      else
       {
-        let sections = pathname.split ('/');
+        mode = 'referee';
 
-        mode   = 'referee';
-        mirror = sections[3];
-
+        if (pathname.startsWith ('/arbitre/arene/'))
         {
-          let msg = '';
+          let sections = pathname.split ('/');
 
-          msg += '[Header]\n';
-          msg += 'name=SmartPoule::JobListCall\n';
-          msg += 'netid=0\n';
-          msg += 'fitness=1\n';
-
-          socket.send (msg);
+          mirror = sections[3];
         }
 
         qrcode.style.display = 'none';
+
+        {
+          let msg = new Message ('SmartPoule::JobListCall');
+
+          socket.send (msg.data);
+        }
       }
     }
 
@@ -1129,7 +1186,11 @@
 
     socket.onmessage = function (msg)
     {
-      if (msg.data.startsWith ('[Header]\nname=BellePoule::ScoreSheet'))
+      if (msg.data.startsWith ('[Header]\nname=SmartPoule::Score\n'))
+      {
+        score_sheet.update (Message.getField (msg.data, 'Header', 'xml'));
+      }
+      else if (msg.data.startsWith ('[Header]\nname=BellePoule::ScoreSheet\n'))
       {
         let table = scorekeeper.firstElementChild;
         for (let panel of table.rows)
@@ -1142,13 +1203,26 @@
 
         matchlist.style.display   = 'none';
         scorekeeper.style.display = 'block';
-        overlay.style.display     = 'block';
+
+        if (mode != 'mirror')
+        {
+          overlay.style.display = 'block';
+        }
 
         score_sheet = new ScoreSheet (msg,
                                       red_fencer,
                                       green_fencer);
+
+        if (mirror != '')
+        {
+          let mirror_msg = new Message (null, msg.data);
+
+          mirror_msg.addField ('mirror', mirror);
+
+          socket.send (mirror_msg.data);
+        }
       }
-      else if (msg.data.startsWith ('[Header]\nname=BellePoule::JobList'))
+      else if (msg.data.startsWith ('[Header]\nname=BellePoule::JobList\n'))
       {
         let batch;
 
@@ -1157,20 +1231,8 @@
           matchlist.removeChild (matchlist.firstChild);
         }
 
-        tag     = 'fitness=';
-        offset  = msg.data.indexOf (tag);
-        fitness = msg.data.slice (offset + tag.length);
-        fitness = fitness.split ('\n', 1)[0];
-        fitness = fitness.replace (/\\n/g, '');
-
-        offset = msg.data.indexOf ('[Body]');
-        body   = msg.data.slice (offset);
-
-        tag    = 'name=';
-        offset = body.indexOf (tag);
-        name = body.slice (offset + tag.length);
-        name = name.split ('\n', 1)[0];
-        name = name.replace (/\\n/g, '');
+        fitness = Message.getField (msg.data, 'Header', 'fitness');
+        name    = Message.getField (msg.data, 'Body',   'name');
 
         if (fitness == '0')
         {
@@ -1180,27 +1242,14 @@
         {
           let scheme;
 
-          tag    = 'stage=';
-          offset = body.indexOf (tag);
-          stage = body.slice (offset + tag.length);
-          stage = stage.split ('\n', 1)[0];
-          stage = stage.replace (/\\n/g, '');
+          stage = Message.getField (msg.data, 'Body', 'stage');
 
           if (name.includes (':T'))
           {
             scheme = '/CompetitionIndividuelle/TableauSuisse/SuiteDeTableaux/Tableau';
 
-            tag    = 'batch=';
-            offset = body.indexOf (tag);
-            batch_id = body.slice (offset + tag.length);
-            batch_id = batch_id.split ('\n', 1)[0];
-            batch_id = batch_id.replace (/\\n/g, '');
-
-            tag    = 'step=';
-            offset = body.indexOf (tag);
-            step = body.slice (offset + tag.length);
-            step = step.split ('\n', 1)[0];
-            step = step.replace (/\\n/g, '');
+            batch_id = Message.getField (msg.data, 'Body', 'batch');
+            step     = Message.getField (msg.data, 'Body', 'step');
           }
           else
           {
@@ -1209,16 +1258,13 @@
             step     = null;
           }
 
-          tag    = 'xml=';
-          offset = body.indexOf (tag);
-          xml    = body.slice (offset + tag.length);
-          xml    = xml.split ('\n', 1)[0];
-          xml    = xml.replace (/\\n/g, '');
-          batch  = new Batch (stage,
-                              batch_id,
-                              step,
-                              xml,
-                              scheme);
+          xml = Message.getField (msg.data, 'Body', 'xml');
+
+          batch = new Batch (stage,
+                             batch_id,
+                             step,
+                             xml,
+                             scheme);
 
           batches.set (name, batch);
         }
@@ -1231,17 +1277,11 @@
           }
         }
       }
-      else if (msg.data.startsWith ('[Header]\nname=BellePoule::QrCode'))
+      else if (msg.data.startsWith ('[Header]\nname=BellePoule::QrCode\n'))
       {
-        let offset = msg.data.indexOf ('[Body]');
-        let body   = msg.data.slice (offset);
         let qrcode = document.getElementById ('qrcode');
 
-        tag    = 'qrcode.png=';
-        offset = body.indexOf (tag);
-        base64 = body.slice (offset + tag.length);
-        base64 = base64.split ('\n', 1)[0];
-        base64 = base64.replace (/\\n/g, '');
+        base64 = Message.getField (msg.data, 'Body', 'qrcode.png');
 
         qrcode.src = 'data:image/png;base64,'
         qrcode.src += base64;

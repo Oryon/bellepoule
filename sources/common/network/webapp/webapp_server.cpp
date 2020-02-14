@@ -172,17 +172,16 @@ namespace Net
     WebAppServer *server  = dynamic_cast<WebAppServer *> (request->_server);
     Message      *message = new Message ((const guint8 *) request->_data);
 
-    message->Set ("client",  request->_client_id);
-    message->Set ("channel", server->_channel);
-    server->_listener->OnMessage (message);
-
     if (message->HasField ("mirror"))
     {
-      Message *mirror = message->Clone ();
-
-      mirror->Set ("client", message->GetInteger ("mirror"));
-      server->_listener->OnMessage (mirror);
-      mirror->Release ();
+      server->SendMessageTo (message->GetInteger ("mirror"),
+                             message);
+    }
+    else
+    {
+      message->Set ("client",  request->_client_id);
+      message->Set ("channel", server->_channel);
+      server->_listener->OnMessage (message);
     }
 
     message->Release ();
