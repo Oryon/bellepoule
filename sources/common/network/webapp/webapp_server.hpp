@@ -37,8 +37,6 @@ namespace Net
                           Message *response);
 
     private:
-      static guint _connection_count;
-
       struct OutgoingMessage
       {
         OutgoingMessage (guint    client,
@@ -58,8 +56,7 @@ namespace Net
       struct WebApp
       {
         struct lws      *_wsi;
-        guint            _id;
-        guint            _screen_id;
+        guint            _client_id;
         RequestBody     *_input_buffer;
         OutgoingMessage *_pending_message;
       };
@@ -68,7 +65,6 @@ namespace Net
       {
         WebAppServer *_server;
         guint         _client_id;
-        guint         _screen_id;
       };
 
       struct IncomingRequest : public RequestBody
@@ -78,7 +74,7 @@ namespace Net
 
         ~IncomingRequest () override;
 
-        guint _id;
+        guint _client_id;
       };
 
     private:

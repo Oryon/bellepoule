@@ -21,15 +21,13 @@
 
 namespace Net
 {
-  guint WebAppServer::_connection_count = 0;
-
   // --------------------------------------------------------------------------------
   // --------------------------------------------------------------------------------
   WebAppServer::IncomingRequest::IncomingRequest (Server *server,
                                                   guint   id)
     : RequestBody (server)
   {
-    _id = id;
+    _client_id = id;
   }
 
   // --------------------------------------------------------------------------------
@@ -174,9 +172,18 @@ namespace Net
     WebAppServer *server  = dynamic_cast<WebAppServer *> (request->_server);
     Message      *message = new Message ((const guint8 *) request->_data);
 
-    message->Set ("client",  request->_id);
+    message->Set ("client",  request->_client_id);
     message->Set ("channel", server->_channel);
     server->_listener->OnMessage (message);
+
+    if (message->HasField ("mirror"))
+    {
+      Message *mirror = message->Clone ();
+
+      mirror->Set ("client", message->GetInteger ("mirror"));
+      server->_listener->OnMessage (mirror);
+      mirror->Release ();
+    }
 
     message->Release ();
     delete (request);
@@ -199,7 +206,7 @@ namespace Net
         gchar *code = g_strdup_printf ("%s:%d/arbitre/arene/%d",
                                        server->_ip_address,
                                        server->GetPort (),
-                                       client->_screen_id);
+                                       client->_client_id);
 
         pixbuf = FlashCode::GetPixbuf (code);
 
@@ -306,7 +313,6 @@ namespace Net
         printf (GREEN "LWS_CALLBACK_ESTABLISHED %p/%p\n" ESC, (void *) web_app, (void *) wsi);
 
         web_app->_wsi             = wsi;
-        web_app->_id              = ++_connection_count;
         web_app->_input_buffer    = nullptr;
         web_app->_pending_message = nullptr;
 
@@ -328,13 +334,12 @@ namespace Net
             {
               Client *client;
 
-              web_app->_screen_id = g_ascii_strtoull (splitted_ip[3],
+              web_app->_client_id = g_ascii_strtoull (splitted_ip[3],
                                                       nullptr,
                                                       10);
               client = new Client ();
               client->_server    = server;
-              client->_client_id = web_app->_id;
-              client->_screen_id = web_app->_screen_id;
+              client->_client_id = web_app->_client_id;
 
               g_strfreev (splitted_ip);
 
@@ -366,7 +371,7 @@ namespace Net
         if (web_app->_input_buffer == nullptr)
         {
           web_app->_input_buffer = new IncomingRequest (server,
-                                                        web_app->_id);
+                                                        web_app->_client_id);
         }
 
         web_app->_input_buffer->Append (in,
@@ -462,7 +467,7 @@ namespace Net
               WebApp *web_app = (WebApp *) current->data;
 
               if (   (outgoing_message->_client_id == 0)
-                  || (web_app->_id == outgoing_message->_client_id))
+                  || (web_app->_client_id == outgoing_message->_client_id))
               {
                 web_app->_pending_message = outgoing_message->Duplicate ();
 
