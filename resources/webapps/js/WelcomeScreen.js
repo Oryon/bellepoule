@@ -7,7 +7,6 @@ class WelcomeScreen extends Module
            document.createElement ('img'));
 
     hook.appendChild (this.container);
-    this.hide ();
 
     this.container.src = 'BellePoule.png';
   }

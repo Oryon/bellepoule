@@ -6,18 +6,35 @@ class Module
     this.name         = name;
     this.container    = container;
     this.container.id = name;
+    this.listener     = null;
+  }
+
+  setListener (listener)
+  {
+    this.listener = listener;
+  }
+
+  onUpdated ()
+  {
+    if (this.listener != null)
+    {
+      this.listener.onDirty ();
+    }
   }
 
   show ()
   {
-    console.log ('show ("' + this.name + "')");
     this.container.style.display = 'block';
   }
 
   hide ()
   {
-    console.log ('hide ("' + this.name + "')");
     this.container.style.display = 'none';
+  }
+
+  isEmpty ()
+  {
+    return false;
   }
 
   clear ()

@@ -5,8 +5,9 @@ class MatchList extends Module
     super ('MatchList',
            document.createElement ('div'));
 
+    this.empty = true;
+
     hook.appendChild (this.container);
-    this.hide ();
 
     {
       let table = document.createElement ('table');
@@ -16,8 +17,22 @@ class MatchList extends Module
     }
   }
 
+  clear ()
+  {
+    super.clear ();
+    this.empty = true;
+    super.onUpdated ();
+  }
+
+  isEmpty ()
+  {
+    return this.empty;
+  }
+
   displayBatch (batch, name)
   {
     batch.display (name, this.container);
+    this.empty = false;
+    super.onUpdated ();
   }
 }

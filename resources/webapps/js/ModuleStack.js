@@ -1,10 +1,8 @@
 class ModuleStack
 {
-  constructor (mode,
-               default_module)
+  constructor (mode)
   {
-    this.stack          = new Array ();
-    this.default_module = default_module;
+    this.stack = new Array ();
 
     if (mode != 'mirror')
     {
@@ -17,25 +15,50 @@ class ModuleStack
       this.cross.innerHTML = html;
       this.cross.onclick = function () {ModuleStack.onCrossClicked (context);};
     }
+  }
 
-    this.default_module.show ();
+  onDirty ()
+  {
+    let moduleDisplayed = null;
+
+    if (this.cross)
+    {
+      this.cross.style.display = 'none';
+    }
+
+    for (let i = this.stack.length; i > 0; i--)
+    {
+      let module = this.stack[i-1];
+
+      if (moduleDisplayed == null)
+      {
+        if (module.isEmpty () == false)
+        {
+          module.show ();
+          moduleDisplayed = module;
+
+          if (this.cross && (this.stack.length > 2))
+          {
+            this.cross.style.display = 'block';
+          }
+        }
+        else
+        {
+          module.hide ();
+        }
+      }
+      else
+      {
+        module.hide ();
+      }
+    }
   }
 
   push (module)
   {
-    if (this.stack.length > 0)
-    {
-      this.stack[this.stack.length-1].hide ();
-    }
-
-    this.default_module.hide ();
+    module.setListener (this);
     this.stack.push (module);
-    module.show ();
-
-    if (this.cross && (this.stack.length > 1))
-    {
-      this.cross.style.display = 'block';
-    }
+    this.onDirty ();
   }
 
   pull (module)
@@ -46,24 +69,13 @@ class ModuleStack
 
       if (index != -1)
       {
-        if ((index > 0) && (index == this.stack.length-1))
-        {
-          this.stack[index-1].show ();
-        }
-        else
-        {
-          this.default_module.show ();
-        }
-
         this.stack.splice (index, 1);
-
-        if (this.cross && (this.stack.length == 1))
-        {
-          this.cross.style.display = 'none';
-        }
       }
 
+      module.setListener (null);
       module.hide ();
+
+      this.onDirty ();
     }
   }
 
