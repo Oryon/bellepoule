@@ -45,6 +45,8 @@ namespace Quest
 
       Generic::PointSystem *GetPointSystem () override;
 
+      gboolean ScoreOverflowAllowed () override;
+
       GSList *SpreadAttendees (GSList *attendees) override;
 
       void Reset () override;

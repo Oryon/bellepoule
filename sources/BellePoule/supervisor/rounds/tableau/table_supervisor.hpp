@@ -58,6 +58,8 @@ namespace Table
 
       void SaveHeader (XmlScheme *xml_scheme);
 
+      virtual gboolean ScoreOverflowAllowed ();
+
     public:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;

@@ -23,7 +23,8 @@ class Data;
 class Score : public Object
 {
   public:
-    Score (Data *max);
+    Score (Data     *max,
+           gboolean  overflow_allowed);
 
   public:
     void Set (guint score, gboolean victory);
@@ -67,10 +68,11 @@ class Score : public Object
       OPPONENT_OUT
     };
 
-    Data   *_max;
-    guint   _score;
-    Status  _status;
-    Status  _backup_status;
+    Data     *_max;
+    guint     _score;
+    gboolean  _overflow_allowed;
+    Status    _status;
+    Status    _backup_status;
 
     ~Score () override;
 };

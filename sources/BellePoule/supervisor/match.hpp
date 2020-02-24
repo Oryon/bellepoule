@@ -34,11 +34,13 @@ class Match : public Object,
               public Error::Provider
 {
   public:
-    Match  (Data *max_score);
+    Match (Data     *max_score,
+           gboolean  overflow_allowed);
 
-    Match  (Player *A,
-            Player *B,
-            Data   *max_score);
+    Match (Player   *A,
+           Player   *B,
+           Data     *max_score,
+           gboolean  overflow_allowed = FALSE);
 
     void SetNameSpace (const gchar *name_space);
 

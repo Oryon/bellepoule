@@ -22,13 +22,15 @@
 #include "score.hpp"
 
 // --------------------------------------------------------------------------------
-Score::Score  (Data *max)
+Score::Score  (Data     *max,
+               gboolean  overflow_allowed)
   : Object ("Score")
 {
-  _max           = max;
-  _score         = 0;
-  _status        = Status::UNKNOWN;
-  _backup_status = Status::UNKNOWN;
+  _max              = max;
+  _score            = 0;
+  _overflow_allowed = overflow_allowed;
+  _status           = Status::UNKNOWN;
+  _backup_status    = Status::UNKNOWN;
 }
 
 // --------------------------------------------------------------------------------
@@ -66,12 +68,11 @@ gchar *Score::GetImage ()
 
   if (_status == Status::UNKNOWN)
   {
-    image = g_new (char, 1);
-    image[0] = 0; // empty string
+    image = g_new0 (char, 1); // empty string
   }
   else if (_status == Status::VICTORY)
   {
-    if (_score == _max->_value)
+    if ((_score == _max->_value) && (_overflow_allowed == FALSE))
     {
       image = g_strdup_printf ("V");
     }
@@ -181,9 +182,9 @@ void Score::Set (guint    score,
   _status = Status::DEFEAT;
 
   if (_score == _max->_value)
-  {
-    _status = Status::VICTORY;
-  }
+    {
+      _status = Status::VICTORY;
+    }
   if (victory)
   {
     _status = Status::VICTORY;
@@ -193,10 +194,14 @@ void Score::Set (guint    score,
 // --------------------------------------------------------------------------------
 gboolean Score::IsValid ()
 {
-  if (   (_status != Status::UNKNOWN)
-      && (_score > _max->_value))
+  if (_status != Status::UNKNOWN)
   {
-    return FALSE;
+    if (_overflow_allowed)
+    {
+      return TRUE;
+    }
+
+    return (_score <= _max->_value);
   }
 
   return TRUE;
@@ -252,7 +257,8 @@ gboolean Score::IsConsistentWith (Score *with)
   {
     return FALSE;
   }
-  else if (   (_score >= _max->_value)
+  else if (   (_overflow_allowed == FALSE)
+           && (_score       >= _max->_value)
            && (with->_score >= _max->_value))
   {
     return FALSE;

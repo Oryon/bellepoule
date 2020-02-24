@@ -526,7 +526,8 @@ namespace Quest
           {
             Match *match = new Match (fencer,
                                       opponent,
-                                      _max_score);
+                                      _max_score,
+                                      TRUE);
 
             matches = g_list_prepend (matches,
                                       match);

@@ -1615,7 +1615,8 @@ namespace Table
     data->_fencer_goo_image = nullptr;
     data->_print_goo_icon   = nullptr;
     data->_connector        = nullptr;
-    data->_match = new Match (_max_score);
+    data->_match = new Match (_max_score,
+                              _supervisor->ScoreOverflowAllowed ());
 
     {
       gchar *name_space = g_strdup_printf ("%d-%d.", _first_place, data->_table->GetSize ()*2);

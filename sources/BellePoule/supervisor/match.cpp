@@ -31,7 +31,8 @@
 GTimeSpan Match::_clock_offset = 0;
 
 // --------------------------------------------------------------------------------
-Match::Match (Data *max_score)
+Match::Match (Data     *max_score,
+              gboolean  overflow_allowed)
   : Object ("Match")
 {
   _referee_list  = nullptr;
@@ -48,7 +49,8 @@ Match::Match (Data *max_score)
   {
     _opponents[i]._fencer   = nullptr;
     _opponents[i]._is_known = FALSE;
-    _opponents[i]._score    = new Score (max_score);
+    _opponents[i]._score    = new Score (max_score,
+                                         overflow_allowed);
   }
 
   _name       = g_strdup ("");
@@ -58,10 +60,11 @@ Match::Match (Data *max_score)
 }
 
 // --------------------------------------------------------------------------------
-Match::Match  (Player *A,
-               Player *B,
-               Data   *max_score)
-  : Match (max_score)
+Match::Match  (Player  *A,
+               Player  *B,
+               Data    *max_score,
+              gboolean  overflow_allowed)
+  : Match (max_score, overflow_allowed)
 {
   _opponents[0]._fencer   = A;
   _opponents[0]._is_known = TRUE;

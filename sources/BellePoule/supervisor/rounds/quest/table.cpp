@@ -52,6 +52,12 @@ namespace Quest
   }
 
   // --------------------------------------------------------------------------------
+  gboolean BonusTable::ScoreOverflowAllowed ()
+  {
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
   void BonusTable::Reset ()
   {
     _point_system->Clear ();

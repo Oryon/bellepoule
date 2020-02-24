@@ -583,6 +583,12 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Supervisor::ScoreOverflowAllowed ()
+  {
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean Supervisor::OnMessage (Net::Message *message)
   {
     if (message->Is ("BellePoule2D::Roadmap"))
