@@ -67,7 +67,8 @@ class Batch
 
     if (node)
     {
-      let context = this;
+      let context      = this;
+      let nb_displayed = 0;
 
       {
         let header = table.insertRow (-1);
@@ -112,12 +113,6 @@ class Batch
         let row        = table.insertRow (-1);
         let match_over = false;
 
-        row.setAttribute ('class', 'tr_matchlist');
-        if (i%2 == 0)
-        {
-          row.style.backgroundColor = 'lightgreen';
-        }
-
         row.addEventListener ('click', function () {Batch.onClicked (context, match_id);});
 
         {
@@ -158,6 +153,16 @@ class Batch
         if (match_over)
         {
           row.style.display = 'none';
+        }
+        else
+        {
+          row.setAttribute ('class', 'tr_matchlist');
+          if (nb_displayed%2 == 0)
+          {
+            row.style.backgroundColor = 'lightgreen';
+          }
+
+          nb_displayed++;
         }
       }
     }
