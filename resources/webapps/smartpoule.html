@@ -67,6 +67,13 @@
       red_fencer   = new Fencer ('red');
       green_fencer = new Fencer ('green');
 
+      window.onbeforeunload = function () {
+        let msg = new Message ('SmartPoule::UnLockMirror');
+
+        msg.addField ('mirror', mirror);
+        socket.send (msg.data);
+      }
+
       if (pathname == '/arene')
       {
         mode   = 'mirror';
@@ -79,8 +86,12 @@
         if (pathname.startsWith ('/arbitre/arene/'))
         {
           let sections = pathname.split ('/');
+          let msg      = new Message ('SmartPoule::LockMirror');
 
           mirror = sections[3];
+
+          msg.addField ('mirror', mirror);
+          socket.send (msg.data);
         }
 
         {
@@ -188,6 +199,14 @@
       {
         qrcode.setUrl (msg.data);
         qrcode.show   ();
+      }
+      else if (msg.data.startsWith ('[Header]\nname=SmartPoule::LockMirror\n'))
+      {
+        qrcode.hide ();
+      }
+      else if (msg.data.startsWith ('[Header]\nname=SmartPoule::UnLockMirror\n'))
+      {
+        qrcode.show ();
       }
     }
   </script>
