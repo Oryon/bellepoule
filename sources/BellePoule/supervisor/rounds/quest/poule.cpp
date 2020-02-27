@@ -1138,7 +1138,14 @@ namespace Quest
 
     _duel_score->EvaluateMatch (match);
 
-    if (match->IsOver ())
+    if (score_collector)
+    {
+      _elo->ProcessBatch (_matches);
+      RefreshClassification ();
+    }
+
+    if (   match->IsOver ()
+        || MatchIsCancelled (match))
     {
       _hall->FreePiste (match);
 
@@ -1148,30 +1155,16 @@ namespace Quest
 
         if (current_match->GetPtrData (this, "Poule::displayed") == FALSE)
         {
-          if (_hall->BookPiste (current_match))
-          {
-            DisplayMatch (current_match);
-          }
-          if (MatchIsCancelled (current_match))
-          {
-            _hall->FreePiste (current_match);
-          }
-          else
-          {
-            break;
-          }
+          _hall->BookPiste (current_match);
+        }
+
+        if (MatchIsCancelled (current_match))
+        {
+          _hall->FreePiste (current_match);
         }
       }
-      if (_muted == FALSE)
-      {
-        Spread ();
-      }
-    }
 
-    if (score_collector)
-    {
-      _elo->ProcessBatch (_matches);
-      RefreshClassification ();
+      Display ();
     }
 
     MakeDirty ();
@@ -1479,7 +1472,8 @@ namespace Quest
         {
           Match *match = (Match *) m->data;
 
-          if (match->GetPtrData (this, "Poule::displayed"))
+          if (   match->GetPtrData (this, "Poule::displayed")
+              && (MatchIsCancelled (match) == FALSE))
           {
             match->Save (xml_scheme);
           }
@@ -1577,16 +1571,25 @@ namespace Quest
 
             if (xml_nodeset->nodeNr == 2)
             {
+              Player::AttributeId status_attr_id ("status", GetDataOwner ());
+
               match->CleanScore ();
 
               for (guint i = 0; i < 2; i++)
               {
+                Player *fencer = match->GetOpponent (i);
+                Score  *score;
+
                 match->Load (xml_nodeset->nodeTab[i],
-                             match->GetOpponent (i));
+                             fencer);
+                score = match->GetScore (i);
+
+                fencer->SetAttributeValue (&status_attr_id,
+                                           score->GetStatusImage ());
 
                 OnNewScore (nullptr,
                             match,
-                            match->GetOpponent (i));
+                            fencer);
               }
 
               _elo->ProcessBatch (_matches);
