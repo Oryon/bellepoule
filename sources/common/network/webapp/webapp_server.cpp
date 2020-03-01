@@ -253,15 +253,17 @@ namespace Net
     {
       case LWS_CALLBACK_HTTP:
       {
+        gint n;
+
         if (g_str_has_suffix (in, ".js"))
         {
           gchar *base_name = g_path_get_basename (in);
           gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", "js", base_name, nullptr);
 
-          lws_serve_http_file (wsi,
-                               app_path,
-                               "application/javascript",
-                               nullptr, 0);
+          n = lws_serve_http_file (wsi,
+                                   app_path,
+                                   "application/javascript",
+                                   nullptr, 0);
           g_free (app_path);
           g_free (base_name);
         }
@@ -270,10 +272,10 @@ namespace Net
           gchar *base_name = g_path_get_basename (in);
           gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", "css", base_name, nullptr);
 
-          lws_serve_http_file (wsi,
-                               app_path,
-                               "text/css",
-                               nullptr, 0);
+          n = lws_serve_http_file (wsi,
+                                   app_path,
+                                   "text/css",
+                                   nullptr, 0);
           g_free (app_path);
           g_free (base_name);
         }
@@ -282,10 +284,10 @@ namespace Net
           gchar *base_name = g_path_get_basename (in);
           gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", base_name, nullptr);
 
-          lws_serve_http_file (wsi,
-                               app_path,
-                               "image/svg",
-                               nullptr, 0);
+          n = lws_serve_http_file (wsi,
+                                   app_path,
+                                   "image/svg",
+                                   nullptr, 0);
           g_free (app_path);
           g_free (base_name);
         }
@@ -293,12 +295,23 @@ namespace Net
         {
           gchar *app_path = g_build_filename (Global::_share_dir, "resources", "webapps", "smartpoule.html", nullptr);
 
-          lws_serve_http_file (wsi,
-                               app_path,
-                               "text/html",
-                               nullptr, 0);
+          n = lws_serve_http_file (wsi,
+                                   app_path,
+                                   "text/html",
+                                   nullptr, 0);
           g_free (app_path);
         }
+
+        if (n < 0 || ((n > 0) && lws_http_transaction_completed (wsi)))
+        {
+          return -1;
+        }
+      }
+      break;
+
+      case LWS_CALLBACK_HTTP_FILE_COMPLETION:
+      {
+        lws_http_transaction_completed (wsi);
       }
       break;
 
