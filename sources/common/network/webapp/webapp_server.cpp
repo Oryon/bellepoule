@@ -311,7 +311,10 @@ namespace Net
 
       case LWS_CALLBACK_HTTP_FILE_COMPLETION:
       {
-        lws_http_transaction_completed (wsi);
+        if (lws_http_transaction_completed (wsi))
+        {
+          return -1;
+        }
       }
       break;
 

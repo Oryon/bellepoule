@@ -78,8 +78,15 @@ namespace Quest
     _elo          = new Elo ();
     _duel_score   = new DuelScore (GetDataOwner ());
 
-    _matches         = nullptr;
-    _score_collector = nullptr;
+     _matches = nullptr;
+
+     {
+       _score_collector = new ScoreCollector (this,
+                                              FALSE);
+
+       _score_collector->SetConsistentColors ("LightGrey",
+                                              "SkyBlue");
+     }
 
     _max_score = new Data ("ScoreMax",
                            15);
@@ -617,16 +624,6 @@ namespace Quest
                                      "column-spacing", 10.0,
                                      "row-spacing",    10.0,
                                      NULL);
-
-      {
-        Object::TryToRelease (_score_collector);
-
-        _score_collector = new ScoreCollector (this,
-                                               FALSE);
-
-        _score_collector->SetConsistentColors ("LightGrey",
-                                               "SkyBlue");
-      }
 
       _rows = 0;
       for (GList *m = _matches; m; m = g_list_next (m))
