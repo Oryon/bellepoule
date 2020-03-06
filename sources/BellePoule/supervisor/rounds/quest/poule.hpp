@@ -21,6 +21,7 @@
 #include "util/canvas_module.hpp"
 #include "../../stage.hpp"
 #include "../../score_collector.hpp"
+#include "hall.hpp"
 
 class Data;
 
@@ -31,12 +32,12 @@ namespace Generic
 
 namespace Quest
 {
-  class Hall;
   class Elo;
   class DuelScore;
 
   class Poule : public Stage,
                 public CanvasModule,
+                public Hall::Listener,
                 public ScoreCollector::Listener
   {
     public:
@@ -100,6 +101,8 @@ namespace Quest
       void Display () override;
 
       void Wipe () override;
+
+      void OnMatchSelected (Match *match) override;
 
       void Dump () override;
 
@@ -166,5 +169,8 @@ namespace Quest
 
       static void on_duration_entry_changed (GtkEditable *editable,
                                              Object      *owner);
+
+      static void OnMatchValidated (GtkButton *button,
+                                    Poule     *poule);
   };
 }

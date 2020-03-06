@@ -31,7 +31,6 @@
 #include "../../contest.hpp"
 #include "../../score.hpp"
 
-#include "hall.hpp"
 #include "elo.hpp"
 #include "duel_score.hpp"
 #include "wheel_of_fortune.hpp"
@@ -58,6 +57,9 @@ namespace Quest
 
       parcel->Set ("channel", (guint) Net::Ring::Channel::WEB_SOCKET);
     }
+
+    SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")));
+    ZoomTo (1.0);
 
     {
       _piste_entry      = GTK_WIDGET (_glade->GetWidget ("piste_entry"));
@@ -103,11 +105,14 @@ namespace Quest
     _available_time = new Data ("TempsDisponible",
                                 4);
 
-    _hall = new Hall ();
+    _hall = new Hall (this);
 
     _piste_count = new Data ("NbPistes",
                              4);
     _hall->SetPisteCount (_piste_count->_value);
+
+    Plug (_hall,
+          _glade->GetWidget ("hall_hook"));
 
     {
       AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
@@ -273,7 +278,7 @@ namespace Quest
         fencer->RemoveData (this, "Poule::matches");
       }
 
-      match->RemoveData (this, "Poule::displayed");
+      match->RemoveData (this, "Poule::match_gooitem");
     }
 
     FreeFullGList (Match,
@@ -363,7 +368,9 @@ namespace Quest
                                match);
                   }
 
-                  if (match->IsOver () == FALSE)
+                  if (   match->GetPiste ()
+                      || (   (match->IsOver ()         == FALSE)
+                          && (MatchIsCancelled (match) == FALSE)))
                   {
                     _hall->BookPiste (match);
                   }
@@ -590,6 +597,22 @@ namespace Quest
   }
 
   // --------------------------------------------------------------------------------
+  void Poule::OnMatchSelected (Match *match)
+  {
+    GooCanvasItem *item = (GooCanvasItem *) match->GetPtrData (this, "Poule::match_gooitem");
+
+    if (item)
+    {
+      GooCanvasBounds bounds;
+
+      goo_canvas_item_get_bounds (item,
+                                  &bounds);
+      Swipe (0,
+             bounds.y1);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Poule::Wipe ()
   {
     for (GList *m = _matches; m; m = g_list_next (m))
@@ -630,20 +653,23 @@ namespace Quest
       {
         Match *match = (Match *) m->data;
 
-        if (match->IsOver () == FALSE)
+        if (   match->GetPiste ()
+            || (   (match->IsOver ()         == FALSE)
+                && (MatchIsCancelled (match) == FALSE)))
         {
-          if (MatchIsCancelled (match) == FALSE)
-          {
-            ongoings++;
-          }
-
+          ongoings++;
           if (ongoings > _piste_count->_value)
           {
             break;
           }
         }
 
-        _hall->BookPiste (match);
+        if (   (match->IsOver ()         == FALSE)
+            && (MatchIsCancelled (match) == FALSE))
+        {
+          _hall->BookPiste (match);
+        }
+
         DisplayMatch (match);
         RefreshMatch (match);
       }
@@ -708,6 +734,9 @@ namespace Quest
                     "font", BP_FONT "18px",
                     NULL);
       Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+
+      match->SetData (this, "Poule::match_gooitem",
+                      item);
     }
 
     // Fencers
@@ -802,9 +831,39 @@ namespace Quest
                       item);
     }
 
+    // Button
+    {
+      GtkWidget *button = gtk_button_new_with_label (gettext ("Validate"));
+      GtkWidget *image  = gtk_image_new_from_stock (GTK_STOCK_APPLY,
+                                                    GTK_ICON_SIZE_BUTTON);
+
+      gtk_button_set_image (GTK_BUTTON (button),
+                            image);
+
+      g_signal_connect (G_OBJECT (button), "clicked",
+                        G_CALLBACK (OnMatchValidated), this);
+
+      g_object_set_data (G_OBJECT (button), "Button::match", match);
+
+      item = goo_canvas_widget_new (_table,
+                                    button,
+                                    0,
+                                    0,
+                                    -1,
+                                    -1,
+                                    "anchor", GTK_ANCHOR_CENTER,
+                                    NULL);
+
+      Canvas::PutInTable (_table,
+                          item,
+                          _rows, column++);
+
+      match->SetData (this,
+                      "Poule::button",
+                      item);
+    }
+
     _rows++;
-    match->SetData (this, "Poule::displayed",
-                    (void *) TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -1141,29 +1200,6 @@ namespace Quest
       RefreshClassification ();
     }
 
-    if (   match->IsOver ()
-        || MatchIsCancelled (match))
-    {
-      _hall->FreePiste (match);
-
-      for (GList *m = _matches; m; m = g_list_next (m))
-      {
-        Match *current_match = (Match *) m->data;
-
-        if (current_match->GetPtrData (this, "Poule::displayed") == FALSE)
-        {
-          _hall->BookPiste (current_match);
-        }
-
-        if (MatchIsCancelled (current_match))
-        {
-          _hall->FreePiste (current_match);
-        }
-      }
-
-      Display ();
-    }
-
     MakeDirty ();
     //OnRoundOver
   }
@@ -1201,18 +1237,41 @@ namespace Quest
       }
     }
 
-    if (match->IsOver ())
+    g_object_set (G_OBJECT (match->GetPtrData (this, "Poule::piste")),
+                  "visibility", GOO_CANVAS_ITEM_HIDDEN,
+                  nullptr);
+    g_object_set (G_OBJECT (match->GetPtrData (this, "Poule::button")),
+                  "visibility", GOO_CANVAS_ITEM_HIDDEN,
+                  nullptr);
+    _hall->SetStatusIcon (match,
+                          nullptr);
+
+    if (   match->IsOver ()
+        || MatchIsCancelled (match))
     {
       g_object_set (G_OBJECT (match->GetPtrData (this, "Poule::piste")),
                     "font",       BP_FONT "18px",
                     "fill-color", "grey",
                     nullptr);
+
+      if (match->GetPiste ())
+      {
+        g_object_set (G_OBJECT (match->GetPtrData (this, "Poule::piste")),
+                      "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                      nullptr);
+        g_object_set (G_OBJECT (match->GetPtrData (this, "Poule::button")),
+                      "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                      nullptr);
+        _hall->SetStatusIcon (match,
+                              GTK_STOCK_APPLY);
+      }
     }
     else
     {
       g_object_set (G_OBJECT (match->GetPtrData (this, "Poule::piste")),
                     "font",       BP_FONT "bold 18px",
                     "fill-color", "dark",
+                    "visibility", GOO_CANVAS_ITEM_VISIBLE,
                     nullptr);
     }
   }
@@ -1354,7 +1413,7 @@ namespace Quest
     {
       Match *match = (Match *) m->data;
 
-      if (match->GetPtrData (this, "Poule::displayed"))
+      if (match->GetPtrData (this, "Poule::match_gooitem"))
       {
         for (guint i = 0; i < 2; i++)
         {
@@ -1469,7 +1528,7 @@ namespace Quest
         {
           Match *match = (Match *) m->data;
 
-          if (   match->GetPtrData (this, "Poule::displayed")
+          if (   match->GetPtrData (this, "Poule::match_gooitem")
               && (MatchIsCancelled (match) == FALSE))
           {
             match->Save (xml_scheme);
@@ -1625,6 +1684,28 @@ namespace Quest
     Poule *p = dynamic_cast <Poule *> (owner);
 
     p->OnDurationChanged (editable);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Poule::OnMatchValidated (GtkButton *button,
+                                Poule     *poule)
+  {
+    Match *match = (Match *) g_object_get_data (G_OBJECT (button), "Button::match");
+
+    poule->_hall->FreePiste (match);
+    match->SetPiste (0);
+
+    for (GList *m = poule->_matches; m; m = g_list_next (m))
+    {
+      Match *current_match = (Match *) m->data;
+
+      if (poule->MatchIsCancelled (current_match))
+      {
+        poule->_hall->FreePiste (current_match);
+      }
+    }
+
+    poule->Display ();
   }
 
   // --------------------------------------------------------------------------------

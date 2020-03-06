@@ -18,15 +18,22 @@
 
 #include <gtk/gtk.h>
 #include <util/object.hpp>
+#include <util/module.hpp>
 
 class Match;
 
 namespace Quest
 {
-  class Hall : public Object
+  class Hall : public Module
   {
     public:
-      Hall ();
+      struct Listener
+      {
+        virtual void OnMatchSelected (Match *match) = 0;
+      };
+
+    public:
+      Hall (Listener *listener);
 
       void Clear ();
 
@@ -36,13 +43,20 @@ namespace Quest
 
       void FreePiste (Match *owner);
 
+      void SetStatusIcon (Match       *match,
+                          const gchar *stock_icon);
+
       void Dump () override;
 
+      void OnPisteSelected ();
+
     private:
-      guint   _table_size;
-      guint   _piste_count;
-      Match **_owners;
+      Listener     *_listener;
+      GtkListStore *_store;
 
       ~Hall ();
+
+      gboolean GetIter (Match       *match,
+                        GtkTreeIter *iter);
   };
 }
