@@ -8,6 +8,7 @@ class WelcomeScreen extends Module
 
     hook.appendChild (this.container);
 
+    this.container.id  = this.name;
     this.container.src = 'BellePoule.png';
   }
 }

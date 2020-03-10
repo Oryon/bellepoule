@@ -3,10 +3,9 @@ class Module
   constructor (name,
                container)
   {
-    this.name         = name;
-    this.container    = container;
-    this.container.id = name;
-    this.listener     = null;
+    this.name      = name;
+    this.container = container;
+    this.listener  = null;
   }
 
   setListener (listener)

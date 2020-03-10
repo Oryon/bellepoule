@@ -8,6 +8,8 @@ class ScoreSheet extends Module
     super ('ScoreSheet',
            container);
 
+    this.timekeeper = null;
+
     this.clear ();
 
     this.competition = Message.getField (msg.data, 'Body', 'competition');
@@ -48,6 +50,30 @@ class ScoreSheet extends Module
 
     red_fencer.setOpponent   (green_fencer);
     green_fencer.setOpponent (red_fencer);
+  }
+
+  setTimekeeper (timekeeper)
+  {
+    this.timekeeper = timekeeper;
+  }
+
+  show ()
+  {
+    super.show ();
+
+    if (this.timekeeper != null)
+    {
+      this.timekeeper.show ();
+    }
+  }
+
+  hide ()
+  {
+    if (this.timekeeper != null)
+    {
+      this.timekeeper.hide ();
+    }
+    super.hide ();
   }
 
   update (xml)

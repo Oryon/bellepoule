@@ -49,6 +49,8 @@ GOO = goocanvas
 #GTK = gtk+-3.0
 #GOO = goocanvas-2.0
 
+LIBWEBSOCKETS = libwebsockets
+
 #----------------------------------------------------
 #-- WEBKIT  -----------------------------------------
 #----------------------------------------------------
@@ -139,7 +141,7 @@ CFLAGS += -fPIC
 CFLAGS += -Wsuggest-override
 endif
 
-CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 libzip $(WEBKIT_LIB) libusb-1.0)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 libzip $(WEBKIT_LIB) libusb-1.0 $(LIBWEBSOCKETS))
 
 CFLAGS += -Isources/common
 CFLAGS += -Isources/common/network
@@ -162,7 +164,7 @@ ifeq ($(OUTPUT), Release)
 LDFLAGS += -mwindows
 endif
 endif
-LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 libzip $(WEBKIT_LIB) libusb-1.0)
+LDFLAGS += $(shell $(PKG_CONFIG) --libs $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 libzip $(WEBKIT_LIB) libusb-1.0 $(LIBWEBSOCKETS))
 
 ifeq ($(DISTRIB), osx)
 LDFLAGS += -headerpad_max_install_names
@@ -317,6 +319,7 @@ prepare_resources = prepare_windows_resources
 build_staging     = build_windows
 publish_staging   = publish_windows
 RESOURCES         = $(PACKAGE)/$(RELEASE)/resources
+LIBWEBSOCKETS     =
 else ifeq ($(DISTRIB), archlinux)
 prepare_linux     = prepare_arch
 build_staging     = build_arch
@@ -496,11 +499,12 @@ ifeq ($(PRODUCT), bellepoulebeta)
 else
 	rm $(RESOURCES)/glade/images/BellePouleWarning.png
 endif
-	cp -f ../../resources/glade/images/*.gif   $(RESOURCES)/glade/images
-	cp -f ../../resources/glade/images/*.jpg   $(RESOURCES)/glade/images
-	cp -f ../../resources/glade/*.glade $(RESOURCES)/glade
-	cp -rf ../../resources/countries      $(RESOURCES)/countries
-	cp -rf ../../resources/localized_data $(RESOURCES)/localized_data
+	cp -f ../../resources/glade/images/*.gif $(RESOURCES)/glade/images
+	cp -f ../../resources/glade/images/*.jpg $(RESOURCES)/glade/images
+	cp -f ../../resources/glade/*.glade      $(RESOURCES)/glade
+	cp -rf ../../resources/countries         $(RESOURCES)/countries
+	cp -rf ../../resources/localized_data    $(RESOURCES)/localized_data
+	cp -rf ../../resources/webapps           $(RESOURCES)/webapps
 	find $(RESOURCES) -type f -exec chmod a-x {} \;
 
 prepare_sources: clean_sources

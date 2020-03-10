@@ -4,17 +4,20 @@ class QrCode extends Module
                mode)
   {
     super ('QrCode',
-           document.createElement ('div'));
+           hook);
 
-    hook.appendChild (this.container);
     this.hide ();
 
-    this.img = document.createElement ('img');
-    this.container.appendChild (this.img);
-    this.img.style.cssFloat = 'right';
+    {
+      let html = '';
 
-    this.text = document.createElement ('div');
-    this.container.appendChild (this.text);
+      html += '<div id="qrcode-text" class="qrcode-child"></div>';
+      html += '<img id="qrcode-image" class="qrcode-child">';
+
+      this.container.innerHTML = html;
+    }
+    this.img  = document.getElementById ('qrcode-image');
+    this.text = document.getElementById ('qrcode-text');
   }
 
   setUrl (url)

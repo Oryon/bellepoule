@@ -279,6 +279,18 @@ namespace Net
           g_free (app_path);
           g_free (base_name);
         }
+        else if (g_str_has_suffix (in, ".ttf"))
+        {
+          gchar *base_name = g_path_get_basename (in);
+          gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", "fonts", base_name, nullptr);
+
+          n = lws_serve_http_file (wsi,
+                                   app_path,
+                                   "application/x-font-ttf",
+                                   nullptr, 0);
+          g_free (app_path);
+          g_free (base_name);
+        }
         else if (g_str_has_suffix (in, ".png"))
         {
           gchar *base_name = g_path_get_basename (in);

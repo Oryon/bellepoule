@@ -1,12 +1,13 @@
 class ModuleStack
 {
-  constructor (mode)
+  constructor (mode,
+               cross_container)
   {
     this.stack = new Array ();
 
     if (mode != 'mirror')
     {
-      this.cross  = document.getElementById ('cross');
+      this.cross  = cross_container;
       let svg     = document.getElementById ('close.svg');
       let context = this;
       let html    = '';

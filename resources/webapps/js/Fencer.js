@@ -6,9 +6,9 @@ class Fencer
     this.color         = color;
     this.freezed       = false;
     this.taintedPanels = [];
-    this.faults        = [{'color':'white',  'penalties':[0, 3]},
-    {'color':'orange', 'penalties':[3, 5]},
-    {'color':'red',    'penalties':[5, -1]}];
+    this.faults        = [{'name':'white',  'color':'white',   'penalties':[0, 3]},
+                          {'name':'orange', 'color':'#ED7117', 'penalties':[3, 5]},
+                          {'name':'red',    'color':'DarkRed', 'penalties':[5, -1]}];
 
     this.opponent = null;
   }
@@ -205,7 +205,7 @@ class Fencer
   {
     for (let fault of this.faults)
     {
-      let lastRow = document.getElementById ('faults-' + fault.color + '.panel');
+      let lastRow = document.getElementById ('faults-' + fault.name + '.panel');
       let html    = '';
       let cell;
 

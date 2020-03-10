@@ -109,11 +109,12 @@ Source: "..\..\..\resources\translations\user_manual.pdf"; DestDir: "{app}\share
 Source: "..\..\..\resources\translations\index.txt"; DestDir: "{app}\share\{#PRODUCT}\resources\translations"; Flags: ignoreversion
 
 ;Webapp
-Source: "..\..\..\resources\webapps\BellePoule.png";   DestDir: "{app}\share\{#PRODUCT}\resources\webapps";     Flags: ignoreversion
-Source: "..\..\..\resources\webapps\favicon.png";      DestDir: "{app}\share\{#PRODUCT}\resources\webapps";     Flags: ignoreversion
-Source: "..\..\..\resources\webapps\smartpoule.html";  DestDir: "{app}\share\{#PRODUCT}\resources\webapps";     Flags: ignoreversion
-Source: "..\..\..\resources\webapps\css\*";            DestDir: "{app}\share\{#PRODUCT}\resources\webapps\css"; Flags: ignoreversion
-Source: "..\..\..\resources\webapps\js\*";             DestDir: "{app}\share\{#PRODUCT}\resources\webapps\js";  Flags: ignoreversion
+Source: "..\..\..\resources\webapps\BellePoule.png";   DestDir: "{app}\share\{#PRODUCT}\resources\webapps";       Flags: ignoreversion
+Source: "..\..\..\resources\webapps\favicon.png";      DestDir: "{app}\share\{#PRODUCT}\resources\webapps";       Flags: ignoreversion
+Source: "..\..\..\resources\webapps\smartpoule.html";  DestDir: "{app}\share\{#PRODUCT}\resources\webapps";       Flags: ignoreversion
+Source: "..\..\..\resources\webapps\css\*";            DestDir: "{app}\share\{#PRODUCT}\resources\webapps\css";   Flags: ignoreversion
+Source: "..\..\..\resources\webapps\js\*";             DestDir: "{app}\share\{#PRODUCT}\resources\webapps\js";    Flags: ignoreversion
+Source: "..\..\..\resources\webapps\fonts\*";          DestDir: "{app}\share\{#PRODUCT}\resources\webapps\fonts"; Flags: ignoreversion
 
 Source: "..\..\..\resources\translations\ar\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\ar";    Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\translations\ca\*";    DestDir: "{app}\share\{#PRODUCT}\resources\translations\ca";    Flags: ignoreversion recursesubdirs
