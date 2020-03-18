@@ -72,7 +72,7 @@
       green_fencer = new Fencer ('green');
 
       window.addEventListener ("unload", function(event) {
-        if (mirror != '')
+        if (mirror != null)
         {
           let msg = new Message ('SmartPoule::UnLockMirror');
 
@@ -83,8 +83,7 @@
 
       if (pathname.startsWith ('/arene/'))
       {
-        mode   = 'mirror';
-        mirror = '';
+        mode = 'mirror';
 
         {
           let msg = new Message ('SmartPoule::RegisterPiste');
@@ -161,7 +160,7 @@
 
         stack.push (score_sheet);
 
-        if (mirror != '')
+        if (mirror != null)
         {
           let mirror_msg = new Message (null, msg.data);
 
@@ -211,7 +210,8 @@
                                batch_id,
                                step,
                                xml,
-                               scheme);
+                               scheme,
+                               mirror);
 
             batches.set (name, batch);
           }

@@ -4,7 +4,8 @@ class Batch
                id,
                step,
                xml,
-               scheme)
+               scheme,
+               piste)
   {
     let parser = new DOMParser ();
 
@@ -17,6 +18,7 @@ class Batch
     this.id          = id;
     this.step        = step;
     this.over        = true;
+    this.piste       = piste;
 
     {
       let nodes = this.getMessageNodes ();
@@ -108,61 +110,68 @@ class Batch
 
       for (let i = 0; i < node.childElementCount; i++)
       {
-        let match      = node.childNodes[i];
-        let match_id   = match.getAttribute ('ID');
-        let row        = table.insertRow (-1);
-        let match_over = false;
+        let match = node.childNodes[i];
 
-        row.addEventListener ('click', function () {Batch.onClicked (context, match_id);});
-
+        if (   (this.piste == null)
+            || (match.getAttribute ('Piste') == null)
+            || (match.getAttribute ('Piste') == this.piste))
         {
-          let cell = row.insertCell (-1);
-          let html = '<td><b>' + match.getAttribute ('ID') + '</b></td>';
+          let match_id   = match.getAttribute ('ID');
+          let row        = table.insertRow (-1);
+          let match_over = false;
 
-          cell.setAttribute ('class', 'td_match_id');
-          cell.innerHTML = html;
-        }
+          row.addEventListener ('click', function () {Batch.onClicked (context, match_id);});
 
-        for (let f = 0; f < node.childNodes[i].childElementCount; f++)
-        {
-          let fencer_node = node.childNodes[i].childNodes[f];
-          let fencer_id   = fencer_node.getAttribute ('REF');
-          let fencer      = this.competition.getFencer (fencer_id);
-          let cell        = row.insertCell (-1);
-          let html        = '<td">' + fencer.getAttribute ('Nom') + '</td>';
-
-          if (   (fencer_node.getAttribute ('Statut') == 'V')
-              || (fencer_node.getAttribute ('Statut') == 'A')
-              || (fencer_node.getAttribute ('Statut') == 'E'))
           {
-            match_over = true;
+            let cell = row.insertCell (-1);
+            let html = '<td><b>' + match.getAttribute ('ID') + '</b></td>';
+
+            cell.setAttribute ('class', 'td_match_id');
+            cell.innerHTML = html;
           }
 
-          cell.setAttribute ('class', 'td_matchlist');
-          cell.innerHTML = html;
-        }
-
-        {
-          let cell = row.insertCell (-1);
-          let html = '<td><b>Piste ' + match.getAttribute ('Piste') + '</b></td>';
-
-          cell.setAttribute ('class', 'td_piste');
-          cell.innerHTML = html;
-        }
-
-        if (match_over)
-        {
-          row.style.display = 'none';
-        }
-        else
-        {
-          row.setAttribute ('class', 'tr_matchlist');
-          if (nb_displayed%2 == 0)
+          for (let f = 0; f < node.childNodes[i].childElementCount; f++)
           {
-            row.style.backgroundColor = 'lightgreen';
+            let fencer_node = node.childNodes[i].childNodes[f];
+            let fencer_id   = fencer_node.getAttribute ('REF');
+            let fencer      = this.competition.getFencer (fencer_id);
+            let cell        = row.insertCell (-1);
+            let html        = '<td">' + fencer.getAttribute ('Nom') + '</td>';
+
+            if (   (fencer_node.getAttribute ('Statut') == 'V')
+                || (fencer_node.getAttribute ('Statut') == 'A')
+                || (fencer_node.getAttribute ('Statut') == 'E'))
+            {
+              match_over = true;
+            }
+
+            cell.setAttribute ('class', 'td_matchlist');
+            cell.innerHTML = html;
           }
 
-          nb_displayed++;
+          if (match.getAttribute ('Piste') != null)
+          {
+            let cell = row.insertCell (-1);
+            let html = '<td><b>Piste ' + match.getAttribute ('Piste') + '</b></td>';
+
+            cell.setAttribute ('class', 'td_piste');
+            cell.innerHTML = html;
+          }
+
+          if (match_over)
+          {
+            row.style.display = 'none';
+          }
+          else
+          {
+            row.setAttribute ('class', 'tr_matchlist');
+            if (nb_displayed%2 == 0)
+            {
+              row.style.backgroundColor = 'lightgreen';
+            }
+
+            nb_displayed++;
+          }
         }
       }
     }
