@@ -1,7 +1,8 @@
 class QrCode extends Module
 {
   constructor (hook,
-               mode)
+               mode,
+               piste_number)
   {
     super ('QrCode',
            hook);
@@ -11,6 +12,10 @@ class QrCode extends Module
     {
       let html = '';
 
+      if (piste_number != null)
+      {
+        html += '<div id="piste_number">Piste ' + piste_number + '</div>';
+      }
       html += '<div id="qrcode-text" class="qrcode-child"></div>';
       html += '<img id="qrcode-image" class="qrcode-child">';
 

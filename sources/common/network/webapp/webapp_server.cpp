@@ -16,18 +16,29 @@
 
 #include "util/global.hpp"
 #include "util/flash_code.hpp"
+#include "pattern.hpp"
 #include "message.hpp"
 #include "webapp_server.hpp"
 
 namespace Net
 {
+  WebAppServer::Resource WebAppServer::_resources[] = 
+  {
+    {".js",    "js",    "application/javascript"},
+    {".css",   "css",   "text/css"},
+    {".ttf",   "fonts", "application/x-font-ttf"},
+    {".png",   "",      "image/png"},
+    {".html",  "",      "text/html"},
+    {nullptr,  nullptr, nullptr}
+  };
+
   // --------------------------------------------------------------------------------
   // --------------------------------------------------------------------------------
   WebAppServer::IncomingRequest::IncomingRequest (Server *server,
                                                   guint   id)
     : RequestBody (server)
   {
-    _client_id = id;
+    _client_uuid = id;
   }
 
   // --------------------------------------------------------------------------------
@@ -37,19 +48,19 @@ namespace Net
 
   // --------------------------------------------------------------------------------
   // --------------------------------------------------------------------------------
-  WebAppServer::OutgoingMessage::OutgoingMessage (guint    client,
+  WebAppServer::OutgoingMessage::OutgoingMessage (guint    client_uuid,
                                                   Message *message)
   {
-    _client_id = client;
-    _message   = message->GetParcel ();
+    _client_uuid = client_uuid;
+    _message     = message->GetParcel ();
   }
 
   // --------------------------------------------------------------------------------
-  WebAppServer::OutgoingMessage::OutgoingMessage (guint        client,
+  WebAppServer::OutgoingMessage::OutgoingMessage (guint        client_uuid,
                                                   const gchar *message)
   {
-    _client_id = client;
-    _message   = g_strdup (message);
+    _client_uuid = client_uuid;
+    _message     = g_strdup (message);
   }
 
   // --------------------------------------------------------------------------------
@@ -61,7 +72,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   WebAppServer::OutgoingMessage *WebAppServer::OutgoingMessage::Duplicate ()
   {
-    return new OutgoingMessage (_client_id,
+    return new OutgoingMessage (_client_uuid,
                                 _message);
   }
 
@@ -75,8 +86,18 @@ namespace Net
   {
     _running    = TRUE;
     _clients    = nullptr;
+    _aliases    = nullptr;
     _channel    = channel;
     _ip_address = nullptr;
+
+    _piste_pattern = new Pattern ("\\/arene\\/([0-9]+)$",
+                                  "<div>La piste <b><font color=\"blue\">%d</font></b> est déjà réservée.</div>");
+
+    _referee_pattern = new Pattern ("\\/arbitre\\/arene\\/([0-9]+)$",
+                                    "<div>La piste <b><font color=\"blue\">%d</font></b> n'existe pas.</div>");
+
+    _standalone_referee_pattern = new Pattern ("\\/arbitre$",
+                                               nullptr);
 
     _queue = g_async_queue_new_full ((GDestroyNotify) Object::TryToRelease);
 
@@ -144,7 +165,14 @@ namespace Net
     g_free ((void *) _info->protocols);
     g_free (_info);
 
+    _piste_pattern->Release ();
+    _referee_pattern->Release ();
+    _standalone_referee_pattern->Release ();
+
     g_async_queue_unref (_queue);
+
+    g_list_free (_clients);
+    g_list_free (_aliases);
   }
 
   // --------------------------------------------------------------------------------
@@ -167,19 +195,54 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean WebAppServer::OnRequest (IncomingRequest *request)
+  gboolean WebAppServer::OnClientClosed (IncomingRequest *request)
+  {
+    WebAppServer *server  = dynamic_cast<WebAppServer *> (request->_server);
+
+    for (GList *m = server->_aliases; m; m = g_list_next (m))
+    {
+      IdMap *map = (IdMap *) m->data;
+
+      if (map->_uuid == request->_client_uuid)
+      {
+        server->_aliases = g_list_remove_link (server->_aliases,
+                                               m);
+        break;
+      }
+    }
+    return G_SOURCE_REMOVE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean WebAppServer::OnIncomingMessage (IncomingRequest *request)
   {
     WebAppServer *server  = dynamic_cast<WebAppServer *> (request->_server);
     Message      *message = new Message ((const guint8 *) request->_data);
 
-    if (message->HasField ("mirror"))
+    if (message->Is ("SmartPoule::RegisterPiste"))
     {
-      server->SendMessageTo (message->GetInteger ("mirror"),
-                             message);
+      server->OnNewMirror (request->_client_uuid,
+                           message->GetInteger ("number"));
+    }
+    else if (message->HasField ("mirror"))
+    {
+      guint mirror = message->GetInteger ("mirror");
+
+      for (GList *m = server->_aliases; m; m = g_list_next (m))
+      {
+        IdMap *map = (IdMap *) m->data;
+
+        if (map->_alias == mirror)
+        {
+          server->SendMessageTo (map->_uuid,
+                                 message);
+          break;
+        }
+      }
     }
     else
     {
-      message->Set ("client",  request->_client_id);
+      message->Set ("client",  request->_client_uuid);
       message->Set ("channel", server->_channel);
       server->_listener->OnMessage (message);
     }
@@ -190,10 +253,17 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean WebAppServer::OnNewClient (Client *client)
+  void WebAppServer::OnNewMirror (guint uuid,
+                                  guint alias)
   {
-    WebAppServer *server  = dynamic_cast<WebAppServer *> (client->_server);
-    Message      *message = new Message ("BellePoule::QrCode");
+    {
+      IdMap *map = g_new (IdMap, 1);
+
+      map->_uuid  = uuid;
+      map->_alias = alias;
+      _aliases = g_list_prepend (_aliases,
+                                 map);
+    }
 
     {
       GdkPixbuf *pixbuf;
@@ -201,12 +271,13 @@ namespace Net
       gsize      png_size;
       gchar     *png64;
       GError    *error    = nullptr;
+      Message   *message  = new Message ("BellePoule::QrCode");
 
       {
         gchar *code = g_strdup_printf ("http://%s:%d/arbitre/arene/%d",
-                                       server->_ip_address,
-                                       server->GetPort (),
-                                       client->_client_id);
+                                       _ip_address,
+                                       GetPort (),
+                                       alias);
 
         pixbuf = FlashCode::GetPixbuf (code);
         message->Set ("qrcode.txt", code);
@@ -232,13 +303,10 @@ namespace Net
       g_free (png);
       g_object_unref (pixbuf);
       g_free (png64);
+
+      SendMessageTo (uuid,
+                     message);
     }
-
-    server->SendMessageTo (client->_client_id,
-                           message);
-
-    delete (client);
-    return G_SOURCE_REMOVE;
   }
 
   // --------------------------------------------------------------------------------
@@ -248,92 +316,143 @@ namespace Net
                             gchar                     *in,
                             size_t                     len)
   {
-#pragma GCC diagnostic ignored "-Wswitch-enum"
-    switch (reason)
+    WebAppServer *server = nullptr;
+
+    if ((WebAppServer *) lws_get_protocol (wsi))
     {
-      case LWS_CALLBACK_HTTP:
+      server = ((WebAppServer *) (lws_get_protocol (wsi)->user));
+
+#pragma GCC diagnostic ignored "-Wswitch-enum"
+      switch (reason)
       {
-        gint n;
-
-        if (g_str_has_suffix (in, ".js"))
+        case LWS_CALLBACK_HTTP:
         {
-          gchar *base_name = g_path_get_basename (in);
-          gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", "js", base_name, nullptr);
+          gint n;
 
-          n = lws_serve_http_file (wsi,
-                                   app_path,
-                                   "application/javascript",
-                                   nullptr, 0);
-          g_free (app_path);
-          g_free (base_name);
+          for (Resource *r = _resources; r->suffix; r++)
+          {
+            if (g_str_has_suffix (in, r->suffix))
+            {
+              gchar *base_name = g_path_get_basename (in);
+              gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", r->folder, base_name, nullptr);
+
+              n = lws_serve_http_file (wsi,
+                                       app_path,
+                                       r->mime_type,
+                                       nullptr, 0);
+              g_free (app_path);
+              g_free (base_name);
+              return 0;
+            }
+          }
+
+          if (server->_standalone_referee_pattern->Match (in) == FALSE)
+          {
+            if (server->_piste_pattern->Match (in))
+            {
+              guint alias = server->_piste_pattern->GetArgument ();
+
+              for (GList *m = server->_aliases; m; m = g_list_next (m))
+              {
+                IdMap *map = (IdMap *) m->data;
+
+                if (map->_alias == alias)
+                {
+                  gchar *error = server->_piste_pattern->GetErrorString ();
+
+                  lws_return_http_status (wsi,
+                                          HTTP_STATUS_BAD_REQUEST,
+                                          error);
+                  g_free (error);
+                  return 0;
+                }
+              }
+            }
+            else if (server->_referee_pattern->Match (in))
+            {
+              guint alias = server->_referee_pattern->GetArgument ();
+              IdMap *map  = nullptr;
+
+              for (GList *m = server->_aliases; m; m = g_list_next (m))
+              {
+                IdMap *current_map = (IdMap *) m->data;
+
+                if (current_map->_alias == alias)
+                {
+                  map = current_map;
+                  break;
+                }
+              }
+
+              if (map == nullptr)
+              {
+                gchar *error = server->_referee_pattern->GetErrorString ();
+
+                lws_return_http_status (wsi,
+                                        HTTP_STATUS_BAD_REQUEST,
+                                        error);
+                g_free (error);
+                return 0;
+              }
+            }
+            else
+            {
+              GString *body = g_string_new (nullptr);
+
+              g_string_append        (body, "<meta charset=\"UTF-8\">");
+              g_string_append        (body, "<div>Mauvaise requète. Les trois formats possibles sont :</div>");
+              g_string_append        (body, "<div>");
+              g_string_append_printf (body, "- http://%s:8000/arene/<b><font color=\"blue\">XX</font></b>", server->_ip_address);
+              g_string_append        (body, "</div>");
+              g_string_append        (body, "<div>");
+              g_string_append_printf (body, "- http://%s:8000/arbitre/arene/<b><font color=\"blue\">XX</font></b>", server->_ip_address);
+              g_string_append        (body, "</div>");
+              g_string_append        (body, "<div>");
+              g_string_append_printf (body, "- http://%s:8000/arbitre", server->_ip_address);
+              g_string_append        (body, "</div>");
+              g_string_append        (body, "<p></p>");
+              g_string_append        (body, "* <i>Remplacer <b><font color=\"blue\">XX</font></b> par le numéro de piste.</i>");
+
+              lws_return_http_status (wsi,
+                                      HTTP_STATUS_BAD_REQUEST,
+                                      body->str);
+              g_string_free (body,
+                             TRUE);
+              return 0;
+            }
+          }
+
+          {
+            gchar *app_path = g_build_filename (Global::_share_dir, "resources", "webapps", "smartpoule.html", nullptr);
+
+            n = lws_serve_http_file (wsi,
+                                     app_path,
+                                     "text/html",
+                                     nullptr, 0);
+            g_free (app_path);
+          }
+
+          if (n < 0 || ((n > 0) && lws_http_transaction_completed (wsi)))
+          {
+            return -1;
+          }
         }
-        else if (g_str_has_suffix (in, ".css"))
+        break;
+
+        case LWS_CALLBACK_HTTP_FILE_COMPLETION:
         {
-          gchar *base_name = g_path_get_basename (in);
-          gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", "css", base_name, nullptr);
-
-          n = lws_serve_http_file (wsi,
-                                   app_path,
-                                   "text/css",
-                                   nullptr, 0);
-          g_free (app_path);
-          g_free (base_name);
+          if (lws_http_transaction_completed (wsi))
+          {
+            return -1;
+          }
         }
-        else if (g_str_has_suffix (in, ".ttf"))
-        {
-          gchar *base_name = g_path_get_basename (in);
-          gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", "fonts", base_name, nullptr);
+        break;
 
-          n = lws_serve_http_file (wsi,
-                                   app_path,
-                                   "application/x-font-ttf",
-                                   nullptr, 0);
-          g_free (app_path);
-          g_free (base_name);
-        }
-        else if (g_str_has_suffix (in, ".png"))
-        {
-          gchar *base_name = g_path_get_basename (in);
-          gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", base_name, nullptr);
-
-          n = lws_serve_http_file (wsi,
-                                   app_path,
-                                   "image/svg",
-                                   nullptr, 0);
-          g_free (app_path);
-          g_free (base_name);
-        }
-        else
-        {
-          gchar *app_path = g_build_filename (Global::_share_dir, "resources", "webapps", "smartpoule.html", nullptr);
-
-          n = lws_serve_http_file (wsi,
-                                   app_path,
-                                   "text/html",
-                                   nullptr, 0);
-          g_free (app_path);
-        }
-
-        if (n < 0 || ((n > 0) && lws_http_transaction_completed (wsi)))
-        {
-          return -1;
-        }
+        default:
+        break;
       }
-      break;
-
-      case LWS_CALLBACK_HTTP_FILE_COMPLETION:
-      {
-        if (lws_http_transaction_completed (wsi))
-        {
-          return -1;
-        }
-      }
-      break;
-
-      default:
-      break;
-    }
 #pragma GCC diagnostic pop
+    }
 
     return 0;
   }
@@ -379,19 +498,10 @@ namespace Net
 
             if (splitted_ip && splitted_ip[0] && splitted_ip[1] && splitted_ip[2] && splitted_ip[3])
             {
-              Client *client;
-
-              web_app->_client_id = g_ascii_strtoull (splitted_ip[3],
-                                                      nullptr,
-                                                      10);
-              client = new Client ();
-              client->_server    = server;
-              client->_client_id = web_app->_client_id;
-
+              web_app->_uuid = g_ascii_strtoull (splitted_ip[3],
+                                                 nullptr,
+                                                 10);
               g_strfreev (splitted_ip);
-
-              g_idle_add ((GSourceFunc) OnNewClient,
-                          client);
             }
           }
         }
@@ -410,6 +520,14 @@ namespace Net
 
         server->_clients = g_list_remove (server->_clients,
                                           web_app);
+
+        {
+          IncomingRequest *request = new IncomingRequest (server,
+                                                          web_app->_uuid);
+
+          g_idle_add ((GSourceFunc) OnClientClosed,
+                      request);
+        }
       }
       break;
 
@@ -418,7 +536,7 @@ namespace Net
         if (web_app->_input_buffer == nullptr)
         {
           web_app->_input_buffer = new IncomingRequest (server,
-                                                        web_app->_client_id);
+                                                        web_app->_uuid);
         }
 
         web_app->_input_buffer->Append (in,
@@ -427,7 +545,7 @@ namespace Net
         if (lws_is_final_fragment (wsi))
         {
           web_app->_input_buffer->ZeroTerminate ();
-          g_idle_add ((GSourceFunc) OnRequest,
+          g_idle_add ((GSourceFunc) OnIncomingMessage,
                       web_app->_input_buffer);
           web_app->_input_buffer = nullptr;
         }
@@ -513,14 +631,14 @@ namespace Net
             {
               WebApp *web_app = (WebApp *) current->data;
 
-              if (   (outgoing_message->_client_id == 0)
-                  || (web_app->_client_id == outgoing_message->_client_id))
+              if (   (outgoing_message->_client_uuid == 0)
+                  || (web_app->_uuid == outgoing_message->_client_uuid))
               {
                 web_app->_pending_message = outgoing_message->Duplicate ();
 
                 lws_callback_on_writable (web_app->_wsi);
 
-                if (outgoing_message->_client_id != 0)
+                if (outgoing_message->_client_uuid != 0)
                 {
                   break;
                 }

@@ -24,6 +24,8 @@
 
 namespace Net
 {
+  class Pattern;
+
   class WebAppServer : public Server
   {
     public:
@@ -37,34 +39,27 @@ namespace Net
                           Message *response);
 
     private:
+      struct Resource
+      {
+        const gchar *suffix;
+        const gchar *folder;
+        const gchar *mime_type;
+      };
+
       struct OutgoingMessage
       {
-        OutgoingMessage (guint    client,
+        OutgoingMessage (guint    client_uuid,
                          Message *message);
 
-        OutgoingMessage (guint        client,
+        OutgoingMessage (guint        client_uuid,
                          const gchar *message);
 
         OutgoingMessage *Duplicate ();
 
         ~OutgoingMessage ();
 
-        guint  _client_id;
+        guint  _client_uuid;
         gchar *_message;
-      };
-
-      struct WebApp
-      {
-        struct lws      *_wsi;
-        guint            _client_id;
-        RequestBody     *_input_buffer;
-        OutgoingMessage *_pending_message;
-      };
-
-      struct Client
-      {
-        WebAppServer *_server;
-        guint         _client_id;
       };
 
       struct IncomingRequest : public RequestBody
@@ -74,10 +69,29 @@ namespace Net
 
         ~IncomingRequest () override;
 
-        guint _client_id;
+        guint _client_uuid;
+      };
+
+      struct WebApp
+      {
+        struct lws      *_wsi;
+        guint            _uuid;
+        RequestBody     *_input_buffer;
+        OutgoingMessage *_pending_message;
+      };
+
+      struct IdMap
+      {
+        guint _uuid;
+        guint _alias;
       };
 
     private:
+      static Resource _resources[];
+
+      Pattern                          *_piste_pattern;
+      Pattern                          *_referee_pattern;
+      Pattern                          *_standalone_referee_pattern;
       const gchar                      *_ip_address;
       guint                             _channel;
       gboolean                          _running;
@@ -85,13 +99,17 @@ namespace Net
       GAsyncQueue                      *_queue;
       struct lws_context               *_context;
       GList                            *_clients;
+      GList                            *_aliases;
       struct lws_context_creation_info *_info;
 
       ~WebAppServer () override;
 
-      static gboolean OnRequest (IncomingRequest *request);
+      static gboolean OnIncomingMessage (IncomingRequest *request);
 
-      static gboolean OnNewClient (Client *client);
+      static gboolean OnClientClosed (IncomingRequest *request);
+
+      void OnNewMirror (guint uuid,
+                        guint alias);
 
       static gpointer ThreadFunction (WebAppServer *server);
 

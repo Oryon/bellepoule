@@ -360,12 +360,6 @@
 		<Unit filename="../../sources/BellePoule/supervisor/attendees.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/point_system.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/point_system.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/book/book.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
@@ -415,6 +409,12 @@
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/match.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/point_system.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/point_system.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/publication.cpp">
@@ -534,16 +534,10 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/swapper.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/splitting/splitting.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/duel_score.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/splitting/splitting.hpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/point_system.cpp">
-			<Option target="Supervisor_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/point_system.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/duel_score.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/elo.cpp">
@@ -558,10 +552,10 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/hall.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/duel_score.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/point_system.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/duel_score.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/point_system.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/poule.cpp">
@@ -580,6 +574,12 @@
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/wheel_of_fortune.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/splitting/splitting.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/splitting/splitting.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/html_table.cpp">
@@ -880,6 +880,12 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/web_server.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/webapp/pattern.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/webapp/pattern.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/webapp/webapp_server.cpp">

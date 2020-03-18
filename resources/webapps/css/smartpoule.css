@@ -88,6 +88,14 @@ div.small-7segments {
   right:2vw;
 }
 
+#piste_number {
+  position:fixed;
+  top:2vh;
+  left:2vw;
+  font-size: 4vw;
+  font-weight: bold;
+}
+
 .qrcode-child {
   display: inline-block;
   vertical-align: bottom;

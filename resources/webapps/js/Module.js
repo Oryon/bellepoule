@@ -6,6 +6,7 @@ class Module
     this.name      = name;
     this.container = container;
     this.listener  = null;
+    this.slave     = null;
   }
 
   setListener (listener)
@@ -24,11 +25,26 @@ class Module
   show ()
   {
     this.container.style.display = 'block';
+
+    if (this.slave != null)
+    {
+      this.slave.show ();
+    }
   }
 
   hide ()
   {
     this.container.style.display = 'none';
+
+    if (this.slave != null)
+    {
+      this.slave.hide ();
+    }
+  }
+
+  attach (slave)
+  {
+    this.slave = slave;
   }
 
   isEmpty ()

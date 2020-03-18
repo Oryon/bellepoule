@@ -65,21 +65,33 @@
     socket.onopen = function ()
     {
       let pathname = window.location.pathname;
+      let piste_number;
 
       red_fencer   = new Fencer ('red');
       green_fencer = new Fencer ('green');
 
       window.onbeforeunload = function () {
-        let msg = new Message ('SmartPoule::UnLockMirror');
+        if (mirror != '')
+        {
+          let msg = new Message ('SmartPoule::UnLockMirror');
 
-        msg.addField ('mirror', mirror);
-        socket.send (msg.data);
+          msg.addField ('mirror', mirror);
+          socket.send (msg.data);
+        }
       }
 
-      if (pathname == '/arene')
+      if (pathname.startsWith ('/arene/'))
       {
         mode   = 'mirror';
         mirror = '';
+
+        {
+          let msg = new Message ('SmartPoule::RegisterPiste');
+
+          piste_number = pathname.substring ('/arene/'.length);
+          msg.addField ('number', piste_number);
+          socket.send (msg.data);
+        }
       }
       else
       {
@@ -106,10 +118,16 @@
       stack = new ModuleStack (mode,
                                document.getElementById ('cross_hook'));
 
-      stack.push (new WelcomeScreen (document.getElementById ('welcome_hook')));
+      {
+        let welcome_screen = new WelcomeScreen (document.getElementById ('welcome_hook'));
 
-      qrcode = new QrCode (document.getElementById ('qrcode_hook'),
-                           mode);
+        qrcode = new QrCode (document.getElementById ('qrcode_hook'),
+                             mode,
+                             piste_number);
+        welcome_screen.attach (qrcode);
+
+        stack.push (welcome_screen);
+      }
 
       matchlist = new MatchList (document.getElementById ('matchlist_hook'));
       stack.push (matchlist);
@@ -213,11 +231,11 @@
       }
       else if (msg.data.startsWith ('[Header]\nname=SmartPoule::LockMirror\n'))
       {
-        qrcode.hide ();
+        qrcode.lock ();
       }
       else if (msg.data.startsWith ('[Header]\nname=SmartPoule::UnLockMirror\n'))
       {
-        qrcode.show ();
+        qrcode.unlock ();
       }
     }
   </script>
