@@ -80,6 +80,20 @@ class ModuleStack
     }
   }
 
+  restore (module)
+  {
+    while (this.stack.length > 0)
+    {
+      let current = this.stack[this.stack.length-1];
+
+      if (current == module)
+      {
+        break;
+      }
+      this.pull (current);
+    }
+  }
+
   static onCrossClicked (what)
   {
     let length = what.stack.length;

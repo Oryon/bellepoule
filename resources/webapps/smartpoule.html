@@ -48,6 +48,7 @@
   <!--***********************************-->
   <script>
     let batches = new Map ();
+    let welcome_screen;
     let stack;
     let mode;
     let mirror;
@@ -70,7 +71,7 @@
       red_fencer   = new Fencer ('red');
       green_fencer = new Fencer ('green');
 
-      window.onbeforeunload = function () {
+      window.addEventListener ("unload", function(event) {
         if (mirror != '')
         {
           let msg = new Message ('SmartPoule::UnLockMirror');
@@ -78,7 +79,7 @@
           msg.addField ('mirror', mirror);
           socket.send (msg.data);
         }
-      }
+      });
 
       if (pathname.startsWith ('/arene/'))
       {
@@ -119,7 +120,7 @@
                                document.getElementById ('cross_hook'));
 
       {
-        let welcome_screen = new WelcomeScreen (document.getElementById ('welcome_hook'));
+        welcome_screen = new WelcomeScreen (document.getElementById ('welcome_hook'));
 
         qrcode = new QrCode (document.getElementById ('qrcode_hook'),
                              mode,
@@ -236,6 +237,7 @@
       else if (msg.data.startsWith ('[Header]\nname=SmartPoule::UnLockMirror\n'))
       {
         qrcode.unlock ();
+        stack.restore (welcome_screen);
       }
     }
   </script>

@@ -41,4 +41,16 @@ class QrCode extends Module
       super.show ();
     }
   }
+
+  lock ()
+  {
+    this.img.style.display  = 'none';
+    this.text.style.display = 'none';
+  }
+
+  unlock ()
+  {
+    this.img.style.display  = 'inline-block';
+    this.text.style.display = 'inline-block';
+  }
 }
