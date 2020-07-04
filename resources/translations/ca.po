@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-10-13 18:29+0200\n"
-"PO-Revision-Date: 2019-02-07 00:36+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2020-02-23 21:14+0000\n"
+"Last-Translator: Angel Oliver <axel.tomcat@gmail.com>\n"
 "Language-Team: Catalan (Valencian) <ca@valencia@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2019-10-14 05:59+0000\n"
-"X-Generator: Launchpad (build af2eefe214bd95389a09b7c956720881bab16807)\n"
+"X-Launchpad-Export-Date: 2020-02-24 05:46+0000\n"
+"X-Generator: Launchpad (build 19413b719a8df7423ab1390528edadce9e0e4aca)\n"
 
 msgid "Long text"
 msgstr "Text estès"
@@ -40,10 +40,10 @@ msgid "Look"
 msgstr "Aparença"
 
 msgid "Follow the instructions given by "
-msgstr ""
+msgstr "Seguiu les instruccions donades per "
 
 msgid "Access denied!"
-msgstr ""
+msgstr "Accés denegat!"
 
 msgid "<b>Smartpoule</b> configuration code"
 msgstr "Codi de configuració <b>Smartpoule</b>"
@@ -68,7 +68,7 @@ msgid "All files"
 msgstr "Tots els arxius"
 
 msgid "The imported FFF file has encoding errors."
-msgstr ""
+msgstr "El fitxer FFF importa un error de codificació."
 
 msgid "List of registered"
 msgstr "Llista d'inscrits"
@@ -89,7 +89,7 @@ msgid "Paste"
 msgstr "Pegar"
 
 msgid "Paste (link)"
-msgstr ""
+msgstr "Enganxa (enllaça)"
 
 msgid "Remove"
 msgstr "Eliminar"
@@ -143,22 +143,22 @@ msgid "Veteran 4"
 msgstr "Veterà 4"
 
 msgid "Veteran 5"
-msgstr ""
+msgstr "Veterà 5"
 
 msgid "Veteran 3+4"
 msgstr "Veterà 3+4"
 
 msgid "Veteran 4+5"
-msgstr ""
+msgstr "Veterà 4+5"
 
 msgid "Choose a competion file to open... "
 msgstr "Trie un arxiu de competició per a obrir... "
 
 msgid "Example files"
-msgstr ""
+msgstr "Exemples d’arxius"
 
 msgid "Competition files"
-msgstr ""
+msgstr "Fitxes de competència"
 
 msgid "BellePoule files"
 msgstr "Arxius BellePoule"
@@ -170,10 +170,10 @@ msgid "Choose a backup files location..."
 msgstr "Seleccione una ubicació per a les còpies de seguretat"
 
 msgid "Men"
-msgstr ""
+msgstr "Homes"
 
 msgid "Women"
-msgstr ""
+msgstr "Dones"
 
 msgid "Mixed"
 msgstr "Mixt"
@@ -203,7 +203,7 @@ msgid "Choose a file..."
 msgstr "Trie un arxiu..."
 
 msgid "GREG alert"
-msgstr ""
+msgstr "Alerta GREG"
 
 msgid ""
 "It's recommended to give a label when publication on GREG (www.escrime-info."
@@ -211,6 +211,10 @@ msgid ""
 "\n"
 "Re-open the form to fill it in?"
 msgstr ""
+"Es recomana donar una etiqueta quan es vol publicar a GREG (www.escrime-info."
+"com). \n"
+"\n"
+"Torneu a obrir el formulari per emplenar-lo?"
 
 msgid "BellePoule files (.cotcot)"
 msgstr "Arxius BellePoule (.cotcot)"
@@ -262,25 +266,25 @@ msgstr "Totes les competicions no guardades es perdran."
 
 #, c-format
 msgid "Piste %d"
-msgstr ""
+msgstr "Pista %d"
 
 msgid "No time!"
-msgstr ""
+msgstr "No hi ha temps!"
 
 msgid "No piste!"
-msgstr ""
+msgstr "Sense pista!"
 
 msgid "Display jobs"
-msgstr ""
+msgstr "Mostrar tasques"
 
 msgid "Not available"
-msgstr ""
+msgstr "No disponible"
 
 msgid "Available"
-msgstr ""
+msgstr "Disponible"
 
 msgid "Pool"
-msgstr ""
+msgstr "Poule"
 
 msgid "Meal"
 msgstr "Menjar"
@@ -308,6 +312,8 @@ msgid ""
 "<b>%s</b> is delayed.\n"
 "Do you want to postpone the next bouts?\n"
 msgstr ""
+"<b> %s</b> es retarda. \n"
+"Voleu ajornar els propers atacs?\n"
 
 msgid "Restart BellePoule for this change to take effect"
 msgstr "Reinicie BellePoule perquè aquest canvi faça efecte"
@@ -349,13 +355,13 @@ msgid "Female"
 msgstr "Femení"
 
 msgid "weapon"
-msgstr ""
+msgstr "arma"
 
 msgid "country"
 msgstr "país"
 
 msgid "region"
-msgstr ""
+msgstr "regió"
 
 msgid "league"
 msgstr "lliga"
@@ -385,7 +391,7 @@ msgid "exported"
 msgstr "exportat"
 
 msgid "incident"
-msgstr ""
+msgstr "incident"
 
 msgid "Absent"
 msgstr "Absent"
@@ -415,7 +421,7 @@ msgid "status"
 msgstr "estat"
 
 msgid "cyphered password"
-msgstr ""
+msgstr "contrasenya xifrada"
 
 msgid "IP address"
 msgstr "Adreça IP"
@@ -445,7 +451,7 @@ msgid "strip"
 msgstr ""
 
 msgid "time"
-msgstr ""
+msgstr "temps"
 
 msgid "Round start rank"
 msgstr "Classificació a principi de ronda"
@@ -507,18 +513,20 @@ msgid ""
 "Referees allocation \n"
 " ongoing"
 msgstr ""
+"Assignació d’àrbitres \n"
+" en marxa"
 
 msgid "Table classification"
 msgstr "Taula de resultats"
 
 msgid "All places fenced"
-msgstr ""
+msgstr "S'ha competit per tots els llocs"
 
 msgid "Fence off for third place"
-msgstr ""
+msgstr "Es competeix pel tercer lloc"
 
 msgid "No fence off for third place"
-msgstr ""
+msgstr "No es competeix pel tercer lloc"
 
 msgid "Max score"
 msgstr "Resultat màxim"
@@ -545,7 +553,7 @@ msgid "Grouped by strength"
 msgstr "Agrupats per força"
 
 msgid "Impossible to apply with this configuration of pools"
-msgstr ""
+msgstr "Impossible aplicar amb aquesta configuració de poules"
 
 #, c-format
 msgid "Pool #%02d"
@@ -588,7 +596,7 @@ msgid "All HTML files (.HTML)"
 msgstr "Tots els arxius HTML (.HTML)"
 
 msgid "All AskFred files (.FRD)"
-msgstr ""
+msgstr "Tots els fitxers AskFred (.FRD)"
 
 msgid "Split"
 msgstr "Dividir"
@@ -609,7 +617,7 @@ msgid "** Without team **"
 msgstr "**Sense equip**"
 
 msgid "Present fencers"
-msgstr ""
+msgstr "Esgrimistes presents"
 
 msgid "Expected fencers"
 msgstr "Tiradors previstos"

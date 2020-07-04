@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-10-13 18:29+0200\n"
-"PO-Revision-Date: 2019-10-14 16:04+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2020-05-10 13:30+0000\n"
+"Last-Translator: Jean-Marc <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2019-10-15 05:59+0000\n"
-"X-Generator: Launchpad (build af2eefe214bd95389a09b7c956720881bab16807)\n"
+"X-Launchpad-Export-Date: 2020-05-11 05:45+0000\n"
+"X-Generator: Launchpad (build fbdff7602bd10fb883bf7e2ddcc7fd5a16f60398)\n"
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -44,7 +44,7 @@ msgid "Follow the instructions given by "
 msgstr "Suivez les instructions données par "
 
 msgid "Access denied!"
-msgstr "Refusé !"
+msgstr "Accès refusé !"
 
 msgid "<b>Smartpoule</b> configuration code"
 msgstr "Code de configuration de <b>SmartPoule</b>"
@@ -147,10 +147,10 @@ msgid "Veteran 5"
 msgstr "Vétéran 5"
 
 msgid "Veteran 3+4"
-msgstr "Vétéran 3+4"
+msgstr "Vétéran 3 + 4"
 
 msgid "Veteran 4+5"
-msgstr "Vétéran 4+5"
+msgstr "Vétéran 4 + 5"
 
 msgid "Choose a competion file to open... "
 msgstr "Choisissez un fichier de compétition à ouvrir... "
@@ -168,7 +168,7 @@ msgid "Recently opened files"
 msgstr "Fichiers récemment ouverts"
 
 msgid "Choose a backup files location..."
-msgstr "Choisissez un dossier pour les sauvegardes de secours..."
+msgstr "Choisissez un dossier pour les sauvegardes..."
 
 msgid "Men"
 msgstr "Hommes"
@@ -263,17 +263,17 @@ msgid "Quit BellePoule?"
 msgstr "Quitter BellePoule ?"
 
 msgid "All the unsaved competions will be lost."
-msgstr "Toutes les compétitions non sauvegardées seront perdues."
+msgstr "Toutes les compétitions non enregistrées seront perdues."
 
 #, c-format
 msgid "Piste %d"
 msgstr "Piste %d"
 
 msgid "No time!"
-msgstr "Pas d'heure"
+msgstr "Pas d'heure !"
 
 msgid "No piste!"
-msgstr "Pas de piste !"
+msgstr "Pas de piste !"
 
 msgid "Display jobs"
 msgstr "Afficher les tâches"
@@ -362,7 +362,7 @@ msgid "country"
 msgstr "nation"
 
 msgid "region"
-msgstr "region"
+msgstr "région"
 
 msgid "league"
 msgstr "CID"
@@ -524,10 +524,10 @@ msgid "All places fenced"
 msgstr "Toutes les places tirées"
 
 msgid "Fence off for third place"
-msgstr "3ième place tirée"
+msgstr "3e place tirée"
 
 msgid "No fence off for third place"
-msgstr "3ième place non tirée"
+msgstr "3e place non tirée"
 
 msgid "Max score"
 msgstr "Score max"
@@ -812,7 +812,7 @@ msgid "Now"
 msgstr "Maintenant"
 
 msgid "<b>From?</b>"
-msgstr "<b>A partir de ?</b>"
+msgstr "<b>À partir de ?</b>"
 
 msgid "label"
 msgstr "label"
@@ -911,19 +911,19 @@ msgid "BellePoule2D is already operating on the network."
 msgstr "BellePoule2D est déjà présent sur le réseau"
 
 msgid "Connection to <b>BellePoule</b>"
-msgstr "Connection à <b>BellePoule</b>"
+msgstr "Connexion à <b>BellePoule</b>"
 
 msgid "Plug an USB stick."
 msgstr "Insérez une clé USB."
 
 msgid "Unplug it."
-msgstr "Retirez la."
+msgstr "Retirez-la."
 
 msgid ""
 "Plug it now in a computer where\n"
 "<b>BellePoule</b> is running."
 msgstr ""
-"Insérez la maintenant dans le PC où\n"
+"Insérez-la maintenant dans l'ordinateur où\n"
 "tourne <b>BellePoule</b>."
 
 msgid "Scan this QRCode:"
@@ -963,7 +963,7 @@ msgid "Zoom"
 msgstr "Zoom :"
 
 msgid "From:"
-msgstr "A partir de :"
+msgstr "À partir de :"
 
 msgctxt "jobs"
 msgid "All"
@@ -1089,32 +1089,32 @@ msgid "Choose a creation method:"
 msgstr "Choisissez une méthode de création :"
 
 msgid "From a XML file"
-msgstr "A partir d'un fichier XML"
+msgstr "À partir d'un fichier XML"
 
 msgid "Empty competition"
 msgstr "Compétition vide"
 
 msgid "From a FFE zip file (extranet)"
-msgstr "A partir d'un fichier zip de la FFE (extranet)"
+msgstr "À partir d'un fichier zip de la FFE (extranet)"
 
 msgid "From AskFred (.frd)"
-msgstr "A partir d'AskFred (.frd)"
+msgstr "À partir d'AskFred (.frd)"
 
 msgid "Connection to <b>BellePoule2D</b>"
-msgstr "Connection à <b>BellePoule2D</b>"
+msgstr "Connexion à <b>BellePoule2D</b>"
 
 msgid ""
 "Plug it now in a computer where\n"
 "<b>BellePoule2D</b> is running."
 msgstr ""
-"Insérez la maintenant dans le PC où\n"
+"Insérez-la maintenant dans l'ordinateur où\n"
 "tourne <b>BellePoule2D</b>."
 
 msgid "Recently opened"
 msgstr "Récemment ouvert"
 
 msgid "Reload imports..."
-msgstr "Recharger les imports..."
+msgstr "Recharger les importations..."
 
 msgid "Backup"
 msgstr "Sauvegarde de secours"
@@ -1245,7 +1245,7 @@ msgid "Start"
 msgstr "Début"
 
 msgid "<b>Date / Time</b>"
-msgstr "<b>Date / Horaires</b>"
+msgstr "<b>Date/horaires</b>"
 
 msgid "Allow"
 msgstr "Autoriser"
