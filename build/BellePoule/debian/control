@@ -2,13 +2,13 @@ Source: __PRODUCT__
 Section: misc
 Priority: extra
 Maintainer: betonniere <le.roux.yannick@free.fr>
-Build-Depends: debhelper (>= 9), libgtk2.0-dev (>=2.24.0), libxml2-dev, libcurl4-openssl-dev|libcurl3-dev, libmicrohttpd-dev, __GOOCANVAS_BUILD_DEP__, libqrencode-dev, libssl-dev, libjson-glib-dev, libzip-dev, libusb-1.0-0-dev, libwebkitgtk-dev
+Build-Depends: debhelper (>= 9), libgtk2.0-dev (>=2.24.0), libxml2-dev, libcurl4-openssl-dev|libcurl3-dev, libmicrohttpd-dev, __GOOCANVAS_BUILD_DEP__ libqrencode-dev, libssl-dev, libjson-glib-dev, libzip-dev, __WEBKIT_BUILD_DEP__ libusb-1.0-0-dev
 Standards-Version: 3.9.7
 Homepage: http://betton.escrime.free.fr/index.php/bellepoule
 
 Package: __PRODUCT__
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk2.0-0 (>=2.24.0), libxml2, libcurl4|libcurl3, libmicrohttpd12|libmicrohttpd10|libmicrohttpd5, __GOOCANVAS_DEP__, libqrencode3, libssl1.0.0, libjson-glib-1.0-0, gamin, libzip4, libusb-1.0-0, libwebkitgtk-1.0-0, php, ${dist:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk2.0-0 (>=2.24.0), libxml2, libcurl4|libcurl3, libmicrohttpd12|libmicrohttpd10|libmicrohttpd5, __GOOCANVAS_DEP__ libqrencode3, libssl1.0.0, libjson-glib-1.0-0, gamin, libzip4, libusb-1.0-0, __WEBKIT_DEP__ php, ${dist:Depends}
 Replaces: bellepoulebeta
 Description: Fencing tournament management
  This software can help you efficiently in the management of your tournaments.

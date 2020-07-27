@@ -48,7 +48,7 @@ GOO = goocanvas
 #----------------------------------------------------
 DWEBKIT    = -DWEBKIT
 WEBKIT_LIB = webkit-1.0
-ifeq ($(DISTRIB), osx)
+ifeq ($(DISTRIB),$(filter $(DISTRIB),osx focal))
 	undefine DWEBKIT
 	undefine WEBKIT_LIB
 endif
@@ -176,7 +176,7 @@ SRC += $(wildcard sources/BellePoule/actors/*.cpp)
 SRC += $(wildcard sources/BellePoule/application/*.cpp)
 OBJ_LIB += $(SRC:.cpp=.o)
 
-ifeq ($(DISTRIB), bionic)
+ifeq ($(DISTRIB),$(filter $(DISTRIB),bionic focal))
 GOOCANVAS_SOURCES = sources/goocanvas
 GOOCANVAS_LIB     = sources/goocanvas/src/.libs/libgoocanvas.so
 install_goocanvas = install_goocanvas
@@ -300,6 +300,8 @@ valgrind:
 #----------------------------------------------------
 GOOCANVAS_BUILD_DEP = libgoocanvas-dev\,
 GOOCANVAS_DEP       = libgoocanvas3\,
+WEBKIT_BUILD_DEP    = libwebkitgtk-dev\,
+WEBKIT_DEP          = libwebkitgtk-1.0-0\,
 prepare_goocanvas   = prepare_fake_goocanvas
 ifeq ($(DISTRIB), windows)
 prepare_resources = prepare_windows_resources
@@ -329,12 +331,16 @@ EXAMPLES          = $(PACKAGE)/$(RELEASE)/Exemples
 RESOURCES         = $(PACKAGE)/$(RELEASE)/resources
 endif
 
-ifeq ($(DISTRIB), bionic)
+ifeq ($(DISTRIB),$(filter $(DISTRIB),bionic focal))
 prepare_goocanvas   = prepare_goocanvas
 GOO                 =
 GOOCANVAS_BUILD_DEP =
 GOOCANVAS_DEP       =
 CFLAGS             += -Isources/goocanvas/src
+endif
+ifeq ($(DISTRIB), focal)
+WEBKIT_BUILD_DEP =
+WEBKIT_DEP       =
 endif
 
 ifeq ($(DISTRIB), stretch)
@@ -519,6 +525,8 @@ prepare_control:
 	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/control
 	sed -i 's/__GOOCANVAS_BUILD_DEP__/$(GOOCANVAS_BUILD_DEP)/g' $(PACKAGE)/$(RELEASE)/debian/control
 	sed -i 's/__GOOCANVAS_DEP__/$(GOOCANVAS_DEP)/g' $(PACKAGE)/$(RELEASE)/debian/control
+	sed -i 's/__WEBKIT_BUILD_DEP__/$(WEBKIT_BUILD_DEP)/g' $(PACKAGE)/$(RELEASE)/debian/control
+	sed -i 's/__WEBKIT_DEP__/$(WEBKIT_DEP)/g' $(PACKAGE)/$(RELEASE)/debian/control
 ifeq ($(PRODUCT), bellepoulebeta)
 	sed -i 's/Replaces/#Replaces/' $(PACKAGE)/$(RELEASE)/debian/control
 endif
@@ -653,6 +661,7 @@ help: vars
 	@echo -e "\e[1;44m**** Ubuntu ****\e[0m"
 	@echo -e "make -s DISTRIB=xenial V=1 package"
 	@echo -e "make -s DISTRIB=bionic V=1 package"
+	@echo -e "make -s DISTRIB=focal V=1 package"
 	@echo -e ""
 	@echo -e "\e[1;42m**** Windows ****\e[0m"
 	@echo -e "make -s DISTRIB=windows V=1 package"
