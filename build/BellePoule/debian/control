@@ -8,7 +8,7 @@ Homepage: http://betton.escrime.free.fr/index.php/bellepoule
 
 Package: __PRODUCT__
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk2.0-0 (>=2.24.0), libxml2, libcurl4|libcurl3, libmicrohttpd12|libmicrohttpd10|libmicrohttpd5, __GOOCANVAS_DEP__ libqrencode3, libssl1.0.0, libjson-glib-1.0-0, gamin, libzip4, libusb-1.0-0, __WEBKIT_DEP__ php, ${dist:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk2.0-0 (>=2.24.0), libxml2, libcurl4|libcurl3, libmicrohttpd12|libmicrohttpd10|libmicrohttpd5, __GOOCANVAS_DEP__ libqrencode4|libqrencode3, libssl1.1|libssl1.0.0, libjson-glib-1.0-0, gamin, libzip5|libzip4, libusb-1.0-0, __WEBKIT_DEP__ php, ${dist:Depends}
 Replaces: bellepoulebeta
 Description: Fencing tournament management
  This software can help you efficiently in the management of your tournaments.
