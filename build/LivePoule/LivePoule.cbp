@@ -19,28 +19,36 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-Wshadow" />
 			<Add option="-Winit-self" />
 			<Add option="-Wredundant-decls" />
 			<Add option="-Wcast-align" />
 			<Add option="-Wundef" />
+			<Add option="-Wfloat-equal" />
+			<Add option="-Winline" />
 			<Add option="-Wunreachable-code" />
 			<Add option="-Wmissing-include-dirs" />
 			<Add option="-Wswitch-enum" />
 			<Add option="-Wswitch-default" />
-			<Add option="-std=c++98" />
+			<Add option="-Wmain" />
+			<Add option="-pedantic-errors" />
+			<Add option="-pedantic" />
 			<Add option="-Wextra" />
 			<Add option="-Wall" />
+			<Add option="-std=c++0x" />
 			<Add option="-Wno-int-to-pointer-cast" />
 			<Add option="-Wno-long-long" />
 			<Add option="-Wno-unused-parameter" />
 			<Add option="-Wno-shadow" />
 			<Add option="-Wno-vla" />
 			<Add option="-Wno-variadic-macros" />
+			<Add option="-Wno-deprecated-declarations" />
 			<Add option="-pthread -D_REENTRANT" />
 			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGDK_DISABLE_DEPRECATED" />
 			<Add option="-DGSEAL_ENABLE" />
 			<Add directory="../../sources/common" />
+			<Add directory="../../sources/common/network" />
 			<Add directory="../../sources/LivePoule" />
 			<Add directory="/usr/include/gtk-3.0" />
 			<Add directory="/usr/include" />
@@ -56,6 +64,7 @@
 			<Add directory="/usr/include/libpng12" />
 			<Add directory="/usr/include/libxml2" />
 			<Add directory="/usr/include/goocanvas-2.0" />
+			<Add directory="/usr/include/json-glib-1.0" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--export-dynamic" />
@@ -83,6 +92,7 @@
 			<Add library="microhttpd" />
 			<Add library="qrencode" />
 			<Add library="crypto" />
+			<Add library="json-glib-1.0" />
 		</Linker>
 		<Unit filename="../../sources/LivePoule/button.cpp" />
 		<Unit filename="../../sources/LivePoule/button.hpp" />
@@ -101,6 +111,12 @@
 		<Unit filename="../../sources/LivePoule/timer.hpp" />
 		<Unit filename="../../sources/LivePoule/wpa.cpp" />
 		<Unit filename="../../sources/LivePoule/wpa.hpp" />
+		<Unit filename="../../sources/common/network/console/console.cpp" />
+		<Unit filename="../../sources/common/network/console/console.hpp" />
+		<Unit filename="../../sources/common/network/console/console_server.cpp" />
+		<Unit filename="../../sources/common/network/console/console_server.hpp" />
+		<Unit filename="../../sources/common/network/credentials.cpp" />
+		<Unit filename="../../sources/common/network/credentials.hpp" />
 		<Unit filename="../../sources/common/network/cryptor.cpp" />
 		<Unit filename="../../sources/common/network/cryptor.hpp" />
 		<Unit filename="../../sources/common/network/http_server.cpp" />
@@ -115,6 +131,12 @@
 		<Unit filename="../../sources/common/network/ring.hpp" />
 		<Unit filename="../../sources/common/network/uploader.cpp" />
 		<Unit filename="../../sources/common/network/uploader.hpp" />
+		<Unit filename="../../sources/common/network/usb_broker.cpp" />
+		<Unit filename="../../sources/common/network/usb_broker.hpp" />
+		<Unit filename="../../sources/common/network/usb_challenge.cpp" />
+		<Unit filename="../../sources/common/network/usb_challenge.hpp" />
+		<Unit filename="../../sources/common/network/usb_drive.cpp" />
+		<Unit filename="../../sources/common/network/usb_drive.hpp" />
 		<Unit filename="../../sources/common/network/wifi_network.cpp" />
 		<Unit filename="../../sources/common/network/wifi_network.hpp" />
 		<Unit filename="../../sources/common/util/attribute.cpp" />
@@ -139,8 +161,12 @@
 		<Unit filename="../../sources/common/util/sensitivity_trigger.hpp" />
 		<Unit filename="../../sources/common/util/tree_model_index.cpp" />
 		<Unit filename="../../sources/common/util/tree_model_index.hpp" />
+		<Unit filename="../../sources/common/util/user_config.cpp" />
+		<Unit filename="../../sources/common/util/user_config.hpp" />
 		<Unit filename="../../sources/common/util/wifi_code.cpp" />
 		<Unit filename="../../sources/common/util/wifi_code.hpp" />
+		<Unit filename="../../sources/common/util/xml_scheme.cpp" />
+		<Unit filename="../../sources/common/util/xml_scheme.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

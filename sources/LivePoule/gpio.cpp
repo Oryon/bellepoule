@@ -96,7 +96,7 @@ void Gpio::Init ()
 // --------------------------------------------------------------------------------
 void Gpio::GenerateFakeEvent ()
 {
-#ifndef WIRING_PI
+#if 0
   g_thread_new (NULL,
                 (GThreadFunc) FakeLoop,
                 this);

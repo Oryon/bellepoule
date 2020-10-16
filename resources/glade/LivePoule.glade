@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.3 -->
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <requires lib="gtk+" version="3.0"/>
   <object class="GtkWindow" id="root">
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
-    <signal name="key-press-event" handler="on_root_key_press_event" swapped="no"/>
     <signal name="delete-event" handler="on_root_delete_event" swapped="no"/>
+    <signal name="key-press-event" handler="on_root_key_press_event" swapped="no"/>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>
@@ -17,7 +18,7 @@
             <property name="can_focus">False</property>
             <property name="shadow_type">none</property>
             <child>
-              <object class="GtkBox" id="box3">
+              <object class="GtkBox" id="title_box">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
@@ -83,7 +84,7 @@
                     <property name="can_focus">False</property>
                     <property name="shadow_type">none</property>
                     <child>
-                      <object class="GtkBox" id="box8">
+                      <object class="GtkBox" id="red_hit_box">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
@@ -170,7 +171,7 @@
                     <property name="can_focus">False</property>
                     <property name="shadow_type">none</property>
                     <child>
-                      <object class="GtkBox" id="box9">
+                      <object class="GtkBox" id="green_hit_box">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>

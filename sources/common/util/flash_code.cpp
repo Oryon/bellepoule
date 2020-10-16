@@ -53,7 +53,7 @@ GdkPixbuf *FlashCode::GetPixbuf (guint pixel_size)
     QRcode *qr_code;
 
     {
-      gchar  *text = GetText ();
+      gchar *text = GetText ();
 
       qr_code = QRcode_encodeString (text,
                                      0,

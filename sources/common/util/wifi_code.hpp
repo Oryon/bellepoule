@@ -53,4 +53,6 @@ class WifiCode : public FlashCode
     ~WifiCode () override;
 
     gchar *GetText () override;
+
+    gchar *GetIpV4Address ();
 };

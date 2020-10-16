@@ -27,6 +27,6 @@ class SgMachine : public ScoringMachine
     virtual ~SgMachine ();
 
     virtual void Wire (GQuark  quark,
-                       Light  *light);
+                       Light  *light) override;
 
 };

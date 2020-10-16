@@ -182,7 +182,7 @@ gchar *Wpa::GetNetworkConfig ()
 
   g_free (config);
 #else
-    sleep (10);
+    sleep (1);
 #endif
 
   return NULL;

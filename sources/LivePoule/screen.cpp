@@ -16,8 +16,14 @@
 
 #include <glib/gstdio.h>
 #include <gio/gunixsocketaddress.h>
+#include "util/glade.hpp"
 #include "network/message.hpp"
 
+#include "button.hpp"
+#include "scoring_machine.hpp"
+#include "light.hpp"
+#include "timer.hpp"
+#include "wpa.hpp"
 #include "screen.hpp"
 
 // --------------------------------------------------------------------------------
@@ -64,13 +70,13 @@ Screen::Screen ()
     g_datalist_init (&_lights);
 
     // red_hit_light
-    light = new Light (_glade->GetWidget ("red_hit_light"),
+    light = new Light (_glade->GetWidget ("red_hit_box"),
                        (GSourceFunc) OnLightEvent, this,
                        "valid",     "#b01313",
                        "non-valid", "#eeeeee",
                        NULL);
     g_datalist_set_data_full (&_lights,
-                              "red_hit_light",
+                              "red_hit_box",
                               light,
                               (GDestroyNotify) Object::TryToRelease);
 
@@ -84,13 +90,13 @@ Screen::Screen ()
                               (GDestroyNotify) Object::TryToRelease);
 
     // green_hit_light
-    light = new Light (_glade->GetWidget ("green_hit_light"),
+    light = new Light (_glade->GetWidget ("green_hit_box"),
                        (GSourceFunc) OnLightEvent, this,
                        "valid",     "#13b013",
                        "non-valid", "#eeeeee",
                        NULL);
     g_datalist_set_data_full (&_lights,
-                              "green_hit_light",
+                              "green_hit_box",
                               light,
                               (GDestroyNotify) Object::TryToRelease);
 
@@ -114,10 +120,12 @@ Screen::Screen ()
 
   _wpa = new Wpa ();
 
-  _http_server = new Net::HttpServer (this,
-                                      HttpPostCbk,
-                                      NULL,
-                                      35832);
+  {
+    guint port = WifiCode::ClaimIpPort ();
+
+    _http_server = new Net::HttpServer (this,
+                                        port);
+  }
 
   ResetDisplay ();
 }
@@ -313,109 +321,78 @@ void Screen::ChangeStripId (gint step)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Screen::OnHttpPost (Net::Message *message)
+gboolean Screen::OnMessage (Net::Message *message)
 {
   gboolean  result = FALSE;
-  gchar    *data   = message->GetString ("content");
 
-  if (data)
+  if (message->Is ("SmartPoule::RefereeHandshake"))
   {
-    printf (BLUE "%s\n" ESC, data);
-    if (strstr (data, "coucou"))
-    {
-      gtk_widget_set_visible (_glade->GetWidget ("code_image"),
-                              FALSE);
+    gtk_widget_set_visible (_glade->GetWidget ("code_image"),
+                            FALSE);
 
-      ResetDisplay ();
+    ResetDisplay ();
 
-      _timer->Set (3*60);
+    _timer->Set (3*60);
 
-      SetFencer ("red",
-                 "score",
-                 "0");
-      SetFencer ("green",
-                 "score",
-                 "0");
+    SetFencer ("red",
+               "score",
+               "0");
+    SetFencer ("green",
+               "score",
+               "0");
 
-      result = TRUE;
-    }
-    else
-    {
-      const gchar *key_file_data = strstr (data, "# LivePoule KeyFile");
+    result = TRUE;
+  }
+  else if (message->Is ("SmartPoule::Score"))
+  {
+    SetCompetition (message);
 
-      if (key_file_data)
-      {
-        GKeyFile *key_file = g_key_file_new ();
+    SetScore ("red",
+              message);
 
-        if (g_key_file_load_from_data (key_file,
-                                       key_file_data,
-                                       -1,
-                                       G_KEY_FILE_NONE,
-                                       NULL))
-        {
-          SetCompetition (key_file);
+    SetScore ("green",
+              message);
+  }
+  else if (message->Is ("SmartPoule::Timer"))
+  {
+    SetTimer (message);
 
-          SetTimer (key_file);
-          SetScore ("red",
-                    key_file);
-
-          SetScore ("green",
-                    key_file);
-
-          result = TRUE;
-        }
-
-        g_key_file_free (key_file);
-      }
-    }
-    g_free (data);
+    result = TRUE;
   }
 
   return result;
 }
 
 // --------------------------------------------------------------------------------
-void Screen::SetCompetition (GKeyFile *key_file)
+void Screen::SetCompetition (Net::Message *from_message)
 {
   {
-    gchar *color = g_key_file_get_string (key_file,
-                                          "competition",
-                                          "color",
-                                          NULL);
-    {
-      SetColor (color);
-      g_free (color);
-    }
+    gchar *color = from_message->GetString ("competition-color");
+
+    SetColor (color);
+    g_free (color);
   }
 
   {
-    gchar *title = g_key_file_get_string (key_file,
-                                          "competition",
-                                          "name",
-                                          NULL);
-    {
-      SetTitle (title);
-      g_free (title);
-    }
+    gchar *title = from_message->GetString ("competition-name");
+
+    SetTitle (title);
+    g_free (title);
   }
 }
 
 // --------------------------------------------------------------------------------
-void Screen::SetTimer (GKeyFile *key_file)
+void Screen::SetTimer (Net::Message *from_message)
 {
   {
-    gint value = g_key_file_get_integer (key_file,
-                                         "timer",
-                                         "value",
-                                         NULL);
+    gint value = from_message->GetInteger ("value");
+
     _timer->Set (value);
   }
 
   {
-    gchar *state = g_key_file_get_string (key_file,
-                                          "timer",
-                                          "state",
-                                          NULL);
+    gchar *state = from_message->GetString ("state");
+
     _timer->SetState (state);
     g_free (state);
   }
@@ -431,7 +408,7 @@ void Screen::SetColor (const gchar *color)
     gdk_rgba_parse (&rgba,
                     color);
 
-    gtk_widget_override_background_color (_glade->GetWidget ("title_viewport"),
+    gtk_widget_override_background_color (_glade->GetWidget ("title_box"),
                                           GTK_STATE_FLAG_NORMAL,
                                           &rgba);
   }
@@ -461,28 +438,31 @@ void Screen::SetTitle (const gchar *title)
 }
 
 // --------------------------------------------------------------------------------
-void Screen::SetScore (const gchar *light_color,
-                       GKeyFile    *key_file)
+void Screen::SetScore (const gchar  *light_color,
+                       Net::Message *from_message)
 {
   {
-    gchar *name = g_key_file_get_string (key_file,
-                                         light_color,
-                                         "fencer",
-                                         NULL);
+    gchar *field = g_strdup_printf ("%s-fencer", light_color);
+    gchar *name  = from_message->GetString (field);
+
     SetFencer (light_color,
                "fencer",
                name);
+
     g_free (name);
+    g_free (field);
   }
+
   {
-    gchar *name = g_key_file_get_string (key_file,
-                                         light_color,
-                                         "score",
-                                         NULL);
+    gchar *field = g_strdup_printf ("%s-score", light_color);
+    gchar *name  = from_message->GetString (field);
+
     SetFencer (light_color,
                "score",
                name);
+
     g_free (name);
+    g_free (field);
   }
 }
 
@@ -503,18 +483,9 @@ void Screen::SetFencer (const gchar *light_color,
 }
 
 // --------------------------------------------------------------------------------
-gchar *Screen::GetSecretKey (const gchar *authentication_scheme)
+const gchar *Screen::GetSecretKey (const gchar *authentication_scheme)
 {
   return _wifi_code->GetKey ();
-}
-
-// --------------------------------------------------------------------------------
-gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
-                              Net::Message            *message)
-{
-  Screen *screen = (Screen *) client;
-
-  return screen->OnHttpPost (message);
 }
 
 // --------------------------------------------------------------------------------

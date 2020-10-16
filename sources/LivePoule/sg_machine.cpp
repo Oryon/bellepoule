@@ -31,7 +31,7 @@ SgMachine::~SgMachine ()
 void SgMachine::Wire (GQuark  quark,
                       Light  *light)
 {
-  if (quark == g_quark_from_string ("red_hit_light"))
+  if (quark == g_quark_from_string ("red_hit_box"))
   {
     light->WireGpioPin ("valid",     1);
     light->WireGpioPin ("non-valid", 0);
@@ -40,7 +40,7 @@ void SgMachine::Wire (GQuark  quark,
   {
     light->WireGpioPin ("on", 2);
   }
-  else if (quark == g_quark_from_string ("green_hit_light"))
+  else if (quark == g_quark_from_string ("green_hit_box"))
   {
     light->WireGpioPin ("valid",     4);
     light->WireGpioPin ("non-valid", 3);

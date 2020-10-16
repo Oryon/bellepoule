@@ -17,9 +17,6 @@
 #pragma once
 
 #include <json-glib/json-glib.h>
-#pragma GCC diagnostic ignored "-Wpedantic"
-#include <libusb.h>
-#pragma GCC diagnostic pop
 
 #include "util/object.hpp"
 

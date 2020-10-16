@@ -19,16 +19,18 @@
 #include <gtk/gtk.h>
 
 #include "util/module.hpp"
+#include "util/wifi_code.hpp"
 #include "network/http_server.hpp"
 #include "network/wifi_network.hpp"
-#include "util/wifi_code.hpp"
-#include "timer.hpp"
-#include "button.hpp"
-#include "light.hpp"
-#include "scoring_machine.hpp"
-#include "wpa.hpp"
+#include "network/http_server.hpp"
 
-class Screen : public Module, Net::HttpServer::Client
+class Button;
+class ScoringMachine;
+class Timer;
+class Wpa;
+
+class Screen : public Module,
+               public Net::HttpServer::Listener
 {
   public:
     Screen ();
@@ -60,12 +62,12 @@ class Screen : public Module, Net::HttpServer::Client
 
     void ChangeNumber (gint step);
 
-    void SetCompetition (GKeyFile *key_file);
+    void SetCompetition (Net::Message *from_message);
 
-    void SetTimer (GKeyFile *key_file);
+    void SetTimer (Net::Message *from_message);
 
-    void SetScore (const gchar *light_color,
-                   GKeyFile    *key_file);
+    void SetScore (const gchar  *light_color,
+                   Net::Message *from_message);
 
     void SetColor (const gchar *color);
 
@@ -75,9 +77,9 @@ class Screen : public Module, Net::HttpServer::Client
                     const gchar *data,
                     const gchar *name);
 
-    gboolean OnHttpPost (Net::Message *message);
+    gboolean OnMessage (Net::Message *message) override;
 
-    gchar *GetSecretKey (const gchar *authentication_scheme);
+    const gchar *GetSecretKey (const gchar *authentication_scheme) override;
 
     void Unfullscreen ();
 
@@ -86,9 +88,6 @@ class Screen : public Module, Net::HttpServer::Client
     void ChangeStripId (gint step);
 
   private:
-    static gboolean HttpPostCbk (Net::HttpServer::Client *client,
-                                 Net::Message            *message);
-
     static gboolean OnLightEvent (Screen *screen);
 
     static gboolean OnQrCodeButton (Screen *context);

@@ -1,3 +1,4 @@
+*.glade~
 *.swp
 *.exe
 *.o
