@@ -7,7 +7,7 @@ class Fencer
     this.freezed       = false;
     this.taintedPanels = [];
     this.faults        = [{'name':'white',  'color':'white',   'penalties':[0, 3]},
-                          {'name':'orange', 'color':'#ED7117', 'penalties':[3, 5]},
+                          {'name':'yellow', 'color':'#FFF500', 'penalties':[3, 5]},
                           {'name':'red',    'color':'DarkRed', 'penalties':[5, -1]}];
 
     this.opponent = null;
