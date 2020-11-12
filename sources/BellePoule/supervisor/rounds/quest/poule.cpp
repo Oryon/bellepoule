@@ -1203,6 +1203,11 @@ namespace Quest
 
     MakeDirty ();
     //OnRoundOver
+
+    if (_muted == FALSE)
+    {
+      Spread ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1481,10 +1486,7 @@ namespace Quest
 
         OnNewScore (nullptr,
                     match,
-                    A);
-        OnNewScore (nullptr,
-                    match,
-                    B);
+                    nullptr);
       }
 
       _elo->ProcessBatch (_matches);
@@ -1643,11 +1645,11 @@ namespace Quest
 
                 fencer->SetAttributeValue (&status_attr_id,
                                            score->GetStatusImage ());
-
-                OnNewScore (nullptr,
-                            match,
-                            fencer);
               }
+
+              OnNewScore (nullptr,
+                          match,
+                          nullptr);
 
               _elo->ProcessBatch (_matches);
               RefreshClassification ();

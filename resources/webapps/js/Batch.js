@@ -142,7 +142,7 @@ class Batch
                 || (fencer_node.getAttribute ('Statut') == 'A')
                 || (fencer_node.getAttribute ('Statut') == 'E'))
             {
-              match_over = true;
+              match_over = match.getAttribute ('Piste') == null;
             }
 
             cell.setAttribute ('class', 'td_matchlist');
@@ -159,10 +159,24 @@ class Batch
           for (let f = 0; f < node.childNodes[i].childElementCount; f++)
           {
             let fencer_node = node.childNodes[i].childNodes[f];
-            let fencer_id   = fencer_node.getAttribute ('REF');
-            let fencer      = this.competition.getFencer (fencer_id);
+            let score       = fencer_node.getAttribute ('Score');
             let cell        = row.insertCell (-1);
-            let html        = '<td"><span style="background-color: #000000">' + '8' + '</span></td>';
+            let html        = '';
+
+            if (score)
+            {
+              html += '<td"><span style="background-color: #000000">&nbsp';
+              if (score < 10)
+              {
+                html += '&nbsp&nbsp';
+              }
+              html += score;
+              html += '&nbsp</span></td>';
+            }
+            else
+            {
+              html = '<td"></td>';
+            }
 
             cell.setAttribute ('class', 'td_score');
             cell.innerHTML = html;
