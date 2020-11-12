@@ -41,19 +41,24 @@
 			<Add alias="Debug" targets="Lib_Debug;Marshaller_Debug;Supervisor_Debug;Backend_Debug;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option="-Wshadow" />
-			<Add option="-Winit-self" />
-			<Add option="-Wredundant-decls" />
-			<Add option="-Wcast-align" />
-			<Add option="-Wundef" />
-			<Add option="-Wunreachable-code" />
-			<Add option="-Wmissing-include-dirs" />
-			<Add option="-Wswitch-enum" />
-			<Add option="-Wswitch-default" />
-			<Add option="-pedantic" />
 			<Add option="-Wextra" />
 			<Add option="-Wall" />
-			<Add option="-std=c++11" />
+			<Add option="-Wcast-align" />
+			<Add option="-Winit-self" />
+			<Add option="-Wmissing-include-dirs" />
+			<Add option="-Wredundant-decls" />
+			<Add option="-Wshadow" />
+			<Add option="-Wsuggest-override" />
+			<Add option="-Wswitch-default" />
+			<Add option="-Wswitch-enum" />
+			<Add option="-Winit-self" />
+			<Add option="-Wmissing-include-dirs" />
+			<Add option="-Wredundant-decls" />
+			<Add option="-Wundef" />
+			<Add option="-Wunreachable-code" />
+			<Add option="-fno-common" />
+			<Add option="-pedantic" />
+			<Add option="-std=c++0x" />
 			<Add option="-g" />
 			<Add option="-Wno-int-to-pointer-cast" />
 			<Add option="-Wno-long-long" />
@@ -61,7 +66,6 @@
 			<Add option="-Wno-variadic-macros" />
 			<Add option="-Wno-deprecated-declarations" />
 			<Add option="-Wno-vla" />
-			<Add option="-Wsuggest-override" />
 			<Add option="-fPIC" />
 			<Add option="-pthread" />
 			<Add option="-DDEBUG" />

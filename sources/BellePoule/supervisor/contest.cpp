@@ -509,7 +509,7 @@ void Contest::LoadXmlString (const guchar *string)
 
     if (doc)
     {
-      LoadXmlDoc (doc);
+      LoadXmlDocument (doc);
 
       if (_save_timeout_id > 0)
       {
@@ -561,7 +561,7 @@ void Contest::LoadXmlFile (const gchar *filename)
 
     if (doc)
     {
-      LoadXmlDoc (doc);
+      LoadXmlDocument (doc);
 
       AddFileToRecentManager (filename);
 
@@ -649,7 +649,7 @@ void Contest::LoadFencerFile (const gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-void Contest::LoadXmlDoc (xmlDoc *doc)
+void Contest::LoadXmlDocument (xmlDoc *doc)
 {
   _state = State::LOADING;
 

@@ -207,7 +207,7 @@ class Contest : public Module
 
     void   ReadProperties       ();
     void   DisplayProperties    ();
-    void   LoadXmlDoc           (xmlDoc *doc);
+    void   LoadXmlDocument      (xmlDoc *doc);
     void   GetUnknownAttributes (const gchar     *contest_keyword,
                                  xmlXPathContext *xml_context);
     void   LoadHeader           (xmlXPathContext *context);

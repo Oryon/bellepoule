@@ -928,9 +928,20 @@ void Tournament::OpenUriContest (const gchar *uri)
     else if (g_str_has_suffix (uri,
                                ".zip"))
     {
-      struct zip *archive = zip_open (uri,
-                                      ZIP_RDONLY|ZIP_CHECKCONS,
-                                      nullptr);
+      struct zip *archive;
+
+      {
+        gchar *locale_uri = g_locale_from_utf8 (uri,
+                                                -1,
+                                                nullptr,
+                                                nullptr,
+                                                nullptr);
+
+        archive = zip_open (locale_uri,
+                            ZIP_RDONLY|ZIP_CHECKCONS,
+                            nullptr);
+        g_free (locale_uri);
+      }
 
       if (archive)
       {

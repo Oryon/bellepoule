@@ -67,7 +67,7 @@ endif
 ifeq ($(DISTRIB), windows)
 CC_FAMILY = i686-w64-mingw32-
 EXE       = .exe
-MINGW=$(HOME)/.local/share/crossroad/roads/w32/fedora
+MINGW=$(HOME)/.local/share/crossroad/roads/w32/bellepouleV$(VERSION_MAJOR)
 PKG_CONFIG = env PKG_CONFIG_PATH= PKG_CONFIG_LIBDIR=$(MINGW)/lib/pkgconfig $(CC_FAMILY)pkg-config
 else
 CC_FAMILY  =
@@ -135,6 +135,8 @@ CFLAGS += -Wno-redundant-decls
 CFLAGS += -Wno-undef
 CFLAGS += -Wno-attributes
 CFLAGS += -Wno-shadow
+CFLAGS += -Wno-parentheses
+CFLAGS += -Wno-cast-function-type
 else ifeq ($(DISTRIB), osx)
 CFLAGS += -DOSX
 CFLAGS += -Wno-cast-align
@@ -579,7 +581,7 @@ build_windows: all
 	cp $(OUTPUT)/$(PRODUCT)*.exe ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/exe
 	#echo "cp Debug/$(PRODUCT)-*.exe ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/"
 	#cp ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/$(PRODUCT)/bin
-	env WINEPREFIX="$(HOME)/.wine" wine C:\\windows\\command\\start.exe /Unix $(HOME)/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Inno\ Setup\ 5/Inno\ Setup\ Compiler.lnk
+	env WINEPREFIX="$(HOME)/.wine" wine C:\\windows\\command\\start.exe /Unix $(HOME)/.wine/drive_c/ProgramData/Microsoft/Windows/Start\ Menu/Programs/Inno\ Setup\ 6/Inno\ Setup\ Compiler.lnk
 
 publish_windows:
 	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/$(FTP_FOLDER) ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/Output/$(PRODUCT)-$(VERSION_MAJOR)-$(VERSION_MINOR)-$(VERSION_MATURITY)-win.exe; quit"
