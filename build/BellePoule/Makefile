@@ -67,7 +67,7 @@ endif
 ifeq ($(DISTRIB), windows)
 CC_FAMILY = i686-w64-mingw32-
 EXE       = .exe
-MINGW=$(HOME)/Project/Cross/Xroad/w32/$(PRODUCT)
+MINGW=$(HOME)/.local/share/crossroad/roads/w32/fedora
 PKG_CONFIG = env PKG_CONFIG_PATH= PKG_CONFIG_LIBDIR=$(MINGW)/lib/pkgconfig $(CC_FAMILY)pkg-config
 else
 CC_FAMILY  =
@@ -129,6 +129,12 @@ endif
 ifeq ($(DISTRIB), windows)
 CFLAGS += -I$(MINGW)/include
 CFLAGS += -fpermissive
+CFLAGS += -Wno-deprecated-declarations
+CFLAGS += -Wno-pedantic
+CFLAGS += -Wno-redundant-decls
+CFLAGS += -Wno-undef
+CFLAGS += -Wno-attributes
+CFLAGS += -Wno-shadow
 else ifeq ($(DISTRIB), osx)
 CFLAGS += -DOSX
 CFLAGS += -Wno-cast-align
