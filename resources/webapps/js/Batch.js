@@ -149,6 +149,25 @@ class Batch
             cell.innerHTML = html;
           }
 
+          {
+            let cell = row.insertCell (-1);
+            let html = '<td></td>';
+
+            cell.innerHTML = html;
+          }
+
+          for (let f = 0; f < node.childNodes[i].childElementCount; f++)
+          {
+            let fencer_node = node.childNodes[i].childNodes[f];
+            let fencer_id   = fencer_node.getAttribute ('REF');
+            let fencer      = this.competition.getFencer (fencer_id);
+            let cell        = row.insertCell (-1);
+            let html        = '<td"><span style="background-color: #000000">' + '8' + '</span></td>';
+
+            cell.setAttribute ('class', 'td_score');
+            cell.innerHTML = html;
+          }
+
           if (match.getAttribute ('Piste') != null)
           {
             let cell = row.insertCell (-1);

@@ -18,6 +18,7 @@
 #include "util/attribute.hpp"
 #include "../../match.hpp"
 #include "../../score.hpp"
+#include "match_figure.hpp"
 
 #include "duel_score.hpp"
 
@@ -27,42 +28,38 @@ namespace Quest
   DuelScore::DuelScore (Object *owner)
     : Object ("Quest::DuelScore")
   {
-    _owner = owner;
+    _score_figure = new MatchFigure ("score_quest",
+                                     owner);
+    _victory_figure = new MatchFigure ("victories_count",
+                                       owner);
   }
 
   // --------------------------------------------------------------------------------
   DuelScore::~DuelScore ()
   {
+    _score_figure->Release   ();
+    _victory_figure->Release ();
   }
 
   // --------------------------------------------------------------------------------
   void DuelScore::EvaluateMatch (Match *match)
   {
-    Player::AttributeId duel_score_attr_id ("score_quest", _owner);
-
     CancelMatch (match);
 
     if (match->IsDropped ())
     {
       for (guint i = 0; i < 2; i++)
       {
-        Player    *fencer          = match->GetOpponent (i);
-        Attribute *duel_score_attr = fencer->GetAttribute (&duel_score_attr_id);
+        Player *fencer = match->GetOpponent (i);
 
         if (match->GetScore (fencer)->IsOut () == FALSE)
         {
-          guint new_duel_score = 2;
-
-          fencer->SetData (match,
-                           "Quest::DuelScore",
-                           GUINT_TO_POINTER (2));
-
-          if (duel_score_attr)
-          {
-            new_duel_score += duel_score_attr->GetUIntValue ();
-          }
-          fencer->SetAttributeValue (&duel_score_attr_id,
-                                     new_duel_score);
+          _score_figure->AddToFencer (fencer,
+                                      match,
+                                      2);
+          _victory_figure->AddToFencer (fencer,
+                                        match,
+                                        1);
         }
       }
     }
@@ -73,39 +70,37 @@ namespace Quest
 
       if (winner && looser)
       {
-        guint      winner_score    = match->GetScore (winner)->Get ();
-        guint      looser_score    = match->GetScore (looser)->Get ();
-        guint      delta           = winner_score - looser_score;
-        Attribute *duel_score_attr = winner->GetAttribute (&duel_score_attr_id);
-        guint      new_duel_score;
+        {
+          guint winner_score   = match->GetScore (winner)->Get ();
+          guint looser_score   = match->GetScore (looser)->Get ();
+          guint delta          = winner_score - looser_score;
+          guint new_duel_score;
 
-        if (delta < 4)
-        {
-          new_duel_score = 1;
-        }
-        else if (4 <= delta && delta <= 7)
-        {
-          new_duel_score = 2;
-        }
-        else if (8 <= delta && delta <= 11)
-        {
-          new_duel_score = 3;
-        }
-        else
-        {
-          new_duel_score = 4;
+          if (delta < 4)
+          {
+            new_duel_score = 1;
+          }
+          else if (4 <= delta && delta <= 7)
+          {
+            new_duel_score = 2;
+          }
+          else if (8 <= delta && delta <= 11)
+          {
+            new_duel_score = 3;
+          }
+          else
+          {
+            new_duel_score = 4;
+          }
+
+          _score_figure->AddToFencer (winner,
+                                      match,
+                                      new_duel_score);
         }
 
-        winner->SetData (match,
-                         "Quest::DuelScore",
-                         GUINT_TO_POINTER (new_duel_score));
-
-        if (duel_score_attr)
-        {
-          new_duel_score += duel_score_attr->GetUIntValue ();
-        }
-        winner->SetAttributeValue (&duel_score_attr_id,
-                                   new_duel_score);
+        _victory_figure->AddToFencer (winner,
+                                      match,
+                                      1);
       }
     }
   }
@@ -113,23 +108,17 @@ namespace Quest
   // --------------------------------------------------------------------------------
   void DuelScore::CancelMatch (Match *match)
   {
-    Player::AttributeId duel_score_attr_id ("score_quest", _owner);
-
     for (guint i = 0; i < 2; i++)
     {
       Player *fencer = match->GetOpponent (i);
 
       if (fencer)
       {
-        guint      previous_duel_score = fencer->GetUIntData (match, "Quest::DuelScore");
-        Attribute *duel_score_attr     = fencer->GetAttribute (&duel_score_attr_id);
+        _score_figure->RemoveFromFencer (fencer,
+                                         match);
 
-        if (duel_score_attr)
-        {
-          fencer->SetAttributeValue (&duel_score_attr_id,
-                                     duel_score_attr->GetUIntValue () - previous_duel_score);
-          fencer->RemoveData (match, "Quest::DuelScore");
-        }
+        _victory_figure->RemoveFromFencer (fencer,
+                                           match);
       }
     }
   }

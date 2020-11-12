@@ -182,7 +182,7 @@ td img {
 }
 
 /* Match list */
-td.td_matchlist {
+td.td_matchlist, td.td_score {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -200,6 +200,11 @@ th.th_matchlist, td.td_matchlist {
 td.td_match_id {
   text-align: left;
   font-size: 10vw;
+}
+
+td.td_score {
+  text-align: right;
+  color: White;
 }
 
 td.td_piste {

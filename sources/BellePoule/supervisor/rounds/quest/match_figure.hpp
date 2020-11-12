@@ -17,27 +17,29 @@
 #pragma once
 
 #include <util/object.hpp>
-#include "../../point_system.hpp"
+#include <util/player.hpp>
 
 class Match;
 
 namespace Quest
 {
-  class MatchFigure;
-
-  class DuelScore : public Object
+  class MatchFigure : public Object
   {
     public:
-      DuelScore (Object *owner);
+      MatchFigure (const gchar *name,
+                   Object      *owner);
 
-      void EvaluateMatch (Match *match);
+      void AddToFencer (Player *fencer,
+                        Match  *match,
+                        guint   value);
 
-      void CancelMatch (Match *match);
+      void RemoveFromFencer (Player *fencer,
+                             Match  *match);
 
     private:
-      MatchFigure *_score_figure;
-      MatchFigure *_victory_figure;
+      gchar               *_key;
+      Player::AttributeId *_attr_id;
 
-      ~DuelScore () override;
+      ~MatchFigure () override;
   };
 }

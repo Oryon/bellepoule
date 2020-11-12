@@ -552,6 +552,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/hall.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/match_figure.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/match_figure.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/point_system.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>

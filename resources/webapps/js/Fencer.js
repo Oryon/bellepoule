@@ -144,9 +144,9 @@ class Fencer
     cell.innerHTML = html;
 
     cell.colSpan = 6;
-    cell.style.backgroundColor = this.rgb[color]
+    cell.style.backgroundColor = this.rgb[color];
 
-      this.score = new Score (cell);
+    this.score = new Score (cell);
     this.light = new Light (cell, this.score, 1);
   }
 

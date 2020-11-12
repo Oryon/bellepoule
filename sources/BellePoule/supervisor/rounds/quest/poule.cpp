@@ -197,7 +197,6 @@ namespace Quest
                                             "promoted",
                                             "status",
                                             "team",
-                                            "victories_count",
                                             "bouts_count",
                                             "victories_ratio",
                                             "strip",
@@ -210,7 +209,9 @@ namespace Quest
         filter->ShowAttribute ("name");
         filter->ShowAttribute ("first_name");
         filter->ShowAttribute ("club");
+        filter->ShowAttribute ("victories_count");
         filter->ShowAttribute ("score_quest");
+        filter->ShowAttribute ("elo");
 
         SetClassificationFilter (filter);
         filter->Release ();
