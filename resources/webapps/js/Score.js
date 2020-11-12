@@ -60,8 +60,8 @@ class Score {
 
   reset ()
   {
-    this.points = 0
-      this.refresh ();
+    this.points = 0;
+    this.refresh ();
   }
 
   refresh ()

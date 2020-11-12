@@ -43,13 +43,15 @@ class FaultCounter extends Counter
 
   cancel ()
   {
+    let counter;
+
     if (this.counter2.hits > 0)
     {
-      this.counter2.cancel ();
+      counter = this.counter2;
     }
     else
     {
-      this.counter1.cancel ();
+      counter = this.counter1;
     }
 
     if (counter.cancel ())
