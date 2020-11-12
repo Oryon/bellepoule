@@ -36,6 +36,7 @@ namespace Quest
 
     private:
       MatchFigure *_score_figure;
+      MatchFigure *_nb_matchs_figure;
       MatchFigure *_victory_figure;
 
       ~DuelScore () override;

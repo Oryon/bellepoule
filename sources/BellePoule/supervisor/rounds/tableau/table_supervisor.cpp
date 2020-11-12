@@ -92,6 +92,7 @@ namespace Table
                                           "password",
                                           "cyphered_password",
                                           "score_quest",
+                                          "nb_matchs",
                                           "elo",
                                           "HS",
                                           "attending",

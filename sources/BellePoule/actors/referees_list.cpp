@@ -74,6 +74,8 @@ namespace People
                                           "bouts_count",
                                           "victories_ratio",
                                           "score_quest",
+                                          "nb_matchs",
+                                          "elo",
                                           "strip",
                                           "time",
                                           NULL);

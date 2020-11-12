@@ -30,6 +30,8 @@ namespace Quest
   {
     _score_figure = new MatchFigure ("score_quest",
                                      owner);
+    _nb_matchs_figure = new MatchFigure ("nb_matchs",
+                                         owner);
     _victory_figure = new MatchFigure ("victories_count",
                                        owner);
   }
@@ -37,8 +39,9 @@ namespace Quest
   // --------------------------------------------------------------------------------
   DuelScore::~DuelScore ()
   {
-    _score_figure->Release   ();
-    _victory_figure->Release ();
+    _score_figure->Release     ();
+    _nb_matchs_figure->Release ();
+    _victory_figure->Release   ();
   }
 
   // --------------------------------------------------------------------------------
@@ -61,6 +64,9 @@ namespace Quest
                                         match,
                                         1);
         }
+        _nb_matchs_figure->AddToFencer (fencer,
+                                        match,
+                                        1);
       }
     }
     else if (match->IsOver ())
@@ -101,6 +107,13 @@ namespace Quest
         _victory_figure->AddToFencer (winner,
                                       match,
                                       1);
+
+        _nb_matchs_figure->AddToFencer (winner,
+                                        match,
+                                        1);
+        _nb_matchs_figure->AddToFencer (looser,
+                                        match,
+                                        1);
       }
     }
   }
@@ -116,6 +129,9 @@ namespace Quest
       {
         _score_figure->RemoveFromFencer (fencer,
                                          match);
+
+        _nb_matchs_figure->RemoveFromFencer (fencer,
+                                             match);
 
         _victory_figure->RemoveFromFencer (fencer,
                                            match);

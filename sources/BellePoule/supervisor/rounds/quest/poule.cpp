@@ -138,6 +138,7 @@ namespace Quest
                                           "password",
                                           "cyphered_password",
                                           "score_quest",
+                                          "nb_matchs",
                                           "elo",
                                           "HS",
                                           "attending",
@@ -211,6 +212,7 @@ namespace Quest
         filter->ShowAttribute ("club");
         filter->ShowAttribute ("victories_count");
         filter->ShowAttribute ("score_quest");
+        filter->ShowAttribute ("nb_matchs");
         filter->ShowAttribute ("elo");
 
         SetClassificationFilter (filter);
