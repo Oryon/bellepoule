@@ -7,3 +7,18 @@
 [submodule "build/BellePoule/snap"]
 	path = build/BellePoule/snap
 	url = git@github.com:betonniere/bellepoulebeta.git
+[submodule "build/BellePoule/windows/crossroad.compile/glib"]
+	path = build/BellePoule/windows/crossroad.compile/glib
+	url = git@github.com:betonniere/glib.git
+[submodule "build/BellePoule/windows/crossroad.compile/goocanvas"]
+	path = build/BellePoule/windows/crossroad.compile/goocanvas
+	url = git@github.com:betonniere/goocanvas.git
+[submodule "build/BellePoule/windows/crossroad.compile/libmicrohttpd"]
+	path = build/BellePoule/windows/crossroad.compile/libmicrohttpd
+	url = git@github.com:betonniere/libmicrohttpd.git
+[submodule "build/BellePoule/windows/crossroad.compile/libqrencode"]
+	path = build/BellePoule/windows/crossroad.compile/libqrencode
+	url = git@github.com:betonniere/libqrencode.git
+[submodule "build/BellePoule/windows/crossroad.compile/libwebsockets"]
+	path = build/BellePoule/windows/crossroad.compile/libwebsockets
+	url = git@github.com:betonniere/libwebsockets.git
