@@ -103,7 +103,7 @@ class Batch
           html += '<td><b>' + what + '</b></td>';
         }
 
-        cell.colSpan = 4;
+        cell.colSpan = 6;
         cell.setAttribute ('class', 'td_step');
         cell.innerHTML = html;
       }

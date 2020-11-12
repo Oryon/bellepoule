@@ -3,10 +3,10 @@
 }
 
 .frame {
-  width:      100vw;
-  max-height: 100vh;
-  margin:     auto;
-  position:   absolute;
+  width:         100vw;
+  max-height:    100vh;
+  margin:        auto;
+  position:      absolute;
   top:0;  bottom:0;     /* vertical center */
   left:0; right:0;      /* horizontal center */
 }
@@ -190,7 +190,8 @@ td.td_matchlist, td.td_score {
 
 table.table_matchlist, table.table_scorekeeper {
   border-collapse: collapse;
-  width: 100vw;
+  width: 95%;
+  margin-left: 2.5%;
 }
 
 th.th_matchlist, td.td_matchlist {
@@ -213,10 +214,24 @@ td.td_piste {
 
 td.td_step {
   text-align: center;
-  font-size: 5vw;
   color: White;
 }
 
-tr.tr_matchlist {
-  font-size: 5vw;
+@media screen and (min-device-aspect-ratio: 1/1) {
+  tr.tr_matchlist, td.td_step {
+    font-size: 5vh;
+  }
+
+  td.td_match_id {
+    font-size: 10vh;
+}
+
+@media screen and (max-device-aspect-ratio: 1/1) {
+  tr.tr_matchlist, td.td_step {
+    font-size: 5vw;
+  }
+
+  td.td_match_id {
+    font-size: 10vw;
+  }
 }
