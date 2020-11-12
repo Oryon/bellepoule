@@ -7,14 +7,14 @@ class ModuleStack
 
     if (mode != 'mirror')
     {
-      this.cross  = cross_container;
-      let svg     = document.getElementById ('close.svg');
-      let context = this;
-      let html    = '';
+      this.cross = cross_container;
+      let svg    = document.getElementById ('close.svg');
+      let caller = this;
+      let html   = '';
 
       html += '<img src="data:image/svg+xml;base64,' + svg.dataset.url + '"/>';
       this.cross.innerHTML = html;
-      this.cross.onclick = function () {ModuleStack.onCrossClicked (context);};
+      this.cross.onclick = function () {caller.onCrossClicked ();};
     }
   }
 
@@ -94,13 +94,13 @@ class ModuleStack
     }
   }
 
-  static onCrossClicked (what)
+  onCrossClicked ()
   {
-    let length = what.stack.length;
+    let length = this.stack.length;
 
     if (length > 0)
     {
-      what.pull (what.stack[length-1]);
+      this.pull (this.stack[length-1]);
     }
   }
 }

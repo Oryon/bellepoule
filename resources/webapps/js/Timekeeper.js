@@ -66,8 +66,8 @@ class Timekeeper extends Module
   addDurations (control_panel,
                 durations)
   {
-    let context = this;
-    let html    = '';
+    let caller = this;
+    let html   = '';
 
     for (let i = 0; i < durations.length; i++)
     {
@@ -93,8 +93,7 @@ class Timekeeper extends Module
       let seconds = durations[i].seconds;
       let element = document.getElementById ('timekeeper-' + seconds);
 
-      element.onclick = function () {Timekeeper.onDurationSelected (context,
-                                                                    element);};
+      element.onclick = function () {caller.onDurationSelected (element);};
     }
   }
 
@@ -128,7 +127,7 @@ class Timekeeper extends Module
 
   start ()
   {
-    let context = this;
+    let caller = this;
 
     if (this.start_time == null)
     {
@@ -143,7 +142,7 @@ class Timekeeper extends Module
       this.start_time += now - this.pause_time;
     }
 
-    this.interval = setInterval (function () {Timekeeper.onTic (context);}, 100);
+    this.interval = setInterval (function () {caller.onTic ();}, 100);
     this.control_panel.style.display = 'none';
   }
 
@@ -166,19 +165,19 @@ class Timekeeper extends Module
     this.control_panel.style.display = 'block';
   }
 
-  static onTic (what)
+  onTic ()
   {
     let now       = new Date ().getTime ();
-    let elapsed   = now - what.start_time;
-    let remaining = what.duration*1000 - elapsed;
+    let elapsed   = now - this.start_time;
+    let remaining = this.duration*1000 - elapsed;
 
     if (remaining <= 0)
     {
-      what.stop ();
+      this.stop ();
     }
     else
     {
-      what.refresh (remaining);
+      this.refresh (remaining);
     }
   }
 
@@ -194,11 +193,10 @@ class Timekeeper extends Module
     }
   }
 
-  static onDurationSelected (what,
-                             element)
+  onDurationSelected (element)
   {
-    what.duration = element.id.replace ('timekeeper-', '');
-    what.display.style.backgroundColor = element.style.backgroundColor;
-    what.stop ();
+    this.duration = element.id.replace ('timekeeper-', '');
+    this.display.style.backgroundColor = element.style.backgroundColor;
+    this.stop ();
   }
 };

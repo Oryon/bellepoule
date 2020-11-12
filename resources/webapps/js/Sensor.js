@@ -9,10 +9,10 @@ class Sensor {
     this.trigger = trigger;
     if (this.trigger != null)
     {
-      let context = this;
+      let caller = this;
 
-      this.trigger.onclick = function () {Sensor.onClicked (context);};
-      this.trigger.addEventListener ('long-press', function (e) {Sensor.onLongPress (context, e);});
+      this.trigger.onclick = function () {caller.onClicked ();};
+      this.trigger.addEventListener ('long-press', function (e) {caller.onLongPress (e);});
     }
   }
 
@@ -29,19 +29,19 @@ class Sensor {
     this.freezed = false;
   }
 
-  static onClicked (what)
+  onClicked ()
   {
-    if (what.freezed == false)
+    if (this.freezed == false)
     {
-      what.onSensorClicked (what);
+      this.onSensorClicked ();
     }
-    what.unFreeze ();
+    this.unFreeze ();
   }
 
-  static onLongPress (what, e)
+  onLongPress (e)
   {
     e.preventDefault ();
-    what.freeze ();
-    what.onSensorLongPress (what);
+    this.freeze ();
+    this.onSensorLongPress ();
   }
 }
