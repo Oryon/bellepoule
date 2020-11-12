@@ -91,10 +91,10 @@ namespace Net
     _ip_address = nullptr;
 
     _piste_pattern = new Pattern ("\\/arene\\/([0-9]+)$",
-                                  "<div>La piste <b><font color=\"blue\">%d</font></b> est déjà réservée.</div>");
+                                  "<div>L'arène <b><font color=\"blue\">%d</font></b> est déjà réservée.</div>");
 
     _referee_pattern = new Pattern ("\\/arbitre\\/arene\\/([0-9]+)$",
-                                    "<div>La piste <b><font color=\"blue\">%d</font></b> n'existe pas.</div>");
+                                    "<div>L'arène <b><font color=\"blue\">%d</font></b> n'existe pas.</div>");
 
     _standalone_referee_pattern = new Pattern ("\\/arbitre$",
                                                nullptr);
@@ -428,7 +428,7 @@ namespace Net
               g_string_append        (body, "</tr>");
               g_string_append        (body, "</tbody>");
               g_string_append        (body, "</table>");
-              g_string_append        (body, "<p><em>* Remplacer <span style=\"color: #0000ff;\"><strong>XX</strong></span> par le num&eacute;ro de piste souhait&eacute;.</em></p>");
+              g_string_append        (body, "<p><em>* Remplacer <span style=\"color: #0000ff;\"><strong>XX</strong></span> par le num&eacute;ro d'arène souhait&eacute;.</em></p>");
 
               lws_return_http_status (wsi,
                                       HTTP_STATUS_BAD_REQUEST,
