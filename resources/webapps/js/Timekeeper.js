@@ -11,7 +11,10 @@ class TimekeeperSensor extends Sensor
 
   onSensorClicked (sensor)
   {
-    this.listener.onClicked ();
+    if (mode != 'mirror')
+    {
+      this.listener.onClicked ();
+    }
   }
 
   onSensorLongPress (sensor)
@@ -22,19 +25,23 @@ class TimekeeperSensor extends Sensor
 
 class Timekeeper extends Module
 {
-  constructor (container)
+  constructor (container, mode)
   {
     super ('Timekeeper',
            container);
 
-    this.duration   = 3*60;
-    this.interval   = null;
-    this.start_time = null;
+    this.duration        = 3*60*1000;
+    this.interval        = null;
+    this.mirror_wait_tic = 0;
+    this.start_time      = null;
 
     {
       let html = '';
 
-      html += '<div id="timekeeper-control" class="timekeeper-control">'
+      if (mode != 'mirror')
+      {
+        html += '<div id="timekeeper-control" class="timekeeper-control">'
+      }
       html += '</div>';
       html += '<div id="timekeeper-display" class="timekeeper-display">'
       html += '  <div id="timekeeper-MMSS" class="big-7segments"></div>';
@@ -49,30 +56,29 @@ class Timekeeper extends Module
     this.display       = document.getElementById ('timekeeper-display');
     this.control_panel = document.getElementById ('timekeeper-control');
 
-    {
-      let durations = [{'seconds':3*60, 'color':'#607D3B'},
-                       {'seconds':30,   'color':'#c6be00'}];
+    this.durations = [{'seconds':3*60, 'color':'#607D3B'},
+                      {'seconds':30,   'color':'#c6be00'}];
 
-      this.addDurations (this.control_panel,
-                         durations);
+    if (this.control_panel)
+    {
+      this.addDurations (this.control_panel);
     }
 
     this.sensor = new TimekeeperSensor (this,
                                         document.getElementById ('timekeeper-display'));
 
-    this.refresh (this.duration*1000);
+    this.refresh (this.duration);
   }
 
-  addDurations (control_panel,
-                durations)
+  addDurations (control_panel)
   {
     let caller = this;
     let html   = '';
 
-    for (let i = 0; i < durations.length; i++)
+    for (let i = 0; i < this.durations.length; i++)
     {
-      let seconds = durations[i].seconds;
-      let color   = durations[i].color;
+      let seconds = this.durations[i].seconds;
+      let color   = this.durations[i].color;
 
       html += '<div id="timekeeper-' + seconds + '" class="timekeeper-button" style="background-color:' + color + ';">';
       if (seconds < 60)
@@ -88,18 +94,18 @@ class Timekeeper extends Module
 
     control_panel.innerHTML += html;
 
-    for (let i = 0; i < durations.length; i++)
+    for (let i = 0; i < this.durations.length; i++)
     {
-      let seconds = durations[i].seconds;
+      let seconds = this.durations[i].seconds;
       let element = document.getElementById ('timekeeper-' + seconds);
 
       element.onclick = function () {caller.onDurationSelected (element);};
     }
   }
 
-  refresh (duration)
+  refresh (remaining)
   {
-    let date     = new Date (duration);
+    let date     = new Date (remaining);
     let minutes  = date.getMinutes ();
     let seconds  = date.getSeconds ();
     let millisec = date.getMilliseconds ();
@@ -123,6 +129,55 @@ class Timekeeper extends Module
 
     this.MMSS.innerHTML = mm + ':' + ss;
     this.ms.innerHTML   = '.' + ms;
+
+    if ((this.mirror_wait_tic == 0) && (mirror != ''))
+    {
+      let msg = new Message ('SmartPoule::Timer');
+
+      msg.addField ('mirror',     mirror);
+      msg.addField ('start_time', this.start_time);
+      msg.addField ('duration',   this.duration);
+      msg.addField ('remaining',  remaining);
+      msg.addField ('running',    this.interval != null);
+
+      socket.send (msg.data);
+      this.mirror_wait_tic = 50;
+    }
+    else
+    {
+      this.mirror_wait_tic--;
+    }
+  }
+
+  synchronize (start_time,
+               duration,
+               remaining,
+               running)
+  {
+    let now = new Date ().getTime ();
+
+    this.duration   = duration;
+    this.start_time = now - duration + remaining;
+
+    if (running == false)
+    {
+      this.pause ();
+    }
+    else if (this.interval == null)
+    {
+      let caller = this;
+
+      this.interval = setInterval (function () {caller.onTic ();}, 100);
+    }
+
+    for (let i = 0; i < this.durations.length; i++)
+    {
+      if (this.durations[i].seconds == duration/1000)
+      {
+        this.display.style.backgroundColor = this.durations[i].color;
+        break;
+      }
+    }
   }
 
   start ()
@@ -142,8 +197,15 @@ class Timekeeper extends Module
       this.start_time += now - this.pause_time;
     }
 
-    this.interval = setInterval (function () {caller.onTic ();}, 100);
-    this.control_panel.style.display = 'none';
+    this.interval        = setInterval (function () {caller.onTic ();}, 100);
+    this.mirror_wait_tic = 0;
+
+    if (this.control_panel)
+    {
+      this.control_panel.style.display = 'none';
+    }
+
+    this.onTic ();
   }
 
   pause ()
@@ -154,6 +216,9 @@ class Timekeeper extends Module
 
     clearInterval (this.interval);
     this.interval = null;
+
+    this.mirror_wait_tic = 0;
+    this.onTic ();
   }
 
   stop ()
@@ -161,15 +226,20 @@ class Timekeeper extends Module
     this.pause ();
 
     this.start_time = null;
-    this.refresh (this.duration*1000);
-    this.control_panel.style.display = 'block';
+    this.mirror_wait_tic = 0;
+    this.refresh (this.duration);
+
+    if (this.control_panel)
+    {
+      this.control_panel.style.display = 'block';
+    }
   }
 
   onTic ()
   {
     let now       = new Date ().getTime ();
     let elapsed   = now - this.start_time;
-    let remaining = this.duration*1000 - elapsed;
+    let remaining = this.duration - elapsed;
 
     if (remaining <= 0)
     {
@@ -195,8 +265,10 @@ class Timekeeper extends Module
 
   onDurationSelected (element)
   {
-    this.duration = element.id.replace ('timekeeper-', '');
+    this.duration = element.id.replace ('timekeeper-', '') * 1000;
     this.display.style.backgroundColor = element.style.backgroundColor;
-    this.stop ();
+
+    this.mirror_wait_tic = 0;
+    this.refresh (this.duration);
   }
 };

@@ -14,6 +14,7 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   background-color: grey;
+  overflow-x: hidden;
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none;   /* Chrome 6.0+, Safari 3.1+, Edge & Opera 15+ */
   -moz-user-select: none;      /* Firefox */
@@ -63,9 +64,18 @@ div.timekeeper-display {
   color: black;
   background-color: #607D3B;
   border-radius: 10px;
-  border: 1.5vw solid black;
   padding-left: 2vw;
   padding-right: 2vw;
+}
+@media screen and (min-device-aspect-ratio: 1/1) {
+  div.timekeeper-display {
+    border: 1.5vh solid black;
+  }
+}
+@media screen and (max-device-aspect-ratio: 1/1) {
+  div.timekeeper-display {
+    border: 1.5vw solid black;
+  }
 }
 
 div.big-7segments {

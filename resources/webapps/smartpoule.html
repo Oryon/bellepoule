@@ -132,7 +132,8 @@
       matchlist = new MatchList (document.getElementById ('matchlist_hook'));
       stack.push (matchlist);
 
-      timekeeper = new Timekeeper (document.getElementById ('timekeeper_hook'));
+      timekeeper = new Timekeeper (document.getElementById ('timekeeper_hook'),
+                                   mode);
     }
 
     socket.onclose = function ()
@@ -141,7 +142,14 @@
 
     socket.onmessage = function (msg)
     {
-      if (msg.data.startsWith ('[Header]\nname=SmartPoule::Score\n'))
+      if (msg.data.startsWith ('[Header]\nname=SmartPoule::Timer\n'))
+      {
+        timekeeper.synchronize (parseInt (Message.getField (msg.data, 'Body', 'start_time'), 10),
+                                parseInt (Message.getField (msg.data, 'Body', 'duration'), 10),
+                                parseInt (Message.getField (msg.data, 'Body', 'remaining', 10)),
+                                Message.getField (msg.data, 'Body', 'running') == 'true');
+      }
+      else if (msg.data.startsWith ('[Header]\nname=SmartPoule::Score\n'))
       {
         score_sheet.update (Message.getField (msg.data, 'Header', 'xml'));
       }
@@ -153,10 +161,7 @@
                                       red_fencer,
                                       green_fencer);
 
-        if (mode != 'mirror')
-        {
-          score_sheet.setTimekeeper (timekeeper);
-        }
+        score_sheet.setTimekeeper (timekeeper);
 
         stack.push (score_sheet);
 
