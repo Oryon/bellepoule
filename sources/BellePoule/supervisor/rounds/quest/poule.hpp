@@ -104,6 +104,8 @@ namespace Quest
 
       void OnMatchSelected (Match *match) override;
 
+      gboolean MatchIsFinished (Match *match) override;
+
       void Dump () override;
 
       void OnMatchesPerFencerChanged (GtkEditable *editable);

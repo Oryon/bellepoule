@@ -130,17 +130,39 @@ namespace Quest
   {
     // Remove excess entries
     {
-      GtkTreeIter iter;
-      gboolean    iter_is_valid = gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_store),
-                                                                 &iter,
-                                                                 nullptr,
-                                                                 count);
-      while (iter_is_valid)
+      gint current_count = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (_store),
+                                                           nullptr);
+
+      for (guint i = current_count; i > count; i--)
       {
-        iter_is_valid = gtk_list_store_remove (_store,
-                                               &iter);
-        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_store),
-                                                  &iter);
+        GtkTreeIter iter;
+        gboolean    iter_is_valid = gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_store),
+                                                                   &iter,
+                                                                   nullptr,
+                                                                   count);
+        if (iter_is_valid)
+        {
+          {
+            Match *match;
+
+            gtk_tree_model_get (GTK_TREE_MODEL (_store),
+                                &iter,
+                                ColumnId::MATCH_ptr, &match,
+                                -1);
+
+            if (   match
+                && _listener->MatchIsFinished (match) == FALSE)
+            {
+              if (match->HasError () == FALSE)
+              {
+                match->SetPiste (0);
+              }
+            }
+          }
+
+          iter_is_valid = gtk_list_store_remove (_store,
+                                                 &iter);
+        }
       }
     }
 

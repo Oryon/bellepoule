@@ -371,8 +371,7 @@ namespace Quest
                   }
 
                   if (   match->GetPiste ()
-                      || (   (match->IsOver ()         == FALSE)
-                          && (MatchIsCancelled (match) == FALSE)))
+                      || (MatchIsFinished (match) == FALSE))
                   {
                     _hall->BookPiste (match);
                   }
@@ -615,6 +614,12 @@ namespace Quest
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Poule::MatchIsFinished (Match *match)
+  {
+    return match->IsOver () || MatchIsCancelled (match);
+  }
+
+  // --------------------------------------------------------------------------------
   void Poule::Wipe ()
   {
     for (GList *m = _matches; m; m = g_list_next (m))
@@ -656,20 +661,33 @@ namespace Quest
         Match *match = (Match *) m->data;
 
         if (   match->GetPiste ()
-            || (   (match->IsOver ()         == FALSE)
-                && (MatchIsCancelled (match) == FALSE)))
+            && match->HasError ())
         {
           ongoings++;
-          if (ongoings > _piste_count->_value)
-          {
-            break;
-          }
-        }
-
-        if (   (match->IsOver ()         == FALSE)
-            && (MatchIsCancelled (match) == FALSE))
-        {
           _hall->BookPiste (match);
+        }
+      }
+
+      for (GList *m = _matches; m; m = g_list_next (m))
+      {
+        Match *match = (Match *) m->data;
+
+        if (match->HasError () == FALSE)
+        {
+          if (   match->GetPiste ()
+              || (MatchIsFinished (match) == FALSE))
+          {
+            ongoings++;
+            if (ongoings > _piste_count->_value)
+            {
+              continue;
+            }
+          }
+
+          if (MatchIsFinished (match) == FALSE)
+          {
+            _hall->BookPiste (match);
+          }
         }
 
         DisplayMatch (match);
@@ -1207,7 +1225,6 @@ namespace Quest
 
     if (_muted == FALSE)
     {
-      printf ("coucou\n");
       Spread ();
     }
   }
@@ -1254,8 +1271,7 @@ namespace Quest
     _hall->SetStatusIcon (match,
                           nullptr);
 
-    if (   match->IsOver ()
-        || MatchIsCancelled (match))
+    if (MatchIsFinished (match))
     {
       g_object_set (G_OBJECT (match->GetPtrData (this, "Poule::piste")),
                     "font",       BP_FONT "18px",

@@ -29,7 +29,8 @@ namespace Quest
     public:
       struct Listener
       {
-        virtual void OnMatchSelected (Match *match) = 0;
+        virtual void     OnMatchSelected (Match *match) = 0;
+        virtual gboolean MatchIsFinished (Match *match) = 0;
       };
 
     public:
