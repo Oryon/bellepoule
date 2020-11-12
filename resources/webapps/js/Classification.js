@@ -14,6 +14,8 @@ class Classification extends Module
       table.className = 'table_classification';
       this.container.appendChild (table);
     }
+
+    this.setScrollSpeed (25);
   }
 
   setCompetition (competition)
