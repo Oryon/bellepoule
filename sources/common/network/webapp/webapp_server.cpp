@@ -99,6 +99,9 @@ namespace Net
     _standalone_referee_pattern = new Pattern ("\\/arbitre$",
                                                nullptr);
 
+    _audience_pattern = new Pattern ("\\/public$",
+                                     nullptr);
+
     _queue = g_async_queue_new_full ((GDestroyNotify) Object::TryToRelease);
 
     {
@@ -168,6 +171,7 @@ namespace Net
     _piste_pattern->Release ();
     _referee_pattern->Release ();
     _standalone_referee_pattern->Release ();
+    _audience_pattern->Release ();
 
     g_async_queue_unref (_queue);
 
@@ -346,7 +350,8 @@ namespace Net
             }
           }
 
-          if (server->_standalone_referee_pattern->Match (in) == FALSE)
+          if (   (server->_standalone_referee_pattern->Match (in) == FALSE)
+              && (server->_audience_pattern->Match (in) == FALSE))
           {
             if (server->_piste_pattern->Match (in))
             {
@@ -399,19 +404,31 @@ namespace Net
             {
               GString *body = g_string_new (nullptr);
 
-              g_string_append        (body, "<meta charset=\"UTF-8\">");
-              g_string_append        (body, "<div>Mauvaise requète. Les trois formats possibles sont :</div>");
-              g_string_append        (body, "<div>");
-              g_string_append_printf (body, "- http://%s:8000/arene/<b><font color=\"blue\">XX</font></b>", server->_ip_address);
-              g_string_append        (body, "</div>");
-              g_string_append        (body, "<div>");
-              g_string_append_printf (body, "- http://%s:8000/arbitre/arene/<b><font color=\"blue\">XX</font></b>", server->_ip_address);
-              g_string_append        (body, "</div>");
-              g_string_append        (body, "<div>");
-              g_string_append_printf (body, "- http://%s:8000/arbitre", server->_ip_address);
-              g_string_append        (body, "</div>");
-              g_string_append        (body, "<p></p>");
-              g_string_append        (body, "* <i>Remplacer <b><font color=\"blue\">XX</font></b> par le numéro de piste.</i>");
+              g_string_append        (body, "<h2 style=\"color: #2e6c80;\">Mauvaise requ&egrave;te :</h2>");
+              g_string_append        (body, "<p>L'adresse que vous venez de saisir n'a pas pas &eacute;t&eacute; comprise par le logiciel BellePoule.&nbsp;</p>");
+              g_string_append        (body, "<p>Corrigez l&agrave; en vous conformant &agrave; l'un des 4 formats possibles. &nbsp;</p>");
+              g_string_append        (body, "<h2 style=\"color: #2e6c80;\">Les 4 formats d'adresses possibles (*):</h2>");
+              g_string_append        (body, "<table bgcolor=\"#FFF8C9\">");
+              g_string_append        (body, "<tbody>");
+              g_string_append        (body, "<tr>");
+              g_string_append_printf (body, "<td>http://%s:8000/arene/<strong><span style=\"color: #0000ff;\">XX</span></strong></td>", server->_ip_address);
+              g_string_append        (body, "<td>&#10145; Retour sur ar&egrave;ne</td>");
+              g_string_append        (body, "</tr>");
+              g_string_append        (body, "<tr>");
+              g_string_append_printf (body, "<td>http://%s:8000/arbitre/arene/<strong><span style=\"color: #0000ff;\">XX</span></strong></td>", server->_ip_address);
+              g_string_append        (body, "<td>&#10145; Application d'arbitrage <strong>avec</strong> retour sur ar&egrave;ne</td>");
+              g_string_append        (body, "</tr>");
+              g_string_append        (body, "<tr>");
+              g_string_append_printf (body, "<td>http://%s:8000/arbitre</td>", server->_ip_address);
+              g_string_append        (body, "<td>&#10145; Application d'arbitrage <strong>sans</strong> retour sur ar&egrave;ne</td>");
+              g_string_append        (body, "</tr>");
+              g_string_append        (body, "<tr>");
+              g_string_append_printf (body, "<td>http://%s:8000/public</td>", server->_ip_address);
+              g_string_append        (body, "<td>&#10145; Affichage pour le public</td>");
+              g_string_append        (body, "</tr>");
+              g_string_append        (body, "</tbody>");
+              g_string_append        (body, "</table>");
+              g_string_append        (body, "<p><em>* Remplacer <span style=\"color: #0000ff;\"><strong>XX</strong></span> par le num&eacute;ro de piste souhait&eacute;.</em></p>");
 
               lws_return_http_status (wsi,
                                       HTTP_STATUS_BAD_REQUEST,

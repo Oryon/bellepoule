@@ -92,6 +92,7 @@ namespace Net
       Pattern                          *_piste_pattern;
       Pattern                          *_referee_pattern;
       Pattern                          *_standalone_referee_pattern;
+      Pattern                          *_audience_pattern;
       const gchar                      *_ip_address;
       guint                             _channel;
       gboolean                          _running;
