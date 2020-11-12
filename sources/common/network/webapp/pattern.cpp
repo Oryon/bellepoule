@@ -19,23 +19,54 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  Pattern::Pattern (const gchar *regexp,
-                    const gchar *error_msg)
+  Pattern::Pattern (const gchar *path,
+                    const gchar *description,
+                    const gchar *uri_path_error)
     : Object ("Pattern")
   {
-    _error_msg = error_msg;
-    _argument  = 0;
+     _argument       = 0;
+     _description    = description;
+     _uri_path_error = uri_path_error;
 
-    _pattern = g_regex_new (regexp,
-                            G_REGEX_OPTIMIZE,
-                            (GRegexMatchFlags) 0,
-                            nullptr);
+     _scheme = g_string_new (path);
+
+     {
+       GString  *full_path     = g_string_new (path);
+       gchar    *regexp;
+       gchar   **path_sections;
+
+       if (uri_path_error)
+       {
+         g_string_append (full_path, "/([0-9]+)");
+         g_string_append (_scheme, "/<strong><span style=\"color: #0000ff;\">XX</span></strong>");
+       }
+       g_string_append (full_path, "$");
+
+       path_sections = g_strsplit_set (full_path->str,
+                                       "/",
+                                       0);
+
+       regexp = g_strjoinv ("\\/",
+                            path_sections);
+
+       _pattern = g_regex_new (regexp,
+                               G_REGEX_OPTIMIZE,
+                               (GRegexMatchFlags) 0,
+                               nullptr);
+
+       g_free (regexp);
+       g_strfreev (path_sections);
+       g_string_free (full_path,
+                      TRUE);
+     }
   }
 
   // --------------------------------------------------------------------------------
   Pattern::~Pattern ()
   {
     g_regex_unref (_pattern);
+    g_string_free (_scheme,
+                   TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -75,22 +106,35 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gchar *Pattern::GetErrorString ()
+  const gchar *Pattern::GetScheme ()
   {
-    gchar *error_string = nullptr;
+    return _scheme->str;
+  }
 
-    if (_error_msg)
+  // --------------------------------------------------------------------------------
+  const gchar *Pattern::GetDescription ()
+  {
+    return _description;
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Pattern::GetUriPathError ()
+  {
+    gchar *error = nullptr;
+
+    if (_uri_path_error)
     {
-      GString *error = g_string_new (nullptr);
+      GString *error_string = g_string_new (nullptr);
 
-      g_string_append        (error, "<meta charset=\"UTF-8\">");
-      g_string_append_printf (error, _error_msg, _argument);
+      g_string_append        (error_string, "<meta charset=\"UTF-8\">");
+      g_string_append_printf (error_string, _uri_path_error, _argument);
 
-      error_string = error->str;
-      g_string_free (error,
+      error = error_string->str;
+
+      g_string_free (error_string,
                      FALSE);
     }
 
-    return error_string;
+    return error;
   }
 }

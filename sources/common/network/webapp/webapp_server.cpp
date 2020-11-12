@@ -90,17 +90,37 @@ namespace Net
     _channel    = channel;
     _ip_address = nullptr;
 
-    _piste_pattern = new Pattern ("\\/arene\\/([0-9]+)$",
-                                  "<div>L'arène <b><font color=\"blue\">%d</font></b> est déjà réservée.</div>");
+    {
+      _patterns = nullptr;
 
-    _referee_pattern = new Pattern ("\\/arbitre\\/arene\\/([0-9]+)$",
-                                    "<div>L'arène <b><font color=\"blue\">%d</font></b> n'existe pas.</div>");
+      _piste_pattern = new Pattern ("/arene",
+                                    "Retour sur ar&egrave;ne",
+                                    "<div>L'arène <b><font color=\"blue\">%d</font></b> est déjà réservée.</div>");
+      _patterns = g_list_append (_patterns,
+                                  _piste_pattern);
 
-    _standalone_referee_pattern = new Pattern ("\\/arbitre$",
-                                               nullptr);
+      _referee_pattern = new Pattern ("/arbitre/arene",
+                                      "Application d'arbitrage <strong>avec</strong> retour sur ar&egrave;ne",
+                                      "<div>L'arène <b><font color=\"blue\">%d</font></b> n'existe pas.</div>");
+      _patterns = g_list_append (_patterns,
+                                  _referee_pattern);
 
-    _audience_pattern = new Pattern ("\\/public$",
-                                     nullptr);
+      _patterns = g_list_append (_patterns,
+                                  new Pattern ("/arbitre",
+                                               "Application d'arbitrage <strong>sans</strong> retour sur ar&egrave;ne"));
+
+      _patterns = g_list_append (_patterns,
+                                  new Pattern ("/public",
+                                               "Affichage des scores et du classement pour le public"));
+
+      _patterns = g_list_append (_patterns,
+                                  new Pattern ("/public/scores",
+                                               "Affichage des scores pour le public"));
+
+      _patterns = g_list_append (_patterns,
+                                  new Pattern ("/public/classement",
+                                               "Affichage du classement pour le public"));
+    }
 
     _queue = g_async_queue_new_full ((GDestroyNotify) Object::TryToRelease);
 
@@ -168,10 +188,8 @@ namespace Net
     g_free ((void *) _info->protocols);
     g_free (_info);
 
-    _piste_pattern->Release ();
-    _referee_pattern->Release ();
-    _standalone_referee_pattern->Release ();
-    _audience_pattern->Release ();
+    FreeFullGList (Pattern,
+                   _patterns);
 
     g_async_queue_unref (_queue);
 
@@ -331,39 +349,71 @@ namespace Net
       {
         case LWS_CALLBACK_HTTP:
         {
-          gint n;
-
           for (Resource *r = _resources; r->suffix; r++)
           {
             if (g_str_has_suffix (in, r->suffix))
             {
               gchar *base_name = g_path_get_basename (in);
               gchar *app_path  = g_build_filename (Global::_share_dir, "resources", "webapps", r->folder, base_name, nullptr);
-
-              n = lws_serve_http_file (wsi,
-                                       app_path,
-                                       r->mime_type,
-                                       nullptr, 0);
+              gint   n         = lws_serve_http_file (wsi,
+                                                      app_path,
+                                                      r->mime_type,
+                                                      nullptr, 0);
               g_free (app_path);
               g_free (base_name);
+              if (n < 0 || ((n > 0) && lws_http_transaction_completed (wsi)))
+              {
+                return -1;
+              }
               return 0;
             }
           }
 
-          if (   (server->_standalone_referee_pattern->Match (in) == FALSE)
-              && (server->_audience_pattern->Match (in) == FALSE))
+          for (GList *current = server->_patterns; current != nullptr; current = g_list_next (current))
           {
-            if (server->_piste_pattern->Match (in))
+            Pattern *pattern = (Pattern *) current->data;
+
+            if (pattern->Match (in))
             {
-              guint alias = server->_piste_pattern->GetArgument ();
-
-              for (GList *m = server->_aliases; m; m = g_list_next (m))
+              if (pattern == server->_piste_pattern)
               {
-                IdMap *map = (IdMap *) m->data;
+                guint alias = server->_piste_pattern->GetArgument ();
 
-                if (map->_alias == alias)
+                for (GList *m = server->_aliases; m; m = g_list_next (m))
                 {
-                  gchar *error = server->_piste_pattern->GetErrorString ();
+                  IdMap *map = (IdMap *) m->data;
+
+                  if (map->_alias == alias)
+                  {
+                    gchar *error = server->_piste_pattern->GetUriPathError ();
+
+                    lws_return_http_status (wsi,
+                                            HTTP_STATUS_BAD_REQUEST,
+                                            error);
+                    g_free (error);
+                    return 0;
+                  }
+                }
+              }
+              else if (pattern == server->_referee_pattern)
+              {
+                guint alias = server->_referee_pattern->GetArgument ();
+                IdMap *map  = nullptr;
+
+                for (GList *m = server->_aliases; m; m = g_list_next (m))
+                {
+                  IdMap *current_map = (IdMap *) m->data;
+
+                  if (current_map->_alias == alias)
+                  {
+                    map = current_map;
+                    break;
+                  }
+                }
+
+                if (map == nullptr)
+                {
+                  gchar *error = server->_referee_pattern->GetUriPathError ();
 
                   lws_return_http_status (wsi,
                                           HTTP_STATUS_BAD_REQUEST,
@@ -372,87 +422,26 @@ namespace Net
                   return 0;
                 }
               }
-            }
-            else if (server->_referee_pattern->Match (in))
-            {
-              guint alias = server->_referee_pattern->GetArgument ();
-              IdMap *map  = nullptr;
 
-              for (GList *m = server->_aliases; m; m = g_list_next (m))
               {
-                IdMap *current_map = (IdMap *) m->data;
+                gchar *app_path = g_build_filename (Global::_share_dir, "resources", "webapps", "smartpoule.html", nullptr);
+                gint   n        = lws_serve_http_file (wsi,
+                                                       app_path,
+                                                       "text/html",
+                                                       nullptr, 0);
+                g_free (app_path);
 
-                if (current_map->_alias == alias)
+                if (n < 0 || ((n > 0) && lws_http_transaction_completed (wsi)))
                 {
-                  map = current_map;
-                  break;
+                  return -1;
                 }
               }
-
-              if (map == nullptr)
-              {
-                gchar *error = server->_referee_pattern->GetErrorString ();
-
-                lws_return_http_status (wsi,
-                                        HTTP_STATUS_BAD_REQUEST,
-                                        error);
-                g_free (error);
-                return 0;
-              }
-            }
-            else
-            {
-              GString *body = g_string_new (nullptr);
-
-              g_string_append        (body, "<h2 style=\"color: #2e6c80;\">Mauvaise requ&egrave;te :</h2>");
-              g_string_append        (body, "<p>L'adresse que vous venez de saisir n'a pas pas &eacute;t&eacute; comprise par le logiciel BellePoule.&nbsp;</p>");
-              g_string_append        (body, "<p>Corrigez l&agrave; en vous conformant &agrave; l'un des 4 formats possibles. &nbsp;</p>");
-              g_string_append        (body, "<h2 style=\"color: #2e6c80;\">Les 4 formats d'adresses possibles (*):</h2>");
-              g_string_append        (body, "<table bgcolor=\"#FFF8C9\">");
-              g_string_append        (body, "<tbody>");
-              g_string_append        (body, "<tr>");
-              g_string_append_printf (body, "<td>http://%s:8000/arene/<strong><span style=\"color: #0000ff;\">XX</span></strong></td>", server->_ip_address);
-              g_string_append        (body, "<td>&#10145; Retour sur ar&egrave;ne</td>");
-              g_string_append        (body, "</tr>");
-              g_string_append        (body, "<tr>");
-              g_string_append_printf (body, "<td>http://%s:8000/arbitre/arene/<strong><span style=\"color: #0000ff;\">XX</span></strong></td>", server->_ip_address);
-              g_string_append        (body, "<td>&#10145; Application d'arbitrage <strong>avec</strong> retour sur ar&egrave;ne</td>");
-              g_string_append        (body, "</tr>");
-              g_string_append        (body, "<tr>");
-              g_string_append_printf (body, "<td>http://%s:8000/arbitre</td>", server->_ip_address);
-              g_string_append        (body, "<td>&#10145; Application d'arbitrage <strong>sans</strong> retour sur ar&egrave;ne</td>");
-              g_string_append        (body, "</tr>");
-              g_string_append        (body, "<tr>");
-              g_string_append_printf (body, "<td>http://%s:8000/public</td>", server->_ip_address);
-              g_string_append        (body, "<td>&#10145; Affichage pour le public</td>");
-              g_string_append        (body, "</tr>");
-              g_string_append        (body, "</tbody>");
-              g_string_append        (body, "</table>");
-              g_string_append        (body, "<p><em>* Remplacer <span style=\"color: #0000ff;\"><strong>XX</strong></span> par le num&eacute;ro d'arène souhait&eacute;.</em></p>");
-
-              lws_return_http_status (wsi,
-                                      HTTP_STATUS_BAD_REQUEST,
-                                      body->str);
-              g_string_free (body,
-                             TRUE);
               return 0;
             }
           }
 
-          {
-            gchar *app_path = g_build_filename (Global::_share_dir, "resources", "webapps", "smartpoule.html", nullptr);
-
-            n = lws_serve_http_file (wsi,
-                                     app_path,
-                                     "text/html",
-                                     nullptr, 0);
-            g_free (app_path);
-          }
-
-          if (n < 0 || ((n > 0) && lws_http_transaction_completed (wsi)))
-          {
-            return -1;
-          }
+          server->DisplayUsage (wsi);
+          return 0;
         }
         break;
 
@@ -472,6 +461,41 @@ namespace Net
     }
 
     return 0;
+  }
+
+  // --------------------------------------------------------------------------------
+  void WebAppServer::DisplayUsage (struct lws *wsi)
+  {
+    GString *body = g_string_new (nullptr);
+
+    g_string_append        (body, "<h2 style=\"color: #2e6c80;\">Mauvaise requ&egrave;te :</h2>");
+    g_string_append        (body, "<p>L'adresse que vous venez de saisir n'a pas pas &eacute;t&eacute; comprise par le logiciel BellePoule.&nbsp;</p>");
+    g_string_append        (body, "<p>Corrigez l&agrave; en vous conformant &agrave; l'un des 4 formats possibles. &nbsp;</p>");
+    g_string_append_printf (body, "<h2 style=\"color: #2e6c80;\">Les %d formats d'adresses possibles (*):</h2>", g_list_length (_patterns));
+    g_string_append        (body, "<table bgcolor=\"#FFF8C9\">");
+    g_string_append        (body, "<tbody>");
+
+    for (GList *p = _patterns; p != nullptr; p = g_list_next (p))
+    {
+      Pattern *pattern = (Pattern *) p->data;
+
+      g_string_append        (body, "<tr>");
+      g_string_append_printf (body, "<td>http://%s:8000%s</td>", _ip_address, pattern->GetScheme ());
+      g_string_append        (body, "<td>&#10145; ");
+      g_string_append        (body, pattern->GetDescription ());
+      g_string_append        (body, "</td>");
+      g_string_append        (body, "</tr>");
+    }
+
+    g_string_append        (body, "</tbody>");
+    g_string_append        (body, "</table>");
+    g_string_append        (body, "<p><em>* Remplacer <span style=\"color: #0000ff;\"><strong>XX</strong></span> par le num&eacute;ro d'ar&egrave;ne souhait&eacute;.</em></p>");
+
+    lws_return_http_status (wsi,
+                            HTTP_STATUS_BAD_REQUEST,
+                            body->str);
+    g_string_free (body,
+                   TRUE);
   }
 
   // --------------------------------------------------------------------------------

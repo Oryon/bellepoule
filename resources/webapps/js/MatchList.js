@@ -3,11 +3,9 @@ class MatchList extends Module
   constructor (hook)
   {
     super ('MatchList',
-           document.createElement ('div'));
+           hook);
 
     this.empty = true;
-
-    hook.appendChild (this.container);
 
     {
       let table = document.createElement ('table');
@@ -21,7 +19,7 @@ class MatchList extends Module
   {
     super.clear ();
     this.empty = true;
-    super.onUpdated ();
+    this.onDirty ();
   }
 
   isEmpty ()
@@ -33,6 +31,6 @@ class MatchList extends Module
   {
     batch.display (name, this.container);
     this.empty = false;
-    super.onUpdated ();
+    this.onDirty ();
   }
 }

@@ -36,6 +36,12 @@ class Classification : public People::PlayersList
     void SetSortFunction (GtkTreeIterCompareFunc sort_func,
                           gpointer               user_data);
 
+    void Conceal () override;
+
+    void Spread () override;
+
+    void Recall () override;
+
   private:
     guint _fff_place_shifting;
 
@@ -48,4 +54,6 @@ class Classification : public People::PlayersList
     ~Classification () override;
 
     gboolean IsTableBorder (guint place) override;
+
+    void FeedParcel (Net::Message *parcel) override;
 };

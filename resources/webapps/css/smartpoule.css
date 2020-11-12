@@ -198,7 +198,7 @@ td.td_matchlist, td.td_score {
   margin-right: auto;
 }
 
-table.table_matchlist, table.table_scorekeeper {
+table.table_matchlist, table.table_classification, table.table_scorekeeper {
   border-collapse: collapse;
   width: 95%;
   margin-left: 2.5%;
@@ -211,6 +211,11 @@ th.th_matchlist, td.td_matchlist {
 td.td_match_id {
   text-align: left;
   font-size: 10vw;
+}
+
+td.td_classification {
+  text-align: left;
+  font-size: 2vw;
 }
 
 td.td_score {

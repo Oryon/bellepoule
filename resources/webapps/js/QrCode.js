@@ -7,8 +7,6 @@ class QrCode extends Module
     super ('QrCode',
            hook);
 
-    this.hide ();
-
     {
       let html = '';
 

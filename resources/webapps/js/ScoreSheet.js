@@ -1,12 +1,12 @@
 class ScoreSheet extends Module
 {
-  constructor (container,
+  constructor (hook,
                msg,
                red_fencer,
                green_fencer)
   {
     super ('ScoreSheet',
-           container);
+           hook);
 
     this.timekeeper = null;
 

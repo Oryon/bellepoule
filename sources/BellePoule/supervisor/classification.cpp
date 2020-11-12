@@ -20,9 +20,12 @@
 
 #include "util/attribute.hpp"
 #include "util/player.hpp"
+#include "util/xml_scheme.hpp"
 
 #include "contest.hpp"
 #include "application/weapon.hpp"
+#include "network/message.hpp"
+#include "network/ring.hpp"
 
 #include "classification.hpp"
 
@@ -32,6 +35,12 @@ Classification::Classification ()
     PlayersList ("classification.glade", NO_RIGHT)
 {
   _fff_place_shifting = 0;
+
+  {
+    Net::Message *parcel = Object::Disclose ("BellePoule::Classification");
+
+    parcel->Set ("channel", (guint) Net::Ring::Channel::WEB_SOCKET);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -43,6 +52,69 @@ Classification::~Classification ()
 void Classification::OnPlugged ()
 {
   OnAttrListUpdated ();
+}
+
+// --------------------------------------------------------------------------------
+void Classification::FeedParcel (Net::Message *parcel)
+{
+  xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+  {
+    Player::AttributeId elo_attr_id ("elo");
+    XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
+
+    xml_scheme->StartElement ("Classement");
+    for (GList *p = _player_list; p != nullptr; p = g_list_next (p))
+    {
+      Player *fencer = (Player *) p->data;
+
+      xml_scheme->StartElement ("Tireur");
+
+      {
+        gchar *ref = g_strdup_printf ("%d", fencer->GetRef ());
+
+        xml_scheme->WriteAttribute ("Ref",
+                                    ref);
+        g_free (ref);
+      }
+
+      {
+        Attribute *elo_attr = fencer->GetAttribute ( &elo_attr_id);
+        gchar     *elo      = g_strdup_printf ("%d", elo_attr->GetIntValue ());
+
+        xml_scheme->WriteAttribute ("Elo",
+                                    elo);
+        g_free (elo);
+      }
+
+      xml_scheme->EndElement ();
+    }
+      xml_scheme->EndElement ();
+
+    xml_scheme->Release ();
+  }
+
+  parcel->Set ("xml", (const gchar *) xml_buffer->content);
+
+  xmlBufferFree (xml_buffer);
+}
+
+// --------------------------------------------------------------------------------
+void Classification::Conceal ()
+{
+  Object::Conceal ();
+}
+
+// --------------------------------------------------------------------------------
+void Classification::Spread ()
+{
+  Object::Spread ();
+}
+
+// --------------------------------------------------------------------------------
+void Classification::Recall ()
+{
+  Object::Recall ();
 }
 
 // --------------------------------------------------------------------------------

@@ -1169,6 +1169,8 @@ void Stage::UpdateClassification (Classification *classification,
     }
 
     Object::TryToRelease (previous_attr_id);
+
+    classification->Spread ();
   }
 }
 

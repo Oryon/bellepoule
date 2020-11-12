@@ -25,10 +25,10 @@ class TimekeeperSensor extends Sensor
 
 class Timekeeper extends Module
 {
-  constructor (container, mode)
+  constructor (hook, mode)
   {
     super ('Timekeeper',
-           container);
+           hook);
 
     this.duration        = 3*60*1000;
     this.interval        = null;

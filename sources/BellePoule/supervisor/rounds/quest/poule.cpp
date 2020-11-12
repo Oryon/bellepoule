@@ -23,7 +23,6 @@
 #include "util/player.hpp"
 #include "util/xml_scheme.hpp"
 #include "util/global.hpp"
-#include "network/message.hpp"
 #include "util/attribute.hpp"
 #include "network/message.hpp"
 #include "network/ring.hpp"
@@ -1208,6 +1207,7 @@ namespace Quest
 
     if (_muted == FALSE)
     {
+      printf ("coucou\n");
       Spread ();
     }
   }

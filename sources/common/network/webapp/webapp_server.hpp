@@ -91,8 +91,7 @@ namespace Net
 
       Pattern                          *_piste_pattern;
       Pattern                          *_referee_pattern;
-      Pattern                          *_standalone_referee_pattern;
-      Pattern                          *_audience_pattern;
+      GList                            *_patterns;
       const gchar                      *_ip_address;
       guint                             _channel;
       gboolean                          _running;
@@ -111,6 +110,8 @@ namespace Net
 
       void OnNewMirror (guint uuid,
                         guint alias);
+
+      void DisplayUsage (struct lws *wsi);
 
       static gpointer ThreadFunction (WebAppServer *server);
 

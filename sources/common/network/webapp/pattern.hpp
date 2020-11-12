@@ -22,18 +22,25 @@ namespace Net
   class Pattern : public Object
   {
     public:
-      Pattern (const gchar *regexp,
-               const gchar *error_msg);
+      Pattern (const gchar *path,
+               const gchar *description,
+               const gchar *uri_path_error = nullptr);
 
       gboolean Match (const gchar *path);
 
       guint GetArgument ();
 
-      gchar *GetErrorString ();
+      const gchar *GetScheme ();
+
+      const gchar *GetDescription ();
+
+      gchar *GetUriPathError ();
 
     private:
       GRegex      *_pattern;
-      const gchar *_error_msg;
+      GString     *_scheme;
+      const gchar *_description;
+      const gchar *_uri_path_error;
       guint        _argument;
 
       ~Pattern ();

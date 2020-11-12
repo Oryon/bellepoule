@@ -28,6 +28,8 @@
     <script type="application/javascript" src="QrCode.js"></script>
     <script type="application/javascript" src="WelcomeScreen.js"></script>
     <script type="application/javascript" src="Timekeeper.js"></script>
+    <script type="application/javascript" src="Classification.js"></script>
+    <script type="application/javascript" src="Carousel.js"></script>
 
     <icon
         id="close.svg"
@@ -55,7 +57,9 @@
     let red_fencer;
     let green_fencer;
     let score_sheet;
+    let batch;
     let matchlist;
+    let classification;
     let qrcode;
     let timekeeper;
     let socket = new WebSocket ("ws://" + document.domain + ':' + location.port, "smartpoule");
@@ -95,7 +99,7 @@
       }
       else
       {
-        mode = 'referee';
+        mode = 'master';
 
         if (pathname.startsWith ('/arbitre/arene/'))
         {
@@ -115,25 +119,42 @@
         }
       }
 
-      stack = new ModuleStack (mode,
-                               document.getElementById ('cross_hook'));
-
       {
-        welcome_screen = new WelcomeScreen (document.getElementById ('welcome_hook'));
+        let carousel = new Carousel ();
 
-        qrcode = new QrCode (document.getElementById ('qrcode_hook'),
-                             mode,
-                             piste_number);
-        welcome_screen.attach (qrcode);
+        classification = new Classification (document.getElementById ('classification_hook'));
 
-        stack.push (welcome_screen);
+        stack = new ModuleStack (mode,
+                                 document.getElementById ('cross_hook'));
+
+        {
+          welcome_screen = new WelcomeScreen (document.getElementById ('welcome_hook'));
+
+          qrcode = new QrCode (document.getElementById ('qrcode_hook'),
+                               mode,
+                               piste_number);
+          welcome_screen.attach (qrcode);
+
+          stack.push (welcome_screen);
+        }
+
+        matchlist = new MatchList (document.getElementById ('matchlist_hook'));
+        if (pathname != '/public/classement')
+        {
+          carousel.manage (matchlist);
+        }
+
+        if (   (pathname == '/public')
+            || (pathname == '/public/classement'))
+        {
+          carousel.manage (classification);
+        }
+
+        stack.push (carousel);
+
+        timekeeper = new Timekeeper (document.getElementById ('timekeeper_hook'),
+                                     mode);
       }
-
-      matchlist = new MatchList (document.getElementById ('matchlist_hook'));
-      stack.push (matchlist);
-
-      timekeeper = new Timekeeper (document.getElementById ('timekeeper_hook'),
-                                   mode);
     }
 
     socket.onclose = function ()
@@ -142,7 +163,13 @@
 
     socket.onmessage = function (msg)
     {
-      if (msg.data.startsWith ('[Header]\nname=SmartPoule::Timer\n'))
+      if (msg.data.startsWith ('[Header]\nname=BellePoule::Classification\n'))
+      {
+        let xml = Message.getField (msg.data, 'Body', 'xml');
+
+        classification.feed (xml);
+      }
+      else if (msg.data.startsWith ('[Header]\nname=SmartPoule::Timer\n'))
       {
         timekeeper.synchronize (parseInt (Message.getField (msg.data, 'Body', 'start_time'), 10),
                                 parseInt (Message.getField (msg.data, 'Body', 'duration'), 10),
@@ -178,8 +205,6 @@
       {
         if (mode != 'mirror')
         {
-          let batch;
-
           matchlist.clear ();
 
           fitness = Message.getField (msg.data, 'Header', 'fitness');
@@ -219,6 +244,8 @@
                                mirror);
 
             batches.set (name, batch);
+
+            classification.setCompetition (batch.competition);
           }
 
           for (const [name, batch] of batches.entries ())
@@ -250,11 +277,13 @@
   <!--***********************************-->
   <body>
       <div class='frame'>
-        <div id="welcome_hook"></div>
+        <div id='welcome_hook'></div>
 
-        <div id="matchlist_hook"></div>
+        <div id='matchlist_hook'></div>
 
-        <div id='scoresheet_hook' class='table_scorekeeper' style='display:none'>
+        <div id='classification_hook'></div>
+
+        <div id='scoresheet_hook' class='table_scorekeeper'>
           <table Cellspacing='0'>
             <tr class='row' id='competition.panel'></tr>
             <tr class='row' id='names.panel'></tr>
@@ -268,9 +297,9 @@
           </table>
         </div>
 
-        <div id="timekeeper_hook" class='timekeeper' style='display:none'></div>
+        <div id="timekeeper_hook" class='timekeeper'></div>
 
-        <div id="cross_hook" style='display:none'></div>
+        <div id="cross_hook"></div>
         <div id="qrcode_hook"></div>
       </div>
   </body>

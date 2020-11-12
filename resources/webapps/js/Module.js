@@ -7,6 +7,8 @@ class Module
     this.container = container;
     this.listener  = null;
     this.slave     = null;
+
+    this.hide ();
   }
 
   setListener (listener)
@@ -14,7 +16,7 @@ class Module
     this.listener = listener;
   }
 
-  onUpdated ()
+  onDirty ()
   {
     if (this.listener != null)
     {
