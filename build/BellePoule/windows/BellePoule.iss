@@ -3,7 +3,7 @@
 
 #include "..\..\..\sources\BellePoule\application\version.h"
 
-#define MINGW     ".\crossroad"
+#define MINGW     ".\crossroad\root"
 #define WEBSERVER "..\..\..\..\webserver"
 #define ICONS     ".\icons"
 #define PRODUCT   "bellepoulebeta"
