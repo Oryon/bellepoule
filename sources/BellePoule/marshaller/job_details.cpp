@@ -74,7 +74,6 @@ namespace Marshaller
                                           "victories_ratio",
                                           "score_quest",
                                           "nb_matchs",
-                                          "elo",
                                           "strip",
                                           "time",
                                           NULL);

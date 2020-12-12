@@ -32,7 +32,7 @@ namespace Quest
     public:
       PointSystem (Stage *owner);
 
-    protected:
+    private:
       GList     *_matches;
       Stage     *_owner;
       DuelScore *_duel_score;

@@ -53,7 +53,6 @@ namespace Pool
                                           "cyphered_password",
                                           "score_quest",
                                           "nb_matchs",
-                                          "elo",
                                           "HS",
                                           "exported",
                                           "final_rank",

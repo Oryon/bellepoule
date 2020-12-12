@@ -66,7 +66,6 @@ namespace People
                                           "cyphered_password",
                                           "score_quest",
                                           "nb_matchs",
-                                          "elo",
                                           "HS",
                                           "attending",
                                           "final_rank",
