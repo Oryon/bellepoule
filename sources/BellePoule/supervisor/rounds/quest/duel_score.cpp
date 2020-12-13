@@ -45,7 +45,7 @@ namespace Quest
   }
 
   // --------------------------------------------------------------------------------
-  void DuelScore::EvaluateMatch (Match *match)
+  void DuelScore::RateMatch (Match *match)
   {
     CancelMatch (match);
 

@@ -30,7 +30,7 @@ namespace Quest
     public:
       DuelScore (Object *owner);
 
-      void EvaluateMatch (Match *match);
+      void RateMatch (Match *match);
 
       void CancelMatch (Match *match);
 

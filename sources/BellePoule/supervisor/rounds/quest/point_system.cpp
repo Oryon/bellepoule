@@ -26,14 +26,17 @@
 namespace Quest
 {
   // --------------------------------------------------------------------------------
-  PointSystem::PointSystem (Stage *owner)
+  PointSystem::PointSystem (Stage *stage)
     : Object ("PointSystem")
   {
-    _owner   = owner;
-    _matches = nullptr;
+    Module *module = dynamic_cast <Module *> (stage);
 
-    _duel_score = new DuelScore (owner);
-    _elo   = new Elo ();
+    _owner     = module->GetDataOwner ();
+    _rand_seed = stage->GetRandSeed ();
+    _matches   = nullptr;
+
+    _duel_score = new DuelScore (_owner);
+    _elo        = new Elo ();
   }
 
   // --------------------------------------------------------------------------------
@@ -43,6 +46,41 @@ namespace Quest
 
     _duel_score->Release ();
     _elo->Release        ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void PointSystem::RateMatch (Match *match)
+  {
+    if (g_list_find (_matches,
+                     match) == nullptr)
+    {
+      _matches = g_list_append (_matches,
+                                match);
+    }
+
+    _duel_score->RateMatch (match);
+  }
+
+  // --------------------------------------------------------------------------------
+  void PointSystem::Rehash ()
+  {
+    _elo->ProcessBatch (_matches);
+  }
+
+  // --------------------------------------------------------------------------------
+  void PointSystem::Reset ()
+  {
+    _elo->CancelBatch ();
+
+    for (GList *m = _matches; m; m = g_list_next (m))
+    {
+      Match *match = (Match *) m->data;
+
+      _duel_score->CancelMatch (match);
+    }
+
+    g_list_free (_matches);
+    _matches = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -68,26 +106,10 @@ namespace Quest
     {
       Match *match = (Match *) m->data;
 
-      _duel_score->EvaluateMatch (match);
+      _duel_score->RateMatch (match);
     }
 
     _elo->ProcessBatch (_matches);
-
-    g_list_free (_matches);
-    _matches = nullptr;
-  }
-
-  // --------------------------------------------------------------------------------
-  void PointSystem::Clear ()
-  {
-    _elo->CancelBatch ();
-
-    for (GList *m = _matches; m; m = g_list_next (m))
-    {
-      Match *match = (Match *) m->data;
-
-      _duel_score->CancelMatch (match);
-    }
 
     g_list_free (_matches);
     _matches = nullptr;
@@ -145,7 +167,7 @@ namespace Quest
 
     return Player::RandomCompare (A,
                                   B,
-                                  _owner->GetRandSeed ());
+                                  _rand_seed);
   }
 
 }

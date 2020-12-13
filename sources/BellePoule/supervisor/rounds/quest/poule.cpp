@@ -76,8 +76,6 @@ namespace Quest
     _muted = FALSE;
 
     _point_system = new PointSystem (this);
-    _elo          = new Elo ();
-    _duel_score   = new DuelScore (GetDataOwner ());
 
      _matches = nullptr;
 
@@ -229,10 +227,8 @@ namespace Quest
     _matches_per_fencer->Release ();
     _available_time->Release     ();
     _piste_count->Release        ();
-
-    _hall->Release       ();
-    _elo->Release        ();
-    _duel_score->Release ();
+    _hall->Release               ();
+    _point_system->Release       ();
 
     Object::TryToRelease (_score_collector);
   }
@@ -263,13 +259,11 @@ namespace Quest
   {
     _hall->Clear ();
 
-    _elo->CancelBatch ();
+    _point_system->Reset ();
 
     for (GList *m = _matches; m; m = g_list_next (m))
     {
       Match *match = (Match *) m->data;
-
-      _duel_score->CancelMatch (match);
 
       for (guint i = 0; i < 2; i++)
       {
@@ -305,7 +299,7 @@ namespace Quest
     LoadConfiguration (xml_node);
     Garnish ();
     LoadMatches (xml_node);
-    _elo->ProcessBatch (_matches);
+    _point_system->Rehash ();
     RefreshClassification ();
   }
 
@@ -376,7 +370,7 @@ namespace Quest
                     _hall->BookPiste (match);
                   }
 
-                  _duel_score->EvaluateMatch (match);
+                  _point_system->RateMatch (match);
 
                   break;
                 }
@@ -1111,7 +1105,7 @@ namespace Quest
       poule->OnNewScore (nullptr,
                          match,
                          fencer);
-      poule->_elo->ProcessBatch (poule->_matches);
+      poule->_point_system->Rehash ();
       poule->RefreshClassification ();
     }
 
@@ -1212,11 +1206,11 @@ namespace Quest
     _score_collector->Refresh (match);
     RefreshMatch (match);
 
-    _duel_score->EvaluateMatch (match);
+    _point_system->RateMatch (match);
 
     if (score_collector)
     {
-      _elo->ProcessBatch (_matches);
+      _point_system->Rehash ();
       RefreshClassification ();
     }
 
@@ -1507,7 +1501,7 @@ namespace Quest
                     nullptr);
       }
 
-      _elo->ProcessBatch (_matches);
+      _point_system->Rehash ();
       RefreshClassification ();
     }
     _muted = FALSE;
@@ -1669,7 +1663,7 @@ namespace Quest
                           match,
                           nullptr);
 
-              _elo->ProcessBatch (_matches);
+              _point_system->Rehash ();
               RefreshClassification ();
               //RefreshScoreData ();
               //RefreshDashBoard ();

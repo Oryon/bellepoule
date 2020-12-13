@@ -60,8 +60,6 @@ namespace Quest
       static const gdouble  _score_rect_w;
       static const gdouble  _score_rect_h;
 
-      Elo                  *_elo;
-      DuelScore            *_duel_score;
       Hall                 *_hall;
       Data                 *_matches_per_fencer;
       Data                 *_available_time;

@@ -28,14 +28,20 @@ namespace Generic
     public:
       PointSystem ();
 
+      virtual void RateMatch (Match *match);
+
+      virtual void Rehash ();
+
+      virtual void Reset ();
+
+
+
       virtual void AuditMatch (Match *match);
 
       virtual void SumUp ();
 
       virtual gint Compare (Player *A,
                             Player *B);
-
-      virtual void Clear ();
 
     protected:
       virtual ~PointSystem ();

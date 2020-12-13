@@ -30,21 +30,26 @@ namespace Quest
   class PointSystem : public Generic::PointSystem
   {
     public:
-      PointSystem (Stage *owner);
+      PointSystem (Stage *stage);
 
     private:
       GList     *_matches;
-      Stage     *_owner;
+      Object    *_owner;
+      guint32    _rand_seed;
       DuelScore *_duel_score;
       Elo       *_elo;
 
       virtual ~PointSystem ();
 
+      void RateMatch (Match *match) override;
+
+      virtual void Rehash () override;
+
+      virtual void Reset () override;
+
       void AuditMatch (Match *match) override;
 
       void SumUp () override;
-
-      void Clear () override;
 
       gint Compare (Player *A,
                     Player *B) override;
