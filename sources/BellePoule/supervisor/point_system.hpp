@@ -34,12 +34,6 @@ namespace Generic
 
       virtual void Reset ();
 
-
-
-      virtual void AuditMatch (Match *match);
-
-      virtual void SumUp ();
-
       virtual gint Compare (Player *A,
                             Player *B);
 

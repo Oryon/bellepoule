@@ -47,10 +47,6 @@ namespace Quest
 
       virtual void Reset () override;
 
-      void AuditMatch (Match *match) override;
-
-      void SumUp () override;
-
       gint Compare (Player *A,
                     Player *B) override;
   };

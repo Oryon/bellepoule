@@ -84,38 +84,6 @@ namespace Quest
   }
 
   // --------------------------------------------------------------------------------
-  void PointSystem::AuditMatch (Match *match)
-  {
-    if (match->IsOver ())
-    {
-      Player *winner = match->GetWinner ();
-      Player *looser = match->GetLooser ();
-
-      if (winner && looser)
-      {
-        _matches = g_list_prepend (_matches,
-                                   match);
-      }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void PointSystem::SumUp ()
-  {
-    for (GList *m = _matches; m; m = g_list_next (m))
-    {
-      Match *match = (Match *) m->data;
-
-      _duel_score->RateMatch (match);
-    }
-
-    _elo->ProcessBatch (_matches);
-
-    g_list_free (_matches);
-    _matches = nullptr;
-  }
-
-  // --------------------------------------------------------------------------------
   gint PointSystem::Compare (Player *A,
                              Player *B)
   {

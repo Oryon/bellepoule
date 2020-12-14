@@ -1899,6 +1899,7 @@ namespace Table
     if (data->_match)
     {
       Player *winner = data->_match->GetWinner ();
+      Player *looser = data->_match->GetLooser ();
 
       if (winner && g_slist_find (table_set->_result_list,
                                   winner) == nullptr)
@@ -1910,7 +1911,13 @@ namespace Table
                          (void *) data->_table);
       }
 
-      table_set->_point_system->AuditMatch (data->_match);
+      if (data->_match->IsOver ())
+      {
+        if (winner && looser)
+        {
+          table_set->_point_system->RateMatch (data->_match);
+        }
+      }
     }
 
     return FALSE;
@@ -2494,13 +2501,15 @@ namespace Table
 
     if (_tree_root)
     {
+      _point_system->Reset ();
+
       g_node_traverse (_tree_root,
                        G_LEVEL_ORDER,
                        G_TRAVERSE_ALL,
                        -1,
                        (GNodeTraverseFunc) StartClassification,
                        this);
-      _point_system->SumUp ();
+      _point_system->Rehash ();
 
       // Sort the list and complete it with the withdrawals
       {
