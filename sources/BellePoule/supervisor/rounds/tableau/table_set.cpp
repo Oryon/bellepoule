@@ -32,10 +32,10 @@
 #include "util/xml_scheme.hpp"
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
+#include "../common/point_system.hpp"
 #include "../../classification.hpp"
 #include "../../score.hpp"
 #include "../../match.hpp"
-#include "../../point_system.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
 #include "../../book/section.hpp"
@@ -189,6 +189,8 @@ namespace Table
     _right_filter->Release ();
 
     _html_table->Release ();
+
+    _point_system->Release ();
 
     g_object_unref (_page_setup);
   }

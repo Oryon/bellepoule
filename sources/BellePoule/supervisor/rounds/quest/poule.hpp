@@ -32,9 +32,6 @@ namespace Generic
 
 namespace Quest
 {
-  class Elo;
-  class DuelScore;
-
   class Poule : public Stage,
                 public CanvasModule,
                 public Hall::Listener,

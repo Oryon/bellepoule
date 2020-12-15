@@ -19,28 +19,34 @@
 #include <util/object.hpp>
 
 class Match;
+class Stage;
 
-namespace Quest
+namespace Generic
 {
-  class Elo : public Object
+  class Elo;
+
+  class PointSystem : public virtual Object
   {
     public:
-      Elo ();
+      PointSystem (Stage *stage);
 
-      void ProcessBatch (GList *matches);
+      virtual ~PointSystem ();
 
-      void CancelBatch ();
+      virtual void RateMatch (Match *match);
+
+      virtual void Rehash ();
+
+      virtual void Reset ();
+
+      virtual gint Compare (Player *A,
+                            Player *B);
+
+    protected:
+      Object  *_owner;
+      GList   *_matches;
+      guint32  _rand_seed;
 
     private:
-      static const guint K = 32;
-
-      GList  *_fencers;
-      GRegex *_table_pattern;
-
-      ~Elo ();
-
-      void PreserveInitialValue (Match *match);
-
-      void Evaluate (Match *match);
+      Elo *_elo;
   };
 }

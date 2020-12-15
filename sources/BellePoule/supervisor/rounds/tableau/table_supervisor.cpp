@@ -28,11 +28,11 @@
 #include "util/xml_scheme.hpp"
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
+#include "../common/point_system.hpp"
 #include "../../book/section.hpp"
 #include "../../classification.hpp"
 #include "../../contest.hpp"
 #include "../../error.hpp"
-#include "../../point_system.hpp"
 #include "table.hpp"
 
 #include "table_supervisor.hpp"
@@ -579,7 +579,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   Generic::PointSystem *Supervisor::GetPointSystem ()
   {
-    return new Generic::PointSystem ();
+    return new Generic::PointSystem (this);
   }
 
   // --------------------------------------------------------------------------------

@@ -19,25 +19,28 @@
 #include <util/object.hpp>
 
 class Match;
-class Player;
 
 namespace Generic
 {
-  class PointSystem : public virtual Object
+  class Elo : public Object
   {
     public:
-      PointSystem ();
+      Elo ();
 
-      virtual void RateMatch (Match *match);
+      void ProcessBatch (GList *matches);
 
-      virtual void Rehash ();
+      void CancelBatch ();
 
-      virtual void Reset ();
+    private:
+      static const guint K = 32;
 
-      virtual gint Compare (Player *A,
-                            Player *B);
+      GList  *_fencers;
+      GRegex *_table_pattern;
 
-    protected:
-      virtual ~PointSystem ();
+      ~Elo ();
+
+      void PreserveInitialValue (Match *match);
+
+      void Evaluate (Match *match);
   };
 }

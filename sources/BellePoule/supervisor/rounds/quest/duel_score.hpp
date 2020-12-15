@@ -17,7 +17,7 @@
 #pragma once
 
 #include <util/object.hpp>
-#include "../../point_system.hpp"
+#include "../common/point_system.hpp"
 
 class Match;
 

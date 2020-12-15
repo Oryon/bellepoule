@@ -20,58 +20,35 @@
 #include "../../stage.hpp"
 
 #include "duel_score.hpp"
-#include "elo.hpp"
 #include "point_system.hpp"
 
 namespace Quest
 {
   // --------------------------------------------------------------------------------
   PointSystem::PointSystem (Stage *stage)
-    : Object ("PointSystem")
+    : Object ("Quest::PointSystem"),
+      Generic::PointSystem (stage)
   {
-    Module *module = dynamic_cast <Module *> (stage);
-
-    _owner     = module->GetDataOwner ();
-    _rand_seed = stage->GetRandSeed ();
-    _matches   = nullptr;
-
     _duel_score = new DuelScore (_owner);
-    _elo        = new Elo ();
   }
 
   // --------------------------------------------------------------------------------
   PointSystem::~PointSystem ()
   {
-    g_list_free (_matches);
-
     _duel_score->Release ();
-    _elo->Release        ();
   }
 
   // --------------------------------------------------------------------------------
   void PointSystem::RateMatch (Match *match)
   {
-    if (g_list_find (_matches,
-                     match) == nullptr)
-    {
-      _matches = g_list_append (_matches,
-                                match);
-    }
-
     _duel_score->RateMatch (match);
-  }
 
-  // --------------------------------------------------------------------------------
-  void PointSystem::Rehash ()
-  {
-    _elo->ProcessBatch (_matches);
+    Generic::PointSystem::RateMatch (match);
   }
 
   // --------------------------------------------------------------------------------
   void PointSystem::Reset ()
   {
-    _elo->CancelBatch ();
-
     for (GList *m = _matches; m; m = g_list_next (m))
     {
       Match *match = (Match *) m->data;
@@ -79,8 +56,7 @@ namespace Quest
       _duel_score->CancelMatch (match);
     }
 
-    g_list_free (_matches);
-    _matches = nullptr;
+    Generic::PointSystem::Reset ();
   }
 
   // --------------------------------------------------------------------------------
@@ -137,5 +113,4 @@ namespace Quest
                                   B,
                                   _rand_seed);
   }
-
 }

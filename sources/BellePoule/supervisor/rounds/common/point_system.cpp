@@ -16,41 +16,82 @@
 
 #include "util/player.hpp"
 #include "util/attribute.hpp"
+#include "../../match.hpp"
+#include "../../stage.hpp"
 
+#include "elo.hpp"
 #include "point_system.hpp"
 
 namespace Generic
 {
   // --------------------------------------------------------------------------------
-  PointSystem::PointSystem ()
+  PointSystem::PointSystem (Stage *stage)
     : Object ("PointSystem")
   {
+    Module *module = dynamic_cast <Module *> (stage);
+
+    _owner     = module->GetDataOwner ();
+    _rand_seed = stage->GetRandSeed ();
+    _matches   = nullptr;
+
+    _elo = new Elo ();
   }
 
   // --------------------------------------------------------------------------------
   PointSystem::~PointSystem ()
   {
+    g_list_free (_matches);
+
+    _elo->Release ();
   }
 
   // --------------------------------------------------------------------------------
   void PointSystem::RateMatch (Match *match)
   {
+    if (g_list_find (_matches,
+                     match) == nullptr)
+    {
+      _matches = g_list_append (_matches,
+                                match);
+    }
   }
 
   // --------------------------------------------------------------------------------
   void PointSystem::Rehash ()
   {
+    _elo->ProcessBatch (_matches);
   }
 
   // --------------------------------------------------------------------------------
   void PointSystem::Reset ()
   {
+    _elo->CancelBatch ();
+
+    g_list_free (_matches);
+    _matches = nullptr;
   }
 
   // --------------------------------------------------------------------------------
   gint PointSystem::Compare (Player *A,
                              Player *B)
   {
-    return 0;
+    Player::AttributeId attr_id ("");
+    guint eloA;
+    guint eloB;
+    gint  result;
+
+    attr_id._name = (gchar *) "elo";
+    eloA = A->GetAttribute (&attr_id)->GetUIntValue ();
+    eloB = B->GetAttribute (&attr_id)->GetUIntValue ();
+
+    result = eloB - eloA;
+    if (result)
+    {
+      return result;
+    }
+
+    return Player::RandomCompare (A,
+                                  B,
+                                  _rand_seed);
   }
 }

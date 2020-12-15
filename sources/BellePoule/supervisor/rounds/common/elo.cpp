@@ -22,7 +22,7 @@
 
 #include "elo.hpp"
 
-namespace Quest
+namespace Generic
 {
   // --------------------------------------------------------------------------------
   Elo::Elo ()

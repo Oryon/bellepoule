@@ -17,15 +17,11 @@
 #pragma once
 
 #include <util/object.hpp>
-#include "../../point_system.hpp"
-
-class Match;
-class Stage;
+#include "../common/point_system.hpp"
 
 namespace Quest
 {
   class DuelScore;
-  class Elo;
 
   class PointSystem : public Generic::PointSystem
   {
@@ -33,17 +29,11 @@ namespace Quest
       PointSystem (Stage *stage);
 
     private:
-      GList     *_matches;
-      Object    *_owner;
-      guint32    _rand_seed;
       DuelScore *_duel_score;
-      Elo       *_elo;
 
       virtual ~PointSystem ();
 
       void RateMatch (Match *match) override;
-
-      virtual void Rehash () override;
 
       virtual void Reset () override;
 

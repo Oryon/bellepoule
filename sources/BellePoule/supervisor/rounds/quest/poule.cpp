@@ -30,8 +30,6 @@
 #include "../../contest.hpp"
 #include "../../score.hpp"
 
-#include "elo.hpp"
-#include "duel_score.hpp"
 #include "wheel_of_fortune.hpp"
 #include "point_system.hpp"
 #include "poule.hpp"
