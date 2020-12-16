@@ -31,6 +31,7 @@
 #include "util/xml_scheme.hpp"
 #include "network/message.hpp"
 #include "dispatcher/dispatcher.hpp"
+#include "../common/point_system.hpp"
 #include "../../score.hpp"
 #include "../../match.hpp"
 
@@ -75,10 +76,10 @@ namespace Pool
       _strength_contributors = 0;
       _rank_owner            = rank_owner;
       _workload              = workload;
-
       _status_listener       = nullptr;
-
       _score_collector       = nullptr;
+
+      _point_system = new Generic::PointSystem (rand_seed);
 
     {
       gchar *text = g_strdup_printf (gettext ("Pool #%02d"), _number);

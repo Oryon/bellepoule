@@ -51,17 +51,18 @@ namespace Table
     public:
       struct Listener
       {
+        virtual Generic::PointSystem * GetPointSystem (TableSet *table_set) = 0;
+
         virtual void OnTableSetStatusUpdated (TableSet *table_set) = 0;
         virtual void OnTableSetDisplayed     (TableSet *table_set,
                                               Table    *from) = 0;
       };
 
     public:
-      TableSet (Supervisor           *supervisor,
-                gchar                *id,
-                guint                 first_place,
-                Generic::PointSystem *point_system,
-                GtkRange             *zoomer);
+      TableSet (Supervisor *supervisor,
+                gchar      *id,
+                guint       first_place,
+                GtkRange   *zoomer);
 
       void SetListener (Listener *listener);
 

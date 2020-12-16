@@ -70,8 +70,7 @@ namespace Table
       static const guint THIRD_PLACES = 3;
       static const guint ALL_PLACES   = 99;
 
-      Data                 *_fenced_places;
-      Generic::PointSystem *_point_system;
+      Data *_fenced_places;
 
       ~Supervisor () override;
 
@@ -95,7 +94,7 @@ namespace Table
 
       void Garnish () override;
 
-      virtual Generic::PointSystem *GetPointSystem ();
+      virtual Generic::PointSystem *GetPointSystem (TableSet *table_set) override;
 
       virtual GSList *SpreadAttendees (GSList *attendees);
 

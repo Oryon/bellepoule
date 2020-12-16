@@ -43,13 +43,11 @@ namespace Quest
     private:
       ~BonusTable () override;
 
-      Generic::PointSystem *GetPointSystem () override;
+      Generic::PointSystem *GetPointSystem (Table::TableSet *table_set) override;
 
       gboolean ScoreOverflowAllowed () override;
 
       GSList *SpreadAttendees (GSList *attendees) override;
-
-      void Reset () override;
 
       const gchar *GetXmlClassName () override;
 

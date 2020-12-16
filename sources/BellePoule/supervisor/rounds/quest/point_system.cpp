@@ -25,10 +25,14 @@
 namespace Quest
 {
   // --------------------------------------------------------------------------------
-  PointSystem::PointSystem (Stage *stage)
+  PointSystem::PointSystem (Stage    *stage,
+                            gboolean  reverse_insertion)
     : Object ("Quest::PointSystem"),
-      Generic::PointSystem (stage)
+      Generic::PointSystem (stage->GetRandSeed (), reverse_insertion)
   {
+    Module *module = dynamic_cast <Module *> (stage);
+
+    _owner      = module->GetDataOwner ();
     _duel_score = new DuelScore (_owner);
   }
 
@@ -93,24 +97,7 @@ namespace Quest
       }
     }
 
-    {
-      Player::AttributeId attr_id ("");
-      guint eloA;
-      guint eloB;
-
-      attr_id._name = (gchar *) "elo";
-      eloA = A->GetAttribute (&attr_id)->GetUIntValue ();
-      eloB = B->GetAttribute (&attr_id)->GetUIntValue ();
-
-      result = eloB - eloA;
-      if (result)
-      {
-        return result;
-      }
-    }
-
-    return Player::RandomCompare (A,
-                                  B,
-                                  _rand_seed);
+    return Generic::PointSystem::Compare (A,
+                                          B);
   }
 }

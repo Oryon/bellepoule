@@ -42,11 +42,10 @@ namespace Quest
   // --------------------------------------------------------------------------------
   BonusTable::~BonusTable ()
   {
-    Reset ();
   }
 
   // --------------------------------------------------------------------------------
-  Generic::PointSystem *BonusTable::GetPointSystem ()
+  Generic::PointSystem *BonusTable::GetPointSystem (Table::TableSet *table_set)
   {
     return new PointSystem (this);
   }
@@ -55,12 +54,6 @@ namespace Quest
   gboolean BonusTable::ScoreOverflowAllowed ()
   {
     return TRUE;
-  }
-
-  // --------------------------------------------------------------------------------
-  void BonusTable::Reset ()
-  {
-    _point_system->Reset ();
   }
 
   // --------------------------------------------------------------------------------

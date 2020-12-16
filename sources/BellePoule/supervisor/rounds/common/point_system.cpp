@@ -25,14 +25,13 @@
 namespace Generic
 {
   // --------------------------------------------------------------------------------
-  PointSystem::PointSystem (Stage *stage)
+  PointSystem::PointSystem (guint32  rand_seed,
+                            gboolean reverse_insertion)
     : Object ("PointSystem")
   {
-    Module *module = dynamic_cast <Module *> (stage);
-
-    _owner     = module->GetDataOwner ();
-    _rand_seed = stage->GetRandSeed ();
-    _matches   = nullptr;
+    _rand_seed         = rand_seed;
+    _matches           = nullptr;
+    _reverse_insertion = reverse_insertion;
 
     _elo = new Elo ();
   }
@@ -51,8 +50,16 @@ namespace Generic
     if (g_list_find (_matches,
                      match) == nullptr)
     {
-      _matches = g_list_append (_matches,
-                                match);
+      if (_reverse_insertion)
+      {
+        _matches = g_list_prepend (_matches,
+                                   match);
+      }
+      else
+      {
+        _matches = g_list_append (_matches,
+                                  match);
+      }
     }
   }
 

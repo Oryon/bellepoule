@@ -28,7 +28,8 @@ namespace Generic
   class PointSystem : public virtual Object
   {
     public:
-      PointSystem (Stage *stage);
+      PointSystem (guint32  rand_seed,
+                   gboolean reverse_insertion = FALSE);
 
       virtual ~PointSystem ();
 
@@ -42,11 +43,11 @@ namespace Generic
                             Player *B);
 
     protected:
-      Object  *_owner;
-      GList   *_matches;
-      guint32  _rand_seed;
+      GList *_matches;
 
     private:
-      Elo *_elo;
+      Elo      *_elo;
+      guint32   _rand_seed;
+      gboolean  _reverse_insertion;
   };
 }

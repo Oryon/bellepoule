@@ -26,9 +26,11 @@ namespace Quest
   class PointSystem : public Generic::PointSystem
   {
     public:
-      PointSystem (Stage *stage);
+      PointSystem (Stage    *stage,
+                   gboolean  reverse_insertion = FALSE);
 
     private:
+      Object    *_owner;
       DuelScore *_duel_score;
 
       virtual ~PointSystem ();

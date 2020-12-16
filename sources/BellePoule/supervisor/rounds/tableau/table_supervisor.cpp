@@ -58,8 +58,6 @@ namespace Table
   {
     Disclose ("Stage");
 
-    _point_system = GetPointSystem ();
-
     _max_score = new Data ("ScoreMax",
                            10);
 
@@ -577,9 +575,10 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  Generic::PointSystem *Supervisor::GetPointSystem ()
+  Generic::PointSystem *Supervisor::GetPointSystem (TableSet *table_set)
   {
-    return new Generic::PointSystem (this);
+    return new Generic::PointSystem (GetRandSeed (),
+                                     TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -788,7 +787,6 @@ namespace Table
       table_set = new TableSet (this,
                                 gtk_tree_path_to_string (path),
                                 from_place,
-                                GetPointSystem (),
                                 GTK_RANGE (_glade->GetWidget ("zoom_scale")));
 
       {

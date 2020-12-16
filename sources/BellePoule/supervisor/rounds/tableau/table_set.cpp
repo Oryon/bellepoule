@@ -64,11 +64,10 @@ namespace Table
   };
 
   // --------------------------------------------------------------------------------
-  TableSet::TableSet (Supervisor           *supervisor,
-                      gchar                *id,
-                      guint                 first_place,
-                      Generic::PointSystem *point_system,
-                      GtkRange             *zoomer)
+  TableSet::TableSet (Supervisor *supervisor,
+                      gchar      *id,
+                      guint       first_place,
+                      GtkRange   *zoomer)
     : Object ("TableSet"),
     CanvasModule ("table.glade")
   {
@@ -94,7 +93,7 @@ namespace Table
     _from_table       = nullptr;
     _to_table         = nullptr;
     _last_search      = nullptr;
-    _point_system     = point_system;
+    _point_system     = nullptr;
 
     _listener         = nullptr;
 
@@ -190,6 +189,7 @@ namespace Table
 
     _html_table->Release ();
 
+    _point_system->Reset ();
     _point_system->Release ();
 
     g_object_unref (_page_setup);
@@ -430,6 +430,7 @@ namespace Table
     if (_listener)
     {
       _listener->OnTableSetStatusUpdated (this);
+      _point_system = _listener->GetPointSystem (this);
     }
   }
 
@@ -2504,7 +2505,6 @@ namespace Table
     if (_tree_root)
     {
       _point_system->Reset ();
-
       g_node_traverse (_tree_root,
                        G_LEVEL_ORDER,
                        G_TRAVERSE_ALL,

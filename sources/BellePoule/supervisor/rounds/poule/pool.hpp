@@ -32,6 +32,11 @@ class Match;
 class XmlScheme;
 class Attribute;
 
+namespace Generic
+{
+  class PointSystem;
+}
+
 namespace Pool
 {
   class Dispatcher;
@@ -141,33 +146,34 @@ namespace Pool
 
     private:
       static gboolean  _match_id_watermarked;
-      Object          *_combined_rounds_owner;
-      Object          *_previous_combined_round;
-      Object          *_rank_owner;
-      Data            *_max_score;
-      guint            _number;
-      GSList          *_fencer_list;
-      GSList          *_sorted_fencer_list;
-      GSList          *_referee_list;
-      guint            _strip;
-      FieTime         *_start_time;
-      guint            _duration_sec;
-      ScoreCollector  *_score_collector;
-      GList           *_match_list;
-      gchar           *_name;
-      gboolean         _is_over;
-      gboolean         _has_error;
-      GooCanvasItem   *_title_table;
-      GooCanvasItem   *_status_item;
-      GdkPixbuf       *_status_pixbuf;
-      gboolean         _locked;
-      GSList          *_display_data;
-      guint            _nb_drop;
-      const gchar     *_xml_player_tag;
-      guint            _strength;
-      guint            _strength_contributors;
-      Dispatcher      *_dispatcher;
-      guint            _workload;
+      Object               *_combined_rounds_owner;
+      Object               *_previous_combined_round;
+      Object               *_rank_owner;
+      Data                 *_max_score;
+      guint                 _number;
+      GSList               *_fencer_list;
+      GSList               *_sorted_fencer_list;
+      GSList               *_referee_list;
+      guint                 _strip;
+      FieTime              *_start_time;
+      guint                 _duration_sec;
+      ScoreCollector       *_score_collector;
+      GList                *_match_list;
+      gchar                *_name;
+      gboolean              _is_over;
+      gboolean              _has_error;
+      GooCanvasItem        *_title_table;
+      GooCanvasItem        *_status_item;
+      GdkPixbuf            *_status_pixbuf;
+      gboolean              _locked;
+      GSList               *_display_data;
+      guint                 _nb_drop;
+      const gchar          *_xml_player_tag;
+      guint                 _strength;
+      guint                 _strength_contributors;
+      Dispatcher           *_dispatcher;
+      guint                 _workload;
+      Generic::PointSystem *_point_system;
 
       StatusListener  *_status_listener;
 
