@@ -124,6 +124,8 @@ namespace Pool
 
     DeleteMatchs ();
 
+    _point_system->Release ();
+
     g_free (_name);
     Object::TryToRelease (_start_time);
 
@@ -217,8 +219,10 @@ namespace Pool
         match->SetScore (A, score, FALSE);
         match->SetScore (B, _max_score->_value, TRUE);
       }
+      _point_system->RateMatch (match);
     }
 
+    _point_system->Rehash ();
     RefreshScoreData ();
     Timestamp ();
   }
@@ -650,6 +654,8 @@ namespace Pool
                          Match          *match,
                          Player         *player)
   {
+    _point_system->RateMatch (match);
+    _point_system->Rehash ();
     RefreshScoreData ();
     RefreshDashBoard ();
 
@@ -2282,6 +2288,8 @@ namespace Pool
                                match->GetOpponent (i));
                 }
                 _score_collector->Refresh (match);
+                _point_system->RateMatch (match);
+                _point_system->Rehash ();
                 RefreshScoreData ();
                 RefreshDashBoard ();
               }
@@ -2513,8 +2521,17 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::Load (xmlNode *xml_node,
-                   GSList  *player_list)
+  void Pool::LoadMatches (xmlNode *xml_node,
+                          GSList  *player_list)
+  {
+    _LoadMatches (xml_node,
+                  player_list);
+    _point_system->Rehash ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::_LoadMatches (xmlNode *xml_node,
+                           GSList  *player_list)
   {
     if (xml_node == nullptr)
     {
@@ -2594,6 +2611,7 @@ namespace Pool
               {
                 match->Load (A, player_A,
                              B, player_B);
+                _point_system->RateMatch (match);
 
                 if (match->IsOver () == FALSE)
                 {
@@ -2609,8 +2627,8 @@ namespace Pool
           }
         }
 
-        Load (n->children,
-              player_list);
+        LoadMatches (n->children,
+                     player_list);
       }
     }
   }
@@ -2770,6 +2788,8 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::CleanScores ()
   {
+    _point_system->Reset ();
+
     for (GList *current = _match_list; current; current = g_list_next (current))
     {
       Match *match = (Match *) current->data;
@@ -2956,6 +2976,8 @@ namespace Pool
     }
 
     g_free (code);
+
+    _point_system->Rehash ();
   }
 
   // --------------------------------------------------------------------------------

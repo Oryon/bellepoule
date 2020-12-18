@@ -115,8 +115,8 @@ namespace Pool
 
       void Load (xmlNode *xml_node);
 
-      void Load (xmlNode *xml_node,
-                 GSList  *player_list);
+      void LoadMatches (xmlNode *xml_node,
+                        GSList  *player_list);
 
       void DumpToHTML (FILE  *file,
                        guint  grid_size);
@@ -201,6 +201,9 @@ namespace Pool
       void OnUnPlugged () override;
 
       void SortPlayers ();
+
+      void _LoadMatches (xmlNode *xml_node,
+                         GSList  *player_list);
 
       gboolean FencerIsAbsent (Player *fencer);
 

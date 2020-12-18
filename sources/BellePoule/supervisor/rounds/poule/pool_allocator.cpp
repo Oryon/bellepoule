@@ -1075,8 +1075,8 @@ namespace Pool
         else if (g_strcmp0 ((char *) n->name, "Match") == 0)
         {
           current_pool->CreateMatchs (_swapping_criteria_list);
-          current_pool->Load (n,
-                              GetShortList ());
+          current_pool->LoadMatches (n,
+                                     GetShortList ());
           current_pool = nullptr;
           return;
         }
