@@ -17,6 +17,10 @@
 #include "util/global.hpp"
 #include "usb_drive.hpp"
 
+#ifdef G_OS_WIN32
+#include <windows.h>
+#endif
+
 #include "usb_broker.hpp"
 
 namespace Net

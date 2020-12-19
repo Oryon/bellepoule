@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <ifaddrs.h>
 #include <sys/types.h>
 #include <qrencode.h>
 #include <gio/gnetworking.h>
@@ -130,7 +129,6 @@ const gchar *WifiCode::GetKey ()
   {
     _key = GetKey256 ();
 
-#ifndef LIVE_POOL
     if (_player)
     {
       Player::AttributeId attr_id ("password");
@@ -138,7 +136,6 @@ const gchar *WifiCode::GetKey ()
       _player->SetAttributeValue (&attr_id,
                                   _key);
     }
-#endif
   }
 
   return _key;
@@ -148,7 +145,7 @@ const gchar *WifiCode::GetKey ()
 gchar *WifiCode::GetText ()
 {
   gchar       *network = GetNetwork ();
-  gchar       *ip      = GetIpV4Address ();
+  const gchar *ip      = Net::Ring::_broker->GetIpV4Address ();
   const gchar *key     = GetKey ();
   gchar       *text;
 
@@ -177,52 +174,7 @@ gchar *WifiCode::GetText ()
                             key);
   }
 
-  g_free (ip);
-
   g_free (network);
 
   return text;
-}
-
-// --------------------------------------------------------------------------------
-gchar *WifiCode::GetIpV4Address ()
-{
-  gchar          *address  = nullptr;
-  struct ifaddrs *ifa_list;
-
-  if (getifaddrs (&ifa_list) == -1)
-  {
-    g_error ("getifaddrs");
-  }
-  else
-  {
-    for (struct ifaddrs *ifa = ifa_list; ifa != nullptr; ifa = ifa->ifa_next)
-    {
-      if (   ifa->ifa_addr
-          && (ifa->ifa_flags  & IFF_UP)
-          && (ifa->ifa_flags  & IFF_RUNNING)
-          && ((ifa->ifa_flags & IFF_LOOPBACK) == 0))
-      {
-        int family = ifa->ifa_addr->sa_family;
-
-        if (family == AF_INET)
-        {
-          char host[NI_MAXHOST];
-
-          if (getnameinfo (ifa->ifa_addr,
-                           sizeof (struct sockaddr_in),
-                           host, NI_MAXHOST,
-                           nullptr, 0,
-                           NI_NUMERICHOST) == 0)
-          {
-            address = g_strdup (host);
-            break;
-          }
-        }
-      }
-    }
-
-    freeifaddrs (ifa_list);
-  }
-  return address;
 }
