@@ -26,22 +26,15 @@ namespace Generic
 {
   // --------------------------------------------------------------------------------
   Elo::Elo ()
-    : Object ("Quest::Elo")
+    : Object ("Generic::Elo")
   {
     _fencers = nullptr;
-
-    _table_pattern = g_regex_new ("[0-9]+-[0-9]+\\.[0-9]+",
-                                  G_REGEX_OPTIMIZE,
-                                  (GRegexMatchFlags) 0,
-                                  nullptr);
-
   }
 
   // --------------------------------------------------------------------------------
   Elo::~Elo ()
   {
     CancelBatch ();
-    g_regex_unref (_table_pattern);
   }
 
   // --------------------------------------------------------------------------------
@@ -57,53 +50,6 @@ namespace Generic
 
       PreserveInitialValue (match);
       Evaluate             (match);
-
-      {
-        const gchar *name         = match->GetName (); ;
-        GMatchInfo  *pattern_info;
-
-        if (g_regex_match (_table_pattern,
-                           name,
-                           (GRegexMatchFlags) 0,
-                           &pattern_info))
-        {
-          guint   bonus  = 10;
-          Player *looser = match->GetLooser ();
-          Player *winner = nullptr;
-
-          if (g_strcmp0 (name, "1-2.1") == 0)
-          {
-            winner = match->GetWinner ();
-            bonus = 120;
-          }
-          else if (g_strcmp0 (name, "3-2.1") == 0)
-          {
-            winner = match->GetWinner ();
-            bonus = 30;
-          }
-
-          if (winner)
-          {
-            Attribute *elo_attr = winner->GetAttribute (&elo_attr_id);
-            guint      elo      = elo_attr->GetUIntValue ();
-
-            elo += bonus*2;
-            winner->SetAttributeValue (&elo_attr_id,
-                                       (guint) elo);
-          }
-          if (looser)
-          {
-            Attribute *elo_attr = looser->GetAttribute (&elo_attr_id);
-            guint      elo      = elo_attr->GetUIntValue ();
-
-            elo += bonus;
-            looser->SetAttributeValue (&elo_attr_id,
-                                       (guint) elo);
-          }
-        }
-
-        g_match_info_free (pattern_info);
-      }
     }
   }
 

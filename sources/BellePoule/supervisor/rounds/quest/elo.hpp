@@ -17,12 +17,13 @@
 #pragma once
 
 #include <util/object.hpp>
+#include "../common/elo.hpp"
 
 class Match;
 
-namespace Generic
+namespace Quest
 {
-  class Elo : public virtual Object
+  class Elo : public Generic::Elo
   {
     public:
       Elo ();
@@ -31,16 +32,9 @@ namespace Generic
 
       void CancelBatch ();
 
-    protected:
-      virtual ~Elo ();
-
     private:
-      static const guint K = 32;
+      GRegex *_table_pattern;
 
-      GList *_fencers;
-
-      void PreserveInitialValue (Match *match);
-
-      void Evaluate (Match *match);
+      ~Elo ();
   };
 }
