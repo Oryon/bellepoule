@@ -19,16 +19,18 @@
 #include "util/player.hpp"
 #include "util/attribute.hpp"
 #include "../../match.hpp"
+#include "../../score.hpp"
 
 #include "elo.hpp"
 
 namespace Generic
 {
   // --------------------------------------------------------------------------------
-  Elo::Elo ()
+  Elo::Elo (guint K)
     : Object ("Generic::Elo")
   {
-    _fencers = nullptr;
+     _K       = K;
+     _fencers = nullptr;
   }
 
   // --------------------------------------------------------------------------------
@@ -80,6 +82,17 @@ namespace Generic
   // --------------------------------------------------------------------------------
   void Elo::Evaluate (Match *match)
   {
+    /*
+      Rn = R0 + K (W - We) + G
+
+      Rn = Nouveau score Elo
+      R0 = Ancien score Elo
+      K  = Poids selon le type de compétition (50)
+      G  = Coefficient selon la différence de touche
+      W  = Résultat du match
+      We = Résultat attendu
+    */
+
     if (match->IsOver ())
     {
       Player::AttributeId elo_attr_id ("elo");
@@ -102,21 +115,31 @@ namespace Generic
       for (guint f = 0; f < 2; f++)
       {
         Player  *fencer = (Player *) match->GetOpponent (f);
+        guint    bonus  = GetBonus (match);
         gdouble  new_elo;
 
         if (fencer == match->GetWinner ())
         {
-          new_elo = round (elo[f] + K*(1-probability[f]));
+          new_elo = round (elo[f] + _K*(1-probability[f])) + bonus;
         }
         else
         {
-          new_elo = round (elo[f] + K*(-probability[f]));
+          new_elo = round (elo[f] + _K*(-probability[f]) - bonus);
         }
 
         fencer->SetAttributeValue (&elo_attr_id,
                                    (guint) new_elo);
       }
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  guint Elo::GetBonus (Match *match)
+  {
+    Score *scoreA = match->GetScore (guint (0));
+    Score *scoreB = match->GetScore (1);
+
+    return ABS (gint (scoreA->Get ()) - gint (scoreB->Get ()));;
   }
 
   // --------------------------------------------------------------------------------

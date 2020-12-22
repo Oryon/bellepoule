@@ -36,5 +36,7 @@ namespace Quest
       GRegex *_table_pattern;
 
       ~Elo ();
+
+      guint GetBonus (Match *match) override;
   };
 }

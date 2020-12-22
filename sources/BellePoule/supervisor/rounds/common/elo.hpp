@@ -25,7 +25,7 @@ namespace Generic
   class Elo : public virtual Object
   {
     public:
-      Elo ();
+      Elo (guint K = 50);
 
       void ProcessBatch (GList *matches);
 
@@ -35,12 +35,13 @@ namespace Generic
       virtual ~Elo ();
 
     private:
-      static const guint K = 32;
-
+      guint  _K;
       GList *_fencers;
 
       void PreserveInitialValue (Match *match);
 
       void Evaluate (Match *match);
+
+      virtual guint GetBonus (Match *match);
   };
 }

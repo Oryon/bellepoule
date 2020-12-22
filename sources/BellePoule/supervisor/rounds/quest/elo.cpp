@@ -27,7 +27,7 @@ namespace Quest
   // --------------------------------------------------------------------------------
   Elo::Elo ()
     : Object ("Quest::Elo"),
-      Generic::Elo ()
+      Generic::Elo (32)
   {
     _table_pattern = g_regex_new ("[0-9]+-[0-9]+\\.[0-9]+",
                                   G_REGEX_OPTIMIZE,
@@ -98,5 +98,11 @@ namespace Quest
 
       g_match_info_free (pattern_info);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  guint Elo::GetBonus (Match *match)
+  {
+    return 0;
   }
 }

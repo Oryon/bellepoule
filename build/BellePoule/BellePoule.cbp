@@ -546,6 +546,12 @@
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/duel_score.hpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/elo.cpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/elo.hpp">
+			<Option target="Supervisor_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/supervisor/rounds/quest/hall.cpp">
 			<Option target="Supervisor_Debug" />
 		</Unit>
