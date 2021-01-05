@@ -41,24 +41,19 @@
 			<Add alias="Debug" targets="Lib_Debug;Marshaller_Debug;Supervisor_Debug;Backend_Debug;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option="-Wextra" />
-			<Add option="-Wall" />
-			<Add option="-Wcast-align" />
-			<Add option="-Winit-self" />
-			<Add option="-Wmissing-include-dirs" />
-			<Add option="-Wredundant-decls" />
 			<Add option="-Wshadow" />
-			<Add option="-Wsuggest-override" />
-			<Add option="-Wswitch-default" />
-			<Add option="-Wswitch-enum" />
 			<Add option="-Winit-self" />
-			<Add option="-Wmissing-include-dirs" />
 			<Add option="-Wredundant-decls" />
+			<Add option="-Wcast-align" />
 			<Add option="-Wundef" />
 			<Add option="-Wunreachable-code" />
-			<Add option="-fno-common" />
+			<Add option="-Wmissing-include-dirs" />
+			<Add option="-Wswitch-enum" />
+			<Add option="-Wswitch-default" />
 			<Add option="-pedantic" />
-			<Add option="-std=c++0x" />
+			<Add option="-Wextra" />
+			<Add option="-Wall" />
+			<Add option="-std=c++11" />
 			<Add option="-g" />
 			<Add option="-Wno-int-to-pointer-cast" />
 			<Add option="-Wno-long-long" />
@@ -66,6 +61,7 @@
 			<Add option="-Wno-variadic-macros" />
 			<Add option="-Wno-deprecated-declarations" />
 			<Add option="-Wno-vla" />
+			<Add option="-Wsuggest-override" />
 			<Add option="-fPIC" />
 			<Add option="-pthread" />
 			<Add option="-DDEBUG" />
@@ -73,36 +69,32 @@
 			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGSEAL_ENABLE" />
-			<Add option="-DWEBKIT" />
-			<Add directory="/usr/include/libxml2" />
-			<Add directory="/usr/include/goocanvas-2.0" />
-			<Add directory="/usr/include/gtk-3.0" />
-			<Add directory="/usr/include/at-spi2-atk/2.0" />
-			<Add directory="/usr/include/at-spi-2.0" />
-			<Add directory="/usr/include/dbus-1.0" />
-			<Add directory="/usr/lib/x86_64-linux-gnu/dbus-1.0/include" />
-			<Add directory="/usr/include/gio-unix-2.0/" />
-			<Add directory="/usr/include/mirclient" />
-			<Add directory="/usr/include/mircommon" />
-			<Add directory="/usr/include/mircookie" />
-			<Add directory="/usr/include/cairo" />
+			<Add directory="/usr/include/gtk-2.0" />
+			<Add directory="/usr/lib/x86_64-linux-gnu/gtk-2.0/include" />
+			<Add directory="/usr/local/include/goocanvas-1.0" />
 			<Add directory="/usr/include/pango-1.0" />
-			<Add directory="/usr/include/harfbuzz" />
 			<Add directory="/usr/include/atk-1.0" />
 			<Add directory="/usr/include/gdk-pixbuf-2.0" />
-			<Add directory="/usr/include/libpng12" />
+			<Add directory="/usr/include/pango-1.0" />
+			<Add directory="/usr/include/fribidi" />
+			<Add directory="/usr/include/cairo" />
+			<Add directory="/usr/include/pixman-1" />
+			<Add directory="/usr/include/harfbuzz" />
+			<Add directory="/usr/include/uuid" />
+			<Add directory="/usr/include/freetype2" />
+			<Add directory="/usr/include/libpng16" />
+			<Add directory="/usr/include/libxml2" />
+			<Add directory="/usr/include/x86_64-linux-gnu" />
+			<Add directory="/usr/include/p11-kit-1" />
+			<Add directory="/usr/include/json-glib-1.0" />
+			<Add directory="/usr/include/libmount" />
+			<Add directory="/usr/include/blkid" />
 			<Add directory="/usr/include/glib-2.0" />
 			<Add directory="/usr/lib/x86_64-linux-gnu/glib-2.0/include" />
-			<Add directory="/usr/include/pixman-1" />
-			<Add directory="/usr/include/freetype2" />
-			<Add directory="/usr/include/p11-kit-1" />
-			<Add directory="/usr/include/webkitgtk-1.0" />
-			<Add directory="/usr/include/libsoup-2.4" />
+			<Add directory="/usr/include/libusb-1.0" />
 			<Add directory="../../sources/BellePoule" />
 			<Add directory="../../sources/common" />
-			<Add directory="/usr/include/json-glib-1.0" />
 			<Add directory="../../sources/common/network" />
-			<Add directory="/usr/include/libusb-1.0" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--export-dynamic" />
@@ -131,7 +123,6 @@
 			<Add library="microhttpd" />
 			<Add library="qrencode" />
 			<Add library="json-glib-1.0" />
-			<Add library="webkitgtk-1.0" />
 			<Add library="zip" />
 			<Add library="usb-1.0" />
 			<Add library="websockets" />

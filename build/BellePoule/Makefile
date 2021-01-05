@@ -29,7 +29,7 @@ PRODUCT      = bellepoulebeta
 #PRODUCT      = bellepoule
 OUTPUT       = Release
 #OUTPUT       = Debug
-PACKAGE      = $(HOME)/Project/PPA/$(PRODUCT)
+PACKAGE      = $(HOME)/Perso/PPA/$(PRODUCT)
 VERSION      = $(VERSION_MAJOR).$(VERSION_MINOR)
 RELEASE      = $(PRODUCT)_$(VERSION)
 ifeq ($(PRODUCT), bellepoulebeta)
@@ -40,9 +40,9 @@ LONG_VERSION = $(VERSION_MAJOR).$(V)
 FTP_FOLDER   = stable
 endif
 DATE         = $(shell date -R)
-OSX_CROSS_ROOT    = $(HOME)/Project/Cross/Osxcross
+OSX_CROSS_ROOT    = $(HOME)/Perso/Cross/Osxcross
 OSX_CROSS_LOCAL   = $(OSX_CROSS_ROOT)/target/macports/pkgs/opt/local
-INSTALL_NAME_TOOL = $(HOME)/Project/Cross/Osxcross/build/cctools-port/cctools/misc/install_name_tool
+INSTALL_NAME_TOOL = $(HOME)/Perso/Cross/Osxcross/build/cctools-port/cctools/misc/install_name_tool
 
 GTK = gtk+-2.0
 GOO = goocanvas
@@ -56,7 +56,7 @@ LIBWEBSOCKETS = libwebsockets
 #----------------------------------------------------
 DWEBKIT    = -DWEBKIT
 WEBKIT_LIB = webkit-1.0
-ifeq ($(DISTRIB),$(filter $(DISTRIB),osx focal))
+ifeq ($(DISTRIB),$(filter $(DISTRIB),osx focal windows))
 	undefine DWEBKIT
 	undefine WEBKIT_LIB
 endif
@@ -578,13 +578,13 @@ build:   $(build_staging)
 publish: $(publish_staging)
 
 build_windows: all
-	cp $(OUTPUT)/$(PRODUCT)*.exe ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/exe
-	#echo "cp Debug/$(PRODUCT)-*.exe ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/"
-	#cp ~/Project/Gtk/$(VERSION)/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/$(PRODUCT)/bin
-	env WINEPREFIX="$(HOME)/.wine" wine C:\\windows\\command\\start.exe /Unix $(HOME)/home/yannick/.wine/drive_c/Program\ Files\ (x86)/Inno\ Setup\ 6/Compil32.exe
+	cp $(OUTPUT)/$(PRODUCT)*.exe ~/Perso/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/exe
+	#echo "cp Debug/$(PRODUCT)-*.exe ~/Perso/Gtk/$(VERSION)/build/BellePoule/windows/exe/"
+	#cp ~/Perso/Gtk/$(VERSION)/build/BellePoule/windows/exe/$(PRODUCT)-*.exe ~/.wine/drive_c/Program\ Files\ \(x86\)/$(PRODUCT)/bin
+	env WINEPREFIX="$(HOME)/.wine" wine C:\\windows\\command\\start.exe /Unix $(HOME)/.wine/drive_c/Program\ Files\ \(x86\)\/Inno\ Setup\ 6/Compil32.exe
 
 publish_windows:
-	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/$(FTP_FOLDER) ~/Project/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/Output/$(PRODUCT)-$(VERSION_MAJOR)-$(VERSION_MINOR)-$(VERSION_MATURITY)-win.exe; quit"
+	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/$(FTP_FOLDER) ~/Perso/Gtk/$(VERSION_MAJOR).0/build/BellePoule/windows/Output/$(PRODUCT)-$(VERSION_MAJOR)-$(VERSION_MINOR)-$(VERSION_MATURITY)-win.exe; quit"
 
 define build_osx_func
 	cp $(OUTPUT)/$(1) $(2).app/Contents/MacOS/$(2)
