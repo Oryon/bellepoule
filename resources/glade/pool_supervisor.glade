@@ -8,6 +8,11 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">images/stock_combined_scores.png</property>
   </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">images/gnome-devel.png</property>
+  </object>
   <object class="GtkAdjustment" id="nb_qualified_adjustment">
     <property name="upper">9999</property>
     <property name="step_increment">1</property>
@@ -594,7 +599,7 @@
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Automatic stuffing</property>
                     <property name="use_underline">True</property>
-                    <property name="icon_name">gnome-devel</property>
+                    <property name="icon_widget">image1</property>
                     <signal name="clicked" handler="on_stuff_toolbutton_clicked" swapped="no"/>
                   </object>
                   <packing>
