@@ -91,7 +91,7 @@ Source: "exe\{#PRODUCT}-backend.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "..\..\..\resources\gtkrc.windows"; DestDir: "{app}\share\{#PRODUCT}\resources"; DestName: "gtkrc"; Flags: ignoreversion
 Source: "..\cacert.pem"; DestDir: "{app}\share\{#PRODUCT}\resources"; Flags: ignoreversion
 Source: "path_dependent_files\gtk.immodules"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gtk.immodules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
-Source: "path_dependent_files\gdk-pixbuf.loaders"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gdk-pixbuf.loaders'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
+Source: "path_dependent_files\loaders.cache"; DestDir: "{app}\lib\gdk-pixbuf-2.0\2.10.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\lib\gdk-pixbuf-2.0\2.10.0\loaders.cache'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 Source: "path_dependent_files\pango.modules"; DestDir: "{app}\etc\pango"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\pango\pango.modules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 
 ;Exemple de fichiers
@@ -310,43 +310,13 @@ Source: "{#ICONS}\share\themes\Aurora\gtk-2.0\gtkrc"; DestDir: "{app}\share\them
 Source: "{#ICONS}\lib\gtk-2.0\2.10.0\engines\libaurora.dll"; DestDir: "{app}\lib\gtk-2.0\2.10.0\engines\"; Flags: ignoreversion
 #endif
 
-; icons
-#ifdef MINGW
-Source: "{#ICONS}\share\icons\hicolor\index.theme"; DestDir: "{app}\share\icons\hicolor\"; Flags: ignoreversion
-
-Source: "{#ICONS}\share\icons\hicolor\16x16\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\24x24\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\32x32\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\48x48\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\48x48\apps\"; Flags: ignoreversion
-
-Source: "{#ICONS}\share\icons\hicolor\16x16\apps\preferences-desktop-theme.png"; DestDir: "{app}\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\24x24\apps\preferences-desktop-theme.png"; DestDir: "{app}\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\32x32\apps\preferences-desktop-theme.png"; DestDir: "{app}\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
-
-Source: "{#ICONS}\share\icons\hicolor\16x16\apps\preferences-desktop-locale.png"; DestDir: "{app}\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\24x24\apps\preferences-desktop-locale.png"; DestDir: "{app}\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\32x32\apps\preferences-desktop-locale.png"; DestDir: "{app}\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
-
-Source: "{#ICONS}\share\icons\hicolor\16x16\mimetypes\x-office-spreadsheet.png"; DestDir: "{app}\share\icons\hicolor\16x16\mimetypes\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\24x24\mimetypes\x-office-spreadsheet.png"; DestDir: "{app}\share\icons\hicolor\24x24\mimetypes\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\32x32\mimetypes\x-office-spreadsheet.png"; DestDir: "{app}\share\icons\hicolor\32x32\mimetypes\"; Flags: ignoreversion
-
-Source: "{#ICONS}\share\icons\hicolor\16x16\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\16x16\status\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\24x24\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\24x24\status\"; Flags: ignoreversion
-Source: "{#ICONS}\share\icons\hicolor\32x32\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\32x32\status\"; Flags: ignoreversion
-#endif
-
-; Patches
-Source: "{#ICONS}\share\icons\hicolor\32x32\status\software-update-available.png"; DestDir: "{app}\bin"; Flags: ignoreversion
-
-;
 #ifdef MINGW
 ;Source: "{#MINGW}\etc\pango\pango.aliases"; Destdir: "{app}\etc\pango"
 #endif
 
 ; loaders
 #ifdef MINGW
-;Source: "{#MINGW}\lib\gtk-2.0\2.10.0\loaders\*"; Destdir: "{app}\lib\gtk-2.0\2.10.0\loaders"
+Source: "{#MINGW}\lib\gdk-pixbuf-2.0\2.10.0\loaders\*.dll"; Destdir: "{app}\lib\gdk-pixbuf-2.0\2.10.0\loaders"
 #endif
 
 [Code]
