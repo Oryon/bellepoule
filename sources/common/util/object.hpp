@@ -19,7 +19,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
-#define BP_FONT "Sans "
+#define BP_FONT "Mono "
 
 #ifdef G_OS_WIN32
 #  define RED     ""
