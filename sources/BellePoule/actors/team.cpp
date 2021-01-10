@@ -60,7 +60,7 @@ void Team::SetAttendingFromMembers ()
     guint   present_count = 0;
     guint   team_rank     = 0;
 
-    if (_manual_classification->_value == FALSE)
+    if (_manual_classification->GetValue () == FALSE)
     {
       _member_list = g_slist_sort_with_data (_member_list,
                                              (GCompareDataFunc) Player::Compare,
@@ -80,9 +80,9 @@ void Team::SetAttendingFromMembers ()
       {
         present_count++;
 
-        if (present_count <= _minimum_size->_value)
+        if (present_count <= _minimum_size->GetValue ())
         {
-          guint      value = _default_classification->_value;
+          guint      value = _default_classification->GetValue ();
           Attribute *rank  = player->GetAttribute (&ranking_attr_id);
 
           if (rank && rank->GetUIntValue ())
@@ -96,9 +96,9 @@ void Team::SetAttendingFromMembers ()
     }
 
     SetAttributeValue (&attending_attr_id,
-                       (present_count >= _minimum_size->_value));
+                       (present_count >= _minimum_size->GetValue ()));
 
-    if (_manual_classification->_value == FALSE)
+    if (_manual_classification->GetValue () == FALSE)
     {
       SetAttributeValue (&ranking_attr_id,
                          team_rank);

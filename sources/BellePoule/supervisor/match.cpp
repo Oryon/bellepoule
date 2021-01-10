@@ -341,7 +341,7 @@ gboolean Match::SetScore (Player *fencer,
         && (g_ascii_toupper (value[0]) == 'V'))
     {
       SetScore (fencer,
-                _max_score->_value,
+                _max_score->GetValue (),
                 TRUE);
       result = TRUE;
     }
@@ -366,7 +366,7 @@ gboolean Match::SetScore (Player *fencer,
 
       if (ScoreIsNumber (score_value))
       {
-        gchar *max_str        = g_strdup_printf ("%d", _max_score->_value);
+        gchar *max_str        = g_strdup_printf ("%d", _max_score->GetValue ());
         gchar *one_digit_more = g_strdup_printf ("%s0", score_value);
 
         SetScore (fencer,
@@ -376,7 +376,7 @@ gboolean Match::SetScore (Player *fencer,
         {
           result = TRUE;
         }
-        else if ((guint) atoi (one_digit_more) > _max_score->_value)
+        else if ((guint) atoi (one_digit_more) > _max_score->GetValue ())
         {
           result = TRUE;
         }
@@ -758,7 +758,7 @@ gint Match::GetNumber ()
 GooCanvasItem *Match::GetScoreTable (GooCanvasItem *parent,
                                      gdouble        size)
 {
-  if (_max_score->_value <= 15)
+  if (_max_score->GetValue () <= 15)
   {
     gchar         *font = g_strdup_printf (BP_FONT "Bold %fpx", 1.5/2.0*(size));
     GooCanvasItem *score_table = goo_canvas_table_new (parent,
@@ -767,7 +767,7 @@ GooCanvasItem *Match::GetScoreTable (GooCanvasItem *parent,
 
     Canvas::NormalyzeDecimalNotation (font);
 
-    for (guint i = 0; i < _max_score->_value; i++)
+    for (guint i = 0; i < _max_score->GetValue (); i++)
     {
       GooCanvasItem *text_item;
       GooCanvasItem *goo_rect;
@@ -882,7 +882,7 @@ void Match::FeedParcel (Net::Message *parcel)
   xmlBufferFree (xml_buffer);
 
   parcel->Set ("workload_units",
-               _max_score->_value);
+               _max_score->GetValue ());
 
   parcel->Set ("duration_sec",
                _duration_sec);

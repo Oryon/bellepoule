@@ -733,9 +733,9 @@ namespace Pool
       {
         guint seeding_is_balanced = gtk_toggle_button_get_active (toggle);
 
-        if (_seeding_balanced->_value != seeding_is_balanced)
+        if (_seeding_balanced->GetValue () != seeding_is_balanced)
         {
-          _seeding_balanced->_value = seeding_is_balanced;
+          _seeding_balanced->SetValue (seeding_is_balanced);
 
           if (seeding_is_balanced)
           {
@@ -806,7 +806,7 @@ namespace Pool
     {
       GtkToggleButton *w;
 
-      if (_seeding_balanced->_value)
+      if (_seeding_balanced->GetValue ())
       {
         w = GTK_TOGGLE_BUTTON (next_stage->GetGObject ("balanced_radiobutton"));
       }
@@ -840,7 +840,7 @@ namespace Pool
     {
       _seeding_balanced->Load (xml_node);
 
-      if (_seeding_balanced->_value == FALSE)
+      if (_seeding_balanced->GetValue () == FALSE)
       {
         _swapping_sensitivity_trigger->SwitchOff ();
       }
@@ -1315,7 +1315,7 @@ namespace Pool
 
       _swapper->Configure (_drop_zones,
                            _swapping_criteria_list);
-      if (_seeding_balanced->_value)
+      if (_seeding_balanced->GetValue ())
       {
         _swapper->Swap (short_list);
       }
@@ -1427,7 +1427,7 @@ namespace Pool
 
     if (biggest)
     {
-      return _max_score->_value * ((biggest * (biggest - 1)) / 2);
+      return _max_score->GetValue () * ((biggest * (biggest - 1)) / 2);
     }
 
     return 0;
@@ -2168,7 +2168,7 @@ namespace Pool
     {
       gchar *text;
 
-      if (_seeding_balanced->_value)
+      if (_seeding_balanced->GetValue ())
       {
         text = g_strdup_printf ("%s : %s",
                                 gettext ("Seeding"),
@@ -2191,7 +2191,7 @@ namespace Pool
     {
       gchar *text = g_strdup_printf ("%s : %d",
                                      gettext ("Max score"),
-                                     _max_score->_value);
+                                     _max_score->GetValue ());
 
       DrawConfigLine (operation,
                       context,
@@ -2207,7 +2207,7 @@ namespace Pool
       {
         text = g_strdup_printf ("%s : %d",
                                 gettext ("Qualified"),
-                                _nb_qualified->_value);
+                                _nb_qualified->GetValue ());
       }
       else
       {
@@ -2233,7 +2233,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gboolean Allocator::SeedingIsBalanced ()
   {
-    return (_seeding_balanced->_value == 1);
+    return (_seeding_balanced->GetValue () == 1);
   }
 
   // --------------------------------------------------------------------------------

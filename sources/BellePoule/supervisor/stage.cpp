@@ -345,7 +345,7 @@ void Stage::ApplyConfig ()
 
         if (str)
         {
-          _max_score->_value = atoi (str);
+          _max_score->SetValue (atoi (str));
         }
       }
     }
@@ -355,7 +355,7 @@ void Stage::ApplyConfig ()
 
       if (w)
       {
-        _nb_qualified->_value = gtk_spin_button_get_value_as_int (w);
+        _nb_qualified->SetValue (gtk_spin_button_get_value_as_int (w));
       }
     }
   }
@@ -400,7 +400,7 @@ void Stage::FillInConfig ()
 
       if (w)
       {
-        gchar *text = g_strdup_printf ("%d", _max_score->_value);
+        gchar *text = g_strdup_printf ("%d", _max_score->GetValue ());
 
         gtk_entry_set_text (w,
                             text);
@@ -414,7 +414,7 @@ void Stage::FillInConfig ()
       if (w)
       {
         gtk_spin_button_set_value (w,
-                                   _nb_qualified->_value);
+                                   _nb_qualified->GetValue ());
       }
     }
   }
@@ -473,7 +473,7 @@ void Stage::RetrieveAttendees ()
 
     if (_nb_qualified->IsValid () == FALSE)
     {
-      _nb_qualified->_value = g_slist_length (short_list);
+      _nb_qualified->SetValue (g_slist_length (short_list));
     }
   }
 }
@@ -567,9 +567,9 @@ void Stage::SetOutputShortlist ()
     }
 
     // Quota
-    if (_nb_qualified->IsValid () && (_nb_qualified->_value > 0))
+    if (_nb_qualified->IsValid () && (_nb_qualified->GetValue () > 0))
     {
-      Player *last_qualified = (Player *) g_slist_nth_data (_output_short_list, _nb_qualified->_value-1);
+      Player *last_qualified = (Player *) g_slist_nth_data (_output_short_list, _nb_qualified->GetValue ()-1);
 
       if (last_qualified)
       {
@@ -612,7 +612,7 @@ void Stage::SetOutputShortlist ()
       }
 
       // Quota exceedance
-      if (g_slist_length (_output_short_list) > _nb_qualified->_value)
+      if (g_slist_length (_output_short_list) > _nb_qualified->GetValue ())
       {
         GSList *reversed_short_list = g_slist_copy (_output_short_list);
 
@@ -652,7 +652,7 @@ void Stage::LoadAttendees (xmlNode *n)
 {
   if (_nb_qualified->IsValid () == FALSE)
   {
-    _nb_qualified->_value = g_slist_length (GetShortList ());
+    _nb_qualified->SetValue (g_slist_length (GetShortList ()));
   }
 
   if (n)

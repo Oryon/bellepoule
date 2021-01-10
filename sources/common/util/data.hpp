@@ -26,8 +26,6 @@ class XmlScheme;
 class Data : public Object
 {
   public:
-    guint  _value;
-
     Data (const gchar *xml_name,
           guint        default_value);
 
@@ -50,11 +48,16 @@ class Data : public Object
 
     void Copy (Data *from);
 
+    void SetValue (guint value);
+
+    guint GetValue ();
+
   private:
     gchar    *_xml_name;
     gboolean  _is_integer;
     gboolean  _valid;
     gchar    *_string;
+    guint     _value;
 
     ~Data () override;
 };

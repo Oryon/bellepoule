@@ -441,18 +441,18 @@ namespace Table
     {
       return TRUE;
     }
-    else if (_fenced_places->_value == ALL_PLACES)
+    else if (_fenced_places->GetValue () == ALL_PLACES)
     {
       return TRUE;
     }
-    else if (_fenced_places->_value == THIRD_PLACES)
+    else if (_fenced_places->GetValue () == THIRD_PLACES)
     {
       if (table_set->GetFirstPlace () <= 3)
       {
         return TRUE;
       }
     }
-    else if (_fenced_places->_value == QUOTA)
+    else if (_fenced_places->GetValue () == QUOTA)
     {
     }
     return FALSE;
@@ -1082,12 +1082,12 @@ namespace Table
   {
     Stage::FillInConfig ();
 
-    if (_fenced_places->_value == ALL_PLACES)
+    if (_fenced_places->GetValue () == ALL_PLACES)
     {
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_places_radiobutton")),
                                     TRUE);
     }
-    else if (_fenced_places->_value == THIRD_PLACES)
+    else if (_fenced_places->GetValue () == THIRD_PLACES)
     {
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("third_place_radiobutton")),
                                     TRUE);
@@ -1106,22 +1106,22 @@ namespace Table
 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_places_radiobutton"))))
     {
-      _fenced_places->_value = ALL_PLACES;
+      _fenced_places->SetValue (ALL_PLACES);
     }
     else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("third_place_radiobutton"))))
     {
-      _fenced_places->_value = THIRD_PLACES;
+      _fenced_places->SetValue (THIRD_PLACES);
     }
     else
     {
-      _fenced_places->_value = NONE;
+      _fenced_places->SetValue (NONE);
     }
 
     OnAttrListUpdated ();
     SetTableSetsState ();
 
     gtk_widget_set_visible (_glade->GetWidget ("table_set_treeview"),
-                            _fenced_places->_value != NONE);
+                            _fenced_places->GetValue () != NONE);
   }
 
   // --------------------------------------------------------------------------------
@@ -1410,12 +1410,12 @@ namespace Table
     {
       gchar *text;
 
-      if (_fenced_places->_value == ALL_PLACES)
+      if (_fenced_places->GetValue () == ALL_PLACES)
       {
         text = g_strdup_printf ("%s",
                                 gettext ("All places fenced"));
       }
-      else if (_fenced_places->_value == THIRD_PLACES)
+      else if (_fenced_places->GetValue () == THIRD_PLACES)
       {
         text = g_strdup_printf ("%s",
                                 gettext ("Fence off for third place"));
@@ -1437,7 +1437,7 @@ namespace Table
     {
       gchar *text = g_strdup_printf ("%s : %d",
                                      gettext ("Max score"),
-                                     _max_score->_value);
+                                     _max_score->GetValue ());
 
       DrawConfigLine (operation,
                       context,
@@ -1453,7 +1453,7 @@ namespace Table
       {
         text = g_strdup_printf ("%s : %d",
                                 gettext ("Qualified"),
-                                _nb_qualified->_value);
+                                _nb_qualified->GetValue ());
       }
       else
       {

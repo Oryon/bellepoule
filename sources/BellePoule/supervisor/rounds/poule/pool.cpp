@@ -207,17 +207,17 @@ namespace Pool
       A     = match->GetOpponent (0);
       B     = match->GetOpponent (1);
       score = g_random_int_range (0,
-                                  _max_score->_value);
+                                  _max_score->GetValue ());
 
       if (g_random_boolean ())
       {
-        match->SetScore (A, _max_score->_value, TRUE);
+        match->SetScore (A, _max_score->GetValue (), TRUE);
         match->SetScore (B, score, FALSE);
       }
       else
       {
         match->SetScore (A, score, FALSE);
-        match->SetScore (B, _max_score->_value, TRUE);
+        match->SetScore (B, _max_score->GetValue (), TRUE);
       }
       _point_system->RateMatch (match);
     }

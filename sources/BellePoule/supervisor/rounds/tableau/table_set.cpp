@@ -2275,16 +2275,16 @@ namespace Table
       {
         if (g_random_boolean ())
         {
-          data->_match->SetScore (A, table_set->_max_score->_value, TRUE);
+          data->_match->SetScore (A, table_set->_max_score->GetValue (), TRUE);
           data->_match->SetScore (B, g_random_int_range (0,
-                                                         table_set->_max_score->_value), FALSE);
+                                                         table_set->_max_score->GetValue ()), FALSE);
           winner = A;
         }
         else
         {
           data->_match->SetScore (A, g_random_int_range (0,
-                                                         table_set->_max_score->_value), FALSE);
-          data->_match->SetScore (B, table_set->_max_score->_value, TRUE);
+                                                         table_set->_max_score->GetValue ()), FALSE);
+          data->_match->SetScore (B, table_set->_max_score->GetValue (), TRUE);
           winner = B;
         }
 

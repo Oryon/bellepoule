@@ -72,7 +72,7 @@ gchar *Score::GetImage ()
   }
   else if (_status == Status::VICTORY)
   {
-    if ((_score == _max->_value) && (_overflow_allowed == FALSE))
+    if ((_score == _max->GetValue ()) && (_overflow_allowed == FALSE))
     {
       image = g_strdup_printf ("V");
     }
@@ -181,7 +181,7 @@ void Score::Set (guint    score,
   _score  = score;
   _status = Status::DEFEAT;
 
-  if (_score == _max->_value)
+  if (_score == _max->GetValue ())
     {
       _status = Status::VICTORY;
     }
@@ -201,7 +201,7 @@ gboolean Score::IsValid ()
       return TRUE;
     }
 
-    return (_score <= _max->_value);
+    return (_score <= _max->GetValue ());
   }
 
   return TRUE;
@@ -258,8 +258,8 @@ gboolean Score::IsConsistentWith (Score *with)
     return FALSE;
   }
   else if (   (_overflow_allowed == FALSE)
-           && (_score       >= _max->_value)
-           && (with->_score >= _max->_value))
+           && (_score       >= _max->GetValue ())
+           && (with->_score >= _max->GetValue ()))
   {
     return FALSE;
   }

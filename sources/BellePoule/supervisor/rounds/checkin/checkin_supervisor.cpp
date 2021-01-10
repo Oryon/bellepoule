@@ -314,7 +314,7 @@ namespace People
       {
         gchar *text = g_strdup_printf ("%s : %d",
                                        gettext ("Team size"),
-                                       _minimum_team_size->_value);
+                                       _minimum_team_size->GetValue ());
 
         DrawConfigLine (operation,
                         context,
@@ -634,21 +634,21 @@ namespace People
     if (IsPlugged ())
     {
       {
-        _manual_classification->_value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("manual_radiobutton")));
+        _manual_classification->SetValue (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("manual_radiobutton"))));
 
         {
           GtkAdjustment *w = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (_glade->GetWidget ("teamsize_entry")));
 
           if (w)
           {
-            _minimum_team_size->_value = gtk_adjustment_get_value (w);
+            _minimum_team_size->SetValue (gtk_adjustment_get_value (w));
           }
         }
 
         {
           GtkWidget *entry = _glade->GetWidget ("worst_entry");
 
-          _default_classification->_value = atoi (gtk_entry_get_text (GTK_ENTRY (entry)));
+          _default_classification->SetValue (atoi (gtk_entry_get_text (GTK_ENTRY (entry))));
 
           gtk_widget_modify_base (entry, GTK_STATE_NORMAL, nullptr);
           gtk_widget_modify_font (entry, nullptr);
@@ -666,7 +666,7 @@ namespace People
 
     if (_manual_classification)
     {
-      if (_manual_classification->_value)
+      if (_manual_classification->GetValue ())
       {
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("manual_radiobutton")),
                                       TRUE);
@@ -685,7 +685,7 @@ namespace People
       if (adj)
       {
         gtk_adjustment_set_value (adj,
-                                  _minimum_team_size->_value);
+                                  _minimum_team_size->GetValue ());
       }
     }
 
@@ -695,7 +695,7 @@ namespace People
 
       if (entry)
       {
-        gchar *text = g_strdup_printf ("%d", _default_classification->_value);
+        gchar *text = g_strdup_printf ("%d", _default_classification->GetValue ());
 
         gtk_entry_set_text (entry,
                             text);
@@ -1089,7 +1089,7 @@ namespace People
     {
       GtkWidget *dialog;
       gchar *size_msg = g_strdup_printf (gettext ("You have configured the minimum team size to <b>%d</b> fencers."),
-                                         _minimum_team_size->_value);
+                                         _minimum_team_size->GetValue ());
       gchar *full_msg = g_strdup_printf ("%s\n%s\n\n%s",
                                          gettext ("Tick the present players of the team."),
                                          gettext ("Untick the absent players of the team."),

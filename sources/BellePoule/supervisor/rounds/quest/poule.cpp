@@ -104,7 +104,7 @@ namespace Quest
 
     _piste_count = new Data ("NbPistes",
                              4);
-    _hall->SetPisteCount (_piste_count->_value);
+    _hall->SetPisteCount (_piste_count->GetValue ());
 
     Plug (_hall,
           _glade->GetWidget ("hall_hook"));
@@ -406,7 +406,7 @@ namespace Quest
     _available_time->Load     (xml_node);
 
     _piste_count->Load (xml_node);
-    _hall->SetPisteCount (_piste_count->_value);
+    _hall->SetPisteCount (_piste_count->GetValue ());
   }
 
   // --------------------------------------------------------------------------------
@@ -453,7 +453,7 @@ namespace Quest
 
       if (w)
       {
-        gchar *text = g_strdup_printf ("%d", _matches_per_fencer->_value);
+        gchar *text = g_strdup_printf ("%d", _matches_per_fencer->GetValue ());
 
         gtk_entry_set_text (w,
                             text);
@@ -467,7 +467,7 @@ namespace Quest
 
       if (w)
       {
-        gchar *text = g_strdup_printf ("%d", _available_time->_value);
+        gchar *text = g_strdup_printf ("%d", _available_time->GetValue ());
 
         gtk_entry_set_text (w,
                             text);
@@ -480,7 +480,7 @@ namespace Quest
 
       if (w)
       {
-        gchar *text = g_strdup_printf ("%d", _piste_count->_value);
+        gchar *text = g_strdup_printf ("%d", _piste_count->GetValue ());
 
         gtk_entry_set_text (w,
                             text);
@@ -494,7 +494,7 @@ namespace Quest
   {
     GSList *fencers            = g_slist_copy (GetShortList ());
     guint   fencer_count       = g_slist_length (fencers);
-    guint   matches_per_fencer = MIN (_matches_per_fencer->_value, fencer_count-1);
+    guint   matches_per_fencer = MIN (_matches_per_fencer->GetValue (), fencer_count-1);
 
     for (guint i = 0; i < matches_per_fencer; i++)
     {
@@ -670,7 +670,7 @@ namespace Quest
               || (MatchIsFinished (match) == FALSE))
           {
             ongoings++;
-            if (ongoings > _piste_count->_value)
+            if (ongoings > _piste_count->GetValue ())
             {
               continue;
             }
@@ -1299,8 +1299,8 @@ namespace Quest
 
     if (str)
     {
-      _piste_count->_value = atoi (str);
-      _hall->SetPisteCount (_piste_count->_value);
+      _piste_count->SetValue (atoi (str));
+      _hall->SetPisteCount (_piste_count->GetValue ());
 
       SynchronizeConfiguration (editable);
     }
@@ -1313,7 +1313,7 @@ namespace Quest
 
     if (str)
     {
-      _matches_per_fencer->_value = atoi (str);
+      _matches_per_fencer->SetValue (atoi (str));
       _matches_per_fencer->Activate ();
       _available_time->Deactivate   ();
 
@@ -1328,7 +1328,7 @@ namespace Quest
 
     if (str)
     {
-      _available_time->_value = atoi (str);
+      _available_time->SetValue (atoi (str));
       _matches_per_fencer->Deactivate ();
       _available_time->Activate       ();
 
@@ -1356,7 +1356,7 @@ namespace Quest
       handler_to_block = _per_fencer_entry_handler;
     }
 
-    if (_piste_count->_value)
+    if (_piste_count->GetValue ())
     {
       guint fencers = g_slist_length (GetShortList ());
 
@@ -1367,7 +1367,7 @@ namespace Quest
       {
         gchar *text;
 
-        if (_matches_per_fencer->_value > fencers-1)
+        if (_matches_per_fencer->GetValue () > fencers-1)
         {
           text = g_strdup_printf ("%d", fencers-1);
 
@@ -1376,8 +1376,8 @@ namespace Quest
         }
         else
         {
-          guint matches    = (fencers * _matches_per_fencer->_value) / 2;
-          guint time_slots = matches / _piste_count->_value;
+          guint matches    = (fencers * _matches_per_fencer->GetValue ()) / 2;
+          guint time_slots = matches / _piste_count->GetValue ();
           guint duration   = (time_slots*15) / 60;
 
           if (duration == 0)
@@ -1395,7 +1395,7 @@ namespace Quest
       }
       else
       {
-        guint  matches    = _available_time->_value * 4 * _piste_count->_value;
+        guint  matches    = _available_time->GetValue () * 4 * _piste_count->GetValue ();
         guint  grid_size  = (1 + sqrt (1 + 8*matches)) / 2;
         guint  per_fencer = MIN (fencers-1, grid_size-1);
         gchar *text       = g_strdup_printf ("%d", per_fencer);
@@ -1481,17 +1481,17 @@ namespace Quest
         A     = match->GetOpponent (0);
         B     = match->GetOpponent (1);
         score = g_random_int_range (0,
-                                    _max_score->_value);
+                                    _max_score->GetValue ());
 
         if (g_random_boolean ())
         {
-          match->SetScore (A, _max_score->_value, TRUE);
+          match->SetScore (A, _max_score->GetValue (), TRUE);
           match->SetScore (B, score, FALSE);
         }
         else
         {
           match->SetScore (A, score, FALSE);
-          match->SetScore (B, _max_score->_value, TRUE);
+          match->SetScore (B, _max_score->GetValue (), TRUE);
         }
 
         OnNewScore (nullptr,
