@@ -58,7 +58,6 @@ Data::~Data ()
 void Data::SetValue (guint value)
 {
   _value = value;
-  _valid = TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -101,7 +100,6 @@ gboolean Data::Load (xmlNode *xml_node)
 
   SetString (prop);
 
-  _valid = FALSE;
   if (_string)
   {
     _value = (guint) atoi (_string);

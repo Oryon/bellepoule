@@ -97,8 +97,10 @@ namespace Quest
 
     _matches_per_fencer = new Data ("MatchsParTireur",
                                     7);
+
     _available_time = new Data ("TempsDisponible",
                                 4);
+    _available_time->Deactivate ();
 
     _hall = new Hall (this);
 
@@ -402,8 +404,15 @@ namespace Quest
   {
     Stage::LoadConfiguration (xml_node);
 
-    _matches_per_fencer->Load (xml_node);
-    _available_time->Load     (xml_node);
+    if (_matches_per_fencer->Load (xml_node) == FALSE)
+    {
+      _matches_per_fencer->Deactivate ();
+    }
+
+    if (_available_time->Load (xml_node) == FALSE)
+    {
+      _available_time->Deactivate ();
+    }
 
     _piste_count->Load (xml_node);
     _hall->SetPisteCount (_piste_count->GetValue ());
