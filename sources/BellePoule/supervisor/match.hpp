@@ -52,6 +52,8 @@ class Match : public Object,
 
     Player *GetLooser  ();
 
+    gboolean IsStarted ();
+
     void SetOpponent (guint   position,
                       Player *fencer);
 

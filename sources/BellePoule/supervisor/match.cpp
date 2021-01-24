@@ -179,6 +179,20 @@ gboolean Match::ExemptedMatch ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Match::IsStarted ()
+{
+  for (guint i = 0; i < 2; i++)
+  {
+    if ((_opponents[i]._is_known) && _opponents[i]._score->IsKnown ())
+    {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 Player *Match::GetWinner ()
 {
   for (guint i = 0; i < 2; i++)

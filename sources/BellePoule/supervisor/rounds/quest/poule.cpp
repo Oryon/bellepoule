@@ -115,9 +115,10 @@ namespace Quest
       AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
       AddSensitiveWidget (_glade->GetWidget ("qualified_viewport"));
       AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
+      AddSensitiveWidget (_glade->GetWidget ("control_panel"));
 
       LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
-      LockOnClassification (_glade->GetWidget ("piste_entry"));
+      LockOnClassification (_glade->GetWidget ("control_panel"));
     }
 
     // Filter
@@ -578,8 +579,6 @@ namespace Quest
       Player *fencer  = (Player *) f->data;
       GList  *matches = (GList *) fencer->GetPtrData (this, "Poule::matches");
 
-      printf ("%s (%d) ==>> ", fencer->GetName (), g_list_length (matches));
-
       for (GList *m = matches; m; m = g_list_next (m))
       {
         Match *match = (Match *) m->data;
@@ -669,6 +668,7 @@ namespace Quest
         }
       }
 
+      printf ("=====>> %d\n", g_list_length (_matches));
       for (GList *m = _matches; m; m = g_list_next (m))
       {
         Match *match = (Match *) m->data;
@@ -713,12 +713,16 @@ namespace Quest
       {
         Player    *fencer      = match->GetOpponent (i);
         Attribute *status_attr = fencer->GetAttribute (&status_attr_id);
-        gchar     *status      = status_attr->GetStrValue ();
 
-        if (   (status && status[0] == 'A')
-            || (status && status[0] == 'E'))
+        if (status_attr)
         {
-          return TRUE;
+          gchar *status = status_attr->GetStrValue ();
+
+          if (   (status && status[0] == 'A')
+              || (status && status[0] == 'E'))
+          {
+            return TRUE;
+          }
         }
       }
     }
@@ -1221,6 +1225,11 @@ namespace Quest
       RefreshClassification ();
     }
 
+    gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("per_fencer_entry")),
+                              FALSE);
+    gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("duration_entry")),
+                              FALSE);
+
     MakeDirty ();
     //OnRoundOver
 
@@ -1365,6 +1374,38 @@ namespace Quest
       handler_to_block = _per_fencer_entry_handler;
     }
 
+    {
+      gboolean round_started = FALSE;
+
+      for (GList *m = _matches; m; m = g_list_next (m))
+      {
+        Match *match = (Match *) m->data;
+
+        if (match->IsStarted ())
+        {
+          round_started = TRUE;
+        }
+        break;
+      }
+
+      if (round_started)
+      {
+        gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("per_fencer_entry")),
+                                  FALSE);
+        gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("duration_entry")),
+                                  FALSE);
+      }
+      else
+      {
+        gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("per_fencer_entry")),
+                                  TRUE);
+        gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("duration_entry")),
+                                  TRUE);
+        Reset ();
+        Garnish ();
+      }
+    }
+
     if (_piste_count->GetValue ())
     {
       guint fencers = g_slist_length (GetShortList ());
@@ -1416,6 +1457,7 @@ namespace Quest
 
       g_signal_handler_unblock (entry_to_block,
                                 handler_to_block);
+
       Display ();
     }
 
@@ -1473,8 +1515,6 @@ namespace Quest
   {
     _muted = TRUE;
     {
-      Wipe ();
-
       Reset ();
       Garnish ();
       Display ();

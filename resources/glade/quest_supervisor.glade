@@ -260,7 +260,7 @@
             <property name="can_focus">False</property>
             <property name="spacing">10</property>
             <child>
-              <object class="GtkHBox" id="hbox5">
+              <object class="GtkHBox" id="control_panel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="spacing">14</property>
@@ -485,7 +485,6 @@
                       <object class="GtkHScale" id="zoom_scale">
                         <property name="can_focus">True</property>
                         <property name="no_show_all">True</property>
-                        <property name="adjustment"/>
                         <property name="restrict_to_fill_level">False</property>
                         <property name="fill_level">1</property>
                         <property name="draw_value">False</property>
