@@ -89,6 +89,7 @@ namespace People
                                           "nb_matchs",
                                           "HS",
                                           "exported",
+                                          "elo",
                                           "final_rank",
                                           "global_status",
                                           "indice",
@@ -515,6 +516,20 @@ namespace People
           {
             p->SetRef (ref);
             ref++;
+          }
+
+          // Initialize the player's Elo
+          {
+            Player::AttributeId  initial_elo_attr_id  ("initial_elo");
+            Attribute           *initial_elo  = p->GetAttribute (&initial_elo_attr_id);
+
+            if (initial_elo)
+            {
+              Player::AttributeId elo_attr_id ("elo");
+
+              p->SetAttributeValue (&elo_attr_id,
+                                    initial_elo->GetUIntValue ());
+            }
           }
         }
         else

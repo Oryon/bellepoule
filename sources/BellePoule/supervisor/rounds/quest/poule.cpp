@@ -138,6 +138,7 @@ namespace Quest
                                           "score_quest",
                                           "nb_matchs",
                                           "elo",
+                                          "initial_elo",
                                           "HS",
                                           "attending",
                                           "exported",

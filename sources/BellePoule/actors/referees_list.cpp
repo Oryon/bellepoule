@@ -76,6 +76,7 @@ namespace People
                                           "score_quest",
                                           "nb_matchs",
                                           "elo",
+                                          "initial_elo",
                                           "strip",
                                           "time",
                                           NULL);

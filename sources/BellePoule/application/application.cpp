@@ -340,6 +340,10 @@ void Application::Prepare ()
     desc = AttributeDesc::Declare (G_TYPE_UINT, "elo", "Elo", gettext ("Elo"));
     desc->_scope         = AttributeDesc::Scope::GLOBAL;
     desc->_computability = AttributeDesc::Computability::COMPUTABLE;
+    desc->_rights        = AttributeDesc::Rights::PRIVATE;
+
+    desc = AttributeDesc::Declare (G_TYPE_UINT, "initial_elo", "EloInitial", gettext ("initial Elo"));
+    desc->_scope         = AttributeDesc::Scope::GLOBAL;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
     desc->_uniqueness    = AttributeDesc::Uniqueness::NOT_SINGULAR;
