@@ -1641,45 +1641,6 @@ Object *Stage::GetPlayerDataOwner ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage::DrawConfig (GtkPrintOperation *operation,
-                        GtkPrintContext   *context,
-                        gint               page_nr)
-{
-}
-
-// --------------------------------------------------------------------------------
-void Stage::DrawConfigLine (GtkPrintOperation *operation,
-                            GtkPrintContext   *context,
-                            const gchar       *line)
-{
-  cairo_t *cr      = gtk_print_context_get_cairo_context (context);
-  gdouble  paper_w = gtk_print_context_get_width (context);
-
-  cairo_translate (cr,
-                   0.0,
-                   2.0 * paper_w / 100);
-
-  {
-    GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
-
-    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                         line,
-                         1.0 * paper_w / 100,
-                         0.0,
-                         -1.0,
-                         GTK_ANCHOR_W,
-                         "font", BP_FONT "2px", NULL);
-
-    goo_canvas_render (canvas,
-                       gtk_print_context_get_cairo_context (context),
-                       nullptr,
-                       1.0);
-
-    gtk_widget_destroy (GTK_WIDGET (canvas));
-  }
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_all_radiobutton_toggled (GtkWidget *widget,
                                                             Object    *owner)
 {

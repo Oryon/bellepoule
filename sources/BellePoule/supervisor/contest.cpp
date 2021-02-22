@@ -2291,6 +2291,16 @@ void Contest::on_web_site_button_clicked ()
 }
 
 // --------------------------------------------------------------------------------
+void Contest::DrawConfig (GtkPrintOperation *operation,
+                          GtkPrintContext   *context,
+                          gint               page_nr)
+{
+  DrawConfigLine (operation,
+                  context,
+                  "Coefficient K du classement ELO \"Hauts de France\" : 50");
+}
+
+// --------------------------------------------------------------------------------
 void Contest::OnDrawPage (GtkPrintOperation *operation,
                           GtkPrintContext   *context,
                           gint               page_nr)

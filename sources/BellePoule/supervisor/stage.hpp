@@ -171,10 +171,6 @@ class Stage : public virtual Object,
 
     void OnFilterClicked (const gchar *classification_toggle_button);
 
-    virtual void DrawConfig (GtkPrintOperation *operation,
-                             GtkPrintContext   *context,
-                             gint               page_nr);
-
     virtual GList *GetBookSections (StageView view);
 
   public:
@@ -225,10 +221,6 @@ class Stage : public virtual Object,
 
     void UpdateClassification (Classification *classification,
                                GSList         *result);
-
-    void DrawConfigLine (GtkPrintOperation *operation,
-                         GtkPrintContext   *context,
-                         const gchar       *line);
 
   private:
     static GSList *_stage_base;

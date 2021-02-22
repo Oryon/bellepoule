@@ -106,6 +106,10 @@ class Module : public virtual Object
 
     virtual gchar *GetPrintName () {return nullptr;};
 
+    virtual void DrawConfig (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             gint               page_nr);
+
   protected:
     DndConfig *_dnd_config;
 
@@ -164,6 +168,10 @@ class Module : public virtual Object
 
     gdouble GetSizeOnSheet (GtkPrintContext *context,
                             gdouble          normalized_size);
+
+    void DrawConfigLine (GtkPrintOperation *operation,
+                         GtkPrintContext   *context,
+                         const gchar       *line);
 
   private:
     virtual void OnDrawPage (GtkPrintOperation *operation,

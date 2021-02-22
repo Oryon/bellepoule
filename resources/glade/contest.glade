@@ -1249,6 +1249,7 @@ stuffing</property>
                                               <object class="GtkEntry" id="K_entry">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
+                                                <property name="editable">False</property>
                                                 <property name="invisible_char">•</property>
                                                 <property name="width_chars">2</property>
                                                 <property name="text" translatable="yes">50</property>

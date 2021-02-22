@@ -816,6 +816,28 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
       gdouble  paper_w = gtk_print_context_get_width (context);
       GList   *current = _stage_list;
 
+      {
+        GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
+
+        goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                             "Paramètres généraux",
+                             0.0, 0.0,
+                             -1.0,
+                             GTK_ANCHOR_W,
+                             "fill-color", "black",
+                             "font", BP_FONT "Bold 2px", NULL);
+
+        goo_canvas_render (canvas,
+                           gtk_print_context_get_cairo_context (context),
+                           nullptr,
+                           1.0);
+        gtk_widget_destroy (GTK_WIDGET (canvas));
+
+        _contest->DrawConfig (operation,
+                              context,
+                              page_nr);
+      }
+
       while (current && g_list_next (current))
       {
         Stage *stage = (Stage *) current->data;
@@ -823,6 +845,7 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
         if (stage->GetInputProvider () == nullptr)
         {
           Stage::StageClass *stage_class = stage->GetClass ();
+          Module            *module      = (Module *) dynamic_cast <Module *> (stage);
 
           if (stage->GetInputProviderClient ())
           {
@@ -857,9 +880,9 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
             gtk_widget_destroy (GTK_WIDGET (canvas));
           }
 
-          stage->DrawConfig (operation,
-                             context,
-                             page_nr);
+          module->DrawConfig (operation,
+                              context,
+                              page_nr);
 
           cairo_translate (cr,
                            0.0,

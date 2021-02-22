@@ -111,6 +111,10 @@ class Contest : public Module
 
     void OnColorChanged (GtkComboBox *widget);
 
+    void DrawConfig (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr) override;
+
     guint        GetNetID           ();
     gchar       *GetOrganizer       ();
     gchar       *GetDate            ();
