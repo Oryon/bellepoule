@@ -137,6 +137,7 @@ CFLAGS += -Wno-attributes
 CFLAGS += -Wno-shadow
 CFLAGS += -Wno-parentheses
 CFLAGS += -Wno-cast-function-type
+CFLAGS += -fno-exceptions
 else ifeq ($(DISTRIB), osx)
 CFLAGS += -DOSX
 CFLAGS += -Wno-cast-align
@@ -267,38 +268,38 @@ output:
 #--
 
 $(SHARED_LIB): $(OBJ_LIB)
-	@echo -e "\e[1;31m" $@ "\e[0m"
+	@echo "\e[1;31m" $@ "\e[0m"
 	@$(CC) $(SHARED_OPT) -o $@ $^ $(LDFLAGS)
 
 $(STATIC_LIB): $(OBJ_LIB)
-	@echo -e "\e[1;31m" $@ "\e[0m"
+	@echo "\e[1;31m" $@ "\e[0m"
 	@$(AR) rcs $@ $^
 
 $(OUTPUT)/$(PRODUCT)-supervisor$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_SUPERVISOR)
-	@echo -e "\e[1;31m" $@ "\e[0m"
+	@echo "\e[1;31m" $@ "\e[0m"
 	@$(CC) -o $@ $(OBJ_SUPERVISOR) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(GOOCANVAS_LIB) $(LDFLAGS)
 
 $(OUTPUT)/$(PRODUCT)-marshaller$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_MARSHALLER)
-	@echo -e "\e[1;31m" $@ "\e[0m"
+	@echo "\e[1;31m" $@ "\e[0m"
 	@$(CC) -o $@ $(OBJ_MARSHALLER) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(GOOCANVAS_LIB) $(LDFLAGS)
 
 $(OUTPUT)/$(PRODUCT)-backend$(EXE): $(SHARED_LIB) $(STATIC_LIB) $(OBJ_BACKEND)
-	@echo -e "\e[1;31m" $@ "\e[0m"
+	@echo "\e[1;31m" $@ "\e[0m"
 	@$(CC) -o $@ $(OBJ_BACKEND) $(RPATH) $(STATIC_LIB) -l$(PRODUCT) $(LDFLAGS)
 
 #--
 
 %.o: %.cpp
-	@echo -e "\e[0;0m" $(notdir $@) "\e[0m"
+	@echo "\e[0;0m" $(notdir $@) "\e[0m"
 	@$(CC) -o $@ -c $< $(CFLAGS)
 
 %.o: %.rc
-	@echo -e "\e[1;33m" $@ "\e[0m"
+	@echo "\e[1;33m" $@ "\e[0m"
 	@$(WINDRES) --output=$@ --input=$<
 
 #--
 vars:
-	@echo -e "\e[1;41m**** Variables ****\e[0m"
+	@echo "\e[1;41m**** Variables ****\e[0m"
 	@echo "$(DISTRIB)"
 	@echo "$(V)"
 	@echo "$(VERSION)"
@@ -683,28 +684,28 @@ clean_sources:
 #-- Help --------------------------------------------
 #----------------------------------------------------
 help: vars
-	@echo -e "\e[1;44m**** Ubuntu ****\e[0m"
-	@echo -e "make -s DISTRIB=xenial V=1 package"
-	@echo -e "make -s DISTRIB=bionic V=1 package"
-	@echo -e "make -s DISTRIB=focal V=1 package"
-	@echo -e ""
-	@echo -e "\e[1;42m**** Windows ****\e[0m"
-	@echo -e "make -s DISTRIB=windows V=1 package"
-	@echo -e ""
-	@echo -e "\e[1;45m**** MacOs ****\e[0m"
-	@echo -e "make -s DISTRIB=osx V=1 package"
-	@echo -e ""
-	@echo -e "\e[1;46m**** Archlinux ****\e[0m"
-	@echo -e "make -s DISTRIB=archlinux V=1 package"
-	@echo -e ""
-	@echo -e "\e[1;41m**** Fedora (VirtualBox) ****\e[0m"
-	@echo -e "make -s DISTRIB=fedora V=1 package"
-	@echo -e ""
-	@echo -e "\e[1;43m**** Debian (VirtualBox) ****\e[0m"
-	@echo -e "make -s DISTRIB=stretch V=1 package"
-	@echo -e ""
-	@echo -e "cd $(PACKAGE)/$(RELEASE)"
-	@echo -e "make -s build"
-	@echo -e "make -s publish"
-	@echo -e ""
+	@echo "\e[1;44m**** Ubuntu ****\e[0m"
+	@echo "make -s DISTRIB=xenial V=1 package"
+	@echo "make -s DISTRIB=bionic V=1 package"
+	@echo "make -s DISTRIB=focal V=1 package"
+	@echo ""
+	@echo "\e[1;42m**** Windows ****\e[0m"
+	@echo "make -s DISTRIB=windows V=1 package"
+	@echo ""
+	@echo "\e[1;45m**** MacOs ****\e[0m"
+	@echo "make -s DISTRIB=osx V=1 package"
+	@echo ""
+	@echo "\e[1;46m**** Archlinux ****\e[0m"
+	@echo "make -s DISTRIB=archlinux V=1 package"
+	@echo ""
+	@echo "\e[1;41m**** Fedora (VirtualBox) ****\e[0m"
+	@echo "make -s DISTRIB=fedora V=1 package"
+	@echo ""
+	@echo "\e[1;43m**** Debian (VirtualBox) ****\e[0m"
+	@echo "make -s DISTRIB=stretch V=1 package"
+	@echo ""
+	@echo "cd $(PACKAGE)/$(RELEASE)"
+	@echo "make -s build"
+	@echo "make -s publish"
+	@echo ""
 	@#echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"
