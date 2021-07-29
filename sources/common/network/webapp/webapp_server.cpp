@@ -441,6 +441,11 @@ namespace Net
           }
 
           server->DisplayUsage (wsi);
+          if (lws_http_transaction_completed (wsi))
+          {
+            return -1;
+          }
+
           return 0;
         }
         break;
@@ -491,6 +496,7 @@ namespace Net
     g_string_append        (body, "</table>");
     g_string_append        (body, "<p><em>* Remplacer <span style=\"color: #0000ff;\"><strong>XX</strong></span> par le num&eacute;ro d'ar&egrave;ne souhait&eacute;.</em></p>");
 
+    printf ("===========>>>>> %s\n", body->str);
     lws_return_http_status (wsi,
                             HTTP_STATUS_BAD_REQUEST,
                             body->str);
