@@ -47,7 +47,7 @@ namespace Marshaller
 
       void AddJobs (GList *jobs);
 
-      void Display (Job *job = NULL);
+      void Display (Job *job = nullptr);
 
       void Clean ();
 

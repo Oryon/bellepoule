@@ -4,6 +4,8 @@
 *.o
 *.layout
 *.depend
+.clangd/
+compile_commands.json
 build/BellePoule/debug
 build/LivePoule/Debug
 PKGBUILD
