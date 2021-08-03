@@ -540,7 +540,7 @@ namespace Marshaller
   // --------------------------------------------------------------------------------
   void Timeline::TranslateCursor (gdouble delta)
   {
-    if (delta != 0)
+    if (delta != 0.0)
     {
       // Translation
       {

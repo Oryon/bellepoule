@@ -306,7 +306,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Message::Dump (gboolean regular)
+  void Message::Log (gboolean regular)
   {
     if (regular)
     {

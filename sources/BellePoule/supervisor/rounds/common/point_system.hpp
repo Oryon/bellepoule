@@ -20,6 +20,7 @@
 
 class Match;
 class Stage;
+class Player;
 
 namespace Generic
 {

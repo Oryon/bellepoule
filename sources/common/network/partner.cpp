@@ -91,7 +91,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Partner::SendMessage (Message *message)
   {
-    message->Dump (FALSE);
+    message->Log (FALSE);
 
     if (message->GetPassPhrase256 () == nullptr)
     {

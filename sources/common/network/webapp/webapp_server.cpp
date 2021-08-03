@@ -344,6 +344,7 @@ namespace Net
     {
       server = ((WebAppServer *) (lws_get_protocol (wsi)->user));
 
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
       switch (reason)
       {
@@ -518,6 +519,7 @@ namespace Net
       server = ((WebAppServer *) (lws_get_protocol (wsi)->user));
     }
 
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
     switch (reason)
     {

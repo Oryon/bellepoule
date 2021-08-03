@@ -75,7 +75,7 @@ namespace Net
 
       gchar *GetParcel ();
 
-      void Dump (gboolean regular = TRUE);
+      void Log (gboolean regular = TRUE);
 
       void Spread () override;
 

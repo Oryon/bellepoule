@@ -179,7 +179,6 @@ namespace Table
       Data                  *_max_score;
       ScoreCollector        *_score_collector;
       ScoreCollector        *_quick_score_collector;
-      xmlNode               *_xml_node;
       Table                **_tables;
       GSList                *_result_list;
       SheetCompositor       *_sheet_compositor;
