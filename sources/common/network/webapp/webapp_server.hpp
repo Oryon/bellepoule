@@ -113,6 +113,8 @@ namespace Net
 
       void DisplayUsage (struct lws *wsi);
 
+      int Reuse (struct lws *wsi);
+
       static gpointer ThreadFunction (WebAppServer *server);
 
       static int OnHttp (struct lws                *wsi,

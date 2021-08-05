@@ -22,7 +22,7 @@
 
 namespace Net
 {
-  WebAppServer::Resource WebAppServer::_resources[] = 
+  WebAppServer::Resource WebAppServer::_resources[] =
   {
     {".js",    "js",    "application/javascript"},
     {".css",   "css",   "text/css"},
@@ -146,10 +146,13 @@ namespace Net
       }
 
       _info = g_new0 (struct lws_context_creation_info, 1);
-      _info->port      = port;
-      _info->protocols = protocols;
-      _info->gid       = -1;
-      _info->uid       = -1;
+      _info->port               = port;
+      _info->protocols          = protocols;
+      _info->gid                = -1;
+      _info->uid                = -1;
+#ifndef G_OS_WIN32
+      _info->error_document_404 = "/404.html";
+#endif
     }
 
     {
@@ -392,7 +395,7 @@ namespace Net
                                             HTTP_STATUS_BAD_REQUEST,
                                             error);
                     g_free (error);
-                    return 0;
+                    return server->Reuse (wsi);
                   }
                 }
               }
@@ -420,7 +423,7 @@ namespace Net
                                           HTTP_STATUS_BAD_REQUEST,
                                           error);
                   g_free (error);
-                  return 0;
+                  return server->Reuse (wsi);
                 }
               }
 
@@ -442,21 +445,13 @@ namespace Net
           }
 
           server->DisplayUsage (wsi);
-          if (lws_http_transaction_completed (wsi))
-          {
-            return -1;
-          }
-
-          return 0;
+          return server->Reuse (wsi);
         }
         break;
 
         case LWS_CALLBACK_HTTP_FILE_COMPLETION:
         {
-          if (lws_http_transaction_completed (wsi))
-          {
-            return -1;
-          }
+           return server->Reuse (wsi);
         }
         break;
 
@@ -467,6 +462,17 @@ namespace Net
     }
 
     return 0;
+  }
+
+  // --------------------------------------------------------------------------------
+  int WebAppServer::Reuse (struct lws *wsi)
+  {
+     if (lws_http_transaction_completed (wsi))
+     {
+        return -1;
+     }
+
+     return 0;
   }
 
   // --------------------------------------------------------------------------------
@@ -497,10 +503,10 @@ namespace Net
     g_string_append        (body, "</table>");
     g_string_append        (body, "<p><em>* Remplacer <span style=\"color: #0000ff;\"><strong>XX</strong></span> par le num&eacute;ro d'ar&egrave;ne souhait&eacute;.</em></p>");
 
-    printf ("===========>>>>> %s\n", body->str);
     lws_return_http_status (wsi,
-                            HTTP_STATUS_BAD_REQUEST,
+                            HTTP_STATUS_NOT_FOUND,
                             body->str);
+
     g_string_free (body,
                    TRUE);
   }
