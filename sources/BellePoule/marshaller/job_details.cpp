@@ -38,7 +38,7 @@ namespace Marshaller
                           Job      *job,
                           gboolean  dnd_capable)
     : Object ("JobDetails"),
-    PlayersList ("details.glade", SORTABLE)
+    PlayersList ("details.glade", nullptr, SORTABLE)
   {
     _listener = listener;
     _job      = job;

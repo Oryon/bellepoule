@@ -30,6 +30,7 @@
 #include "util/glade.hpp"
 #include "util/data.hpp"
 #include "util/xml_scheme.hpp"
+#include "util/anti_cheat_block.hpp"
 #include "network/advertiser.hpp"
 #include "network/message.hpp"
 #include "../common/point_system.hpp"
@@ -64,10 +65,11 @@ namespace Table
   };
 
   // --------------------------------------------------------------------------------
-  TableSet::TableSet (Supervisor *supervisor,
-                      gchar      *id,
-                      guint       first_place,
-                      GtkRange   *zoomer)
+  TableSet::TableSet (Supervisor     *supervisor,
+                      gchar          *id,
+                      guint           first_place,
+                      GtkRange       *zoomer,
+                      AntiCheatBlock *anti_cheat_block)
     : Object ("TableSet"),
     CanvasModule ("table.glade")
   {
@@ -94,6 +96,7 @@ namespace Table
     _to_table         = nullptr;
     _last_search      = nullptr;
     _point_system     = nullptr;
+    _anti_cheat_block = anti_cheat_block;
 
     _listener         = nullptr;
 
@@ -2528,9 +2531,9 @@ namespace Table
         GSList              *current;
         guint                previous_rank   = 0;
         Player              *previous_player = nullptr;
-        guint32              rand_seed       = _rand_seed;
 
-        _rand_seed = 0; // !!
+        // TODO: _rand_seed = 0;
+        g_warning("TableSet::_rand_seed commenté !!!!!!");
         current = _result_list;
         for (guint i = _first_place; current != nullptr; i++)
         {
@@ -2555,7 +2558,7 @@ namespace Table
           current = g_slist_next (current);
         }
         attr_id->Release ();
-        _rand_seed = rand_seed; // !!
+        // TODO: _rand_seed = rand_seed;
       }
 
       g_node_traverse (_tree_root,
@@ -2653,18 +2656,18 @@ namespace Table
 
     return table_set->ComparePreviousRankPlayer (A,
                                                  B,
-                                                 table_set->_rand_seed);
+                                                 table_set->_anti_cheat_block->GetAntiCheatToken ());
   }
 
   // --------------------------------------------------------------------------------
   gint TableSet::ComparePreviousRankPlayer (Player  *A,
                                             Player  *B,
-                                            guint32  rand_seed)
+                                            guint32  anti_cheat_token)
   {
     Stage *previous_stage = _supervisor->GetPreviousStage ();
     Player::AttributeId attr_id ("rank", previous_stage);
 
-    attr_id.MakeRandomReady (rand_seed);
+    attr_id.MakeRandomReady (anti_cheat_token);
     return Player::Compare (A,
                             B,
                             &attr_id);

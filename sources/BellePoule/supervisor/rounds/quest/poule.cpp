@@ -522,7 +522,7 @@ namespace Quest
                            guint   matches_per_fencer)
   {
     WheelOfFortune *wheel = new WheelOfFortune (fencers,
-                                                GetRandSeed ());
+                                                GetAntiCheatToken ());
 
     for (GSList *f = fencers; f; f = g_slist_next (f))
     {

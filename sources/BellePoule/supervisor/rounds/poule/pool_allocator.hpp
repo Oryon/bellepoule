@@ -111,7 +111,6 @@ namespace Pool
       GSList              *_config_list;
       Configuration       *_best_config;
       Configuration       *_selected_config;
-      GooCanvas           *_canvas;
       GooCanvasItem       *_main_table;
       GtkListStore        *_combobox_store;
       Data                *_swapping;

@@ -22,6 +22,7 @@
 #include "util/module.hpp"
 #include "util/player.hpp"
 #include "util/filter.hpp"
+#include "util/anti_cheat_block.hpp"
 
 class Attribute;
 
@@ -35,8 +36,9 @@ namespace People
       static Player *GetPlayer (GtkTreeModel *model,
                                 GtkTreeIter  *iter);
 
-      PlayersList (const gchar *glade_file,
-                   guint        rights = SORTABLE | MODIFIABLE);
+      PlayersList (const gchar    *glade_file,
+                   AntiCheatBlock *anti_cheat_block,
+                   guint           rights = SORTABLE | MODIFIABLE);
 
       virtual void Add (Player *player);
 
@@ -71,8 +73,11 @@ namespace People
 
       void CollapseAll ();
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
       void Disclose (const gchar *as,
                      Object      *extra_feeder = nullptr);
+#pragma GCC diagnostic pop
 
       void Conceal () override;
 
@@ -142,16 +147,17 @@ namespace People
     private:
       static GList *_clipboard;
 
-      guint         _rights;
-      guint         _nb_player_per_page;
-      gdouble       _print_scale;
-      guint         _nb_pages;
-      gint          _selector_column;
-      gdouble      *_column_width;
-      gboolean      _flat_print;
-      PlayersStore *_store;
-      const gchar  *_parcel_name;
-      gboolean      _list_changes_muted;
+      guint           _rights;
+      guint           _nb_player_per_page;
+      gdouble         _print_scale;
+      guint           _nb_pages;
+      gint            _selector_column;
+      gdouble        *_column_width;
+      gboolean        _flat_print;
+      PlayersStore   *_store;
+      const gchar    *_parcel_name;
+      gboolean        _list_changes_muted;
+      AntiCheatBlock *_anti_cheat_block;
 
       void RefreshDisplay ();
 

@@ -32,7 +32,7 @@
 // --------------------------------------------------------------------------------
 Classification::Classification ()
   : Object ("Classification"),
-    PlayersList ("classification.glade", NO_RIGHT)
+    PlayersList ("classification.glade", nullptr, NO_RIGHT)
 {
   _fff_place_shifting = 0;
 

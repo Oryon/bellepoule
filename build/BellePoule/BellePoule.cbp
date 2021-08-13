@@ -62,6 +62,7 @@
 			<Add option="-Wno-int-to-pointer-cast" />
 			<Add option="-Wno-long-long" />
 			<Add option="-Wno-unused-parameter" />
+			<Add option="-Wno-overloaded-virtual" />
 			<Add option="-Wno-variadic-macros" />
 			<Add option="-Wno-deprecated-declarations" />
 			<Add option="-Wno-cast-function-type" />
@@ -909,6 +910,9 @@
 		</Unit>
 		<Unit filename="../../sources/common/network/wifi_network.hpp">
 			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/anti_cheat_block.hpp">
+			<Option target="Supervisor_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/util/attribute.cpp">
 			<Option target="Lib_Debug" />

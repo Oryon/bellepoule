@@ -203,6 +203,7 @@ namespace Pool
 
     {
       _fencer_list = new People::PlayersList ("classification.glade",
+                                              this,
                                               People::PlayersList::SORTABLE);
       {
         GSList *attr_list;
@@ -1001,7 +1002,7 @@ namespace Pool
                                      GetWorkload (),
                                      number+1,
                                      GetXmlPlayerTag (),
-                                     _rand_seed,
+                                     this,
                                      GetNetID (),
                                      this,
                                      "competition", _contest->GetNetID (),
@@ -1295,7 +1296,7 @@ namespace Pool
                                   GetWorkload (),
                                   i+1,
                                   GetXmlPlayerTag (),
-                                  _rand_seed,
+                                  this,
                                   GetNetID (),
                                   this,
                                   "competition", _contest->GetNetID (),

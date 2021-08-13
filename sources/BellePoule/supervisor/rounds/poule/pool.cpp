@@ -42,13 +42,13 @@ namespace Pool
   gboolean Pool::_match_id_watermarked = FALSE;
 
   // --------------------------------------------------------------------------------
-  Pool::Pool (Data        *max_score,
-              guint        workload,
-              guint        number,
-              const gchar *xml_player_tag,
-              guint32      rand_seed,
-              guint        stage_id,
-              Object      *rank_owner,
+  Pool::Pool (Data           *max_score,
+              guint           workload,
+              guint           number,
+              const gchar    *xml_player_tag,
+              AntiCheatBlock *anti_cheat_block,
+              guint           stage_id,
+              Object         *rank_owner,
               ...)
     : Object ("Pool"),
       CanvasModule ("pool.glade", "canvas_scrolled_window")
@@ -70,7 +70,7 @@ namespace Pool
       _max_score             = max_score;
       _display_data          = nullptr;
       _nb_drop               = 0;
-      _rand_seed             = rand_seed;
+      _anti_cheat_block      = anti_cheat_block;
       _xml_player_tag        = xml_player_tag;
       _strength              = 0;
       _strength_contributors = 0;
@@ -79,7 +79,7 @@ namespace Pool
       _status_listener       = nullptr;
       _score_collector       = nullptr;
 
-      _point_system = new Generic::PointSystem (rand_seed);
+      _point_system = new Generic::PointSystem (anti_cheat_block);
 
     {
       gchar *text = g_strdup_printf (gettext ("Pool #%02d"), _number);
@@ -357,7 +357,7 @@ namespace Pool
       {
         Player::AttributeId attr_id ("stage_start_rank", _rank_owner);
 
-        attr_id.MakeRandomReady (_rand_seed);
+        attr_id.MakeRandomReady (_anti_cheat_block->GetAntiCheatToken ());
         _fencer_list = g_slist_insert_sorted_with_data (_fencer_list,
                                                         player,
                                                         (GCompareDataFunc) Player::Compare,
@@ -1527,7 +1527,7 @@ namespace Pool
     return ComparePlayer (A,
                           B,
                           pool->GetDataOwner (),
-                          pool->_rand_seed,
+                          pool->_anti_cheat_block->GetAntiCheatToken (),
                           WITH_CALCULUS | WITH_RANDOM);
   }
 
@@ -1556,7 +1556,7 @@ namespace Pool
   gint Pool::ComparePlayer (Player   *A,
                             Player   *B,
                             Object   *data_owner,
-                            guint32   rand_seed,
+                            guint32   anti_cheat_token,
                             guint     comparison_policy)
   {
     if (B == nullptr)
@@ -1651,7 +1651,7 @@ namespace Pool
     {
       return Player::RandomCompare (A,
                                     B,
-                                    rand_seed);
+                                    anti_cheat_token);
     }
 
     return 0;
@@ -2813,7 +2813,7 @@ namespace Pool
     return ComparePlayer (A,
                           B,
                           nullptr,
-                          pool->_rand_seed,
+                          pool->_anti_cheat_block->GetAntiCheatToken (),
                           WITH_RANDOM);
   }
 

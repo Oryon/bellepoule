@@ -36,6 +36,7 @@ namespace Pool
 
     _checkin = new People::Checkin ("pillow_list.glade",
                                     "Fencer",
+                                    nullptr,
                                     nullptr);
 
     {

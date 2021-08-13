@@ -16,40 +16,9 @@
 
 #pragma once
 
-#include <util/object.hpp>
-#include <util/anti_cheat_block.hpp>
+#include <glib.h>
 
-class Match;
-class Stage;
-class Player;
-
-namespace Generic
+struct AntiCheatBlock
 {
-  class Elo;
-
-  class PointSystem : public virtual Object
-  {
-    public:
-      PointSystem (AntiCheatBlock *anti_cheat_block,
-                   gboolean        reverse_insertion = FALSE);
-
-      virtual ~PointSystem ();
-
-      virtual void RateMatch (Match *match);
-
-      virtual void Rehash ();
-
-      virtual void Reset ();
-
-      virtual gint Compare (Player *A,
-                            Player *B);
-
-    protected:
-      GList *_matches;
-
-    private:
-      Elo             *_elo;
-      AntiCheatBlock  *_anti_cheat_block;
-      gboolean         _reverse_insertion;
-  };
-}
+   virtual guint32 GetAntiCheatToken () = 0;
+};

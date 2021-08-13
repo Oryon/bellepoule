@@ -22,6 +22,7 @@
 
 #include "util/canvas_module.hpp"
 #include "util/attribute_desc.hpp"
+#include "util/anti_cheat_block.hpp"
 #include "../../score_collector.hpp"
 
 class FieTime;
@@ -59,13 +60,13 @@ namespace Pool
       } ComparisonPolicy;
 
     public:
-      Pool (Data        *max_score,
-            guint        workload,
-            guint        number,
-            const gchar *xml_player_tag,
-            guint32      rand_seed,
-            guint        stage_id,
-            Object      *rank_owner,
+      Pool (Data           *max_score,
+            guint           workload,
+            guint           number,
+            const gchar    *xml_player_tag,
+            AntiCheatBlock *anti_cheat_block,
+            guint           stage_id,
+            Object         *rank_owner,
             ...);
 
       guint    GetPiste         ();
@@ -137,7 +138,7 @@ namespace Pool
       static gint ComparePlayer (Player   *A,
                                  Player   *B,
                                  Object   *data_owner,
-                                 guint32   rand_seed,
+                                 guint32   anti_cheat_token,
                                  guint     comparison_policy);
 
       static void SetWaterMarkingPolicy (gboolean enabled);
@@ -174,6 +175,7 @@ namespace Pool
       Dispatcher           *_dispatcher;
       guint                 _workload;
       Generic::PointSystem *_point_system;
+      AntiCheatBlock       *_anti_cheat_block;
 
       StatusListener  *_status_listener;
 

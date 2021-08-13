@@ -82,7 +82,10 @@ class Contest : public Module
 
     void SaveHeader (XmlScheme *xml_scheme);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
     void DumpToHTML (gchar *filename);
+#pragma GCC diagnostic pop
 
     void DumpToFRD (gchar *filename);
 

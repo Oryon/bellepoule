@@ -22,6 +22,7 @@
 #include <gtk/gtk.h>
 
 #include "util/object.hpp"
+#include "util/anti_cheat_block.hpp"
 #include "network/advertiser.hpp"
 #include "error.hpp"
 
@@ -36,7 +37,8 @@ class Attendees;
 class XmlScheme;
 
 class Stage : public virtual Object,
-              public Net::Advertiser::Feeder
+              public Net::Advertiser::Feeder,
+              public AntiCheatBlock
 {
   public:
     struct StageClass;
@@ -98,9 +100,11 @@ class Stage : public virtual Object,
 
     guint GetNetID ();
 
-    guint32 GetRandSeed ();
+    guint32 GetAntiCheatToken () override;
 
-    void SetRandSeed (guint32 rand_seed);
+    void SetAntiCheatToken (guint32 token);
+
+    void RestoreAntiCheatToken (guint32 token); // !!
 
     guint GetRights ();
 
@@ -236,10 +240,10 @@ class Stage : public virtual Object,
     GSList             *_output_short_list;
     guint               _quota_exceedance;
     Classification     *_classification;
-    GSList             *_locked_on_classification;
     SensitivityTrigger *_sensitivity_trigger;
     SensitivityTrigger *_score_stuffing_trigger;
     gboolean            _classification_on;
+    guint32             _anti_cheat_token;
 
     Listener *_status_listener;
 

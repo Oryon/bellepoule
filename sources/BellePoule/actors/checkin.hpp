@@ -38,9 +38,10 @@ namespace People
       };
 
     public:
-      Checkin (const gchar *glade,
-               const gchar *base_class,
-               const gchar *gathering_class);
+      Checkin (const gchar    *glade,
+               const gchar    *base_class,
+               const gchar    *gathering_class,
+               AntiCheatBlock *anti_cheat_block);
 
       void Add (Player *player) override;
 

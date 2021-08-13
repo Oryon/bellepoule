@@ -313,7 +313,7 @@ namespace Pool
     return Pool::ComparePlayer (A,
                                 B,
                                 pool_supervisor->_current_round_owner,
-                                pool_supervisor->_rand_seed,
+                                pool_supervisor->GetAntiCheatToken (),
                                 policy);
   }
 
@@ -332,7 +332,7 @@ namespace Pool
     return Pool::ComparePlayer (A,
                                 B,
                                 pool_supervisor,
-                                pool_supervisor->_rand_seed,
+                                pool_supervisor->GetAntiCheatToken (),
                                 policy);
   }
 

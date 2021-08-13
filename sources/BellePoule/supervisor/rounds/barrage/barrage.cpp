@@ -36,8 +36,7 @@ namespace People
   Barrage::Barrage (StageClass *stage_class)
     : Object ("Barrage"),
     Stage (stage_class),
-    PlayersList ("barrage.glade",
-                 SORTABLE)
+    PlayersList ("barrage.glade", nullptr, SORTABLE)
   {
     _ties_count        = 0;
     _short_list_length = 0;
@@ -207,7 +206,7 @@ namespace People
     }
 
     {
-      promoted_attr_id.MakeRandomReady (_rand_seed);
+      promoted_attr_id.MakeRandomReady (GetAntiCheatToken ());
 
       _player_list = g_list_sort_with_data (_player_list,
                                             (GCompareDataFunc) Player::Compare,

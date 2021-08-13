@@ -47,7 +47,7 @@ namespace People
   // --------------------------------------------------------------------------------
   CheckinSupervisor::CheckinSupervisor (StageClass *stage_class)
     : Object ("CheckinSupervisor"),
-    Checkin ("checkin.glade", "Fencer", "Team"),
+    Checkin ("checkin.glade", "Fencer", "Team", this),
     Stage (stage_class)
   {
     _checksum_list = nullptr;
@@ -549,7 +549,7 @@ namespace People
                  sizeof (short_checksum));
         short_checksum[8] = 0;
 
-        _rand_seed = strtoul (short_checksum, nullptr, 16);
+        SetAntiCheatToken (strtoul (short_checksum, nullptr, 16));
       }
 
       g_checksum_free (checksum);
@@ -583,7 +583,7 @@ namespace People
     {
       ranking_id = new Player::AttributeId ("ranking");
 
-      ranking_id->MakeRandomReady (_rand_seed);
+      ranking_id->MakeRandomReady (GetAntiCheatToken ());
     }
 
     _player_list = g_list_sort_with_data (_player_list,
@@ -921,7 +921,7 @@ namespace People
     {
       Player::AttributeId attr_id ("rank", this);
 
-      attr_id.MakeRandomReady (_rand_seed);
+      attr_id.MakeRandomReady (GetAntiCheatToken ());
       all_involved = g_slist_sort_with_data (all_involved,
                                              (GCompareDataFunc) Player::Compare,
                                              &attr_id);

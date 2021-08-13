@@ -31,11 +31,13 @@
 namespace People
 {
   // --------------------------------------------------------------------------------
-  Checkin::Checkin (const gchar *glade,
-                    const gchar *base_class,
-                    const gchar *gathering_class)
+  Checkin::Checkin (const gchar    *glade,
+                    const gchar    *base_class,
+                    const gchar    *gathering_class,
+                    AntiCheatBlock *anti_cheat_block)
     : Object ("Checkin"),
-    PlayersList (glade)
+    PlayersList (glade,
+                 anti_cheat_block)
   {
     _form            = nullptr;
     _tally_counter   = new TallyCounter ();

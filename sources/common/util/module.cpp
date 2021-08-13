@@ -39,7 +39,6 @@ Module::Module (const gchar *glade_file,
    _toolbar          = nullptr;
    _config_container = nullptr;
    _filter           = nullptr;
-   _rand_seed        = 0;
 
   _print_settings            = gtk_print_settings_new ();
   _page_setup_print_settings = gtk_print_settings_new ();

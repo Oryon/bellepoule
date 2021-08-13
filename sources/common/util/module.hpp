@@ -35,8 +35,6 @@ class Module : public virtual Object
       LEAVING
     };
 
-    guint32 _rand_seed;
-
     void Plug (Module       *module,
                GtkWidget    *in,
                GtkToolbar   *toolbar          = nullptr,

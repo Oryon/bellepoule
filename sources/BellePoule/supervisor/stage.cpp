@@ -161,27 +161,21 @@ void Stage::SetName (gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-guint32 Stage::GetRandSeed ()
+guint32 Stage::GetAntiCheatToken ()
 {
-  Module *module = dynamic_cast <Module *> (this);
-
-  if (module)
-  {
-    return module->_rand_seed;
-  }
-
-  return 0;
+   return _anti_cheat_token;
 }
 
 // --------------------------------------------------------------------------------
-void Stage::SetRandSeed (guint32 rand_seed)
+void Stage::RestoreAntiCheatToken (guint32 token)
 {
-  Module *module = dynamic_cast <Module *> (this);
+   _anti_cheat_token = token;
+}
 
-  if (module)
-  {
-    module->_rand_seed = rand_seed;
-  }
+// --------------------------------------------------------------------------------
+void Stage::SetAntiCheatToken (guint32 token)
+{
+   RestoreAntiCheatToken (token);
 
   if (_previous)
   {

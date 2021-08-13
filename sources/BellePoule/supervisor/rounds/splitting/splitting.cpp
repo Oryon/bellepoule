@@ -43,8 +43,7 @@ namespace People
   Splitting::Splitting (StageClass *stage_class)
     : Object ("Splitting"),
     Stage (stage_class),
-    PlayersList ("splitting.glade",
-                 SORTABLE)
+    PlayersList ("splitting.glade", this, SORTABLE)
   {
     // Sensitive widgets
     {
@@ -271,7 +270,7 @@ namespace People
       Player::AttributeId attr_id ("stage_start_rank",
                                    this);
 
-      attr_id.MakeRandomReady (_rand_seed);
+      attr_id.MakeRandomReady (GetAntiCheatToken ());
       remaining = g_slist_sort_with_data (remaining,
                                           (GCompareDataFunc) Player::Compare,
                                           &attr_id);

@@ -43,14 +43,14 @@ class Player : public Object, Net::MessageUploader::Listener
                      Object      *owner = nullptr)
           : Object ("Player::AttributeId")
         {
-          _name      = name;
-          _owner     = owner;
-          _rand_seed = 0;
+          _name             = name;
+          _owner            = owner;
+          _anti_cheat_token = 0;
         }
 
-        void MakeRandomReady (guint32 rand_seed)
+        void MakeRandomReady (guint32 anti_cheat_token)
         {
-          _rand_seed = rand_seed;
+          _anti_cheat_token = anti_cheat_token;
         };
 
         static AttributeId *Create (AttributeDesc *desc,
@@ -58,7 +58,7 @@ class Player : public Object, Net::MessageUploader::Listener
 
         const gchar *_name;
         Object      *_owner;
-        guint32      _rand_seed;
+        guint32      _anti_cheat_token;
     };
 
     typedef void (*OnChange) (Player    *player,
@@ -144,7 +144,7 @@ class Player : public Object, Net::MessageUploader::Listener
 
     static gint RandomCompare (Player  *A,
                                Player  *B,
-                               guint32  rand_seed);
+                               guint32  anti_cheat_token);
 
   protected:
     Player (const gchar *player_class);

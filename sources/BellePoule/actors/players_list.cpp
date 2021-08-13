@@ -30,8 +30,9 @@ namespace People
   GList *PlayersList::_clipboard = nullptr;
 
   // --------------------------------------------------------------------------------
-  PlayersList::PlayersList (const gchar *glade_file,
-                            guint        rights)
+  PlayersList::PlayersList (const gchar    *glade_file,
+                            AntiCheatBlock *anti_cheat_block,
+                            guint           rights)
     : Object ("PlayersList"),
     Module (glade_file)
   {
@@ -42,6 +43,7 @@ namespace People
     _selector_column    = -1;
     _parcel_name        = nullptr;
     _list_changes_muted = FALSE;
+    _anti_cheat_block   = anti_cheat_block;
 
     {
       _tree_view = GTK_TREE_VIEW (_glade->GetWidget ("players_list"));
@@ -588,12 +590,12 @@ namespace People
                                      GtkTreeIter         *b,
                                      Player::AttributeId *attr_id)
   {
-    guint32 *rand_seed = (guint32 *) attr_id->GetPtrData (nullptr,
-                                                          "CompareIteratorRandSeed");
+    guint32 *anti_cheat_token = (guint32 *) attr_id->GetPtrData (nullptr,
+                                                                 "CompareIteratorAntiCheatToken");
 
-    if (rand_seed)
+    if (anti_cheat_token)
     {
-      attr_id->MakeRandomReady (*rand_seed);
+      attr_id->MakeRandomReady (*anti_cheat_token);
     }
     return Player::Compare (GetPlayer (model, a),
                             GetPlayer (model, b),
@@ -747,9 +749,15 @@ namespace People
 
         if (desc->_type != G_TYPE_STRING)
         {
+           guint32 token = 0;
+
+          if (_anti_cheat_block)
+          {
+            token = _anti_cheat_block->GetAntiCheatToken ();
+          }
           attr_id->SetData (nullptr,
-                            "CompareIteratorRandSeed",
-                            &_rand_seed);
+                            "CompareIteratorAntiCheatToken",
+                            &token);
         }
         _store->SetSortFunction (id*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,
                                  (GtkTreeIterCompareFunc) CompareIterator,

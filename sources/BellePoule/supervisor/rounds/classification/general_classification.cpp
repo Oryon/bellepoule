@@ -39,7 +39,7 @@ namespace People
   GeneralClassification::GeneralClassification (StageClass *stage_class)
     : Object ("GeneralClassification"),
       Stage (stage_class),
-      PlayersList ("general_classification.glade", NO_RIGHT)
+      PlayersList ("general_classification.glade", this, NO_RIGHT)
   {
     // Player attributes to display
     {
@@ -155,7 +155,7 @@ namespace People
     // Sort final list
     if (full_result)
     {
-      final_rank_attr_id.MakeRandomReady (_rand_seed);
+      final_rank_attr_id.MakeRandomReady (GetAntiCheatToken ());
       full_result = g_slist_sort_with_data (full_result,
                                             (GCompareDataFunc) Player::Compare,
                                             &final_rank_attr_id);

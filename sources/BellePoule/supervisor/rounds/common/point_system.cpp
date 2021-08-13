@@ -25,11 +25,11 @@
 namespace Generic
 {
   // --------------------------------------------------------------------------------
-  PointSystem::PointSystem (guint32  rand_seed,
-                            gboolean reverse_insertion)
+  PointSystem::PointSystem (AntiCheatBlock *anti_cheat_block,
+                            gboolean        reverse_insertion)
     : Object ("PointSystem")
   {
-    _rand_seed         = rand_seed;
+    _anti_cheat_block  = anti_cheat_block;
     _matches           = nullptr;
     _reverse_insertion = reverse_insertion;
 
@@ -99,6 +99,6 @@ namespace Generic
 
     return Player::RandomCompare (A,
                                   B,
-                                  _rand_seed);
+                                  _anti_cheat_block->GetAntiCheatToken ());
   }
 }

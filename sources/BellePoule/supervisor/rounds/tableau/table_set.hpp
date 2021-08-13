@@ -59,10 +59,11 @@ namespace Table
       };
 
     public:
-      TableSet (Supervisor *supervisor,
-                gchar      *id,
-                guint       first_place,
-                GtkRange   *zoomer);
+      TableSet (Supervisor     *supervisor,
+                gchar          *id,
+                guint           first_place,
+                GtkRange       *zoomer,
+                AntiCheatBlock *anti_cheat_block);
 
       void SetListener (Listener *listener);
 
@@ -200,6 +201,7 @@ namespace Table
       Filter                *_right_filter;
       GooCanvasItem         *_last_search;
       Generic::PointSystem  *_point_system;
+      AntiCheatBlock        *_anti_cheat_block;
 
       Listener *_listener;
 
@@ -267,7 +269,7 @@ namespace Table
 
       gint ComparePreviousRankPlayer (Player  *A,
                                       Player  *B,
-                                      guint32  rand_seed);
+                                      guint32  anti_cheat_token);
 
       void AddFork (GNode *to);
 

@@ -37,7 +37,7 @@ namespace People
   // --------------------------------------------------------------------------------
   RefereesList::RefereesList (Listener *listener)
     : Object ("RefereesList"),
-      People::Checkin ("referees.glade", "Referee", nullptr)
+      People::Checkin ("referees.glade", "Referee", nullptr, nullptr)
   {
     _weapon   = nullptr;
     _listener = listener;

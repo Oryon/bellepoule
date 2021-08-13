@@ -163,11 +163,11 @@ gint Player::Compare (Player      *a,
     Attribute *attr_b = b->GetAttribute (attr_id);
     gint       result = Attribute::Compare (attr_a, attr_b);
 
-    if ((result == 0) && (attr_id->_rand_seed))
+    if ((result == 0) && (attr_id->_anti_cheat_token))
     {
       result = RandomCompare (a,
                               b,
-                              attr_id->_rand_seed);
+                              attr_id->_anti_cheat_token);
     }
 
     return result;
@@ -210,11 +210,11 @@ gint Player::MultiCompare (Player *a,
     {
       AttributeId *attr_id = (AttributeId *) attr_list->data;
 
-      if ((result == 0) && (attr_id->_rand_seed))
+      if ((result == 0) && (attr_id->_anti_cheat_token))
       {
         result = RandomCompare (a,
                                 b,
-                                attr_id->_rand_seed);
+                                attr_id->_anti_cheat_token);
       }
     }
 
@@ -225,11 +225,11 @@ gint Player::MultiCompare (Player *a,
 // --------------------------------------------------------------------------------
 gint Player::RandomCompare (Player  *A,
                             Player  *B,
-                            guint32  rand_seed)
+                            guint32  anti_cheat_token)
 {
   guint          ref_A  = A->GetRef ();
   guint          ref_B  = B->GetRef ();
-  const guint32  seed[] = {MIN (ref_A, ref_B), MAX (ref_A, ref_B), rand_seed};
+  const guint32  seed[] = {MIN (ref_A, ref_B), MAX (ref_A, ref_B), anti_cheat_token};
   GRand         *rand;
   gint           result;
 

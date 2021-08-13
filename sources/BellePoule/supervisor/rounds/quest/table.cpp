@@ -61,7 +61,7 @@ namespace Quest
   {
     return g_slist_sort_with_data (attendees,
                                    (GCompareDataFunc) Player::RandomCompare,
-                                   GINT_TO_POINTER (GetRandSeed ()));
+                                   GINT_TO_POINTER (GetAntiCheatToken ()));
   }
 
   // --------------------------------------------------------------------------------

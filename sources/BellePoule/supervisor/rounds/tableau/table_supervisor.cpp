@@ -577,7 +577,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   Generic::PointSystem *Supervisor::GetPointSystem (TableSet *table_set)
   {
-    return new Generic::PointSystem (GetRandSeed (),
+    return new Generic::PointSystem (this,
                                      TRUE);
   }
 
@@ -787,7 +787,8 @@ namespace Table
       table_set = new TableSet (this,
                                 gtk_tree_path_to_string (path),
                                 from_place,
-                                GTK_RANGE (_glade->GetWidget ("zoom_scale")));
+                                GTK_RANGE (_glade->GetWidget ("zoom_scale")),
+                                this);
 
       {
         GtkTreeRowReference *ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (_table_set_treestore),

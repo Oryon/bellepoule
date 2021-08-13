@@ -1707,16 +1707,16 @@ void Schedule::PlugStage (Stage *stage)
 
     if (previous)
     {
-      const guint32  seed[] = {stage->GetId (), previous->GetRandSeed ()};
+      const guint32  seed[] = {stage->GetId (), previous->GetAntiCheatToken ()};
       GRand         *rand;
-      gint           rand_seed;
+      gint           anti_cheat_token;
 
       rand = g_rand_new_with_seed_array (seed,
                                          sizeof (seed) / sizeof (guint32));
-      rand_seed = (gint) g_rand_int (rand);
+      anti_cheat_token = (gint) g_rand_int (rand);
       g_rand_free (rand);
 
-      stage->SetRandSeed (rand_seed);
+      stage->SetAntiCheatToken (anti_cheat_token);
     }
   }
 
