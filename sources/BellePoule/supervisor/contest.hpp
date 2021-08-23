@@ -110,6 +110,10 @@ class Contest : public Module
 
     void MakeDirty () override;
 
+    void Lock ();
+
+    void UnLock ();
+
     void ReloadFencers ();
 
     void OnColorChanged (GtkComboBox *widget);
@@ -149,7 +153,6 @@ class Contest : public Module
       void Save (XmlScheme   *xml_scheme,
                  const gchar *attr_name);
       void ReadProperties (Glade *glade);
-      void HideProperties (Glade *glade);
       void FillInProperties (Glade *glade);
       void Copy (Time *to);
       gboolean IsEqualTo (Time *to);
@@ -202,6 +205,7 @@ class Contest : public Module
     State                 _state;
     gboolean              _read_only;
     GList                *_advertisers;
+    gboolean              _locked;
 
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;

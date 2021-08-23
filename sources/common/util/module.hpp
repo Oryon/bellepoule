@@ -118,12 +118,13 @@ class Module : public virtual Object
       NORMALIZED
     };
 
-    Filter           *_filter;
-    Glade            *_glade;
-    Module           *_owner;
-    GtkPrintSettings *_print_settings;
-    GtkPrintSettings *_page_setup_print_settings;
-    GtkPageSetup     *_default_page_setup;
+    Filter             *_filter;
+    Glade              *_glade;
+    Module             *_owner;
+    SensitivityTrigger  _sensitivity_trigger;
+    GtkPrintSettings   *_print_settings;
+    GtkPrintSettings   *_page_setup_print_settings;
+    GtkPageSetup       *_default_page_setup;
 
     static const gdouble PRINT_HEADER_FRAME_HEIGHT;
     static const gdouble PRINT_FONT_HEIGHT;
@@ -192,7 +193,6 @@ class Module : public virtual Object
     GtkWidget          *_root;
     GtkToolbar         *_toolbar;
     GtkContainer       *_config_container;
-    SensitivityTrigger  _sensitivity_trigger;
     GSList             *_plugged_list;
     GtkWidget          *_config_widget;
     Object             *_data_owner;

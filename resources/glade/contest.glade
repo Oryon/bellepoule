@@ -149,6 +149,16 @@
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
+  <object class="GtkListStore" id="weapon_liststore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name sensitivity -->
+      <column type="gboolean"/>
+      <!-- column-name weapon -->
+      <column type="gpointer"/>
+    </columns>
+  </object>
   <object class="GtkDialog" id="properties_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -302,9 +312,17 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <child>
-                                          <object class="GtkComboBoxText" id="weapon_combo">
+                                          <object class="GtkComboBox" id="weapon_combo">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="model">weapon_liststore</property>
+                                            <child>
+                                              <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                                              <attributes>
+                                                <attribute name="sensitive">1</attribute>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
@@ -1193,7 +1211,7 @@ stuffing</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="frame2">
+                      <object class="GtkFrame" id="elo_frame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label_xalign">0</property>

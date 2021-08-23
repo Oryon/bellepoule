@@ -160,20 +160,6 @@ void Contest::Time::ReadProperties (Glade *glade)
 }
 
 // --------------------------------------------------------------------------------
-void Contest::Time::HideProperties (Glade *glade)
-{
-  gchar *button_name;
-
-  button_name = g_strdup_printf ("%s_hour_spinbutton", _name);
-  gtk_widget_set_sensitive (glade->GetWidget (button_name), FALSE);
-  g_free (button_name);
-
-  button_name = g_strdup_printf ("%s_minute_spinbutton", _name);
-  gtk_widget_set_sensitive (glade->GetWidget (button_name), FALSE);
-  g_free (button_name);
-}
-
-// --------------------------------------------------------------------------------
 void Contest::Time::FillInProperties (Glade *glade)
 {
   gchar *button_name;
@@ -228,6 +214,7 @@ Contest::Contest (GList    *advertisers,
   _derived     = FALSE;
   _source      = nullptr;
   _advertisers = advertisers;
+  _locked      = FALSE;
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
@@ -257,6 +244,9 @@ Contest::Contest (GList    *advertisers,
   _scratch_time = new Time ("scratch");
   _start_time   = new Time ("start");
 
+  AddSensitiveWidget (_glade->GetWidget ("team_vbox"));
+  AddSensitiveWidget (_glade->GetWidget ("elo_frame"));
+
   {
     GtkComboBox  *combo = GTK_COMBO_BOX (_glade->GetWidget ("color_combobox"));
     GtkTreeModel *model = gtk_combo_box_get_model (combo);
@@ -276,10 +266,6 @@ Contest::Contest (GList    *advertisers,
   ChooseColor ();
 
   _properties_dialog = _glade->GetWidget ("properties_dialog");
-
-  SetData (nullptr,
-           "SensitiveWidgetForCheckinStage",
-           _glade->GetWidget ("team_vbox"));
 
   _referees_list = new People::RefereesList ();
 
@@ -312,16 +298,23 @@ Contest::Contest (GList    *advertisers,
   }
 
   {
-    GList *current = Weapon::GetList ();
+    GtkTreeModel *model;
 
     _weapon_combo = _glade->GetWidget ("weapon_combo");
-    while (current)
-    {
-      Weapon *weapon = (Weapon *) current->data;
+    model         = gtk_combo_box_get_model (GTK_COMBO_BOX (_weapon_combo));
 
-      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_weapon_combo),
-                                      weapon->GetImage ());
-      current = g_list_next (current);
+    for (GList *current = Weapon::GetList (); current; current = g_list_next (current))
+    {
+      GtkTreeIter  iter;
+      Weapon      *weapon = (Weapon *) current->data;
+
+      gtk_list_store_append (GTK_LIST_STORE (model),
+                             &iter);
+      gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+                          0, weapon->GetImage (),
+                          1, TRUE,
+                          2, weapon,
+                          -1);
     }
 
     g_signal_connect (G_OBJECT (_weapon_combo), "changed",
@@ -811,6 +804,11 @@ void Contest::LoadXmlDocument (xmlDoc *doc)
         {
           _weapon = Weapon::GetFromXml (attr);
           xmlFree (attr);
+
+          if (_weapon->GetXmlImage ()[0] == 'L')
+          {
+            DisableSensitiveWidgets ();
+          }
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Sexe");
@@ -1412,6 +1410,72 @@ void Contest::MakeDirty ()
   _save_timeout_id = g_timeout_add_seconds (5,
                                             (GSourceFunc) OnSaveTimeout,
                                             this);
+}
+
+// --------------------------------------------------------------------------------
+void Contest::Lock ()
+{
+  if (_locked == FALSE)
+  {
+    DisableSensitiveWidgets ();
+
+    {
+      GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (_weapon_combo));
+      gboolean      iter_is_valid;
+      GtkTreeIter   iter;
+
+      iter_is_valid = gtk_tree_model_get_iter_first (model,
+                                                     &iter);
+
+      while (iter_is_valid)
+      {
+        Weapon *weapon;
+
+        gtk_tree_model_get (model, &iter,
+                            2, &weapon,
+                            -1);
+
+        gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+                            1, _weapon->HasSameAffinity (weapon),
+                            -1);
+
+        iter_is_valid = gtk_tree_model_iter_next (model,
+                                                  &iter);
+      }
+    }
+
+    _locked = TRUE;
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::UnLock ()
+{
+  if (_locked)
+  {
+    EnableSensitiveWidgets ();
+
+    {
+      GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (_weapon_combo));
+      gboolean      iter_is_valid;
+      GtkTreeIter   iter;
+
+      iter_is_valid = gtk_tree_model_get_iter_first (model,
+                                                     &iter);
+
+      while (iter_is_valid)
+      {
+        gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+                            1, TRUE,
+                            -1);
+
+        iter_is_valid = gtk_tree_model_iter_next (model,
+                                                  &iter);
+      }
+    }
+
+    _locked = FALSE;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -2268,6 +2332,11 @@ void Contest::OnWeaponChanged (GtkComboBox *combobox,
 
   if (weapon->GetXmlImage ()[0] == 'L')
   {
+    if (weapon->HasSameAffinity (contest->_weapon) == FALSE)
+    {
+      contest->DisableSensitiveWidgets ();
+    }
+
     contest->_schedule->Mutate ("TourDePoules",
                                 "RondeSuisse");
     contest->_schedule->Mutate ("PhaseDeTableaux",
@@ -2275,11 +2344,18 @@ void Contest::OnWeaponChanged (GtkComboBox *combobox,
   }
   else
   {
+    if (weapon->HasSameAffinity (contest->_weapon) == FALSE)
+    {
+      contest->EnableSensitiveWidgets ();
+    }
+
     contest->_schedule->Mutate ("RondeSuisse",
                                 "TourDePoules");
     contest->_schedule->Mutate ("TableauSuisse",
                                 "PhaseDeTableaux");
   }
+
+  contest->_weapon = weapon;
 }
 
 // --------------------------------------------------------------------------------

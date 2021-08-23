@@ -240,7 +240,7 @@ class Stage : public virtual Object,
     GSList             *_output_short_list;
     guint               _quota_exceedance;
     Classification     *_classification;
-    SensitivityTrigger *_sensitivity_trigger;
+    SensitivityTrigger  _classification_trigger;
     SensitivityTrigger *_score_stuffing_trigger;
     gboolean            _classification_on;
     guint32             _anti_cheat_token;

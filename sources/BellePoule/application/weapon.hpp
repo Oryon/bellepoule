@@ -24,7 +24,8 @@ class Weapon : public Object
     Weapon (const gchar *image,
             const gchar *xml_image,
             const gchar *greg_image,
-            guint        standard_duration_sec);
+            guint        standard_duration_sec,
+            gchar        affinity);
 
   public:
     static GList *GetList ();
@@ -48,6 +49,8 @@ class Weapon : public Object
 
     guint GetStandardDuration ();
 
+    gboolean HasSameAffinity (Weapon *than);
+
   private:
     static GList *_list;
 
@@ -55,6 +58,7 @@ class Weapon : public Object
     gchar *_xml_image;
     gchar *_greg_image;
     guint  _standard_duration_sec;
+    gchar  _affinity;
 
     ~Weapon () override;
 };

@@ -130,23 +130,11 @@ Stage *Schedule::CreateStage (const gchar *class_name)
 
   if (stage && (g_ascii_strcasecmp (class_name, "Pointage") == 0))
   {
-    {
-      Module *module = dynamic_cast <Module *> (stage);
+    People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (stage);
 
-      if (module)
-      {
-        module->AddSensitiveWidget (GTK_WIDGET (_contest->GetPtrData (nullptr,
-                                                                      "SensitiveWidgetForCheckinStage")));
-      }
-    }
-
-    {
-      People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (stage);
-
-      checkin->SetTeamData (_minimum_team_size,
-                            _default_classification,
-                            _manual_classification);
-    }
+    checkin->SetTeamData (_minimum_team_size,
+                          _default_classification,
+                          _manual_classification);
   }
 
   return stage;
@@ -301,6 +289,7 @@ void Schedule::DisplayLocks ()
   gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("add_stage_toolbutton")),
                             TRUE);
 
+  _contest->UnLock ();
   if (_stage_list)
   {
     GtkTreeIter iter;
@@ -318,6 +307,7 @@ void Schedule::DisplayLocks ()
                           -1);
       if (current_stage->Locked ())
       {
+        _contest->Lock ();
         gtk_list_store_set (_list_store, &iter,
                             ColumnId::LOCK_str, GTK_STOCK_DIALOG_AUTHENTICATION,
                             -1);

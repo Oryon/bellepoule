@@ -22,12 +22,14 @@ GList *Weapon::_list = nullptr;
 Weapon::Weapon (const gchar *image,
                 const gchar *xml_image,
                 const gchar *greg_image,
-                guint        standard_duration_sec)
+                guint        standard_duration_sec,
+                gchar        affinity)
   : Object ("Weapon")
 {
   _image      = g_strdup (image);
   _xml_image  = g_strdup (xml_image);
   _greg_image = g_strdup (greg_image);
+  _affinity   = affinity;
 
   _standard_duration_sec = standard_duration_sec;
 
@@ -129,4 +131,10 @@ const gchar *Weapon::GetXmlImage ()
 const gchar *Weapon::GetGregImage ()
 {
   return _greg_image;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Weapon::HasSameAffinity (Weapon *than)
+{
+  return _affinity == than->_affinity;
 }

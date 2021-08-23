@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     tree = etree.parse('BellePoule.cbp')
 
-    options     = []
+    options     = ['-Wunused-private-field']
     directories = []
     filenames   = []
 
