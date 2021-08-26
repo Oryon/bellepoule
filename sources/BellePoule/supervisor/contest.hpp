@@ -116,6 +116,8 @@ class Contest : public Module
 
     void ReloadFencers ();
 
+    gboolean EloMatters ();
+
     void OnColorChanged (GtkComboBox *widget);
 
     void DrawConfig (GtkPrintOperation *operation,
@@ -190,6 +192,7 @@ class Contest : public Module
     guint                 _month;
     guint                 _year;
     gboolean              _team_event;
+    gboolean              _elo_matters;
     Data                 *_manual_classification;
     Data                 *_minimum_team_size;
     Data                 *_default_classification;

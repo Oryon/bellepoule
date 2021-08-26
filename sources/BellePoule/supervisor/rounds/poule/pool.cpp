@@ -47,6 +47,7 @@ namespace Pool
               guint           number,
               const gchar    *xml_player_tag,
               AntiCheatBlock *anti_cheat_block,
+              gboolean        elo_matters,
               guint           stage_id,
               Object         *rank_owner,
               ...)
@@ -79,7 +80,8 @@ namespace Pool
       _status_listener       = nullptr;
       _score_collector       = nullptr;
 
-      _point_system = new Generic::PointSystem (anti_cheat_block);
+      _point_system = new Generic::PointSystem (anti_cheat_block,
+                                                elo_matters);
 
     {
       gchar *text = g_strdup_printf (gettext ("Pool #%02d"), _number);

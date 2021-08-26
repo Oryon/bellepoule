@@ -65,6 +65,7 @@ namespace Pool
             guint           number,
             const gchar    *xml_player_tag,
             AntiCheatBlock *anti_cheat_block,
+            gboolean        elo_matters,
             guint           stage_id,
             Object         *rank_owner,
             ...);

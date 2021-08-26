@@ -31,6 +31,7 @@ namespace Generic
   {
     public:
       PointSystem (AntiCheatBlock *anti_cheat_block,
+                   gboolean        elo_matters,
                    gboolean        reverse_insertion = FALSE);
 
       virtual ~PointSystem ();
@@ -50,6 +51,7 @@ namespace Generic
     private:
       Elo             *_elo;
       AntiCheatBlock  *_anti_cheat_block;
+      gboolean         _elo_matters;
       gboolean         _reverse_insertion;
   };
 }

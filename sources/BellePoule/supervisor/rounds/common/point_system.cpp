@@ -26,11 +26,13 @@ namespace Generic
 {
   // --------------------------------------------------------------------------------
   PointSystem::PointSystem (AntiCheatBlock *anti_cheat_block,
+                            gboolean        elo_matters,
                             gboolean        reverse_insertion)
     : Object ("PointSystem")
   {
     _anti_cheat_block  = anti_cheat_block;
     _matches           = nullptr;
+    _elo_matters       = elo_matters;
     _reverse_insertion = reverse_insertion;
 
     _elo = new Elo ();
@@ -82,23 +84,24 @@ namespace Generic
   gint PointSystem::Compare (Player *A,
                              Player *B)
   {
-    Player::AttributeId attr_id ("");
-    guint eloA;
-    guint eloB;
-    gint  result;
-
-    attr_id._name = (gchar *) "elo";
-    eloA = A->GetAttribute (&attr_id)->GetUIntValue ();
-    eloB = B->GetAttribute (&attr_id)->GetUIntValue ();
-
-    result = eloB - eloA;
-    if (result)
+    if (_elo_matters)
     {
-      return result;
+      Player::AttributeId attr_id ("");
+      guint eloA;
+      guint eloB;
+      gint  result;
+
+      attr_id._name = (gchar *) "elo";
+      eloA = A->GetAttribute (&attr_id)->GetUIntValue ();
+      eloB = B->GetAttribute (&attr_id)->GetUIntValue ();
+
+      result = eloB - eloA;
+      if (result)
+      {
+        return result;
+      }
     }
 
-    return Player::RandomCompare (A,
-                                  B,
-                                  _anti_cheat_block->GetAntiCheatToken ());
+    return 0;
   }
 }

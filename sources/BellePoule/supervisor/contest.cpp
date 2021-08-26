@@ -210,6 +210,7 @@ Contest::Contest (GList    *advertisers,
   _category    = new Category (_glade->GetWidget ("category_combobox"));
   _level       = 0;
   _gender      = 0;
+  _elo_matters = FALSE;
   _team_event  = FALSE;
   _derived     = FALSE;
   _source      = nullptr;
@@ -907,6 +908,13 @@ void Contest::LoadXmlDocument (xmlDoc *doc)
           xmlFree (attr);
         }
 
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "EloComptePourClassement");
+        if (attr)
+        {
+          _elo_matters = (gboolean) atoi (attr);
+          xmlFree (attr);
+        }
+
         _minimum_team_size->Load      (xml_nodeset->nodeTab[0]);
         _default_classification->Load (xml_nodeset->nodeTab[0]);
         _manual_classification->Load  (xml_nodeset->nodeTab[0]);
@@ -1159,20 +1167,21 @@ Contest *Contest::Duplicate (const gchar *label)
     g_free (contest->_fie_id);
     contest->_fie_id = g_strdup (_fie_id);
   }
-  contest->_name       = g_strdup (_name);
-  contest->_organizer  = g_strdup (_organizer);
-  contest->_source     = g_strdup (_source);
-  contest->_web_site   = g_strdup (_web_site);
-  contest->_location   = g_strdup (_location);
+  contest->_name        = g_strdup (_name);
+  contest->_organizer   = g_strdup (_organizer);
+  contest->_source      = g_strdup (_source);
+  contest->_web_site    = g_strdup (_web_site);
+  contest->_location    = g_strdup (_location);
   contest->_category->Replicate (_category);
-  contest->_level      = _level;
-  contest->_weapon     = _weapon;
-  contest->_gender     = _gender;
-  contest->_day        = _day;
-  contest->_month      = _month;
-  contest->_year       = _year;
-  contest->_tournament = _tournament;
-  contest->_team_event = _team_event;
+  contest->_level       = _level;
+  contest->_weapon      = _weapon;
+  contest->_gender      = _gender;
+  contest->_day         = _day;
+  contest->_month       = _month;
+  contest->_year        = _year;
+  contest->_tournament  = _tournament;
+  contest->_team_event  = _team_event;
+  contest->_elo_matters = _elo_matters;
   contest->_schedule->SetTeamEvent (_team_event);
 
   _checkin_time->Copy (contest->_checkin_time);
@@ -1487,6 +1496,12 @@ void Contest::ReloadFencers ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Contest::EloMatters ()
+{
+  return _elo_matters;
+}
+
+// --------------------------------------------------------------------------------
 void Contest::Init ()
 {
   GdkColor *color;
@@ -1610,6 +1625,9 @@ void Contest::FillInProperties ()
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("individual_radiobutton")),
                                 (_team_event == FALSE));
 
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("elo_checkbutton")),
+                                (_elo_matters == TRUE));
+
   FillInDate (_day,
               _month,
               _year);
@@ -1657,6 +1675,8 @@ void Contest::ReadProperties ()
   _weapon = Weapon::GetFromIndex (gtk_combo_box_get_active (GTK_COMBO_BOX (_weapon_combo)));
   _gender = gtk_combo_box_get_active (GTK_COMBO_BOX (_gender_combo));
   _level  = gtk_combo_box_get_active (GTK_COMBO_BOX (_level_combo));
+
+  _elo_matters = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("elo_checkbutton")));
 
 
   _category->ReadUserChoice ();
@@ -2030,6 +2050,8 @@ void Contest::SaveHeader (XmlScheme *xml_scheme)
                                 _web_site);
     xml_scheme->WriteFormatAttribute ("ScoreAleatoire",
                                       "%d", _schedule->ScoreStuffingIsAllowed ());
+    xml_scheme->WriteFormatAttribute ("EloComptePourClassement",
+                                      "%d", _elo_matters);
     // Team configuration
     {
       _minimum_team_size->Save      (xml_scheme);

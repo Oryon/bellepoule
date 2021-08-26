@@ -578,6 +578,7 @@ namespace Table
   Generic::PointSystem *Supervisor::GetPointSystem (TableSet *table_set)
   {
     return new Generic::PointSystem (this,
+                                     _contest->EloMatters (),
                                      TRUE);
   }
 
