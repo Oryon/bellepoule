@@ -148,6 +148,8 @@ CFLAGS += -Wno-unknown-pragmas
 else
 CFLAGS += -fPIC
 CFLAGS += -Wsuggest-override
+CFLAGS += -Wno-deprecated-declarations
+CFLAGS += -Wno-cast-function-type
 endif
 
 CFLAGS += $(shell $(PKG_CONFIG) --cflags $(GTK) glib-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 $(GOO) libcurl libmicrohttpd libqrencode json-glib-1.0 libzip $(WEBKIT_LIB) libusb-1.0 $(LIBWEBSOCKETS))
@@ -503,10 +505,8 @@ prepare_resources:
 	cp -rf ../../resources/translations/zh_CN $(RESOURCES)/translations
 	mkdir -p $(RESOURCES)/glade/images
 	cp -f ../../resources/glade/images/*.png   $(RESOURCES)/glade/images
-ifeq ($(PRODUCT), bellepoulebeta)
+ifneq ($(PRODUCT), bellepoulebeta)
 	mv $(RESOURCES)/glade/images/BellePouleWarning.png $(RESOURCES)/glade/images/BellePoule.png
-else
-	rm $(RESOURCES)/glade/images/BellePouleWarning.png
 endif
 	cp -f ../../resources/glade/images/*.gif $(RESOURCES)/glade/images
 	cp -f ../../resources/glade/images/*.jpg $(RESOURCES)/glade/images
@@ -614,7 +614,7 @@ build_ubuntu:
 	debuild -us -uc --lintian-opts --color always
 
 publish_ubuntu:
-	debuild -S -sa -k`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
+	debuild -S -sa -k0E6CA8BD7C1265A8
 	dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes
 
 publish_debian:
