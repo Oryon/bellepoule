@@ -118,6 +118,8 @@ class Contest : public Module
 
     gboolean EloMatters ();
 
+    gboolean ConfigValidated ();
+
     void OnColorChanged (GtkComboBox *widget);
 
     void DrawConfig (GtkPrintOperation *operation,

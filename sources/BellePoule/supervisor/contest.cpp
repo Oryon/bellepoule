@@ -1502,6 +1502,23 @@ gboolean Contest::EloMatters ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Contest::ConfigValidated ()
+{
+  if ((_weapon->GetXmlImage ()[0] != 'L') && _elo_matters)
+  {
+    gint       response;
+    GtkWidget *w = _glade->GetWidget ("elo_dialog");
+
+    response = RunDialog (GTK_DIALOG (w));
+    gtk_widget_hide (w);
+
+    return response == GTK_RESPONSE_YES;
+  }
+
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
 void Contest::Init ()
 {
   GdkColor *color;

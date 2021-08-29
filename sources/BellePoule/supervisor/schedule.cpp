@@ -1634,43 +1634,46 @@ void Schedule::on_next_stage_toolbutton_clicked ()
 {
   Stage *stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
 
-  _contest->Archive (stage->GetName ());
-  stage->Lock ();
-  DisplayLocks ();
-
-  g_list_foreach (_advertisers,
-                  (GFunc) Net::Advertiser::TweetFeeder,
-                  stage);
-
-  if (stage->GetQuotaExceedance ())
+  if (stage->ConfigValidated ())
   {
-    GtkWidget *dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
-                                                            GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                            GTK_MESSAGE_QUESTION,
-                                                            GTK_BUTTONS_YES_NO,
-                                                            gettext ("<b><big>Because of ties, the quota is exceeded.\nDo you wish to add a barrage round?</big></b>"));
+    _contest->Archive (stage->GetName ());
+    stage->Lock ();
+    DisplayLocks ();
 
-    gtk_window_set_title (GTK_WINDOW (dialog),
-                          gettext ("Barrage"));
+    g_list_foreach (_advertisers,
+                    (GFunc) Net::Advertiser::TweetFeeder,
+                    stage);
 
-    if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_YES)
+    if (stage->GetQuotaExceedance ())
     {
-      Stage *barrage = CreateStage ("Barrage");
+      GtkWidget *dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                              GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                              GTK_MESSAGE_QUESTION,
+                                                              GTK_BUTTONS_YES_NO,
+                                                              gettext ("<b><big>Because of ties, the quota is exceeded.\nDo you wish to add a barrage round?</big></b>"));
 
-      AddStage (barrage,
-                stage);
+      gtk_window_set_title (GTK_WINDOW (dialog),
+                            gettext ("Barrage"));
+
+      if (RunDialog (GTK_DIALOG (dialog)) == GTK_RESPONSE_YES)
+      {
+        Stage *barrage = CreateStage ("Barrage");
+
+        AddStage (barrage,
+                  stage);
+      }
+      gtk_widget_destroy (dialog);
     }
-    gtk_widget_destroy (dialog);
+
+    stage = (Stage *) g_list_nth_data (_stage_list, _current_stage+1);
+    PlugStage (stage);
+    stage->RetrieveAttendees ();
+    stage->Garnish ();
+    stage->Display ();
+
+    SetCurrentStage (_current_stage+1);
+    MakeDirty ();
   }
-
-  stage = (Stage *) g_list_nth_data (_stage_list, _current_stage+1);
-  PlugStage (stage);
-  stage->RetrieveAttendees ();
-  stage->Garnish ();
-  stage->Display ();
-
-  SetCurrentStage (_current_stage+1);
-  MakeDirty ();
 }
 
 // --------------------------------------------------------------------------------

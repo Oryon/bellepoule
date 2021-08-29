@@ -69,6 +69,8 @@ namespace People
 
       void ApplyConfig (Team *team);
 
+      gboolean ConfigValidated () override;
+
       guint PreparePrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context) override;
 

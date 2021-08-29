@@ -140,6 +140,8 @@ class Stage : public virtual Object,
 
     virtual void SetTeamEvent (gboolean team_event) {};
 
+    virtual gboolean ConfigValidated () {return TRUE;};
+
     virtual void Reset ();
 
     virtual void Display ();

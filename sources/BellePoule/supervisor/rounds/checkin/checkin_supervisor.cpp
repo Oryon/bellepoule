@@ -988,6 +988,12 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::ConfigValidated ()
+  {
+    return _contest->ConfigValidated ();
+  }
+
+  // --------------------------------------------------------------------------------
   Team *CheckinSupervisor::GetTeam (const gchar *name)
   {
     Player              *team;
