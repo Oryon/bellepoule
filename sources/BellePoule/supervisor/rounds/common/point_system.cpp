@@ -89,17 +89,12 @@ namespace Generic
       Player::AttributeId attr_id ("");
       guint eloA;
       guint eloB;
-      gint  result;
 
       attr_id._name = (gchar *) "elo";
       eloA = A->GetAttribute (&attr_id)->GetUIntValue ();
       eloB = B->GetAttribute (&attr_id)->GetUIntValue ();
 
-      result = eloB - eloA;
-      if (result)
-      {
-        return result;
-      }
+      return eloB - eloA;
     }
 
     return 0;

@@ -285,7 +285,7 @@ namespace Table
                                GSList *withdrawals)
   {
     withdrawals = g_slist_sort_with_data (withdrawals,
-                                          (GCompareDataFunc) TableSet::ComparePlayer,
+                                          (GCompareDataFunc) TableSet::ComparePlayerZealously,
                                           this);
     g_slist_free (_withdrawals);
     _withdrawals = withdrawals;
@@ -2519,8 +2519,8 @@ namespace Table
       // Sort the list and complete it with the withdrawals
       {
         _result_list = g_slist_sort_with_data (_result_list,
-                                               (GCompareDataFunc) ComparePlayer,
-                                               (void *) this);
+                                               (GCompareDataFunc) ComparePlayerZealously,
+                                               this);
         _result_list = g_slist_concat (_result_list,
                                        g_slist_copy (_withdrawals));
       }
@@ -2532,16 +2532,14 @@ namespace Table
         guint                previous_rank   = 0;
         Player              *previous_player = nullptr;
 
-        // TODO: _rand_seed = 0;
-        g_warning("TableSet::_rand_seed commenté !!!!!!");
         current = _result_list;
         for (guint i = _first_place; current != nullptr; i++)
         {
           Player *player = (Player *) current->data;
 
-          if (   (previous_player && (ComparePlayer (player,
-                                                     previous_player,
-                                                     this) == 0))
+          if (   (previous_player && (ComparePlayerRoughly (player,
+                                                            previous_player,
+                                                            this) == 0))
               || (PlaceIsFenced (i) == FALSE))
           {
             player->SetAttributeValue (attr_id,
@@ -2558,7 +2556,6 @@ namespace Table
           current = g_slist_next (current);
         }
         attr_id->Release ();
-        // TODO: _rand_seed = rand_seed;
       }
 
       g_node_traverse (_tree_root,
@@ -2597,9 +2594,32 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  gint TableSet::ComparePlayerZealously (Player   *A,
+                                         Player   *B,
+                                         TableSet *table_set)
+  {
+    return ComparePlayer (A,
+                          B,
+                          table_set,
+                          table_set->_anti_cheat_block->GetAntiCheatToken ());
+  }
+
+  // --------------------------------------------------------------------------------
+  gint TableSet::ComparePlayerRoughly (Player   *A,
+                                       Player   *B,
+                                       TableSet *table_set)
+  {
+    return ComparePlayer (A,
+                          B,
+                          table_set,
+                          0);
+  }
+
+  // --------------------------------------------------------------------------------
   gint TableSet::ComparePlayer (Player   *A,
                                 Player   *B,
-                                TableSet *table_set)
+                                TableSet *table_set,
+                                guint32  anti_cheat_token)
   {
     if (B == nullptr)
     {
@@ -2656,7 +2676,7 @@ namespace Table
 
     return table_set->ComparePreviousRankPlayer (A,
                                                  B,
-                                                 table_set->_anti_cheat_block->GetAntiCheatToken ());
+                                                 anti_cheat_token);
   }
 
   // --------------------------------------------------------------------------------

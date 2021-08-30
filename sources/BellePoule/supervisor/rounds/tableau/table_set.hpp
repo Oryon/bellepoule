@@ -286,9 +286,18 @@ namespace Table
 
       PrintSession *GetPrintSession (GtkPrintOperation *operation);
 
+      static gint ComparePlayerZealously (Player   *A,
+                                          Player   *B,
+                                          TableSet *table_set);
+
+      static gint ComparePlayerRoughly (Player   *A,
+                                        Player   *B,
+                                        TableSet *table_set);
+
       static gint ComparePlayer (Player   *A,
                                  Player   *B,
-                                 TableSet *table_set);
+                                 TableSet *table_set,
+                                 guint32  anti_cheat_token);
 
       static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
                                                      GtkCellRenderer *cell,
