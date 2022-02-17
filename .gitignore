@@ -5,6 +5,7 @@
 *.layout
 *.depend
 .clangd/
+.ccls-cache/
 compile_commands.json
 build/BellePoule/debug
 build/LivePoule/Debug

@@ -1703,8 +1703,15 @@ namespace Quest
                              fencer);
                 score = match->GetScore (i);
 
-                fencer->SetAttributeValue (&status_attr_id,
-                                           score->GetStatusImage ());
+                {
+                   const gchar *status = score->GetStatusImage ();
+
+                   if (status && ((status[0] == 'A') || (status[0] == 'E')))
+                   {
+                      fencer->SetAttributeValue (&status_attr_id,
+                                                 status);
+                   }
+                }
               }
 
               OnNewScore (nullptr,
