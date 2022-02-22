@@ -138,7 +138,7 @@
           stack.push (welcome_screen);
         }
 
-        matchlist = new MatchList (document.getElementById ('matchlist_hook'));
+        matchlist = new MatchList (document.getElementById ('matchlist_hook'), pathname.includes('/public'));
         if (pathname != '/public/classement')
         {
           carousel.manage (matchlist);

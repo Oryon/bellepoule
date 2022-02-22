@@ -61,7 +61,7 @@ class Batch
                                   null);
   }
 
-  display (what, where)
+  display (what, where, read_only)
   {
     let table = where.firstElementChild;
     let nodes = this.getMessageNodes ();
@@ -120,7 +120,10 @@ class Batch
           let row        = table.insertRow (-1);
           let match_over = false;
 
-          row.addEventListener ('click', function () {Batch.onClicked (context, match_id);});
+          if (read_only == false)
+          {
+            row.addEventListener ('click', function () {Batch.onClicked (context, match_id);});
+          }
 
           {
             let cell = row.insertCell (-1);

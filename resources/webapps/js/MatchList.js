@@ -1,11 +1,12 @@
 class MatchList extends Module
 {
-  constructor (hook)
+  constructor (hook, read_only)
   {
     super ('MatchList',
            hook);
 
-    this.empty = true;
+    this.empty     = true;
+    this.read_only = read_only;
 
     {
       let table = document.createElement ('table');
@@ -29,7 +30,7 @@ class MatchList extends Module
 
   displayBatch (batch, name)
   {
-    batch.display (name, this.container);
+    batch.display (name, this.container, this.read_only);
     this.empty = false;
     this.onDirty ();
   }
