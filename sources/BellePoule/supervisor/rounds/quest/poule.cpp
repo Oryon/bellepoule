@@ -669,7 +669,6 @@ namespace Quest
         }
       }
 
-      printf ("=====>> %d\n", g_list_length (_matches));
       for (GList *m = _matches; m; m = g_list_next (m))
       {
         Match *match = (Match *) m->data;

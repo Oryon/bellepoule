@@ -1175,20 +1175,28 @@ namespace Net
         {
           for (PIP_ADAPTER_INFO pAdapter = pAdapterInfo; pAdapter; pAdapter = pAdapter->Next)
           {
-            if (g_strcmp0 (pAdapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
+            if ((pAdapter->Type == IF_TYPE_IEEE80211) || (pAdapter->Type == MIB_IF_TYPE_ETHERNET))
             {
-              _unicast_address = g_strdup (pAdapter->IpAddressList.IpAddress.String);
-
+              if (g_strcmp0 (pAdapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
               {
-                struct in_addr iaddr;
-                gulong         ip   = inet_addr (_unicast_address);
-                gulong         mask = inet_addr (pAdapter->IpAddressList.IpMask.String);
+                g_free (_unicast_address);
+                _unicast_address = g_strdup (pAdapter->IpAddressList.IpAddress.String);
 
-                iaddr.S_un.S_addr = ip | ~mask;
+                {
+                  struct in_addr iaddr;
+                  gulong         ip   = inet_addr (_unicast_address);
+                  gulong         mask = inet_addr (pAdapter->IpAddressList.IpMask.String);
 
-                broadcast_address = inet_ntoa (iaddr);
+                  iaddr.S_un.S_addr = ip | ~mask;
+
+                  broadcast_address = inet_ntoa (iaddr);
+                }
+
+                if (pAdapter->Type == IF_TYPE_IEEE80211)
+                {
+                  break;
+                }
               }
-              break;
             }
           }
         }
