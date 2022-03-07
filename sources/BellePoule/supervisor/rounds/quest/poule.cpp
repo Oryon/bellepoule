@@ -299,6 +299,7 @@ namespace Quest
 
     _hall->Clear ();
     LoadConfiguration (xml_node);
+    Reset ();
     Garnish ();
     LoadMatches (xml_node);
     _point_system->Rehash ();
