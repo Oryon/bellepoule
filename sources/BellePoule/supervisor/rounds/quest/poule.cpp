@@ -1705,6 +1705,7 @@ namespace Quest
                 {
                    const gchar *status = score->GetStatusImage ();
 
+                   fencer->RemoveAttribute (&status_attr_id);
                    if (status && ((status[0] == 'A') || (status[0] == 'E')))
                    {
                       fencer->SetAttributeValue (&status_attr_id,
