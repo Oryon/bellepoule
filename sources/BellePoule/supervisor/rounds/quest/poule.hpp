@@ -138,6 +138,8 @@ namespace Quest
 
       void FeedParcel (Net::Message *parcel) override;
 
+      void OnLocked () override;
+
       void OnLoadingCompleted () override;
 
       static void OnStatusChanged (GtkComboBox *combo_box,
