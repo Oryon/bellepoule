@@ -718,7 +718,10 @@ namespace Table
 
     {
       SpreadWinners ();
-      RefreshNodes ();
+      if (_main_table)
+      {
+        RefreshNodes ();
+      }
       RefilterQuickSearch ();
     }
 
