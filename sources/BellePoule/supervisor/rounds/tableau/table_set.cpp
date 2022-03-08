@@ -2209,7 +2209,7 @@ namespace Table
                   else
                   {
                     _score_collector->Refresh (match);
-                    RefreshTableStatus ();
+                    RefreshNodes ();
                   }
                 }
 
