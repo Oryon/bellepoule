@@ -101,6 +101,13 @@ namespace Quest
 
       gboolean MatchIsFinished (Match *match) override;
 
+      guint PreparePrint (GtkPrintOperation *operation,
+                          GtkPrintContext   *context) override;
+
+      void DrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr) override;
+
       void Dump () override;
 
       void OnMatchesPerFencerChanged (GtkEditable *editable);

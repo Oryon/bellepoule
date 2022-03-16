@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "util/object.hpp"
+#include "util/module.hpp"
 
 class Book : public Object
 {

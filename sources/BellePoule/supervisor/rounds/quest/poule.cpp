@@ -29,6 +29,7 @@
 #include "../../match.hpp"
 #include "../../contest.hpp"
 #include "../../score.hpp"
+#include "../../classification.hpp"
 
 #include "wheel_of_fortune.hpp"
 #include "point_system.hpp"
@@ -569,6 +570,58 @@ namespace Quest
     }
 
     wheel->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  guint Poule::PreparePrint (GtkPrintOperation *operation,
+                             GtkPrintContext   *context)
+  {
+    if (GetStageView (operation) == StageView::CLASSIFICATION)
+    {
+      Classification *classification = GetClassification ();
+
+      if (classification)
+      {
+        return classification->PreparePrint (operation,
+                                             context);
+      }
+      return 0;
+    }
+    else if (GetStageView (operation) == StageView::RESULT)
+    {
+      return CanvasModule::PreparePrint(operation,
+                                        context);
+    }
+
+    return 0;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Poule::DrawPage (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             gint               page_nr)
+  {
+    if (GetStageView (operation) == StageView::CLASSIFICATION)
+    {
+      Classification *classification = GetClassification ();
+
+      if (classification)
+      {
+        DrawContainerPage (operation,
+                           context,
+                           page_nr);
+
+        classification->DrawBarePage (operation,
+                                      context,
+                                      page_nr);
+      }
+    }
+    else if (GetStageView (operation) == StageView::RESULT)
+    {
+      CanvasModule::DrawPage (operation,
+                              context,
+                              page_nr);
+    }
   }
 
   // --------------------------------------------------------------------------------
