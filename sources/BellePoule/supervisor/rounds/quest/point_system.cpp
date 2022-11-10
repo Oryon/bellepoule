@@ -28,7 +28,7 @@ namespace Quest
   PointSystem::PointSystem (Stage    *stage,
                             gboolean  reverse_insertion)
     : Object ("Quest::PointSystem"),
-      Generic::PointSystem (stage, reverse_insertion)
+      Generic::PointSystem (stage, true /* elo_matters */, reverse_insertion)
   {
     Module *module = dynamic_cast <Module *> (stage);
 
