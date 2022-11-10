@@ -71,26 +71,26 @@ namespace Quest
 
     {
       Player::AttributeId attr_id ("", _owner);
-      guint      duel_scoreA      = 0;
-      guint      duel_scoreB      = 0;
-      Attribute *duel_scoreA_attr;
-      Attribute *duel_scoreB_attr;
-
 
       attr_id._name = (gchar *) "score_quest";
-      duel_scoreA_attr = A->GetAttribute (&attr_id);
-      duel_scoreB_attr = B->GetAttribute (&attr_id);
-
-      if (duel_scoreA_attr)
-      {
-        duel_scoreA = duel_scoreA_attr->GetUIntValue ();
-      }
-      if (duel_scoreB_attr)
-      {
-        duel_scoreB = duel_scoreB_attr->GetUIntValue ();
-      }
+      Attribute *duel_scoreA_attr = A->GetAttribute (&attr_id);
+      Attribute *duel_scoreB_attr = B->GetAttribute (&attr_id);
+      guint duel_scoreA = duel_scoreA_attr ? duel_scoreA_attr->GetUIntValue () : 0;
+      guint duel_scoreB = duel_scoreB_attr ? duel_scoreB_attr->GetUIntValue () : 0;
 
       result = duel_scoreB - duel_scoreA;
+      if (result)
+      {
+        return result;
+      }
+
+      attr_id._name = (gchar *) "victories_count";
+      Attribute *victoriesA_attr = A->GetAttribute (&attr_id);
+      Attribute *victoriesB_attr = B->GetAttribute (&attr_id);
+      guint victoriesA = victoriesA_attr ? victoriesA_attr->GetUIntValue () : 0;
+      guint victoriesB = victoriesB_attr ? victoriesB_attr->GetUIntValue () : 0;
+
+      result = victoriesB - victoriesA;
       if (result)
       {
         return result;
