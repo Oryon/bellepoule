@@ -505,17 +505,14 @@ namespace Quest
   // --------------------------------------------------------------------------------
   void Poule::Garnish ()
   {
+    // Garnish is sometimes called from outside, without Reset being called first
+    Reset ();
+
     GSList *fencers            = g_slist_copy (GetShortList ());
     guint   fencer_count       = g_slist_length (fencers);
     guint   matches_per_fencer = MIN (_matches_per_fencer->GetValue (), fencer_count-1);
 
-    for (guint i = 0; i < matches_per_fencer; i++)
-    {
-      TossMatches (fencers,
-                   i+1);
-      fencers = g_slist_reverse (fencers);
-    }
-
+    TossMatches (fencers, matches_per_fencer);
     g_slist_free (fencers);
   }
 
@@ -523,53 +520,35 @@ namespace Quest
   void Poule::TossMatches (GSList *fencers,
                            guint   matches_per_fencer)
   {
-    WheelOfFortune *wheel = new WheelOfFortune (fencers,
-                                                GetAntiCheatToken ());
+    WheelOfFortune wheel = WheelOfFortune(g_slist_length(fencers),
+                                          matches_per_fencer,
+                                          GetAntiCheatToken ());
+    auto matchups = wheel.generate_matchups();
 
-    for (GSList *f = fencers; f; f = g_slist_next (f))
-    {
-      Player *fencer  = (Player *) f->data;
-      GList  *matches = (GList *) fencer->GetPtrData (this, "Poule::matches");
-
-      for (guint match_count = g_list_length (matches);
-           match_count < matches_per_fencer;
-           match_count++)
-      {
-        for (void *o = wheel->Turn (); o; o = wheel->TryAgain ())
-        {
-          Player *opponent         = (Player *) o;
-          GList  *opponent_matches = (GList *) opponent->GetPtrData (this, "Poule::matches");
-
-          if (   (opponent != fencer)
-              && (FencerHasMatch (opponent, matches) == FALSE)
-              && (g_list_length (opponent_matches) < matches_per_fencer))
-          {
-            Match *match = new Match (fencer,
-                                      opponent,
-                                      _max_score,
-                                      TRUE);
-
-            matches = g_list_prepend (matches,
-                                      match);
-
-            opponent_matches = g_list_prepend (opponent_matches,
-                                               match);
-            opponent->SetData (this, "Poule::matches",
-                               opponent_matches);
-
-            _matches = g_list_append (_matches,
-                                      match);
-            match->SetNumber (g_list_length (_matches));
-
-            break;
-          }
-        }
-      }
-      fencer->SetData (this, "Poule::matches",
-                       matches);
+    if ((matchups.size() == 0) && (matches_per_fencer != 0)) {
+      GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                  GTK_MESSAGE_ERROR,
+                                                  GTK_BUTTONS_CLOSE,
+                                                  gettext ("Number of fencers and matches per fencers cannot be both odd !"));
+      RunDialog (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
     }
 
-    wheel->Release ();
+    for (auto& matchup : matchups) {
+      Player *f1  = (Player *) g_slist_nth_data(fencers, matchup.first);
+      Player *f2  = (Player *) g_slist_nth_data(fencers, matchup.second);
+      Match *match = new Match (f1, f2, _max_score, TRUE);
+
+      GList  *f1_matches = (GList *) f1->GetPtrData (this, "Poule::matches");
+      GList  *f2_matches = (GList *) f2->GetPtrData (this, "Poule::matches");
+
+      f1->SetData (this, "Poule::matches", g_list_prepend(f1_matches, match));
+      f2->SetData (this, "Poule::matches", g_list_prepend(f2_matches, match));
+
+      _matches = g_list_append (_matches, match);
+      match->SetNumber (g_list_length (_matches));
+    }
   }
 
   // --------------------------------------------------------------------------------
