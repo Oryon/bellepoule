@@ -22,7 +22,7 @@
 
 namespace Quest
 {
-  const gchar *BonusTable::_class_name     = N_ ("Table");
+  const gchar *BonusTable::_class_name     = N_ ("BonusTable");
   const gchar *BonusTable::_xml_class_name = "TableauSuisse";
 
   // --------------------------------------------------------------------------------
