@@ -127,6 +127,10 @@ namespace Generic
           new_elo = round (elo[f] + _K*(-probability[f]) - bonus);
         }
 
+        if (new_elo < 0) {
+          // Prevent elo from going negative.
+          new_elo = 0;
+        }
         fencer->SetAttributeValue (&elo_attr_id,
                                    (guint) new_elo);
       }
