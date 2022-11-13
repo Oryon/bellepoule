@@ -56,7 +56,7 @@ LIBWEBSOCKETS = libwebsockets
 #----------------------------------------------------
 DWEBKIT    = -DWEBKIT
 WEBKIT_LIB = webkit-1.0
-ifeq ($(DISTRIB),$(filter $(DISTRIB),osx focal windows))
+ifeq ($(DISTRIB),$(filter $(DISTRIB),osx focal jammy windows))
 	undefine DWEBKIT
 	undefine WEBKIT_LIB
 endif
@@ -198,7 +198,7 @@ SRC += $(wildcard sources/BellePoule/actors/*.cpp)
 SRC += $(wildcard sources/BellePoule/application/*.cpp)
 OBJ_LIB += $(SRC:.cpp=.o)
 
-ifeq ($(DISTRIB),$(filter $(DISTRIB),bionic focal))
+ifeq ($(DISTRIB),$(filter $(DISTRIB),focal jammy))
 GOOCANVAS_SOURCES = sources/goocanvas
 GOOCANVAS_LIB     = sources/goocanvas/src/.libs/libgoocanvas.so
 install_goocanvas = install_goocanvas
@@ -354,14 +354,14 @@ EXAMPLES          = $(PACKAGE)/$(RELEASE)/Exemples
 RESOURCES         = $(PACKAGE)/$(RELEASE)/resources
 endif
 
-ifeq ($(DISTRIB),$(filter $(DISTRIB),bionic focal))
+ifeq ($(DISTRIB),$(filter $(DISTRIB),focal jammy))
 prepare_goocanvas   = prepare_goocanvas
 GOO                 =
 GOOCANVAS_BUILD_DEP =
 GOOCANVAS_DEP       =
 CFLAGS             += -Isources/goocanvas/src
 endif
-ifeq ($(DISTRIB), focal)
+ifeq ($(DISTRIB),$(filter $(DISTRIB),focal jammy))
 WEBKIT_BUILD_DEP =
 WEBKIT_DEP       =
 endif
@@ -614,8 +614,8 @@ build_ubuntu:
 	debuild -us -uc --lintian-opts --color always
 
 publish_ubuntu:
-	debuild -S -sa -k0E6CA8BD7C1265A8
-	dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes
+	debuild -S -sa -k2D42F6EFB83A4FF3
+	dput ppa:bettonescrime/bellepoule ../$(PRODUCT)*_source.changes
 
 publish_debian:
 	lftp ftp://betton.escrime:`ssh-askpass`@ftpperso.free.fr -e "put -O /documents/BellePoule/$(FTP_FOLDER) ../$(PRODUCT)_$(VERSION_MAJOR).$(VERSION_MINOR)ubuntu1~stretch1_amd64.deb; quit"
@@ -685,9 +685,8 @@ clean_sources:
 #----------------------------------------------------
 help: vars
 	@echo "\e[1;44m**** Ubuntu ****\e[0m"
-	@echo "make -s DISTRIB=xenial V=1 package"
-	@echo "make -s DISTRIB=bionic V=1 package"
 	@echo "make -s DISTRIB=focal V=1 package"
+	@echo "make -s DISTRIB=jammy V=1 package"
 	@echo ""
 	@echo "\e[1;42m**** Windows ****\e[0m"
 	@echo "make -s DISTRIB=windows V=1 package"
