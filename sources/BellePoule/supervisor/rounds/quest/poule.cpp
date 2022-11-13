@@ -215,7 +215,6 @@ namespace Quest
         filter->ShowAttribute ("score_quest");
         filter->ShowAttribute ("tiebreaker_quest");
         filter->ShowAttribute ("nb_matchs");
-        filter->ShowAttribute ("elo");
 
         SetClassificationFilter (filter);
         filter->Release ();
