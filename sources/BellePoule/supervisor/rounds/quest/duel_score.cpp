@@ -34,14 +34,17 @@ namespace Quest
                                          owner);
     _victory_figure = new MatchFigure ("victories_count",
                                        owner);
+    _tiebreaker_figure = new MatchFigure ("tiebreaker_quest",
+                                          owner);
   }
 
   // --------------------------------------------------------------------------------
   DuelScore::~DuelScore ()
   {
-    _score_figure->Release     ();
-    _nb_matchs_figure->Release ();
-    _victory_figure->Release   ();
+    _score_figure->Release        ();
+    _nb_matchs_figure->Release    ();
+    _victory_figure->Release      ();
+    _tiebreaker_figure->Release   ();
   }
 
   // --------------------------------------------------------------------------------
@@ -63,6 +66,9 @@ namespace Quest
           _victory_figure->AddToFencer (fencer,
                                         match,
                                         1);
+          _tiebreaker_figure->AddToFencer (fencer,
+                                           match,
+                                           1);
         }
         _nb_matchs_figure->AddToFencer (fencer,
                                         match,
@@ -81,27 +87,35 @@ namespace Quest
           guint looser_score   = match->GetScore (looser)->Get ();
           guint delta          = winner_score - looser_score;
           guint new_duel_score;
+          guint new_duel_tiebreaker;
 
           if (delta < 4)
           {
             new_duel_score = 1;
+            new_duel_tiebreaker = 1;
           }
           else if (4 <= delta && delta <= 7)
           {
             new_duel_score = 2;
+            new_duel_tiebreaker = 100;
           }
           else if (8 <= delta && delta <= 11)
           {
             new_duel_score = 3;
+            new_duel_tiebreaker = 10000;
           }
           else
           {
             new_duel_score = 4;
+            new_duel_tiebreaker = 1000000;
           }
 
           _score_figure->AddToFencer (winner,
                                       match,
                                       new_duel_score);
+          _tiebreaker_figure->AddToFencer (winner,
+                                           match,
+                                           new_duel_tiebreaker);
         }
 
         _victory_figure->AddToFencer (winner,
@@ -135,6 +149,9 @@ namespace Quest
 
         _victory_figure->RemoveFromFencer (fencer,
                                            match);
+
+        _tiebreaker_figure->RemoveFromFencer (fencer,
+                                              match);
       }
     }
   }

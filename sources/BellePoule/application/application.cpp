@@ -405,6 +405,10 @@ void Application::Prepare ()
       desc->_scope         = AttributeDesc::Scope::LOCAL;
       desc->_computability = AttributeDesc::Computability::COMPUTABLE;
 
+      desc = AttributeDesc::Declare (G_TYPE_UINT, "tiebreaker_quest", "TieBreakerQuest", gettext ("Cotations"));
+      desc->_scope         = AttributeDesc::Scope::LOCAL;
+      desc->_computability = AttributeDesc::Computability::COMPUTABLE;
+
       desc = AttributeDesc::Declare (G_TYPE_UINT, "nb_matchs", "NbMatchs", gettext ("Nb matchs"));
       desc->_persistency   = AttributeDesc::Persistency::NOT_PERSISTENT;
       desc->_scope         = AttributeDesc::Scope::LOCAL;

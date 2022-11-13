@@ -95,6 +95,19 @@ namespace Quest
       {
         return result;
       }
+
+      attr_id._name = (gchar *) "tiebreaker_quest";
+      Attribute *tiebreakerA_attr = A->GetAttribute (&attr_id);
+      Attribute *tiebreakerB_attr = B->GetAttribute (&attr_id);
+      guint tiebreakerA = tiebreakerA_attr ? tiebreakerA_attr->GetUIntValue () : 0;
+      guint tiebreakerB = tiebreakerB_attr ? tiebreakerB_attr->GetUIntValue () : 0;
+
+      result = tiebreakerB - tiebreakerA;
+      if (result)
+      {
+        return result;
+      }
+
     }
 
     return Generic::PointSystem::Compare (A,

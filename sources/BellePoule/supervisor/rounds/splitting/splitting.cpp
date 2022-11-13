@@ -64,6 +64,7 @@ namespace People
                                           "password",
                                           "cyphered_password",
                                           "score_quest",
+                                          "tiebreaker_quest",
                                           "nb_matchs",
                                           "HS",
                                           "attending",

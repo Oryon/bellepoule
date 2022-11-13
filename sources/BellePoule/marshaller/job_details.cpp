@@ -73,6 +73,7 @@ namespace Marshaller
                                           "bouts_count",
                                           "victories_ratio",
                                           "score_quest",
+                                          "tiebreaker_quest",
                                           "nb_matchs",
                                           "strip",
                                           "time",

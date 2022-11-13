@@ -74,6 +74,7 @@ namespace People
                                           "bouts_count",
                                           "victories_ratio",
                                           "score_quest",
+                                          "tiebreaker_quest",
                                           "nb_matchs",
                                           "elo",
                                           "initial_elo",

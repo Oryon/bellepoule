@@ -137,6 +137,7 @@ namespace Quest
                                           "password",
                                           "cyphered_password",
                                           "score_quest",
+                                          "tiebreaker_quest",
                                           "nb_matchs",
                                           "elo",
                                           "initial_elo",
@@ -212,6 +213,7 @@ namespace Quest
         filter->ShowAttribute ("club");
         filter->ShowAttribute ("victories_count");
         filter->ShowAttribute ("score_quest");
+        filter->ShowAttribute ("tiebreaker_quest");
         filter->ShowAttribute ("nb_matchs");
         filter->ShowAttribute ("elo");
 
