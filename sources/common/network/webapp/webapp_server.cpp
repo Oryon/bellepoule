@@ -537,29 +537,8 @@ namespace Net
         web_app->_input_buffer    = nullptr;
         web_app->_pending_message = nullptr;
 
-        {
-          char peer_name[128];
-          char ip[30];
-
-          lws_get_peer_addresses (wsi,
-                                  lws_get_socket_fd (wsi),
-                                  peer_name, sizeof peer_name,
-                                  ip, sizeof ip);
-
-          {
-            gchar **splitted_ip = g_strsplit_set (ip,
-                                                  ".",
-                                                  0);
-
-            if (splitted_ip && splitted_ip[0] && splitted_ip[1] && splitted_ip[2] && splitted_ip[3])
-            {
-              web_app->_uuid = g_ascii_strtoull (splitted_ip[3],
-                                                 nullptr,
-                                                 10);
-              g_strfreev (splitted_ip);
-            }
-          }
-        }
+        static int uuid_counter = 0;
+        web_app->_uuid = uuid_counter++;
 
         server->_clients = g_list_prepend (server->_clients,
                                            web_app);
