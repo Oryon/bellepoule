@@ -97,34 +97,6 @@ namespace Quest
       }
     }
 
-    {
-      Player::AttributeId attr_id ("");
-      guint      elo_A      = 0;
-      guint      elo_B      = 0;
-      Attribute *elo_A_attr;
-      Attribute *elo_B_attr;
-
-
-      attr_id._name = (gchar *) "elo";
-      elo_A_attr = A->GetAttribute (&attr_id);
-      elo_B_attr = B->GetAttribute (&attr_id);
-
-      if (elo_A_attr)
-      {
-        elo_A = elo_A_attr->GetUIntValue ();
-      }
-      if (elo_B_attr)
-      {
-        elo_B = elo_B_attr->GetUIntValue ();
-      }
-
-      result = elo_B - elo_A;
-      if (result)
-      {
-        return result;
-      }
-    }
-
     return Generic::PointSystem::Compare (A,
                                           B);
   }
