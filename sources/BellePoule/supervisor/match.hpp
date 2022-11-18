@@ -169,6 +169,7 @@ class Match : public Object,
     guint     _duration_span;
     gboolean  _dirty;
     gboolean  _falsified;
+    gboolean  _overflow_allowed;
 
     static GTimeSpan _clock_offset;
 

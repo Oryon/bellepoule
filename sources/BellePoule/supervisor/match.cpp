@@ -42,6 +42,7 @@ Match::Match (Data     *max_score,
   _piste         = 0;
   _dirty         = TRUE;
   _falsified     = FALSE;
+  _overflow_allowed = overflow_allowed;
 
   _max_score = max_score;
 
@@ -390,7 +391,8 @@ gboolean Match::SetScore (Player *fencer,
         {
           result = TRUE;
         }
-        else if ((guint) atoi (one_digit_more) > _max_score->GetValue ())
+        else if (!_overflow_allowed &&
+                 ((guint) atoi (one_digit_more) > _max_score->GetValue ()))
         {
           result = TRUE;
         }
