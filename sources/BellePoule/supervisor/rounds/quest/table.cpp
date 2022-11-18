@@ -28,7 +28,8 @@ namespace Quest
   // --------------------------------------------------------------------------------
   BonusTable::BonusTable (StageClass *stage_class)
     : Object ("Quest::BonusTable"),
-    Table::Supervisor (stage_class)
+      Table::Supervisor (stage_class),
+      _spread_randomly(false)
   {
     _max_score->Release ();
     _max_score = new Data ("ScoreMax",
@@ -59,9 +60,18 @@ namespace Quest
   // --------------------------------------------------------------------------------
   GSList *BonusTable::SpreadAttendees (GSList *attendees)
   {
-    return g_slist_sort_with_data (attendees,
-                                   (GCompareDataFunc) Player::RandomCompare,
-                                   GINT_TO_POINTER (GetAntiCheatToken ()));
+    if (_spread_randomly) {
+      // This is not really used, but could be some day, so left it as an option
+      return g_slist_sort_with_data (attendees,
+                                       (GCompareDataFunc) Player::RandomCompare,
+                                       GINT_TO_POINTER (GetAntiCheatToken ()));
+    } else {
+      // Default approach is to sort players by stage rank
+      Player::AttributeId attr_id = Player::AttributeId ("stage_start_rank", this);
+      return g_slist_sort_with_data (attendees,
+                                     (GCompareDataFunc) Player::Compare,
+                                     &attr_id);
+    }
   }
 
   // --------------------------------------------------------------------------------

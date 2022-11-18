@@ -52,5 +52,8 @@ namespace Quest
       const gchar *GetXmlClassName () override;
 
       static Stage *CreateInstance (StageClass *stage_class);
+
+      // Whether to randomly pick the first round matches. Default to false.
+      bool _spread_randomly;
   };
 }
