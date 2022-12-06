@@ -168,7 +168,8 @@ class Batch
             let fencer_id   = fencer_node.getAttribute ('REF');
             let fencer      = this.competition.getFencer (fencer_id);
             let cell        = row.insertCell (-1);
-            let html        = '<td>' + fencer.getAttribute ('Club') + '</td>';
+            let club        = fencer.getAttribute ('Club')
+            let html        = '<td>' + (club ? club : "-") + '</td>';
 
             cell.setAttribute ('class', 'td_matchlist');
             cell.innerHTML = html;
