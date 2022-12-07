@@ -1000,7 +1000,12 @@ namespace Table
   {
     NodeData *data = (NodeData *) node->data;
 
-    if (data->_table->IsDisplayed () && data->_match)
+    // Note: I have added Table::NodeHasGooTable(node) because of a crash
+    //       Where node->_fencer_goo_table was nullptr when receiving scores
+    //       for a tableset which is not currently selected.
+    //       Honestly, I suspect there is an underlying issue and this is only
+    //       hiding the symptom. But it seems to work after testing.
+    if (data->_table->IsDisplayed () && data->_match && Table::NodeHasGooTable(node))
     {
       GooCanvasBounds  bounds;
 
