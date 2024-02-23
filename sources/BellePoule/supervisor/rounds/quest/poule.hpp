@@ -46,6 +46,9 @@ namespace Quest
 
       void OnStuffClicked ();
 
+      void OnSaveClicked ();
+      void SaveClassification (gchar *filename);
+
       void OnHighlightChanged (GtkEditable *editable);
 
     public:

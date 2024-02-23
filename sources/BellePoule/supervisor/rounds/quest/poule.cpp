@@ -15,6 +15,8 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <math.h>
+#include <iostream>
+#include <fstream>
 #include <gdk/gdkkeysyms.h>
 #include "util/data.hpp"
 #include "util/glade.hpp"
@@ -23,6 +25,7 @@
 #include "util/player.hpp"
 #include "util/xml_scheme.hpp"
 #include "util/global.hpp"
+#include "util/user_config.hpp"
 #include "util/attribute.hpp"
 #include "network/message.hpp"
 #include "network/ring.hpp"
@@ -1590,6 +1593,139 @@ namespace Quest
     Spread ();
   }
 
+    // --------------------------------------------------------------------------------
+
+  void Poule::SaveClassification (gchar *filename)
+  {
+    GSList *result = GetCurrentClassification ();
+
+    if (result == nullptr) {
+      GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                  GTK_MESSAGE_ERROR,
+                                                  GTK_BUTTONS_CLOSE,
+                                                  gettext ("No result !"));
+      RunDialog (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
+      return;
+    }
+
+    std::ofstream file;
+    file.open (filename);
+    if (!file.is_open()) {
+      g_slist_free (result);
+      GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                  GTK_MESSAGE_ERROR,
+                                                  GTK_BUTTONS_CLOSE,
+                                                  gettext ("Cannot open file !"));
+      RunDialog (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
+      return;
+    }
+
+    file << "rank,name,first_name,club,score_quest,victories_count,tiebreaker_quest\n";
+    {
+      Player::AttributeId rank_attr_id      ("rank", this);
+      Player::AttributeId firstname_attr_id ("first_name");
+      Player::AttributeId name_attr_id      ("name");
+      Player::AttributeId club_attr_id      ("club");
+      Player::AttributeId quest_attr_id     ("score_quest", this);
+      Player::AttributeId vict_attr_id      ("victories_count", this);
+      Player::AttributeId tb_attr_id        ("tiebreaker_quest", this);
+
+      GSList              *current_player = result;
+      while (current_player)
+      {
+        Player *player= (Player *) current_player->data;
+
+        Attribute *rank_attr = player->GetAttribute (&rank_attr_id);
+        guint rank = rank_attr ? rank_attr->GetUIntValue () : 99999;
+
+        Attribute *name_attr = player->GetAttribute (&name_attr_id);
+        const gchar *name = name_attr ? name_attr->GetStrValue () : "-";
+
+        Attribute *firstname_attr = player->GetAttribute (&firstname_attr_id);
+        const gchar *firstname = firstname_attr ? firstname_attr->GetStrValue () : "-";
+
+        Attribute *club_attr = player->GetAttribute (&club_attr_id);
+        const gchar *club = club_attr ? club_attr->GetStrValue () : "-";
+
+        Attribute *quest_attr = player->GetAttribute (&quest_attr_id);
+        guint quest = quest_attr ? quest_attr->GetUIntValue () : 0;
+
+        Attribute *vict_attr = player->GetAttribute (&vict_attr_id);
+        guint vict = vict_attr ? vict_attr->GetUIntValue () : 0;
+
+        Attribute *tb_attr = player->GetAttribute (&tb_attr_id);
+        guint tb = tb_attr ? tb_attr->GetUIntValue () : 0;
+
+        file << rank << ","
+             << name << ","
+             << firstname << ","
+             << club << ","
+             << quest << ","
+             << vict << ","
+             << tb << "\n";
+
+        current_player = g_slist_next (current_player);
+      }
+    }
+
+    file.close();
+    g_slist_free (result);
+  }
+
+  void Poule::OnSaveClicked ()
+  {
+    GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose file to save quest round csv results"),
+                                                      nullptr,
+                                                      GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                      GTK_STOCK_CANCEL,
+                                                      GTK_RESPONSE_CANCEL,
+                                                      GTK_STOCK_SAVE_AS,
+                                                      GTK_RESPONSE_ACCEPT,
+                                                      NULL);
+
+    {
+      GtkFileFilter *filter = gtk_file_filter_new ();
+      gtk_file_filter_set_name (filter, gettext ("CSV files"));
+      gtk_file_filter_add_pattern (filter, "*.csv");
+      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser), filter);
+    }
+
+    {
+      GtkFileFilter *filter = gtk_file_filter_new ();
+      gtk_file_filter_set_name (filter, gettext ("All files"));
+      gtk_file_filter_add_pattern (filter, "*");
+      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser), filter);
+    }
+
+    {
+      gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
+                                                   "Competiton",
+                                                   "default_dir_name",
+                                                   nullptr);
+      if (last_dirname && (g_file_test (last_dirname, G_FILE_TEST_IS_DIR))) {
+        gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
+                                             last_dirname);
+
+        g_free (last_dirname);
+      }
+    }
+
+    if (RunDialog (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT) {
+      gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+
+      printf("Saving poule into '%s'\n", filename);
+      SaveClassification(filename);
+
+      g_free (filename);
+    }
+
+    gtk_widget_destroy (chooser);
+  }
+
   // --------------------------------------------------------------------------------
   void Poule::OnLocked ()
   {
@@ -1863,6 +1999,15 @@ namespace Quest
     Poule *p = dynamic_cast <Poule *> (owner);
 
     p->OnStuffClicked ();
+  }
+
+    // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_quest_save_toolbutton_clicked (GtkWidget *widget,
+                                                                    Object    *owner)
+  {
+    Poule *p = dynamic_cast <Poule *> (owner);
+
+    p->OnSaveClicked ();
   }
 
   // --------------------------------------------------------------------------------
