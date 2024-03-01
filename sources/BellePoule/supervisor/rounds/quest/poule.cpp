@@ -15,8 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <math.h>
-#include <iostream>
-#include <fstream>
+#include <stdio.h>
 #include <gdk/gdkkeysyms.h>
 #include "util/data.hpp"
 #include "util/glade.hpp"
@@ -1610,9 +1609,8 @@ namespace Quest
       return;
     }
 
-    std::ofstream file;
-    file.open (filename);
-    if (!file.is_open()) {
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
       g_slist_free (result);
       GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -1624,7 +1622,7 @@ namespace Quest
       return;
     }
 
-    file << "rank,name,first_name,club,score_quest,victories_count,tiebreaker_quest\n";
+    fprintf(file, "rank,name,first_name,club,score_quest,victories_count,tiebreaker_quest\n");
     {
       Player::AttributeId rank_attr_id      ("rank", this);
       Player::AttributeId firstname_attr_id ("first_name");
@@ -1660,19 +1658,14 @@ namespace Quest
         Attribute *tb_attr = player->GetAttribute (&tb_attr_id);
         guint tb = tb_attr ? tb_attr->GetUIntValue () : 0;
 
-        file << rank << ","
-             << name << ","
-             << firstname << ","
-             << club << ","
-             << quest << ","
-             << vict << ","
-             << tb << "\n";
+        fprintf(file, "%s,%s,%s,%s,%u,%u,%u\n",
+                rank, name, firstname, club, quest, vict, tb);
 
         current_player = g_slist_next (current_player);
       }
     }
 
-    file.close();
+    fclose(file);
     g_slist_free (result);
   }
 
