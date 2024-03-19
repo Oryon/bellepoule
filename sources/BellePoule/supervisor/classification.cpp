@@ -61,6 +61,9 @@ void Classification::FeedParcel (Net::Message *parcel)
 
   {
     Player::AttributeId elo_attr_id ("elo");
+    Player::AttributeId quest_attr_id("score_quest", GetDataOwner());
+    Player::AttributeId vict_attr_id("victories_count", GetDataOwner());
+    Player::AttributeId tb_attr_id("tiebreaker_quest", GetDataOwner());
     XmlScheme *xml_scheme = new XmlScheme (xml_buffer);
 
     xml_scheme->StartElement ("Classement");
@@ -79,12 +82,39 @@ void Classification::FeedParcel (Net::Message *parcel)
       }
 
       {
-        Attribute *elo_attr = fencer->GetAttribute ( &elo_attr_id);
-        gchar     *elo      = g_strdup_printf ("%d", elo_attr->GetIntValue ());
+        Attribute *elo_attr = fencer->GetAttribute(&elo_attr_id);
+        gchar *elo = g_strdup_printf("%d", elo_attr->GetIntValue());
 
-        xml_scheme->WriteAttribute ("Elo",
-                                    elo);
-        g_free (elo);
+        xml_scheme->WriteAttribute("Elo",
+                                   elo);
+        g_free(elo);
+      }
+
+      {
+        Attribute *quest_attr = fencer->GetAttribute(&quest_attr_id);
+        gchar *quest = g_strdup_printf("%u", quest_attr ? quest_attr->GetUIntValue() : 0);
+
+        xml_scheme->WriteAttribute("Quest",
+                                   quest);
+        g_free(quest);
+      }
+
+      {
+        Attribute *vict_attr = fencer->GetAttribute(&vict_attr_id);
+        gchar *vict = g_strdup_printf("%u", vict_attr ? vict_attr->GetUIntValue() : 0);
+
+        xml_scheme->WriteAttribute("Vict",
+                                   vict);
+        g_free(vict);
+      }
+
+      {
+        Attribute *tb_attr = fencer->GetAttribute(&tb_attr_id);
+        gchar *tb = g_strdup_printf("%u", tb_attr ? tb_attr->GetUIntValue() : 0);
+
+        xml_scheme->WriteAttribute("TB",
+                                   tb);
+        g_free(tb);
       }
 
       xml_scheme->EndElement ();
